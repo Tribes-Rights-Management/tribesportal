@@ -104,86 +104,100 @@ export function PublicLayout({ children }: PublicLayoutProps) {
           </button>
         </div>
 
-        {/* Mobile Menu - Slide-out Panel */}
+        {/* Mobile Menu - Right slide-in drawer */}
         {mobileMenuOpen && (
           <>
             {/* Backdrop */}
             <div 
-              className="fixed inset-0 bg-black/50 z-40 md:hidden"
+              className="fixed inset-0 bg-black/60 z-40 md:hidden"
               onClick={() => setMobileMenuOpen(false)}
             />
             
-            {/* Panel */}
-            <nav className="fixed top-0 right-0 h-full w-[280px] bg-background z-50 md:hidden flex flex-col shadow-xl">
+            {/* Drawer */}
+            <nav className="fixed top-0 right-0 h-screen w-[280px] bg-[#111214] z-50 md:hidden flex flex-col">
               {/* Close button */}
-              <div className="flex justify-end p-4">
+              <div className="flex justify-end p-5">
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-muted-foreground text-sm"
+                  className="text-white/60 hover:text-white"
+                  aria-label="Close menu"
                 >
-                  Close
+                  <X size={20} />
                 </button>
               </div>
               
-              {/* Main nav links */}
-              <div className="flex flex-col px-6 gap-5">
+              {/* Section 1: Primary actions */}
+              <div className="flex flex-col px-6 pt-4 gap-6">
                 <Link 
-                  to="/licensing-account" 
+                  to="/auth" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-base text-foreground"
+                  className="text-base font-medium text-white"
                 >
-                  Request Licensing Access
-                </Link>
-                <Link 
-                  to="/service-inquiry" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-base text-muted-foreground"
-                >
-                  Inquire About Services
-                </Link>
-                <Link 
-                  to="/services" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-base text-muted-foreground"
-                >
-                  Services
+                  Client Sign In
                 </Link>
                 <Link 
                   to="/contact" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-base text-muted-foreground"
+                  className="text-base text-white/60 hover:text-white/90"
                 >
                   Contact
                 </Link>
               </div>
               
-              {/* Sign in - separated */}
-              <div className="px-6 mt-8">
+              {/* Section 2: Orientation */}
+              <div className="flex flex-col px-6 pt-10 gap-6">
                 <Link 
-                  to="/auth" 
+                  to="/our-approach" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-base text-muted-foreground"
+                  className="text-base text-white/60 hover:text-white/90"
                 >
-                  Client Sign In
+                  Our Approach
+                </Link>
+                <Link 
+                  to="/how-it-works" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-base text-white/60 hover:text-white/90"
+                >
+                  How It Works
                 </Link>
               </div>
               
-              {/* Footer links at bottom */}
-              <div className="mt-auto px-6 pb-8 flex flex-col gap-3">
+              {/* Section 3: Secondary info */}
+              <div className="flex flex-col px-6 pt-10 gap-6">
                 <Link 
-                  to="/privacy" 
+                  to="/services" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm text-muted-foreground/60"
+                  className="text-base text-white/60 hover:text-white/90"
                 >
-                  Privacy Policy
+                  Services
                 </Link>
                 <Link 
-                  to="/terms" 
+                  to="/licensing" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm text-muted-foreground/60"
+                  className="text-base text-white/60 hover:text-white/90"
                 >
-                  Terms of Use
+                  Licensing
                 </Link>
+              </div>
+              
+              {/* Section 4: Utility footer */}
+              <div className="mt-auto px-6 pb-10">
+                <div className="border-t border-white/10 pt-6 flex flex-col gap-4">
+                  <Link 
+                    to="/privacy" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-sm text-white/40 hover:text-white/60"
+                  >
+                    Privacy
+                  </Link>
+                  <Link 
+                    to="/terms" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-sm text-white/40 hover:text-white/60"
+                  >
+                    Terms
+                  </Link>
+                </div>
               </div>
             </nav>
           </>
