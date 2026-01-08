@@ -133,13 +133,13 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
             </>
           )}
 
-          {/* Mobile Contact Link (logoOnly mode with anchor) */}
+          {/* Contact Link (logoOnly mode with anchor - visible on all screen sizes) */}
           {logoOnly && mobileContactAnchor && (
             <button
               onClick={() => {
                 document.getElementById(mobileContactAnchor)?.scrollIntoView({ behavior: "smooth" });
               }}
-              className={`md:hidden text-sm transition-colors ${mutedColor}`}
+              className={`text-sm transition-colors ${mutedColor}`}
             >
               Contact
             </button>
