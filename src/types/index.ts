@@ -15,12 +15,27 @@ export const STATUS_LABELS: Record<string, string> = {
   done: "Complete",
 };
 
+export const STATUS_DESCRIPTIONS: Record<string, string> = {
+  draft: "Your request has been saved but not yet submitted.",
+  submitted: "Your request has been submitted and is awaiting review.",
+  in_review: "Your request is currently being reviewed by our team.",
+  needs_info: "Additional information is needed to process your request.",
+  approved: "Your request has been approved.",
+  awaiting_signature: "Please review and sign the license agreement.",
+  awaiting_payment: "Please complete payment to finalize your license.",
+  sent_for_signature: "The agreement has been sent for signature.",
+  executed: "Your license has been executed.",
+  closed: "This request has been closed.",
+  done: "Your license is complete and active.",
+};
+
 // License request type
 export interface LicenseRequest {
   id: string;
   user_id: string;
   status: RequestStatus;
   license_id?: string;
+  package_reference?: string;
   
   // Requester info
   first_name?: string;
@@ -160,7 +175,7 @@ export interface StatusHistory {
   id: string;
   request_id: string;
   license_id?: string;
-  from_status: RequestStatus;
+  from_status?: RequestStatus;
   to_status: RequestStatus;
   actor_user_id: string;
   notes?: string;
@@ -196,34 +211,24 @@ export interface AuditLogEntry {
   created_at: string;
 }
 
-// Status history entry
-export interface StatusHistoryEntry {
-  id: string;
-  package_id: string;
-  old_status: RequestStatus;
-  new_status: RequestStatus;
-  changed_by: string;
-  notes?: string;
-  created_at: string;
-}
-
 // Internal note
 export interface InternalNote {
   id: string;
-  package_id: string;
-  author_id: string;
-  content: string;
+  request_id: string;
+  user_id: string;
+  note: string;
   created_at: string;
 }
 
-// Generated document
+// Generated document - matches database schema
 export interface GeneratedDocument {
   id: string;
-  package_id: string;
+  request_id: string;
   document_type: string;
-  file_url?: string;
-  status: string;
+  file_url?: string | null;
+  status?: string | null;
   created_at: string;
+  updated_at?: string;
 }
 
 // Contact submission

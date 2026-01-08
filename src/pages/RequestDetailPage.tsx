@@ -61,15 +61,15 @@ export default function RequestDetailPage() {
   async function handleDownload() {
     if (!request || request.status !== "done") return;
     
-    const executedDoc = documents.find(d => d.doc_type === "executed");
-    if (!executedDoc) {
+    const executedDoc = documents.find(d => d.document_type === "executed");
+    if (!executedDoc?.file_url) {
       toast({ title: "Document unavailable", description: "The executed agreement is not yet available.", variant: "destructive" });
       return;
     }
 
     setIsDownloading(true);
     try {
-      const response = await fetch(executedDoc.storage_path);
+      const response = await fetch(executedDoc.file_url);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -202,10 +202,7 @@ export default function RequestDetailPage() {
           <section className="space-y-4">
             <h2 className="text-sm font-medium text-muted-foreground">License Details</h2>
             <div className="space-y-3">
-              <Field label="License Type" value={request.license_type} />
-              <Field label="Territory" value={request.territory} />
-              <Field label="Term" value={request.term} />
-              <Field label="License Fee" value={request.license_fee ? `$${request.license_fee.toLocaleString()} ${request.currency || "USD"}` : null} />
+              <Field label="License Types" value={request.selected_license_types?.join(", ")} />
             </div>
           </section>
 
@@ -254,7 +251,7 @@ export default function RequestDetailPage() {
                 {documents.map(doc => (
                   <div key={doc.id} className="text-sm">
                     <p>
-                      {doc.doc_type === "draft" ? "Draft Agreement" : "Executed Agreement"}
+                      {doc.document_type === "draft" ? "Draft Agreement" : "Executed Agreement"}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {format(new Date(doc.created_at), "MMMM d, yyyy")}
@@ -273,36 +270,17 @@ export default function RequestDetailPage() {
                 label="Submitted" 
                 value={request.submitted_at ? format(new Date(request.submitted_at), "MMMM d, yyyy 'at' h:mm a") : null} 
               />
-              {request.signed_at && (
-                <Field 
-                  label="Signed" 
-                  value={format(new Date(request.signed_at), "MMMM d, yyyy 'at' h:mm a")} 
-                />
-              )}
-              {request.paid_at && (
-                <Field 
-                  label="Payment received" 
-                  value={format(new Date(request.paid_at), "MMMM d, yyyy 'at' h:mm a")} 
-                />
-              )}
-              {request.executed_at && (
-                <Field 
-                  label="Executed" 
-                  value={format(new Date(request.executed_at), "MMMM d, yyyy 'at' h:mm a")} 
-                />
-              )}
             </div>
           </section>
         </div>
       </div>
 
       {/* Preview Modal */}
-      {showPreview && request && (
-        <LicensePreviewModal
-          request={request}
-          onClose={() => setShowPreview(false)}
-        />
-      )}
+      <LicensePreviewModal
+        open={showPreview}
+        onOpenChange={setShowPreview}
+        request={request}
+      />
     </DashboardLayout>
   );
 }
