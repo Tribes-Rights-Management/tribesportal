@@ -93,10 +93,10 @@ export default function ContactPage() {
   if (isSubmitted) {
     return (
       <PublicLayout>
-        <section className="pt-28 pb-24 md:pt-36 md:pb-32">
+        <section className="pt-20 pb-24 md:pt-28 md:pb-32">
           <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
             <div className="max-w-[560px]">
-              <h1 className="text-foreground mb-3">
+              <h1 className="text-[28px] md:text-[32px] font-semibold text-foreground mb-3">
                 Message received
               </h1>
               <p className="text-muted-foreground leading-relaxed mb-6">
@@ -118,10 +118,10 @@ export default function ContactPage() {
   return (
     <PublicLayout>
       {/* Header */}
-      <section className="pt-28 pb-8 md:pt-36 md:pb-10">
+      <section className="pt-20 pb-6 md:pt-28 md:pb-8">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
           <div className="max-w-[560px]">
-            <h1 className="text-foreground mb-2">
+            <h1 className="text-[28px] md:text-[32px] font-semibold text-foreground mb-3">
               Contact
             </h1>
             <p className="text-muted-foreground leading-relaxed">
@@ -132,10 +132,10 @@ export default function ContactPage() {
       </section>
 
       {/* Form */}
-      <section className="pb-16 md:pb-20">
+      <section className="pb-16 md:pb-24">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
           <div className="max-w-[560px]">
-            <form onSubmit={handleSubmit} className="space-y-3">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <Input
                 type="text"
                 placeholder="Full name"
@@ -144,6 +144,7 @@ export default function ContactPage() {
                 required
                 disabled={isSubmitting}
                 aria-label="Name"
+                className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
               />
 
               <Input
@@ -154,13 +155,17 @@ export default function ContactPage() {
                 required
                 disabled={isSubmitting}
                 aria-label="Email"
+                className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
               />
 
               <Select value={location} onValueChange={setLocation} disabled={isSubmitting}>
-                <SelectTrigger aria-label="Select your location">
+                <SelectTrigger 
+                  aria-label="Select your location"
+                  className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
+                >
                   <SelectValue placeholder="Country or territory" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-background border-border z-50">
                   {COUNTRIES.map((c) => (
                     <SelectItem key={c} value={c}>
                       {c}
@@ -178,16 +183,17 @@ export default function ContactPage() {
                   disabled={isSubmitting}
                   rows={4}
                   aria-label="Message"
+                  className="px-4 py-3 text-[15px] rounded-xl border-border/60 bg-background resize-none"
                 />
               </div>
 
-              <div className="pt-4">
+              <div className="pt-4 flex justify-center">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full h-12 bg-foreground text-background text-[14px] font-medium rounded-md hover:bg-foreground/90 transition-all duration-150 disabled:bg-muted disabled:text-muted-foreground/60 disabled:cursor-not-allowed"
+                  className="h-14 px-12 text-[15px] font-medium rounded-xl transition-all duration-150 bg-muted-foreground/80 text-background hover:bg-muted-foreground disabled:bg-muted-foreground/40 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? "Sending…" : "Send"}
+                  {isSubmitting ? "Sending…" : "Send Message"}
                 </button>
               </div>
             </form>

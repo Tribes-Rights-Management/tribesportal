@@ -91,10 +91,10 @@ export default function ServiceInquiryPage() {
   if (isSubmitted) {
     return (
       <PublicLayout>
-        <section className="pt-28 pb-24 md:pt-36 md:pb-32">
+        <section className="pt-20 pb-24 md:pt-28 md:pb-32">
           <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
             <div className="max-w-[560px]">
-              <h1 className="text-foreground mb-3">
+              <h1 className="text-[28px] md:text-[32px] font-semibold text-foreground mb-3">
                 Inquiry received
               </h1>
               <p className="text-muted-foreground leading-relaxed mb-6">
@@ -116,10 +116,10 @@ export default function ServiceInquiryPage() {
   return (
     <PublicLayout>
       {/* Header */}
-      <section className="pt-28 pb-8 md:pt-36 md:pb-10">
+      <section className="pt-20 pb-6 md:pt-28 md:pb-8">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
           <div className="max-w-[560px]">
-            <h1 className="text-foreground mb-2">
+            <h1 className="text-[28px] md:text-[32px] font-semibold text-foreground mb-3">
               Inquire About Services
             </h1>
             <p className="text-muted-foreground leading-relaxed">
@@ -130,10 +130,10 @@ export default function ServiceInquiryPage() {
       </section>
 
       {/* Form */}
-      <section className="pb-24 md:pb-32">
+      <section className="pb-16 md:pb-24">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
           <div className="max-w-[560px]">
-            <form onSubmit={handleSubmit} className="space-y-3">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <Input
                 type="text"
                 placeholder="Full name"
@@ -142,6 +142,7 @@ export default function ServiceInquiryPage() {
                 required
                 disabled={isSubmitting}
                 aria-label="Full name"
+                className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
               />
 
               <Input
@@ -152,6 +153,7 @@ export default function ServiceInquiryPage() {
                 required
                 disabled={isSubmitting}
                 aria-label="Company or organization"
+                className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
               />
 
               <Input
@@ -162,13 +164,17 @@ export default function ServiceInquiryPage() {
                 required
                 disabled={isSubmitting}
                 aria-label="Email address"
+                className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
               />
 
               <Select value={country} onValueChange={setCountry} disabled={isSubmitting}>
-                <SelectTrigger aria-label="Select your location">
+                <SelectTrigger 
+                  aria-label="Select your location"
+                  className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
+                >
                   <SelectValue placeholder="Country or territory" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-background border-border z-50">
                   {COUNTRIES.map((c) => (
                     <SelectItem key={c} value={c}>
                       {c}
@@ -178,10 +184,13 @@ export default function ServiceInquiryPage() {
               </Select>
 
               <Select value={roleType} onValueChange={setRoleType} disabled={isSubmitting}>
-                <SelectTrigger aria-label="Your role">
+                <SelectTrigger 
+                  aria-label="Your role"
+                  className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
+                >
                   <SelectValue placeholder="Your role" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-background border-border z-50">
                   <SelectItem value="songwriter_creator">Songwriter / Creator</SelectItem>
                   <SelectItem value="publisher_rights_holder">Publisher / Rights Holder</SelectItem>
                   <SelectItem value="brand_agency">Brand / Agency</SelectItem>
@@ -191,7 +200,7 @@ export default function ServiceInquiryPage() {
               </Select>
 
               <div className="pt-2">
-                <label className="text-[12px] text-muted-foreground/70 mb-1.5 block">
+                <label className="text-[14px] text-muted-foreground mb-2 block">
                   Catalog or scope
                 </label>
                 <Textarea
@@ -202,11 +211,12 @@ export default function ServiceInquiryPage() {
                   disabled={isSubmitting}
                   rows={3}
                   aria-label="Catalog or scope description"
+                  className="px-4 py-3 text-[15px] rounded-xl border-border/60 bg-background resize-none"
                 />
               </div>
 
               <div className="pt-2">
-                <label className="text-[12px] text-muted-foreground/70 mb-1.5 block">
+                <label className="text-[14px] text-muted-foreground mb-2 block">
                   What you're looking for
                 </label>
                 <Textarea
@@ -217,28 +227,29 @@ export default function ServiceInquiryPage() {
                   disabled={isSubmitting}
                   rows={3}
                   aria-label="What you're looking for"
+                  className="px-4 py-3 text-[15px] rounded-xl border-border/60 bg-background resize-none"
                 />
               </div>
 
               {/* Consent */}
-              <div className="pt-3">
-                <div className="flex items-start gap-2.5">
+              <div className="pt-4">
+                <div className="flex items-start gap-3">
                   <Checkbox
                     id="terms"
                     checked={agreeToTerms}
                     onCheckedChange={(checked) => setAgreeToTerms(checked === true)}
                     disabled={isSubmitting}
                     aria-label="Agree to terms"
-                    className="shrink-0 mt-0.5"
+                    className="shrink-0 mt-0.5 h-5 w-5 rounded border-border/60"
                   />
                   <label 
                     htmlFor="terms" 
-                    className="text-[12px] text-muted-foreground/60 leading-relaxed cursor-pointer"
+                    className="text-[14px] text-muted-foreground leading-relaxed cursor-pointer"
                   >
                     I agree to the{" "}
                     <Link 
                       to="/privacy" 
-                      className="text-muted-foreground/60 underline underline-offset-2 hover:text-foreground transition-colors"
+                      className="text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
                       target="_blank"
                     >
                       Privacy Policy
@@ -246,7 +257,7 @@ export default function ServiceInquiryPage() {
                     {" "}and{" "}
                     <Link 
                       to="/terms" 
-                      className="text-muted-foreground/60 underline underline-offset-2 hover:text-foreground transition-colors"
+                      className="text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
                       target="_blank"
                     >
                       Terms of Use
@@ -255,33 +266,22 @@ export default function ServiceInquiryPage() {
                 </div>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-6 flex justify-center">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className={`w-full h-12 text-[14px] font-medium rounded-md transition-all duration-150 ${
-                    agreeToTerms && !isSubmitting
-                      ? "bg-foreground text-background hover:bg-foreground/90"
-                      : "bg-muted text-muted-foreground/60 cursor-not-allowed"
-                  }`}
+                  disabled={isSubmitting || !agreeToTerms}
+                  className="h-14 px-12 text-[15px] font-medium rounded-xl transition-all duration-150 bg-muted-foreground/80 text-background hover:bg-muted-foreground disabled:bg-muted-foreground/40 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Submitting…" : "Submit Inquiry"}
                 </button>
               </div>
             </form>
 
-            <div className="flex flex-col gap-2 mt-6 text-center">
-              <p className="text-[13px] text-muted-foreground/60">
-                <Link to="/licensing" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Request Licensing Access
-                </Link>
-              </p>
-              <p className="text-[12px] text-muted-foreground/40">
-                <Link 
-                  to="/how-publishing-administration-works" 
-                  className="text-muted-foreground/40 hover:text-muted-foreground transition-colors underline underline-offset-2"
-                >
-                  How publishing administration works
+            <div className="mt-8 text-center">
+              <p className="text-[14px] text-muted-foreground">
+                Need licensing access?{" "}
+                <Link to="/licensing-account" className="text-foreground font-medium hover:underline">
+                  Request an account
                 </Link>
               </p>
             </div>

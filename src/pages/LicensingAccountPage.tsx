@@ -116,10 +116,10 @@ export default function LicensingAccountPage() {
   if (viewState === "submitted") {
     return (
       <PublicLayout>
-        <section className="pt-28 pb-24 md:pt-36 md:pb-32">
+        <section className="pt-20 pb-24 md:pt-28 md:pb-32">
           <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
             <div className="max-w-[560px]">
-              <h1 className="text-foreground mb-3">
+              <h1 className="text-[28px] md:text-[32px] font-semibold text-foreground mb-3">
                 Request submitted
               </h1>
               <p className="text-muted-foreground leading-relaxed mb-6">
@@ -142,10 +142,10 @@ export default function LicensingAccountPage() {
   if (viewState === "pending") {
     return (
       <PublicLayout>
-        <section className="pt-28 pb-24 md:pt-36 md:pb-32">
+        <section className="pt-20 pb-24 md:pt-28 md:pb-32">
           <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
             <div className="max-w-[560px]">
-              <h1 className="text-foreground mb-3">
+              <h1 className="text-[28px] md:text-[32px] font-semibold text-foreground mb-3">
                 Already pending
               </h1>
               <p className="text-muted-foreground leading-relaxed mb-6">
@@ -168,10 +168,10 @@ export default function LicensingAccountPage() {
   if (viewState === "exists") {
     return (
       <PublicLayout>
-        <section className="pt-28 pb-24 md:pt-36 md:pb-32">
+        <section className="pt-20 pb-24 md:pt-28 md:pb-32">
           <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
             <div className="max-w-[560px]">
-              <h1 className="text-foreground mb-3">
+              <h1 className="text-[28px] md:text-[32px] font-semibold text-foreground mb-3">
                 Account exists
               </h1>
               <p className="text-muted-foreground leading-relaxed mb-6">
@@ -182,14 +182,14 @@ export default function LicensingAccountPage() {
                   to="/auth" 
                   className="text-[14px] text-foreground hover:text-muted-foreground transition-colors duration-150 underline underline-offset-4"
                 >
-                  Client Sign In
+                  Sign in
                 </Link>
               ) : (
                 <a 
                   href={getSignInUrl("/portal")} 
                   className="text-[14px] text-foreground hover:text-muted-foreground transition-colors duration-150 underline underline-offset-4"
                 >
-                  Client Sign In
+                  Sign in
                 </a>
               )}
             </div>
@@ -202,33 +202,36 @@ export default function LicensingAccountPage() {
   return (
     <PublicLayout>
       {/* Header */}
-      <section className="pt-28 pb-8 md:pt-36 md:pb-10">
+      <section className="pt-20 pb-6 md:pt-28 md:pb-8">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
           <div className="max-w-[560px]">
-            <h1 className="text-foreground mb-2">
-              Request Licensing Access
+            <h1 className="text-[28px] md:text-[32px] font-semibold text-foreground mb-3">
+              Request an Account
             </h1>
             <p className="text-muted-foreground leading-relaxed">
-              Account approval required before submitting license requests.
+              Licensing requests require an approved account.
             </p>
           </div>
         </div>
       </section>
 
       {/* Form */}
-      <section className="pb-24 md:pb-32">
+      <section className="pb-16 md:pb-24">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
           <div className="max-w-[560px]">
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <Input
-                type="text"
-                placeholder="Full name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-                disabled={isSubmitting}
-                aria-label="Full name"
-              />
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <Input
+                  type="text"
+                  placeholder="Full name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                  disabled={isSubmitting}
+                  aria-label="Full name"
+                  className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
+                />
+              </div>
 
               <div>
                 <Input
@@ -239,9 +242,10 @@ export default function LicensingAccountPage() {
                   required
                   disabled={isSubmitting}
                   aria-label="Company or organization"
+                  className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
                 />
-                <p className="text-[11px] text-muted-foreground/50 mt-1 leading-snug">
-                  Individuals may use an artist or professional name.
+                <p className="text-[13px] text-muted-foreground/70 mt-2 leading-relaxed">
+                  If you're an individual creator, enter your artist or professional name.
                 </p>
               </div>
 
@@ -254,17 +258,21 @@ export default function LicensingAccountPage() {
                   required
                   disabled={isSubmitting}
                   aria-label="Email address"
+                  className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
                 />
-                <p className="text-[11px] text-muted-foreground/50 mt-1 leading-snug">
+                <p className="text-[13px] text-muted-foreground/70 mt-2 leading-relaxed">
                   Used for account access.
                 </p>
               </div>
 
               <Select value={country} onValueChange={setCountry} disabled={isSubmitting}>
-                <SelectTrigger aria-label="Select your location">
+                <SelectTrigger 
+                  aria-label="Select your location"
+                  className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
+                >
                   <SelectValue placeholder="Country or territory" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-background border-border z-50">
                   {COUNTRIES.map((c) => (
                     <SelectItem key={c} value={c}>
                       {c}
@@ -274,10 +282,13 @@ export default function LicensingAccountPage() {
               </Select>
 
               <Select value={organizationType} onValueChange={setOrganizationType} disabled={isSubmitting}>
-                <SelectTrigger aria-label="Organization type">
+                <SelectTrigger 
+                  aria-label="Organization type"
+                  className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
+                >
                   <SelectValue placeholder="Organization type" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-background border-border z-50">
                   <SelectItem value="commercial_brand">Commercial / Brand</SelectItem>
                   <SelectItem value="broadcast_media">Broadcast / Media</SelectItem>
                   <SelectItem value="church_ministry">Church / Ministry</SelectItem>
@@ -288,42 +299,43 @@ export default function LicensingAccountPage() {
               </Select>
 
               <div className="pt-2">
-                <label className="text-[12px] text-muted-foreground/70 mb-1.5 block">
-                  Intended use
+                <label className="text-[14px] text-muted-foreground mb-2 block">
+                  Describe your intended licensing use
                 </label>
                 <Textarea
-                  placeholder="Advertising, broadcast, livestream, film, venue playback, etc."
+                  placeholder="Example: advertising, broadcast, livestream, film, venue playback."
                   value={intendedUse}
                   onChange={(e) => setIntendedUse(e.target.value)}
                   required
                   disabled={isSubmitting}
-                  rows={3}
+                  rows={4}
                   aria-label="Intended use"
+                  className="px-4 py-3 text-[15px] rounded-xl border-border/60 bg-background resize-none"
                 />
-                <p className="text-[11px] text-muted-foreground/50 mt-1 leading-snug">
-                  Reviewed as part of account approval.
+                <p className="text-[13px] text-muted-foreground/70 mt-2 leading-relaxed">
+                  This does not need to be perfect.
                 </p>
               </div>
 
               {/* Consent */}
-              <div className="pt-3">
-                <div className="flex items-start gap-2.5">
+              <div className="pt-4">
+                <div className="flex items-start gap-3">
                   <Checkbox
                     id="terms"
                     checked={agreeToTerms}
                     onCheckedChange={(checked) => setAgreeToTerms(checked === true)}
                     disabled={isSubmitting}
                     aria-label="Agree to terms"
-                    className="shrink-0 mt-0.5"
+                    className="shrink-0 mt-0.5 h-5 w-5 rounded border-border/60"
                   />
                   <label 
                     htmlFor="terms" 
-                    className="text-[12px] text-muted-foreground/60 leading-relaxed cursor-pointer"
+                    className="text-[14px] text-muted-foreground leading-relaxed cursor-pointer"
                   >
                     I agree to the{" "}
                     <Link 
                       to="/privacy" 
-                      className="text-muted-foreground/60 underline underline-offset-2 hover:text-foreground transition-colors"
+                      className="text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
                       target="_blank"
                     >
                       Privacy Policy
@@ -331,7 +343,7 @@ export default function LicensingAccountPage() {
                     {" "}and{" "}
                     <Link 
                       to="/terms" 
-                      className="text-muted-foreground/60 underline underline-offset-2 hover:text-foreground transition-colors"
+                      className="text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
                       target="_blank"
                     >
                       Terms of Use
@@ -340,40 +352,29 @@ export default function LicensingAccountPage() {
                 </div>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-6 flex justify-center">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className={`w-full h-12 text-[14px] font-medium rounded-md transition-all duration-150 ${
-                    agreeToTerms && !isSubmitting
-                      ? "bg-foreground text-background hover:bg-foreground/90"
-                      : "bg-muted text-muted-foreground/60 cursor-not-allowed"
-                  }`}
+                  disabled={isSubmitting || !agreeToTerms}
+                  className="h-14 px-12 text-[15px] font-medium rounded-xl transition-all duration-150 bg-muted-foreground/80 text-background hover:bg-muted-foreground disabled:bg-muted-foreground/40 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? "Submitting…" : "Submit Request"}
+                  {isSubmitting ? "Submitting…" : "Request Account Review"}
                 </button>
               </div>
             </form>
 
-            <div className="flex flex-col gap-2 mt-6 text-center md:text-left">
-              <p className="text-[13px] text-muted-foreground/60">
+            <div className="mt-8 text-center">
+              <p className="text-[14px] text-muted-foreground">
+                Already have an account?{" "}
                 {isPreviewEnvironment() ? (
-                  <Link to="/auth" className="text-muted-foreground hover:text-foreground transition-colors">
-                    Client Sign In
+                  <Link to="/auth" className="text-foreground font-medium hover:underline">
+                    Sign in
                   </Link>
                 ) : (
-                  <a href={getSignInUrl("/portal")} className="text-muted-foreground hover:text-foreground transition-colors">
-                    Client Sign In
+                  <a href={getSignInUrl("/portal")} className="text-foreground font-medium hover:underline">
+                    Sign in
                   </a>
                 )}
-              </p>
-              <p className="text-[12px] text-muted-foreground/40">
-                <Link 
-                  to="/how-publishing-administration-works" 
-                  className="text-muted-foreground/40 hover:text-muted-foreground transition-colors underline underline-offset-2"
-                >
-                  How publishing administration works
-                </Link>
               </p>
             </div>
           </div>
