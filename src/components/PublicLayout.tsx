@@ -93,7 +93,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
       <header className={`sticky top-0 z-50 transition-colors duration-300 ${headerBg} ${borderColor} border-b`}>
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-20 flex items-center justify-between h-14">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-8 lg:px-12 flex items-center justify-between h-14">
           <Link to="/" className="flex items-center">
             <span className={`text-base font-semibold tracking-tight ${textColor}`}>{BRAND.wordmark}</span>
           </Link>
