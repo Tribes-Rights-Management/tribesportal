@@ -21,7 +21,7 @@ export function Footer({ className, disableLinks = false, hideLinks = false }: F
             <img 
               src={tribesLogoWhite} 
               alt={BRAND.wordmark}
-              className="h-[12px] w-auto opacity-80"
+              className="h-[16px] w-auto opacity-80"
               onError={(e) => {
                 const target = e.currentTarget;
                 target.style.display = 'none';
