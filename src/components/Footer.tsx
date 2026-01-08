@@ -31,29 +31,36 @@ export function Footer({ className, disableLinks = false, hideLinks = false }: F
           <nav className="flex flex-wrap gap-x-6 gap-y-2">
             {disableLinks ? (
               <>
-                <span className="text-sm text-white/50">Privacy</span>
-                <span className="text-sm text-white/50">Terms</span>
-                <span className="text-sm text-white/50">Contact</span>
+                <span className="text-sm text-white/50">How Administration Works</span>
+                <span className="text-sm text-white/50">How Licensing Works</span>
+                <span className="text-sm text-white/50">Privacy Policy</span>
+                <span className="text-sm text-white/50">Terms of Use</span>
               </>
             ) : (
               <>
                 <Link 
+                  to="/how-publishing-admin-works" 
+                  className="text-sm text-white/50 hover:text-white/80 transition-colors"
+                >
+                  How Administration Works
+                </Link>
+                <Link 
+                  to="/how-licensing-works" 
+                  className="text-sm text-white/50 hover:text-white/80 transition-colors"
+                >
+                  How Licensing Works
+                </Link>
+                <Link 
                   to="/privacy" 
                   className="text-sm text-white/50 hover:text-white/80 transition-colors"
                 >
-                  Privacy
+                  Privacy Policy
                 </Link>
                 <Link 
                   to="/terms" 
                   className="text-sm text-white/50 hover:text-white/80 transition-colors"
                 >
-                  Terms
-                </Link>
-                <Link 
-                  to="/contact" 
-                  className="text-sm text-white/50 hover:text-white/80 transition-colors"
-                >
-                  Contact
+                  Terms of Use
                 </Link>
               </>
             )}
