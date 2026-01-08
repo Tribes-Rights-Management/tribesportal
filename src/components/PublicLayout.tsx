@@ -104,47 +104,89 @@ export function PublicLayout({ children }: PublicLayoutProps) {
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Slide-out Panel */}
         {mobileMenuOpen && (
-          <nav className={`md:hidden ${borderColor} border-t py-4 ${headerBg}`}>
-            <div className="max-w-[1200px] mx-auto px-4 flex flex-col gap-4">
-              <Link 
-                to="/services" 
-                onClick={() => setMobileMenuOpen(false)}
-                className={`text-sm transition-colors ${mutedColor}`}
-              >
-                Services
-              </Link>
-              <Link 
-                to="/our-approach" 
-                onClick={() => setMobileMenuOpen(false)}
-                className={`text-sm transition-colors ${mutedColor}`}
-              >
-                Our Approach
-              </Link>
-              <Link 
-                to="/licensing-account" 
-                onClick={() => setMobileMenuOpen(false)}
-                className={`text-sm transition-colors ${mutedColor}`}
-              >
-                Request Access
-              </Link>
-              <Link 
-                to="/contact" 
-                onClick={() => setMobileMenuOpen(false)}
-                className={`text-sm transition-colors ${mutedColor}`}
-              >
-                Contact
-              </Link>
-              <Link 
-                to="/auth" 
-                onClick={() => setMobileMenuOpen(false)}
-                className={`text-sm transition-colors ${mutedColor}`}
-              >
-                Sign in
-              </Link>
-            </div>
-          </nav>
+          <>
+            {/* Backdrop */}
+            <div 
+              className="fixed inset-0 bg-black/50 z-40 md:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            
+            {/* Panel */}
+            <nav className="fixed top-0 right-0 h-full w-[280px] bg-background z-50 md:hidden flex flex-col shadow-xl">
+              {/* Close button */}
+              <div className="flex justify-end p-4">
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-muted-foreground text-sm"
+                >
+                  Close
+                </button>
+              </div>
+              
+              {/* Main nav links */}
+              <div className="flex flex-col px-6 gap-5">
+                <Link 
+                  to="/licensing-account" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-base text-foreground"
+                >
+                  Request Licensing Access
+                </Link>
+                <Link 
+                  to="/service-inquiry" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-base text-muted-foreground"
+                >
+                  Inquire About Services
+                </Link>
+                <Link 
+                  to="/services" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-base text-muted-foreground"
+                >
+                  Services
+                </Link>
+                <Link 
+                  to="/contact" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-base text-muted-foreground"
+                >
+                  Contact
+                </Link>
+              </div>
+              
+              {/* Sign in - separated */}
+              <div className="px-6 mt-8">
+                <Link 
+                  to="/auth" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-base text-muted-foreground"
+                >
+                  Client Sign In
+                </Link>
+              </div>
+              
+              {/* Footer links at bottom */}
+              <div className="mt-auto px-6 pb-8 flex flex-col gap-3">
+                <Link 
+                  to="/privacy" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm text-muted-foreground/60"
+                >
+                  Privacy Policy
+                </Link>
+                <Link 
+                  to="/terms" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm text-muted-foreground/60"
+                >
+                  Terms of Use
+                </Link>
+              </div>
+            </nav>
+          </>
         )}
       </header>
 
