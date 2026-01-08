@@ -5,6 +5,7 @@ import { BRAND } from "@/lib/brand";
 import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
 import { Footer } from "@/components/Footer";
 import tribesLogoWhite from "@/assets/tribes-logo-white.svg";
+import tribesLogoBlack from "@/assets/tribes-logo-black.svg";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -98,9 +99,9 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
         <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14 md:h-16`}>
           <Link to="/" className="flex items-center">
             <img 
-              src={tribesLogoWhite} 
+              src={headerDark ? tribesLogoWhite : tribesLogoBlack} 
               alt={BRAND.wordmark}
-              className={`h-[28px] md:h-[28px] w-auto ${headerDark ? '' : 'invert'}`}
+              className="h-[28px] md:h-[28px] w-auto"
               onError={(e) => {
                 // Fallback to text wordmark if image fails
                 const target = e.currentTarget;

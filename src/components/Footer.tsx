@@ -4,6 +4,7 @@ import { getCopyrightLine } from "@/lib/copyright";
 import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
 import { cn } from "@/lib/utils";
 import tribesLogoWhite from "@/assets/tribes-logo-white.svg";
+import tribesLogoBlack from "@/assets/tribes-logo-black.svg";
 
 interface FooterProps {
   className?: string;
