@@ -3,7 +3,7 @@ import { BRAND } from "@/lib/brand";
 import { getCopyrightLine } from "@/lib/copyright";
 import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
 import { cn } from "@/lib/utils";
-import tribesLogoBlack from "@/assets/tribes-logo-black.png";
+import tribesLogoWhite from "@/assets/tribes-logo-white.svg";
 
 interface FooterProps {
   className?: string;
@@ -19,7 +19,7 @@ export function Footer({ className, disableLinks = false, hideLinks = false }: F
         <div className="mb-8">
           <div className="mb-2">
             <img 
-              src={tribesLogoBlack} 
+              src={tribesLogoWhite} 
               alt={BRAND.wordmark}
               className="h-[12px] w-auto opacity-80"
               onError={(e) => {

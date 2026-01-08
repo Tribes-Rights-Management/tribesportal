@@ -4,7 +4,7 @@ import { Menu, X } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
 import { Footer } from "@/components/Footer";
-import tribesLogoBlack from "@/assets/tribes-logo-black.png";
+import tribesLogoWhite from "@/assets/tribes-logo-white.svg";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -98,7 +98,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
         <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14`}>
           <Link to="/" className="flex items-center">
             <img 
-              src={tribesLogoBlack} 
+              src={tribesLogoWhite} 
               alt={BRAND.wordmark}
               className={`h-[14px] w-auto ${headerDark ? '' : 'invert'}`}
               onError={(e) => {
