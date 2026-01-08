@@ -101,9 +101,9 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
             <img 
               src={headerDark ? tribesLogoWhite : tribesLogoBlack} 
               alt={BRAND.wordmark}
-              className="h-[21px] md:h-[21px] w-auto"
+              className="h-[18px] md:h-[21px] w-auto"
+              style={{ imageRendering: 'auto', shapeRendering: 'geometricPrecision' }}
               onError={(e) => {
-                // Fallback to text wordmark if image fails
                 const target = e.currentTarget;
                 target.style.display = 'none';
                 const fallback = document.createElement('span');
