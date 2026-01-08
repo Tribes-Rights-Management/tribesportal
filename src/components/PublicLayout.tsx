@@ -33,7 +33,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
     const handleScroll = () => {
       // Find all sections and determine which one is at the top
       const sections = document.querySelectorAll('section[data-theme]');
-      const headerHeight = 56; // h-14 = 56px
+      const headerHeight = 72; // md:h-[72px] for desktop
       
       let isDark = true; // Default to dark for pages with dark heroes
       
@@ -95,12 +95,12 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
       <header className={`sticky top-0 z-50 transition-colors duration-300 ${headerBg} ${borderColor} border-b`}>
-        <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14`}>
+        <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14 md:h-[72px]`}>
           <Link to="/" className="flex items-center">
             <img 
               src={tribesLogoWhite} 
               alt={BRAND.wordmark}
-              className={`h-[24px] w-auto ${headerDark ? '' : 'invert'}`}
+              className={`h-[24px] md:h-[28px] w-auto ${headerDark ? '' : 'invert'}`}
               onError={(e) => {
                 // Fallback to text wordmark if image fails
                 const target = e.currentTarget;

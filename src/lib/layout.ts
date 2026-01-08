@@ -8,7 +8,15 @@
  * - Do not widen beyond 1200px unless explicitly instructed
  * - Do not alter padding values without explicit instruction
  * - Header, body, and footer content must share this same grid
+ * - Desktop header height is locked at 72px (h-18)
+ * - Desktop logo height is locked at 28px
  */
 
 /** Inner content container: max-width + centering + responsive horizontal padding */
 export const CONTENT_CONTAINER_CLASS = "max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12";
+
+/** Desktop header height in pixels (locked) */
+export const DESKTOP_HEADER_HEIGHT = 72;
+
+/** Desktop logo height in pixels (locked) */
+export const DESKTOP_LOGO_HEIGHT = 28;
