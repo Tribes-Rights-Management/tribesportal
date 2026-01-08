@@ -438,7 +438,7 @@ export default function AdminRequestDetailPage() {
                           {license.fee && (
                             <div className="flex justify-between text-[13px]">
                               <span className="text-muted-foreground">Fee</span>
-                              <span>${license.fee.toFixed(2)}</span>
+                              <span>${license.fee}</span>
                             </div>
                           )}
                         </div>
@@ -467,12 +467,6 @@ export default function AdminRequestDetailPage() {
                   );
                 })}
                 
-                {/* Total fee */}
-                {request?.license_fee && (
-                  <div className="pt-2">
-                    <p className="text-[14px] font-medium">Total Package Fee: ${request.license_fee.toFixed(2)}</p>
-                  </div>
-                )}
               </div>
             </section>
           )}
