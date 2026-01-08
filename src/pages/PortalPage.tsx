@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BRAND } from "@/lib/brand";
+import { Settings } from "lucide-react";
 
 export default function PortalPage() {
   const { user, signOut } = useAuth();
@@ -24,6 +26,11 @@ export default function PortalPage() {
                 ))}
               </div>
             )}
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/settings">
+                <Settings className="h-4 w-4" />
+              </Link>
+            </Button>
             <Button variant="outline" size="sm" onClick={signOut}>
               Sign Out
             </Button>

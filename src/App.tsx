@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import PreLaunchPage from "./pages/PreLaunchPage";
 import AuthPage from "./pages/AuthPage";
 import PortalPage from "./pages/PortalPage";
+import SettingsPage from "./pages/SettingsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 
@@ -25,6 +26,11 @@ const App = () => (
             <Route path="/portal" element={
               <ProtectedRoute>
                 <PortalPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <SettingsPage />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
