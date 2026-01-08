@@ -13,6 +13,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRIES } from "@/lib/countries";
+import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
 import { z } from "zod";
 
 const contactSchema = z.object({
@@ -94,7 +95,7 @@ export default function ContactPage() {
     return (
       <PublicLayout>
         <section className="pt-20 pb-24 md:pt-28 md:pb-32">
-          <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+          <div className={CONTENT_CONTAINER_CLASS}>
             <div className="max-w-[560px]">
               <h1 className="text-[28px] md:text-[32px] font-semibold text-foreground mb-3">
                 Message received
@@ -119,7 +120,7 @@ export default function ContactPage() {
     <PublicLayout>
       {/* Header */}
       <section className="pt-20 pb-6 md:pt-28 md:pb-8">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[560px]">
             <h1 className="text-[28px] md:text-[32px] font-semibold text-foreground mb-3">
               Contact
@@ -133,7 +134,7 @@ export default function ContactPage() {
 
       {/* Form */}
       <section className="pb-16 md:pb-24">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[560px]">
             <form onSubmit={handleSubmit} className="space-y-5">
               <Input

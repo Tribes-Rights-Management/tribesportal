@@ -1,12 +1,12 @@
-import { Link } from "react-router-dom";
 import { PublicLayout } from "@/components/PublicLayout";
+import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
 
 export default function HowLicensingWorksPage() {
   return (
     <PublicLayout>
       {/* Hero */}
       <section className="pt-28 pb-16 md:pt-36 md:pb-20">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[640px]">
             <h1 className="mb-4">
               How Licensing Works
@@ -19,13 +19,13 @@ export default function HowLicensingWorksPage() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+      <div className={CONTENT_CONTAINER_CLASS}>
         <div className="h-px bg-border" />
       </div>
 
       {/* Overview */}
       <section className="py-16 md:py-20">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[640px]">
             <h2 className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground mb-8">
               Overview
@@ -43,13 +43,13 @@ export default function HowLicensingWorksPage() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+      <div className={CONTENT_CONTAINER_CLASS}>
         <div className="h-px bg-border" />
       </div>
 
       {/* What We Ask For */}
       <section className="py-16 md:py-20">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[640px]">
             <h2 className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground mb-8">
               What We Ask For
@@ -70,13 +70,13 @@ export default function HowLicensingWorksPage() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+      <div className={CONTENT_CONTAINER_CLASS}>
         <div className="h-px bg-border" />
       </div>
 
       {/* One Song per Request */}
       <section className="py-16 md:py-20">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[640px]">
             <h2 className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground mb-8">
               One Song per Request
@@ -94,13 +94,13 @@ export default function HowLicensingWorksPage() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+      <div className={CONTENT_CONTAINER_CLASS}>
         <div className="h-px bg-border" />
       </div>
 
       {/* Review and Clarification */}
       <section className="py-16 md:py-20">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[640px]">
             <h2 className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground mb-8">
               Review
@@ -118,13 +118,13 @@ export default function HowLicensingWorksPage() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+      <div className={CONTENT_CONTAINER_CLASS}>
         <div className="h-px bg-border" />
       </div>
 
       {/* License Structure */}
       <section className="py-16 md:py-20">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[640px]">
             <h2 className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground mb-8">
               License Structure
@@ -146,13 +146,13 @@ export default function HowLicensingWorksPage() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+      <div className={CONTENT_CONTAINER_CLASS}>
         <div className="h-px bg-border" />
       </div>
 
       {/* Execution */}
       <section className="py-16 md:py-20">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[640px]">
             <h2 className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground mb-8">
               Execution
@@ -170,13 +170,13 @@ export default function HowLicensingWorksPage() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+      <div className={CONTENT_CONTAINER_CLASS}>
         <div className="h-px bg-border" />
       </div>
 
       {/* Records and Access */}
       <section className="py-16 md:py-20">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[640px]">
             <h2 className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground mb-8">
               Records
@@ -194,13 +194,13 @@ export default function HowLicensingWorksPage() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+      <div className={CONTENT_CONTAINER_CLASS}>
         <div className="h-px bg-border" />
       </div>
 
       {/* Access and Oversight */}
       <section className="py-16 md:py-20">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[640px]">
             <h2 className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground mb-8">
               Account Approval
@@ -218,13 +218,13 @@ export default function HowLicensingWorksPage() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+      <div className={CONTENT_CONTAINER_CLASS}>
         <div className="h-px bg-border" />
       </div>
 
       {/* Closing + Disclaimer */}
       <section className="py-16 md:py-20">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[640px]">
             <p className="text-lg font-medium text-foreground leading-relaxed mb-4">
               Every license is reviewed, executed, and recorded.
