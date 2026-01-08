@@ -12,7 +12,7 @@ interface FooterProps {
 export function Footer({ className, disableLinks = false, hideLinks = false }: FooterProps) {
   return (
     <footer className={cn("pt-16 pb-10 bg-[#111214]", className)}>
-      <div className="max-w-[1280px] mx-auto px-6 md:px-8 lg:px-12">
+      <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
         {/* Brand + Copyright */}
         <div className="mb-8">
           <p className="text-sm font-semibold tracking-tight text-white/80 mb-2">
