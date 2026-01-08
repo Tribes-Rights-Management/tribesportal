@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { PublicLayout } from "@/components/PublicLayout";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -145,7 +146,6 @@ export default function ContactPage() {
                 required
                 disabled={isSubmitting}
                 aria-label="Name"
-                className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
               />
 
               <Input
@@ -156,17 +156,13 @@ export default function ContactPage() {
                 required
                 disabled={isSubmitting}
                 aria-label="Email"
-                className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
               />
 
               <Select value={location} onValueChange={setLocation} disabled={isSubmitting}>
-                <SelectTrigger 
-                  aria-label="Select your location"
-                  className="h-14 px-4 text-[15px] rounded-xl border-border/60 bg-background"
-                >
+                <SelectTrigger aria-label="Select your location">
                   <SelectValue placeholder="Country or territory" />
                 </SelectTrigger>
-                <SelectContent className="bg-background border-border z-50">
+                <SelectContent>
                   {COUNTRIES.map((c) => (
                     <SelectItem key={c} value={c}>
                       {c}
@@ -184,18 +180,18 @@ export default function ContactPage() {
                   disabled={isSubmitting}
                   rows={4}
                   aria-label="Message"
-                  className="px-4 py-3 text-[15px] rounded-xl border-border/60 bg-background resize-none"
                 />
               </div>
 
               <div className="pt-4 flex justify-center">
-                <button
+                <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="h-14 px-12 text-[15px] font-medium rounded-xl transition-all duration-150 bg-muted-foreground/80 text-background hover:bg-muted-foreground disabled:bg-muted-foreground/40 disabled:cursor-not-allowed"
+                  size="lg"
+                  className="min-w-[180px]"
                 >
                   {isSubmitting ? "Sending…" : "Send Message"}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
