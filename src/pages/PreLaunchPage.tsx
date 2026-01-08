@@ -10,7 +10,7 @@ export default function PreLaunchPage() {
     <PublicLayout logoOnly hideFooterLinks mobileContactAnchor="contact">
       {/* Hero */}
       <section data-theme="dark" className="bg-[#111214] pt-24 pb-32 md:pt-32 md:pb-40 lg:pt-40 lg:pb-48">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
           <div className="max-w-[640px]">
             <p className="text-sm font-medium tracking-[0.08em] text-[#C9C9CC] mb-14">
               TRIBES
