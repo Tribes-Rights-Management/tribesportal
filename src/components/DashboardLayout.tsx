@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { PortalSidebar } from "@/components/PortalSidebar";
+import { PortalMeta } from "@/components/PortalMeta";
 import { BRAND } from "@/lib/brand";
 
 interface DashboardLayoutProps {
@@ -18,6 +19,7 @@ export function DashboardLayout({ children, title }: DashboardLayoutProps) {
 
   return (
     <SidebarProvider>
+      <PortalMeta title={title} />
       <div className="min-h-screen flex w-full bg-background">
         <PortalSidebar />
         
