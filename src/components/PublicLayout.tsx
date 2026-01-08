@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
 import { Footer } from "@/components/Footer";
+import { DesktopSidebar } from "@/components/DesktopSidebar";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -15,9 +16,13 @@ interface PublicLayoutProps {
 
 export function PublicLayout({ children, logoOnly = false, disableFooterLinks = false, hideFooterLinks = false, mobileContactAnchor }: PublicLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(false);
   const [headerDark, setHeaderDark] = useState(true);
   const mainRef = useRef<HTMLElement>(null);
   const location = useLocation();
+
+  // Root landing page exception - no desktop sidebar
+  const isRootPage = location.pathname === "/";
 
   // Check if we're on a page that starts with a dark hero
   const darkHeroPages = ["/", "/marketing"];
@@ -61,6 +66,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
   // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
+    setDesktopSidebarOpen(false);
   }, [location.pathname]);
 
   // Lock body scroll when menu is open
@@ -78,13 +84,16 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
   // Close on ESC key
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMobileMenuOpen(false);
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        setDesktopSidebarOpen(false);
+      }
     };
-    if (mobileMenuOpen) {
+    if (mobileMenuOpen || desktopSidebarOpen) {
       document.addEventListener('keydown', handleEsc);
       return () => document.removeEventListener('keydown', handleEsc);
     }
-  }, [mobileMenuOpen]);
+  }, [mobileMenuOpen, desktopSidebarOpen]);
   const headerBg = headerDark ? "bg-[#111214]" : "bg-background";
   const textColor = headerDark ? "text-white" : "text-foreground";
   const mutedColor = headerDark ? "text-white/60 hover:text-white/90" : "text-muted-foreground hover:text-foreground";
@@ -105,26 +114,38 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
           
           {!logoOnly && (
             <>
-              {/* Desktop Nav */}
+              {/* Desktop Nav - Menu button for non-root pages */}
               <nav className="hidden md:flex items-center gap-6">
-                <Link 
-                  to="/services" 
-                  className={`text-sm transition-colors ${mutedColor}`}
-                >
-                  Services
-                </Link>
-                <Link 
-                  to="/our-approach" 
-                  className={`text-sm transition-colors ${mutedColor}`}
-                >
-                  Our Approach
-                </Link>
-                <Link 
-                  to="/auth" 
-                  className={`text-sm transition-colors ${mutedColor}`}
-                >
-                  Sign in
-                </Link>
+                {!isRootPage && (
+                  <button
+                    onClick={() => setDesktopSidebarOpen(true)}
+                    className={`text-sm transition-colors ${mutedColor}`}
+                  >
+                    Menu
+                  </button>
+                )}
+                {isRootPage && (
+                  <>
+                    <Link 
+                      to="/services" 
+                      className={`text-sm transition-colors ${mutedColor}`}
+                    >
+                      Services
+                    </Link>
+                    <Link 
+                      to="/our-approach" 
+                      className={`text-sm transition-colors ${mutedColor}`}
+                    >
+                      Our Approach
+                    </Link>
+                    <Link 
+                      to="/auth" 
+                      className={`text-sm transition-colors ${mutedColor}`}
+                    >
+                      Sign in
+                    </Link>
+                  </>
+                )}
               </nav>
 
               {/* Mobile Menu Button */}
@@ -245,6 +266,14 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
               </div>
             </nav>
           </>
+        )}
+
+        {/* Desktop Sidebar - only for non-root pages */}
+        {!logoOnly && !isRootPage && (
+          <DesktopSidebar
+            isOpen={desktopSidebarOpen}
+            onClose={() => setDesktopSidebarOpen(false)}
+          />
         )}
       </header>
 
