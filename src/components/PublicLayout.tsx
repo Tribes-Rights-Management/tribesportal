@@ -100,7 +100,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
             <img 
               src={tribesLogoBlack} 
               alt={BRAND.wordmark}
-              className={`h-[14px] w-auto ${headerDark ? 'invert' : ''}`}
+              className={`h-[14px] w-auto ${headerDark ? '' : 'invert'}`}
               onError={(e) => {
                 // Fallback to text wordmark if image fails
                 const target = e.currentTarget;
