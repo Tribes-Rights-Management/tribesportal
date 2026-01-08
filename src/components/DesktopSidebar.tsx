@@ -82,12 +82,18 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
             </Link>
           </div>
 
-          {/* Services Section */}
           <div className="mt-10">
             <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-foreground/40 mb-4">
               Services
             </p>
             <div className="flex flex-col gap-4">
+              <Link
+                to="/services"
+                onClick={onClose}
+                className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
+              >
+                Services
+              </Link>
               <Link
                 to="/licensing-account"
                 onClick={onClose}

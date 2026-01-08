@@ -237,6 +237,13 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
                 </p>
                 <div className="flex flex-col gap-4">
                   <Link 
+                    to="/services" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-[15px] font-light text-white/80 hover:opacity-85 transition-opacity duration-160"
+                  >
+                    Services
+                  </Link>
+                  <Link 
                     to="/licensing-account" 
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-[15px] font-light text-white/80 hover:opacity-85 transition-opacity duration-160"
