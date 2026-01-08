@@ -65,7 +65,8 @@ const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
 
     return (
       <FormItemContext.Provider value={{ id }}>
-        <div ref={ref} className={cn("space-y-2", className)} {...props} />
+        {/* Institutional spacing: tight vertical rhythm (LOCKED) */}
+        <div ref={ref} className={cn("space-y-1.5", className)} {...props} />
       </FormItemContext.Provider>
     );
   },
@@ -76,9 +77,10 @@ const FormLabel = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 >(({ className, ...props }, ref) => {
-  const { error, formItemId } = useFormField();
+  const { formItemId } = useFormField();
 
-  return <Label ref={ref} className={cn(error && "text-destructive", className)} htmlFor={formItemId} {...props} />;
+  // Institutional label: no color change on error (LOCKED)
+  return <Label ref={ref} className={cn("text-[14px] font-medium text-foreground", className)} htmlFor={formItemId} {...props} />;
 });
 FormLabel.displayName = "FormLabel";
 
@@ -103,7 +105,8 @@ const FormDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttribu
   ({ className, ...props }, ref) => {
     const { formDescriptionId } = useFormField();
 
-    return <p ref={ref} id={formDescriptionId} className={cn("text-sm text-muted-foreground", className)} {...props} />;
+    // Institutional helper text (LOCKED)
+    return <p ref={ref} id={formDescriptionId} className={cn("text-[13px] text-muted-foreground leading-snug", className)} {...props} />;
   },
 );
 FormDescription.displayName = "FormDescription";
@@ -117,8 +120,18 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<
       return null;
     }
 
+    // INSTITUTIONAL ERROR STYLING (LOCKED)
+    // - Neutral dark gray text (not red)
+    // - Smaller than body copy, tight line height
+    // - No icons, emojis, or visual noise
+    // - Appears directly beneath field
     return (
-      <p ref={ref} id={formMessageId} className={cn("text-sm font-medium text-destructive", className)} {...props}>
+      <p 
+        ref={ref} 
+        id={formMessageId} 
+        className={cn("text-[13px] text-[#525252] leading-snug mt-1.5", className)} 
+        {...props}
+      >
         {body}
       </p>
     );

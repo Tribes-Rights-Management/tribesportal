@@ -120,24 +120,24 @@ export default function ContactPage() {
   return (
     <PublicLayout>
       {/* Header */}
-      <section className="pt-20 pb-6 md:pt-28 md:pb-8">
+      <section className="pt-16 pb-6 md:pt-20 md:pb-8">
         <div className={CONTENT_CONTAINER_CLASS}>
-          <div className="max-w-[560px]">
-            <h1 className="text-[28px] md:text-[32px] font-semibold text-foreground mb-3">
+          <div className="max-w-[480px]">
+            <h1 className="text-[26px] md:text-[30px] font-semibold text-foreground mb-2">
               Contact
             </h1>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-[15px] text-muted-foreground leading-relaxed">
               Questions or general inquiries.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Form */}
+      {/* Form - Institutional layout: contained column, document-like spacing */}
       <section className="pb-16 md:pb-24">
         <div className={CONTENT_CONTAINER_CLASS}>
-          <div className="max-w-[560px]">
-            <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="max-w-[480px]">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <Input
                 type="text"
                 placeholder="Full name"
@@ -171,24 +171,23 @@ export default function ContactPage() {
                 </SelectContent>
               </Select>
 
-              <div className="pt-2">
-                <Textarea
-                  placeholder="Your message"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  required
-                  disabled={isSubmitting}
-                  rows={4}
-                  aria-label="Message"
-                />
-              </div>
+              <Textarea
+                placeholder="Your message"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                required
+                disabled={isSubmitting}
+                rows={4}
+                aria-label="Message"
+              />
 
-              <div className="pt-4 flex justify-center">
+              {/* Full-width submit button - institutional standard (LOCKED) */}
+              <div className="pt-3">
                 <Button
                   type="submit"
                   disabled={isSubmitting}
                   size="lg"
-                  className="min-w-[180px]"
+                  className="w-full"
                 >
                   {isSubmitting ? "Sending…" : "Send Message"}
                 </Button>
