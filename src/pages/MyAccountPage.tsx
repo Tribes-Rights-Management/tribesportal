@@ -18,13 +18,11 @@ import {
 interface UserProfile {
   id: string;
   name: string | null;
-  email: string;
-  role: string;
-  account_status: string;
+  email: string | null;
+  account_status: string | null;
   company: string | null;
   country: string | null;
   company_type: string | null;
-  last_sign_in_at: string | null;
 }
 
 const COMPANY_TYPE_LABELS: Record<string, string> = {
@@ -52,7 +50,7 @@ export default function MyAccountPage() {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, name, email, role, account_status, company, country, company_type, last_sign_in_at")
+        .select("id, name, email, account_status, company, country, company_type")
         .eq("id", user?.id)
         .single();
 
@@ -100,7 +98,7 @@ export default function MyAccountPage() {
     );
   }
 
-  const lastSignIn = user?.last_sign_in_at || profile.last_sign_in_at;
+  const lastSignIn = user?.last_sign_in_at;
 
   return (
     <DashboardLayout>
@@ -158,7 +156,7 @@ export default function MyAccountPage() {
               
               <div>
                 <p className="text-xs text-muted-foreground mb-0.5">Email address</p>
-                <p className="text-sm">{profile.email}</p>
+                <p className="text-sm">{profile.email || user?.email || "—"}</p>
                 <p className="text-xs text-muted-foreground mt-1">Used for login and license notifications</p>
               </div>
               
@@ -169,7 +167,7 @@ export default function MyAccountPage() {
               
               <div>
                 <p className="text-xs text-muted-foreground mb-0.5">Account status</p>
-                <p className="text-sm capitalize">{profile.account_status}</p>
+                <p className="text-sm capitalize">{profile.account_status || "pending"}</p>
               </div>
             </div>
           </section>

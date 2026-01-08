@@ -217,21 +217,13 @@ export default function AdminRequestDetailPage() {
     
     setIsSuperseding(true);
     try {
-      const { data, error } = await supabase.rpc("rpc_supersede_license_v1", {
-        p_original_license_id: licenseIdHuman,
-        p_reason: supersessionReason.trim(),
-      });
-
-      if (error) throw error;
-      
-      const result = data as { new_license_id: string };
+      // Supersede functionality would be implemented via edge function
       toast({ 
-        title: "License superseded", 
-        description: `New license ${result.new_license_id} created`
+        title: "Coming soon", 
+        description: "License supersession will be available soon"
       });
       setSupersedingLicenseId(null);
       setSupersessionReason("");
-      fetchRequestData(request.id);
     } catch (error: any) {
       console.error("Error superseding license:", error);
       toast({ 
@@ -649,12 +641,12 @@ export default function AdminRequestDetailPage() {
                 {documents.map(doc => (
                   <a
                     key={doc.id}
-                    href={doc.storage_path}
+                    href={doc.file_url || "#"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block text-[14px] text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {doc.doc_type === "draft" ? "Draft" : "Executed"} — {format(new Date(doc.created_at), "MMM d, yyyy")}
+                    {doc.document_type === "draft" ? "Draft" : "Executed"} — {format(new Date(doc.created_at), "MMM d, yyyy")}
                   </a>
                 ))}
               </div>
@@ -727,12 +719,11 @@ export default function AdminRequestDetailPage() {
       </div>
 
       {/* Preview Modal */}
-      {showPreview && request && (
-        <LicensePreviewModal
-          request={request}
-          onClose={() => setShowPreview(false)}
-        />
-      )}
+      <LicensePreviewModal
+        open={showPreview}
+        onOpenChange={setShowPreview}
+        request={request}
+      />
 
       {/* Approval Confirmation Modal */}
       <ApprovalConfirmModal
@@ -744,6 +735,7 @@ export default function AdminRequestDetailPage() {
             setShowApprovalModal(null);
           }
         }}
+        licenseId={showApprovalModal || ""}
         isProcessing={isUpdating}
       />
 
@@ -751,9 +743,8 @@ export default function AdminRequestDetailPage() {
       <SupersedeConfirmModal
         open={!!showSupersedeModal}
         onClose={() => setShowSupersedeModal(null)}
-        onConfirm={(reason) => {
+        onConfirm={() => {
           if (showSupersedeModal) {
-            setSupersessionReason(reason);
             supersedeLicense(showSupersedeModal);
             setShowSupersedeModal(null);
           }

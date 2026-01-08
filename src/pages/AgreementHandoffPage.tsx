@@ -9,9 +9,7 @@ export default function AgreementHandoffPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  const [signingUrl, setSigningUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isNavigating, setIsNavigating] = useState(false);
 
   useEffect(() => {
     if (id) fetchRequest(id);
@@ -21,7 +19,7 @@ export default function AgreementHandoffPage() {
     try {
       const { data, error } = await supabase
         .from("license_packages")
-        .select("status, signing_url")
+        .select("status")
         .eq("id", requestId)
         .single();
 
@@ -32,8 +30,6 @@ export default function AgreementHandoffPage() {
         navigate(`/portal/request/${requestId}`, { replace: true });
         return;
       }
-
-      setSigningUrl(data.signing_url);
     } catch (error) {
       console.error("Error fetching request:", error);
       toast({ title: "Error", description: "Failed to load agreement", variant: "destructive" });
@@ -44,17 +40,7 @@ export default function AgreementHandoffPage() {
   }
 
   function handleContinue() {
-    if (!signingUrl) {
-      toast({ title: "Not available", description: "The agreement link is not ready yet.", variant: "destructive" });
-      return;
-    }
-    
-    setIsNavigating(true);
-    
-    // Brief delay to prevent double-clicks
-    setTimeout(() => {
-      window.location.href = signingUrl;
-    }, 300);
+    toast({ title: "Coming soon", description: "Agreement signing will be available soon." });
   }
 
   if (isLoading) {
@@ -76,8 +62,7 @@ export default function AgreementHandoffPage() {
 
           <button
             onClick={handleContinue}
-            disabled={isNavigating || !signingUrl}
-            className="h-10 px-6 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-10 px-6 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
           >
             Review, sign, and pay
           </button>

@@ -84,7 +84,7 @@ export function AccessApproveModal({ open, onClose, onConfirm, isProcessing, use
 interface AccessRejectModalProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (reason?: string) => void;
   isProcessing: boolean;
 }
 
@@ -102,7 +102,7 @@ export function AccessRejectModal({ open, onClose, onConfirm, isProcessing }: Ac
           <Button variant="outline" onClick={onClose} disabled={isProcessing}>
             Cancel
           </Button>
-          <Button variant="destructive" onClick={onConfirm} disabled={isProcessing}>
+          <Button variant="destructive" onClick={() => onConfirm()} disabled={isProcessing}>
             {isProcessing ? "Rejecting..." : "Reject"}
           </Button>
         </DialogFooter>
@@ -144,9 +144,10 @@ interface ApprovalConfirmModalProps {
   onClose: () => void;
   onConfirm: () => void;
   licenseId: string;
+  isProcessing?: boolean;
 }
 
-export function ApprovalConfirmModal({ open, onClose, onConfirm, licenseId }: ApprovalConfirmModalProps) {
+export function ApprovalConfirmModal({ open, onClose, onConfirm, licenseId, isProcessing }: ApprovalConfirmModalProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
@@ -157,8 +158,10 @@ export function ApprovalConfirmModal({ open, onClose, onConfirm, licenseId }: Ap
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={onConfirm}>Approve</Button>
+          <Button variant="outline" onClick={onClose} disabled={isProcessing}>Cancel</Button>
+          <Button onClick={onConfirm} disabled={isProcessing}>
+            {isProcessing ? "Approving..." : "Approve"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -196,7 +199,13 @@ export function SupersedeConfirmModal({ open, onClose, onConfirm, licenseId, isP
 }
 
 // Export Warning
-export function ExportWarning() {
+interface ExportWarningProps {
+  canExport?: boolean;
+}
+
+export function ExportWarning({ canExport }: ExportWarningProps) {
+  if (canExport) return null;
+  
   return (
     <div className="flex items-start gap-2 py-3 px-4 bg-amber-50 dark:bg-amber-950/30 rounded text-amber-700 dark:text-amber-300">
       <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
