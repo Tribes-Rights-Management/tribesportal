@@ -58,6 +58,28 @@ export function PublicLayout({ children }: PublicLayoutProps) {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
+  // Close on ESC key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileMenuOpen(false);
+    };
+    if (mobileMenuOpen) {
+      document.addEventListener('keydown', handleEsc);
+      return () => document.removeEventListener('keydown', handleEsc);
+    }
+  }, [mobileMenuOpen]);
   const headerBg = headerDark ? "bg-[#111214]" : "bg-background";
   const textColor = headerDark ? "text-white" : "text-foreground";
   const mutedColor = headerDark ? "text-white/60 hover:text-white/90" : "text-muted-foreground hover:text-foreground";
@@ -105,103 +127,96 @@ export function PublicLayout({ children }: PublicLayoutProps) {
         </div>
 
         {/* Mobile Menu - Right slide-in drawer */}
-        {mobileMenuOpen && (
-          <>
-            {/* Backdrop */}
-            <div 
-              className="fixed inset-0 bg-black/60 z-40 md:hidden"
+        {/* Backdrop */}
+        <div 
+          className={`fixed inset-0 bg-black/70 z-40 md:hidden transition-opacity duration-250 ease-out ${
+            mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+        
+        {/* Drawer */}
+        <nav 
+          className={`fixed top-0 right-0 h-screen w-[80%] max-w-[320px] bg-black z-50 md:hidden flex flex-col transition-transform duration-250 ease-out ${
+            mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+          aria-label="Mobile navigation"
+        >
+          {/* Close button */}
+          <div className="flex justify-end p-5">
+            <button
               onClick={() => setMobileMenuOpen(false)}
-            />
-            
-            {/* Drawer */}
-            <nav className="fixed top-0 right-0 h-screen w-[280px] bg-[#111214] z-50 md:hidden flex flex-col">
-              {/* Close button */}
-              <div className="flex justify-end p-5">
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-white/60 hover:text-white"
-                  aria-label="Close menu"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-              
-              {/* Section 1: Primary actions */}
-              <div className="flex flex-col px-6 pt-4 gap-6">
-                <Link 
-                  to="/auth" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-base font-medium text-white"
-                >
-                  Client Sign In
-                </Link>
-                <Link 
-                  to="/contact" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-base text-white/60 hover:text-white/90"
-                >
-                  Contact
-                </Link>
-              </div>
-              
-              {/* Section 2: Orientation */}
-              <div className="flex flex-col px-6 pt-10 gap-6">
-                <Link 
-                  to="/our-approach" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-base text-white/60 hover:text-white/90"
-                >
-                  Our Approach
-                </Link>
-                <Link 
-                  to="/how-it-works" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-base text-white/60 hover:text-white/90"
-                >
-                  How It Works
-                </Link>
-              </div>
-              
-              {/* Section 3: Secondary info */}
-              <div className="flex flex-col px-6 pt-10 gap-6">
-                <Link 
-                  to="/services" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-base text-white/60 hover:text-white/90"
-                >
-                  Services
-                </Link>
-                <Link 
-                  to="/licensing" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-base text-white/60 hover:text-white/90"
-                >
-                  Licensing
-                </Link>
-              </div>
-              
-              {/* Section 4: Utility footer */}
-              <div className="mt-auto px-6 pb-10">
-                <div className="border-t border-white/10 pt-6 flex flex-col gap-4">
-                  <Link 
-                    to="/privacy" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-sm text-white/40 hover:text-white/60"
-                  >
-                    Privacy
-                  </Link>
-                  <Link 
-                    to="/terms" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-sm text-white/40 hover:text-white/60"
-                  >
-                    Terms
-                  </Link>
-                </div>
-              </div>
-            </nav>
-          </>
-        )}
+              className="text-white/60 hover:text-white transition-opacity"
+              aria-label="Close menu"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          
+          {/* Top group */}
+          <div className="flex flex-col px-6 pt-2 gap-5">
+            <Link 
+              to="/auth" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[15px] font-medium text-white/95 hover:text-white transition-opacity"
+            >
+              Client Sign In
+            </Link>
+            <Link 
+              to="/contact" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
+            >
+              Contact
+            </Link>
+            <Link 
+              to="/services" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
+            >
+              Services
+            </Link>
+          </div>
+          
+          {/* Middle group */}
+          <div className="flex flex-col px-6 pt-8 gap-5">
+            <Link 
+              to="/licensing-account" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
+            >
+              Request Licensing Access
+            </Link>
+            <Link 
+              to="/service-inquiry" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
+            >
+              Inquire About Services
+            </Link>
+          </div>
+          
+          {/* Bottom legal group */}
+          <div className="mt-auto px-6 pb-10">
+            <div className="border-t border-white/10 pt-6 flex flex-col gap-4">
+              <Link 
+                to="/privacy" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-sm font-light text-white/50 hover:text-white/70 transition-opacity"
+              >
+                Privacy Policy
+              </Link>
+              <Link 
+                to="/terms" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-sm font-light text-white/50 hover:text-white/70 transition-opacity"
+              >
+                Terms of Use
+              </Link>
+            </div>
+          </div>
+        </nav>
       </header>
 
       {/* Main */}
