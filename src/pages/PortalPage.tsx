@@ -1,54 +1,22 @@
-import { Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { BRAND } from "@/lib/brand";
-import { Settings } from "lucide-react";
+import { PortalLayout } from "@/components/PortalLayout";
 
 export default function PortalPage() {
-  const { user, signOut } = useAuth();
-  const { roles, isAdmin, isModerator, loading: rolesLoading } = useUserRole();
+  const { isAdmin, isModerator } = useUserRole();
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold">{BRAND.wordmark} Portal</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">{user?.email}</span>
-            {!rolesLoading && roles.length > 0 && (
-              <div className="flex gap-1">
-                {roles.map((role) => (
-                  <Badge key={role} variant={role === "admin" ? "destructive" : "secondary"}>
-                    {role}
-                  </Badge>
-                ))}
-              </div>
-            )}
-            <Button variant="ghost" size="icon" asChild>
-              <Link to="/settings">
-                <Settings className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="outline" size="sm" onClick={signOut}>
-              Sign Out
-            </Button>
-          </div>
+    <PortalLayout title="Dashboard">
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-semibold">Welcome to your portal</h2>
+          <p className="text-muted-foreground">Your dashboard content will appear here.</p>
         </div>
-      </header>
-      
-      <main className="container mx-auto px-4 py-8">
-        <h2 className="text-2xl font-semibold mb-4">Welcome to your portal</h2>
-        <p className="text-muted-foreground mb-6">
-          Your dashboard content will appear here.
-        </p>
 
         {isAdmin && (
-          <div className="p-4 rounded-lg border border-destructive/20 bg-destructive/5 mb-4">
+          <div className="p-4 rounded-lg border border-destructive/20 bg-destructive/5">
             <h3 className="font-semibold text-destructive mb-2">Admin Panel</h3>
             <p className="text-sm text-muted-foreground">
-              You have administrator access. Admin features will appear here.
+              You have administrator access. Use the sidebar to manage users.
             </p>
           </div>
         )}
@@ -61,7 +29,7 @@ export default function PortalPage() {
             </p>
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </PortalLayout>
   );
 }
