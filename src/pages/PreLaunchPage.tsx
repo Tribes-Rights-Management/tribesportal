@@ -38,7 +38,7 @@ export default function PreLaunchPage() {
 
       {/* Contact Section */}
       <section data-theme="light" id="contact" className="py-24 md:py-32 scroll-mt-24 bg-background">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-8 lg:px-12">
+        <div className="max-w-[1200px] mx-auto px-6 md:px-8 lg:px-12">
           <div className="max-w-[560px]">
             <h2 className="text-2xl md:text-3xl font-medium text-foreground mb-6">
               Contact
