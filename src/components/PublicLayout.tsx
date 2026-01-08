@@ -103,7 +103,8 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
       <header className={`sticky top-0 z-50 transition-colors duration-300 ${headerBg} ${borderColor} border-b`}>
-        <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14 md:h-16`}>
+        <div className={`${CONTENT_CONTAINER_CLASS} flex items-center h-14 md:h-16 ${isRootPage ? 'justify-between' : 'justify-center relative'}`}>
+          {/* Centered wordmark for non-root pages, left-aligned for root */}
           <Link to="/" className="flex items-center">
             <span 
               className={`text-[15px] md:text-[17px] font-bold tracking-[-0.02em] uppercase ${textColor}`}
@@ -112,51 +113,35 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
             </span>
           </Link>
           
-          {!logoOnly && (
-            <>
-              {/* Desktop Nav - Menu button for non-root pages */}
-              <nav className="hidden md:flex items-center gap-6">
-                {!isRootPage && (
-                  <button
-                    onClick={() => setDesktopSidebarOpen(true)}
-                    className={`text-sm transition-colors ${mutedColor}`}
-                  >
-                    Menu
-                  </button>
-                )}
-                {isRootPage && (
-                  <>
-                    <Link 
-                      to="/services" 
-                      className={`text-sm transition-colors ${mutedColor}`}
-                    >
-                      Services
-                    </Link>
-                    <Link 
-                      to="/our-approach" 
-                      className={`text-sm transition-colors ${mutedColor}`}
-                    >
-                      Our Approach
-                    </Link>
-                    <Link 
-                      to="/auth" 
-                      className={`text-sm transition-colors ${mutedColor}`}
-                    >
-                      Sign in
-                    </Link>
-                  </>
-                )}
-              </nav>
+          {/* Root page: Contact link on right */}
+          {!logoOnly && isRootPage && (
+            <Link 
+              to="/contact" 
+              className={`hidden md:block text-sm transition-colors ${mutedColor}`}
+            >
+              Contact
+            </Link>
+          )}
 
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={`md:hidden p-2 -mr-2 ${textColor}`}
-                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-              >
-                {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-              </button>
-            </>
+          {/* Non-root pages: Menu trigger on right (desktop) */}
+          {!logoOnly && !isRootPage && (
+            <button
+              onClick={() => setDesktopSidebarOpen(true)}
+              className={`hidden md:block absolute right-0 text-sm transition-colors ${mutedColor}`}
+            >
+              Menu
+            </button>
+          )}
+
+          {/* Mobile Menu Button - all non-logoOnly pages */}
+          {!logoOnly && (
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`md:hidden p-2 -mr-2 ${isRootPage ? '' : 'absolute right-6'} ${textColor}`}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           )}
 
           {/* Contact Link (logoOnly mode with anchor - visible on all screen sizes) */}
@@ -212,23 +197,12 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
                   Client Sign In
                 </Link>
                 <Link 
-                  to="/contact" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
-                >
-                  Contact
-                </Link>
-                <Link 
                   to="/services" 
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
                 >
                   Services
                 </Link>
-              </div>
-              
-              {/* Middle group */}
-              <div className="flex flex-col px-6 pt-8 gap-5">
                 <Link 
                   to="/licensing-account" 
                   onClick={() => setMobileMenuOpen(false)}
@@ -242,6 +216,13 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
                   className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
                 >
                   Inquire About Services
+                </Link>
+                <Link 
+                  to="/contact" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
+                >
+                  Contact
                 </Link>
               </div>
               
