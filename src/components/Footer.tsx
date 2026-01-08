@@ -11,9 +11,9 @@ interface FooterProps {
 export function Footer({ variant = "full", className }: FooterProps) {
   if (variant === "minimal") {
     return (
-      <footer className={cn("border-t border-border/50 py-6", className)}>
+      <footer className={cn("py-8", className)}>
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
-          <p className="text-xs text-muted-foreground text-center">
+          <p className="text-xs text-muted-foreground">
             {getCopyrightLine()}
           </p>
         </div>
@@ -22,72 +22,39 @@ export function Footer({ variant = "full", className }: FooterProps) {
   }
 
   return (
-    <footer className={cn("border-t border-border/50 py-12", className)}>
+    <footer className={cn("pt-16 pb-10", className)}>
       <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            <span className="text-base font-semibold tracking-tight">{BRAND.wordmark}</span>
-            <p className="text-sm text-muted-foreground mt-2">
-              Rights licensing made simple.
-            </p>
-          </div>
-
-          {/* Links */}
-          <div>
-            <h4 className="text-sm font-medium mb-3">Platform</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/how-licensing-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  How It Works
-                </Link>
-              </li>
-              <li>
-                <Link to="/services" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Services
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-sm font-medium mb-3">Company</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/our-approach" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Our Approach
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-sm font-medium mb-3">Legal</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Privacy
-                </Link>
-              </li>
-              <li>
-                <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Terms
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="border-t border-border/50 pt-6">
+        {/* Brand + Copyright */}
+        <div className="mb-8">
+          <p className="text-sm font-semibold tracking-tight text-foreground mb-2">
+            {BRAND.wordmark}
+          </p>
           <p className="text-xs text-muted-foreground">
             {getCopyrightLine()}
           </p>
         </div>
+
+        {/* Navigation Links - Horizontal row */}
+        <nav className="flex flex-wrap gap-x-6 gap-y-2">
+          <Link 
+            to="/privacy" 
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Privacy
+          </Link>
+          <Link 
+            to="/terms" 
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Terms
+          </Link>
+          <Link 
+            to="/contact" 
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Contact
+          </Link>
+        </nav>
       </div>
     </footer>
   );
