@@ -104,17 +104,17 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Header - 64px desktop, 56px mobile */}
-      <header className={`sticky top-0 z-50 transition-colors duration-220 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${headerBg} ${borderStyle}`}>
+      {/* Header - 64px desktop, 56px mobile - Institutional grade lock */}
+      <header className={`sticky top-0 z-50 ${headerBg} ${borderStyle}`}>
         <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14 md:h-16`}>
-          {/* Left-aligned wordmark - font-weight 700 */}
+          {/* Left-aligned wordmark - institutional weight + tracking */}
           <Link 
             to="/" 
-            className="flex items-center hover:opacity-85 transition-opacity duration-160"
+            className={`flex items-center transition-opacity duration-150 ease-out hover:opacity-100 ${headerDark ? 'opacity-90' : 'opacity-90'}`}
           >
             <span 
-              className={`text-[15px] md:text-[17px] font-bold tracking-[-0.02em] uppercase ${textColor}`}
-              style={{ fontWeight: 700 }}
+              className={`text-[15px] md:text-[17px] font-bold uppercase ${textColor}`}
+              style={{ fontWeight: 700, letterSpacing: '0.04em' }}
             >
               {BRAND.wordmark}
             </span>
@@ -124,7 +124,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
           {!logoOnly && isRootPage && (
             <Link 
               to="/contact" 
-              className={`hidden md:block text-sm transition-opacity duration-160 hover:opacity-85 ${mutedColor}`}
+              className={`hidden md:block text-[13px] transition-opacity duration-150 ease-out opacity-60 hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 ${headerDark ? 'text-white focus-visible:outline-white/20' : 'text-foreground focus-visible:outline-foreground/15'}`}
             >
               Contact
             </Link>
@@ -134,10 +134,10 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
           {!logoOnly && !isRootPage && (
             <button
               onClick={() => setDesktopSidebarOpen(true)}
-              className={`hidden md:flex p-2 -mr-2 transition-opacity duration-160 hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${headerDark ? 'focus-visible:outline-white/25' : 'focus-visible:outline-foreground/18'} ${mutedColor}`}
+              className={`hidden md:flex p-2 -mr-2 transition-opacity duration-150 ease-out opacity-70 hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 ${headerDark ? 'text-white focus-visible:outline-white/20' : 'text-foreground focus-visible:outline-foreground/15'}`}
               aria-label="Open menu"
             >
-              <Menu size={20} />
+              <Menu size={20} strokeWidth={1.75} />
             </button>
           )}
 
@@ -145,10 +145,10 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
           {!logoOnly && (
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`md:hidden p-2 -mr-2 transition-opacity duration-160 hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${headerDark ? 'focus-visible:outline-white/25' : 'focus-visible:outline-foreground/18'} ${textColor}`}
+              className={`md:hidden p-2 -mr-2 transition-opacity duration-150 ease-out opacity-80 hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 ${headerDark ? 'text-white focus-visible:outline-white/20' : 'text-foreground focus-visible:outline-foreground/15'}`}
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              {mobileMenuOpen ? <X size={20} strokeWidth={1.75} /> : <Menu size={20} strokeWidth={1.75} />}
             </button>
           )}
 
@@ -158,7 +158,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
               onClick={() => {
                 document.getElementById(mobileContactAnchor)?.scrollIntoView({ behavior: "smooth" });
               }}
-              className={`text-sm leading-none transition-opacity duration-160 hover:opacity-85 ${mutedColor}`}
+              className={`text-[13px] leading-none transition-opacity duration-150 ease-out opacity-60 hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 ${headerDark ? 'text-white focus-visible:outline-white/20' : 'text-foreground focus-visible:outline-foreground/15'}`}
             >
               Contact
             </button>
