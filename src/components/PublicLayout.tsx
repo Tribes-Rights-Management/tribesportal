@@ -24,13 +24,22 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
   // Root landing page exception - no desktop sidebar
   const isRootPage = location.pathname === "/";
 
-  // Legal/utility pages use white header by design (distinct from marketing)
-  const legalPages = ["/privacy", "/terms", "/data-retention"];
-  const isLegalPage = legalPages.includes(location.pathname);
+  // HEADER COLOR RULE (LOCKED)
+  // White header → legal, policy, documentation, reference pages
+  // Black header → marketing, positioning, narrative pages
+  // This separation is intentional — restraint signals maturity
+  const whiteHeaderPages = [
+    "/privacy",
+    "/terms", 
+    "/data-retention",
+    "/how-licensing-works",
+    "/how-publishing-admin-works",
+  ];
+  const usesWhiteHeader = whiteHeaderPages.includes(location.pathname);
 
-  // Check if we're on a page that starts with a dark hero
-  const darkHeroPages = ["/", "/marketing"];
-  const startsWithDarkHero = !isLegalPage && darkHeroPages.includes(location.pathname);
+  // Dark hero pages get scroll-aware header color transitions
+  const darkHeroPages = ["/", "/marketing", "/our-approach", "/services", "/contact", "/licensing-account", "/services/inquiry"];
+  const startsWithDarkHero = !usesWhiteHeader && darkHeroPages.includes(location.pathname);
 
   useEffect(() => {
     if (!startsWithDarkHero) {
