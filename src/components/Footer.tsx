@@ -6,9 +6,10 @@ import { cn } from "@/lib/utils";
 interface FooterProps {
   className?: string;
   disableLinks?: boolean;
+  hideLinks?: boolean;
 }
 
-export function Footer({ className, disableLinks = false }: FooterProps) {
+export function Footer({ className, disableLinks = false, hideLinks = false }: FooterProps) {
   return (
     <footer className={cn("pt-16 pb-10 bg-[#111214]", className)}>
       <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
@@ -23,36 +24,38 @@ export function Footer({ className, disableLinks = false }: FooterProps) {
         </div>
 
         {/* Navigation Links - Horizontal row */}
-        <nav className="flex flex-wrap gap-x-6 gap-y-2">
-          {disableLinks ? (
-            <>
-              <span className="text-sm text-white/50">Privacy</span>
-              <span className="text-sm text-white/50">Terms</span>
-              <span className="text-sm text-white/50">Contact</span>
-            </>
-          ) : (
-            <>
-              <Link 
-                to="/privacy" 
-                className="text-sm text-white/50 hover:text-white/80 transition-colors"
-              >
-                Privacy
-              </Link>
-              <Link 
-                to="/terms" 
-                className="text-sm text-white/50 hover:text-white/80 transition-colors"
-              >
-                Terms
-              </Link>
-              <Link 
-                to="/contact" 
-                className="text-sm text-white/50 hover:text-white/80 transition-colors"
-              >
-                Contact
-              </Link>
-            </>
-          )}
-        </nav>
+        {!hideLinks && (
+          <nav className="flex flex-wrap gap-x-6 gap-y-2">
+            {disableLinks ? (
+              <>
+                <span className="text-sm text-white/50">Privacy</span>
+                <span className="text-sm text-white/50">Terms</span>
+                <span className="text-sm text-white/50">Contact</span>
+              </>
+            ) : (
+              <>
+                <Link 
+                  to="/privacy" 
+                  className="text-sm text-white/50 hover:text-white/80 transition-colors"
+                >
+                  Privacy
+                </Link>
+                <Link 
+                  to="/terms" 
+                  className="text-sm text-white/50 hover:text-white/80 transition-colors"
+                >
+                  Terms
+                </Link>
+                <Link 
+                  to="/contact" 
+                  className="text-sm text-white/50 hover:text-white/80 transition-colors"
+                >
+                  Contact
+                </Link>
+              </>
+            )}
+          </nav>
+        )}
       </div>
     </footer>
   );
