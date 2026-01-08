@@ -7,7 +7,7 @@ export default function PreLaunchPage() {
   };
 
   return (
-    <PublicLayout hideMobileNav disableFooterLinks>
+    <PublicLayout hideNav disableFooterLinks>
       {/* Hero */}
       <section data-theme="dark" className="bg-[#111214] pt-24 pb-32 md:pt-32 md:pb-40 lg:pt-40 lg:pb-48">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-20">

@@ -6,11 +6,11 @@ import { Footer } from "@/components/Footer";
 
 interface PublicLayoutProps {
   children: ReactNode;
-  hideMobileNav?: boolean;
+  hideNav?: boolean;
   disableFooterLinks?: boolean;
 }
 
-export function PublicLayout({ children, hideMobileNav = false, disableFooterLinks = false }: PublicLayoutProps) {
+export function PublicLayout({ children, hideNav = false, disableFooterLinks = false }: PublicLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [headerDark, setHeaderDark] = useState(true);
   const mainRef = useRef<HTMLElement>(null);
@@ -90,36 +90,36 @@ export function PublicLayout({ children, hideMobileNav = false, disableFooterLin
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className={`sticky top-0 z-50 transition-colors duration-300 ${headerBg} ${borderColor} border-b`}>
-        <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-between h-14">
-          <Link to="/" className="flex items-center">
-            <span className={`text-base font-semibold tracking-tight ${textColor}`}>{BRAND.wordmark}</span>
-          </Link>
-          
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            <Link 
-              to="/services" 
-              className={`text-sm transition-colors ${mutedColor}`}
-            >
-              Services
+      {!hideNav && (
+        <header className={`sticky top-0 z-50 transition-colors duration-300 ${headerBg} ${borderColor} border-b`}>
+          <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-between h-14">
+            <Link to="/" className="flex items-center">
+              <span className={`text-base font-semibold tracking-tight ${textColor}`}>{BRAND.wordmark}</span>
             </Link>
-            <Link 
-              to="/our-approach" 
-              className={`text-sm transition-colors ${mutedColor}`}
-            >
-              Our Approach
-            </Link>
-            <Link 
-              to="/auth" 
-              className={`text-sm transition-colors ${mutedColor}`}
-            >
-              Sign in
-            </Link>
-          </nav>
+            
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center gap-6">
+              <Link 
+                to="/services" 
+                className={`text-sm transition-colors ${mutedColor}`}
+              >
+                Services
+              </Link>
+              <Link 
+                to="/our-approach" 
+                className={`text-sm transition-colors ${mutedColor}`}
+              >
+                Our Approach
+              </Link>
+              <Link 
+                to="/auth" 
+                className={`text-sm transition-colors ${mutedColor}`}
+              >
+                Sign in
+              </Link>
+            </nav>
 
-          {/* Mobile Menu Button */}
-          {!hideMobileNav && (
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`md:hidden p-2 -mr-2 ${textColor}`}
@@ -127,11 +127,9 @@ export function PublicLayout({ children, hideMobileNav = false, disableFooterLin
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-          )}
-        </div>
+          </div>
 
-        {/* Mobile Menu - Right slide-in drawer */}
-        {!hideMobileNav && (
+          {/* Mobile Menu - Right slide-in drawer */}
           <>
             {/* Backdrop */}
             <div 
@@ -224,8 +222,8 @@ export function PublicLayout({ children, hideMobileNav = false, disableFooterLin
               </div>
             </nav>
           </>
-        )}
-      </header>
+        </header>
+      )}
 
       {/* Main */}
       <main ref={mainRef} className="flex-1">
