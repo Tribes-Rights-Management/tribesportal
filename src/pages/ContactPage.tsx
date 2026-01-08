@@ -92,23 +92,28 @@ export default function ContactPage() {
     }
   }
 
+  // INSTITUTIONAL SUCCESS STATE (LOCKED)
+  // - No celebratory language or icons
+  // - Neutral confirmation copy
+  // - Single CTA to return
   if (isSubmitted) {
     return (
       <PublicLayout>
-        <section className="pt-20 pb-24 md:pt-28 md:pb-32">
+        <section className="pt-12 pb-16 md:pt-16 md:pb-20">
           <div className={CONTENT_CONTAINER_CLASS}>
-            <div className="max-w-[560px]">
-              <h1 className="text-[28px] md:text-[32px] font-semibold text-foreground mb-3">
-                Message received
+            <div className="max-w-[480px]">
+              <h1 className="text-[26px] md:text-[30px] font-semibold text-foreground mb-3">
+                Submission received.
               </h1>
-              <p className="text-muted-foreground leading-relaxed mb-6">
-                We'll review and respond if there's a fit.
+              <p className="text-[15px] text-muted-foreground leading-relaxed mb-6">
+                Your information has been received and will be reviewed.<br />
+                If additional information is required, you will be contacted.
               </p>
               <Link 
                 to="/" 
                 className="text-[14px] text-muted-foreground hover:text-foreground transition-colors duration-150 underline underline-offset-4"
               >
-                Return to home
+                Return to site
               </Link>
             </div>
           </div>
@@ -119,8 +124,8 @@ export default function ContactPage() {
 
   return (
     <PublicLayout>
-      {/* Header */}
-      <section className="pt-16 pb-6 md:pt-20 md:pb-8">
+      {/* Header - Institutional spacing: tight gap after header (LOCKED) */}
+      <section className="pt-12 pb-6 md:pt-16 md:pb-8">
         <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[480px]">
             <h1 className="text-[26px] md:text-[30px] font-semibold text-foreground mb-2">

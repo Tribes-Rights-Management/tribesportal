@@ -11,7 +11,8 @@ interface ContentPageLayoutProps {
 export function ContentPageLayout({ children, title, description }: ContentPageLayoutProps) {
   return (
     <PublicLayout>
-      <section className="pt-28 pb-16 md:pt-36 md:pb-20">
+      {/* Institutional page spacing: tight top gap after header (LOCKED) */}
+      <section className="pt-12 pb-16 md:pt-16 md:pb-20">
         <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[700px]">
             {title && <h1 className="text-foreground mb-3">{title}</h1>}

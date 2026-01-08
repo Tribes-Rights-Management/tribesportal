@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
 import { Footer } from "@/components/Footer";
@@ -108,14 +108,14 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
             </button>
           )}
 
-          {/* Mobile Menu Button - all non-logoOnly pages */}
+          {/* Mobile Menu Button - hamburger icon only (LOCKED) */}
           {!logoOnly && (
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`md:hidden p-2 -mr-2 transition-opacity duration-150 ease-out opacity-80 hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 ${headerDark ? 'text-white focus-visible:outline-white/20' : 'text-foreground focus-visible:outline-foreground/15'}`}
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             >
-              {mobileMenuOpen ? <X size={20} strokeWidth={1.75} /> : <Menu size={20} strokeWidth={1.75} />}
+              <Menu size={20} strokeWidth={1.75} />
             </button>
           )}
 
@@ -149,9 +149,9 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
               aria-hidden="true"
             />
             
-            {/* Drawer - Full width on mobile */}
+            {/* Drawer - Full width on mobile, white background (INSTITUTIONAL LOCK) */}
             <nav 
-              className={`fixed top-0 right-0 h-screen w-full bg-black z-50 md:hidden flex flex-col transition-transform duration-220 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:duration-0 ${
+              className={`fixed top-0 right-0 h-screen w-full bg-white z-50 md:hidden flex flex-col transition-transform duration-200 ease-out motion-reduce:duration-0 ${
                 mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
               }`}
               style={{
@@ -162,79 +162,79 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
               }}
               aria-label="Mobile navigation"
             >
-              {/* Close button */}
-              <div className="flex justify-end p-5">
+              {/* Close button - institutional styling */}
+              <div className="flex justify-end px-6 pt-6 pb-4">
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-white/60 hover:opacity-85 transition-opacity duration-160 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/25 focus-visible:outline-offset-2"
+                  className="text-[13px] text-foreground/50 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
                   aria-label="Close menu"
                 >
-                  <X size={20} />
+                  Close
                 </button>
               </div>
               
-              {/* Primary links */}
-              <div className="flex flex-col px-6 pt-2 gap-5">
+              {/* Primary links - institutional styling */}
+              <div className="flex flex-col px-6 pt-4 gap-5">
                 <Link 
                   to="/auth" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-[15px] font-semibold text-white hover:opacity-85 transition-opacity duration-160"
+                  className="text-[15px] font-semibold text-foreground transition-opacity duration-150 ease-out hover:opacity-70"
                 >
                   Client Sign In
                 </Link>
               </div>
 
-              {/* Services section */}
+              {/* Services section - institutional styling */}
               <div className="px-6 mt-10">
-                <p className="text-xs font-medium uppercase tracking-[0.1em] text-white/50 mb-4">
+                <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-foreground/40 mb-4">
                   Services
                 </p>
                 <div className="flex flex-col gap-4">
                   <Link 
                     to="/services" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-[15px] font-light text-white/80 hover:opacity-85 transition-opacity duration-160"
+                    className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
                   >
                     Services
                   </Link>
                   <Link 
                     to="/licensing-account" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-[15px] font-light text-white/80 hover:opacity-85 transition-opacity duration-160"
+                    className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
                   >
                     Request Licensing Access
                   </Link>
                   <Link 
                     to="/services/inquiry" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-[15px] font-light text-white/80 hover:opacity-85 transition-opacity duration-160"
+                    className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
                   >
                     Inquire About Services
                   </Link>
                   <Link 
                     to="/contact" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-[15px] font-light text-white/80 hover:opacity-85 transition-opacity duration-160"
+                    className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
                   >
                     Contact
                   </Link>
                 </div>
               </div>
               
-              {/* Bottom legal group */}
+              {/* Bottom legal group - institutional styling */}
               <div className="mt-auto px-6 pb-10">
-                <div className="border-t border-white/10 pt-6 flex flex-col gap-4">
+                <div className="border-t border-foreground/[0.06] pt-6 flex flex-col gap-3">
                   <Link 
                     to="/privacy" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-sm font-light text-white/50 hover:opacity-85 transition-opacity duration-160"
+                    className="text-[13px] text-foreground/50 transition-opacity duration-150 ease-out hover:opacity-100"
                   >
                     Privacy Policy
                   </Link>
                   <Link 
                     to="/terms" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-sm font-light text-white/50 hover:opacity-85 transition-opacity duration-160"
+                    className="text-[13px] text-foreground/50 transition-opacity duration-150 ease-out hover:opacity-100"
                   >
                     Terms of Use
                   </Link>
