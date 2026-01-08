@@ -8,9 +8,11 @@ interface PublicLayoutProps {
   children: ReactNode;
   logoOnly?: boolean;
   disableFooterLinks?: boolean;
+  hideFooterLinks?: boolean;
+  mobileContactAnchor?: string;
 }
 
-export function PublicLayout({ children, logoOnly = false, disableFooterLinks = false }: PublicLayoutProps) {
+export function PublicLayout({ children, logoOnly = false, disableFooterLinks = false, hideFooterLinks = false, mobileContactAnchor }: PublicLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [headerDark, setHeaderDark] = useState(true);
   const mainRef = useRef<HTMLElement>(null);
@@ -130,6 +132,18 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
               </button>
             </>
           )}
+
+          {/* Mobile Contact Link (logoOnly mode with anchor) */}
+          {logoOnly && mobileContactAnchor && (
+            <button
+              onClick={() => {
+                document.getElementById(mobileContactAnchor)?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className={`md:hidden text-sm transition-colors ${mutedColor}`}
+            >
+              Contact
+            </button>
+          )}
         </div>
 
         {/* Mobile Menu - Right slide-in drawer */}
@@ -235,7 +249,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
       </main>
 
       {/* Footer */}
-      <Footer disableLinks={disableFooterLinks} />
+      <Footer disableLinks={disableFooterLinks} hideLinks={hideFooterLinks} />
     </div>
   );
 }
