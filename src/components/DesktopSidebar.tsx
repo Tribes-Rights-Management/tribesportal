@@ -51,13 +51,6 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
           {/* Primary Section */}
           <div className="flex flex-col gap-4">
             <Link
-              to="/auth"
-              onClick={onClose}
-              className="text-[15px] font-medium text-foreground hover:opacity-70 transition-opacity"
-            >
-              Client Sign In
-            </Link>
-            <Link
               to="/services"
               onClick={onClose}
               className="text-[15px] text-foreground hover:opacity-70 transition-opacity"
@@ -65,18 +58,32 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
               Services
             </Link>
             <Link
-              to="/licensing-account"
+              to="/our-approach"
               onClick={onClose}
               className="text-[15px] text-foreground hover:opacity-70 transition-opacity"
             >
-              Request Licensing Access
+              Our Approach
             </Link>
             <Link
-              to="/service-inquiry"
+              to="/how-publishing-admin-works"
               onClick={onClose}
               className="text-[15px] text-foreground hover:opacity-70 transition-opacity"
             >
-              Inquire About Services
+              How Administration Works
+            </Link>
+            <Link
+              to="/how-licensing-works"
+              onClick={onClose}
+              className="text-[15px] text-foreground hover:opacity-70 transition-opacity"
+            >
+              How Licensing Works
+            </Link>
+            <Link
+              to="/auth"
+              onClick={onClose}
+              className="text-[15px] text-foreground hover:opacity-70 transition-opacity"
+            >
+              Sign In
             </Link>
             <Link
               to="/contact"

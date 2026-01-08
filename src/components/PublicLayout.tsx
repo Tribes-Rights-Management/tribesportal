@@ -103,8 +103,8 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
       <header className={`sticky top-0 z-50 transition-colors duration-300 ${headerBg} ${borderColor} border-b`}>
-        <div className={`${CONTENT_CONTAINER_CLASS} flex items-center h-14 md:h-16 ${isRootPage ? 'justify-between' : 'justify-center relative'}`}>
-          {/* Centered wordmark for non-root pages, left-aligned for root */}
+        <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14 md:h-16`}>
+          {/* Left-aligned wordmark */}
           <Link to="/" className="flex items-center">
             <span 
               className={`text-[15px] md:text-[17px] font-bold tracking-[-0.02em] uppercase ${textColor}`}
@@ -123,13 +123,14 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
             </Link>
           )}
 
-          {/* Non-root pages: Menu trigger on right (desktop) */}
+          {/* Non-root pages: Hamburger menu trigger on right (desktop) */}
           {!logoOnly && !isRootPage && (
             <button
               onClick={() => setDesktopSidebarOpen(true)}
-              className={`hidden md:block absolute right-0 text-sm transition-colors ${mutedColor}`}
+              className={`hidden md:flex p-2 -mr-2 transition-colors ${mutedColor}`}
+              aria-label="Open menu"
             >
-              Menu
+              <Menu size={20} />
             </button>
           )}
 
@@ -137,7 +138,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
           {!logoOnly && (
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`md:hidden p-2 -mr-2 ${isRootPage ? '' : 'absolute right-6'} ${textColor}`}
+              className={`md:hidden p-2 -mr-2 ${textColor}`}
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -190,13 +191,6 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
               {/* Top group */}
               <div className="flex flex-col px-6 pt-2 gap-5">
                 <Link 
-                  to="/auth" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-[15px] font-medium text-white/95 hover:text-white transition-opacity"
-                >
-                  Client Sign In
-                </Link>
-                <Link 
                   to="/services" 
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
@@ -204,18 +198,32 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
                   Services
                 </Link>
                 <Link 
-                  to="/licensing-account" 
+                  to="/our-approach" 
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
                 >
-                  Request Licensing Access
+                  Our Approach
                 </Link>
                 <Link 
-                  to="/service-inquiry" 
+                  to="/how-publishing-admin-works" 
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
                 >
-                  Inquire About Services
+                  How Administration Works
+                </Link>
+                <Link 
+                  to="/how-licensing-works" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
+                >
+                  How Licensing Works
+                </Link>
+                <Link 
+                  to="/auth" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-[15px] font-light text-white/80 hover:text-white transition-opacity"
+                >
+                  Sign In
                 </Link>
                 <Link 
                   to="/contact" 
