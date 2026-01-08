@@ -38,9 +38,9 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         style={{
-          backgroundColor: 'rgba(115, 115, 115, 0.25)',
-          backdropFilter: isOpen ? 'blur(6px)' : 'blur(0px)',
-          WebkitBackdropFilter: isOpen ? 'blur(6px)' : 'blur(0px)',
+          backgroundColor: 'rgba(120, 120, 120, 0.22)',
+          backdropFilter: isOpen ? 'blur(10px)' : 'blur(0px)',
+          WebkitBackdropFilter: isOpen ? 'blur(10px)' : 'blur(0px)',
         }}
         onClick={onClose}
         aria-hidden="true"

@@ -17,64 +17,17 @@ interface PublicLayoutProps {
 export function PublicLayout({ children, logoOnly = false, disableFooterLinks = false, hideFooterLinks = false, mobileContactAnchor }: PublicLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(false);
-  const [headerDark, setHeaderDark] = useState(true);
   const mainRef = useRef<HTMLElement>(null);
   const location = useLocation();
 
-  // Root landing page exception - no desktop sidebar
+  // Root landing page exception - no desktop sidebar, dark header integrated with hero
   const isRootPage = location.pathname === "/";
 
-  // HEADER COLOR RULE (LOCKED)
-  // White header → legal, policy, documentation, reference pages
-  // Black header → marketing, positioning, narrative pages
-  // This separation is intentional — restraint signals maturity
-  const whiteHeaderPages = [
-    "/privacy",
-    "/terms", 
-    "/data-retention",
-    "/how-licensing-works",
-    "/how-publishing-admin-works",
-  ];
-  const usesWhiteHeader = whiteHeaderPages.includes(location.pathname);
-
-  // Dark hero pages get scroll-aware header color transitions
-  const darkHeroPages = ["/", "/marketing", "/our-approach", "/services", "/contact", "/licensing-account", "/services/inquiry"];
-  const startsWithDarkHero = !usesWhiteHeader && darkHeroPages.includes(location.pathname);
-
-  useEffect(() => {
-    if (!startsWithDarkHero) {
-      setHeaderDark(false);
-      return;
-    }
-
-    const handleScroll = () => {
-      // Find all sections and determine which one is at the top
-      const sections = document.querySelectorAll('section[data-theme]');
-      const headerHeight = 64; // Desktop header height
-      
-      let isDark = true; // Default to dark for pages with dark heroes
-      
-      sections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        // Check if this section is at or above the header
-        if (rect.top <= headerHeight && rect.bottom > headerHeight) {
-          isDark = section.getAttribute('data-theme') === 'dark';
-        }
-      });
-      
-      // If no sections with data-theme, check scroll position
-      if (sections.length === 0) {
-        // Assume first ~400px is dark hero
-        isDark = window.scrollY < 400;
-      }
-      
-      setHeaderDark(isDark);
-    };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [startsWithDarkHero, location.pathname]);
+  // GLOBAL HEADER RULE (LOCKED - INSTITUTIONAL GRADE)
+  // Root (/) only: Black header, white logo, integrated with hero
+  // All other pages: White header, black logo, black hamburger, subtle divider
+  // NO scroll-based color switching. NO exceptions.
+  const headerDark = isRootPage;
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -108,12 +61,13 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
     }
   }, [mobileMenuOpen, desktopSidebarOpen]);
 
-  const headerBg = headerDark ? "bg-[#111214]" : "bg-background";
+  // Header styling - institutional grade
+  const headerBg = headerDark ? "bg-[#111214]" : "bg-white";
   const textColor = headerDark ? "text-white" : "text-foreground";
-  const mutedColor = headerDark ? "text-white/60" : "text-muted-foreground";
+  // Subtle institutional divider: very light gray for white header, subtle white for dark
   const borderStyle = headerDark 
     ? "border-b border-white/[0.06]" 
-    : "border-b border-foreground/[0.06]";
+    : "border-b border-[#e5e5e5]";
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
