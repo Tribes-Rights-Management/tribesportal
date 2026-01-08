@@ -2,104 +2,360 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GLOBAL COLOR CONTRAST SYSTEM — LOCKED
+
+   This color system is authoritative and must not drift.
+   All text must pass WCAG AA contrast minimums.
+
+   LIGHT MODE (default):
+   - Primary text: foreground (HSL 0 0% 9%) — near-black
+   - Secondary text: muted-foreground (HSL 0 0% 45%) — readable gray
+   - Background: background (HSL 0 0% 100%) — white
+
+   DARK SECTIONS (#111214):
+   - Primary text: white/92 — Headlines, critical copy
+   - Secondary text: white/70-72 — Descriptions, body copy
+   - Tertiary text: white/55-65 — Labels, meta, supporting copy
+   - Meta/Footer text: white/50-60 — Copyright, legal links
+   - Links: white/60 default → white/80 hover
+   - Dividers: white/15
+
+   PROHIBITIONS:
+   - No text below white/50 on dark backgrounds
+   - No arbitrary gray values — use semantic tokens
+   - No opacity-based text that reduces readability
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Apple-grade Design System
+   System typography, spacing-led layout, minimal dividers, calm hierarchy */
 
 @layer base {
   :root {
+    /* Header height for content clearance calculations */
+    --header-height: 64px;
+
+    /* Background & Surface */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 0 0% 9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 0 0% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 0 0% 9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Neutral dark */
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Soft gray */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent */
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 9%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Destructive */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Borders & Inputs */
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 9%;
 
-    --radius: 0.5rem;
+    --radius: 10px;
 
+    /* Sidebar */
     --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 45%;
+    --sidebar-primary: 0 0% 9%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 94%;
+    --sidebar-accent-foreground: 0 0% 9%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 0 0% 9%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Semantic */
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 9%;
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 100%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Near-black backgrounds - #0E0F12 primary, #13141A secondary */
+    --background: 228 10% 6%;
+    --foreground: 220 10% 97%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    /* Cards use secondary dark */
+    --card: 228 10% 9%;
+    --card-foreground: 220 10% 97%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 228 10% 9%;
+    --popover-foreground: 220 10% 97%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Primary inverts for dark */
+    --primary: 220 10% 97%;
+    --primary-foreground: 228 10% 6%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary surfaces */
+    --secondary: 228 10% 12%;
+    --secondary-foreground: 220 10% 97%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    /* Muted - reduced opacity text */
+    --muted: 228 10% 12%;
+    --muted-foreground: 220 5% 60%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    /* Accent */
+    --accent: 228 10% 12%;
+    --accent-foreground: 220 10% 97%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 220 10% 97%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Thin dividers - rgba(255,255,255,0.08) equivalent */
+    --border: 0 0% 100% / 0.08;
+    --input: 228 10% 15%;
+    --ring: 220 10% 80%;
+
+    --sidebar-background: 228 10% 6%;
+    --sidebar-foreground: 220 5% 60%;
+    --sidebar-primary: 220 10% 97%;
+    --sidebar-primary-foreground: 228 10% 6%;
+    --sidebar-accent: 228 10% 12%;
+    --sidebar-accent-foreground: 220 10% 97%;
+    --sidebar-border: 0 0% 100% / 0.08;
+    --sidebar-ring: 220 10% 80%;
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GLOBAL TYPOGRAPHY SCALE — LOCKED
+
+   This typography system is authoritative and must not drift.
+   No page-specific overrides. Mercury/JPMorgan reference standard.
+
+   H1: 32px (mobile) / 40px (desktop), Semibold, -0.015em tracking
+   H2: 20px globally, Medium weight, subordinate to H1
+   Body: 16px, Regular, 1.65 line-height for long-form reading
+   Meta: 13px for helper text, labels
+
+   SPACING:
+   - H1 margin-bottom: 12px (tight coupling to intro)
+   - H2 margin-bottom: 16px
+   - Paragraph gap: 1rem (not stacked whitespace)
+   ═══════════════════════════════════════════════════════════════════════════════ */
 @layer base {
   * {
     @apply border-border;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* H1 — Primary page heading. Locked globally. */
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    scroll-margin-top: calc(var(--header-height) + 24px);
+  }
+
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 40px;
+    }
+  }
+
+  /* H2 — Section titles. Fixed size, clearly subordinate. */
+  h2 {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    scroll-margin-top: calc(var(--header-height) + 24px);
+  }
+
+  /* H3-H6 — Subsection headings */
+  h3 {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  h4, h5, h6 {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* Paragraph rhythm — use gap between siblings, not stacked margins */
+  p + p {
+    margin-top: 1rem;
+  }
+}
+
+@layer components {
+  /* Status chips - outline only, neutral */
+  .status-chip {
+    @apply inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium;
+    @apply border border-border bg-transparent text-muted-foreground;
+  }
+
+  /* Section spacing */
+  .section-gap {
+    @apply mb-8; /* 32px */
+  }
+
+  .subsection-gap {
+    @apply mb-6; /* 24px */
+  }
+
+  .row-gap {
+    @apply mb-3; /* 12px */
+  }
+
+  /* Hairline divider */
+  .divider {
+    @apply h-px bg-border/50;
+  }
+
+  /* Row density */
+  .row-comfortable {
+    @apply py-4; /* ~16px vertical = 56px total */
+  }
+
+  .row-compact {
+    @apply py-2.5; /* ~10px vertical = 44px total */
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     GLOBAL INTERACTION STATE SYSTEM — LOCKED
+     ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* Focus ring - visible, 1px solid, 2px offset */
+  .focus-ring {
+    @apply focus-visible:outline-none;
+  }
+
+  .focus-ring:focus-visible {
+    outline: 1px solid hsl(0 0% 9% / 0.4);
+    outline-offset: 2px;
+  }
+
+  .dark .focus-ring:focus-visible,
+  [data-dark="true"] .focus-ring:focus-visible {
+    outline-color: hsl(0 0% 100% / 0.4);
+  }
+
+  /* Hover state - subtle opacity shift only */
+  .hover-subtle {
+    @apply transition-opacity duration-150 ease-out;
+  }
+
+  .hover-subtle:hover {
+    opacity: 0.88;
+  }
+
+  /* Button hover - subtle brightness shift */
+  .btn-hover {
+    @apply transition-[filter,opacity] duration-150 ease-out;
+  }
+
+  .btn-hover:hover {
+    filter: brightness(0.94);
+  }
+
+  .btn-hover:active {
+    opacity: 0.85;
+  }
+
+  /* Link hover - underline emphasis */
+  .link-hover {
+    @apply transition-[text-decoration-color,opacity] duration-150 ease-out;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 2px;
+  }
+
+  .link-hover:hover {
+    text-decoration-color: currentColor;
+  }
+
+  /* Link simple - opacity shift only (for navigation) */
+  .link-simple {
+    @apply transition-opacity duration-150 ease-out;
+  }
+
+  .link-simple:hover {
+    opacity: 0.75;
+  }
+
+  /* Disabled state - opacity only, no events */
+  .state-disabled {
+    @apply opacity-50 pointer-events-none cursor-not-allowed;
+  }
+
+  /* Input focus - border emphasis, no ring glow */
+  .input-focus {
+    @apply transition-[border-color] duration-150 ease-out;
+  }
+
+  .input-focus:hover:not(:disabled):not(:focus) {
+    border-color: hsl(0 0% 70%);
+  }
+
+  .input-focus:focus {
+    border-color: hsl(0 0% 50%);
+    outline: none;
+  }
+
+  /* Label style */
+  .label-muted {
+    @apply text-xs font-medium text-muted-foreground;
+  }
+}
+
+@layer utilities {
+  /* Content fade - opacity only, 150ms */
+  .animate-content-fade {
+    animation: contentFade 0.15s ease-out forwards;
+  }
+
+  @keyframes contentFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Button active state - brief opacity reduction, instant feedback */
+  .btn-active {
+    @apply active:opacity-85 active:transition-opacity active:duration-75;
+  }
+
+  /* Global focus visible for dark surfaces */
+  [data-surface="dark"] *:focus-visible {
+    outline: 1px solid hsl(0 0% 100% / 0.4) !important;
+    outline-offset: 2px;
+  }
+
+  /* Global transition utility - locked duration */
+  .transition-interaction {
+    @apply transition-all duration-150 ease-out;
   }
 }
