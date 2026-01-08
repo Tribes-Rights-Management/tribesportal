@@ -4,8 +4,6 @@ import { Menu, X } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
 import { Footer } from "@/components/Footer";
-import tribesLogoWhite from "@/assets/tribes-logo-white.svg";
-import tribesLogoBlack from "@/assets/tribes-logo-black.svg";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -98,20 +96,11 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
       <header className={`sticky top-0 z-50 transition-colors duration-300 ${headerBg} ${borderColor} border-b`}>
         <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14 md:h-16`}>
           <Link to="/" className="flex items-center">
-            <img 
-              src={headerDark ? tribesLogoWhite : tribesLogoBlack} 
-              alt={BRAND.wordmark}
-              className="h-[18px] md:h-[21px] w-auto"
-              style={{ imageRendering: 'auto', shapeRendering: 'geometricPrecision' }}
-              onError={(e) => {
-                const target = e.currentTarget;
-                target.style.display = 'none';
-                const fallback = document.createElement('span');
-                fallback.className = `text-base font-semibold tracking-tight ${textColor}`;
-                fallback.textContent = BRAND.wordmark;
-                target.parentNode?.appendChild(fallback);
-              }}
-            />
+            <span 
+              className={`text-[15px] md:text-[17px] font-bold tracking-[-0.02em] uppercase ${textColor}`}
+            >
+              {BRAND.wordmark}
+            </span>
           </Link>
           
           {!logoOnly && (
