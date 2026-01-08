@@ -17,10 +17,11 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      // Institutional-grade select trigger (LOCKED)
-      // Matches input styling: 48px height, subtle radius, neutral gray border
-      // Focus: border darkens, no ring/glow
-      "flex h-12 w-full items-center justify-between rounded-md border border-[#d4d4d4] bg-white px-4 py-2 text-[15px] text-foreground transition-colors duration-150 ease-out placeholder:text-muted-foreground/60 focus:outline-none focus:border-[#737373] disabled:cursor-not-allowed disabled:bg-[#fafafa] disabled:opacity-60 [&>span]:line-clamp-1",
+      // INSTITUTIONAL SELECT TRIGGER (LOCKED)
+      // - Height: 48px, tight horizontal padding (px-3)
+      // - Neutral gray border, white bg
+      // - Focus: border darkens, no ring/glow
+      "flex h-12 w-full items-center justify-between rounded-md border border-[#d4d4d4] bg-white px-3 py-2 text-[15px] text-foreground transition-colors duration-150 ease-out placeholder:text-muted-foreground/60 focus:outline-none focus:border-[#737373] disabled:cursor-not-allowed disabled:bg-[#fafafa] disabled:opacity-60 [&>span]:line-clamp-1",
       className,
     )}
     {...props}
