@@ -10,7 +10,7 @@ export default function MarketingPage() {
       <Hero />
 
       {/* Built for Permanence — Structural Differentiation (Desktop: after hero, Mobile: after Who It's For) */}
-      <section data-theme="light" className="pt-12 pb-16 md:pt-14 md:pb-20 bg-background border-b border-border/30 hidden md:block">
+      <section data-theme="light" className="relative pt-12 pb-16 md:pt-14 md:pb-20 bg-background border-b border-border/30 hidden md:block" style={{ marginTop: 0 }}>
         <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[560px]">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/80 mb-7">

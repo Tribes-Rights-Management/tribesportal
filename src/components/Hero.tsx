@@ -15,43 +15,66 @@ export function Hero({ contactAnchor }: HeroProps) {
   };
 
   return (
-    <section data-theme="dark" className="pt-24 pb-32 md:pt-32 md:pb-40 lg:pt-40 lg:pb-48" style={{ backgroundColor: THEME_DARK_BG }}>
-      <div className={CONTENT_CONTAINER_CLASS}>
-        <div className="max-w-[640px]">
-          {/* Eyebrow */}
-          <p className="text-sm font-medium tracking-[0.08em] text-[#C9C9CC] mb-14">
-            TRIBES
-          </p>
+    <section 
+      data-theme="dark" 
+      className="relative flex flex-col justify-center pb-[env(safe-area-inset-bottom)]"
+      style={{ 
+        backgroundColor: THEME_DARK_BG,
+        /* Full viewport height minus header - uses cascading fallbacks for iOS Safari */
+        minHeight: 'calc(100vh - var(--header-h, 56px))',
+      }}
+    >
+      {/* CSS for svh/dvh support */}
+      <style>{`
+        @supports (min-height: 100svh) {
+          [data-hero-section] {
+            min-height: calc(100svh - var(--header-h, 56px)) !important;
+          }
+        }
+        @supports (min-height: 100dvh) {
+          [data-hero-section] {
+            min-height: calc(100dvh - var(--header-h, 56px)) !important;
+          }
+        }
+      `}</style>
+      <div data-hero-section className="flex-1 flex flex-col justify-center" style={{ minHeight: 'inherit' }}>
+        <div className={`${CONTENT_CONTAINER_CLASS} py-16 md:py-24 lg:py-32`}>
+          <div className="max-w-[640px]">
+            {/* Eyebrow */}
+            <p className="text-sm font-medium tracking-[0.08em] text-[#C9C9CC] mb-14">
+              TRIBES
+            </p>
 
-          {/* H1 - Institutional weight, refined letter-spacing */}
-          <h1 className="text-[40px] md:text-[56px] lg:text-[72px] font-medium leading-[1.08] tracking-[-0.015em] text-white mb-8">
-            Rights management, built to last.
-          </h1>
+            {/* H1 - Institutional weight, refined letter-spacing */}
+            <h1 className="text-[40px] md:text-[56px] lg:text-[72px] font-medium leading-[1.08] tracking-[-0.015em] text-white mb-8">
+              Rights management, built to last.
+            </h1>
 
-          {/* Secondary supporting line - Quiet, subordinate */}
-          <p className="text-base md:text-lg font-light text-white/45 leading-[1.5] tracking-[0.01em] mb-16">
-            Publishing administration, built for precision.
-          </p>
+            {/* Secondary supporting line - Quiet, subordinate */}
+            <p className="text-base md:text-lg font-light text-white/45 leading-[1.5] tracking-[0.01em] mb-16">
+              Publishing administration, built for precision.
+            </p>
 
-          {/* Divider */}
-          <div className="w-16 h-px bg-white/10 mb-10" />
+            {/* Divider */}
+            <div className="w-16 h-px bg-white/10 mb-10" />
 
-          {/* CTA Link */}
-          {contactAnchor ? (
-            <button
-              onClick={scrollToContact}
-              className="text-sm text-white/75 hover:text-white/85 transition-opacity duration-160 underline underline-offset-4 decoration-white/30"
-            >
-              Contact
-            </button>
-          ) : (
-            <Link
-              to="/our-approach"
-              className="text-xs text-white/55 hover:text-white/85 transition-opacity duration-160 underline underline-offset-4 decoration-white/20"
-            >
-              Our approach
-            </Link>
-          )}
+            {/* CTA Link */}
+            {contactAnchor ? (
+              <button
+                onClick={scrollToContact}
+                className="text-sm text-white/75 hover:text-white/85 transition-opacity duration-160 underline underline-offset-4 decoration-white/30"
+              >
+                Contact
+              </button>
+            ) : (
+              <Link
+                to="/our-approach"
+                className="text-xs text-white/55 hover:text-white/85 transition-opacity duration-160 underline underline-offset-4 decoration-white/20"
+              >
+                Our approach
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </section>
