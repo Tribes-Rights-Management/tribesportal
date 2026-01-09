@@ -20,26 +20,29 @@ export function Hero({ contactAnchor }: HeroProps) {
       className="relative pb-[env(safe-area-inset-bottom)]"
       style={{ 
         backgroundColor: THEME_DARK_BG,
-        /* Full viewport height minus header - uses cascading fallbacks for iOS Safari */
-        minHeight: 'calc(100vh - var(--header-h, 56px))',
       }}
     >
-      {/* CSS for svh/dvh support - background wrapper only */}
+      {/* Full viewport height on desktop only */}
       <style>{`
-        @supports (min-height: 100svh) {
+        @media (min-width: 769px) {
           [data-hero-section] {
-            min-height: calc(100svh - var(--header-h, 56px)) !important;
+            min-height: calc(100vh - var(--header-h, 56px));
           }
-        }
-        @supports (min-height: 100dvh) {
-          [data-hero-section] {
-            min-height: calc(100dvh - var(--header-h, 56px)) !important;
+          @supports (min-height: 100svh) {
+            [data-hero-section] {
+              min-height: calc(100svh - var(--header-h, 56px)) !important;
+            }
+          }
+          @supports (min-height: 100dvh) {
+            [data-hero-section] {
+              min-height: calc(100dvh - var(--header-h, 56px)) !important;
+            }
           }
         }
       `}</style>
-      {/* Content anchored at top on mobile, centered on desktop */}
-      <div data-hero-section style={{ minHeight: 'inherit' }}>
-        <div className={`${CONTENT_CONTAINER_CLASS} pt-16 pb-16 md:pt-24 md:pb-24 lg:pt-32 lg:pb-32`}>
+      {/* Mobile: auto height with padding. Desktop: full viewport, centered */}
+      <div data-hero-section className="md:flex md:flex-col md:justify-center">
+        <div className={`${CONTENT_CONTAINER_CLASS} pt-20 pb-14 md:py-24 lg:py-32`}>
           <div className="max-w-[640px]">
             {/* Eyebrow */}
             <p className="text-sm font-medium tracking-[0.08em] text-[#C9C9CC] mb-14">
