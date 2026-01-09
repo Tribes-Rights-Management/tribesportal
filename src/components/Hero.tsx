@@ -17,14 +17,14 @@ export function Hero({ contactAnchor }: HeroProps) {
   return (
     <section 
       data-theme="dark" 
-      className="relative flex flex-col justify-center pb-[env(safe-area-inset-bottom)]"
+      className="relative pb-[env(safe-area-inset-bottom)]"
       style={{ 
         backgroundColor: THEME_DARK_BG,
         /* Full viewport height minus header - uses cascading fallbacks for iOS Safari */
         minHeight: 'calc(100vh - var(--header-h, 56px))',
       }}
     >
-      {/* CSS for svh/dvh support */}
+      {/* CSS for svh/dvh support - background wrapper only */}
       <style>{`
         @supports (min-height: 100svh) {
           [data-hero-section] {
@@ -37,8 +37,9 @@ export function Hero({ contactAnchor }: HeroProps) {
           }
         }
       `}</style>
-      <div data-hero-section className="flex-1 flex flex-col justify-center" style={{ minHeight: 'inherit' }}>
-        <div className={`${CONTENT_CONTAINER_CLASS} py-16 md:py-24 lg:py-32`}>
+      {/* Content anchored at top on mobile, centered on desktop */}
+      <div data-hero-section style={{ minHeight: 'inherit' }}>
+        <div className={`${CONTENT_CONTAINER_CLASS} pt-16 pb-16 md:pt-24 md:pb-24 lg:pt-32 lg:pb-32`}>
           <div className="max-w-[640px]">
             {/* Eyebrow */}
             <p className="text-sm font-medium tracking-[0.08em] text-[#C9C9CC] mb-14">
