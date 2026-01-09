@@ -646,8 +646,8 @@
     opacity: 0.45 !important;
   }
 
-  /* Native checkbox fallback (if any exist) */
-  :where(form) input[type="checkbox"] {
+  /* Native checkbox fallback — EXCLUDES TribesCheckbox (opacity:0 inputs) */
+  :where(form) input[type="checkbox"]:not([style*="opacity"]) {
     -webkit-appearance: none;
     appearance: none;
     width: 18px;
@@ -659,12 +659,12 @@
     place-content: center;
   }
 
-  :where(form) input[type="checkbox"]:checked {
+  :where(form) input[type="checkbox"]:not([style*="opacity"]):checked {
     border-color: hsl(0 0% 32%);
     background-color: hsl(var(--background));
   }
 
-  :where(form) input[type="checkbox"]:checked::after {
+  :where(form) input[type="checkbox"]:not([style*="opacity"]):checked::after {
     content: "";
     width: 10px;
     height: 10px;
@@ -673,7 +673,7 @@
     border-bottom: 2px solid hsl(0 0% 7%);
   }
 
-  :where(form) input[type="checkbox"]:disabled {
+  :where(form) input[type="checkbox"]:not([style*="opacity"]):disabled {
     opacity: 0.45;
   }
 }

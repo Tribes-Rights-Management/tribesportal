@@ -15,7 +15,8 @@ import { cn } from "@/lib/utils";
  * - Focus: subtle outline on box only
  * - Disabled: reduced opacity
  * 
- * iOS Safari: appearance:none + custom styling prevents native rendering
+ * iOS Safari: Native input is absolutely positioned and opacity:0,
+ * with explicit sizing to prevent any native rendering from showing.
  */
 
 interface TribesCheckboxProps {
@@ -45,51 +46,71 @@ export function TribesCheckbox({
         className
       )}
     >
-      {/* Visually hidden native input for accessibility */}
-      <input
-        type="checkbox"
-        id={id}
-        checked={checked}
-        onChange={(e) => onCheckedChange(e.target.checked)}
-        disabled={disabled}
-        className="sr-only peer"
-        aria-checked={checked}
-      />
-      
-      {/* Custom visual checkbox box */}
-      <span
-        className={cn(
-          // 18x18px box, 2px radius, thin border, transparent bg
-          "relative shrink-0 w-[18px] h-[18px] rounded-[2px] border bg-transparent transition-colors duration-100",
-          "border-[#cfcfcf]",
-          // Focus state: subtle outline on box only
-          "peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-[rgba(17,17,17,0.25)] peer-focus-visible:outline-offset-2",
-          // Checked: slightly darker border for definition
-          checked && "border-[#888888]"
-        )}
-        aria-hidden="true"
-      >
-        {/* Checkmark SVG - only visible when checked */}
-        {checked && (
-          <svg
-            className="absolute inset-0 w-full h-full p-[2px]"
-            viewBox="0 0 14 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7.5L5.5 10L11 4"
-              stroke="#111111"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
+      {/* Checkbox container - positions native input and custom visual */}
+      <span className="relative shrink-0 w-[18px] h-[18px] mt-[3px]">
+        {/* Native input: opacity 0, same size as container, no appearance */}
+        <input
+          type="checkbox"
+          id={id}
+          checked={checked}
+          onChange={(e) => onCheckedChange(e.target.checked)}
+          disabled={disabled}
+          aria-checked={checked}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '18px',
+            height: '18px',
+            margin: 0,
+            padding: 0,
+            opacity: 0,
+            cursor: disabled ? 'not-allowed' : 'pointer',
+            // Force no appearance on iOS Safari
+            WebkitAppearance: 'none',
+            appearance: 'none',
+          }}
+        />
+        
+        {/* Custom visual checkbox box */}
+        <span
+          className={cn(
+            // 18x18px box, 2px radius, thin border, transparent bg
+            "absolute inset-0 rounded-[2px] border bg-transparent transition-colors duration-100 pointer-events-none",
+            "border-[#cfcfcf]",
+            // Checked: slightly darker border for definition
+            checked && "border-[#888888]"
+          )}
+          aria-hidden="true"
+        >
+          {/* Checkmark SVG - only visible when checked */}
+          {checked && (
+            <svg
+              className="absolute inset-0 w-full h-full p-[2px]"
+              viewBox="0 0 14 14"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 7.5L5.5 10L11 4"
+                stroke="#111111"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </span>
+        
+        {/* Focus ring - shows when native input is focused */}
+        <span 
+          className="absolute inset-0 rounded-[2px] pointer-events-none peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-[rgba(17,17,17,0.25)] peer-focus-visible:outline-offset-2"
+          aria-hidden="true"
+        />
       </span>
       
       {/* Label content - inherits typography from parent */}
-      <span className="text-[14px] text-muted-foreground leading-relaxed pt-px">
+      <span className="text-[14px] text-muted-foreground leading-relaxed">
         {children}
       </span>
     </label>
