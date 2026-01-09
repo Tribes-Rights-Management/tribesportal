@@ -541,6 +541,145 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
+   FORM PRIMITIVE HARD OVERRIDES — TRIBES INSTITUTIONAL STANDARD (LOCKED)
+
+   Purpose: ensure NO default/consumer-grade form UI survives anywhere.
+   Applies to: all forms across the site (public + auth + portal + admin).
+   Excludes: non-form UI by scoping to <form> where possible.
+
+   Non-negotiables:
+   - No filled-square checkbox state
+   - No pill inputs
+   - No glows/shadows
+   - Strong disabled contrast separation
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  /* Inputs / textareas / selects — hard reset inside forms */
+  :where(form) :where(
+      input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
+      textarea,
+      select
+    ) {
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 6px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: hsl(0 0% 82%); /* ~#d0d0d0 */
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-size: 15px;
+    line-height: 1.4;
+    padding: 10px 12px; /* dense, contractual */
+    min-height: 48px;
+    box-shadow: none;
+  }
+
+  :where(form) textarea {
+    min-height: 120px;
+    padding-top: 12px;
+    resize: none;
+  }
+
+  :where(form) :where(input, textarea)::placeholder {
+    color: hsl(0 0% 55%);
+  }
+
+  :where(form) :where(input, textarea, select):disabled {
+    background-color: hsl(0 0% 98%);
+    border-color: hsl(0 0% 86%);
+    color: hsl(0 0% 45%);
+    cursor: not-allowed;
+  }
+
+  /* Focus: darker border, no glow, no layout shift */
+  :where(form) :where(input, textarea, select):focus {
+    outline: none;
+    border-color: hsl(0 0% 7%); /* ~#111 */
+  }
+
+  /* Primary submit buttons (native) */
+  :where(form) button[type="submit"],
+  :where(form) button:not([type]) {
+    border-radius: 6px;
+    min-height: 48px;
+  }
+
+  :where(form) button[type="submit"] {
+    width: 100%;
+    background-color: hsl(var(--foreground));
+    color: hsl(var(--background));
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: none;
+    transition: opacity 150ms ease-out;
+  }
+
+  :where(form) button[type="submit"]:hover {
+    opacity: 0.9;
+  }
+
+  :where(form) button[type="submit"]:disabled {
+    background-color: hsl(0 0% 64%);
+    color: hsl(0 0% 100%);
+    opacity: 1;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* Radix Checkbox (role="checkbox") — FORCIBLY NO FILL WHEN CHECKED */
+  button[role="checkbox"][data-state] {
+    background-color: hsl(var(--background)) !important;
+    border: 1px solid hsl(0 0% 82%) !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+  }
+
+  button[role="checkbox"][data-state="checked"] {
+    background-color: hsl(var(--background)) !important;
+    border-color: hsl(0 0% 32%) !important;
+    color: hsl(0 0% 7%) !important;
+  }
+
+  button[role="checkbox"][data-state][data-disabled] {
+    opacity: 0.45 !important;
+  }
+
+  /* Native checkbox fallback (if any exist) */
+  :where(form) input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    border: 1px solid hsl(0 0% 82%);
+    background-color: hsl(var(--background));
+    display: inline-grid;
+    place-content: center;
+  }
+
+  :where(form) input[type="checkbox"]:checked {
+    border-color: hsl(0 0% 32%);
+    background-color: hsl(var(--background));
+  }
+
+  :where(form) input[type="checkbox"]:checked::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    transform: translateY(-0.5px) rotate(45deg);
+    border-right: 2px solid hsl(0 0% 7%);
+    border-bottom: 2px solid hsl(0 0% 7%);
+  }
+
+  :where(form) input[type="checkbox"]:disabled {
+    opacity: 0.45;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
    UX HARDENING — TRIBES INSTITUTIONAL STANDARD (LOCKED)
    
    Global interaction polish: tap targets, focus states, link feedback,
