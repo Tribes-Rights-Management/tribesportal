@@ -99,8 +99,8 @@ export function Footer({
           <nav>
             <div className={navGridClass}>
               {renderGroup("Access", [
-                { to: "/auth", label: "Request a License" },
                 { to: "/portal", label: "Client Portal" },
+                { to: "/licensing-account", label: "Licensing Access" },
               ])}
               {renderGroup("Company", [
                 { to: "/how-publishing-admin-works", label: "How Administration Works" },

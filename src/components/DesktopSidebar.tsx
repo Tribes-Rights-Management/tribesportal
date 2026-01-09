@@ -90,11 +90,11 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
         <nav className="flex flex-col flex-1 px-8 pt-6">
           <div className="flex flex-col gap-5">
             <Link
-              to="/auth"
+              to="/portal"
               onClick={onClose}
-              className="text-[15px] font-semibold text-foreground transition-opacity duration-150 ease-out hover:opacity-70 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
+              className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
             >
-              Client Sign In
+              Client Portal
             </Link>
             <Link
               to="/services"
@@ -104,18 +104,32 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
               Services
             </Link>
             <Link
+              to="/how-publishing-admin-works"
+              onClick={onClose}
+              className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
+            >
+              How Administration Works
+            </Link>
+            <Link
+              to="/how-licensing-works"
+              onClick={onClose}
+              className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
+            >
+              How Licensing Works
+            </Link>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-foreground/[0.06] mt-8 mb-5" />
+
+          {/* Secondary Links */}
+          <div className="flex flex-col gap-5">
+            <Link
               to="/licensing-account"
               onClick={onClose}
               className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
             >
-              Request Licensing Access
-            </Link>
-            <Link
-              to="/services/inquiry"
-              onClick={onClose}
-              className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
-            >
-              Inquire About Services
+              Licensing Access
             </Link>
             <Link
               to="/contact"
@@ -123,27 +137,6 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
               className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
             >
               Contact
-            </Link>
-          </div>
-
-          {/* Divider */}
-          <div className="border-t border-foreground/[0.06] mt-8 mb-5" />
-
-          {/* Footer Links */}
-          <div className="flex flex-col gap-3">
-            <Link
-              to="/privacy"
-              onClick={onClose}
-              className="text-[13px] text-foreground/50 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              to="/terms"
-              onClick={onClose}
-              className="text-[13px] text-foreground/50 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
-            >
-              Terms of Use
             </Link>
           </div>
         </nav>
