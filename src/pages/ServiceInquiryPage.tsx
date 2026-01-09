@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FormPageLayout, FormSuccessLayout } from "@/components/FormPageLayout";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { TribesCheckbox } from "@/components/ui/tribes-checkbox";
+import { ConsentRow } from "@/components/ConsentRow";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -237,44 +237,23 @@ export default function ServiceInquiryPage() {
 
         {/* ============================================
             SECTION 4: CONSENT + SUBMISSION
-            Spacing: 20px above consent, 20px to button (locked)
+            Spacing: 20px above/below consent (via ConsentRow)
             ============================================ */}
-        <div className="pt-5 space-y-5">
-          <TribesCheckbox
-            id="terms"
-            checked={agreeToTerms}
-            onCheckedChange={setAgreeToTerms}
-            disabled={isSubmitting}
-          >
-            I agree to the{" "}
-            <Link 
-              to="/privacy" 
-              className="text-foreground underline underline-offset-2 hover:opacity-70 transition-opacity duration-150"
-              target="_blank"
-              onClick={(e) => e.stopPropagation()}
-            >
-              Privacy Policy
-            </Link>
-            {" "}and{" "}
-            <Link 
-              to="/terms" 
-              className="text-foreground underline underline-offset-2 hover:opacity-70 transition-opacity duration-150"
-              target="_blank"
-              onClick={(e) => e.stopPropagation()}
-            >
-              Terms of Use
-            </Link>.
-          </TribesCheckbox>
+        <ConsentRow
+          id="terms"
+          checked={agreeToTerms}
+          onCheckedChange={setAgreeToTerms}
+          disabled={isSubmitting}
+        />
 
-          <Button
-            type="submit"
-            disabled={isSubmitting || !agreeToTerms}
-            size="lg"
-            className="w-full"
-          >
-            {isSubmitting ? "Submitting…" : "Submit Inquiry"}
-          </Button>
-        </div>
+        <Button
+          type="submit"
+          disabled={isSubmitting || !agreeToTerms}
+          size="lg"
+          className="w-full"
+        >
+          {isSubmitting ? "Submitting…" : "Submit Inquiry"}
+        </Button>
       </form>
 
       <div className="mt-8 text-center">
