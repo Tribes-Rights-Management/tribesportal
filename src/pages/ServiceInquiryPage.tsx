@@ -111,95 +111,135 @@ export default function ServiceInquiryPage() {
       title="Inquire About Services"
       lede="For publishing administration, rights management, or catalog support."
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          type="text"
-          placeholder="Full name"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          required
-          disabled={isSubmitting}
-          aria-label="Full name"
-        />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* ============================================
+            SECTION 1: IDENTITY FIELDS
+            ============================================ */}
+        <div className="space-y-5">
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              Full name
+            </label>
+            <Input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+              disabled={isSubmitting}
+              aria-label="Full name"
+            />
+          </div>
 
-        <Input
-          type="text"
-          placeholder="Company / Organization"
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          required
-          disabled={isSubmitting}
-          aria-label="Company or organization"
-        />
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              Company / Organization
+            </label>
+            <Input
+              type="text"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              required
+              disabled={isSubmitting}
+              aria-label="Company or organization"
+            />
+          </div>
 
-        <Input
-          type="email"
-          placeholder="Email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          disabled={isSubmitting}
-          aria-label="Email address"
-        />
-
-        <Select value={country} onValueChange={setCountry} disabled={isSubmitting}>
-          <SelectTrigger aria-label="Select your location">
-            <SelectValue placeholder="Country or territory" />
-          </SelectTrigger>
-          <SelectContent>
-            {COUNTRIES.map((c) => (
-              <SelectItem key={c} value={c}>
-                {c}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={roleType} onValueChange={setRoleType} disabled={isSubmitting}>
-          <SelectTrigger aria-label="Your role">
-            <SelectValue placeholder="Your role" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="songwriter_creator">Songwriter / Creator</SelectItem>
-            <SelectItem value="publisher_rights_holder">Publisher / Rights Holder</SelectItem>
-            <SelectItem value="brand_agency">Brand / Agency</SelectItem>
-            <SelectItem value="media_company">Media Company</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <div className="space-y-1.5">
-          <label className="text-[14px] font-medium text-foreground">
-            Catalog or scope
-          </label>
-          <Textarea
-            placeholder="Size, type of rights, geographic reach, etc."
-            value={catalogDescription}
-            onChange={(e) => setCatalogDescription(e.target.value)}
-            required
-            disabled={isSubmitting}
-            rows={3}
-            aria-label="Catalog or scope description"
-          />
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              Email address
+            </label>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={isSubmitting}
+              aria-label="Email address"
+            />
+          </div>
         </div>
 
-        <div className="space-y-1.5">
-          <label className="text-[14px] font-medium text-foreground">
-            What you're looking for
-          </label>
-          <Textarea
-            placeholder="Administration, licensing, catalog oversight, etc."
-            value={lookingFor}
-            onChange={(e) => setLookingFor(e.target.value)}
-            required
-            disabled={isSubmitting}
-            rows={3}
-            aria-label="What you're looking for"
-          />
+        {/* ============================================
+            SECTION 2: CONTEXT FIELDS
+            ============================================ */}
+        <div className="pt-2 space-y-5">
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              Country or territory
+            </label>
+            <Select value={country} onValueChange={setCountry} disabled={isSubmitting}>
+              <SelectTrigger aria-label="Select your location">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                {COUNTRIES.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              Your role
+            </label>
+            <Select value={roleType} onValueChange={setRoleType} disabled={isSubmitting}>
+              <SelectTrigger aria-label="Your role">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="songwriter_creator">Songwriter / Creator</SelectItem>
+                <SelectItem value="publisher_rights_holder">Publisher / Rights Holder</SelectItem>
+                <SelectItem value="brand_agency">Brand / Agency</SelectItem>
+                <SelectItem value="media_company">Media Company</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        {/* Consent - checkbox-gated button */}
-        <div className="pt-2">
+        {/* ============================================
+            SECTION 3: INTENT FIELDS
+            ============================================ */}
+        <div className="pt-2 space-y-5">
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              Catalog or scope
+            </label>
+            <Textarea
+              placeholder="Size, type of rights, geographic reach, etc."
+              value={catalogDescription}
+              onChange={(e) => setCatalogDescription(e.target.value)}
+              required
+              disabled={isSubmitting}
+              rows={3}
+              aria-label="Catalog or scope description"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              What you're looking for
+            </label>
+            <Textarea
+              placeholder="Administration, licensing, catalog oversight, etc."
+              value={lookingFor}
+              onChange={(e) => setLookingFor(e.target.value)}
+              required
+              disabled={isSubmitting}
+              rows={3}
+              aria-label="What you're looking for"
+            />
+          </div>
+        </div>
+
+        {/* ============================================
+            SECTION 4: CONSENT + SUBMISSION
+            Distinct "legal moment" with clear separation
+            ============================================ */}
+        <div className="pt-6 space-y-5">
           <div className="flex items-start gap-3">
             <Checkbox
               id="terms"
@@ -231,10 +271,7 @@ export default function ServiceInquiryPage() {
               </Link>.
             </label>
           </div>
-        </div>
 
-        {/* Full-width submit button - disabled until checkbox checked */}
-        <div className="pt-3">
           <Button
             type="submit"
             disabled={isSubmitting || !agreeToTerms}

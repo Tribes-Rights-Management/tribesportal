@@ -123,73 +123,82 @@ export default function ContactPage() {
         This form is intended for licensing, administration, and general business inquiries.
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Full name */}
-        <div className="space-y-2">
-          <label htmlFor="contact-name" className="text-[13px] font-medium text-foreground">
-            Full name
-          </label>
-          <Input
-            id="contact-name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            disabled={isSubmitting}
-          />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* ============================================
+            SECTION 1: IDENTITY FIELDS
+            ============================================ */}
+        <div className="space-y-5">
+          <div className="space-y-2">
+            <label htmlFor="contact-name" className="text-[13px] font-medium text-foreground">
+              Full name
+            </label>
+            <Input
+              id="contact-name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              disabled={isSubmitting}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="contact-email" className="text-[13px] font-medium text-foreground">
+              Email address
+            </label>
+            <Input
+              id="contact-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={isSubmitting}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="contact-location" className="text-[13px] font-medium text-foreground">
+              Country or territory
+            </label>
+            <Select value={location} onValueChange={setLocation} disabled={isSubmitting}>
+              <SelectTrigger id="contact-location">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                {COUNTRIES.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        {/* Email address */}
-        <div className="space-y-2">
-          <label htmlFor="contact-email" className="text-[13px] font-medium text-foreground">
-            Email address
-          </label>
-          <Input
-            id="contact-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={isSubmitting}
-          />
+        {/* ============================================
+            SECTION 2: MESSAGE / INTENT
+            ============================================ */}
+        <div className="pt-2">
+          <div className="space-y-2">
+            <label htmlFor="contact-message" className="text-[13px] font-medium text-foreground">
+              Your message
+            </label>
+            <Textarea
+              id="contact-message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              required
+              disabled={isSubmitting}
+              rows={4}
+            />
+          </div>
         </div>
 
-        {/* Country or territory */}
-        <div className="space-y-2">
-          <label htmlFor="contact-location" className="text-[13px] font-medium text-foreground">
-            Country or territory
-          </label>
-          <Select value={location} onValueChange={setLocation} disabled={isSubmitting}>
-            <SelectTrigger id="contact-location">
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              {COUNTRIES.map((c) => (
-                <SelectItem key={c} value={c}>
-                  {c}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Your message */}
-        <div className="space-y-2">
-          <label htmlFor="contact-message" className="text-[13px] font-medium text-foreground">
-            Your message
-          </label>
-          <Textarea
-            id="contact-message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-            disabled={isSubmitting}
-            rows={4}
-          />
-        </div>
-
-        {/* Full-width submit button — institutional standard (LOCKED) */}
-        <div className="pt-3">
+        {/* ============================================
+            SECTION 3: SUBMISSION
+            Distinct separation for the legal/action moment
+            ============================================ */}
+        <div className="pt-4 space-y-4">
           <Button
             type="submit"
             disabled={isSubmitting}
@@ -198,12 +207,11 @@ export default function ContactPage() {
           >
             {isSubmitting ? "Submitting…" : "Submit"}
           </Button>
-        </div>
 
-        {/* Post-form expectation note — institutional tone */}
-        <p className="text-[13px] text-muted-foreground text-center pt-2">
-          Submissions are reviewed in the order received.
-        </p>
+          <p className="text-[13px] text-muted-foreground text-center">
+            Submissions are reviewed in the order received.
+          </p>
+        </div>
       </form>
     </FormPageLayout>
   );

@@ -183,94 +183,130 @@ export default function LicensingAccountPage() {
       title="Request an Account"
       lede="Licensing requests require an approved account."
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          type="text"
-          placeholder="Full name"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          required
-          disabled={isSubmitting}
-          aria-label="Full name"
-        />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* ============================================
+            SECTION 1: IDENTITY FIELDS
+            ============================================ */}
+        <div className="space-y-5">
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              Full name
+            </label>
+            <Input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+              disabled={isSubmitting}
+              aria-label="Full name"
+            />
+          </div>
 
-        <div className="space-y-1.5">
-          <Input
-            type="text"
-            placeholder="Company / Organization"
-            value={company}
-            onChange={(e) => setCompany(e.target.value)}
-            required
-            disabled={isSubmitting}
-            aria-label="Company or organization"
-          />
-          <p className="text-[13px] text-muted-foreground leading-snug">
-            If you're an individual creator, enter your artist or professional name.
-          </p>
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              Company / Organization
+            </label>
+            <Input
+              type="text"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              required
+              disabled={isSubmitting}
+              aria-label="Company or organization"
+            />
+            <p className="text-[13px] text-muted-foreground leading-snug">
+              If you're an individual creator, enter your artist or professional name.
+            </p>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              Email address
+            </label>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={isSubmitting}
+              aria-label="Email address"
+            />
+            <p className="text-[13px] text-muted-foreground leading-snug">
+              Used for account access.
+            </p>
+          </div>
         </div>
 
-        <div className="space-y-1.5">
-          <Input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={isSubmitting}
-            aria-label="Email address"
-          />
-          <p className="text-[13px] text-muted-foreground leading-snug">
-            Used for account access.
-          </p>
+        {/* ============================================
+            SECTION 2: CONTEXT FIELDS
+            ============================================ */}
+        <div className="pt-2 space-y-5">
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              Country or territory
+            </label>
+            <Select value={country} onValueChange={setCountry} disabled={isSubmitting}>
+              <SelectTrigger aria-label="Select your location">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                {COUNTRIES.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              Organization type
+            </label>
+            <Select value={organizationType} onValueChange={setOrganizationType} disabled={isSubmitting}>
+              <SelectTrigger aria-label="Organization type">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="commercial_brand">Commercial / Brand</SelectItem>
+                <SelectItem value="broadcast_media">Broadcast / Media</SelectItem>
+                <SelectItem value="church_ministry">Church / Ministry</SelectItem>
+                <SelectItem value="agency">Agency</SelectItem>
+                <SelectItem value="independent_creator">Independent Creator</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        <Select value={country} onValueChange={setCountry} disabled={isSubmitting}>
-          <SelectTrigger aria-label="Select your location">
-            <SelectValue placeholder="Country or territory" />
-          </SelectTrigger>
-          <SelectContent>
-            {COUNTRIES.map((c) => (
-              <SelectItem key={c} value={c}>
-                {c}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={organizationType} onValueChange={setOrganizationType} disabled={isSubmitting}>
-          <SelectTrigger aria-label="Organization type">
-            <SelectValue placeholder="Organization type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="commercial_brand">Commercial / Brand</SelectItem>
-            <SelectItem value="broadcast_media">Broadcast / Media</SelectItem>
-            <SelectItem value="church_ministry">Church / Ministry</SelectItem>
-            <SelectItem value="agency">Agency</SelectItem>
-            <SelectItem value="independent_creator">Independent Creator</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <div className="space-y-1.5">
-          <label className="text-[14px] font-medium text-foreground">
-            Describe your intended licensing use
-          </label>
-          <Textarea
-            placeholder="Example: advertising, broadcast, livestream, film, venue playback."
-            value={intendedUse}
-            onChange={(e) => setIntendedUse(e.target.value)}
-            required
-            disabled={isSubmitting}
-            rows={4}
-            aria-label="Intended use"
-          />
-          <p className="text-[13px] text-muted-foreground leading-snug">
-            This does not need to be perfect.
-          </p>
-        </div>
-
-        {/* Consent - checkbox-gated button */}
+        {/* ============================================
+            SECTION 3: INTENT FIELD
+            ============================================ */}
         <div className="pt-2">
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-foreground">
+              Describe your intended licensing use
+            </label>
+            <Textarea
+              placeholder="Example: advertising, broadcast, livestream, film, venue playback."
+              value={intendedUse}
+              onChange={(e) => setIntendedUse(e.target.value)}
+              required
+              disabled={isSubmitting}
+              rows={4}
+              aria-label="Intended use"
+            />
+            <p className="text-[13px] text-muted-foreground leading-snug">
+              This does not need to be perfect.
+            </p>
+          </div>
+        </div>
+
+        {/* ============================================
+            SECTION 4: CONSENT + SUBMISSION
+            Distinct "legal moment" with clear separation
+            ============================================ */}
+        <div className="pt-6 space-y-5">
           <div className="flex items-start gap-3">
             <Checkbox
               id="terms"
@@ -302,10 +338,7 @@ export default function LicensingAccountPage() {
               </Link>.
             </label>
           </div>
-        </div>
 
-        {/* Full-width submit button - disabled until checkbox checked */}
-        <div className="pt-3">
           <Button
             type="submit"
             disabled={isSubmitting || !agreeToTerms}
