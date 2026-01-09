@@ -5,8 +5,13 @@ import { cn } from "@/lib/utils";
  * TRIBES CHECKBOX — CANONICAL CONSENT CONTROL (LOCKED)
  *
  * Purpose: a stable, iOS-safe consent checkbox that cannot regress to native UI.
- * Implementation: native <input type="checkbox"> kept for accessibility but visually hidden (opacity: 0)
- * and fully overridden; a separate 18×18 visual box renders the checkmark.
+ * 
+ * Structure:
+ * - Outer wrapper: flex, items-start, min-height 44px (tap target), clickable
+ * - Tap-target wrapper: 44x44 invisible hit area containing the 18x18 visual box
+ * - Native input: opacity:0, appearance:none, positioned over tap target
+ * - Visual box: 18x18, border only, no fill, SVG checkmark when checked
+ * - Label: leading-relaxed, top-aligned with visual box
  */
 
 interface TribesCheckboxProps {
@@ -31,8 +36,8 @@ export function TribesCheckbox({
   return (
     <div
       className={cn(
-        // Wrapper: flex; top-aligned; 12px gap; full-row tap target
-        "flex items-start gap-3 cursor-pointer select-none min-h-[44px]",
+        // Wrapper: flex, top-aligned, 12px gap, full-row tap target
+        "flex items-start gap-3 cursor-pointer select-none",
         disabled && "cursor-not-allowed opacity-50",
         className,
       )}
@@ -40,8 +45,12 @@ export function TribesCheckbox({
         if (!disabled) onCheckedChange(!checked);
       }}
     >
-      {/* Visual checkbox + native input */}
-      <span className="relative shrink-0 w-[18px] h-[18px] mt-[3px]">
+      {/* Tap target wrapper: 44x44 invisible, contains 18x18 visual box */}
+      <span 
+        className="relative shrink-0 flex items-start justify-center"
+        style={{ width: '44px', height: '44px', marginLeft: '-13px', marginTop: '-13px' }}
+      >
+        {/* Native input: covers full tap target, invisible */}
         <input
           type="checkbox"
           id={id}
@@ -51,17 +60,30 @@ export function TribesCheckbox({
           disabled={disabled}
           aria-labelledby={labelId}
           data-tribes-checkbox
-          className="peer absolute inset-0 m-0 p-0 w-[18px] h-[18px] opacity-0"
-          style={{ WebkitAppearance: "none", appearance: "none" }}
+          className="peer absolute inset-0 m-0 p-0 cursor-pointer"
+          style={{ 
+            width: '44px', 
+            height: '44px', 
+            opacity: 0,
+            WebkitAppearance: 'none', 
+            appearance: 'none',
+          }}
         />
 
+        {/* Visual box: 18x18, centered in 44x44 tap target */}
         <span
           className={cn(
-            "absolute inset-0 rounded-[2px] border bg-transparent transition-colors duration-100",
+            "absolute rounded-[2px] border bg-transparent transition-colors duration-100",
             "border-[hsl(var(--tribes-checkbox-border))]",
             checked && "border-[hsl(var(--tribes-checkbox-border-checked))]",
             "peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-[hsl(var(--tribes-checkbox-focus))] peer-focus-visible:outline-offset-2",
           )}
+          style={{ 
+            width: '18px', 
+            height: '18px', 
+            top: '13px', 
+            left: '13px',
+          }}
           aria-hidden="true"
         >
           {checked && (
@@ -83,8 +105,8 @@ export function TribesCheckbox({
         </span>
       </span>
 
-      {/* Label content (not a <label> to avoid link-click toggling) */}
-      <span id={labelId} className="text-[14px] text-muted-foreground leading-relaxed">
+      {/* Label content: top-aligned with visual box */}
+      <span id={labelId} className="text-[14px] text-muted-foreground leading-relaxed pt-px">
         {children}
       </span>
     </div>
