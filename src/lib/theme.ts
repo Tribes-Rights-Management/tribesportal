@@ -5,16 +5,38 @@
  * consistent dark/light transitions across the entire site.
  * 
  * NON-REGRESSION RULES:
- * - Dark zones use THEME_DARK_BG (#0B0E11) exclusively
- * - Light zones use THEME_LIGHT_BG (#FFFFFF) exclusively
+ * - Dark zones use THEME_DARK_BG (#0B0F14) exclusively
+ * - Light zones use THEME_LIGHT_BG (#F5F5F7) exclusively
  * - No arbitrary background colors in page components
  * - Theme transitions happen ONLY at explicit section boundaries
+ * 
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * FORM ZONE SYSTEM (LOCKED)
+ * 
+ * All intake and transactional pages use THEME_LIGHT_BG (neutral gray #F5F5F7)
+ * with white input fields (bg-white). This creates clear affordance and
+ * distinguishes form pages from marketing content.
+ * 
+ * FORM PAGES (gray background + white inputs):
+ * - Contact (/contact)
+ * - Licensing Account (/licensing-account)
+ * - Service Inquiry (/services/inquiry)
+ * - Auth/Login (/auth)
+ * 
+ * MARKETING PAGES (white or dark backgrounds only):
+ * - All explanatory and promotional content
+ * - Legal pages (Privacy, Terms)
+ * - Services overview
+ * 
+ * DO NOT mix white background + white inputs (low affordance).
+ * DO NOT use multiple grays across different forms.
+ * ═══════════════════════════════════════════════════════════════════════════════
  */
 
 /** Primary dark background - used for hero, marketing, and dark sections */
 export const THEME_DARK_BG = "#0B0F14";
 
-/** Primary light background - used for body pages and light sections */
+/** Primary light background - used for form pages, body pages, and light sections */
 export const THEME_LIGHT_BG = "#F5F5F7";
 
 /** Section padding - consistent vertical rhythm */
@@ -24,10 +46,10 @@ export const SECTION_PADDING = {
 };
 
 /** Tailwind class for dark theme zone background */
-export const THEME_DARK_CLASS = "bg-[#0B0E11]";
+export const THEME_DARK_CLASS = "bg-[#0B0F14]";
 
-/** Tailwind class for light theme zone background */
-export const THEME_LIGHT_CLASS = "bg-white";
+/** Tailwind class for light theme zone background (form zone) */
+export const THEME_LIGHT_CLASS = "bg-[#F5F5F7]";
 
 /** Overlay backdrop color with blur - institutional standard */
 export const OVERLAY_BACKDROP = {

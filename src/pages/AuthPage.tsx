@@ -8,7 +8,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import { BRAND } from "@/lib/brand";
+import { THEME_LIGHT_BG } from "@/lib/theme";
 
+/**
+ * AUTH PAGE — Uses Form Zone pattern (LOCKED)
+ * Gray background (#F5F5F7) + white card for institutional intake feel.
+ */
 export default function AuthPage() {
   const { user, loading, signIn, signUp, signInWithMagicLink, resetPassword, updatePassword } = useAuth();
   const [searchParams] = useSearchParams();
@@ -26,7 +31,7 @@ export default function AuthPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: THEME_LIGHT_BG }}>
         <div className="animate-pulse text-muted-foreground">Loading...</div>
       </div>
     );
@@ -161,7 +166,7 @@ export default function AuthPage() {
 
   if (showResetPassword) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: THEME_LIGHT_BG }}>
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold">{BRAND.wordmark}</CardTitle>
@@ -201,7 +206,7 @@ export default function AuthPage() {
 
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: THEME_LIGHT_BG }}>
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold">{BRAND.wordmark}</CardTitle>
@@ -239,7 +244,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: THEME_LIGHT_BG }}>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">{BRAND.wordmark}</CardTitle>
