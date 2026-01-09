@@ -3,6 +3,80 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════════════════════════
+   GLOBAL SPACING SYSTEM — TRIBES STANDARD (LOCKED)
+
+   Premium spacing tokens for Apple/Stripe/Mercury-level vertical rhythm.
+   These tokens are authoritative and must be used consistently across all
+   marketing pages, sections, and the footer.
+
+   Usage:
+   - Sections: Use --section-padding-* for consistent vertical rhythm
+   - Gutters: Use --gutter-* for horizontal page margins
+   - Internal: Use --space-* for component-level spacing
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ─────────────────────────────────────────────────────────────────────────────
+     SPACING SCALE — 8px base unit
+     ───────────────────────────────────────────────────────────────────────────── */
+  --space-0: 0px;
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 64px;
+  --space-8: 80px;
+  --space-9: 96px;
+  --space-10: 120px;
+  --space-11: 160px;
+
+  /* ─────────────────────────────────────────────────────────────────────────────
+     PAGE GUTTERS — Horizontal container padding
+     Mobile: 24px | Tablet: 32px | Desktop: 48px
+     ───────────────────────────────────────────────────────────────────────────── */
+  --gutter: var(--space-4); /* 24px mobile default */
+
+  /* ─────────────────────────────────────────────────────────────────────────────
+     SECTION PADDING — Vertical rhythm for major page sections
+     Mobile: 96px | Tablet: 120px | Desktop: 160px
+     ───────────────────────────────────────────────────────────────────────────── */
+  --section-padding-y: var(--space-9); /* 96px mobile default */
+
+  /* ─────────────────────────────────────────────────────────────────────────────
+     SECTION HEADER RHYTHM — Eyebrow + headline pattern
+     ───────────────────────────────────────────────────────────────────────────── */
+  --eyebrow-top: var(--space-5);     /* 32px breathing room from section top */
+  --eyebrow-bottom: var(--space-4);  /* 24px to headline */
+  --headline-bottom: var(--space-6); /* 48px to content */
+
+  /* ─────────────────────────────────────────────────────────────────────────────
+     CONTENT RHYTHM — Internal spacing
+     ───────────────────────────────────────────────────────────────────────────── */
+  --paragraph-gap: 28px;             /* Between paragraph blocks */
+  --card-gap: var(--space-6);        /* 48px between major items */
+  --step-gap: 56px;                  /* Between numbered steps */
+  --step-list-top: var(--space-4);   /* 24px above step list */
+}
+
+/* Tablet breakpoint (768px+) */
+@media (min-width: 768px) {
+  :root {
+    --gutter: var(--space-5);          /* 32px */
+    --section-padding-y: var(--space-10); /* 120px */
+  }
+}
+
+/* Desktop breakpoint (1024px+) */
+@media (min-width: 1024px) {
+  :root {
+    --gutter: var(--space-6);          /* 48px */
+    --section-padding-y: var(--space-11); /* 160px */
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
    GLOBAL COLOR CONTRAST SYSTEM — LOCKED
 
    This color system is authoritative and must not drift.
@@ -267,6 +341,21 @@
   .status-chip {
     @apply inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium;
     @apply border border-border bg-transparent text-muted-foreground;
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────────
+     SECTION PADDING — Premium vertical rhythm for marketing pages
+     Uses CSS custom properties from :root for responsive values
+     ───────────────────────────────────────────────────────────────────────────── */
+  .section-padding {
+    padding-top: var(--section-padding-y);
+    padding-bottom: var(--section-padding-y);
+  }
+
+  /* Footer premium padding — slightly more breathing room */
+  .footer-padding {
+    padding-top: var(--section-padding-y);
+    padding-bottom: var(--space-9); /* 96px bottom on all sizes */
   }
 
   /* Section spacing */
