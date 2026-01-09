@@ -25,7 +25,8 @@ const Checkbox = React.forwardRef<
     ref={ref}
     className={cn(
       // Square, thin border, NO fill on checked, NO rounded corners
-      "peer h-5 w-5 shrink-0 rounded-none border border-[#c4c4c4] bg-white transition-colors duration-100 ease-out",
+      // Scaled to 18px to match reduced input proportions
+      "peer h-[18px] w-[18px] shrink-0 rounded-none border border-[#c4c4c4] bg-white transition-colors duration-100 ease-out",
       "data-[state=checked]:border-[#888888] data-[state=checked]:bg-white",
       "focus-visible:outline-none focus-visible:border-[#666666]",
       "disabled:cursor-not-allowed disabled:opacity-40",
@@ -34,7 +35,7 @@ const Checkbox = React.forwardRef<
     {...props}
   >
     <CheckboxPrimitive.Indicator className={cn("flex items-center justify-center text-[#222222]")}>
-      <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+      <Check className="h-3 w-3" strokeWidth={2.5} />
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
 ));

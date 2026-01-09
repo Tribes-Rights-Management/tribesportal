@@ -9,10 +9,10 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
         type={type}
         className={cn(
           // INSTITUTIONAL FORM FIELD (LOCKED)
-          // - Height: 48px, tight horizontal padding (px-3)
+          // - Height: 44px (h-11), tight horizontal padding (px-3)
           // - Neutral gray border, white bg
           // - Focus: border darkens, no ring/glow
-          "flex h-12 w-full rounded-md border border-[#d4d4d4] bg-white px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground/60 transition-colors duration-150 ease-out focus:outline-none focus:border-[#737373] disabled:cursor-not-allowed disabled:bg-[#fafafa] disabled:opacity-60",
+          "flex h-11 w-full rounded-md border border-[#d4d4d4] bg-white px-3 py-2 text-[15px] leading-normal text-foreground placeholder:text-muted-foreground/60 transition-colors duration-150 ease-out focus:outline-none focus:border-[#737373] disabled:cursor-not-allowed disabled:bg-[#fafafa] disabled:opacity-60",
           className,
         )}
         ref={ref}
