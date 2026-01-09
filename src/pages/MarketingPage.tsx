@@ -129,7 +129,7 @@ export default function MarketingPage() {
                   className="text-[15px] leading-[1.7]"
                   style={{ color: 'rgba(255,255,255,0.65)' }}
                 >
-                  Structured records of who owns what—splits, metadata, and agreements maintained as permanent reference.
+                  Structured ownership records, including splits, metadata, and agreements, maintained as permanent reference.
                 </p>
               </div>
               <div>
