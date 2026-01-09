@@ -12,10 +12,16 @@
  */
 
 /** Primary dark background - used for hero, marketing, and dark sections */
-export const THEME_DARK_BG = "#0B0E11";
+export const THEME_DARK_BG = "#0B0F14";
 
 /** Primary light background - used for body pages and light sections */
-export const THEME_LIGHT_BG = "#FFFFFF";
+export const THEME_LIGHT_BG = "#F5F5F7";
+
+/** Section padding - consistent vertical rhythm */
+export const SECTION_PADDING = {
+  mobile: "py-16 md:py-24",
+  desktop: "py-24 md:py-32",
+};
 
 /** Tailwind class for dark theme zone background */
 export const THEME_DARK_CLASS = "bg-[#0B0E11]";

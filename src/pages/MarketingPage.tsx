@@ -1,43 +1,22 @@
 import { PublicLayout } from "@/components/PublicLayout";
 import { Hero } from "@/components/Hero";
 import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
-import { THEME_DARK_BG } from "@/lib/theme";
+import { THEME_DARK_BG, THEME_LIGHT_BG } from "@/lib/theme";
 
 export default function MarketingPage() {
   return (
     <PublicLayout darkBackground>
-      {/* Shared Hero Component - pixel-perfect match with root */}
+      {/* 1) HERO = BLACK */}
       <Hero />
 
-      {/* Built for Permanence — DARK section immediately after hero (no white transition) */}
-      <section data-theme="dark" className="py-16 md:py-20" style={{ backgroundColor: THEME_DARK_BG }}>
+      {/* 2) WHO IT'S FOR = WHITE */}
+      <section 
+        data-theme="light" 
+        className="py-16 md:py-24"
+        style={{ backgroundColor: THEME_LIGHT_BG }}
+      >
         <div className={CONTENT_CONTAINER_CLASS}>
-          <div className="max-w-[560px]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] mb-7" style={{ color: 'rgba(255,255,255,0.55)' }}>
-              Built for permanence
-            </p>
-            <p className="text-[17px] md:text-[19px] leading-[1.65] mb-8" style={{ color: 'rgba(255,255,255,0.80)' }}>
-              Most publishing problems don't come from bad intent—they come from records that weren't built to hold up over time.
-            </p>
-            <div className="space-y-2.5 pt-1 border-t border-white/10">
-              <p className="text-[14px] md:text-[15px] font-medium leading-snug pt-4" style={{ color: 'rgba(255,255,255,0.65)' }}>
-                Permanent ownership records
-              </p>
-              <p className="text-[14px] md:text-[15px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.65)' }}>
-                Deterministic splits and metadata
-              </p>
-              <p className="text-[14px] md:text-[15px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.65)' }}>
-                Documentation designed to withstand audits, disputes, and time
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Who It's For — First LIGHT section */}
-      <section data-theme="light" className="py-20 md:py-28 bg-background">
-        <div className={CONTENT_CONTAINER_CLASS}>
-          <h2 className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground mb-10">
+          <h2 className="text-xs font-medium uppercase tracking-[0.12em] text-foreground/60 mb-10">
             Who It's For
           </h2>
           <div className="grid md:grid-cols-3 gap-12 md:gap-16">
@@ -45,7 +24,7 @@ export default function MarketingPage() {
               <h3 className="text-lg font-medium text-foreground mb-2">
                 Songwriters & Producers
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-foreground/70 leading-relaxed">
                 Get your copyrights registered, royalties collected, and records organized—so ownership and income remain clear over time.
               </p>
             </div>
@@ -53,7 +32,7 @@ export default function MarketingPage() {
               <h3 className="text-lg font-medium text-foreground mb-2">
                 Rights Holders
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-foreground/70 leading-relaxed">
                 Clear ownership records, structured licensing, reliable income tracking.
               </p>
             </div>
@@ -61,7 +40,7 @@ export default function MarketingPage() {
               <h3 className="text-lg font-medium text-foreground mb-2">
                 Commercial & Broadcast
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-foreground/70 leading-relaxed">
                 Clear music rights for your projects with proper authorization, documentation, and records that hold up.
               </p>
             </div>
@@ -69,10 +48,16 @@ export default function MarketingPage() {
         </div>
       </section>
 
-      {/* Removed duplicate mobile "Built for Permanence" — now unified in single dark section above */}
+      {/* Subtle separator */}
+      <div className="h-px w-full" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }} />
 
-      {/* Music as an Asset - Full-width dark section */}
-      <section data-theme="dark" id="asset-management" className="py-24 md:py-32" style={{ backgroundColor: THEME_DARK_BG }}>
+      {/* 3) MUSIC AS AN ASSET = BLACK */}
+      <section 
+        data-theme="dark" 
+        id="asset-management" 
+        className="py-16 md:py-24"
+        style={{ backgroundColor: THEME_DARK_BG }}
+      >
         <div className={CONTENT_CONTAINER_CLASS}>
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
             {/* Left Column */}
@@ -93,11 +78,11 @@ export default function MarketingPage() {
                 className="text-base leading-[1.8]"
                 style={{ color: 'rgba(255,255,255,0.72)' }}
               >
-                Publishing administration isn't paperwork—it's asset management. We handle rights, data, income, and documentation with the same rigor you'd expect from any serious financial steward. The goal is simple: protect what you've built, keep it organized, and make sure it holds up over time.
+                Publishing administration isn't paperwork—it's asset management. We handle rights, data, income, and documentation with the same rigor you'd expect from any serious financial steward.
               </p>
             </div>
             
-            {/* Right Column - Three stacked blocks */}
+            {/* Right Column */}
             <div className="space-y-12 lg:pt-12">
               <div>
                 <h3 
@@ -146,25 +131,19 @@ export default function MarketingPage() {
         </div>
       </section>
 
-      {/* Transition: Dark to Light */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      {/* Subtle separator */}
+      <div className="h-px w-full" style={{ backgroundColor: 'rgba(0,0,0,0.06)' }} />
 
-      {/* Philosophical Anchor — Category Reframe */}
-      <section data-theme="light" className="py-20 md:py-24 bg-background">
+      {/* 4) HOW COPYRIGHT CLEARANCE WORKS = WHITE */}
+      <section 
+        data-theme="light" 
+        id="how-it-works" 
+        className="py-16 md:py-24 scroll-mt-24"
+        style={{ backgroundColor: THEME_LIGHT_BG }}
+      >
         <div className={CONTENT_CONTAINER_CLASS}>
-          <div className="max-w-[580px]">
-            <p className="text-[18px] md:text-[20px] text-foreground/80 leading-[1.7] tracking-[-0.005em]">
-              Over time, the difference between administration and stewardship is whether records survive the people who made them.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* How Licensing Works - Increased density for cognitive focus */}
-      <section data-theme="light" id="how-it-works" className="py-20 md:py-24 scroll-mt-24 bg-background border-t border-border/40">
-        <div className={CONTENT_CONTAINER_CLASS}>
-          <h2 className="text-xs font-medium uppercase tracking-[0.12em] mb-4 text-muted-foreground">
-            How Licensing Works
+          <h2 className="text-xs font-medium uppercase tracking-[0.12em] mb-4 text-foreground/60">
+            How Copyright Clearance Works
           </h2>
           <p className="text-lg md:text-xl leading-relaxed mb-12 max-w-[640px] text-foreground">
             Every request is reviewed before any agreement is issued.
@@ -172,48 +151,32 @@ export default function MarketingPage() {
           <div className="grid md:grid-cols-2 gap-12 md:gap-20">
             <div className="space-y-8">
               <div>
-                <p className="text-xs font-medium mb-1.5 text-muted-foreground">
-                  01
-                </p>
-                <h3 className="text-lg font-medium mb-2 text-foreground">
-                  Submit
-                </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
+                <p className="text-xs font-medium mb-1.5 text-foreground/50">01</p>
+                <h3 className="text-lg font-medium mb-2 text-foreground">Submit</h3>
+                <p className="text-sm leading-relaxed text-foreground/70">
                   Tell us what you want to use and how. The details you provide become the foundation of the agreement.
                 </p>
               </div>
               <div>
-                <p className="text-xs font-medium mb-1.5 text-muted-foreground">
-                  02
-                </p>
-                <h3 className="text-lg font-medium mb-2 text-foreground">
-                  Review
-                </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
+                <p className="text-xs font-medium mb-1.5 text-foreground/50">02</p>
+                <h3 className="text-lg font-medium mb-2 text-foreground">Review</h3>
+                <p className="text-sm leading-relaxed text-foreground/70">
                   We verify ownership, splits, and usage details—so the agreement reflects the correct terms from the start.
                 </p>
               </div>
             </div>
             <div className="space-y-8">
               <div>
-                <p className="text-xs font-medium mb-1.5 text-muted-foreground">
-                  03
-                </p>
-                <h3 className="text-lg font-medium mb-2 text-foreground">
-                  Execute
-                </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
+                <p className="text-xs font-medium mb-1.5 text-foreground/50">03</p>
+                <h3 className="text-lg font-medium mb-2 text-foreground">Execute</h3>
+                <p className="text-sm leading-relaxed text-foreground/70">
                   Sign and pay (if applicable) in one step. Once executed, the license becomes a binding reference.
                 </p>
               </div>
               <div>
-                <p className="text-xs font-medium mb-1.5 text-muted-foreground">
-                  04
-                </p>
-                <h3 className="text-lg font-medium mb-2 text-foreground">
-                  Record
-                </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
+                <p className="text-xs font-medium mb-1.5 text-foreground/50">04</p>
+                <h3 className="text-lg font-medium mb-2 text-foreground">Record</h3>
+                <p className="text-sm leading-relaxed text-foreground/70">
                   Your agreement is stored as a permanent record—retrievable whenever you need it, years from now.
                 </p>
               </div>
@@ -222,8 +185,7 @@ export default function MarketingPage() {
         </div>
       </section>
 
-      {/* Footer transition — Clear visual separation */}
-      <div className="h-px bg-border/60" />
+      {/* 5) FOOTER = BLACK (handled by PublicLayout) */}
     </PublicLayout>
   );
 }
