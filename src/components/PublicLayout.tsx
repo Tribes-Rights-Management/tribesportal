@@ -81,8 +81,12 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
 
   return (
     <div 
-      className="min-h-dvh pb-safe flex flex-col"
-      style={pageBackgroundStyle}
+      className="min-h-dvh min-h-[100svh] pb-safe flex flex-col"
+      style={{
+        ...pageBackgroundStyle,
+        // iOS Safari: ensure dark background extends beyond viewport during overscroll
+        boxShadow: '0 100vh 0 100vh #0B0E11, 0 -100vh 0 100vh #0B0E11',
+      }}
     >
       {/* Header - 64px desktop, 56px mobile - Institutional grade lock */}
       {/* NON-STICKY: scrolls away for institutional calm (LOCKED) */}

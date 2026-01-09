@@ -303,7 +303,7 @@
 
   /* Root element - ensures full viewport coverage on iOS Safari */
   #root {
-    /* Dark background as baseline */
+    /* Dark background as baseline - prevents white flash on overscroll */
     background: #0B0E11;
     /* iOS Safari viewport units - cascading fallbacks */
     min-height: 100vh;
@@ -311,6 +311,8 @@
     min-height: 100svh;
     /* Safe area padding for notched devices */
     padding-bottom: env(safe-area-inset-bottom);
+    /* iOS Safari: extend dark color beyond viewport edges during bounce */
+    box-shadow: 0 100vh 0 100vh #0B0E11, 0 -100vh 0 100vh #0B0E11;
   }
 
   /* H1 — Primary page heading. Locked globally. */
