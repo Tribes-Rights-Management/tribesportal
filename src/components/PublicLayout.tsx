@@ -194,7 +194,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
                 </button>
               </div>
               
-              {/* Primary links - institutional styling */}
+              {/* Navigation Links - Clean vertical list, no section headers */}
               <div className="flex flex-col px-6 pt-4 gap-5">
                 <Link 
                   to="/auth" 
@@ -203,48 +203,39 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
                 >
                   Client Sign In
                 </Link>
-              </div>
-
-              {/* Services section - institutional styling */}
-              <div className="px-6 mt-10">
-                <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-foreground/40 mb-4">
+                <Link 
+                  to="/services" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
+                >
                   Services
-                </p>
-                <div className="flex flex-col gap-4">
-                  <Link 
-                    to="/services" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
-                  >
-                    Services
-                  </Link>
-                  <Link 
-                    to="/licensing-account" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
-                  >
-                    Request Licensing Access
-                  </Link>
-                  <Link 
-                    to="/services/inquiry" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
-                  >
-                    Inquire About Services
-                  </Link>
-                  <Link 
-                    to="/contact" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
-                  >
-                    Contact
-                  </Link>
-                </div>
+                </Link>
+                <Link 
+                  to="/licensing-account" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
+                >
+                  Request Licensing Access
+                </Link>
+                <Link 
+                  to="/services/inquiry" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
+                >
+                  Inquire About Services
+                </Link>
+                <Link 
+                  to="/contact" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
+                >
+                  Contact
+                </Link>
               </div>
               
-              {/* Bottom legal group - institutional styling */}
+              {/* Bottom legal group */}
               <div className="mt-auto px-6 pb-10">
-                <div className="border-t border-foreground/[0.06] pt-6 flex flex-col gap-3">
+                <div className="border-t border-foreground/[0.06] pt-5 flex flex-col gap-3">
                   <Link 
                     to="/privacy" 
                     onClick={() => setMobileMenuOpen(false)}

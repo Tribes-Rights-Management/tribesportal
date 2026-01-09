@@ -86,11 +86,9 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
             </button>
           </div>
 
-        {/* Navigation Links - Institutional grade spacing and hierarchy */}
+        {/* Navigation Links - Clean vertical list, no section headers */}
         <nav className="flex flex-col flex-1 px-8 pt-6">
-          {/* Primary Section */}
           <div className="flex flex-col gap-5">
-            {/* Client Sign In - Bold/emphasized */}
             <Link
               to="/auth"
               onClick={onClose}
@@ -98,48 +96,40 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
             >
               Client Sign In
             </Link>
-          </div>
-
-          <div className="mt-10">
-            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-foreground/40 mb-4">
+            <Link
+              to="/services"
+              onClick={onClose}
+              className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
+            >
               Services
-            </p>
-            <div className="flex flex-col gap-4">
-              <Link
-                to="/services"
-                onClick={onClose}
-                className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
-              >
-                Services
-              </Link>
-              <Link
-                to="/licensing-account"
-                onClick={onClose}
-                className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
-              >
-                Request Licensing Access
-              </Link>
-              <Link
-                to="/services/inquiry"
-                onClick={onClose}
-                className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
-              >
-                Inquire About Services
-              </Link>
-              <Link
-                to="/contact"
-                onClick={onClose}
-                className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
-              >
-                Contact
-              </Link>
-            </div>
+            </Link>
+            <Link
+              to="/licensing-account"
+              onClick={onClose}
+              className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
+            >
+              Request Licensing Access
+            </Link>
+            <Link
+              to="/services/inquiry"
+              onClick={onClose}
+              className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
+            >
+              Inquire About Services
+            </Link>
+            <Link
+              to="/contact"
+              onClick={onClose}
+              className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-foreground/15 focus-visible:outline-offset-2"
+            >
+              Contact
+            </Link>
           </div>
 
-          {/* Divider - subtle, no harsh contrast */}
-          <div className="border-t border-foreground/[0.06] mt-10 mb-6" />
+          {/* Divider */}
+          <div className="border-t border-foreground/[0.06] mt-8 mb-5" />
 
-          {/* Secondary/Footer Links - reduced hierarchy */}
+          {/* Footer Links */}
           <div className="flex flex-col gap-3">
             <Link
               to="/privacy"
