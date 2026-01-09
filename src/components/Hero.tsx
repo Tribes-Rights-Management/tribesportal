@@ -44,6 +44,8 @@ export function Hero({ contactAnchor }: HeroProps) {
         backgroundColor: THEME_DARK_BG,
         /* Full viewport height - cascading fallbacks for all browsers */
         minHeight: 'calc(100vh - var(--header-h, 56px))',
+        /* Explicit width prevents flex shrinking in certain contexts */
+        width: '100%',
       }}
     >
       {/* CSS for svh/dvh support - ensures full viewport on mobile Safari */}
