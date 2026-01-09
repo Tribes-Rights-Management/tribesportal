@@ -36,12 +36,12 @@ export default function MarketingPage() {
             Who It's For
           </p>
           
-          {/* Headline with spacing to content */}
+          {/* Headline with spacing to content — refined for institutional restraint */}
           <h2 
-            className="text-[28px] md:text-[32px] font-medium leading-[1.2] tracking-[-0.01em] text-foreground max-w-[640px]"
+            className="text-[24px] md:text-[29px] lg:text-[30px] font-medium leading-[1.2] tracking-[-0.01em] text-foreground max-w-[640px]"
             style={{ marginBottom: 'var(--headline-bottom)' }}
           >
-            Built for those who treat music rights seriously.
+            Built for long-term rights holders.
           </h2>
           
           {/* Audience cards with premium gaps */}
