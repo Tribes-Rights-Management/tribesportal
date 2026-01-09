@@ -49,7 +49,7 @@ export default function MarketingPage() {
             className="text-[15px] md:text-base leading-[1.7] text-foreground/70 max-w-[560px]"
             style={{ marginBottom: '52px' }}
           >
-            Clear ownership records, structured licensing, reliable worldwide income tracking, and disciplined royalty management.
+            Clear music rights through proper authorization, documentation, payment handling, and defensible records.
           </p>
           
           {/* Audience cards with premium gaps */}
