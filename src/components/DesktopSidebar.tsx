@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { THEME_LIGHT_BG, OVERLAY_BACKDROP, MOTION_TIMING } from "@/lib/theme";
 
 interface DesktopSidebarProps {
   isOpen: boolean;
@@ -32,15 +33,16 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
 
   return (
     <>
-      {/* Backdrop - Institutional grade: subtle blur, neutral gray dim */}
+      {/* Backdrop - Institutional grade: uses theme constants */}
       <div
-        className={`fixed inset-0 z-40 transition-opacity duration-200 ease-out ${
+        className={`fixed inset-0 z-40 ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         style={{
-          backgroundColor: 'rgba(120, 120, 120, 0.22)',
-          backdropFilter: isOpen ? 'blur(10px)' : 'blur(0px)',
-          WebkitBackdropFilter: isOpen ? 'blur(10px)' : 'blur(0px)',
+          backgroundColor: OVERLAY_BACKDROP.color,
+          backdropFilter: isOpen ? `blur(${OVERLAY_BACKDROP.blur})` : 'blur(0px)',
+          WebkitBackdropFilter: isOpen ? `blur(${OVERLAY_BACKDROP.blur})` : 'blur(0px)',
+          transition: `opacity ${MOTION_TIMING.enter}ms ${MOTION_TIMING.easing}`,
         }}
         onClick={onClose}
         aria-hidden="true"
@@ -48,13 +50,15 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
 
       {/* Sidebar Panel - 420px desktop, full-width mobile, no border/shadow */}
       <aside
-        className={`fixed top-0 right-0 h-screen w-full md:w-[420px] bg-white z-50 flex flex-col transition-transform duration-200 ease-out motion-reduce:duration-0 ${
+        className={`fixed top-0 right-0 h-screen w-full md:w-[420px] z-50 flex flex-col motion-reduce:duration-0 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
         style={{
+          backgroundColor: THEME_LIGHT_BG,
           paddingTop: 'env(safe-area-inset-top)',
           paddingBottom: 'env(safe-area-inset-bottom)',
           paddingRight: 'env(safe-area-inset-right)',
+          transition: `transform ${MOTION_TIMING.enter}ms ${MOTION_TIMING.easing}`,
         }}
         aria-label="Desktop navigation"
       >

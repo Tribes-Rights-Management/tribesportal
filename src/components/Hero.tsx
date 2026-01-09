@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
+import { THEME_DARK_BG } from "@/lib/theme";
 
 interface HeroProps {
   /** If provided, renders a button that scrolls to the anchor. Otherwise renders a Link to /our-approach */
@@ -14,7 +15,7 @@ export function Hero({ contactAnchor }: HeroProps) {
   };
 
   return (
-    <section data-theme="dark" className="bg-[#111214] pt-24 pb-32 md:pt-32 md:pb-40 lg:pt-40 lg:pb-48">
+    <section data-theme="dark" className="pt-24 pb-32 md:pt-32 md:pb-40 lg:pt-40 lg:pb-48" style={{ backgroundColor: THEME_DARK_BG }}>
       <div className={CONTENT_CONTAINER_CLASS}>
         <div className="max-w-[640px]">
           {/* Eyebrow */}

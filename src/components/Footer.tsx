@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { BRAND } from "@/lib/brand";
 import { getCopyrightLine } from "@/lib/copyright";
 import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
+import { THEME_DARK_BG } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
 interface FooterProps {
@@ -17,7 +18,7 @@ export function Footer({ className, disableLinks = false, hideLinks = false }: F
   const legalLinkClass = cn(baseLinkClass, "text-white/55 hover:opacity-100");
 
   return (
-    <footer className={cn("pt-14 pb-8 bg-[#111214]", className)}>
+    <footer className={cn("pt-14 pb-8", className)} style={{ backgroundColor: THEME_DARK_BG }}>
       <div className={CONTENT_CONTAINER_CLASS}>
         {/* Brand + Copyright — tight vertical stack */}
         <div className="mb-6">

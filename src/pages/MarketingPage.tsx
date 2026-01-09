@@ -1,6 +1,7 @@
 import { PublicLayout } from "@/components/PublicLayout";
 import { Hero } from "@/components/Hero";
 import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
+import { THEME_DARK_BG } from "@/lib/theme";
 
 export default function MarketingPage() {
   return (
@@ -94,7 +95,7 @@ export default function MarketingPage() {
       </section>
 
       {/* Music as an Asset - Full-width dark section */}
-      <section data-theme="dark" id="asset-management" className="py-24 md:py-32" style={{ backgroundColor: '#111214' }}>
+      <section data-theme="dark" id="asset-management" className="py-24 md:py-32" style={{ backgroundColor: THEME_DARK_BG }}>
         <div className={CONTENT_CONTAINER_CLASS}>
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
             {/* Left Column */}

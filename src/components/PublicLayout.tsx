@@ -3,8 +3,10 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
+import { THEME_DARK_BG, THEME_LIGHT_BG, OVERLAY_BACKDROP, MOTION_TIMING } from "@/lib/theme";
 import { Footer } from "@/components/Footer";
 import { DesktopSidebar } from "@/components/DesktopSidebar";
+import { FooterSpacer } from "@/components/FooterSpacer";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -63,21 +65,23 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
     }
   }, [mobileMenuOpen, desktopSidebarOpen]);
 
-  // Header styling - institutional grade
-  const headerBg = headerDark ? "bg-[#111214]" : "bg-white";
+  // Header styling - institutional grade, uses theme constants
+  const headerBgStyle = headerDark ? { backgroundColor: THEME_DARK_BG } : { backgroundColor: THEME_LIGHT_BG };
   const textColor = headerDark ? "text-white" : "text-foreground";
   // Subtle institutional divider: very light gray for white header, subtle white for dark
   const borderStyle = headerDark 
     ? "border-b border-white/[0.06]" 
     : "border-b border-[#e5e5e5]";
 
-  // Background color: dark pages use #111214 to prevent white fall-through
-  const pageBackground = darkBackground ? "bg-[#111214]" : "bg-background";
+  // Theme zone background - uses authoritative colors from theme.ts
+  const pageBackgroundStyle = darkBackground 
+    ? { backgroundColor: THEME_DARK_BG } 
+    : { backgroundColor: THEME_LIGHT_BG };
 
   return (
-    <div className={`min-h-screen flex flex-col ${pageBackground}`}>
+    <div className="min-h-screen flex flex-col" style={pageBackgroundStyle}>
       {/* Header - 64px desktop, 56px mobile - Institutional grade lock */}
-      <header className={`sticky top-0 z-50 ${headerBg} ${borderStyle}`}>
+      <header className={`sticky top-0 z-50 ${borderStyle}`} style={headerBgStyle}>
         <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14 md:h-16`}>
           {/* Left-aligned wordmark - institutional weight + tracking */}
           <Link 
@@ -140,15 +144,16 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
         {/* Mobile Menu - Full-screen slide-in drawer */}
         {!logoOnly && (
           <>
-            {/* Backdrop with blur */}
+            {/* Backdrop with blur - uses theme constants */}
             <div 
-              className={`fixed inset-0 z-40 md:hidden transition-opacity duration-220 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
+              className={`fixed inset-0 z-40 md:hidden ${
                 mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}
               style={{
-                backgroundColor: 'rgba(0,0,0,0.35)',
-                backdropFilter: mobileMenuOpen ? 'blur(10px)' : 'blur(0px)',
-                WebkitBackdropFilter: mobileMenuOpen ? 'blur(10px)' : 'blur(0px)',
+                backgroundColor: OVERLAY_BACKDROP.color,
+                backdropFilter: mobileMenuOpen ? `blur(${OVERLAY_BACKDROP.blur})` : 'blur(0px)',
+                WebkitBackdropFilter: mobileMenuOpen ? `blur(${OVERLAY_BACKDROP.blur})` : 'blur(0px)',
+                transition: `opacity ${MOTION_TIMING.enter}ms ${MOTION_TIMING.easing}`,
               }}
               onClick={() => setMobileMenuOpen(false)}
               aria-hidden="true"
@@ -156,14 +161,16 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
             
             {/* Drawer - Full width on mobile, white background (INSTITUTIONAL LOCK) */}
             <nav 
-              className={`fixed top-0 right-0 h-screen w-full bg-white z-50 md:hidden flex flex-col transition-transform duration-200 ease-out motion-reduce:duration-0 ${
+              className={`fixed top-0 right-0 h-screen w-full z-50 md:hidden flex flex-col motion-reduce:duration-0 ${
                 mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
               }`}
               style={{
+                backgroundColor: THEME_LIGHT_BG,
                 paddingTop: 'env(safe-area-inset-top)',
                 paddingBottom: 'env(safe-area-inset-bottom)',
                 paddingRight: 'env(safe-area-inset-right)',
                 paddingLeft: 'env(safe-area-inset-left)',
+                transition: `transform ${MOTION_TIMING.enter}ms ${MOTION_TIMING.easing}`,
               }}
               aria-label="Mobile navigation"
             >
@@ -258,9 +265,11 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
         )}
       </header>
 
-      {/* Main */}
-      <main ref={mainRef} className="flex-1">
+      {/* Main - flex-1 ensures content expands to fill viewport */}
+      <main ref={mainRef} className="flex-1 flex flex-col">
         {children}
+        {/* Footer Spacer - prevents white fall-through when content is short */}
+        <FooterSpacer isDark={darkBackground} />
       </main>
 
       {/* Footer */}

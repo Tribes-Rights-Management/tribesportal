@@ -159,6 +159,16 @@
     @apply border-border;
   }
 
+  /* ═══════════════════════════════════════════════════════════════════════════
+     GLOBAL VIEWPORT HEIGHT LOCK — PREVENTS WHITE FALL-THROUGH
+     
+     Ensures the page background extends to at least 100vh on all devices.
+     Critical for mobile where content may be shorter than viewport.
+     ═══════════════════════════════════════════════════════════════════════════ */
+  html {
+    height: 100%;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -166,6 +176,7 @@
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100%;
   }
 
   /* H1 — Primary page heading. Locked globally. */
