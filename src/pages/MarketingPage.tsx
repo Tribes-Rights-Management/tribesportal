@@ -39,10 +39,18 @@ export default function MarketingPage() {
           {/* Headline with spacing to content — refined for institutional restraint */}
           <h2 
             className="text-[24px] md:text-[29px] lg:text-[30px] font-medium leading-[1.2] tracking-[-0.01em] text-foreground max-w-[640px]"
-            style={{ marginBottom: 'var(--headline-bottom)' }}
+            style={{ marginBottom: '28px' }}
           >
             Built for long-term rights holders.
           </h2>
+          
+          {/* Supporting lead-in line */}
+          <p 
+            className="text-[15px] md:text-base leading-[1.7] text-foreground/70 max-w-[560px]"
+            style={{ marginBottom: '52px' }}
+          >
+            Clear ownership records, structured licensing, reliable worldwide income tracking, and disciplined royalty management.
+          </p>
           
           {/* Audience cards with premium gaps */}
           <div 
