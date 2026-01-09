@@ -38,7 +38,6 @@ export function ConsentRow({
         <Link
           to="/privacy"
           className="text-foreground underline underline-offset-2 hover:opacity-70 transition-opacity duration-150"
-          target="_blank"
           onClick={(e) => e.stopPropagation()}
         >
           Privacy Policy
@@ -47,7 +46,6 @@ export function ConsentRow({
         <Link
           to="/terms"
           className="text-foreground underline underline-offset-2 hover:opacity-70 transition-opacity duration-150"
-          target="_blank"
           onClick={(e) => e.stopPropagation()}
         >
           Terms of Use
