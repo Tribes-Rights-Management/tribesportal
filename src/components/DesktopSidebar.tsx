@@ -43,15 +43,13 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
 
   return (
     <>
-      {/* Backdrop - Institutional grade: subtle blur, de-emphasizes without obscuring */}
+      {/* Backdrop - Institutional grade: flat dim overlay, no blur */}
       <div
         className={`fixed inset-0 z-40 hidden md:block ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         style={{
           backgroundColor: OVERLAY_BACKDROP.color,
-          backdropFilter: isOpen ? `blur(${OVERLAY_BACKDROP.blur})` : 'blur(0px)',
-          WebkitBackdropFilter: isOpen ? `blur(${OVERLAY_BACKDROP.blur})` : 'blur(0px)',
           transition: `opacity ${isOpen ? MOTION_TIMING.enter : MOTION_TIMING.exit}ms ${MOTION_TIMING.easing}`,
         }}
         onClick={onClose}

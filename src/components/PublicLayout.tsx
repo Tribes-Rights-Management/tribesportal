@@ -151,15 +151,13 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
         {/* Mobile Menu - Full-screen slide-in drawer */}
         {!logoOnly && (
           <>
-            {/* Backdrop - Institutional: subtle blur, de-emphasizes without obscuring */}
+            {/* Backdrop - Institutional: flat dim overlay, no blur */}
             <div 
               className={`fixed inset-0 z-40 md:hidden ${
                 mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}
               style={{
                 backgroundColor: OVERLAY_BACKDROP.color,
-                backdropFilter: mobileMenuOpen ? `blur(${OVERLAY_BACKDROP.blur})` : 'blur(0px)',
-                WebkitBackdropFilter: mobileMenuOpen ? `blur(${OVERLAY_BACKDROP.blur})` : 'blur(0px)',
                 transition: `opacity ${mobileMenuOpen ? MOTION_TIMING.enter : MOTION_TIMING.exit}ms ${MOTION_TIMING.easing}`,
               }}
               onClick={() => setMobileMenuOpen(false)}
