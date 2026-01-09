@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FormPageLayout, FormSuccessLayout } from "@/components/FormPageLayout";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
+import { TribesCheckbox } from "@/components/ui/tribes-checkbox";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -307,37 +307,31 @@ export default function LicensingAccountPage() {
             Distinct "legal moment" with clear separation
             ============================================ */}
         <div className="pt-6 space-y-5">
-          <div className="flex items-start gap-3">
-            <Checkbox
-              id="terms"
-              checked={agreeToTerms}
-              onCheckedChange={(checked) => setAgreeToTerms(checked === true)}
-              disabled={isSubmitting}
-              aria-label="Agree to terms"
-              className="shrink-0 mt-0.5"
-            />
-            <label 
-              htmlFor="terms" 
-              className="text-[14px] text-muted-foreground leading-relaxed cursor-pointer"
+          <TribesCheckbox
+            id="terms"
+            checked={agreeToTerms}
+            onCheckedChange={setAgreeToTerms}
+            disabled={isSubmitting}
+          >
+            I agree to the{" "}
+            <Link 
+              to="/privacy" 
+              className="text-foreground underline underline-offset-2 hover:opacity-70 transition-opacity duration-150"
+              target="_blank"
+              onClick={(e) => e.stopPropagation()}
             >
-              I agree to the{" "}
-              <Link 
-                to="/privacy" 
-                className="text-foreground underline underline-offset-2 hover:opacity-70 transition-opacity duration-150"
-                target="_blank"
-              >
-                Privacy Policy
-              </Link>
-              {" "}and{" "}
-              <Link 
-                to="/terms" 
-                className="text-foreground underline underline-offset-2 hover:opacity-70 transition-opacity duration-150"
-                target="_blank"
-              >
-                Terms of Use
-              </Link>.
-            </label>
-          </div>
+              Privacy Policy
+            </Link>
+            {" "}and{" "}
+            <Link 
+              to="/terms" 
+              className="text-foreground underline underline-offset-2 hover:opacity-70 transition-opacity duration-150"
+              target="_blank"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Terms of Use
+            </Link>.
+          </TribesCheckbox>
 
           <Button
             type="submit"
