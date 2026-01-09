@@ -31,6 +31,25 @@
   --space-9: 96px;
   --space-10: 120px;
   --space-11: 160px;
+  --space-12: 200px;
+  
+  /* Footer-specific tokens */
+  --footer-pt-mobile: 160px;
+  --footer-pt-tablet: 180px;
+  --footer-pt-desktop: 200px;
+  --footer-pb-mobile: 96px;
+  --footer-pb-tablet: 120px;
+  --footer-pb-desktop: 140px;
+  --footer-group-gap-mobile: 96px;
+  --footer-label-to-link-mobile: 40px;
+  --footer-label-to-link-desktop: 32px;
+  --footer-link-gap-mobile: 28px;
+  --footer-link-gap-desktop: 22px;
+  --footer-column-gap-tablet: 48px;
+  --footer-column-gap-desktop: 80px;
+  --footer-signature-mt-mobile: 120px;
+  --footer-signature-mt-tablet: 140px;
+  --footer-signature-mt-desktop: 160px;
 
   /* ─────────────────────────────────────────────────────────────────────────────
      PAGE GUTTERS — Horizontal container padding
@@ -352,10 +371,59 @@
     padding-bottom: var(--section-padding-y);
   }
 
-  /* Footer premium padding — slightly more breathing room */
+  /* Footer compact padding — original spacing for root temp page */
   .footer-padding {
     padding-top: var(--section-padding-y);
     padding-bottom: var(--space-9); /* 96px bottom on all sizes */
+  }
+
+  /* Footer premium institutional padding — standard for all marketing pages */
+  .footer-padding-standard {
+    padding-top: var(--footer-pt-mobile);
+    padding-bottom: var(--footer-pb-mobile);
+  }
+
+  /* Footer standard internal spacing utilities */
+  .footer-label-spacing {
+    margin-bottom: var(--footer-label-to-link-mobile);
+  }
+  
+  .footer-link-spacing {
+    margin-top: var(--footer-link-gap-mobile);
+  }
+  
+  .footer-signature-spacing {
+    margin-top: var(--footer-signature-mt-mobile);
+  }
+
+  @media (min-width: 768px) {
+    .footer-padding-standard {
+      padding-top: var(--footer-pt-tablet);
+      padding-bottom: var(--footer-pb-tablet);
+    }
+    
+    .footer-label-spacing {
+      margin-bottom: var(--footer-label-to-link-desktop);
+    }
+    
+    .footer-link-spacing {
+      margin-top: var(--footer-link-gap-desktop);
+    }
+    
+    .footer-signature-spacing {
+      margin-top: var(--footer-signature-mt-tablet);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-padding-standard {
+      padding-top: var(--footer-pt-desktop);
+      padding-bottom: var(--footer-pb-desktop);
+    }
+    
+    .footer-signature-spacing {
+      margin-top: var(--footer-signature-mt-desktop);
+    }
   }
 
   /* Section spacing */
