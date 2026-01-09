@@ -16,7 +16,10 @@ export function Footer({ className, disableLinks = false, hideLinks = false }: F
   const linkClass = "text-[13px] leading-relaxed transition-opacity duration-150 ease-out opacity-70 hover:opacity-100 focus-visible:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-white/20 focus-visible:outline-offset-2";
 
   return (
-    <footer className={cn("py-16 md:py-20", className)} style={{ backgroundColor: THEME_DARK_BG }}>
+<footer 
+      className={cn("footer-padding", className)} 
+      style={{ backgroundColor: THEME_DARK_BG }}
+    >
       <div className={CONTENT_CONTAINER_CLASS}>
         {/* Navigation Links — 3-column desktop, 2-column mobile grid */}
         {!hideLinks && (
