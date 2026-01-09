@@ -53,8 +53,8 @@ export const THEME_LIGHT_CLASS = "bg-[#F5F5F7]";
 
 /** Overlay backdrop - institutional standard (soft frost, Apple-grade) */
 export const OVERLAY_BACKDROP = {
-  color: "rgba(11, 13, 16, 0.25)",
-  blur: "4px",
+  color: "rgba(11, 13, 16, 0.22)",
+  blur: "3px",
 };
 
 /** Motion timing - institutional standard (firm, restrained) */
