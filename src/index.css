@@ -47,9 +47,9 @@
   --footer-link-gap-desktop: 22px;
   --footer-column-gap-tablet: 48px;
   --footer-column-gap-desktop: 80px;
-  --footer-signature-mt-mobile: 120px;
-  --footer-signature-mt-tablet: 140px;
-  --footer-signature-mt-desktop: 160px;
+  --footer-signature-mt-mobile: 64px;
+  --footer-signature-mt-tablet: 72px;
+  --footer-signature-mt-desktop: 80px;
 
   /* ─────────────────────────────────────────────────────────────────────────────
      PAGE GUTTERS — Horizontal container padding
