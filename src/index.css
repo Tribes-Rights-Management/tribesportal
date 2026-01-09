@@ -33,10 +33,10 @@
   --space-11: 160px;
   --space-12: 200px;
   
-  /* Footer-specific tokens */
-  --footer-pt-mobile: 160px;
-  --footer-pt-tablet: 180px;
-  --footer-pt-desktop: 200px;
+  /* Footer-specific tokens — 1.25× ratio to section padding (LOCKED) */
+  --footer-pt-mobile: 120px;   /* 1.25× of 96px section padding */
+  --footer-pt-tablet: 150px;   /* 1.25× of 120px section padding */
+  --footer-pt-desktop: 200px;  /* 1.25× of 160px section padding */
   --footer-pb-mobile: 96px;
   --footer-pb-tablet: 120px;
   --footer-pb-desktop: 140px;
