@@ -26,12 +26,13 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
 
   // Root landing page exception - no desktop sidebar, dark header integrated with hero
   const isRootPage = location.pathname === "/";
+  const isMarketingPage = location.pathname === "/marketing";
 
   // GLOBAL HEADER RULE (LOCKED - INSTITUTIONAL GRADE)
-  // Root (/) only: Black header, white logo, integrated with hero
+  // Root (/) AND /marketing: Black header, white logo, integrated with hero
   // All other pages: White header, black logo, black hamburger, subtle divider
   // NO scroll-based color switching. NO exceptions.
-  const headerDark = isRootPage;
+  const headerDark = isRootPage || isMarketingPage;
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -100,8 +101,8 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
             </span>
           </Link>
           
-          {/* Root page: Contact link on right */}
-          {!logoOnly && isRootPage && (
+          {/* Root or marketing page: Contact link on right */}
+          {!logoOnly && (isRootPage || isMarketingPage) && (
             <Link 
               to="/contact" 
               className={`hidden md:block text-[13px] transition-opacity duration-150 ease-out opacity-60 hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 ${headerDark ? 'text-white focus-visible:outline-white/20' : 'text-foreground focus-visible:outline-foreground/15'}`}
@@ -110,8 +111,8 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
             </Link>
           )}
 
-          {/* Non-root pages: Hamburger menu trigger on right (desktop) */}
-          {!logoOnly && !isRootPage && (
+          {/* Non-marketing pages: Hamburger menu trigger on right (desktop) */}
+          {!logoOnly && !isRootPage && !isMarketingPage && (
             <button
               onClick={() => setDesktopSidebarOpen(true)}
               className={`hidden md:flex p-2 -mr-2 transition-opacity duration-150 ease-out opacity-70 hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 ${headerDark ? 'text-white focus-visible:outline-white/20' : 'text-foreground focus-visible:outline-foreground/15'}`}
@@ -260,8 +261,8 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
           </>
         )}
 
-        {/* Desktop Sidebar - only for non-root pages */}
-        {!logoOnly && !isRootPage && (
+        {/* Desktop Sidebar - only for non-marketing pages */}
+        {!logoOnly && !isRootPage && !isMarketingPage && (
           <DesktopSidebar
             isOpen={desktopSidebarOpen}
             onClose={() => setDesktopSidebarOpen(false)}
