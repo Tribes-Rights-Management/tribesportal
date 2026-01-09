@@ -9,24 +9,24 @@ export default function MarketingPage() {
       {/* Shared Hero Component - pixel-perfect match with root */}
       <Hero />
 
-      {/* Built for Permanence — Structural Differentiation (Desktop: after hero, Mobile: after Who It's For) */}
-      <section data-theme="light" className="relative pt-12 pb-16 md:pt-14 md:pb-20 bg-background border-b border-border/30 hidden md:block" style={{ marginTop: 0 }}>
+      {/* Built for Permanence — DARK section immediately after hero (no white transition) */}
+      <section data-theme="dark" className="py-16 md:py-20" style={{ backgroundColor: THEME_DARK_BG }}>
         <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[560px]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/80 mb-7">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] mb-7" style={{ color: 'rgba(255,255,255,0.55)' }}>
               Built for permanence
             </p>
-            <p className="text-[19px] text-foreground/80 leading-[1.65] mb-8">
+            <p className="text-[17px] md:text-[19px] leading-[1.65] mb-8" style={{ color: 'rgba(255,255,255,0.80)' }}>
               Most publishing problems don't come from bad intent—they come from records that weren't built to hold up over time.
             </p>
-            <div className="space-y-2.5 pt-1 border-t border-border/20">
-              <p className="text-[15px] font-medium text-foreground/70 leading-snug pt-4">
+            <div className="space-y-2.5 pt-1 border-t border-white/10">
+              <p className="text-[14px] md:text-[15px] font-medium leading-snug pt-4" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 Permanent ownership records
               </p>
-              <p className="text-[15px] font-medium text-foreground/70 leading-snug">
+              <p className="text-[14px] md:text-[15px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 Deterministic splits and metadata
               </p>
-              <p className="text-[15px] font-medium text-foreground/70 leading-snug">
+              <p className="text-[14px] md:text-[15px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 Documentation designed to withstand audits, disputes, and time
               </p>
             </div>
@@ -34,8 +34,8 @@ export default function MarketingPage() {
         </div>
       </section>
 
-      {/* Who It's For */}
-      <section data-theme="light" className="py-24 md:py-32">
+      {/* Who It's For — First LIGHT section */}
+      <section data-theme="light" className="py-20 md:py-28 bg-background">
         <div className={CONTENT_CONTAINER_CLASS}>
           <h2 className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground mb-10">
             Who It's For
@@ -69,30 +69,7 @@ export default function MarketingPage() {
         </div>
       </section>
 
-      {/* Built for Permanence — Mobile Only (appears after Who It's For) */}
-      <section data-theme="light" className="pt-8 pb-12 bg-background border-b border-border/30 md:hidden">
-        <div className={CONTENT_CONTAINER_CLASS}>
-          <div className="max-w-[320px]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/80 mb-5">
-              Built for permanence
-            </p>
-            <p className="text-[17px] text-foreground/80 leading-[1.6] mb-6">
-              Most publishing problems don't come from bad intent—they come from records that weren't built to hold up over time.
-            </p>
-            <div className="space-y-2 pt-1 border-t border-border/20">
-              <p className="text-[14px] font-medium text-foreground/70 leading-snug pt-3">
-                Permanent ownership records
-              </p>
-              <p className="text-[14px] font-medium text-foreground/70 leading-snug">
-                Deterministic splits and metadata
-              </p>
-              <p className="text-[14px] font-medium text-foreground/70 leading-snug">
-                Documentation designed to withstand audits, disputes, and time
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Removed duplicate mobile "Built for Permanence" — now unified in single dark section above */}
 
       {/* Music as an Asset - Full-width dark section */}
       <section data-theme="dark" id="asset-management" className="py-24 md:py-32" style={{ backgroundColor: THEME_DARK_BG }}>

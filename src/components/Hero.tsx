@@ -51,6 +51,9 @@ export function Hero({ contactAnchor }: HeroProps) {
         /* Mobile-first: full viewport height on all devices */
         [data-hero-section] {
           min-height: calc(100vh - var(--header-h, 56px));
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
         }
         @supports (min-height: 100svh) {
           [data-hero-section] {
@@ -65,7 +68,7 @@ export function Hero({ contactAnchor }: HeroProps) {
       `}</style>
       
       {/* Content - vertically centered via parent flexbox */}
-      <div className={`${CONTENT_CONTAINER_CLASS} py-16 md:py-24 lg:py-32`}>
+      <div className={`${CONTENT_CONTAINER_CLASS} py-12 md:py-24 lg:py-32`}>
         <div className="max-w-[640px]">
           {/* Eyebrow */}
           <p className="text-sm font-medium tracking-[0.08em] text-[#C9C9CC] mb-14">
