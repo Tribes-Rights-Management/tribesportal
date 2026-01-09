@@ -4,7 +4,7 @@ import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
 
 export default function MarketingPage() {
   return (
-    <PublicLayout>
+    <PublicLayout darkBackground>
       {/* Shared Hero Component - pixel-perfect match with root */}
       <Hero />
 

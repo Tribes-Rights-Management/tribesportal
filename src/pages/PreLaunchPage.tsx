@@ -4,7 +4,7 @@ import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
 
 export default function PreLaunchPage() {
   return (
-    <PublicLayout logoOnly hideFooterLinks mobileContactAnchor="contact">
+    <PublicLayout logoOnly hideFooterLinks mobileContactAnchor="contact" darkBackground>
       {/* Shared Hero Component */}
       <Hero contactAnchor="contact" />
 

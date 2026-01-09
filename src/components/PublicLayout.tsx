@@ -12,9 +12,11 @@ interface PublicLayoutProps {
   disableFooterLinks?: boolean;
   hideFooterLinks?: boolean;
   mobileContactAnchor?: string;
+  /** Use dark theme background (bg-[#111214]) for the entire page to prevent white fall-through */
+  darkBackground?: boolean;
 }
 
-export function PublicLayout({ children, logoOnly = false, disableFooterLinks = false, hideFooterLinks = false, mobileContactAnchor }: PublicLayoutProps) {
+export function PublicLayout({ children, logoOnly = false, disableFooterLinks = false, hideFooterLinks = false, mobileContactAnchor, darkBackground = false }: PublicLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(false);
   const mainRef = useRef<HTMLElement>(null);
@@ -69,8 +71,11 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
     ? "border-b border-white/[0.06]" 
     : "border-b border-[#e5e5e5]";
 
+  // Background color: dark pages use #111214 to prevent white fall-through
+  const pageBackground = darkBackground ? "bg-[#111214]" : "bg-background";
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className={`min-h-screen flex flex-col ${pageBackground}`}>
       {/* Header - 64px desktop, 56px mobile - Institutional grade lock */}
       <header className={`sticky top-0 z-50 ${headerBg} ${borderStyle}`}>
         <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14 md:h-16`}>
