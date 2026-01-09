@@ -6,7 +6,6 @@ import { CONTENT_CONTAINER_CLASS } from "@/lib/layout";
 import { THEME_DARK_BG, THEME_LIGHT_BG, OVERLAY_BACKDROP, MOTION_TIMING } from "@/lib/theme";
 import { Footer } from "@/components/Footer";
 import { DesktopSidebar } from "@/components/DesktopSidebar";
-import { FooterSpacer } from "@/components/FooterSpacer";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -268,8 +267,6 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
       {/* Main - flex-1 ensures content expands to fill viewport */}
       <main ref={mainRef} className="flex-1 flex flex-col">
         {children}
-        {/* Footer Spacer - prevents white fall-through when content is short */}
-        <FooterSpacer isDark={darkBackground} />
       </main>
 
       {/* Footer — root page uses compact variant to preserve original layout */}
