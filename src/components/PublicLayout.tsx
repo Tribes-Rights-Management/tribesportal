@@ -88,7 +88,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
       {/* Header - 64px desktop, 56px mobile - Institutional grade lock */}
       {/* NON-STICKY: scrolls away for institutional calm (LOCKED) */}
       <header className={`relative z-50 ${borderStyle}`} style={headerBgStyle}>
-        <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14 md:h-16`}>
+        <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14 md:h-16`} style={{ outline: '2px solid lime' }}>
           {/* Left-aligned wordmark - institutional weight + tracking */}
           <Link 
             to="/" 

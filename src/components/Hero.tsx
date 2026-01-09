@@ -70,7 +70,7 @@ export function Hero({ contactAnchor }: HeroProps) {
       `}</style>
       
       {/* Content - vertically centered via parent flexbox */}
-      <div className={`${CONTENT_CONTAINER_CLASS} py-12 md:py-24 lg:py-32`}>
+      <div className={`${CONTENT_CONTAINER_CLASS} py-12 md:py-24 lg:py-32`} style={{ outline: '2px solid lime' }}>
         <div className="max-w-[640px]">
           {/* Eyebrow */}
           <p className="text-sm font-medium tracking-[0.08em] text-[#C9C9CC] mb-14">
