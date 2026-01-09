@@ -202,7 +202,7 @@ export default function ContactPage() {
 
         {/* Post-form expectation note — institutional tone */}
         <p className="text-[13px] text-muted-foreground text-center pt-2">
-          Submissions are reviewed in order received.
+          Submissions are reviewed in the order received.
         </p>
       </form>
     </FormPageLayout>
