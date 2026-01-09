@@ -51,10 +51,10 @@ export const THEME_DARK_CLASS = "bg-[#0B0F14]";
 /** Tailwind class for light theme zone background (form zone) */
 export const THEME_LIGHT_CLASS = "bg-[#F5F5F7]";
 
-/** Overlay backdrop - institutional standard (soft frost, Apple-grade) */
+/** Overlay backdrop - institutional standard (dim-first, subtle blur) */
 export const OVERLAY_BACKDROP = {
-  color: "rgba(11, 13, 16, 0.22)",
-  blur: "3px",
+  color: "rgba(0, 0, 0, 0.40)",
+  blur: "6px",
 };
 
 /** Motion timing - institutional standard (firm, restrained) */

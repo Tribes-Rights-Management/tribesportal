@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FormPageLayout, FormSuccessLayout } from "@/components/FormPageLayout";
 import { Input } from "@/components/ui/input";
@@ -21,7 +21,21 @@ import { z } from "zod";
 /**
  * LICENSING ACCOUNT PAGE — Uses global FormPageLayout standard
  * NO page-specific typography or spacing overrides.
+ * 
+ * FORM PERSISTENCE: Uses sessionStorage to preserve form state
+ * when users navigate to legal pages and return via browser Back.
  */
+
+const STORAGE_KEY = "licensing-account-draft";
+
+interface FormDraft {
+  fullName: string;
+  company: string;
+  email: string;
+  country: string;
+  organizationType: string;
+  intendedUse: string;
+}
 
 const licensingAccountSchema = z.object({
   fullName: z.string().trim().min(1, "This field is required.").max(200),
@@ -47,7 +61,58 @@ export default function LicensingAccountPage() {
   const [intendedUse, setIntendedUse] = useState("");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRestored, setIsRestored] = useState(false);
   const { toast } = useToast();
+
+  // Restore form draft from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const draft: FormDraft = JSON.parse(saved);
+        setFullName(draft.fullName || "");
+        setCompany(draft.company || "");
+        setEmail(draft.email || "");
+        setCountry(draft.country || "");
+        setOrganizationType(draft.organizationType || "");
+        setIntendedUse(draft.intendedUse || "");
+      }
+    } catch (e) {
+      // Ignore parse errors
+    }
+    setIsRestored(true);
+  }, []);
+
+  // Save form draft to sessionStorage on change (after initial restore)
+  const saveDraft = useCallback(() => {
+    if (!isRestored) return;
+    const draft: FormDraft = {
+      fullName,
+      company,
+      email,
+      country,
+      organizationType,
+      intendedUse,
+    };
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+    } catch (e) {
+      // Ignore storage errors
+    }
+  }, [isRestored, fullName, company, email, country, organizationType, intendedUse]);
+
+  useEffect(() => {
+    saveDraft();
+  }, [saveDraft]);
+
+  // Clear draft on successful submission
+  const clearDraft = useCallback(() => {
+    try {
+      sessionStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+      // Ignore errors
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -98,10 +163,13 @@ export default function LicensingAccountPage() {
       const status = data?.status;
 
       if (status === "active") {
+        clearDraft();
         setViewState("exists");
       } else if (status === "pending") {
+        clearDraft();
         setViewState("pending");
       } else if (status === "new_request") {
+        clearDraft();
         setViewState("submitted");
       } else {
         throw new Error("Unexpected response");

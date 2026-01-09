@@ -43,7 +43,7 @@ export function DesktopSidebar({ isOpen, onClose }: DesktopSidebarProps) {
 
   return (
     <>
-      {/* Backdrop - Institutional grade: soft frost, 8px blur */}
+      {/* Backdrop - Institutional: dim-first approach, subtle blur */}
       <div
         className={`fixed inset-0 z-40 hidden md:block ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"

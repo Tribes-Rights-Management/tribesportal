@@ -151,8 +151,8 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
         {/* Mobile Menu - Full-screen slide-in drawer */}
         {!logoOnly && (
           <>
-            {/* Backdrop - Institutional: soft frost, 8px blur */}
-            <div 
+            {/* Backdrop - Institutional: dim-first approach, subtle blur */}
+            <div
               className={`fixed inset-0 z-40 md:hidden ${
                 mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}
