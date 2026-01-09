@@ -116,53 +116,79 @@ export default function ContactPage() {
   return (
     <FormPageLayout
       title="Contact"
-      lede="Questions or general inquiries."
+      lede="Submit an inquiry below. All messages are reviewed."
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          type="text"
-          placeholder="Full name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          disabled={isSubmitting}
-          aria-label="Name"
-        />
+      {/* Intent clarification — institutional tone */}
+      <p className="text-[14px] text-muted-foreground leading-relaxed mb-8 -mt-4">
+        This form is intended for licensing, administration, and general business inquiries.
+      </p>
 
-        <Input
-          type="email"
-          placeholder="Email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          disabled={isSubmitting}
-          aria-label="Email"
-        />
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Full name */}
+        <div className="space-y-2">
+          <label htmlFor="contact-name" className="text-[13px] font-medium text-foreground">
+            Full name
+          </label>
+          <Input
+            id="contact-name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            disabled={isSubmitting}
+          />
+        </div>
 
-        <Select value={location} onValueChange={setLocation} disabled={isSubmitting}>
-          <SelectTrigger aria-label="Select your location">
-            <SelectValue placeholder="Country or territory" />
-          </SelectTrigger>
-          <SelectContent>
-            {COUNTRIES.map((c) => (
-              <SelectItem key={c} value={c}>
-                {c}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {/* Email address */}
+        <div className="space-y-2">
+          <label htmlFor="contact-email" className="text-[13px] font-medium text-foreground">
+            Email address
+          </label>
+          <Input
+            id="contact-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={isSubmitting}
+          />
+        </div>
 
-        <Textarea
-          placeholder="Your message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          required
-          disabled={isSubmitting}
-          rows={4}
-          aria-label="Message"
-        />
+        {/* Country or territory */}
+        <div className="space-y-2">
+          <label htmlFor="contact-location" className="text-[13px] font-medium text-foreground">
+            Country or territory
+          </label>
+          <Select value={location} onValueChange={setLocation} disabled={isSubmitting}>
+            <SelectTrigger id="contact-location">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              {COUNTRIES.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-        {/* Full-width submit button - institutional standard (LOCKED) */}
+        {/* Your message */}
+        <div className="space-y-2">
+          <label htmlFor="contact-message" className="text-[13px] font-medium text-foreground">
+            Your message
+          </label>
+          <Textarea
+            id="contact-message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            required
+            disabled={isSubmitting}
+            rows={4}
+          />
+        </div>
+
+        {/* Full-width submit button — institutional standard (LOCKED) */}
         <div className="pt-3">
           <Button
             type="submit"
@@ -170,9 +196,14 @@ export default function ContactPage() {
             size="lg"
             className="w-full"
           >
-            {isSubmitting ? "Sending…" : "Send Message"}
+            {isSubmitting ? "Submitting…" : "Submit"}
           </Button>
         </div>
+
+        {/* Post-form expectation note — institutional tone */}
+        <p className="text-[13px] text-muted-foreground text-center pt-2">
+          Submissions are reviewed in order received.
+        </p>
       </form>
     </FormPageLayout>
   );
