@@ -196,60 +196,54 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
               {/* Navigation Links - Clean vertical list, no section headers */}
               <div className="flex flex-col px-6 pt-4 gap-5">
                 <Link 
-                  to="/auth" 
+                  to="/portal" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-[15px] font-semibold text-foreground transition-opacity duration-150 ease-out hover:opacity-70"
+                  className="text-[15px] text-[#4A4A4A] font-normal transition-colors duration-[120ms] ease-out hover:text-[#000000] hover:font-medium focus-visible:text-[#000000] focus-visible:font-medium"
                 >
-                  Client Sign In
+                  Client Portal
                 </Link>
                 <Link 
                   to="/services" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
+                  className="text-[15px] text-[#4A4A4A] font-normal transition-colors duration-[120ms] ease-out hover:text-[#000000] hover:font-medium focus-visible:text-[#000000] focus-visible:font-medium"
                 >
                   Services
                 </Link>
                 <Link 
-                  to="/licensing-account" 
+                  to="/how-publishing-admin-works" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
+                  className="text-[15px] text-[#4A4A4A] font-normal transition-colors duration-[120ms] ease-out hover:text-[#000000] hover:font-medium focus-visible:text-[#000000] focus-visible:font-medium"
                 >
-                  Request Licensing Access
+                  How Administration Works
                 </Link>
                 <Link 
-                  to="/services/inquiry" 
+                  to="/how-licensing-works" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
+                  className="text-[15px] text-[#4A4A4A] font-normal transition-colors duration-[120ms] ease-out hover:text-[#000000] hover:font-medium focus-visible:text-[#000000] focus-visible:font-medium"
                 >
-                  Inquire About Services
+                  How Licensing Works
+                </Link>
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-foreground/[0.06] mx-6 mt-8 mb-5" />
+
+              {/* Secondary Links */}
+              <div className="flex flex-col px-6 gap-5">
+                <Link 
+                  to="/licensing-account" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-[15px] text-[#4A4A4A] font-normal transition-colors duration-[120ms] ease-out hover:text-[#000000] hover:font-medium focus-visible:text-[#000000] focus-visible:font-medium"
+                >
+                  Licensing Access
                 </Link>
                 <Link 
                   to="/contact" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-[15px] text-foreground/80 transition-opacity duration-150 ease-out hover:opacity-100"
+                  className="text-[15px] text-[#4A4A4A] font-normal transition-colors duration-[120ms] ease-out hover:text-[#000000] hover:font-medium focus-visible:text-[#000000] focus-visible:font-medium"
                 >
                   Contact
                 </Link>
-              </div>
-              
-              {/* Bottom legal group */}
-              <div className="mt-auto px-6 pb-10">
-                <div className="border-t border-foreground/[0.06] pt-5 flex flex-col gap-3">
-                  <Link 
-                    to="/privacy" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-[13px] text-foreground/50 transition-opacity duration-150 ease-out hover:opacity-100"
-                  >
-                    Privacy Policy
-                  </Link>
-                  <Link 
-                    to="/terms" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-[13px] text-foreground/50 transition-opacity duration-150 ease-out hover:opacity-100"
-                  >
-                    Terms of Use
-                  </Link>
-                </div>
               </div>
             </nav>
           </>
