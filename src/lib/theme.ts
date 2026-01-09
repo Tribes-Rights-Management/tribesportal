@@ -41,3 +41,6 @@ export const FOOTER_SPACER = {
   mobile: 80,   // 64-96px
   desktop: 100, // 80-120px
 };
+
+/** Header height CSS variable name */
+export const HEADER_HEIGHT_VAR = "--header-h";

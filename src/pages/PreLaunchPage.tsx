@@ -9,7 +9,7 @@ export default function PreLaunchPage() {
       <Hero contactAnchor="contact" />
 
       {/* Contact Section */}
-      <section data-theme="light" id="contact" className="py-24 md:py-32 scroll-mt-24 bg-background">
+      <section data-theme="light" id="contact" className="relative py-24 md:py-32 scroll-mt-24 bg-background" style={{ marginTop: 0 }}>
         <div className={CONTENT_CONTAINER_CLASS}>
           <div className="max-w-[560px]">
             <h2 className="text-2xl md:text-3xl font-medium text-foreground mb-6">

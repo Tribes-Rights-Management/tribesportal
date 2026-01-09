@@ -34,6 +34,8 @@
   :root {
     /* Header height for content clearance calculations */
     --header-height: 64px;
+    /* Mobile-aware header height variable used by hero sections */
+    --header-h: 56px; /* Mobile: 56px (h-14) */
 
     /* Background & Surface */
     --background: 0 0% 100%;
@@ -222,6 +224,11 @@
   }
 
   @media (min-width: 768px) {
+    :root {
+      /* Desktop: 64px (h-16) */
+      --header-h: 64px;
+    }
+    
     h1 {
       font-size: 40px;
     }
