@@ -74,12 +74,16 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
     : "border-b border-[#e5e5e5]";
 
   // Theme zone background - uses authoritative colors from theme.ts
+  // Dark pages keep the global dark baseline; light pages explicitly paint white
   const pageBackgroundStyle = darkBackground 
     ? { backgroundColor: THEME_DARK_BG } 
     : { backgroundColor: THEME_LIGHT_BG };
 
   return (
-    <div className="min-h-screen flex flex-col" style={pageBackgroundStyle}>
+    <div 
+      className="min-h-dvh pb-safe flex flex-col"
+      style={pageBackgroundStyle}
+    >
       {/* Header - 64px desktop, 56px mobile - Institutional grade lock */}
       <header className={`sticky top-0 z-50 ${borderStyle}`} style={headerBgStyle}>
         <div className={`${CONTENT_CONTAINER_CLASS} flex items-center justify-between h-14 md:h-16`}>

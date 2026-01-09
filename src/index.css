@@ -160,23 +160,56 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     GLOBAL VIEWPORT HEIGHT LOCK — PREVENTS WHITE FALL-THROUGH
+     GLOBAL VIEWPORT + iOS SAFARI FIX — PREVENTS WHITE FALL-THROUGH
      
-     Ensures the page background extends to at least 100vh on all devices.
-     Critical for mobile where content may be shorter than viewport.
+     CRITICAL: html/body background is DARK by default to prevent white bleed
+     on iOS Safari during bounce, dynamic viewport changes, and safe-area reveal.
+     
+     Light pages explicitly paint their own white background via layout wrappers.
      ═══════════════════════════════════════════════════════════════════════════ */
   html {
-    height: 100%;
+    /* Dark background as global baseline - prevents iOS white flash */
+    background: #0B0E11;
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    /* Prevent bounce revealing white */
+    overscroll-behavior-y: none;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    /* Dark background baseline for iOS Safari */
+    background: #0B0E11;
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-size: 16px;
     line-height: 1.65;
+    margin: 0;
+    padding: 0;
+    /* Prevent horizontal overflow */
+    overflow-x: hidden;
+    /* Prevent bounce revealing white */
+    overscroll-behavior-y: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    min-height: 100%;
+    /* iOS Safari viewport fix - use all three for maximum compatibility */
+    min-height: 100vh;
+    min-height: 100dvh;
+    min-height: 100svh;
+  }
+
+  /* Root element - ensures full viewport coverage on iOS Safari */
+  #root {
+    /* Dark background as baseline */
+    background: #0B0E11;
+    /* iOS Safari viewport units - cascading fallbacks */
+    min-height: 100vh;
+    min-height: 100dvh;
+    min-height: 100svh;
+    /* Safe area padding for notched devices */
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   /* H1 — Primary page heading. Locked globally. */
@@ -344,6 +377,24 @@
 }
 
 @layer utilities {
+  /* ═══════════════════════════════════════════════════════════════════════════
+     iOS SAFARI VIEWPORT UTILITIES — LOCKED
+     
+     These utilities ensure full viewport coverage on iOS Safari with
+     dynamic viewport height support and safe-area handling.
+     ═══════════════════════════════════════════════════════════════════════════ */
+  
+  /* Full dynamic viewport height - iOS Safari compatible */
+  .min-h-dvh {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Safe area bottom padding for notched devices */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
   /* Content fade - opacity only, 150ms */
   .animate-content-fade {
     animation: contentFade 0.15s ease-out forwards;
