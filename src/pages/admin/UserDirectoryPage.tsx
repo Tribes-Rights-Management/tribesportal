@@ -10,29 +10,67 @@ import { ArrowLeft, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
+interface UserWithRole {
+  id: string;
+  email: string;
+  status: UserStatus;
+  created_at: string;
+  last_login_at: string | null;
+  role: UserRole;
+}
+
 export default function UserDirectoryPage() {
   const { profile: currentProfile } = useAuth();
-  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
 
   const fetchUsers = async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    
+    // Fetch profiles
+    const { data: profiles, error: profilesError } = await supabase
       .from("user_profiles")
-      .select("*")
+      .select("id, email, status, created_at, last_login_at")
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("Error fetching users:", error);
+    if (profilesError) {
+      console.error("Error fetching profiles:", profilesError);
       toast({
         title: "Error",
         description: "Failed to load users",
         variant: "destructive",
       });
-    } else {
-      setUsers(data as UserProfile[]);
+      setLoading(false);
+      return;
     }
+
+    // Fetch roles
+    const { data: roles, error: rolesError } = await supabase
+      .from("user_roles")
+      .select("user_id, role");
+
+    if (rolesError) {
+      console.error("Error fetching roles:", rolesError);
+      toast({
+        title: "Error",
+        description: "Failed to load user roles",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Create a map of user_id to role
+    const roleMap = new Map(roles?.map(r => [r.user_id, r.role as UserRole]) || []);
+
+    // Combine profiles with roles
+    const usersWithRoles: UserWithRole[] = (profiles || []).map(profile => ({
+      ...profile,
+      role: roleMap.get(profile.id) || "client" as UserRole
+    }));
+
+    setUsers(usersWithRoles);
     setLoading(false);
   };
 
@@ -52,9 +90,9 @@ export default function UserDirectoryPage() {
 
     setUpdating(userId);
     const { error } = await supabase
-      .from("user_profiles")
+      .from("user_roles")
       .update({ role: newRole })
-      .eq("id", userId);
+      .eq("user_id", userId);
 
     if (error) {
       toast({

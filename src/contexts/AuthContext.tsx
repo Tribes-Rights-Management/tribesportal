@@ -45,11 +45,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          await fetchProfile(session.user.id);
+          // Use setTimeout to avoid potential Supabase client deadlock
+          setTimeout(() => {
+            fetchProfile(session.user.id);
+          }, 0);
         } else {
           setProfile(null);
           setLoading(false);
@@ -62,17 +65,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function fetchProfile(userId: string) {
     try {
-      const { data, error } = await supabase
-        .from("user_profiles")
-        .select("*")
-        .eq("id", userId)
-        .single();
+      // Fetch profile and role separately (role is now in user_roles table)
+      const [profileResult, roleResult] = await Promise.all([
+        supabase
+          .from("user_profiles")
+          .select("id, email, status, created_at, last_login_at")
+          .eq("id", userId)
+          .maybeSingle(),
+        supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", userId)
+          .maybeSingle()
+      ]);
 
-      if (error) {
-        console.error("Error fetching profile:", error);
+      if (profileResult.error || !profileResult.data) {
+        console.error("Error fetching profile:", profileResult.error);
+        setProfile(null);
+      } else if (roleResult.error || !roleResult.data) {
+        console.error("Error fetching role:", roleResult.error);
         setProfile(null);
       } else {
-        setProfile(data as UserProfile);
+        const combinedProfile: UserProfile = {
+          ...profileResult.data,
+          role: roleResult.data.role as UserRole
+        };
+        setProfile(combinedProfile);
+        
         // Update last login
         await supabase
           .from("user_profiles")

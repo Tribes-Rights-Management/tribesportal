@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { UserProfile, UserRole } from "@/contexts/AuthContext";
+import { UserRole } from "@/contexts/AuthContext";
 
 export default function AuthCallbackPage() {
   const navigate = useNavigate();
@@ -24,25 +24,41 @@ export default function AuthCallbackPage() {
           return;
         }
 
-        // Fetch the user's profile
-        const { data: profile, error: profileError } = await supabase
-          .from("user_profiles")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
+        // Fetch the user's profile and role separately
+        const [profileResult, roleResult] = await Promise.all([
+          supabase
+            .from("user_profiles")
+            .select("id, email, status, created_at, last_login_at")
+            .eq("id", session.user.id)
+            .maybeSingle(),
+          supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", session.user.id)
+            .maybeSingle()
+        ]);
 
-        if (profileError || !profile) {
-          console.error("Profile error:", profileError);
+        if (profileResult.error || !profileResult.data) {
+          console.error("Profile error:", profileResult.error);
           // User authenticated but no profile exists
           await supabase.auth.signOut();
           navigate("/auth/error", { replace: true });
           return;
         }
 
-        const userProfile = profile as UserProfile;
+        if (roleResult.error || !roleResult.data) {
+          console.error("Role error:", roleResult.error);
+          // User has profile but no role assigned
+          await supabase.auth.signOut();
+          navigate("/auth/error", { replace: true });
+          return;
+        }
+
+        const userStatus = profileResult.data.status;
+        const userRole = roleResult.data.role as UserRole;
 
         // Check status
-        if (userProfile.status !== "active") {
+        if (userStatus !== "active") {
           await supabase.auth.signOut();
           navigate("/auth/error", { replace: true });
           return;
@@ -61,7 +77,7 @@ export default function AuthCallbackPage() {
           licensing: "/licensing",
         };
 
-        const targetRoute = roleRoutes[userProfile.role];
+        const targetRoute = roleRoutes[userRole];
         if (targetRoute) {
           navigate(targetRoute, { replace: true });
         } else {
