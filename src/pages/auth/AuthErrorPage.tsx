@@ -1,41 +1,54 @@
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, ArrowLeft } from "lucide-react";
 
 export default function AuthErrorPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
-      <Card className="w-full max-w-md text-center">
-        <CardHeader className="space-y-4">
-          <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
-            <AlertCircle className="h-6 w-6 text-destructive" />
-          </div>
-          <CardTitle className="text-2xl font-semibold">Access unavailable</CardTitle>
-          <CardDescription className="text-base">
-            Access unavailable for this account.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            If you believe this is an error, contact administration at{" "}
+    <div className="min-h-screen flex items-center justify-center bg-white px-4">
+      {/* Auth Surface */}
+      <div 
+        className="w-full max-w-[440px] bg-white border border-[#E4E4E7] px-10 py-12 sm:px-12 sm:py-14"
+        style={{ 
+          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.03)'
+        }}
+      >
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-[22px] sm:text-[24px] font-semibold text-[#09090B] tracking-[-0.01em] leading-tight">
+            Access Restricted
+          </h1>
+          <p className="mt-3 text-[14px] text-[#71717A] leading-relaxed">
+            This account does not have portal access.
+          </p>
+        </div>
+
+        {/* Notice Box */}
+        <div className="bg-[#FAFAFA] border border-[#E4E4E7] rounded-[6px] py-5 px-5 mb-8">
+          <p className="text-[14px] text-[#52525B] leading-relaxed text-center">
+            If you believe this is an error, contact administration.
+          </p>
+          <p className="mt-3 text-center">
             <a 
               href="mailto:admin@tribesassets.com" 
-              className="text-primary hover:underline"
+              className="text-[14px] font-medium text-[#09090B] hover:underline"
             >
               admin@tribesassets.com
             </a>
           </p>
-          <div className="pt-4">
-            <Button variant="ghost" asChild>
-              <Link to="/auth/sign-in">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to sign in
-              </Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Back Link */}
+        <div className="text-center pt-2 border-t border-[#F4F4F5]">
+          <Button 
+            variant="ghost" 
+            asChild
+            className="text-[13px] text-[#71717A] hover:text-[#09090B] hover:bg-transparent h-auto py-4 font-normal"
+          >
+            <Link to="/auth/sign-in">
+              ← Return to sign in
+            </Link>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
