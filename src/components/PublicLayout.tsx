@@ -82,7 +82,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
   return (
     <div 
       className="min-h-dvh min-h-[100svh] pb-safe flex flex-col"
-      style={pageBackgroundStyle}
+      style={{ backgroundColor: "hsl(var(--site-black))" }}
     >
       {/* Header - 64px desktop, 56px mobile - Institutional grade lock */}
       {/* NON-STICKY: scrolls away for institutional calm (LOCKED) */}
@@ -259,7 +259,7 @@ export function PublicLayout({ children, logoOnly = false, disableFooterLinks = 
       </header>
 
       {/* Main - flex-1 ensures content expands to fill viewport */}
-      <main ref={mainRef} className="flex-1 flex flex-col">
+      <main ref={mainRef} className="flex-1 flex flex-col" style={pageBackgroundStyle}>
         {children}
       </main>
 

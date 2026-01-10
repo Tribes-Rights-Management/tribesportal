@@ -310,13 +310,15 @@
     position: fixed;
     inset: 0;
     background: hsl(var(--site-black));
-    z-index: -1;
+    z-index: 0;
     pointer-events: none;
   }
 
   /* App root element(s) - ensures full viewport coverage on iOS Safari */
   #root,
   #__next {
+    position: relative;
+    z-index: 1;
     /* Dark background as baseline - prevents white flash on overscroll */
     background: hsl(var(--site-black));
     /* iOS Safari viewport units - cascading fallbacks */
