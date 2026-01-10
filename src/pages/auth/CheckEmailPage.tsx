@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { AuthLayout, AuthHeader, AuthFooter, AuthSecondaryAction } from "@/components/auth/AuthLayout";
 
 export default function CheckEmailPage() {
   const location = useLocation();
@@ -35,52 +36,38 @@ export default function CheckEmailPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6">
-      <div className="w-full max-w-[440px]">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-[28px] sm:text-[32px] font-medium text-[#0A0A0A] tracking-[-0.02em] leading-tight">
-            Check your email
-          </h1>
-          <p className="mt-3 text-[15px] text-[#6B6B6B] leading-relaxed">
-            We've sent a secure sign-in link to
-          </p>
-        </div>
+    <AuthLayout
+      footer={<AuthFooter>Access is restricted to approved accounts.</AuthFooter>}
+    >
+      <AuthHeader 
+        title="Check your email"
+        subtitle="We've sent a secure sign-in link to"
+      />
 
-        {/* Email Display */}
-        <div className="bg-[#FAFAFA] border border-[#E4E4E7] rounded-[6px] py-4 px-5 mb-8">
-          <p className="text-[15px] font-medium text-[#0A0A0A] text-center break-all">
-            {email}
-          </p>
-        </div>
-
-        {/* Expiration Notice */}
-        <p className="text-[13px] text-[#A1A1AA] text-center">
-          This link expires shortly and can only be used once.
+      {/* Email Display */}
+      <div className="bg-black/[0.03] border border-black/[0.06] rounded-lg py-4 px-5 mb-6">
+        <p className="text-[15px] font-medium text-foreground text-center break-all">
+          {email}
         </p>
-
-        {/* Secondary Actions */}
-        <div className="mt-10 flex flex-col items-center gap-3">
-          <button
-            onClick={handleResend}
-            disabled={isResending}
-            className="text-[13px] text-[#71717A] hover:text-[#0A0A0A] transition-colors disabled:opacity-50"
-          >
-            {isResending ? "Sending..." : "Resend sign-in link"}
-          </button>
-          <Link 
-            to="/auth/sign-in"
-            className="text-[13px] text-[#71717A] hover:text-[#0A0A0A] transition-colors"
-          >
-            Use a different email
-          </Link>
-        </div>
       </div>
 
-      {/* Footer */}
-      <p className="absolute bottom-8 text-[12px] text-[#A1A1AA]">
-        Access is restricted to approved accounts.
+      {/* Expiration Notice */}
+      <p className="text-[13px] text-black/50 text-center">
+        This link expires shortly and can only be used once.
       </p>
-    </div>
+
+      {/* Secondary Actions */}
+      <div className="mt-10 flex flex-col items-center gap-3">
+        <AuthSecondaryAction onClick={handleResend} disabled={isResending}>
+          {isResending ? "Sending..." : "Resend sign-in link"}
+        </AuthSecondaryAction>
+        <Link 
+          to="/auth/sign-in"
+          className="text-[13px] text-black/60 hover:text-black transition-colors"
+        >
+          Use a different email
+        </Link>
+      </div>
+    </AuthLayout>
   );
 }

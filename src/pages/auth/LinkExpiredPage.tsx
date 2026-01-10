@@ -1,39 +1,17 @@
 import { useState } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SignInHelpDialog } from "@/components/auth/SignInHelpDialog";
-import { AuthLayout, AuthHeader, AuthFooter, AuthSecondaryAction } from "@/components/auth/AuthLayout";
+import { AuthLayout, AuthHeader, AuthFooter } from "@/components/auth/AuthLayout";
 
-export default function SignInPage() {
-  const { user, profile, loading, signInWithMagicLink } = useAuth();
+export default function LinkExpiredPage() {
   const navigate = useNavigate();
+  const { signInWithMagicLink } = useAuth();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [helpDialogOpen, setHelpDialogOpen] = useState(false);
-
-  const handleResendLink = async () => {
-    return signInWithMagicLink(email.trim());
-  };
-
-  // If already authenticated with valid profile, redirect to appropriate dashboard
-  if (!loading && user && profile) {
-    if (profile.status !== "active") {
-      return <Navigate to="/auth/error" replace />;
-    }
-    
-    switch (profile.role) {
-      case "admin":
-        return <Navigate to="/admin" replace />;
-      case "client":
-        return <Navigate to="/dashboard" replace />;
-      case "licensing":
-        return <Navigate to="/licensing" replace />;
-      default:
-        return <Navigate to="/auth/error" replace />;
-    }
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,30 +22,26 @@ export default function SignInPage() {
     setIsSubmitting(false);
 
     if (error) {
-      console.error("Sign-in error:", error);
+      toast({
+        title: "Unable to send",
+        description: "Please try again or contact support.",
+        variant: "destructive",
+      });
+    } else {
+      navigate("/auth/check-email", { state: { email: email.trim() } });
     }
-    
-    navigate("/auth/check-email", { state: { email: email.trim() } });
   };
-
-  if (loading) {
-    return (
-      <AuthLayout>
-        <p className="text-black/50 text-sm text-center tracking-wide">Verifying access...</p>
-      </AuthLayout>
-    );
-  }
 
   return (
     <AuthLayout
       footer={<AuthFooter>Access is restricted to approved accounts.</AuthFooter>}
     >
       <AuthHeader 
-        title="Sign in to Tribes"
-        subtitle="Secure access via email sign-in link"
+        title="Link Expired"
+        subtitle="Sign-in links can only be used once and expire after a short time."
       />
 
-      {/* Form */}
+      {/* Request new link form */}
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
           <Label 
@@ -94,23 +68,19 @@ export default function SignInPage() {
           className="w-full h-12 bg-[#101010] hover:bg-black/90 hover:shadow-md text-white text-[15px] font-medium rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-2"
           disabled={isSubmitting || !email.trim()}
         >
-          {isSubmitting ? "Sending..." : "Continue"}
+          {isSubmitting ? "Sending..." : "Request a new link"}
         </button>
       </form>
 
-      {/* Help Link */}
-      <div className="mt-8 text-center">
-        <AuthSecondaryAction onClick={() => setHelpDialogOpen(true)}>
-          Trouble signing in?
-        </AuthSecondaryAction>
-      </div>
-
-      <SignInHelpDialog
-        open={helpDialogOpen}
-        onOpenChange={setHelpDialogOpen}
-        email={email}
-        onResendLink={handleResendLink}
-      />
+      {/* Secondary link */}
+      <p className="mt-8 text-center">
+        <Link 
+          to="/auth/sign-in"
+          className="text-[13px] text-black/60 hover:text-black transition-colors"
+        >
+          Return to sign in
+        </Link>
+      </p>
     </AuthLayout>
   );
 }
