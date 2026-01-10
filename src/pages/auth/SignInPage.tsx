@@ -4,8 +4,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail } from "lucide-react";
 
 export default function SignInPage() {
   const { user, profile, loading } = useAuth();
@@ -41,7 +39,6 @@ export default function SignInPage() {
     setIsSubmitting(false);
 
     if (error) {
-      // Still navigate to check-email, but could show error
       console.error("Magic link error:", error);
     }
     
@@ -50,47 +47,67 @@ export default function SignInPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-muted/30">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-[#6B6B6B] text-sm tracking-wide">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-2xl font-semibold">Tribes Portal</CardTitle>
-          <CardDescription>
-            Enter your email to receive a sign-in link
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoFocus
-                autoComplete="email"
-              />
-            </div>
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={isSubmitting || !email.trim()}
+    <div className="min-h-screen flex items-center justify-center bg-white px-4">
+      {/* Auth Card */}
+      <div 
+        className="w-full max-w-[440px] bg-white border border-[#E5E5E5] px-10 py-12 sm:px-12 sm:py-14"
+        style={{ 
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04)'
+        }}
+      >
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-[22px] sm:text-[24px] font-semibold text-[#111111] tracking-[-0.01em] leading-tight">
+            Sign in to Tribes
+          </h1>
+          <p className="mt-3 text-[14px] text-[#6B6B6B] leading-relaxed">
+            Secure access via email sign-in link
+          </p>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label 
+              htmlFor="email" 
+              className="text-[13px] font-medium text-[#333333] block"
             >
-              <Mail className="mr-2 h-4 w-4" />
-              {isSubmitting ? "Sending..." : "Send sign-in link"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+              Email address
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@company.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoFocus
+              autoComplete="email"
+              className="h-11 px-3.5 text-[15px] bg-white border-[#D4D4D4] rounded-[6px] placeholder:text-[#A0A0A0] focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-colors"
+            />
+          </div>
+
+          <Button 
+            type="submit" 
+            className="w-full h-11 bg-[#111111] hover:bg-[#000000] text-white text-[14px] font-medium rounded-[6px] transition-colors"
+            disabled={isSubmitting || !email.trim()}
+          >
+            {isSubmitting ? "Sending..." : "Send sign-in link"}
+          </Button>
+        </form>
+
+        {/* Institutional notice */}
+        <p className="mt-8 text-center text-[12px] text-[#888888] leading-relaxed">
+          Access is restricted to approved accounts.
+        </p>
+      </div>
     </div>
   );
 }
