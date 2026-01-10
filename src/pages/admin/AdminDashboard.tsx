@@ -54,7 +54,7 @@ export default function AdminDashboard() {
             <CardTitle>Administration</CardTitle>
             <CardDescription>Manage users and system settings</CardDescription>
           </CardHeader>
-          <CardContent className="flex gap-3">
+          <CardContent className="flex flex-wrap gap-3">
             <Button asChild>
               <Link to="/admin/users">
                 <Users className="mr-2 h-4 w-4" />
@@ -65,6 +65,12 @@ export default function AdminDashboard() {
               <Link to="/admin/rls-audit">
                 <Shield className="mr-2 h-4 w-4" />
                 RLS Coverage Audit
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to="/admin/security">
+                <Shield className="mr-2 h-4 w-4" />
+                Security Verification
               </Link>
             </Button>
           </CardContent>

@@ -35,13 +35,16 @@ import PublishingDocuments from "@/pages/app/publishing/PublishingDocuments";
 import AccessRequestsPage from "@/pages/app/publishing/AccessRequestsPage";
 import PublishingSettings from "@/pages/app/publishing/PublishingSettings";
 
-// App pages - Other
+// App pages - Access states
 import PendingApprovalPage from "@/pages/app/PendingApprovalPage";
+import NoAccessPage from "@/pages/app/NoAccessPage";
+import AccessSuspendedPage from "@/pages/app/AccessSuspendedPage";
 
 // Admin pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import UserDirectoryPage from "@/pages/admin/UserDirectoryPage";
 import RLSAuditPage from "@/pages/admin/RLSAuditPage";
+import SecurityVerificationPage from "@/pages/admin/SecurityVerificationPage";
 
 // Error pages
 import NotFoundPage from "@/pages/NotFoundPage";
@@ -67,13 +70,16 @@ const App = () => (
         <Route path="/auth/error" element={<AuthErrorPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
-        {/* App pending approval */}
+        {/* App access state pages (outside protected layout) */}
         <Route path="/app/pending" element={<PendingApprovalPage />} />
+        <Route path="/app/no-access" element={<NoAccessPage />} />
+        <Route path="/app/suspended" element={<AccessSuspendedPage />} />
 
         {/* App routes with layout */}
         <Route path="/app" element={<AppProtectedRoute><AppLayout /></AppProtectedRoute>}>
           {/* Index route - redirects to active context */}
           <Route index element={<AppIndexRedirect />} />
+
           {/* Licensing context routes */}
           <Route path="licensing" element={<AppProtectedRoute requiredContext="licensing"><LicensingDashboard /></AppProtectedRoute>} />
           <Route path="licensing/catalog" element={<AppProtectedRoute requiredContext="licensing"><LicensingCatalog /></AppProtectedRoute>} />
@@ -100,6 +106,7 @@ const App = () => (
         <Route path="/admin" element={<RoleProtectedRoute allowedRoles={["admin"]}><AdminDashboard /></RoleProtectedRoute>} />
         <Route path="/admin/users" element={<RoleProtectedRoute allowedRoles={["admin"]}><UserDirectoryPage /></RoleProtectedRoute>} />
         <Route path="/admin/rls-audit" element={<RoleProtectedRoute allowedRoles={["admin"]}><RLSAuditPage /></RoleProtectedRoute>} />
+        <Route path="/admin/security" element={<RoleProtectedRoute allowedRoles={["admin"]}><SecurityVerificationPage /></RoleProtectedRoute>} />
 
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFoundPage />} />
