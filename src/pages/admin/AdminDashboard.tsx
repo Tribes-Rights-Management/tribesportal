@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogOut, Users } from "lucide-react";
+import { LogOut, Users, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function AdminDashboard() {
@@ -54,11 +54,17 @@ export default function AdminDashboard() {
             <CardTitle>Administration</CardTitle>
             <CardDescription>Manage users and system settings</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex gap-3">
             <Button asChild>
               <Link to="/admin/users">
                 <Users className="mr-2 h-4 w-4" />
                 User Directory
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to="/admin/rls-audit">
+                <Shield className="mr-2 h-4 w-4" />
+                RLS Coverage Audit
               </Link>
             </Button>
           </CardContent>
