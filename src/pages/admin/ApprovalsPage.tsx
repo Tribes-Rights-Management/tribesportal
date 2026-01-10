@@ -27,13 +27,13 @@ interface PendingMembership {
 
 interface Tenant {
   id: string;
-  legal_name: string;
+  name: string;
   slug: string;
 }
 
 interface ApprovalFormState {
   tenant_id: string;
-  roles: PortalRole[];
+  role: PortalRole;
   contexts: PortalContext[];
   default_context: PortalContext | null;
 }
@@ -49,7 +49,7 @@ export default function ApprovalsPage() {
   const fetchData = async () => {
     setLoading(true);
     
-    // Fetch pending memberships (status = 'invited')
+    // Fetch pending memberships (status = 'pending')
     const { data: memberships, error: membershipsError } = await supabase
       .from("tenant_memberships")
       .select(`
@@ -59,10 +59,9 @@ export default function ApprovalsPage() {
         status,
         created_at,
         user_profiles!inner(email),
-        tenants(legal_name)
+        tenants(name)
       `)
-      .eq("status", "invited")
-      .is("deleted_at", null)
+      .eq("status", "pending")
       .order("created_at", { ascending: true });
 
     if (membershipsError) {
@@ -79,10 +78,8 @@ export default function ApprovalsPage() {
     // Fetch all tenants
     const { data: tenantsData, error: tenantsError } = await supabase
       .from("tenants")
-      .select("id, legal_name, slug")
-      .eq("status", "active")
-      .is("deleted_at", null)
-      .order("legal_name");
+      .select("id, name, slug")
+      .order("name");
 
     if (tenantsError) {
       console.error("Error fetching tenants:", tenantsError);
@@ -103,7 +100,7 @@ export default function ApprovalsPage() {
       status: m.status,
       created_at: m.created_at,
       user_email: m.user_profiles?.email || "Unknown",
-      tenant_name: m.tenants?.legal_name || null,
+      tenant_name: m.tenants?.name || null,
     }));
 
     setPendingMemberships(pending);
@@ -113,7 +110,7 @@ export default function ApprovalsPage() {
     pending.forEach((m) => {
       initialStates[m.id] = {
         tenant_id: m.tenant_id || (tenantsData?.[0]?.id || ""),
-        roles: ["licensing_user"],
+        role: "tenant_user",
         contexts: ["licensing"],
         default_context: "licensing",
       };
@@ -135,22 +132,6 @@ export default function ApprovalsPage() {
         ...updates,
       },
     }));
-  };
-
-  const toggleRole = (membershipId: string, role: PortalRole) => {
-    setFormStates((prev) => {
-      const current = prev[membershipId]?.roles || [];
-      const newRoles = current.includes(role)
-        ? current.filter((r) => r !== role)
-        : [...current, role];
-      return {
-        ...prev,
-        [membershipId]: {
-          ...prev[membershipId],
-          roles: newRoles.length > 0 ? newRoles : ["licensing_user"],
-        },
-      };
-    });
   };
 
   const toggleContext = (membershipId: string, context: PortalContext) => {
@@ -191,61 +172,34 @@ export default function ApprovalsPage() {
       return;
     }
 
-    if (formState.roles.length === 0) {
-      toast({
-        title: "Error",
-        description: "Please select at least one role",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setProcessing(membership.id);
 
     try {
-      // Update the membership to active and set tenant
+      // Update the membership to active and set tenant, role, contexts
       const { error: membershipError } = await supabase
         .from("tenant_memberships")
         .update({
           status: "active",
           tenant_id: formState.tenant_id,
+          role: formState.role,
+          allowed_contexts: formState.contexts,
+          default_context: formState.default_context,
           updated_at: new Date().toISOString(),
         })
         .eq("id", membership.id);
 
       if (membershipError) throw membershipError;
 
-      // Clear existing membership roles
-      await supabase
-        .from("membership_roles")
-        .delete()
-        .eq("membership_id", membership.id);
-
-      // Add new membership roles
-      const rolesToInsert = formState.roles.map((role) => ({
-        membership_id: membership.id,
-        role,
-      }));
-
-      const { error: rolesError } = await supabase
-        .from("membership_roles")
-        .insert(rolesToInsert);
-
-      if (rolesError) throw rolesError;
-
-      // Update user's default context if not set
+      // Also activate the user profile if it's still pending
       await supabase
         .from("user_profiles")
-        .update({
-          default_tenant_id: formState.tenant_id,
-          default_context: formState.default_context,
-        })
-        .eq("id", membership.user_id)
-        .is("default_tenant_id", null);
+        .update({ status: "active" })
+        .eq("user_id", membership.user_id)
+        .eq("status", "pending");
 
       // Audit log
       await writeAuditLog({
-        userId: currentProfile?.id,
+        userId: currentProfile?.user_id,
         tenantId: formState.tenant_id,
         action: AuditActions.MEMBERSHIP_APPROVED,
         resourceType: ResourceTypes.TENANT_MEMBERSHIP,
@@ -253,7 +207,8 @@ export default function ApprovalsPage() {
         details: {
           approved_user_email: membership.user_email,
           tenant_id: formState.tenant_id,
-          roles: formState.roles,
+          role: formState.role,
+          contexts: formState.contexts,
         },
       });
 
@@ -283,7 +238,7 @@ export default function ApprovalsPage() {
       const { error } = await supabase
         .from("tenant_memberships")
         .update({
-          status: "suspended",
+          status: "denied",
           updated_at: new Date().toISOString(),
         })
         .eq("id", membership.id);
@@ -292,7 +247,7 @@ export default function ApprovalsPage() {
 
       // Audit log
       await writeAuditLog({
-        userId: currentProfile?.id,
+        userId: currentProfile?.user_id,
         action: AuditActions.MEMBERSHIP_DENIED,
         resourceType: ResourceTypes.TENANT_MEMBERSHIP,
         resourceId: membership.id,
@@ -321,10 +276,9 @@ export default function ApprovalsPage() {
   };
 
   const availableRoles: { value: PortalRole; label: string }[] = [
-    { value: "tenant_owner", label: "Owner" },
-    { value: "publishing_admin", label: "Publishing Admin" },
-    { value: "licensing_user", label: "Licensing User" },
-    { value: "read_only", label: "Read Only" },
+    { value: "tenant_admin", label: "Tenant Admin" },
+    { value: "tenant_user", label: "Tenant User" },
+    { value: "viewer", label: "Viewer" },
   ];
 
   const availableContexts: { value: PortalContext; label: string }[] = [
@@ -374,7 +328,7 @@ export default function ApprovalsPage() {
                     <TableHead>Email</TableHead>
                     <TableHead>Requested</TableHead>
                     <TableHead>Tenant</TableHead>
-                    <TableHead>Roles</TableHead>
+                    <TableHead>Role</TableHead>
                     <TableHead>Contexts</TableHead>
                     <TableHead>Default</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -384,7 +338,7 @@ export default function ApprovalsPage() {
                   {pendingMemberships.map((membership) => {
                     const formState = formStates[membership.id] || {
                       tenant_id: "",
-                      roles: [],
+                      role: "tenant_user" as PortalRole,
                       contexts: [],
                       default_context: null,
                     };
@@ -411,30 +365,31 @@ export default function ApprovalsPage() {
                             <SelectContent>
                               {tenants.map((tenant) => (
                                 <SelectItem key={tenant.id} value={tenant.id}>
-                                  {tenant.legal_name}
+                                  {tenant.name}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </TableCell>
                         <TableCell>
-                          <div className="flex flex-col gap-1.5">
-                            {availableRoles.map((role) => (
-                              <label
-                                key={role.value}
-                                className="flex items-center gap-2 text-sm cursor-pointer"
-                              >
-                                <Checkbox
-                                  checked={formState.roles.includes(role.value)}
-                                  onCheckedChange={() =>
-                                    toggleRole(membership.id, role.value)
-                                  }
-                                  disabled={processing === membership.id}
-                                />
-                                {role.label}
-                              </label>
-                            ))}
-                          </div>
+                          <Select
+                            value={formState.role}
+                            onValueChange={(value) =>
+                              updateFormState(membership.id, { role: value as PortalRole })
+                            }
+                            disabled={processing === membership.id}
+                          >
+                            <SelectTrigger className="w-36">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableRoles.map((role) => (
+                                <SelectItem key={role.value} value={role.value}>
+                                  {role.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col gap-1.5">
