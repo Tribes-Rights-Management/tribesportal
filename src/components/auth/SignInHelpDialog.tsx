@@ -84,98 +84,82 @@ export function SignInHelpDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent 
         hideDefaultClose
-        className="w-[92vw] max-w-[520px] rounded-[16px] border border-black/10 bg-white p-8 shadow-[0_24px_60px_rgba(0,0,0,0.18)]"
-        overlayClassName="bg-black/60 backdrop-blur-[6px]"
+        className="w-[min(520px,calc(100vw-48px))] max-w-[520px] rounded-[16px] border border-black/8 bg-white p-7 shadow-[0_16px_48px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06)]"
+        overlayClassName="bg-black/40 backdrop-blur-[4px]"
       >
-        {/* Close button - 36x36 hit area, 18px icon */}
+        {/* Close button - 32px hit area, 16px icon */}
         <button
           onClick={() => handleOpenChange(false)}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-2"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-black/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-1"
           aria-label="Close"
         >
-          <X className="h-[18px] w-[18px] text-[#6b6b6b] hover:text-[#111111] transition-colors" />
+          <X className="h-4 w-4 text-[#6B7280] transition-colors group-hover:text-[#374151]" strokeWidth={1.5} />
         </button>
 
         <DialogHeader className="space-y-0 pb-0 pr-10">
-          <DialogTitle className="text-lg font-semibold text-foreground tracking-[-0.01em]">
+          <DialogTitle className="text-[17px] font-semibold text-foreground tracking-[-0.01em]">
             Trouble signing in?
           </DialogTitle>
         </DialogHeader>
 
-        <div className="mt-[16px] space-y-0">
+        <div className="mt-4">
           {/* Intro line */}
-          <p className="text-sm leading-[1.5] text-black/70">
+          <p className="text-[14px] leading-[1.5] text-black/65">
             Tribes uses secure email sign-in links.
           </p>
 
           {/* Troubleshooting list */}
-          <div className="mt-[16px]">
-            <p className="text-sm leading-[1.5] text-black/70 mb-2">
+          <div className="mt-3">
+            <p className="text-[14px] leading-[1.5] text-black/65 mb-2">
               If you're having trouble:
             </p>
-            <ul className="space-y-1.5 text-sm leading-[1.45] text-black/70">
+            <ul className="space-y-2 text-[14px] leading-[1.5] text-black/65">
               <li className="flex items-start gap-2">
-                <span className="text-black/40 mt-px select-none">•</span>
+                <span className="text-black/35 mt-px select-none">•</span>
                 <span>Confirm you entered the correct email address.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-black/40 mt-px select-none">•</span>
+                <span className="text-black/35 mt-px select-none">•</span>
                 <span>Check your spam or junk folder.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-black/40 mt-px select-none">•</span>
+                <span className="text-black/35 mt-px select-none">•</span>
                 <span>Sign-in links expire quickly and can be used once.</span>
               </li>
             </ul>
           </div>
 
-          {/* Primary action - modal-scoped Tribes button */}
-          <div className="mt-[20px]">
+          {/* Primary action - Tribes-style button */}
+          <div className="mt-5">
             <button
               onClick={handleResendLink}
               disabled={isResending || !email.trim()}
-              className="h-12 w-full rounded-[12px] bg-[#111111] text-white text-base font-semibold transition-all hover:bg-[#000000] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2"
+              className="h-11 w-full rounded-[10px] bg-[#111111] px-4 text-[15px] font-medium text-white transition-all hover:bg-[#000000] hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-2"
             >
               {isResending ? "Sending..." : "Resend sign-in link"}
             </button>
           </div>
 
-          {/* Support section - compact copy row */}
-          <div className="mt-[18px]">
-            {!showSupportEmail ? (
-              <button
-                onClick={() => setShowSupportEmail(true)}
-                className="text-[13px] text-black/60 hover:text-black transition-colors focus:outline-none focus-visible:underline"
-              >
-                Contact support
-              </button>
-            ) : (
-              <div className="flex items-center gap-3">
-                <span className="text-[13px] text-black/50">Support:</span>
-                <span className="text-[13px] text-black/70">{supportEmail}</span>
-                <button
-                  onClick={handleCopyEmail}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 text-[12px] text-black/50 hover:text-black rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
-                  aria-label="Copy email address"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="h-3 w-3" />
-                      <span>Copied</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3 w-3" />
-                      <span>Copy</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            )}
+          {/* Support email row - compact single line with icon-only copy */}
+          <div className="mt-4 flex items-center gap-2">
+            <span className="text-[13px] text-black/45">Support</span>
+            <span className="text-[13px] text-black/70 font-mono tracking-tight">{supportEmail}</span>
+            <button
+              onClick={handleCopyEmail}
+              className="ml-auto flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-black/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+              aria-label={copied ? "Copied" : "Copy email address"}
+              title={copied ? "Copied!" : "Copy"}
+            >
+              {copied ? (
+                <Check className="h-4 w-4 text-emerald-600" strokeWidth={2} />
+              ) : (
+                <Copy className="h-4 w-4 text-black/40" strokeWidth={1.5} />
+              )}
+            </button>
           </div>
 
           {/* Footer - quiet restriction line */}
-          <p className="mt-[16px] text-[13px] leading-[1.5] text-black/50">
+          <p className="mt-3 text-[13px] leading-[1.5] text-black/45">
             Access is restricted to approved accounts.
           </p>
         </div>
