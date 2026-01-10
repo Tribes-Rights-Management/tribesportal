@@ -1,6 +1,4 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { TenantSelector } from "./TenantSelector";
-import { ContextToggle } from "./ContextToggle";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,127 +6,154 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, Settings, ChevronDown } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { User, LogOut, Settings, ChevronDown, HelpCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
-function ModeIndicator() {
-  const { activeContext } = useAuth();
-  
-  const contextLabel = activeContext === "licensing" ? "Licensing" : "Publishing";
-  
-  return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-[12px] text-[#A1A1AA] font-normal tracking-wide uppercase">
-        Mode:
-      </span>
-      <span className="text-[12px] text-[#52525B] font-medium">
-        {contextLabel}
-      </span>
-    </div>
-  );
-}
-
-function TenantIndicator() {
+// Status indicator for Tenant (non-interactive)
+function TenantIndicator({ className }: { className?: string }) {
   const { activeTenant } = useAuth();
   
   if (!activeTenant) return null;
   
   return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-[12px] text-[#A1A1AA] font-normal tracking-wide uppercase">
-        Tenant:
-      </span>
-      <span className="text-[12px] text-[#52525B] font-medium truncate max-w-[200px]">
+    <span className={cn("text-[11px] text-[#71717A] font-normal whitespace-nowrap", className)}>
+      <span className="text-[#A1A1AA]">Tenant:</span>{" "}
+      <span className="font-medium text-[#52525B] truncate max-w-[180px] inline-block align-bottom">
         {activeTenant.tenant_name}
       </span>
-    </div>
+    </span>
   );
 }
 
-function StatusBar() {
+// Status indicator for Mode (non-interactive)
+function ModeIndicator({ className }: { className?: string }) {
+  const { activeContext } = useAuth();
+  
+  const contextLabel = activeContext === "licensing" ? "Licensing" : "Publishing";
+  
   return (
-    <div className="hidden md:flex items-center gap-4 border-l border-[#E4E4E7] pl-4 ml-2">
+    <span className={cn("text-[11px] text-[#71717A] font-normal whitespace-nowrap", className)}>
+      <span className="text-[#A1A1AA]">Mode:</span>{" "}
+      <span className="font-medium text-[#52525B]">{contextLabel}</span>
+    </span>
+  );
+}
+
+// Desktop status cluster with divider
+function StatusCluster() {
+  return (
+    <div className="hidden md:flex items-center gap-2">
       <TenantIndicator />
-      <div className="h-3 w-px bg-[#E4E4E7]" />
+      <span className="text-[#D4D4D8] text-[11px] select-none">·</span>
       <ModeIndicator />
     </div>
   );
 }
 
-function MobileStatusMenu() {
-  const { activeTenant, activeContext, availableContexts, setActiveContext } = useAuth();
-  const isMobile = useIsMobile();
-  
-  if (!isMobile) return null;
-  
-  const contextLabel = activeContext === "licensing" ? "Licensing" : "Publishing";
-  const hasBothContexts = availableContexts.length > 1;
-  
+// Tenant selector control (only shown if multiple tenants)
+function TenantControl() {
+  const { tenantMemberships, activeTenant, setActiveTenant } = useAuth();
+
+  if (tenantMemberships.length <= 1) return null;
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="md:hidden h-8 px-2 gap-1 text-[12px] text-[#52525B] hover:text-[#0A0A0A]"
-        >
-          <span className="font-medium">{contextLabel}</span>
-          <ChevronDown className="h-3 w-3" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64">
-        {/* Tenant Status */}
-        <div className="px-3 py-2 border-b border-[#E4E4E7]">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[11px] text-[#A1A1AA] font-normal tracking-wide uppercase">
-              Tenant:
-            </span>
-            <span className="text-[12px] text-[#52525B] font-medium truncate">
-              {activeTenant?.tenant_name ?? "None"}
-            </span>
-          </div>
-        </div>
-        
-        {/* Mode Status */}
-        <div className="px-3 py-2 border-b border-[#E4E4E7]">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[11px] text-[#A1A1AA] font-normal tracking-wide uppercase">
-              Mode:
-            </span>
-            <span className="text-[12px] text-[#52525B] font-medium">
-              {contextLabel}
-            </span>
-          </div>
-        </div>
-        
-        {/* Context Switch Options (only if both contexts available) */}
-        {hasBothContexts && (
-          <>
-            <div className="px-3 py-1.5">
-              <span className="text-[10px] text-[#A1A1AA] font-medium tracking-wide uppercase">
-                Switch Mode
-              </span>
-            </div>
-            {availableContexts.map((context) => (
-              <DropdownMenuItem
-                key={context}
-                onClick={() => setActiveContext(context)}
-                className={`text-[13px] ${activeContext === context ? "bg-[#F4F4F5]" : ""}`}
-              >
-                {context === "licensing" ? "Licensing" : "Publishing"}
-              </DropdownMenuItem>
-            ))}
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Select
+      value={activeTenant?.tenant_id ?? ""}
+      onValueChange={setActiveTenant}
+    >
+      <SelectTrigger className="h-7 w-auto min-w-[120px] max-w-[180px] border-[#E4E4E7] bg-transparent hover:bg-[#F4F4F5] text-[11px] gap-1 px-2">
+        <SelectValue placeholder="Switch tenant" />
+      </SelectTrigger>
+      <SelectContent align="end">
+        {tenantMemberships.map((membership) => (
+          <SelectItem
+            key={membership.tenant_id}
+            value={membership.tenant_id}
+            className="text-[12px]"
+          >
+            {membership.tenant_name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
-export function AppHeader() {
-  const { profile, signOut, isPlatformAdmin, activeContext, availableContexts } = useAuth();
+// Mode toggle control (only shown if both contexts available)
+function ModeControl() {
+  const { activeContext, availableContexts, setActiveContext } = useAuth();
+
+  if (availableContexts.length <= 1) return null;
+
+  return (
+    <div className="flex items-center h-7 p-0.5 bg-[#F4F4F5] rounded">
+      {availableContexts.map((context) => (
+        <button
+          key={context}
+          onClick={() => setActiveContext(context)}
+          className={cn(
+            "h-6 px-2.5 text-[11px] font-medium rounded transition-all duration-150",
+            activeContext === context
+              ? "bg-white text-[#0A0A0A] shadow-sm"
+              : "text-[#71717A] hover:text-[#3F3F46]"
+          )}
+        >
+          {context === "licensing" ? "Licensing" : "Publishing"}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// Mobile compact status display
+function MobileStatusDisplay() {
+  const { activeTenant, activeContext } = useAuth();
+  
+  const contextLabel = activeContext === "licensing" ? "Licensing" : "Publishing";
+  const tenantName = activeTenant?.tenant_name ?? "—";
+  
+  // Truncate long tenant names
+  const displayTenant = tenantName.length > 20 
+    ? tenantName.substring(0, 18) + "…" 
+    : tenantName;
+  
+  return (
+    <div className="flex flex-col items-end gap-0 md:hidden">
+      <span className="text-[10px] text-[#71717A] leading-tight">
+        <span className="text-[#A1A1AA]">Tenant:</span>{" "}
+        <span className="font-medium text-[#52525B]">{displayTenant}</span>
+      </span>
+      <span className="text-[10px] text-[#71717A] leading-tight">
+        <span className="text-[#A1A1AA]">Mode:</span>{" "}
+        <span className="font-medium text-[#52525B]">{contextLabel}</span>
+      </span>
+    </div>
+  );
+}
+
+// Account menu with mobile controls
+function AccountMenu() {
+  const { 
+    profile, 
+    signOut, 
+    activeContext, 
+    availableContexts, 
+    setActiveContext,
+    tenantMemberships,
+    activeTenant,
+    setActiveTenant 
+  } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -137,94 +162,189 @@ export function AppHeader() {
     navigate("/auth/sign-in");
   };
 
-  const showContextToggle = availableContexts.length > 1;
+  const hasMultipleTenants = tenantMemberships.length > 1;
+  const hasMultipleContexts = availableContexts.length > 1;
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 rounded-full bg-[#F4F4F5] hover:bg-[#E4E4E7] shrink-0"
+        >
+          <User className="h-4 w-4 text-[#71717A]" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-64">
+        {/* User info */}
+        <div className="px-3 py-2">
+          <p className="text-[13px] font-medium text-[#0A0A0A] truncate">
+            {profile?.email}
+          </p>
+          <p className="text-[11px] text-[#71717A] capitalize mt-0.5">
+            {activeContext} Portal
+          </p>
+        </div>
+        
+        <DropdownMenuSeparator />
+        
+        {/* Mobile: Show current status at top of menu */}
+        {isMobile && (
+          <>
+            <div className="px-3 py-2 bg-[#FAFAFA]">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-[#A1A1AA] uppercase tracking-wide">Tenant</span>
+                <span className="text-[11px] text-[#52525B] font-medium truncate max-w-[160px]">
+                  {activeTenant?.tenant_name}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-[10px] text-[#A1A1AA] uppercase tracking-wide">Mode</span>
+                <span className="text-[11px] text-[#52525B] font-medium capitalize">
+                  {activeContext}
+                </span>
+              </div>
+            </div>
+            <DropdownMenuSeparator />
+          </>
+        )}
+        
+        {/* Mobile: Tenant switching */}
+        {isMobile && hasMultipleTenants && (
+          <>
+            <DropdownMenuLabel className="text-[10px] text-[#A1A1AA] uppercase tracking-wide font-normal">
+              Switch Tenant
+            </DropdownMenuLabel>
+            {tenantMemberships.map((membership) => (
+              <DropdownMenuItem
+                key={membership.tenant_id}
+                onClick={() => setActiveTenant(membership.tenant_id)}
+                className={cn(
+                  "text-[12px]",
+                  activeTenant?.tenant_id === membership.tenant_id && "bg-[#F4F4F5]"
+                )}
+              >
+                {membership.tenant_name}
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+          </>
+        )}
+        
+        {/* Mobile: Mode switching */}
+        {isMobile && hasMultipleContexts && (
+          <>
+            <DropdownMenuLabel className="text-[10px] text-[#A1A1AA] uppercase tracking-wide font-normal">
+              Switch Mode
+            </DropdownMenuLabel>
+            {availableContexts.map((context) => (
+              <DropdownMenuItem
+                key={context}
+                onClick={() => setActiveContext(context)}
+                className={cn(
+                  "text-[12px] capitalize",
+                  activeContext === context && "bg-[#F4F4F5]"
+                )}
+              >
+                {context}
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+          </>
+        )}
+        
+        {/* Standard menu items */}
+        <DropdownMenuItem
+          onClick={() => navigate(`/app/${activeContext}/settings`)}
+          className="text-[12px]"
+        >
+          <Settings className="mr-2 h-3.5 w-3.5" />
+          Settings
+        </DropdownMenuItem>
+        <DropdownMenuItem className="text-[12px]">
+          <HelpCircle className="mr-2 h-3.5 w-3.5" />
+          Support
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={handleSignOut}
+          className="text-[12px] text-red-600 focus:text-red-600"
+        >
+          <LogOut className="mr-2 h-3.5 w-3.5" />
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export function AppHeader() {
+  const { activeContext, isPlatformAdmin, tenantMemberships, availableContexts } = useAuth();
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
+
+  const hasMultipleTenants = tenantMemberships.length > 1;
+  const hasMultipleContexts = availableContexts.length > 1;
+
+  const handleLogoClick = () => {
+    navigate(`/app/${activeContext}`);
+  };
 
   return (
     <header className="h-14 border-b border-[#E4E4E7] bg-white px-4 md:px-6 flex items-center justify-between">
-      {/* Left: Logo + Tenant Selector */}
-      <div className="flex items-center gap-4 md:gap-6">
-        <span className="text-[15px] font-semibold text-[#0A0A0A] tracking-[-0.01em]">
+      {/* Left: Wordmark */}
+      <div className="flex items-center">
+        <button
+          onClick={handleLogoClick}
+          className="text-[15px] font-semibold text-[#0A0A0A] tracking-[-0.01em] hover:text-[#3F3F46] transition-colors"
+        >
           Tribes
-        </span>
-        <div className="hidden md:block h-5 w-px bg-[#E4E4E7]" />
-        <div className="hidden md:block">
-          <TenantSelector />
-        </div>
-        
-        {/* Desktop Status Bar */}
-        <StatusBar />
+        </button>
       </div>
 
-      {/* Right: Context Toggle + Account */}
-      <div className="flex items-center gap-2 md:gap-4">
-        {/* Mobile Status Menu */}
-        <MobileStatusMenu />
+      {/* Center: Empty (intentional) */}
+      <div className="flex-1" />
+
+      {/* Right: Status cluster → Controls → Admin → Account */}
+      <div className="flex items-center gap-3 md:gap-4">
+        {/* Desktop: Status cluster */}
+        <StatusCluster />
         
-        {/* Desktop Context Toggle (only if both contexts available) */}
-        {!isMobile && showContextToggle && <ContextToggle />}
+        {/* Mobile: Compact stacked status */}
+        <MobileStatusDisplay />
         
-        {isPlatformAdmin && (
+        {/* Desktop: Controls */}
+        {!isMobile && (hasMultipleTenants || hasMultipleContexts) && (
           <>
-            <div className="hidden md:block h-5 w-px bg-[#E4E4E7]" />
+            <div className="h-4 w-px bg-[#E4E4E7]" />
+            <div className="flex items-center gap-2">
+              {hasMultipleTenants && <TenantControl />}
+              {hasMultipleContexts && <ModeControl />}
+            </div>
+          </>
+        )}
+        
+        {/* Platform Admin link */}
+        {isPlatformAdmin && !isMobile && (
+          <>
+            <div className="h-4 w-px bg-[#E4E4E7]" />
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate("/admin")}
-              className="hidden md:flex text-[13px] text-[#71717A] hover:text-[#0A0A0A]"
+              className="h-7 px-2 text-[11px] text-[#71717A] hover:text-[#0A0A0A]"
             >
               Admin
             </Button>
           </>
         )}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 rounded-full bg-[#F4F4F5] hover:bg-[#E4E4E7]"
-            >
-              <User className="h-4 w-4 text-[#71717A]" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <div className="px-2 py-1.5">
-              <p className="text-[13px] font-medium text-[#0A0A0A]">
-                {profile?.email}
-              </p>
-              <p className="text-[12px] text-[#71717A] capitalize">
-                {activeContext} Portal
-              </p>
-            </div>
-            <DropdownMenuSeparator />
-            
-            {/* Mobile-only: Tenant selector in account menu */}
-            {isMobile && (
-              <>
-                <div className="px-2 py-1.5">
-                  <TenantSelector />
-                </div>
-                <DropdownMenuSeparator />
-              </>
-            )}
-            
-            <DropdownMenuItem
-              onClick={() => navigate(`/app/${activeContext}/settings`)}
-              className="text-[13px]"
-            >
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={handleSignOut}
-              className="text-[13px] text-red-600 focus:text-red-600"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* Divider before account */}
+        <div className="h-4 w-px bg-[#E4E4E7]" />
+        
+        {/* Account menu */}
+        <AccountMenu />
       </div>
     </header>
   );
