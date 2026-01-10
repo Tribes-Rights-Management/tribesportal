@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useLocation, Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
 export default function CheckEmailPage() {
@@ -36,15 +35,15 @@ export default function CheckEmailPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6">
       <div className="w-full max-w-[440px]">
         {/* Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <h1 className="text-[28px] sm:text-[32px] font-medium text-[#0A0A0A] tracking-[-0.02em] leading-tight">
             Check your email
           </h1>
           <p className="mt-3 text-[15px] text-[#6B6B6B] leading-relaxed">
-            A sign-in link has been sent to
+            We've sent a secure sign-in link to
           </p>
         </div>
 
@@ -55,38 +54,33 @@ export default function CheckEmailPage() {
           </p>
         </div>
 
-        {/* Instructions */}
-        <div className="space-y-4 text-center">
-          <p className="text-[14px] text-[#52525B] leading-relaxed">
-            Click the link in your email to sign in.
-          </p>
-          <p className="text-[13px] text-[#A1A1AA]">
-            This link expires shortly and can only be used once.
-          </p>
-        </div>
+        {/* Expiration Notice */}
+        <p className="text-[13px] text-[#A1A1AA] text-center">
+          This link expires shortly and can only be used once.
+        </p>
 
-        {/* Resend */}
-        <div className="mt-8 text-center">
-          <Button
-            variant="ghost"
+        {/* Secondary Actions */}
+        <div className="mt-10 flex flex-col items-center gap-3">
+          <button
             onClick={handleResend}
             disabled={isResending}
-            className="text-[13px] text-[#71717A] hover:text-[#0A0A0A] hover:bg-transparent"
+            className="text-[13px] text-[#71717A] hover:text-[#0A0A0A] transition-colors disabled:opacity-50"
           >
             {isResending ? "Sending..." : "Resend sign-in link"}
-          </Button>
-        </div>
-
-        {/* Back Link */}
-        <p className="mt-4 text-center">
+          </button>
           <Link 
             to="/auth/sign-in"
             className="text-[13px] text-[#71717A] hover:text-[#0A0A0A] transition-colors"
           >
             Use a different email
           </Link>
-        </p>
+        </div>
       </div>
+
+      {/* Footer */}
+      <p className="absolute bottom-8 text-[12px] text-[#A1A1AA]">
+        Access is restricted to approved accounts.
+      </p>
     </div>
   );
 }
