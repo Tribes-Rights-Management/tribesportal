@@ -130,6 +130,9 @@
     /* Mobile-aware header height variable used by hero sections */
     --header-h: 56px; /* Mobile: 56px (h-14) */
 
+    /* Site black (LOCKED) — used as the global baseline behind all pages */
+    --site-black: 210 21% 5%;
+
     /* Background & Surface */
     --background: 0 0% 100%;
     --foreground: 0 0% 9%;
@@ -262,25 +265,25 @@
 
   /* ═══════════════════════════════════════════════════════════════════════════
      GLOBAL VIEWPORT + iOS SAFARI FIX — PREVENTS WHITE FALL-THROUGH
-     
+
      CRITICAL: html/body background is DARK by default to prevent white bleed
      on iOS Safari during bounce, dynamic viewport changes, and safe-area reveal.
-     
+
      Light pages explicitly paint their own white background via layout wrappers.
      ═══════════════════════════════════════════════════════════════════════════ */
   html {
-    /* Dark background as global baseline - prevents iOS white flash */
-    background: #0B0E11;
+    /* Site black baseline - prevents iOS white flash */
+    background: hsl(var(--site-black));
     margin: 0;
     padding: 0;
     min-height: 100%;
-    /* Prevent bounce revealing white */
+    /* Prevent bounce revealing light browser canvas */
     overscroll-behavior-y: none;
   }
 
   body {
-    /* Dark background baseline for iOS Safari */
-    background: #0B0E11;
+    /* Site black baseline for iOS Safari */
+    background: hsl(var(--site-black));
     color: hsl(var(--foreground));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -291,7 +294,7 @@
     padding: 0;
     /* Prevent horizontal overflow */
     overflow-x: hidden;
-    /* Prevent bounce revealing white */
+    /* Prevent bounce revealing light browser canvas */
     overscroll-behavior-y: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -301,18 +304,29 @@
     min-height: 100svh;
   }
 
-  /* Root element - ensures full viewport coverage on iOS Safari */
-  #root {
+  /* iOS Safari: fixed full-viewport underlay so overscroll can never reveal white */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: hsl(var(--site-black));
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* App root element(s) - ensures full viewport coverage on iOS Safari */
+  #root,
+  #__next {
     /* Dark background as baseline - prevents white flash on overscroll */
-    background: #0B0E11;
+    background: hsl(var(--site-black));
     /* iOS Safari viewport units - cascading fallbacks */
     min-height: 100vh;
     min-height: 100dvh;
     min-height: 100svh;
     /* Safe area padding for notched devices */
     padding-bottom: env(safe-area-inset-bottom);
-    /* iOS Safari: extend dark color beyond viewport edges during bounce */
-    box-shadow: 0 100vh 0 100vh #0B0E11, 0 -100vh 0 100vh #0B0E11;
+    /* Extra insurance: extend dark color beyond viewport edges during bounce */
+    box-shadow: 0 100vh 0 100vh hsl(var(--site-black)), 0 -100vh 0 100vh hsl(var(--site-black));
   }
 
   /* H1 — Primary page heading. Locked globally. */

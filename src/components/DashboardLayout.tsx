@@ -20,7 +20,7 @@ export function DashboardLayout({ children, title }: DashboardLayoutProps) {
   return (
     <SidebarProvider>
       <PortalMeta title={title} />
-      <div className="min-h-screen flex w-full bg-background">
+      <div className="min-h-dvh min-h-[100svh] flex w-full bg-background">
         <PortalSidebar />
         
         <div className="flex-1 flex flex-col">
