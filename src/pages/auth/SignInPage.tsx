@@ -53,21 +53,15 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4">
-      {/* Auth Surface */}
-      <div 
-        className="w-full max-w-[440px] bg-white border border-[#E4E4E7] px-10 py-12 sm:px-12 sm:py-14"
-        style={{ 
-          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.03)'
-        }}
-      >
+    <div className="min-h-screen flex items-center justify-center bg-white px-6">
+      <div className="w-full max-w-[440px]">
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-[22px] sm:text-[24px] font-semibold text-[#09090B] tracking-[-0.01em] leading-tight">
-            Tribes Portal
+          <h1 className="text-[28px] sm:text-[32px] font-medium text-[#0A0A0A] tracking-[-0.02em] leading-tight">
+            Sign in to Tribes
           </h1>
-          <p className="mt-3 text-[14px] text-[#71717A] leading-relaxed">
-            Secure access for approved accounts
+          <p className="mt-3 text-[15px] text-[#6B6B6B] leading-relaxed">
+            Secure access via email sign-in link
           </p>
         </div>
 
@@ -89,22 +83,32 @@ export default function SignInPage() {
               required
               autoFocus
               autoComplete="email"
-              className="h-11 px-3.5 text-[15px] text-[#09090B] bg-white border-[#D4D4D8] rounded-[6px] placeholder:text-[#A1A1AA] focus:border-[#09090B] focus:ring-1 focus:ring-[#09090B] transition-colors"
+              className="h-12 px-4 text-[15px] text-[#0A0A0A] bg-white border-[#D4D4D8] rounded-[6px] placeholder:text-[#A1A1AA] focus:border-[#0A0A0A] focus:ring-1 focus:ring-[#0A0A0A] transition-colors"
             />
           </div>
 
           <Button 
             type="submit" 
-            className="w-full h-11 bg-[#09090B] hover:bg-[#18181B] text-white text-[14px] font-medium rounded-[6px] transition-colors"
+            className="w-full h-12 bg-[#0A0A0A] hover:bg-[#171717] text-white text-[15px] font-medium rounded-[6px] transition-colors"
             disabled={isSubmitting || !email.trim()}
           >
-            {isSubmitting ? "Requesting access..." : "Request access"}
+            {isSubmitting ? "Sending..." : "Continue"}
           </Button>
         </form>
 
         {/* Institutional Notice */}
-        <p className="mt-8 text-center text-[12px] text-[#A1A1AA] leading-relaxed">
-          Access is restricted to approved accounts only.
+        <p className="mt-8 text-center text-[13px] text-[#A1A1AA] leading-relaxed">
+          Access is restricted to approved accounts.
+        </p>
+
+        {/* Help Link */}
+        <p className="mt-4 text-center">
+          <a 
+            href="mailto:admin@tribesassets.com" 
+            className="text-[13px] text-[#71717A] hover:text-[#0A0A0A] transition-colors"
+          >
+            Trouble signing in?
+          </a>
         </p>
       </div>
     </div>
