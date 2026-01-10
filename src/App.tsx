@@ -48,7 +48,7 @@ import ApprovalsPage from "@/pages/admin/ApprovalsPage";
 import TenantsPage from "@/pages/admin/TenantsPage";
 import UserDirectoryPage from "@/pages/admin/UserDirectoryPage";
 import RLSAuditPage from "@/pages/admin/RLSAuditPage";
-import SecurityVerificationPage from "@/pages/admin/SecurityVerificationPage";
+import AuthAccessReviewPage from "@/pages/admin/AuthAccessReviewPage";
 
 // Error pages
 import NotFoundPage from "@/pages/NotFoundPage";
@@ -114,7 +114,7 @@ const App = () => (
         <Route path="/admin/tenants" element={<RoleProtectedRoute allowedRoles={["admin"]}><TenantsPage /></RoleProtectedRoute>} />
         <Route path="/admin/users" element={<RoleProtectedRoute allowedRoles={["admin"]}><UserDirectoryPage /></RoleProtectedRoute>} />
         <Route path="/admin/rls-audit" element={<RoleProtectedRoute allowedRoles={["admin"]}><RLSAuditPage /></RoleProtectedRoute>} />
-        <Route path="/admin/security" element={<RoleProtectedRoute allowedRoles={["admin"]}><SecurityVerificationPage /></RoleProtectedRoute>} />
+        <Route path="/admin/security" element={<RoleProtectedRoute allowedRoles={["admin"]}><AuthAccessReviewPage /></RoleProtectedRoute>} />
 
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFoundPage />} />

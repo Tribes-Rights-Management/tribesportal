@@ -128,7 +128,7 @@ export default function AdminDashboard() {
                 <Button asChild variant="outline">
                   <Link to="/admin/security">
                     <Shield className="mr-2 h-4 w-4" />
-                    Security Verification
+                    Auth & Access Review
                   </Link>
                 </Button>
               </CardContent>
