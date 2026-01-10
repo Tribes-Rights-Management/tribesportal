@@ -35,9 +35,9 @@ export default function RootRedirect() {
   // Route based on access state
   switch (accessState) {
     case "no-access-request":
-      return <Navigate to="/app/no-access" replace />;
+      return <Navigate to="/auth/unauthorized" replace />;
     case "pending-approval":
-      return <Navigate to="/app/pending" replace />;
+      return <Navigate to="/auth/unauthorized" replace />;
     case "suspended-access":
       return <Navigate to="/app/suspended" replace />;
     case "active":

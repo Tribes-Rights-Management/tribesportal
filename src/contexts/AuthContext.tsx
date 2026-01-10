@@ -57,6 +57,7 @@ interface AuthContextType {
   isPlatformAdmin: boolean;
   signInWithMagicLink: (email: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
   setActiveTenant: (tenantId: string) => void;
   setActiveContext: (context: PortalContext) => void;
   canAccessContext: (context: PortalContext) => boolean;
@@ -403,6 +404,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error as Error | null };
   };
 
+  const refreshProfile = useCallback(async () => {
+    if (user) {
+      setLoading(true);
+      await fetchProfile(user.id);
+    }
+  }, [user]);
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setProfile(null);
@@ -429,6 +437,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isPlatformAdmin,
       signInWithMagicLink, 
       signOut,
+      refreshProfile,
       setActiveTenant,
       setActiveContext,
       canAccessContext,

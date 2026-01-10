@@ -73,16 +73,16 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
   // Route based on access state
   switch (accessState) {
     case "no-access-request":
-      return <Navigate to="/app/no-access" replace />;
+      return <Navigate to="/auth/unauthorized" replace />;
     case "pending-approval":
-      return <Navigate to="/app/pending" replace />;
+      return <Navigate to="/auth/unauthorized" replace />;
     case "suspended-access":
       return <Navigate to="/app/suspended" replace />;
   }
 
   // No active tenant selected (shouldn't happen if active, but safety check)
   if (!activeTenant) {
-    return <Navigate to="/app/pending" replace />;
+    return <Navigate to="/auth/unauthorized" replace />;
   }
 
   // Check context access for specific routes
@@ -98,7 +98,7 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
       });
       return <Navigate to={`/app/${activeContext}`} replace />;
     }
-    return <Navigate to="/app/pending" replace />;
+    return <Navigate to="/auth/unauthorized" replace />;
   }
 
   return <>{children}</>;
