@@ -810,6 +810,266 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   INTERNAL FORM SYSTEM — TRIBES INSTITUTIONAL STANDARD (LOCKED)
+
+   Purpose: Compact, operational forms for authenticated portal contexts.
+   Applies to: Licensing, Publishing, Admin, and all internal data entry.
+   
+   Design principles:
+   - Forms are operational instruments, not marketing surfaces
+   - Neutral, system-oriented language only
+   - No reassurance or explanatory copy
+   - Compact spacing for repeat professional use
+
+   Spacing tokens:
+   - Field-to-field: 12-16px (--internal-field-gap)
+   - Section-to-section: 24-32px (--internal-section-gap)
+   - Label-to-input: 4-6px (--internal-label-gap)
+   - Button group: 16-24px above (--internal-button-gap)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Internal form spacing tokens */
+  --internal-field-gap: 14px;      /* 12-16px range, centered */
+  --internal-section-gap: 28px;    /* 24-32px range */
+  --internal-label-gap: 5px;       /* 4-6px range, centered */
+  --internal-button-gap: 20px;     /* 16-24px range */
+  --internal-helper-gap: 4px;      /* Helper text spacing */
+  
+  /* Internal form max-width (aligned to app content grid) */
+  --internal-form-width: 560px;
+  --internal-form-width-narrow: 400px;
+  --internal-form-width-wide: 720px;
+}
+
+@layer components {
+  /* ═══════════════════════════════════════════════════════════════════════════
+     INTERNAL FORM CONTAINER — Main wrapper for portal forms
+     ═══════════════════════════════════════════════════════════════════════════ */
+  .internal-form {
+    max-width: var(--internal-form-width);
+    width: 100%;
+  }
+
+  .internal-form-narrow {
+    max-width: var(--internal-form-width-narrow);
+    width: 100%;
+  }
+
+  .internal-form-wide {
+    max-width: var(--internal-form-width-wide);
+    width: 100%;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     INTERNAL FORM SECTION — Groups related fields with subtle header
+     ═══════════════════════════════════════════════════════════════════════════ */
+  .internal-form-section {
+    margin-bottom: var(--internal-section-gap);
+  }
+
+  .internal-form-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .internal-form-section-header {
+    font-size: 13px;
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  .internal-form-section-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: hsl(var(--foreground));
+    margin-bottom: 12px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     INTERNAL FORM FIELD STACK — Compact vertical field spacing
+     ═══════════════════════════════════════════════════════════════════════════ */
+  .internal-form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--internal-field-gap);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     INTERNAL FORM FIELD — Individual field wrapper with tight label spacing
+     ═══════════════════════════════════════════════════════════════════════════ */
+  .internal-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--internal-label-gap);
+  }
+
+  /* Internal form label - concise, factual, always visible */
+  .internal-form-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: hsl(var(--foreground));
+    line-height: 1.3;
+  }
+
+  /* Internal form helper text - minimal, low-contrast, factual */
+  .internal-form-helper {
+    font-size: 12px;
+    color: hsl(var(--muted-foreground));
+    line-height: 1.4;
+    margin-top: var(--internal-helper-gap);
+  }
+
+  /* Internal form error - inline, concise, specific */
+  .internal-form-error {
+    font-size: 12px;
+    color: hsl(0 0% 35%);
+    line-height: 1.4;
+    margin-top: var(--internal-helper-gap);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     INTERNAL FORM ROW — Horizontal field grouping (2-3 fields)
+     ═══════════════════════════════════════════════════════════════════════════ */
+  .internal-form-row {
+    display: grid;
+    gap: 16px;
+  }
+
+  .internal-form-row-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .internal-form-row-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    .internal-form-row-2,
+    .internal-form-row-3 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     INTERNAL FORM ACTIONS — Button group with proper spacing
+     ═══════════════════════════════════════════════════════════════════════════ */
+  .internal-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: var(--internal-button-gap);
+    padding-top: var(--internal-button-gap);
+    border-top: 1px solid hsl(var(--border));
+  }
+
+  .internal-form-actions-simple {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: var(--internal-button-gap);
+  }
+
+  /* Primary action should be first, no explicit justification */
+  .internal-form-actions-right {
+    justify-content: flex-end;
+  }
+
+  /* Destructive actions pushed to end */
+  .internal-form-actions-space {
+    justify-content: space-between;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     INTERNAL FORM DIVIDER — Subtle section separator
+     ═══════════════════════════════════════════════════════════════════════════ */
+  .internal-form-divider {
+    height: 1px;
+    background-color: hsl(var(--border));
+    margin: var(--internal-section-gap) 0;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     INTERNAL FORM INLINE ROW — Key-value or label-action pairs
+     ═══════════════════════════════════════════════════════════════════════════ */
+  .internal-form-inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 40px;
+  }
+
+  .internal-form-inline-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: hsl(var(--foreground));
+  }
+
+  .internal-form-inline-value {
+    font-size: 13px;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     APPROVAL FORM — Extremely compact, decision-focused
+     ═══════════════════════════════════════════════════════════════════════════ */
+  .approval-form {
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .approval-form-identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background-color: hsl(var(--muted));
+    border-radius: 6px;
+  }
+
+  .approval-form-identity-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: hsl(var(--background));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .approval-form-identity-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .approval-form-identity-email {
+    font-size: 14px;
+    font-weight: 500;
+    color: hsl(var(--foreground));
+  }
+
+  .approval-form-identity-meta {
+    font-size: 12px;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .approval-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+  }
+}
+
 @layer utilities {
   /* ═══════════════════════════════════════════════════════════════════════════
      iOS SAFARI VIEWPORT UTILITIES — LOCKED
