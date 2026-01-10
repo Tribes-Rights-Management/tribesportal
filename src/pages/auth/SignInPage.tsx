@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SignInHelpDialog } from "@/components/auth/SignInHelpDialog";
-import { AuthLayout, AuthHeader, AuthFooter, AuthSecondaryAction } from "@/components/auth/AuthLayout";
-
 export default function SignInPage() {
   const { user, profile, loading, signInWithMagicLink } = useAuth();
   const navigate = useNavigate();
@@ -52,65 +51,79 @@ export default function SignInPage() {
 
   if (loading) {
     return (
-      <AuthLayout>
-        <p className="text-black/50 text-sm text-center tracking-wide">Verifying access...</p>
-      </AuthLayout>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <p className="text-[#71717A] text-[14px] tracking-wide">Verifying access...</p>
+      </div>
     );
   }
 
   return (
-    <AuthLayout
-      footer={<AuthFooter>Access is restricted to approved accounts.</AuthFooter>}
-    >
-      <AuthHeader 
-        title="Sign in to Tribes"
-        subtitle="Secure access via email sign-in link"
-      />
-
-      {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="space-y-2">
-          <Label 
-            htmlFor="email" 
-            className="text-[13px] font-medium text-black/70 block"
-          >
-            Email address
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@company.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoFocus
-            autoComplete="email"
-            className="h-12 px-4 text-[15px] text-foreground bg-white border-black/15 rounded-lg placeholder:text-black/40 focus:border-black/40 focus:ring-1 focus:ring-black/20 transition-colors"
-          />
+    <div className="min-h-screen flex items-center justify-center bg-white px-6">
+      <div className="w-full max-w-[440px]">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-[28px] sm:text-[32px] font-medium text-[#0A0A0A] tracking-[-0.02em] leading-tight">
+            Sign in to Tribes
+          </h1>
+          <p className="mt-3 text-[15px] text-[#6B6B6B] leading-relaxed">
+            Secure access via email sign-in link
+          </p>
         </div>
 
-        <button 
-          type="submit" 
-          className="w-full h-12 bg-[#101010] hover:bg-black/90 hover:shadow-md text-white text-[15px] font-medium rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-2"
-          disabled={isSubmitting || !email.trim()}
-        >
-          {isSubmitting ? "Sending..." : "Continue"}
-        </button>
-      </form>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label 
+              htmlFor="email" 
+              className="text-[13px] font-medium text-[#3F3F46] block"
+            >
+              Email address
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@company.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoFocus
+              autoComplete="email"
+              className="h-12 px-4 text-[15px] text-[#0A0A0A] bg-white border-[#D4D4D8] rounded-[6px] placeholder:text-[#A1A1AA] focus:border-[#0A0A0A] focus:ring-1 focus:ring-[#0A0A0A] transition-colors"
+            />
+          </div>
 
-      {/* Help Link */}
-      <div className="mt-8 text-center">
-        <AuthSecondaryAction onClick={() => setHelpDialogOpen(true)}>
-          Trouble signing in?
-        </AuthSecondaryAction>
+          <Button 
+            type="submit" 
+            className="w-full h-12 bg-[#0A0A0A] hover:bg-[#171717] text-white text-[15px] font-medium rounded-[6px] transition-colors"
+            disabled={isSubmitting || !email.trim()}
+          >
+            {isSubmitting ? "Sending..." : "Continue"}
+          </Button>
+        </form>
+
+        {/* Institutional Notice */}
+        <p className="mt-8 text-center text-[13px] text-[#A1A1AA] leading-relaxed">
+          Access is restricted to approved accounts.
+        </p>
+
+        {/* Help Link */}
+        <p className="mt-4 text-center">
+          <button 
+            type="button"
+            onClick={() => setHelpDialogOpen(true)}
+            className="text-[13px] text-[#71717A] hover:text-[#0A0A0A] transition-colors"
+          >
+            Trouble signing in?
+          </button>
+        </p>
+
+        <SignInHelpDialog
+          open={helpDialogOpen}
+          onOpenChange={setHelpDialogOpen}
+          email={email}
+          onResendLink={handleResendLink}
+        />
       </div>
-
-      <SignInHelpDialog
-        open={helpDialogOpen}
-        onOpenChange={setHelpDialogOpen}
-        email={email}
-        onResendLink={handleResendLink}
-      />
-    </AuthLayout>
+    </div>
   );
 }
