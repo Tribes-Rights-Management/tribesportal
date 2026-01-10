@@ -1,43 +1,46 @@
 import { Navigate } from "react-router-dom";
-import { useAuth, UserRole } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * Smart redirect component for the root route.
- * Redirects authenticated users to their role-appropriate dashboard.
- * Redirects unauthenticated users to sign-in.
+ * Redirects to appropriate dashboard based on auth state and context.
  */
 export default function RootRedirect() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, isPlatformAdmin, activeContext, hasPendingApproval } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <p className="text-[15px] text-[#71717A]">Loading...</p>
       </div>
     );
   }
 
-  // Not authenticated - go to sign in
+  // Not authenticated
   if (!user) {
     return <Navigate to="/auth/sign-in" replace />;
   }
 
-  // Authenticated but no profile - account not provisioned
-  if (!profile) {
+  // No profile or suspended
+  if (!profile || profile.status !== "active") {
     return <Navigate to="/auth/error" replace />;
   }
 
-  // Account suspended
-  if (profile.status !== "active") {
-    return <Navigate to="/auth/error" replace />;
+  // Platform admin goes to admin dashboard
+  if (isPlatformAdmin) {
+    return <Navigate to="/admin" replace />;
   }
 
-  // Redirect based on role
-  const roleRoutes: Record<UserRole, string> = {
-    admin: "/admin",
-    client: "/dashboard",
-    licensing: "/licensing",
-  };
+  // Pending approval
+  if (hasPendingApproval) {
+    return <Navigate to="/app/pending" replace />;
+  }
 
-  return <Navigate to={roleRoutes[profile.role]} replace />;
+  // Redirect to active context dashboard
+  if (activeContext) {
+    return <Navigate to={`/app/${activeContext}`} replace />;
+  }
+
+  // Fallback
+  return <Navigate to="/app/licensing" replace />;
 }

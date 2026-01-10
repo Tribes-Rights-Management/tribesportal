@@ -4,7 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate } from "react-router-dom";
 import RoleProtectedRoute from "@/components/RoleProtectedRoute";
-import RootRedirect from "@/components/RootRedirect";
+import { AppProtectedRoute } from "@/components/app/AppProtectedRoute";
+import { AppLayout } from "@/layouts/AppLayout";
 
 // Auth pages
 import SignInPage from "@/pages/auth/SignInPage";
@@ -12,14 +13,38 @@ import CheckEmailPage from "@/pages/auth/CheckEmailPage";
 import AuthErrorPage from "@/pages/auth/AuthErrorPage";
 import AuthCallbackPage from "@/pages/auth/AuthCallbackPage";
 
-// Protected pages
-import DashboardPage from "@/pages/DashboardPage";
-import LicensingPage from "@/pages/LicensingPage";
+// App pages - Licensing
+import LicensingDashboard from "@/pages/app/licensing/LicensingDashboard";
+import LicensingCatalog from "@/pages/app/licensing/LicensingCatalog";
+import LicensingRequests from "@/pages/app/licensing/LicensingRequests";
+import LicensingLicenses from "@/pages/app/licensing/LicensingLicenses";
+import LicensingReports from "@/pages/app/licensing/LicensingReports";
+import LicensingDocuments from "@/pages/app/licensing/LicensingDocuments";
+import LicensingSettings from "@/pages/app/licensing/LicensingSettings";
+
+// App pages - Publishing
+import PublishingDashboard from "@/pages/app/publishing/PublishingDashboard";
+import PublishingCatalog from "@/pages/app/publishing/PublishingCatalog";
+import PublishingWorks from "@/pages/app/publishing/PublishingWorks";
+import PublishingSplits from "@/pages/app/publishing/PublishingSplits";
+import PublishingRegistrations from "@/pages/app/publishing/PublishingRegistrations";
+import PublishingStatements from "@/pages/app/publishing/PublishingStatements";
+import PublishingPayments from "@/pages/app/publishing/PublishingPayments";
+import PublishingDocuments from "@/pages/app/publishing/PublishingDocuments";
+import PublishingSettings from "@/pages/app/publishing/PublishingSettings";
+
+// App pages - Other
+import PendingApprovalPage from "@/pages/app/PendingApprovalPage";
+
+// Admin pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import UserDirectoryPage from "@/pages/admin/UserDirectoryPage";
 
 // Error pages
 import NotFoundPage from "@/pages/NotFoundPage";
+
+// Root redirect component
+import RootRedirect from "@/components/RootRedirect";
 
 const queryClient = new QueryClient();
 
@@ -29,55 +54,45 @@ const App = () => (
       <Toaster />
       <Sonner />
       <Routes>
-        {/* Root redirect - smart routing based on auth/role */}
+        {/* Root redirect */}
         <Route path="/" element={<RootRedirect />} />
 
-        {/* Auth redirect */}
+        {/* Auth routes */}
         <Route path="/auth" element={<Navigate to="/auth/sign-in" replace />} />
-
-        {/* Public auth routes */}
         <Route path="/auth/sign-in" element={<SignInPage />} />
         <Route path="/auth/check-email" element={<CheckEmailPage />} />
         <Route path="/auth/error" element={<AuthErrorPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
-        {/* Protected routes - Client */}
-        <Route
-          path="/dashboard"
-          element={
-            <RoleProtectedRoute allowedRoles={["client"]}>
-              <DashboardPage />
-            </RoleProtectedRoute>
-          }
-        />
+        {/* App pending approval */}
+        <Route path="/app/pending" element={<PendingApprovalPage />} />
 
-        {/* Protected routes - Licensing */}
-        <Route
-          path="/licensing"
-          element={
-            <RoleProtectedRoute allowedRoles={["licensing"]}>
-              <LicensingPage />
-            </RoleProtectedRoute>
-          }
-        />
+        {/* App routes with layout */}
+        <Route path="/app" element={<AppProtectedRoute><AppLayout /></AppProtectedRoute>}>
+          {/* Licensing context routes */}
+          <Route path="licensing" element={<AppProtectedRoute requiredContext="licensing"><LicensingDashboard /></AppProtectedRoute>} />
+          <Route path="licensing/catalog" element={<AppProtectedRoute requiredContext="licensing"><LicensingCatalog /></AppProtectedRoute>} />
+          <Route path="licensing/requests" element={<AppProtectedRoute requiredContext="licensing"><LicensingRequests /></AppProtectedRoute>} />
+          <Route path="licensing/licenses" element={<AppProtectedRoute requiredContext="licensing"><LicensingLicenses /></AppProtectedRoute>} />
+          <Route path="licensing/reports" element={<AppProtectedRoute requiredContext="licensing"><LicensingReports /></AppProtectedRoute>} />
+          <Route path="licensing/documents" element={<AppProtectedRoute requiredContext="licensing"><LicensingDocuments /></AppProtectedRoute>} />
+          <Route path="licensing/settings" element={<AppProtectedRoute requiredContext="licensing"><LicensingSettings /></AppProtectedRoute>} />
 
-        {/* Protected routes - Admin */}
-        <Route
-          path="/admin"
-          element={
-            <RoleProtectedRoute allowedRoles={["admin"]}>
-              <AdminDashboard />
-            </RoleProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/users"
-          element={
-            <RoleProtectedRoute allowedRoles={["admin"]}>
-              <UserDirectoryPage />
-            </RoleProtectedRoute>
-          }
-        />
+          {/* Publishing context routes */}
+          <Route path="publishing" element={<AppProtectedRoute requiredContext="publishing"><PublishingDashboard /></AppProtectedRoute>} />
+          <Route path="publishing/catalog" element={<AppProtectedRoute requiredContext="publishing"><PublishingCatalog /></AppProtectedRoute>} />
+          <Route path="publishing/works" element={<AppProtectedRoute requiredContext="publishing"><PublishingWorks /></AppProtectedRoute>} />
+          <Route path="publishing/splits" element={<AppProtectedRoute requiredContext="publishing"><PublishingSplits /></AppProtectedRoute>} />
+          <Route path="publishing/registrations" element={<AppProtectedRoute requiredContext="publishing"><PublishingRegistrations /></AppProtectedRoute>} />
+          <Route path="publishing/statements" element={<AppProtectedRoute requiredContext="publishing"><PublishingStatements /></AppProtectedRoute>} />
+          <Route path="publishing/payments" element={<AppProtectedRoute requiredContext="publishing"><PublishingPayments /></AppProtectedRoute>} />
+          <Route path="publishing/documents" element={<AppProtectedRoute requiredContext="publishing"><PublishingDocuments /></AppProtectedRoute>} />
+          <Route path="publishing/settings" element={<AppProtectedRoute requiredContext="publishing"><PublishingSettings /></AppProtectedRoute>} />
+        </Route>
+
+        {/* Admin routes */}
+        <Route path="/admin" element={<RoleProtectedRoute allowedRoles={["admin"]}><AdminDashboard /></RoleProtectedRoute>} />
+        <Route path="/admin/users" element={<RoleProtectedRoute allowedRoles={["admin"]}><UserDirectoryPage /></RoleProtectedRoute>} />
 
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFoundPage />} />
