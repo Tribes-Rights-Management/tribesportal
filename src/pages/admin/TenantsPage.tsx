@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowLeft, RefreshCw, Plus, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -15,9 +14,8 @@ import { writeAuditLog, AuditActions, ResourceTypes } from "@/lib/audit";
 
 interface Tenant {
   id: string;
-  legal_name: string;
+  name: string;
   slug: string;
-  status: string;
   created_at: string;
   member_count?: number;
 }
@@ -29,16 +27,15 @@ export default function TenantsPage() {
   const [saving, setSaving] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);
-  const [formData, setFormData] = useState({ legal_name: "", slug: "" });
+  const [formData, setFormData] = useState({ name: "", slug: "" });
 
   const fetchTenants = async () => {
     setLoading(true);
     
     const { data: tenantsData, error: tenantsError } = await supabase
       .from("tenants")
-      .select("id, legal_name, slug, status, created_at")
-      .is("deleted_at", null)
-      .order("legal_name");
+      .select("id, name, slug, created_at")
+      .order("name");
 
     if (tenantsError) {
       console.error("Error fetching tenants:", tenantsError);
@@ -55,8 +52,7 @@ export default function TenantsPage() {
     const { data: memberCounts } = await supabase
       .from("tenant_memberships")
       .select("tenant_id")
-      .eq("status", "active")
-      .is("deleted_at", null);
+      .eq("status", "active");
 
     const countMap = new Map<string, number>();
     memberCounts?.forEach((m) => {
@@ -86,25 +82,25 @@ export default function TenantsPage() {
 
   const handleNameChange = (value: string) => {
     setFormData({
-      legal_name: value,
+      name: value,
       slug: editingTenant ? formData.slug : generateSlug(value),
     });
   };
 
   const openCreateDialog = () => {
     setEditingTenant(null);
-    setFormData({ legal_name: "", slug: "" });
+    setFormData({ name: "", slug: "" });
     setDialogOpen(true);
   };
 
   const openEditDialog = (tenant: Tenant) => {
     setEditingTenant(tenant);
-    setFormData({ legal_name: tenant.legal_name, slug: tenant.slug });
+    setFormData({ name: tenant.name, slug: tenant.slug });
     setDialogOpen(true);
   };
 
   const saveTenant = async () => {
-    if (!formData.legal_name.trim() || !formData.slug.trim()) {
+    if (!formData.name.trim() || !formData.slug.trim()) {
       toast({
         title: "Error",
         description: "Name and slug are required",
@@ -121,7 +117,7 @@ export default function TenantsPage() {
         const { error } = await supabase
           .from("tenants")
           .update({
-            legal_name: formData.legal_name.trim(),
+            name: formData.name.trim(),
             slug: formData.slug.trim(),
             updated_at: new Date().toISOString(),
           })
@@ -130,14 +126,14 @@ export default function TenantsPage() {
         if (error) throw error;
 
         await writeAuditLog({
-          userId: currentProfile?.id,
+          userId: currentProfile?.user_id,
           tenantId: editingTenant.id,
           action: AuditActions.TENANT_UPDATED,
           resourceType: ResourceTypes.TENANT,
           resourceId: editingTenant.id,
           details: {
-            old_name: editingTenant.legal_name,
-            new_name: formData.legal_name.trim(),
+            old_name: editingTenant.name,
+            new_name: formData.name.trim(),
           },
         });
 
@@ -147,7 +143,7 @@ export default function TenantsPage() {
         const { data, error } = await supabase
           .from("tenants")
           .insert({
-            legal_name: formData.legal_name.trim(),
+            name: formData.name.trim(),
             slug: formData.slug.trim(),
           })
           .select("id")
@@ -156,13 +152,13 @@ export default function TenantsPage() {
         if (error) throw error;
 
         await writeAuditLog({
-          userId: currentProfile?.id,
+          userId: currentProfile?.user_id,
           tenantId: data.id,
           action: AuditActions.TENANT_CREATED,
           resourceType: ResourceTypes.TENANT,
           resourceId: data.id,
           details: {
-            name: formData.legal_name.trim(),
+            name: formData.name.trim(),
             slug: formData.slug.trim(),
           },
         });
@@ -223,10 +219,10 @@ export default function TenantsPage() {
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
-                    <Label htmlFor="legal_name">Legal Name</Label>
+                    <Label htmlFor="name">Name</Label>
                     <Input
-                      id="legal_name"
-                      value={formData.legal_name}
+                      id="name"
+                      value={formData.name}
                       onChange={(e) => handleNameChange(e.target.value)}
                       placeholder="Acme Publishing Inc."
                     />
@@ -286,7 +282,6 @@ export default function TenantsPage() {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Slug</TableHead>
-                    <TableHead>Status</TableHead>
                     <TableHead>Members</TableHead>
                     <TableHead>Created</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -296,19 +291,10 @@ export default function TenantsPage() {
                   {tenants.map((tenant) => (
                     <TableRow key={tenant.id}>
                       <TableCell className="font-medium">
-                        {tenant.legal_name}
+                        {tenant.name}
                       </TableCell>
                       <TableCell className="text-muted-foreground font-mono text-sm">
                         {tenant.slug}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            tenant.status === "active" ? "default" : "secondary"
-                          }
-                        >
-                          {tenant.status}
-                        </Badge>
                       </TableCell>
                       <TableCell>{tenant.member_count}</TableCell>
                       <TableCell className="text-muted-foreground">

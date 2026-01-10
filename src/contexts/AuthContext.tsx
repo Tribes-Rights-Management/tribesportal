@@ -1,15 +1,13 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 
-// Platform role (user_roles table - for platform-level admin)
-export type UserRole = "admin" | "client" | "licensing";
-export type UserStatus = "active" | "suspended";
-
-// Portal roles (membership_roles table - per-tenant)
-export type PortalRole = "tenant_owner" | "publishing_admin" | "licensing_user" | "read_only" | "internal_admin";
-export type PortalContext = "licensing" | "publishing";
-export type MembershipStatus = "active" | "suspended" | "invited";
+// Types from database enums
+export type PlatformRole = Database["public"]["Enums"]["platform_role"];
+export type PortalRole = Database["public"]["Enums"]["portal_role"];
+export type PortalContext = Database["public"]["Enums"]["portal_context"];
+export type MembershipStatus = Database["public"]["Enums"]["membership_status"];
 
 export interface TenantMembership {
   id: string;
@@ -17,19 +15,19 @@ export interface TenantMembership {
   tenant_name: string;
   tenant_slug: string;
   status: MembershipStatus;
-  portal_roles: PortalRole[];
-  available_contexts: PortalContext[];
+  role: PortalRole;
+  allowed_contexts: PortalContext[];
+  default_context: PortalContext | null;
 }
 
 export interface UserProfile {
   id: string;
+  user_id: string;
   email: string;
-  role: UserRole; // Platform role
-  status: UserStatus;
+  full_name: string | null;
+  platform_role: PlatformRole;
+  status: MembershipStatus;
   created_at: string;
-  last_login_at: string | null;
-  default_tenant_id: string | null;
-  default_context: PortalContext | null;
 }
 
 // Access state determines which page/route to show
@@ -39,8 +37,8 @@ export type AccessState =
   | "no-profile"
   | "suspended-profile"
   | "no-access-request"     // User has zero memberships (never requested)
-  | "pending-approval"      // User has memberships but all are invited
-  | "suspended-access"      // User has memberships but all are suspended
+  | "pending-approval"      // User has memberships but all are pending/denied
+  | "suspended-access"      // User has memberships but all are suspended/revoked
   | "active";               // User has at least one active membership
 
 interface AuthContextType {
@@ -104,17 +102,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [activeContext, setActiveContextState] = useState<PortalContext | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const isPlatformAdmin = profile?.role === "admin";
+  const isPlatformAdmin = profile?.platform_role === "platform_admin" && profile?.status === "active";
 
-  // Derive available contexts from active tenant's roles
-  const availableContexts = activeTenant?.available_contexts ?? [];
+  // Derive available contexts from active tenant
+  const availableContexts = activeTenant?.allowed_contexts ?? [];
 
   // Compute access state based on user, profile, and memberships
   const accessState: AccessState = (() => {
     if (loading) return "loading";
     if (!user) return "unauthenticated";
     if (!profile) return "no-profile";
-    if (profile.status === "suspended") return "suspended-profile";
+    if (profile.status === "suspended" || profile.status === "revoked") return "suspended-profile";
     
     // Platform admins always have access
     if (isPlatformAdmin) return "active";
@@ -125,10 +123,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const hasActive = allMemberships.some(m => m.status === "active");
     if (hasActive) return "active";
     
-    const hasInvited = allMemberships.some(m => m.status === "invited");
-    if (hasInvited) return "pending-approval";
+    const hasPending = allMemberships.some(m => m.status === "pending");
+    if (hasPending) return "pending-approval";
     
-    // All memberships must be suspended
+    // All memberships must be suspended/revoked/denied
     return "suspended-access";
   })();
 
@@ -170,17 +168,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function fetchProfile(userId: string) {
     try {
-      // Fetch profile, role, and ALL tenant memberships (any status)
-      const [profileResult, roleResult, allMembershipsResult, activeMembershipsResult] = await Promise.all([
+      // Fetch profile and ALL tenant memberships
+      const [profileResult, allMembershipsResult, activeMembershipsResult] = await Promise.all([
         supabase
           .from("user_profiles")
-          .select("id, email, status, created_at, last_login_at, default_tenant_id, default_context")
-          .eq("id", userId)
-          .is("deleted_at", null)
-          .maybeSingle(),
-        supabase
-          .from("user_roles")
-          .select("role")
+          .select("id, user_id, email, full_name, platform_role, status, created_at")
           .eq("user_id", userId)
           .maybeSingle(),
         // Fetch ALL memberships (any status) for access state resolution
@@ -190,11 +182,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             id,
             tenant_id,
             status,
-            tenants!inner(legal_name, slug),
-            membership_roles(role)
+            role,
+            allowed_contexts,
+            default_context,
+            tenants!inner(name, slug)
           `)
-          .eq("user_id", userId)
-          .is("deleted_at", null),
+          .eq("user_id", userId),
         // Fetch only ACTIVE memberships for app access
         supabase
           .from("tenant_memberships")
@@ -202,12 +195,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             id,
             tenant_id,
             status,
-            tenants!inner(legal_name, slug),
-            membership_roles(role)
+            role,
+            allowed_contexts,
+            default_context,
+            tenants!inner(name, slug)
           `)
           .eq("user_id", userId)
           .eq("status", "active")
-          .is("deleted_at", null)
       ]);
 
       if (profileResult.error || !profileResult.data) {
@@ -217,57 +211,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      if (roleResult.error || !roleResult.data) {
-        console.error("Error fetching role:", roleResult.error);
-        setProfile(null);
-        setLoading(false);
-        return;
-      }
-
-      // Fetch context permissions to map roles to contexts
-      const { data: contextPerms } = await supabase
-        .from("context_permissions")
-        .select("role, context, allowed")
-        .eq("allowed", true);
-
-      const contextPermMap = new Map<string, PortalContext[]>();
-      if (contextPerms) {
-        contextPerms.forEach((perm) => {
-          const existing = contextPermMap.get(perm.role) || [];
-          existing.push(perm.context as PortalContext);
-          contextPermMap.set(perm.role, existing);
-        });
-      }
-
-      const combinedProfile: UserProfile = {
-        ...profileResult.data,
-        role: roleResult.data.role as UserRole,
-        default_context: profileResult.data.default_context as PortalContext | null,
+      const userProfile: UserProfile = {
+        id: profileResult.data.id,
+        user_id: profileResult.data.user_id,
+        email: profileResult.data.email,
+        full_name: profileResult.data.full_name,
+        platform_role: profileResult.data.platform_role,
+        status: profileResult.data.status,
+        created_at: profileResult.data.created_at,
       };
-      setProfile(combinedProfile);
+      setProfile(userProfile);
 
       // Process helper function
       const processMemberships = (data: any[]): TenantMembership[] => {
-        return data.map((m: any) => {
-          const portalRoles = m.membership_roles?.map((mr: any) => mr.role as PortalRole) ?? [];
-          
-          // Derive available contexts from roles
-          const contexts = new Set<PortalContext>();
-          portalRoles.forEach((role: PortalRole) => {
-            const roleContexts = contextPermMap.get(role) || [];
-            roleContexts.forEach((ctx) => contexts.add(ctx));
-          });
-
-          return {
-            id: m.id,
-            tenant_id: m.tenant_id,
-            tenant_name: m.tenants.legal_name,
-            tenant_slug: m.tenants.slug,
-            status: m.status as MembershipStatus,
-            portal_roles: portalRoles,
-            available_contexts: Array.from(contexts),
-          };
-        });
+        return data.map((m: any) => ({
+          id: m.id,
+          tenant_id: m.tenant_id,
+          tenant_name: m.tenants.name,
+          tenant_slug: m.tenants.slug,
+          status: m.status as MembershipStatus,
+          role: m.role as PortalRole,
+          allowed_contexts: (m.allowed_contexts || []) as PortalContext[],
+          default_context: m.default_context as PortalContext | null,
+        }));
       };
 
       // Store all memberships for access state resolution
@@ -283,10 +249,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         // Resolve active tenant
         const storedTenantId = localStorage.getItem(ACTIVE_TENANT_KEY);
-        const defaultTenantId = combinedProfile.default_tenant_id;
         
         let selectedTenant = memberships.find(m => m.tenant_id === storedTenantId)
-          || memberships.find(m => m.tenant_id === defaultTenantId)
           || memberships[0]
           || null;
         
@@ -294,10 +258,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         // Resolve active context with priority
         if (selectedTenant) {
-          const selectedContext = resolveContextForTenant(
-            selectedTenant,
-            combinedProfile.default_context
-          );
+          const selectedContext = resolveContextForTenant(selectedTenant);
           
           setActiveContextState(selectedContext);
           if (selectedContext) {
@@ -305,12 +266,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         }
       }
-      
-      // Update last login
-      await supabase
-        .from("user_profiles")
-        .update({ last_login_at: new Date().toISOString() })
-        .eq("id", userId);
         
     } finally {
       setLoading(false);
@@ -318,11 +273,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   // Resolve context for a tenant using priority order
-  const resolveContextForTenant = useCallback((
-    tenant: TenantMembership,
-    defaultContext: PortalContext | null
-  ): PortalContext | null => {
-    const available = tenant.available_contexts;
+  const resolveContextForTenant = useCallback((tenant: TenantMembership): PortalContext | null => {
+    const available = tenant.allowed_contexts;
     if (available.length === 0) return null;
     
     // If only one context, use it
@@ -334,18 +286,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return storedContext;
     }
     
-    // Priority 2: User's default_context from profile
-    if (defaultContext && available.includes(defaultContext)) {
-      return defaultContext;
+    // Priority 2: Membership's default_context
+    if (tenant.default_context && available.includes(tenant.default_context)) {
+      return tenant.default_context;
     }
     
-    // Priority 3: publishing_admin role → publishing
-    if (tenant.portal_roles.includes("publishing_admin") && available.includes("publishing")) {
-      return "publishing";
-    }
-    
-    // Priority 4: First available (licensing by convention)
-    return available.includes("licensing") ? "licensing" : available[0];
+    // Priority 3: First available
+    return available[0];
   }, []);
 
   const setActiveTenant = useCallback((tenantId: string) => {
@@ -356,42 +303,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Recompute active context for new tenant using priority order
       const currentContext = activeContext;
-      if (currentContext && tenant.available_contexts.includes(currentContext)) {
+      if (currentContext && tenant.allowed_contexts.includes(currentContext)) {
         // Keep current context if valid, but update localStorage
         setStoredContextForTenant(tenantId, currentContext);
       } else {
         // Resolve using priority order
-        const newContext = resolveContextForTenant(tenant, profile?.default_context ?? null);
+        const newContext = resolveContextForTenant(tenant);
         setActiveContextState(newContext);
         if (newContext) {
           setStoredContextForTenant(tenantId, newContext);
         }
       }
     }
-  }, [tenantMemberships, activeContext, profile?.default_context, resolveContextForTenant]);
+  }, [tenantMemberships, activeContext, resolveContextForTenant]);
 
   const setActiveContext = useCallback((context: PortalContext) => {
-    if (activeTenant?.available_contexts.includes(context)) {
+    if (activeTenant?.allowed_contexts.includes(context)) {
       setActiveContextState(context);
       setStoredContextForTenant(activeTenant.tenant_id, context);
-      
-      // Persist to profile as default
-      if (profile) {
-        supabase
-          .from("user_profiles")
-          .update({ default_context: context })
-          .eq("id", profile.id)
-          .then(() => {});
-      }
     }
-  }, [activeTenant, profile]);
+  }, [activeTenant]);
 
   const canAccessContext = useCallback((context: PortalContext): boolean => {
-    return activeTenant?.available_contexts.includes(context) ?? false;
+    return activeTenant?.allowed_contexts.includes(context) ?? false;
   }, [activeTenant]);
 
   const hasPortalRole = useCallback((role: PortalRole): boolean => {
-    return activeTenant?.portal_roles.includes(role) ?? false;
+    return activeTenant?.role === role;
   }, [activeTenant]);
 
   const signInWithMagicLink = async (email: string) => {

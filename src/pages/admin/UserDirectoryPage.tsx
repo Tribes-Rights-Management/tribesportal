@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
-import { useAuth, UserRole, UserStatus } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { writeAuditLog, AuditActions, ResourceTypes } from "@/lib/audit";
 import type { Database } from "@/integrations/supabase/types";
 
+type PlatformRole = Database["public"]["Enums"]["platform_role"];
 type PortalRole = Database["public"]["Enums"]["portal_role"];
 type MembershipStatus = Database["public"]["Enums"]["membership_status"];
 
@@ -21,36 +21,36 @@ interface TenantMembership {
   tenant_id: string;
   tenant_name: string;
   status: MembershipStatus;
-  roles: PortalRole[];
+  role: PortalRole;
+  allowed_contexts: string[];
   created_at: string;
 }
 
-interface UserWithRole {
+interface UserWithProfile {
   id: string;
+  user_id: string;
   email: string;
-  status: UserStatus;
+  full_name: string | null;
+  platform_role: PlatformRole;
+  status: MembershipStatus;
   created_at: string;
-  last_login_at: string | null;
-  role: UserRole;
   memberships: TenantMembership[];
 }
 
 export default function UserDirectoryPage() {
   const { profile: currentProfile } = useAuth();
-  const [users, setUsers] = useState<UserWithRole[]>([]);
+  const [users, setUsers] = useState<UserWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [expandedUser, setExpandedUser] = useState<string | null>(null);
-  const [selectedUser, setSelectedUser] = useState<UserWithRole | null>(null);
 
   const fetchUsers = async () => {
     setLoading(true);
     
-    // Fetch profiles (excluding soft-deleted)
+    // Fetch profiles
     const { data: profiles, error: profilesError } = await supabase
       .from("user_profiles")
-      .select("id, email, status, created_at, last_login_at")
-      .is("deleted_at", null)
+      .select("id, user_id, email, full_name, platform_role, status, created_at")
       .order("created_at", { ascending: false });
 
     if (profilesError) {
@@ -64,23 +64,7 @@ export default function UserDirectoryPage() {
       return;
     }
 
-    // Fetch roles
-    const { data: roles, error: rolesError } = await supabase
-      .from("user_roles")
-      .select("user_id, role");
-
-    if (rolesError) {
-      console.error("Error fetching roles:", rolesError);
-      toast({
-        title: "Error",
-        description: "Failed to load user roles",
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
-    }
-
-    // Fetch all memberships with tenant info and roles
+    // Fetch all memberships with tenant info
     const { data: memberships, error: membershipsError } = await supabase
       .from("tenant_memberships")
       .select(`
@@ -88,41 +72,39 @@ export default function UserDirectoryPage() {
         user_id,
         tenant_id,
         status,
+        role,
+        allowed_contexts,
         created_at,
-        tenants(legal_name),
-        membership_roles(role)
-      `)
-      .is("deleted_at", null);
+        tenants(name)
+      `);
 
     if (membershipsError) {
       console.error("Error fetching memberships:", membershipsError);
     }
 
-    // Create maps
-    const roleMap = new Map(roles?.map(r => [r.user_id, r.role as UserRole]) || []);
-    
+    // Create membership map by user_id
     const membershipsByUser = new Map<string, TenantMembership[]>();
     memberships?.forEach((m: any) => {
       const existing = membershipsByUser.get(m.user_id) || [];
       existing.push({
         id: m.id,
         tenant_id: m.tenant_id,
-        tenant_name: m.tenants?.legal_name || "Unknown",
+        tenant_name: m.tenants?.name || "Unknown",
         status: m.status,
-        roles: m.membership_roles?.map((mr: any) => mr.role) || [],
+        role: m.role,
+        allowed_contexts: m.allowed_contexts || [],
         created_at: m.created_at,
       });
       membershipsByUser.set(m.user_id, existing);
     });
 
-    // Combine profiles with roles and memberships
-    const usersWithRoles: UserWithRole[] = (profiles || []).map(profile => ({
+    // Combine profiles with memberships
+    const usersWithMemberships: UserWithProfile[] = (profiles || []).map(profile => ({
       ...profile,
-      role: roleMap.get(profile.id) || "client" as UserRole,
-      memberships: membershipsByUser.get(profile.id) || [],
+      memberships: membershipsByUser.get(profile.user_id) || [],
     }));
 
-    setUsers(usersWithRoles);
+    setUsers(usersWithMemberships);
     setLoading(false);
   };
 
@@ -130,8 +112,8 @@ export default function UserDirectoryPage() {
     fetchUsers();
   }, []);
 
-  const updateUserRole = async (userId: string, newRole: UserRole) => {
-    if (userId === currentProfile?.id) {
+  const updatePlatformRole = async (userId: string, userProfileId: string, newRole: PlatformRole) => {
+    if (userId === currentProfile?.user_id) {
       toast({
         title: "Error",
         description: "You cannot change your own role",
@@ -140,14 +122,14 @@ export default function UserDirectoryPage() {
       return;
     }
 
-    const targetUser = users.find(u => u.id === userId);
-    const oldRole = targetUser?.role;
+    const targetUser = users.find(u => u.user_id === userId);
+    const oldRole = targetUser?.platform_role;
 
-    setUpdating(userId);
+    setUpdating(userProfileId);
     const { error } = await supabase
-      .from("user_roles")
-      .update({ role: newRole })
-      .eq("user_id", userId);
+      .from("user_profiles")
+      .update({ platform_role: newRole })
+      .eq("id", userProfileId);
 
     if (error) {
       toast({
@@ -157,9 +139,9 @@ export default function UserDirectoryPage() {
       });
     } else {
       await writeAuditLog({
-        userId: currentProfile?.id,
+        userId: currentProfile?.user_id,
         action: AuditActions.USER_ROLE_CHANGED,
-        resourceType: ResourceTypes.USER_ROLE,
+        resourceType: ResourceTypes.USER,
         resourceId: userId,
         details: {
           target_user_email: targetUser?.email,
@@ -177,8 +159,8 @@ export default function UserDirectoryPage() {
     setUpdating(null);
   };
 
-  const updateUserStatus = async (userId: string, newStatus: UserStatus) => {
-    if (userId === currentProfile?.id) {
+  const updateUserStatus = async (userId: string, userProfileId: string, newStatus: MembershipStatus) => {
+    if (userId === currentProfile?.user_id) {
       toast({
         title: "Error",
         description: "You cannot change your own status",
@@ -187,14 +169,14 @@ export default function UserDirectoryPage() {
       return;
     }
 
-    const targetUser = users.find(u => u.id === userId);
+    const targetUser = users.find(u => u.user_id === userId);
     const oldStatus = targetUser?.status;
 
-    setUpdating(userId);
+    setUpdating(userProfileId);
     const { error } = await supabase
       .from("user_profiles")
       .update({ status: newStatus })
-      .eq("id", userId);
+      .eq("id", userProfileId);
 
     if (error) {
       toast({
@@ -204,7 +186,7 @@ export default function UserDirectoryPage() {
       });
     } else {
       await writeAuditLog({
-        userId: currentProfile?.id,
+        userId: currentProfile?.user_id,
         action: AuditActions.USER_STATUS_CHANGED,
         resourceType: ResourceTypes.USER,
         resourceId: userId,
@@ -242,7 +224,7 @@ export default function UserDirectoryPage() {
       });
     } else {
       await writeAuditLog({
-        userId: currentProfile?.id,
+        userId: currentProfile?.user_id,
         action: AuditActions.TENANT_MEMBERSHIP_UPDATED,
         resourceType: ResourceTypes.TENANT_MEMBERSHIP,
         resourceId: membershipId,
@@ -261,23 +243,25 @@ export default function UserDirectoryPage() {
   const getMembershipBadgeVariant = (status: MembershipStatus) => {
     switch (status) {
       case "active": return "default";
-      case "invited": return "secondary";
+      case "pending": return "secondary";
+      case "denied": return "destructive";
       case "suspended": return "destructive";
+      case "revoked": return "destructive";
       default: return "outline";
     }
   };
 
-  const formatRoles = (roles: PortalRole[]): string => {
-    return roles.map(r => {
-      switch (r) {
-        case "tenant_owner": return "Owner";
-        case "publishing_admin": return "Pub Admin";
-        case "licensing_user": return "Licensing";
-        case "read_only": return "Read Only";
-        case "internal_admin": return "Internal";
-        default: return r;
-      }
-    }).join(", ") || "No roles";
+  const formatRole = (role: PortalRole): string => {
+    switch (role) {
+      case "tenant_admin": return "Admin";
+      case "tenant_user": return "User";
+      case "viewer": return "Viewer";
+      default: return role;
+    }
+  };
+
+  const formatContexts = (contexts: string[]): string => {
+    return contexts.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(", ") || "None";
   };
 
   return (
@@ -320,7 +304,6 @@ export default function UserDirectoryPage() {
                     <TableHead>Status</TableHead>
                     <TableHead>Memberships</TableHead>
                     <TableHead>Created</TableHead>
-                    <TableHead>Last Login</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -345,38 +328,39 @@ export default function UserDirectoryPage() {
                         </TableCell>
                         <TableCell className="font-medium">
                           {user.email}
-                          {user.id === currentProfile?.id && (
+                          {user.user_id === currentProfile?.user_id && (
                             <Badge variant="outline" className="ml-2">You</Badge>
                           )}
                         </TableCell>
                         <TableCell>
                           <Select
-                            value={user.role}
-                            onValueChange={(value) => updateUserRole(user.id, value as UserRole)}
-                            disabled={updating === user.id || user.id === currentProfile?.id}
+                            value={user.platform_role}
+                            onValueChange={(value) => updatePlatformRole(user.user_id, user.id, value as PlatformRole)}
+                            disabled={updating === user.id || user.user_id === currentProfile?.user_id}
                           >
-                            <SelectTrigger className="w-28">
+                            <SelectTrigger className="w-36">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="admin">Admin</SelectItem>
-                              <SelectItem value="client">Client</SelectItem>
-                              <SelectItem value="licensing">Licensing</SelectItem>
+                              <SelectItem value="platform_admin">Platform Admin</SelectItem>
+                              <SelectItem value="platform_user">Platform User</SelectItem>
                             </SelectContent>
                           </Select>
                         </TableCell>
                         <TableCell>
                           <Select
                             value={user.status}
-                            onValueChange={(value) => updateUserStatus(user.id, value as UserStatus)}
-                            disabled={updating === user.id || user.id === currentProfile?.id}
+                            onValueChange={(value) => updateUserStatus(user.user_id, user.id, value as MembershipStatus)}
+                            disabled={updating === user.id || user.user_id === currentProfile?.user_id}
                           >
                             <SelectTrigger className="w-28">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="active">Active</SelectItem>
+                              <SelectItem value="pending">Pending</SelectItem>
                               <SelectItem value="suspended">Suspended</SelectItem>
+                              <SelectItem value="revoked">Revoked</SelectItem>
                             </SelectContent>
                           </Select>
                         </TableCell>
@@ -386,9 +370,9 @@ export default function UserDirectoryPage() {
                           ) : (
                             <span className="text-sm">
                               {user.memberships.filter(m => m.status === "active").length} active
-                              {user.memberships.some(m => m.status === "invited") && (
+                              {user.memberships.some(m => m.status === "pending") && (
                                 <span className="text-muted-foreground ml-1">
-                                  ({user.memberships.filter(m => m.status === "invited").length} pending)
+                                  ({user.memberships.filter(m => m.status === "pending").length} pending)
                                 </span>
                               )}
                             </span>
@@ -397,15 +381,10 @@ export default function UserDirectoryPage() {
                         <TableCell className="text-muted-foreground">
                           {new Date(user.created_at).toLocaleDateString()}
                         </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {user.last_login_at
-                            ? new Date(user.last_login_at).toLocaleString()
-                            : "Never"}
-                        </TableCell>
                       </TableRow>
                       {expandedUser === user.id && user.memberships.length > 0 && (
                         <TableRow className="bg-muted/50">
-                          <TableCell colSpan={7} className="py-4">
+                          <TableCell colSpan={6} className="py-4">
                             <div className="pl-8 space-y-3">
                               <p className="text-sm font-medium text-muted-foreground mb-2">
                                 Tenant Memberships
@@ -422,7 +401,10 @@ export default function UserDirectoryPage() {
                                         {membership.status}
                                       </Badge>
                                       <span className="text-sm text-muted-foreground">
-                                        {formatRoles(membership.roles)}
+                                        {formatRole(membership.role)}
+                                      </span>
+                                      <span className="text-sm text-muted-foreground">
+                                        ({formatContexts(membership.allowed_contexts)})
                                       </span>
                                     </div>
                                     <Select
@@ -437,8 +419,10 @@ export default function UserDirectoryPage() {
                                       </SelectTrigger>
                                       <SelectContent>
                                         <SelectItem value="active">Active</SelectItem>
-                                        <SelectItem value="invited">Invited</SelectItem>
+                                        <SelectItem value="pending">Pending</SelectItem>
                                         <SelectItem value="suspended">Suspended</SelectItem>
+                                        <SelectItem value="revoked">Revoked</SelectItem>
+                                        <SelectItem value="denied">Denied</SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </div>

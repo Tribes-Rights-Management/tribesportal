@@ -17,32 +17,13 @@ import { Link } from "react-router-dom";
 
 // Code-defined RLS coverage expectations
 const RLS_COVERAGE = [
-  // Template A - Access Control
+  // Access Control
   { table: "tenants", template: "A", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: false }, notes: "Platform admin + member read" },
-  { table: "tenant_memberships", template: "A", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Managers only write" },
-  { table: "membership_roles", template: "A", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Via membership FK" },
-  
-  // Template L - Licensing
-  { table: "license_requests", template: "L", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Active member read; licensing user create" },
-  { table: "licenses", template: "L", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Active member read; admin write" },
-  
-  // Template P - Publishing
-  { table: "works", template: "P", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Publishing roles only" },
-  { table: "splits", template: "P", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Publishing roles only" },
-  { table: "registrations", template: "P", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Publishing roles only" },
-  { table: "statements", template: "P", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Publishing roles only" },
-  { table: "payments", template: "P", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Publishing roles only" },
-  
-  // Template S - Shared
-  { table: "documents", template: "S", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Active member read; privileged write" },
-  { table: "tenant_notes", template: "S", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Active member read; privileged write" },
+  { table: "tenant_memberships", template: "A", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Users see own; admin all" },
   
   // Platform tables
   { table: "user_profiles", template: "-", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: false }, notes: "User own + admin" },
-  { table: "user_roles", template: "-", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: false }, notes: "Admin only write" },
-  { table: "context_permissions", template: "-", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Auth read; admin write" },
-  { table: "audit_logs", template: "-", requiresTenantId: true, expectedPolicies: { select: true, insert: false, update: false, delete: false }, notes: "Read only; service insert" },
-  { table: "contact_submissions", template: "-", requiresTenantId: false, expectedPolicies: { select: true, insert: false, update: true, delete: false }, notes: "Admin only; service insert" },
+  { table: "access_requests", template: "-", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: false }, notes: "User own + admin" },
 ];
 
 type CheckResult = {
@@ -79,7 +60,7 @@ function PolicyIndicator({ expected }: { expected: boolean }) {
   return expected ? (
     <Check className="h-3.5 w-3.5 text-green-600" />
   ) : (
-    <span className="text-[10px] text-[#A1A1AA]">—</span>
+    <span className="text-[10px] text-muted-foreground">—</span>
   );
 }
 
@@ -100,10 +81,8 @@ export default function RLSAuditPage() {
   const { user } = useAuth();
   const [checks, setChecks] = useState<CheckResult[]>([
     { name: "Active Memberships", description: "Count user's active tenant memberships", status: "pending", details: "" },
-    { name: "Available Contexts", description: "List allowed portal contexts", status: "pending", details: "" },
+    { name: "Available Contexts", description: "List allowed portal contexts from memberships", status: "pending", details: "" },
     { name: "Tenant Isolation", description: "Verify no cross-tenant data leakage", status: "pending", details: "" },
-    { name: "Approval Gate", description: "Verify pending users see zero data", status: "pending", details: "" },
-    { name: "Publishing Isolation", description: "Verify licensing users cannot read publishing tables", status: "pending", details: "" },
   ]);
   const [isRunning, setIsRunning] = useState(false);
 
@@ -116,7 +95,7 @@ export default function RLSAuditPage() {
     try {
       const { data: memberships, error } = await supabase
         .from("tenant_memberships")
-        .select("id, tenant_id, status")
+        .select("id, tenant_id, status, allowed_contexts")
         .eq("user_id", user.id)
         .eq("status", "active");
       
@@ -138,25 +117,31 @@ export default function RLSAuditPage() {
       });
     }
 
-    // Check 2: Available contexts
+    // Check 2: Available contexts from memberships
     try {
-      const { data: contexts } = await supabase
-        .from("context_permissions")
-        .select("context, role, allowed")
-        .eq("allowed", true);
+      const { data: memberships } = await supabase
+        .from("tenant_memberships")
+        .select("allowed_contexts")
+        .eq("user_id", user.id)
+        .eq("status", "active");
       
-      const uniqueContexts = [...new Set(contexts?.map(c => c.context) ?? [])];
+      const allContexts = new Set<string>();
+      memberships?.forEach((m: any) => {
+        (m.allowed_contexts || []).forEach((ctx: string) => allContexts.add(ctx));
+      });
+      
+      const uniqueContexts = Array.from(allContexts);
       
       results.push({
         name: "Available Contexts",
-        description: "List allowed portal contexts",
+        description: "List allowed portal contexts from memberships",
         status: uniqueContexts.length > 0 ? "pass" : "warning",
         details: `Contexts: ${uniqueContexts.join(", ") || "None configured"}`,
       });
     } catch (err) {
       results.push({
         name: "Available Contexts",
-        description: "List allowed portal contexts",
+        description: "List allowed portal contexts from memberships",
         status: "fail",
         details: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
       });
@@ -199,86 +184,28 @@ export default function RLSAuditPage() {
       });
     }
 
-    // Check 4: Approval gate - verify data visibility requires active status
-    try {
-      // Count rows in various tenant-scoped tables
-      const [worksResult, docsResult, licensesResult] = await Promise.all([
-        supabase.from("works").select("id", { count: "exact", head: true }),
-        supabase.from("documents").select("id", { count: "exact", head: true }),
-        supabase.from("licenses").select("id", { count: "exact", head: true }),
-      ]);
-      
-      const totalRows = (worksResult.count ?? 0) + (docsResult.count ?? 0) + (licensesResult.count ?? 0);
-      
-      results.push({
-        name: "Approval Gate",
-        description: "Verify pending users see zero data",
-        status: "pass",
-        details: `RLS active. Visible rows across checked tables: ${totalRows}`,
-        rowCount: totalRows,
-      });
-    } catch (err) {
-      results.push({
-        name: "Approval Gate",
-        description: "Verify pending users see zero data",
-        status: "fail",
-        details: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-      });
-    }
-
-    // Check 5: Publishing isolation
-    try {
-      const [worksResult, splitsResult, statementsResult, paymentsResult] = await Promise.all([
-        supabase.from("works").select("id", { count: "exact", head: true }),
-        supabase.from("splits").select("id", { count: "exact", head: true }),
-        supabase.from("statements").select("id", { count: "exact", head: true }),
-        supabase.from("payments").select("id", { count: "exact", head: true }),
-      ]);
-      
-      const publishingRowCount = 
-        (worksResult.count ?? 0) + 
-        (splitsResult.count ?? 0) + 
-        (statementsResult.count ?? 0) + 
-        (paymentsResult.count ?? 0);
-      
-      results.push({
-        name: "Publishing Isolation",
-        description: "Verify licensing users cannot read publishing tables",
-        status: "pass",
-        details: `Publishing tables visible rows: ${publishingRowCount} (based on current user roles)`,
-        rowCount: publishingRowCount,
-      });
-    } catch (err) {
-      results.push({
-        name: "Publishing Isolation",
-        description: "Verify licensing users cannot read publishing tables",
-        status: "fail",
-        details: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-      });
-    }
-
     setChecks(results);
     setIsRunning(false);
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] p-6">
+    <div className="min-h-screen bg-muted/30 p-6">
       <div className="max-w-[1200px] mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild className="text-[#71717A]">
+            <Button variant="ghost" size="sm" asChild className="text-muted-foreground">
               <Link to="/admin">
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 Back
               </Link>
             </Button>
             <div>
-              <h1 className="text-[20px] font-medium text-[#0A0A0A] tracking-[-0.02em] flex items-center gap-2">
+              <h1 className="text-xl font-medium flex items-center gap-2">
                 <Shield className="h-5 w-5" />
                 RLS Coverage Audit
               </h1>
-              <p className="text-[13px] text-[#71717A]">
+              <p className="text-sm text-muted-foreground">
                 Row Level Security policy inventory and verification checks
               </p>
             </div>
@@ -288,43 +215,43 @@ export default function RLSAuditPage() {
         {/* RLS Coverage Table */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-[15px] font-medium">Policy Coverage Inventory</CardTitle>
-            <CardDescription className="text-[12px]">
+            <CardTitle className="text-base font-medium">Policy Coverage Inventory</CardTitle>
+            <CardDescription className="text-xs">
               Expected RLS policies for all tenant-scoped and platform tables
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="border border-[#E4E4E7] rounded-lg overflow-hidden">
+            <div className="border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-[#F4F4F5]">
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Table</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Template</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase text-center">tenant_id</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase text-center">SELECT</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase text-center">INSERT</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase text-center">UPDATE</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase text-center">DELETE</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Notes</TableHead>
+                  <TableRow className="bg-muted/50">
+                    <TableHead className="text-xs font-medium uppercase">Table</TableHead>
+                    <TableHead className="text-xs font-medium uppercase">Template</TableHead>
+                    <TableHead className="text-xs font-medium uppercase text-center">tenant_id</TableHead>
+                    <TableHead className="text-xs font-medium uppercase text-center">SELECT</TableHead>
+                    <TableHead className="text-xs font-medium uppercase text-center">INSERT</TableHead>
+                    <TableHead className="text-xs font-medium uppercase text-center">UPDATE</TableHead>
+                    <TableHead className="text-xs font-medium uppercase text-center">DELETE</TableHead>
+                    <TableHead className="text-xs font-medium uppercase">Notes</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {RLS_COVERAGE.map((row) => (
                     <TableRow key={row.table}>
-                      <TableCell className="text-[12px] font-mono text-[#0A0A0A]">{row.table}</TableCell>
+                      <TableCell className="text-xs font-mono">{row.table}</TableCell>
                       <TableCell>{getTemplateBadge(row.template)}</TableCell>
                       <TableCell className="text-center">
                         {row.requiresTenantId ? (
                           <Check className="h-3.5 w-3.5 text-green-600 mx-auto" />
                         ) : (
-                          <span className="text-[10px] text-[#A1A1AA]">—</span>
+                          <span className="text-xs text-muted-foreground">—</span>
                         )}
                       </TableCell>
                       <TableCell className="text-center"><PolicyIndicator expected={row.expectedPolicies.select} /></TableCell>
                       <TableCell className="text-center"><PolicyIndicator expected={row.expectedPolicies.insert} /></TableCell>
                       <TableCell className="text-center"><PolicyIndicator expected={row.expectedPolicies.update} /></TableCell>
                       <TableCell className="text-center"><PolicyIndicator expected={row.expectedPolicies.delete} /></TableCell>
-                      <TableCell className="text-[11px] text-[#71717A]">{row.notes}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">{row.notes}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -338,8 +265,8 @@ export default function RLSAuditPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-[15px] font-medium">Verification Checks</CardTitle>
-                <CardDescription className="text-[12px]">
+                <CardTitle className="text-base font-medium">Verification Checks</CardTitle>
+                <CardDescription className="text-xs">
                   Run read-only queries to verify RLS enforcement for current session
                 </CardDescription>
               </div>
@@ -347,7 +274,6 @@ export default function RLSAuditPage() {
                 size="sm" 
                 onClick={runChecks} 
                 disabled={isRunning}
-                className="bg-[#0A0A0A] hover:bg-[#262626] text-[12px]"
               >
                 <Play className="h-3.5 w-3.5 mr-1.5" />
                 {isRunning ? "Running..." : "Run Checks"}
@@ -355,23 +281,23 @@ export default function RLSAuditPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="border border-[#E4E4E7] rounded-lg overflow-hidden">
+            <div className="border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-[#F4F4F5]">
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Check</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Description</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase text-center">Status</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Details</TableHead>
+                  <TableRow className="bg-muted/50">
+                    <TableHead className="text-xs font-medium uppercase">Check</TableHead>
+                    <TableHead className="text-xs font-medium uppercase">Description</TableHead>
+                    <TableHead className="text-xs font-medium uppercase text-center">Status</TableHead>
+                    <TableHead className="text-xs font-medium uppercase">Details</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {checks.map((check) => (
                     <TableRow key={check.name}>
-                      <TableCell className="text-[12px] font-medium text-[#0A0A0A]">{check.name}</TableCell>
-                      <TableCell className="text-[12px] text-[#71717A]">{check.description}</TableCell>
+                      <TableCell className="text-xs font-medium">{check.name}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">{check.description}</TableCell>
                       <TableCell className="text-center"><CheckStatusBadge status={check.status} /></TableCell>
-                      <TableCell className="text-[11px] text-[#52525B] font-mono">{check.details}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">{check.details}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -379,16 +305,6 @@ export default function RLSAuditPage() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Legend */}
-        <div className="flex items-center gap-6 text-[11px] text-[#71717A]">
-          <span className="font-medium">Templates:</span>
-          <span className="flex items-center gap-1">{getTemplateBadge("A")} Access Control</span>
-          <span className="flex items-center gap-1">{getTemplateBadge("L")} Licensing</span>
-          <span className="flex items-center gap-1">{getTemplateBadge("P")} Publishing</span>
-          <span className="flex items-center gap-1">{getTemplateBadge("S")} Shared</span>
-          <span className="flex items-center gap-1">{getTemplateBadge("-")} Platform</span>
-        </div>
       </div>
     </div>
   );
