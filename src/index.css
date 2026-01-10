@@ -273,7 +273,8 @@
      ═══════════════════════════════════════════════════════════════════════════ */
   html {
     /* Site black baseline - prevents iOS white flash */
-    background: hsl(var(--site-black));
+    background-color: hsl(210 21% 5%) !important;
+    background-color: hsl(var(--site-black)) !important;
     margin: 0;
     padding: 0;
     min-height: 100%;
@@ -283,7 +284,8 @@
 
   body {
     /* Site black baseline for iOS Safari */
-    background: hsl(var(--site-black));
+    background-color: hsl(210 21% 5%) !important;
+    background-color: hsl(var(--site-black)) !important;
     color: hsl(var(--foreground));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -305,11 +307,11 @@
   }
 
   /* iOS Safari: fixed full-viewport underlay so overscroll can never reveal white */
-  body::before {
-    content: "";
+  #ios-underlay {
     position: fixed;
     inset: 0;
-    background: hsl(var(--site-black));
+    background-color: hsl(210 21% 5%);
+    background-color: hsl(var(--site-black));
     z-index: 0;
     pointer-events: none;
   }
