@@ -84,35 +84,36 @@ export function SignInHelpDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent 
         hideDefaultClose
-        className="w-[92vw] max-w-[520px] rounded-2xl border border-black/10 bg-white shadow-xl p-6 sm:p-8"
+        className="w-[92vw] max-w-[520px] rounded-[16px] border border-black/10 bg-white p-8 shadow-[0_24px_60px_rgba(0,0,0,0.18)]"
+        overlayClassName="bg-black/60 backdrop-blur-[6px]"
       >
-        {/* Close button - muted, properly sized */}
+        {/* Close button - 36x36 hit area, 18px icon */}
         <button
           onClick={() => handleOpenChange(false)}
-          className="absolute right-5 top-5 p-1 rounded-md text-black/50 hover:text-black/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-2"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-2"
           aria-label="Close"
         >
-          <X className="h-[18px] w-[18px]" />
+          <X className="h-[18px] w-[18px] text-[#6b6b6b] hover:text-[#111111] transition-colors" />
         </button>
 
-        <DialogHeader className="space-y-0 pb-0 pr-8">
+        <DialogHeader className="space-y-0 pb-0 pr-10">
           <DialogTitle className="text-lg font-semibold text-foreground tracking-[-0.01em]">
             Trouble signing in?
           </DialogTitle>
         </DialogHeader>
 
-        <div className="mt-5 space-y-4">
+        <div className="mt-[16px] space-y-0">
           {/* Intro line */}
-          <p className="text-sm leading-relaxed text-black/70">
+          <p className="text-sm leading-[1.5] text-black/70">
             Tribes uses secure email sign-in links.
           </p>
 
           {/* Troubleshooting list */}
-          <div>
-            <p className="text-sm leading-relaxed text-black/70 mb-2">
+          <div className="mt-[16px]">
+            <p className="text-sm leading-[1.5] text-black/70 mb-2">
               If you're having trouble:
             </p>
-            <ul className="space-y-2 text-sm leading-relaxed text-black/70">
+            <ul className="space-y-1.5 text-sm leading-[1.45] text-black/70">
               <li className="flex items-start gap-2">
                 <span className="text-black/40 mt-px select-none">•</span>
                 <span>Confirm you entered the correct email address.</span>
@@ -128,32 +129,33 @@ export function SignInHelpDialog({
             </ul>
           </div>
 
-          {/* Primary action - Tribes standard button */}
-          <div className="pt-2">
+          {/* Primary action - modal-scoped Tribes button */}
+          <div className="mt-[20px]">
             <button
               onClick={handleResendLink}
               disabled={isResending || !email.trim()}
-              className="h-12 w-full rounded-xl bg-[#101010] text-white text-[15px] font-medium transition-all hover:bg-black/90 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-2"
+              className="h-12 w-full rounded-[12px] bg-[#111111] text-white text-base font-semibold transition-all hover:bg-[#000000] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2"
             >
               {isResending ? "Sending..." : "Resend sign-in link"}
             </button>
           </div>
 
-          {/* Support section - reveal + copy-to-clipboard */}
-          <div className="pt-1">
+          {/* Support section - compact copy row */}
+          <div className="mt-[18px]">
             {!showSupportEmail ? (
               <button
                 onClick={() => setShowSupportEmail(true)}
-                className="text-sm text-black/70 hover:text-black transition-colors focus:outline-none focus-visible:underline"
+                className="text-[13px] text-black/60 hover:text-black transition-colors focus:outline-none focus-visible:underline"
               >
                 Contact support
               </button>
             ) : (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-black/60">{supportEmail}</span>
+              <div className="flex items-center gap-3">
+                <span className="text-[13px] text-black/50">Support:</span>
+                <span className="text-[13px] text-black/70">{supportEmail}</span>
                 <button
                   onClick={handleCopyEmail}
-                  className="inline-flex items-center gap-1 px-2 py-1 text-xs text-black/60 hover:text-black rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 text-[12px] text-black/50 hover:text-black rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
                   aria-label="Copy email address"
                 >
                   {copied ? (
@@ -173,7 +175,7 @@ export function SignInHelpDialog({
           </div>
 
           {/* Footer - quiet restriction line */}
-          <p className="text-[13px] leading-relaxed text-black/50 pt-1">
+          <p className="mt-[16px] text-[13px] leading-[1.5] text-black/50">
             Access is restricted to approved accounts.
           </p>
         </div>
