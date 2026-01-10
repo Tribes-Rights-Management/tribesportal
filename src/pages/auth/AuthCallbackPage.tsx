@@ -5,7 +5,7 @@ import { UserRole } from "@/contexts/AuthContext";
 
 export default function AuthCallbackPage() {
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<"verifying" | "error">("verifying");
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -30,6 +30,7 @@ export default function AuthCallbackPage() {
             .from("user_profiles")
             .select("id, email, status, created_at, last_login_at")
             .eq("id", session.user.id)
+            .is("deleted_at", null)
             .maybeSingle(),
           supabase
             .from("user_roles")
@@ -85,8 +86,10 @@ export default function AuthCallbackPage() {
         }
       } catch (err) {
         console.error("Callback error:", err);
-        setError("An unexpected error occurred");
-        navigate("/auth/error", { replace: true });
+        setStatus("error");
+        setTimeout(() => {
+          navigate("/auth/error", { replace: true });
+        }, 1500);
       }
     };
 
@@ -94,11 +97,11 @@ export default function AuthCallbackPage() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30">
-      <div className="text-center space-y-2">
-        <div className="animate-pulse text-muted-foreground">
-          {error ? error : "Signing you in..."}
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-white px-4">
+      <div className="text-center">
+        <p className="text-[14px] text-[#71717A] tracking-wide">
+          {status === "error" ? "Access verification failed" : "Verifying access..."}
+        </p>
       </div>
     </div>
   );
