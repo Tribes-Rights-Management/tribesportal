@@ -4,12 +4,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
+import { SignInHelpDialog } from "@/components/auth/SignInHelpDialog";
 export default function SignInPage() {
   const { user, profile, loading, signInWithMagicLink } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [helpDialogOpen, setHelpDialogOpen] = useState(false);
+
+  const handleResendLink = async () => {
+    return signInWithMagicLink(email.trim());
+  };
 
   // If already authenticated with valid profile, redirect to appropriate dashboard
   if (!loading && user && profile) {
@@ -103,13 +108,21 @@ export default function SignInPage() {
 
         {/* Help Link */}
         <p className="mt-4 text-center">
-          <a 
-            href="mailto:admin@tribesassets.com" 
+          <button 
+            type="button"
+            onClick={() => setHelpDialogOpen(true)}
             className="text-[13px] text-[#71717A] hover:text-[#0A0A0A] transition-colors"
           >
             Trouble signing in?
-          </a>
+          </button>
         </p>
+
+        <SignInHelpDialog
+          open={helpDialogOpen}
+          onOpenChange={setHelpDialogOpen}
+          email={email}
+          onResendLink={handleResendLink}
+        />
       </div>
     </div>
   );
