@@ -6,9 +6,9 @@ import { useAuth } from "@/contexts/AuthContext";
  * This ensures /app always lands on the correct context-specific dashboard.
  */
 export function AppIndexRedirect() {
-  const { activeContext, hasPendingApproval, loading } = useAuth();
+  const { activeContext, accessState } = useAuth();
 
-  if (loading) {
+  if (accessState === "loading") {
     return (
       <div className="flex items-center justify-center py-12">
         <p className="text-[15px] text-[#71717A]">Loading...</p>
@@ -16,8 +16,14 @@ export function AppIndexRedirect() {
     );
   }
 
-  if (hasPendingApproval) {
-    return <Navigate to="/app/pending" replace />;
+  // Route based on access state
+  switch (accessState) {
+    case "no-access-request":
+      return <Navigate to="/app/no-access" replace />;
+    case "pending-approval":
+      return <Navigate to="/app/pending" replace />;
+    case "suspended-access":
+      return <Navigate to="/app/suspended" replace />;
   }
 
   if (activeContext) {

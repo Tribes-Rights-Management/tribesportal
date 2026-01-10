@@ -3,12 +3,13 @@ import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * Smart redirect component for the root route.
- * Redirects to appropriate dashboard based on auth state and context.
+ * Routes to appropriate destination based on access state.
  */
 export default function RootRedirect() {
-  const { user, profile, loading, isPlatformAdmin, activeContext, hasPendingApproval } = useAuth();
+  const { accessState, activeContext, isPlatformAdmin } = useAuth();
 
-  if (loading) {
+  // Loading
+  if (accessState === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <p className="text-[15px] text-[#71717A]">Loading...</p>
@@ -17,12 +18,12 @@ export default function RootRedirect() {
   }
 
   // Not authenticated
-  if (!user) {
+  if (accessState === "unauthenticated") {
     return <Navigate to="/auth/sign-in" replace />;
   }
 
-  // No profile or suspended
-  if (!profile || profile.status !== "active") {
+  // No profile or suspended profile
+  if (accessState === "no-profile" || accessState === "suspended-profile") {
     return <Navigate to="/auth/error" replace />;
   }
 
@@ -31,16 +32,22 @@ export default function RootRedirect() {
     return <Navigate to="/admin" replace />;
   }
 
-  // Pending approval
-  if (hasPendingApproval) {
-    return <Navigate to="/app/pending" replace />;
+  // Route based on access state
+  switch (accessState) {
+    case "no-access-request":
+      return <Navigate to="/app/no-access" replace />;
+    case "pending-approval":
+      return <Navigate to="/app/pending" replace />;
+    case "suspended-access":
+      return <Navigate to="/app/suspended" replace />;
+    case "active":
+      // Redirect to active context dashboard
+      if (activeContext) {
+        return <Navigate to={`/app/${activeContext}`} replace />;
+      }
+      // Fallback
+      return <Navigate to="/app/licensing" replace />;
+    default:
+      return <Navigate to="/auth/sign-in" replace />;
   }
-
-  // Redirect to active context dashboard
-  if (activeContext) {
-    return <Navigate to={`/app/${activeContext}`} replace />;
-  }
-
-  // Fallback
-  return <Navigate to="/app/licensing" replace />;
 }

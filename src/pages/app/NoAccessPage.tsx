@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
-export default function PendingApprovalPage() {
+export default function NoAccessPage() {
   const { profile, signOut } = useAuth();
 
   return (
@@ -9,17 +9,17 @@ export default function PendingApprovalPage() {
       <div className="w-full max-w-[440px]">
         {/* Header */}
         <h1 className="text-[28px] sm:text-[32px] font-medium text-[#0A0A0A] tracking-[-0.02em] leading-tight">
-          Access pending approval
+          Access not found
         </h1>
         
         {/* Primary text */}
         <p className="mt-6 text-[15px] text-[#6B6B6B] leading-relaxed">
-          Your sign-in was successful, but this account has not yet been approved for portal access.
+          This email address does not have a portal access request on file.
         </p>
 
         {/* Secondary text */}
         <p className="mt-4 text-[14px] text-[#71717A] leading-relaxed">
-          If you believe this is an error, please contact your Tribes representative or email support.
+          To request access, submit an access request or contact support.
         </p>
 
         {/* Support line */}
@@ -39,8 +39,17 @@ export default function PendingApprovalPage() {
           </p>
         )}
 
-        {/* Action */}
-        <div className="mt-6">
+        {/* Actions */}
+        <div className="mt-6 flex items-center gap-3">
+          <Button
+            variant="default"
+            asChild
+            className="text-[13px] bg-[#0A0A0A] hover:bg-[#262626]"
+          >
+            <a href="https://tribesassets.com/request-access" target="_blank" rel="noopener noreferrer">
+              Request access
+            </a>
+          </Button>
           <Button
             variant="outline"
             onClick={signOut}

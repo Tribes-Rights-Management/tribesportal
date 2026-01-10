@@ -10,11 +10,9 @@ interface AppProtectedRouteProps {
 
 export function AppProtectedRoute({ children, requiredContext }: AppProtectedRouteProps) {
   const { 
-    user, 
-    loading, 
+    accessState,
     activeTenant, 
     activeContext, 
-    hasPendingApproval,
     canAccessContext,
     setActiveContext,
     isPlatformAdmin,
@@ -48,7 +46,8 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
     hasAutoSwitched.current = false;
   }, [location.pathname]);
 
-  if (loading) {
+  // Handle loading state
+  if (accessState === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <p className="text-[15px] text-[#71717A]">Loading...</p>
@@ -57,8 +56,13 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
   }
 
   // Not authenticated
-  if (!user) {
+  if (accessState === "unauthenticated") {
     return <Navigate to="/auth/sign-in" state={{ from: location }} replace />;
+  }
+
+  // No profile or suspended profile
+  if (accessState === "no-profile" || accessState === "suspended-profile") {
+    return <Navigate to="/auth/error" replace />;
   }
 
   // Platform admins bypass tenant requirements
@@ -66,12 +70,17 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
     return <>{children}</>;
   }
 
-  // Authenticated but no active membership (pending approval)
-  if (hasPendingApproval) {
-    return <Navigate to="/app/pending" replace />;
+  // Route based on access state
+  switch (accessState) {
+    case "no-access-request":
+      return <Navigate to="/app/no-access" replace />;
+    case "pending-approval":
+      return <Navigate to="/app/pending" replace />;
+    case "suspended-access":
+      return <Navigate to="/app/suspended" replace />;
   }
 
-  // No active tenant selected
+  // No active tenant selected (shouldn't happen if active, but safety check)
   if (!activeTenant) {
     return <Navigate to="/app/pending" replace />;
   }
@@ -81,7 +90,6 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
     // User tried to access a context they don't have permission for
     // Show notification and redirect to their allowed context
     if (activeContext) {
-      // Show subtle "not permitted" message
       const requestedLabel = requiredContext === "licensing" ? "Licensing" : "Publishing";
       toast.error(`${requestedLabel} access not available`, {
         description: "You've been redirected to your available portal.",
