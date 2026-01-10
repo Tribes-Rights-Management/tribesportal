@@ -10,6 +10,7 @@ import {
   CreditCard,
   FolderOpen,
   Settings,
+  UserCheck,
 } from "lucide-react";
 
 const navItems = [
@@ -21,6 +22,7 @@ const navItems = [
   { to: "/app/publishing/statements", label: "Statements", icon: Receipt },
   { to: "/app/publishing/payments", label: "Payments", icon: CreditCard },
   { to: "/app/publishing/documents", label: "Documents", icon: FolderOpen },
+  { to: "/app/publishing/access-requests", label: "Access Requests", icon: UserCheck },
   { to: "/app/publishing/settings", label: "Settings", icon: Settings },
 ];
 
