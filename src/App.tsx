@@ -44,6 +44,8 @@ import AccessSuspendedPage from "@/pages/app/AccessSuspendedPage";
 
 // Admin pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
+import ApprovalsPage from "@/pages/admin/ApprovalsPage";
+import TenantsPage from "@/pages/admin/TenantsPage";
 import UserDirectoryPage from "@/pages/admin/UserDirectoryPage";
 import RLSAuditPage from "@/pages/admin/RLSAuditPage";
 import SecurityVerificationPage from "@/pages/admin/SecurityVerificationPage";
@@ -108,6 +110,8 @@ const App = () => (
 
         {/* Admin routes */}
         <Route path="/admin" element={<RoleProtectedRoute allowedRoles={["admin"]}><AdminDashboard /></RoleProtectedRoute>} />
+        <Route path="/admin/approvals" element={<RoleProtectedRoute allowedRoles={["admin"]}><ApprovalsPage /></RoleProtectedRoute>} />
+        <Route path="/admin/tenants" element={<RoleProtectedRoute allowedRoles={["admin"]}><TenantsPage /></RoleProtectedRoute>} />
         <Route path="/admin/users" element={<RoleProtectedRoute allowedRoles={["admin"]}><UserDirectoryPage /></RoleProtectedRoute>} />
         <Route path="/admin/rls-audit" element={<RoleProtectedRoute allowedRoles={["admin"]}><RLSAuditPage /></RoleProtectedRoute>} />
         <Route path="/admin/security" element={<RoleProtectedRoute allowedRoles={["admin"]}><SecurityVerificationPage /></RoleProtectedRoute>} />
