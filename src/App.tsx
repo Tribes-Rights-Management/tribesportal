@@ -40,6 +40,7 @@ import PendingApprovalPage from "@/pages/app/PendingApprovalPage";
 // Admin pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import UserDirectoryPage from "@/pages/admin/UserDirectoryPage";
+import RLSAuditPage from "@/pages/admin/RLSAuditPage";
 
 // Error pages
 import NotFoundPage from "@/pages/NotFoundPage";
@@ -95,6 +96,7 @@ const App = () => (
         {/* Admin routes */}
         <Route path="/admin" element={<RoleProtectedRoute allowedRoles={["admin"]}><AdminDashboard /></RoleProtectedRoute>} />
         <Route path="/admin/users" element={<RoleProtectedRoute allowedRoles={["admin"]}><UserDirectoryPage /></RoleProtectedRoute>} />
+        <Route path="/admin/rls-audit" element={<RoleProtectedRoute allowedRoles={["admin"]}><RLSAuditPage /></RoleProtectedRoute>} />
 
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFoundPage />} />
