@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { ArrowLeft, RefreshCw, Plus, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
-import { writeAuditLog, AuditActions, ResourceTypes } from "@/lib/audit";
 
 interface Tenant {
   id: string;
@@ -125,43 +124,17 @@ export default function TenantsPage() {
 
         if (error) throw error;
 
-        await writeAuditLog({
-          userId: currentProfile?.user_id,
-          tenantId: editingTenant.id,
-          action: AuditActions.TENANT_UPDATED,
-          resourceType: ResourceTypes.TENANT,
-          resourceId: editingTenant.id,
-          details: {
-            old_name: editingTenant.name,
-            new_name: formData.name.trim(),
-          },
-        });
-
         toast({ title: "Tenant updated" });
       } else {
         // Create new tenant
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("tenants")
           .insert({
             name: formData.name.trim(),
             slug: formData.slug.trim(),
-          })
-          .select("id")
-          .single();
+          });
 
         if (error) throw error;
-
-        await writeAuditLog({
-          userId: currentProfile?.user_id,
-          tenantId: data.id,
-          action: AuditActions.TENANT_CREATED,
-          resourceType: ResourceTypes.TENANT,
-          resourceId: data.id,
-          details: {
-            name: formData.name.trim(),
-            slug: formData.slug.trim(),
-          },
-        });
 
         toast({ title: "Tenant created" });
       }

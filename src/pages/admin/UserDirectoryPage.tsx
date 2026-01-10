@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
-import { writeAuditLog, AuditActions, ResourceTypes } from "@/lib/audit";
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];
@@ -122,9 +121,6 @@ export default function UserDirectoryPage() {
       return;
     }
 
-    const targetUser = users.find(u => u.user_id === userId);
-    const oldRole = targetUser?.platform_role;
-
     setUpdating(userProfileId);
     const { error } = await supabase
       .from("user_profiles")
@@ -138,18 +134,6 @@ export default function UserDirectoryPage() {
         variant: "destructive",
       });
     } else {
-      await writeAuditLog({
-        userId: currentProfile?.user_id,
-        action: AuditActions.USER_ROLE_CHANGED,
-        resourceType: ResourceTypes.USER,
-        resourceId: userId,
-        details: {
-          target_user_email: targetUser?.email,
-          old_role: oldRole,
-          new_role: newRole,
-        },
-      });
-
       toast({
         title: "Success",
         description: "User role updated",
@@ -169,9 +153,6 @@ export default function UserDirectoryPage() {
       return;
     }
 
-    const targetUser = users.find(u => u.user_id === userId);
-    const oldStatus = targetUser?.status;
-
     setUpdating(userProfileId);
     const { error } = await supabase
       .from("user_profiles")
@@ -185,18 +166,6 @@ export default function UserDirectoryPage() {
         variant: "destructive",
       });
     } else {
-      await writeAuditLog({
-        userId: currentProfile?.user_id,
-        action: AuditActions.USER_STATUS_CHANGED,
-        resourceType: ResourceTypes.USER,
-        resourceId: userId,
-        details: {
-          target_user_email: targetUser?.email,
-          old_status: oldStatus,
-          new_status: newStatus,
-        },
-      });
-
       toast({
         title: "Success",
         description: "User status updated",
@@ -223,14 +192,6 @@ export default function UserDirectoryPage() {
         variant: "destructive",
       });
     } else {
-      await writeAuditLog({
-        userId: currentProfile?.user_id,
-        action: AuditActions.TENANT_MEMBERSHIP_UPDATED,
-        resourceType: ResourceTypes.TENANT_MEMBERSHIP,
-        resourceId: membershipId,
-        details: { new_status: newStatus },
-      });
-
       toast({
         title: "Success",
         description: "Membership updated",

@@ -9,7 +9,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft, RefreshCw, Check, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
-import { writeAuditLog, AuditActions, ResourceTypes } from "@/lib/audit";
 import type { Database } from "@/integrations/supabase/types";
 
 type PortalRole = Database["public"]["Enums"]["portal_role"];
@@ -197,21 +196,6 @@ export default function ApprovalsPage() {
         .eq("user_id", membership.user_id)
         .eq("status", "pending");
 
-      // Audit log
-      await writeAuditLog({
-        userId: currentProfile?.user_id,
-        tenantId: formState.tenant_id,
-        action: AuditActions.MEMBERSHIP_APPROVED,
-        resourceType: ResourceTypes.TENANT_MEMBERSHIP,
-        resourceId: membership.id,
-        details: {
-          approved_user_email: membership.user_email,
-          tenant_id: formState.tenant_id,
-          role: formState.role,
-          contexts: formState.contexts,
-        },
-      });
-
       toast({
         title: "Access approved",
         description: `${membership.user_email} now has access`,
@@ -244,17 +228,6 @@ export default function ApprovalsPage() {
         .eq("id", membership.id);
 
       if (error) throw error;
-
-      // Audit log
-      await writeAuditLog({
-        userId: currentProfile?.user_id,
-        action: AuditActions.MEMBERSHIP_DENIED,
-        resourceType: ResourceTypes.TENANT_MEMBERSHIP,
-        resourceId: membership.id,
-        details: {
-          denied_user_email: membership.user_email,
-        },
-      });
 
       toast({
         title: "Access denied",
