@@ -69,77 +69,79 @@ export function SignInHelpDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent 
         hideDefaultClose
-        className="max-w-[520px] w-[92vw] bg-white border border-black/[0.06] rounded-2xl p-6 sm:p-8 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_10px_15px_-3px_rgba(0,0,0,0.08),0_20px_25px_-5px_rgba(0,0,0,0.06)]"
+        className="w-[92vw] max-w-[520px] rounded-[16px] border border-black/10 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.18),0_2px_8px_rgba(0,0,0,0.08)] p-6 sm:p-8"
       >
         {/* Custom close button */}
         <button
           onClick={() => handleOpenChange(false)}
-          className="absolute right-5 top-5 p-1 rounded-sm opacity-60 hover:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+          className="absolute right-5 top-5 p-1.5 rounded-md opacity-50 hover:opacity-100 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
           aria-label="Close"
         >
           <X className="h-4 w-4" />
         </button>
 
-        <DialogHeader className="space-y-0 pb-0 pr-6">
-          <DialogTitle className="text-lg font-semibold text-foreground tracking-[-0.01em]">
+        <DialogHeader className="space-y-0 pb-0 pr-8">
+          <DialogTitle className="text-[18px] font-semibold text-foreground tracking-[-0.01em]">
             Trouble signing in?
           </DialogTitle>
         </DialogHeader>
 
-        <div className="mt-6 space-y-6">
-          {/* Explanation */}
-          <p className="text-[15px] text-muted-foreground leading-relaxed">
+        <div className="mt-6 space-y-5">
+          {/* Intro line */}
+          <p className="text-[15px] leading-[1.6] text-neutral-700">
             Tribes uses secure email sign-in links.
           </p>
 
           {/* Troubleshooting list */}
-          <div className="text-[15px] text-muted-foreground leading-[1.6]">
-            <p className="mb-3">If you're having trouble:</p>
-            <ul className="space-y-2.5 ml-1">
-              <li className="flex items-start gap-3">
-                <span className="text-[#777] mt-0.5 select-none">•</span>
-                <span>Confirm you entered the correct email address</span>
+          <div>
+            <p className="text-[15px] leading-[1.6] text-neutral-700 mb-3">
+              If you're having trouble:
+            </p>
+            <ul className="space-y-2 text-[14px] leading-[1.6] text-neutral-600">
+              <li className="flex items-start gap-2.5">
+                <span className="text-neutral-400 mt-px select-none">•</span>
+                <span>Confirm you entered the correct email address.</span>
               </li>
-              <li className="flex items-start gap-3">
-                <span className="text-[#777] mt-0.5 select-none">•</span>
-                <span>Check your spam or junk folder</span>
+              <li className="flex items-start gap-2.5">
+                <span className="text-neutral-400 mt-px select-none">•</span>
+                <span>Check your spam or junk folder.</span>
               </li>
-              <li className="flex items-start gap-3">
-                <span className="text-[#777] mt-0.5 select-none">•</span>
-                <span>Sign-in links expire after a short time</span>
+              <li className="flex items-start gap-2.5">
+                <span className="text-neutral-400 mt-px select-none">•</span>
+                <span>Sign-in links expire quickly and can be used once.</span>
               </li>
             </ul>
           </div>
 
           {/* Primary action */}
-          <div className="pt-1">
+          <div className="pt-2">
             <button
               onClick={handleResendLink}
               disabled={isResending || !email.trim()}
-              className="w-full h-12 bg-[#111] hover:bg-[#1a1a1a] active:bg-[#0a0a0a] disabled:bg-[#111]/50 disabled:cursor-not-allowed text-white text-[15px] font-medium rounded-[11px] transition-colors focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2"
+              className="h-12 w-full rounded-xl bg-[#111] text-white text-[15px] font-medium transition-colors hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-2"
             >
               {isResending ? "Sending..." : "Resend sign-in link"}
             </button>
           </div>
 
-          {/* Support section */}
+          {/* Support section (reveal-only, no mailto) */}
           <div className="pt-1">
             {!showSupportEmail ? (
               <button
                 onClick={() => setShowSupportEmail(true)}
-                className="text-[13px] text-muted-foreground/70 hover:text-muted-foreground transition-colors"
+                className="text-[13px] text-neutral-600 hover:text-black underline-offset-4 hover:underline transition-colors"
               >
                 Contact support
               </button>
             ) : (
-              <p className="text-[13px] text-muted-foreground/60">
+              <p className="mt-2 text-[13px] text-neutral-500">
                 {supportEmail}
               </p>
             )}
           </div>
 
-          {/* Footer */}
-          <p className="text-[12px] text-muted-foreground/50 pt-2">
+          {/* Footer - quiet restriction line */}
+          <p className="text-[13px] leading-[1.5] text-neutral-500 pt-1">
             Access is restricted to approved accounts.
           </p>
         </div>
