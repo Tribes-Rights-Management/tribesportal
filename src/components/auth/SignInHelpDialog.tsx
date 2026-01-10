@@ -23,8 +23,8 @@ export function SignInHelpDialog({
 }: SignInHelpDialogProps) {
   const { toast } = useToast();
   const [isResending, setIsResending] = useState(false);
-  const [showSupportEmail, setShowSupportEmail] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showCopiedTooltip, setShowCopiedTooltip] = useState(false);
 
   const supportEmail = "admin@tribesassets.com";
 
@@ -62,7 +62,11 @@ export function SignInHelpDialog({
     try {
       await navigator.clipboard.writeText(supportEmail);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setShowCopiedTooltip(true);
+      setTimeout(() => {
+        setCopied(false);
+        setShowCopiedTooltip(false);
+      }, 1200);
     } catch {
       toast({
         title: "Unable to copy",
@@ -74,8 +78,8 @@ export function SignInHelpDialog({
   // Reset state when modal closes
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
-      setShowSupportEmail(false);
       setCopied(false);
+      setShowCopiedTooltip(false);
     }
     onOpenChange(newOpen);
   };
@@ -140,26 +144,33 @@ export function SignInHelpDialog({
             </button>
           </div>
 
-          {/* Support email row - compact single line with icon-only copy */}
-          <div className="mt-4 flex items-center gap-2">
-            <span className="text-[13px] text-black/45">Support</span>
-            <span className="text-[13px] text-black/70 font-mono tracking-tight">{supportEmail}</span>
-            <button
-              onClick={handleCopyEmail}
-              className="ml-auto flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-black/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
-              aria-label={copied ? "Copied" : "Copy email address"}
-              title={copied ? "Copied!" : "Copy"}
-            >
-              {copied ? (
-                <Check className="h-4 w-4 text-emerald-600" strokeWidth={2} />
-              ) : (
-                <Copy className="h-4 w-4 text-black/40" strokeWidth={1.5} />
+          {/* Support row - compact inline: label + email + icon */}
+          <div className="mt-3.5 flex items-center gap-2">
+            <span className="text-[12px] text-black/40">Support</span>
+            <span className="text-[13px] text-black/55">{supportEmail}</span>
+            <div className="relative ml-1">
+              <button
+                onClick={handleCopyEmail}
+                className="flex items-center justify-center p-0.5 transition-colors hover:opacity-70 focus:outline-none cursor-pointer"
+                aria-label="Copy email address"
+              >
+                {copied ? (
+                  <Check className="h-[14px] w-[14px] text-emerald-600" strokeWidth={1.5} />
+                ) : (
+                  <Copy className="h-[14px] w-[14px] text-[#6B7280]" strokeWidth={1.5} />
+                )}
+              </button>
+              {/* Copied tooltip */}
+              {showCopiedTooltip && (
+                <div className="absolute left-1/2 -translate-x-1/2 -top-7 px-2 py-1 bg-[#1f1f1f] text-white text-[11px] rounded shadow-sm whitespace-nowrap animate-in fade-in duration-150">
+                  Copied
+                </div>
               )}
-            </button>
+            </div>
           </div>
 
           {/* Footer - quiet restriction line */}
-          <p className="mt-3 text-[13px] leading-[1.5] text-black/45">
+          <p className="mt-2.5 text-[12px] leading-[1.5] text-black/40">
             Access is restricted to approved accounts.
           </p>
         </div>
