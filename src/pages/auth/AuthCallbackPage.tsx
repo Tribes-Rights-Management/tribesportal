@@ -9,18 +9,40 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
+        // Check URL for error parameters (expired/invalid link)
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const errorCode = hashParams.get("error_code");
+        const errorDescription = hashParams.get("error_description");
+        
+        // Handle expired or invalid OTP links
+        if (errorCode === "otp_expired" || errorDescription?.includes("expired")) {
+          navigate("/auth/link-expired", { replace: true });
+          return;
+        }
+        
+        if (errorCode) {
+          console.error("Auth error:", errorCode, errorDescription);
+          navigate("/auth/error", { replace: true });
+          return;
+        }
+
         // Exchange the auth code/hash for a session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
           console.error("Session error:", sessionError);
+          // Check if it's an expired link error
+          if (sessionError.message?.includes("expired") || sessionError.message?.includes("invalid")) {
+            navigate("/auth/link-expired", { replace: true });
+            return;
+          }
           navigate("/auth/error", { replace: true });
           return;
         }
 
         if (!session?.user) {
           // No session - may be expired link or invalid
-          navigate("/auth/sign-in", { replace: true });
+          navigate("/auth/link-expired", { replace: true });
           return;
         }
 
@@ -32,7 +54,7 @@ export default function AuthCallbackPage() {
         console.error("Callback error:", err);
         setStatus("error");
         setTimeout(() => {
-          navigate("/auth/error", { replace: true });
+          navigate("/auth/link-expired", { replace: true });
         }, 1500);
       }
     };
