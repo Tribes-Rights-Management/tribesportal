@@ -63,14 +63,34 @@ function StatusCluster() {
 
 // Tenant selector control (only shown if multiple tenants)
 function TenantControl() {
-  const { tenantMemberships, activeTenant, setActiveTenant } = useAuth();
+  const { tenantMemberships, activeTenant, setActiveTenant, activeContext } = useAuth();
+  const navigate = useNavigate();
 
   if (tenantMemberships.length <= 1) return null;
+
+  const handleTenantChange = (tenantId: string) => {
+    setActiveTenant(tenantId);
+    // Navigate to the current context dashboard (context may have changed if not available in new tenant)
+    // The setActiveTenant will handle context recomputation, so we navigate to what will be the active context
+    const newTenant = tenantMemberships.find(m => m.tenant_id === tenantId);
+    if (newTenant) {
+      // Check if current context is still available
+      if (activeContext && newTenant.available_contexts.includes(activeContext)) {
+        navigate(`/app/${activeContext}`);
+      } else if (newTenant.available_contexts.length > 0) {
+        // Will be set to first available by setActiveTenant
+        const newContext = newTenant.available_contexts.includes("licensing") 
+          ? "licensing" 
+          : newTenant.available_contexts[0];
+        navigate(`/app/${newContext}`);
+      }
+    }
+  };
 
   return (
     <Select
       value={activeTenant?.tenant_id ?? ""}
-      onValueChange={setActiveTenant}
+      onValueChange={handleTenantChange}
     >
       <SelectTrigger className="h-7 w-auto min-w-[120px] max-w-[180px] border-[#E4E4E7] bg-transparent hover:bg-[#F4F4F5] text-[11px] gap-1 px-2">
         <SelectValue placeholder="Switch tenant" />
@@ -93,15 +113,24 @@ function TenantControl() {
 // Mode toggle control (only shown if both contexts available)
 function ModeControl() {
   const { activeContext, availableContexts, setActiveContext } = useAuth();
+  const navigate = useNavigate();
 
   if (availableContexts.length <= 1) return null;
+
+  const handleContextSwitch = (context: typeof activeContext) => {
+    if (context && context !== activeContext) {
+      setActiveContext(context);
+      // Navigate to the new context's dashboard
+      navigate(`/app/${context}`);
+    }
+  };
 
   return (
     <div className="flex items-center h-7 p-0.5 bg-[#F4F4F5] rounded">
       {availableContexts.map((context) => (
         <button
           key={context}
-          onClick={() => setActiveContext(context)}
+          onClick={() => handleContextSwitch(context)}
           className={cn(
             "h-6 px-2.5 text-[11px] font-medium rounded transition-all duration-150",
             activeContext === context
@@ -219,7 +248,16 @@ function AccountMenu() {
             {tenantMemberships.map((membership) => (
               <DropdownMenuItem
                 key={membership.tenant_id}
-                onClick={() => setActiveTenant(membership.tenant_id)}
+                onClick={() => {
+                  setActiveTenant(membership.tenant_id);
+                  // Navigate to context dashboard
+                  const newContext = membership.available_contexts.includes(activeContext as any)
+                    ? activeContext
+                    : membership.available_contexts[0];
+                  if (newContext) {
+                    navigate(`/app/${newContext}`);
+                  }
+                }}
                 className={cn(
                   "text-[12px]",
                   activeTenant?.tenant_id === membership.tenant_id && "bg-[#F4F4F5]"
@@ -241,7 +279,12 @@ function AccountMenu() {
             {availableContexts.map((context) => (
               <DropdownMenuItem
                 key={context}
-                onClick={() => setActiveContext(context)}
+                onClick={() => {
+                  if (context !== activeContext) {
+                    setActiveContext(context);
+                    navigate(`/app/${context}`);
+                  }
+                }}
                 className={cn(
                   "text-[12px] capitalize",
                   activeContext === context && "bg-[#F4F4F5]"

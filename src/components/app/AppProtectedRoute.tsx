@@ -1,6 +1,7 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth, PortalContext } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 interface AppProtectedRouteProps {
   children: ReactNode;
@@ -20,13 +21,32 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
   } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const hasAutoSwitched = useRef(false);
 
   useEffect(() => {
     // Handle deep-linking: if user navigates to a context they have access to but isn't active
-    if (requiredContext && activeContext !== requiredContext && canAccessContext(requiredContext)) {
+    if (
+      requiredContext && 
+      activeContext !== requiredContext && 
+      canAccessContext(requiredContext) &&
+      !hasAutoSwitched.current
+    ) {
+      hasAutoSwitched.current = true;
       setActiveContext(requiredContext);
+      
+      // Show subtle notification about context switch
+      const contextLabel = requiredContext === "licensing" ? "Licensing" : "Publishing";
+      toast.info(`Switched to ${contextLabel} mode`, {
+        duration: 2000,
+        position: "bottom-center",
+      });
     }
   }, [requiredContext, activeContext, canAccessContext, setActiveContext]);
+
+  // Reset auto-switch flag when location changes
+  useEffect(() => {
+    hasAutoSwitched.current = false;
+  }, [location.pathname]);
 
   if (loading) {
     return (
@@ -58,8 +78,16 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
 
   // Check context access for specific routes
   if (requiredContext && !canAccessContext(requiredContext)) {
-    // Redirect to the context they do have access to
+    // User tried to access a context they don't have permission for
+    // Show notification and redirect to their allowed context
     if (activeContext) {
+      // Show subtle "not permitted" message
+      const requestedLabel = requiredContext === "licensing" ? "Licensing" : "Publishing";
+      toast.error(`${requestedLabel} access not available`, {
+        description: "You've been redirected to your available portal.",
+        duration: 3000,
+        position: "bottom-center",
+      });
       return <Navigate to={`/app/${activeContext}`} replace />;
     }
     return <Navigate to="/app/pending" replace />;

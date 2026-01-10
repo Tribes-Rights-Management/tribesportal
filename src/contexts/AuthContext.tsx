@@ -54,7 +54,32 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const ACTIVE_TENANT_KEY = "tribes_active_tenant";
-const ACTIVE_CONTEXT_KEY = "tribes_active_context";
+const CONTEXT_BY_TENANT_KEY = "tribes_context_by_tenant";
+
+// Helper to get/set per-tenant context from localStorage
+function getStoredContextForTenant(tenantId: string): PortalContext | null {
+  try {
+    const stored = localStorage.getItem(CONTEXT_BY_TENANT_KEY);
+    if (stored) {
+      const map = JSON.parse(stored) as Record<string, PortalContext>;
+      return map[tenantId] || null;
+    }
+  } catch {
+    // Ignore parse errors
+  }
+  return null;
+}
+
+function setStoredContextForTenant(tenantId: string, context: PortalContext): void {
+  try {
+    const stored = localStorage.getItem(CONTEXT_BY_TENANT_KEY);
+    const map = stored ? JSON.parse(stored) : {};
+    map[tenantId] = context;
+    localStorage.setItem(CONTEXT_BY_TENANT_KEY, JSON.stringify(map));
+  } catch {
+    // Ignore errors
+  }
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -208,24 +233,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         setActiveTenantState(selectedTenant);
 
-        // Resolve active context
+        // Resolve active context with priority:
+        // 1. Stored per-tenant preference
+        // 2. User's default_context from profile
+        // 3. publishing_admin role → publishing
+        // 4. First available context
         if (selectedTenant) {
-          const storedContext = localStorage.getItem(ACTIVE_CONTEXT_KEY) as PortalContext | null;
-          const defaultContext = combinedProfile.default_context;
-          
-          let selectedContext: PortalContext | null = null;
-          
-          if (storedContext && selectedTenant.available_contexts.includes(storedContext)) {
-            selectedContext = storedContext;
-          } else if (defaultContext && selectedTenant.available_contexts.includes(defaultContext)) {
-            selectedContext = defaultContext;
-          } else if (selectedTenant.available_contexts.length > 0) {
-            selectedContext = selectedTenant.available_contexts[0];
-          }
+          const selectedContext = resolveContextForTenant(
+            selectedTenant,
+            combinedProfile.default_context
+          );
           
           setActiveContextState(selectedContext);
           if (selectedContext) {
-            localStorage.setItem(ACTIVE_CONTEXT_KEY, selectedContext);
+            setStoredContextForTenant(selectedTenant.tenant_id, selectedContext);
           }
         }
       }
@@ -241,34 +262,65 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // Resolve context for a tenant using priority order
+  const resolveContextForTenant = useCallback((
+    tenant: TenantMembership,
+    defaultContext: PortalContext | null
+  ): PortalContext | null => {
+    const available = tenant.available_contexts;
+    if (available.length === 0) return null;
+    
+    // If only one context, use it
+    if (available.length === 1) return available[0];
+    
+    // Priority 1: Stored per-tenant preference
+    const storedContext = getStoredContextForTenant(tenant.tenant_id);
+    if (storedContext && available.includes(storedContext)) {
+      return storedContext;
+    }
+    
+    // Priority 2: User's default_context from profile
+    if (defaultContext && available.includes(defaultContext)) {
+      return defaultContext;
+    }
+    
+    // Priority 3: publishing_admin role → publishing
+    if (tenant.portal_roles.includes("publishing_admin") && available.includes("publishing")) {
+      return "publishing";
+    }
+    
+    // Priority 4: First available (licensing by convention)
+    return available.includes("licensing") ? "licensing" : available[0];
+  }, []);
+
   const setActiveTenant = useCallback((tenantId: string) => {
     const tenant = tenantMemberships.find(m => m.tenant_id === tenantId);
     if (tenant) {
       setActiveTenantState(tenant);
       localStorage.setItem(ACTIVE_TENANT_KEY, tenantId);
       
-      // Recompute active context for new tenant
+      // Recompute active context for new tenant using priority order
       const currentContext = activeContext;
       if (currentContext && tenant.available_contexts.includes(currentContext)) {
-        // Keep current context if valid
-      } else if (tenant.available_contexts.length > 0) {
-        // Switch to first available context
-        const newContext = tenant.available_contexts[0];
-        setActiveContextState(newContext);
-        localStorage.setItem(ACTIVE_CONTEXT_KEY, newContext);
+        // Keep current context if valid, but update localStorage
+        setStoredContextForTenant(tenantId, currentContext);
       } else {
-        setActiveContextState(null);
-        localStorage.removeItem(ACTIVE_CONTEXT_KEY);
+        // Resolve using priority order
+        const newContext = resolveContextForTenant(tenant, profile?.default_context ?? null);
+        setActiveContextState(newContext);
+        if (newContext) {
+          setStoredContextForTenant(tenantId, newContext);
+        }
       }
     }
-  }, [tenantMemberships, activeContext]);
+  }, [tenantMemberships, activeContext, profile?.default_context, resolveContextForTenant]);
 
   const setActiveContext = useCallback((context: PortalContext) => {
     if (activeTenant?.available_contexts.includes(context)) {
       setActiveContextState(context);
-      localStorage.setItem(ACTIVE_CONTEXT_KEY, context);
+      setStoredContextForTenant(activeTenant.tenant_id, context);
       
-      // Optionally persist to profile
+      // Persist to profile as default
       if (profile) {
         supabase
           .from("user_profiles")
@@ -304,7 +356,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setActiveTenantState(null);
     setActiveContextState(null);
     localStorage.removeItem(ACTIVE_TENANT_KEY);
-    localStorage.removeItem(ACTIVE_CONTEXT_KEY);
+    // Keep per-tenant context preferences for next login
   };
 
   return (
