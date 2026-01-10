@@ -59,28 +59,62 @@ type FormItemContextValue = {
 
 const FormItemContext = React.createContext<FormItemContextValue>({} as FormItemContextValue);
 
-const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => {
+interface FormItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Use 'internal' for compact portal forms, 'external' for marketing forms */
+  variant?: 'internal' | 'external';
+}
+
+const FormItem = React.forwardRef<HTMLDivElement, FormItemProps>(
+  ({ className, variant = 'internal', ...props }, ref) => {
     const id = React.useId();
 
     return (
       <FormItemContext.Provider value={{ id }}>
-        {/* Institutional spacing: tight vertical rhythm (LOCKED) */}
-        <div ref={ref} className={cn("space-y-1.5", className)} {...props} />
+        {/* INTERNAL FORM SPACING (LOCKED)
+            - Internal forms: 5px label-to-input gap (compact, operational)
+            - External forms: 6px gap (slightly more breathing room) */}
+        <div 
+          ref={ref} 
+          className={cn(
+            variant === 'internal' ? "space-y-[5px]" : "space-y-1.5",
+            className
+          )} 
+          {...props} 
+        />
       </FormItemContext.Provider>
     );
   },
 );
 FormItem.displayName = "FormItem";
 
+interface FormLabelProps extends React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> {
+  /** Use 'internal' for compact portal forms, 'external' for marketing forms */
+  variant?: 'internal' | 'external';
+}
+
 const FormLabel = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
->(({ className, ...props }, ref) => {
+  FormLabelProps
+>(({ className, variant = 'internal', ...props }, ref) => {
   const { formItemId } = useFormField();
 
-  // Institutional label: no color change on error (LOCKED)
-  return <Label ref={ref} className={cn("text-[14px] font-medium text-foreground", className)} htmlFor={formItemId} {...props} />;
+  // INTERNAL FORM LABELS (LOCKED)
+  // - Internal: 13px, concise, factual, always visible
+  // - External: 14px, slightly more relaxed
+  // - No color change on error
+  return (
+    <Label 
+      ref={ref} 
+      className={cn(
+        variant === 'internal' 
+          ? "text-[13px] font-medium text-foreground leading-tight" 
+          : "text-[14px] font-medium text-foreground",
+        className
+      )} 
+      htmlFor={formItemId} 
+      {...props} 
+    />
+  );
 });
 FormLabel.displayName = "FormLabel";
 
@@ -101,18 +135,43 @@ const FormControl = React.forwardRef<React.ElementRef<typeof Slot>, React.Compon
 );
 FormControl.displayName = "FormControl";
 
-const FormDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className, ...props }, ref) => {
+interface FormDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
+  /** Use 'internal' for compact portal forms, 'external' for marketing forms */
+  variant?: 'internal' | 'external';
+}
+
+const FormDescription = React.forwardRef<HTMLParagraphElement, FormDescriptionProps>(
+  ({ className, variant = 'internal', ...props }, ref) => {
     const { formDescriptionId } = useFormField();
 
-    // Institutional helper text (LOCKED)
-    return <p ref={ref} id={formDescriptionId} className={cn("text-[13px] text-muted-foreground leading-snug", className)} {...props} />;
+    // INTERNAL FORM HELPER TEXT (LOCKED)
+    // - Default: none (omit unless strictly necessary for clarity)
+    // - Internal: 12px, low-contrast, factual, minimal
+    // - External: 13px, slightly more readable
+    return (
+      <p 
+        ref={ref} 
+        id={formDescriptionId} 
+        className={cn(
+          variant === 'internal'
+            ? "text-[12px] text-muted-foreground leading-snug mt-1"
+            : "text-[13px] text-muted-foreground leading-snug",
+          className
+        )} 
+        {...props} 
+      />
+    );
   },
 );
 FormDescription.displayName = "FormDescription";
 
-const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className, children, ...props }, ref) => {
+interface FormMessageProps extends React.HTMLAttributes<HTMLParagraphElement> {
+  /** Use 'internal' for compact portal forms, 'external' for marketing forms */
+  variant?: 'internal' | 'external';
+}
+
+const FormMessage = React.forwardRef<HTMLParagraphElement, FormMessageProps>(
+  ({ className, children, variant = 'internal', ...props }, ref) => {
     const { error, formMessageId } = useFormField();
     const body = error ? String(error?.message) : children;
 
@@ -120,16 +179,22 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<
       return null;
     }
 
-    // INSTITUTIONAL ERROR STYLING (LOCKED)
-    // - Neutral dark gray text (not red)
-    // - Smaller than body copy, tight line height
+    // INTERNAL FORM VALIDATION (LOCKED)
+    // - Inline validation only
+    // - Clear, specific error messages
+    // - No modal alerts for validation errors
+    // - Neutral dark gray text (not red/emotional)
     // - No icons, emojis, or visual noise
-    // - Appears directly beneath field
     return (
       <p 
         ref={ref} 
         id={formMessageId} 
-        className={cn("text-[13px] text-[#525252] leading-snug mt-1.5", className)} 
+        className={cn(
+          variant === 'internal'
+            ? "text-[12px] text-[#525252] leading-snug mt-1"
+            : "text-[13px] text-[#525252] leading-snug mt-1.5",
+          className
+        )} 
         {...props}
       >
         {body}

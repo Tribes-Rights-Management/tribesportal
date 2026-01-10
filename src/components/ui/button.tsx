@@ -24,6 +24,10 @@ const buttonVariants = cva(
         sm: "h-10 rounded-md px-4 text-sm",
         lg: "h-14 rounded-md px-8",
         icon: "h-10 w-10",
+        // INTERNAL FORM BUTTON SIZES (LOCKED)
+        // Compact buttons for operational portal forms
+        "internal": "h-9 px-4 text-[13px] font-medium",
+        "internal-sm": "h-8 px-3 text-[12px] font-medium",
       },
     },
     defaultVariants: {
