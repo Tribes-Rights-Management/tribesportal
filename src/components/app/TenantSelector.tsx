@@ -6,30 +6,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Building2 } from "lucide-react";
+import { Building2, ChevronDown } from "lucide-react";
 
 export function TenantSelector() {
   const { tenantMemberships, activeTenant, setActiveTenant } = useAuth();
 
-  // Don't show selector if user only belongs to one tenant
+  // Single tenant: show as static label (no selector needed)
   if (tenantMemberships.length <= 1) {
-    return activeTenant ? (
-      <div className="flex items-center gap-2 text-[13px] text-[#3F3F46]">
-        <Building2 className="h-4 w-4 text-[#71717A]" />
-        <span className="font-medium">{activeTenant.tenant_name}</span>
-      </div>
-    ) : null;
+    return null;
   }
 
+  // Multiple tenants: show dropdown selector
   return (
     <Select
       value={activeTenant?.tenant_id ?? ""}
       onValueChange={setActiveTenant}
     >
-      <SelectTrigger className="w-auto min-w-[180px] h-9 border-[#E4E4E7] bg-white text-[13px]">
+      <SelectTrigger className="w-auto min-w-[160px] h-8 border-[#E4E4E7] bg-white text-[12px] gap-1.5">
         <div className="flex items-center gap-2">
-          <Building2 className="h-4 w-4 text-[#71717A]" />
-          <SelectValue placeholder="Select organization" />
+          <Building2 className="h-3.5 w-3.5 text-[#71717A]" />
+          <SelectValue placeholder="Select tenant" />
         </div>
       </SelectTrigger>
       <SelectContent>
@@ -37,7 +33,7 @@ export function TenantSelector() {
           <SelectItem
             key={membership.tenant_id}
             value={membership.tenant_id}
-            className="text-[13px]"
+            className="text-[12px]"
           >
             {membership.tenant_name}
           </SelectItem>
