@@ -401,6 +401,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      can_manage_memberships: {
+        Args: { p_tenant_id: string }
+        Returns: boolean
+      }
       get_membership_roles: {
         Args: { _membership_id: string }
         Returns: Database["public"]["Enums"]["portal_role"][]
@@ -414,6 +418,13 @@ export type Database = {
         Returns: Database["public"]["Enums"]["user_role"]
       }
       get_user_tenant_ids: { Args: { _user_id: string }; Returns: string[] }
+      has_any_tenant_role: {
+        Args: {
+          p_roles: Database["public"]["Enums"]["portal_role"][]
+          p_tenant_id: string
+        }
+        Returns: boolean
+      }
       has_portal_role: {
         Args: {
           _role: Database["public"]["Enums"]["portal_role"]
@@ -433,6 +444,14 @@ export type Database = {
         Args: { _tenant_id: string; _user_id: string }
         Returns: boolean
       }
+      has_tenant_role: {
+        Args: {
+          p_role: Database["public"]["Enums"]["portal_role"]
+          p_tenant_id: string
+        }
+        Returns: boolean
+      }
+      is_active_member: { Args: { p_tenant_id: string }; Returns: boolean }
       is_platform_admin: { Args: { _user_id: string }; Returns: boolean }
       is_tenant_admin: {
         Args: { _tenant_id: string; _user_id: string }

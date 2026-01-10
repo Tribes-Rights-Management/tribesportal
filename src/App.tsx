@@ -31,6 +31,7 @@ import PublishingRegistrations from "@/pages/app/publishing/PublishingRegistrati
 import PublishingStatements from "@/pages/app/publishing/PublishingStatements";
 import PublishingPayments from "@/pages/app/publishing/PublishingPayments";
 import PublishingDocuments from "@/pages/app/publishing/PublishingDocuments";
+import AccessRequestsPage from "@/pages/app/publishing/AccessRequestsPage";
 import PublishingSettings from "@/pages/app/publishing/PublishingSettings";
 
 // App pages - Other
@@ -87,6 +88,7 @@ const App = () => (
           <Route path="publishing/statements" element={<AppProtectedRoute requiredContext="publishing"><PublishingStatements /></AppProtectedRoute>} />
           <Route path="publishing/payments" element={<AppProtectedRoute requiredContext="publishing"><PublishingPayments /></AppProtectedRoute>} />
           <Route path="publishing/documents" element={<AppProtectedRoute requiredContext="publishing"><PublishingDocuments /></AppProtectedRoute>} />
+          <Route path="publishing/access-requests" element={<AppProtectedRoute requiredContext="publishing"><AccessRequestsPage /></AppProtectedRoute>} />
           <Route path="publishing/settings" element={<AppProtectedRoute requiredContext="publishing"><PublishingSettings /></AppProtectedRoute>} />
         </Route>
 
