@@ -1,5 +1,4 @@
 import { useLocation, Navigate, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 
 export default function CheckEmailPage() {
   const location = useLocation();
@@ -11,34 +10,28 @@ export default function CheckEmailPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4">
-      {/* Auth Surface */}
-      <div 
-        className="w-full max-w-[440px] bg-white border border-[#E4E4E7] px-10 py-12 sm:px-12 sm:py-14"
-        style={{ 
-          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.03)'
-        }}
-      >
+    <div className="min-h-screen flex items-center justify-center bg-white px-6">
+      <div className="w-full max-w-[440px]">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-[22px] sm:text-[24px] font-semibold text-[#09090B] tracking-[-0.01em] leading-tight">
+        <div className="text-center mb-10">
+          <h1 className="text-[28px] sm:text-[32px] font-medium text-[#0A0A0A] tracking-[-0.02em] leading-tight">
             Verify your identity
           </h1>
-          <p className="mt-3 text-[14px] text-[#71717A] leading-relaxed">
+          <p className="mt-3 text-[15px] text-[#6B6B6B] leading-relaxed">
             A secure access link has been sent to
           </p>
         </div>
 
         {/* Email Display */}
         <div className="bg-[#FAFAFA] border border-[#E4E4E7] rounded-[6px] py-4 px-5 mb-8">
-          <p className="text-[15px] font-medium text-[#09090B] text-center break-all">
+          <p className="text-[15px] font-medium text-[#0A0A0A] text-center break-all">
             {email}
           </p>
         </div>
 
         {/* Instructions */}
-        <div className="space-y-4 text-center mb-8">
-          <p className="text-[14px] text-[#52525B] leading-relaxed">
+        <div className="space-y-4 text-center">
+          <p className="text-[15px] text-[#52525B] leading-relaxed">
             Open the link in your email to complete authentication.
           </p>
           <p className="text-[13px] text-[#A1A1AA]">
@@ -47,17 +40,14 @@ export default function CheckEmailPage() {
         </div>
 
         {/* Back Link */}
-        <div className="text-center pt-2 border-t border-[#F4F4F5]">
-          <Button 
-            variant="ghost" 
-            asChild
-            className="text-[13px] text-[#71717A] hover:text-[#09090B] hover:bg-transparent h-auto py-4 font-normal"
+        <p className="mt-10 text-center">
+          <Link 
+            to="/auth/sign-in"
+            className="text-[13px] text-[#71717A] hover:text-[#0A0A0A] transition-colors"
           >
-            <Link to="/auth/sign-in">
-              ← Return to sign in
-            </Link>
-          </Button>
-        </div>
+            Return to sign in
+          </Link>
+        </p>
       </div>
     </div>
   );

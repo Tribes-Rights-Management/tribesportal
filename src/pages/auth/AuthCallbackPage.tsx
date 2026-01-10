@@ -97,9 +97,9 @@ export default function AuthCallbackPage() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4">
+    <div className="min-h-screen flex items-center justify-center bg-white px-6">
       <div className="text-center">
-        <p className="text-[14px] text-[#71717A] tracking-wide">
+        <p className="text-[15px] text-[#6B6B6B] tracking-wide">
           {status === "error" ? "Access verification failed" : "Verifying access..."}
         </p>
       </div>
