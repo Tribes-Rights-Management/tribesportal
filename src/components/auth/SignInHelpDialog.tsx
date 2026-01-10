@@ -52,7 +52,7 @@ export function SignInHelpDialog({
     } else {
       toast({
         title: "Sign-in link sent",
-        description: `Check your inbox at ${email}`,
+        description: "Check your inbox for a new link.",
       });
       onOpenChange(false);
     }
