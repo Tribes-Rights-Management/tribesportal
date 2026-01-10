@@ -2,37 +2,24 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ScrollToTop } from "@/components/ScrollToTop";
-import ProtectedRoute from "./components/ProtectedRoute";
+import RoleProtectedRoute from "@/components/RoleProtectedRoute";
 
-// Public pages
-import AuthPage from "./pages/AuthPage";
-import AuthCallbackPage from "./pages/AuthCallbackPage";
-import NotFound from "./pages/NotFound";
+// Auth pages
+import SignInPage from "@/pages/auth/SignInPage";
+import CheckEmailPage from "@/pages/auth/CheckEmailPage";
+import AuthErrorPage from "@/pages/auth/AuthErrorPage";
+import AuthCallbackPage from "@/pages/auth/AuthCallbackPage";
 
-// Portal pages (protected)
-import PortalPage from "./pages/PortalPage";
-import PortalDashboard from "./pages/PortalDashboard";
-import PortalLicensesPage from "./pages/PortalLicensesPage";
-import RequestFormPage from "./pages/RequestFormPage";
-import RequestDetailPage from "./pages/RequestDetailPage";
-import AgreementHandoffPage from "./pages/AgreementHandoffPage";
-import MyAccountPage from "./pages/MyAccountPage";
-import SettingsPage from "./pages/SettingsPage";
-import DataRetentionPage from "./pages/DataRetentionPage";
+// Protected pages
+import DashboardPage from "@/pages/DashboardPage";
+import LicensingPage from "@/pages/LicensingPage";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import UserDirectoryPage from "@/pages/admin/UserDirectoryPage";
 
-// Admin pages (protected)
-import AdminDashboardPage from "./pages/AdminDashboardPage";
-import AdminLicensesPage from "./pages/AdminLicensesPage";
-import AdminRequestDetailPage from "./pages/AdminRequestDetailPage";
-import AdminUsersPage from "./pages/AdminUsersPage";
-import AdminAccessRequestsPage from "./pages/AdminAccessRequestsPage";
-import AdminAccessRequestDetailPage from "./pages/AdminAccessRequestDetailPage";
-import AdminContactSubmissionsPage from "./pages/AdminContactSubmissionsPage";
-import AdminGuidelinesPage from "./pages/AdminGuidelinesPage";
-import AdminConductPolicyPage from "./pages/AdminConductPolicyPage";
+// Error pages
+import NotFoundPage from "@/pages/NotFoundPage";
 
 const queryClient = new QueryClient();
 
@@ -43,36 +30,59 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <ScrollToTop />
           <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<AuthPage />} />
+            {/* Root redirect */}
+            <Route path="/" element={<Navigate to="/auth/sign-in" replace />} />
+            
+            {/* Auth redirect */}
+            <Route path="/auth" element={<Navigate to="/auth/sign-in" replace />} />
+
+            {/* Public auth routes */}
+            <Route path="/auth/sign-in" element={<SignInPage />} />
+            <Route path="/auth/check-email" element={<CheckEmailPage />} />
+            <Route path="/auth/error" element={<AuthErrorPage />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
-            {/* Portal routes (protected) */}
-            <Route path="/portal" element={<ProtectedRoute><PortalPage /></ProtectedRoute>} />
-            <Route path="/portal/dashboard" element={<ProtectedRoute><PortalDashboard /></ProtectedRoute>} />
-            <Route path="/portal/licenses" element={<ProtectedRoute><PortalLicensesPage /></ProtectedRoute>} />
-            <Route path="/portal/request/new" element={<ProtectedRoute><RequestFormPage /></ProtectedRoute>} />
-            <Route path="/portal/request/:id" element={<ProtectedRoute><RequestDetailPage /></ProtectedRoute>} />
-            <Route path="/portal/agreement/:id" element={<ProtectedRoute><AgreementHandoffPage /></ProtectedRoute>} />
-            <Route path="/portal/account" element={<ProtectedRoute><MyAccountPage /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-            <Route path="/data-retention" element={<ProtectedRoute><DataRetentionPage /></ProtectedRoute>} />
+            {/* Protected routes - Client */}
+            <Route 
+              path="/dashboard" 
+              element={
+                <RoleProtectedRoute allowedRoles={["client"]}>
+                  <DashboardPage />
+                </RoleProtectedRoute>
+              } 
+            />
 
-            {/* Admin routes (protected) */}
-            <Route path="/admin" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
-            <Route path="/admin/licenses" element={<ProtectedRoute><AdminLicensesPage /></ProtectedRoute>} />
-            <Route path="/admin/licenses/:id" element={<ProtectedRoute><AdminRequestDetailPage /></ProtectedRoute>} />
-            <Route path="/admin/users" element={<ProtectedRoute><AdminUsersPage /></ProtectedRoute>} />
-            <Route path="/admin/access-requests" element={<ProtectedRoute><AdminAccessRequestsPage /></ProtectedRoute>} />
-            <Route path="/admin/access-requests/:id" element={<ProtectedRoute><AdminAccessRequestDetailPage /></ProtectedRoute>} />
-            <Route path="/admin/contact-submissions" element={<ProtectedRoute><AdminContactSubmissionsPage /></ProtectedRoute>} />
-            <Route path="/admin/guidelines" element={<ProtectedRoute><AdminGuidelinesPage /></ProtectedRoute>} />
-            <Route path="/admin/conduct-policy" element={<ProtectedRoute><AdminConductPolicyPage /></ProtectedRoute>} />
+            {/* Protected routes - Licensing */}
+            <Route 
+              path="/licensing" 
+              element={
+                <RoleProtectedRoute allowedRoles={["licensing"]}>
+                  <LicensingPage />
+                </RoleProtectedRoute>
+              } 
+            />
 
-            {/* Catch-all */}
-            <Route path="*" element={<NotFound />} />
+            {/* Protected routes - Admin */}
+            <Route 
+              path="/admin" 
+              element={
+                <RoleProtectedRoute allowedRoles={["admin"]}>
+                  <AdminDashboard />
+                </RoleProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/users" 
+              element={
+                <RoleProtectedRoute allowedRoles={["admin"]}>
+                  <UserDirectoryPage />
+                </RoleProtectedRoute>
+              } 
+            />
+
+            {/* Catch-all 404 */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>

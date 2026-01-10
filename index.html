@@ -1,45 +1,29 @@
 <!doctype html>
-<html lang="en" style="background-color: hsl(210 21% 5%);">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     
+    <!-- NOINDEX: This is an authenticated portal, not for public discovery -->
+    <meta name="robots" content="noindex, nofollow" />
+    
     <!-- iOS Safari: Dark status bar + full viewport -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="theme-color" content="#0B0E11" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="theme-color" content="#ffffff" />
     
-    <title>Tribes Rights Management</title>
-    <meta name="description" content="Rights management, built to last." />
-    <meta name="author" content="Tribes Rights Management" />
+    <title>Tribes Portal</title>
+    <meta name="description" content="Tribes Rights Management Portal" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-512.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-512.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon-512.png" />
     <link rel="icon" sizes="512x512" href="/favicon-512.png" />
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="Tribes Rights Management" />
-    <meta property="og:description" content="Rights management, built to last." />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:site_name" content="Tribes Rights Management" />
-
-    <!-- Twitter/X Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Tribes Rights Management" />
-    <meta name="twitter:description" content="Rights management, built to last." />
-    <meta name="twitter:image" content="/og-image.png" />
   </head>
 
-  <body style="background-color: hsl(210 21% 5%);">
-    <!-- iOS Safari overscroll underlay: fixed viewport fill so rubber-band can never reveal white -->
-    <div id="ios-underlay" aria-hidden="true"></div>
-
-    <div id="root" style="background-color: hsl(210 21% 5%);"></div>
+  <body>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
