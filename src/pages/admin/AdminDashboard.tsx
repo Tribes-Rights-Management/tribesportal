@@ -30,19 +30,19 @@ export default function AdminDashboard() {
                 <p className="font-medium">{profile?.email}</p>
               </div>
               <div>
-                <span className="text-muted-foreground">Role:</span>
-                <p className="font-medium capitalize">{profile?.role}</p>
+                <span className="text-muted-foreground">Platform Role:</span>
+                <p className="font-medium capitalize">{profile?.platform_role?.replace("_", " ")}</p>
               </div>
               <div>
                 <span className="text-muted-foreground">Status:</span>
                 <p className="font-medium capitalize">{profile?.status}</p>
               </div>
               <div>
-                <span className="text-muted-foreground">Last Login:</span>
+                <span className="text-muted-foreground">Member Since:</span>
                 <p className="font-medium">
-                  {profile?.last_login_at 
-                    ? new Date(profile.last_login_at).toLocaleString() 
-                    : "First login"}
+                  {profile?.created_at 
+                    ? new Date(profile.created_at).toLocaleDateString() 
+                    : "—"}
                 </p>
               </div>
             </div>

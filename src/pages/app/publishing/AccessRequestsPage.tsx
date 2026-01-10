@@ -22,6 +22,10 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Check, X, Clock, UserCircle } from "lucide-react";
 import { format } from "date-fns";
+import type { Database } from "@/integrations/supabase/types";
+
+type PortalRole = Database["public"]["Enums"]["portal_role"];
+type PortalContext = Database["public"]["Enums"]["portal_context"];
 
 type PendingMembership = {
   id: string;
@@ -32,12 +36,11 @@ type PendingMembership = {
   user_email?: string;
 };
 
-type PortalRole = "tenant_owner" | "publishing_admin" | "licensing_user" | "read_only" | "internal_admin";
-
 export default function AccessRequestsPage() {
   const { activeTenant } = useAuth();
   const queryClient = useQueryClient();
-  const [selectedRoles, setSelectedRoles] = useState<Record<string, PortalRole>>({}); 
+  const [selectedRoles, setSelectedRoles] = useState<Record<string, PortalRole>>({});
+  const [selectedContexts, setSelectedContexts] = useState<Record<string, PortalContext[]>>({});
 
   // Fetch pending memberships for the active tenant
   const { data: pendingRequests, isLoading } = useQuery({
@@ -50,8 +53,7 @@ export default function AccessRequestsPage() {
         .from("tenant_memberships")
         .select("id, user_id, tenant_id, status, created_at")
         .eq("tenant_id", activeTenant.tenant_id)
-        .eq("status", "invited")
-        .is("deleted_at", null)
+        .eq("status", "pending")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -62,10 +64,10 @@ export default function AccessRequestsPage() {
 
       const { data: profiles } = await supabase
         .from("user_profiles")
-        .select("id, email")
-        .in("id", userIds);
+        .select("user_id, email")
+        .in("user_id", userIds);
 
-      const profileMap = new Map(profiles?.map((p) => [p.id, p.email]) ?? []);
+      const profileMap = new Map(profiles?.map((p) => [p.user_id, p.email]) ?? []);
 
       return memberships?.map((m) => ({
         ...m,
@@ -77,21 +79,28 @@ export default function AccessRequestsPage() {
 
   // Approve mutation
   const approveMutation = useMutation({
-    mutationFn: async ({ membershipId, role }: { membershipId: string; role: PortalRole }) => {
-      // Update membership status to active
-      const { error: membershipError } = await supabase
+    mutationFn: async ({ 
+      membershipId, 
+      role, 
+      contexts 
+    }: { 
+      membershipId: string; 
+      role: PortalRole; 
+      contexts: PortalContext[];
+    }) => {
+      // Update membership status to active and set role/contexts
+      const { error } = await supabase
         .from("tenant_memberships")
-        .update({ status: "active", updated_at: new Date().toISOString() })
+        .update({ 
+          status: "active", 
+          role,
+          allowed_contexts: contexts,
+          default_context: contexts[0] ?? null,
+          updated_at: new Date().toISOString() 
+        })
         .eq("id", membershipId);
 
-      if (membershipError) throw membershipError;
-
-      // Assign the selected role
-      const { error: roleError } = await supabase
-        .from("membership_roles")
-        .insert({ membership_id: membershipId, role });
-
-      if (roleError) throw roleError;
+      if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Access approved");
@@ -103,12 +112,12 @@ export default function AccessRequestsPage() {
     },
   });
 
-  // Deny mutation (soft deny - set to suspended)
+  // Deny mutation
   const denyMutation = useMutation({
     mutationFn: async (membershipId: string) => {
       const { error } = await supabase
         .from("tenant_memberships")
-        .update({ status: "suspended", updated_at: new Date().toISOString() })
+        .update({ status: "denied", updated_at: new Date().toISOString() })
         .eq("id", membershipId);
 
       if (error) throw error;
@@ -124,8 +133,9 @@ export default function AccessRequestsPage() {
   });
 
   const handleApprove = (membershipId: string) => {
-    const role = selectedRoles[membershipId] ?? "read_only";
-    approveMutation.mutate({ membershipId, role });
+    const role = selectedRoles[membershipId] ?? "tenant_user";
+    const contexts = selectedContexts[membershipId] ?? ["publishing"];
+    approveMutation.mutate({ membershipId, role, contexts });
   };
 
   const handleDeny = (membershipId: string) => {
@@ -134,6 +144,19 @@ export default function AccessRequestsPage() {
 
   const handleRoleChange = (membershipId: string, role: PortalRole) => {
     setSelectedRoles((prev) => ({ ...prev, [membershipId]: role }));
+  };
+
+  const handleContextToggle = (membershipId: string, context: PortalContext) => {
+    setSelectedContexts((prev) => {
+      const current = prev[membershipId] ?? ["publishing"];
+      if (current.includes(context)) {
+        // Don't remove if it's the last one
+        if (current.length === 1) return prev;
+        return { ...prev, [membershipId]: current.filter(c => c !== context) };
+      } else {
+        return { ...prev, [membershipId]: [...current, context] };
+      }
+    });
   };
 
   if (!activeTenant) {
@@ -190,7 +213,10 @@ export default function AccessRequestsPage() {
                   Status
                 </TableHead>
                 <TableHead className="text-[12px] font-medium text-[#71717A] uppercase tracking-wide">
-                  Assign Role
+                  Role
+                </TableHead>
+                <TableHead className="text-[12px] font-medium text-[#71717A] uppercase tracking-wide">
+                  Contexts
                 </TableHead>
                 <TableHead className="text-[12px] font-medium text-[#71717A] uppercase tracking-wide text-right">
                   Actions
@@ -226,27 +252,48 @@ export default function AccessRequestsPage() {
                   </TableCell>
                   <TableCell>
                     <Select
-                      value={selectedRoles[request.id] ?? "read_only"}
+                      value={selectedRoles[request.id] ?? "tenant_user"}
                       onValueChange={(value) => handleRoleChange(request.id, value as PortalRole)}
                     >
-                      <SelectTrigger className="h-8 w-[160px] text-[12px] border-[#E4E4E7]">
+                      <SelectTrigger className="h-8 w-[140px] text-[12px] border-[#E4E4E7]">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="read_only" className="text-[12px]">
-                          Read Only
+                        <SelectItem value="viewer" className="text-[12px]">
+                          Viewer
                         </SelectItem>
-                        <SelectItem value="licensing_user" className="text-[12px]">
-                          Licensing User
+                        <SelectItem value="tenant_user" className="text-[12px]">
+                          Tenant User
                         </SelectItem>
-                        <SelectItem value="publishing_admin" className="text-[12px]">
-                          Publishing Admin
-                        </SelectItem>
-                        <SelectItem value="tenant_owner" className="text-[12px]">
-                          Tenant Owner
+                        <SelectItem value="tenant_admin" className="text-[12px]">
+                          Tenant Admin
                         </SelectItem>
                       </SelectContent>
                     </Select>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => handleContextToggle(request.id, "publishing")}
+                        className={`px-2 py-1 text-[10px] rounded border transition-colors ${
+                          (selectedContexts[request.id] ?? ["publishing"]).includes("publishing")
+                            ? "bg-[#0A0A0A] text-white border-[#0A0A0A]"
+                            : "bg-white text-[#71717A] border-[#E4E4E7] hover:border-[#A1A1AA]"
+                        }`}
+                      >
+                        Publishing
+                      </button>
+                      <button
+                        onClick={() => handleContextToggle(request.id, "licensing")}
+                        className={`px-2 py-1 text-[10px] rounded border transition-colors ${
+                          (selectedContexts[request.id] ?? ["publishing"]).includes("licensing")
+                            ? "bg-[#0A0A0A] text-white border-[#0A0A0A]"
+                            : "bg-white text-[#71717A] border-[#E4E4E7] hover:border-[#A1A1AA]"
+                        }`}
+                      >
+                        Licensing
+                      </button>
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
