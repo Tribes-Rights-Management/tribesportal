@@ -9,19 +9,32 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // Check URL for error parameters (expired/invalid link)
+        // Check URL hash for error parameters (expired/invalid link)
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const errorCode = hashParams.get("error_code");
         const errorDescription = hashParams.get("error_description");
         
+        // Also check query params (some flows use query instead of hash)
+        const queryParams = new URLSearchParams(window.location.search);
+        const queryError = queryParams.get("error");
+        const queryErrorDescription = queryParams.get("error_description");
+        
         // Handle expired or invalid OTP links
-        if (errorCode === "otp_expired" || errorDescription?.includes("expired")) {
+        const isExpiredError = 
+          errorCode === "otp_expired" || 
+          errorDescription?.toLowerCase().includes("expired") ||
+          errorDescription?.toLowerCase().includes("invalid") ||
+          queryError === "access_denied" ||
+          queryErrorDescription?.toLowerCase().includes("expired") ||
+          queryErrorDescription?.toLowerCase().includes("invalid");
+          
+        if (isExpiredError) {
           navigate("/auth/link-expired", { replace: true });
           return;
         }
         
-        if (errorCode) {
-          console.error("Auth error:", errorCode, errorDescription);
+        if (errorCode || queryError) {
+          console.error("Auth error:", errorCode || queryError, errorDescription || queryErrorDescription);
           navigate("/auth/error", { replace: true });
           return;
         }
@@ -31,8 +44,9 @@ export default function AuthCallbackPage() {
         
         if (sessionError) {
           console.error("Session error:", sessionError);
-          // Check if it's an expired link error
-          if (sessionError.message?.includes("expired") || sessionError.message?.includes("invalid")) {
+          // Check if it's an expired/invalid link error
+          const msg = sessionError.message?.toLowerCase() || "";
+          if (msg.includes("expired") || msg.includes("invalid") || msg.includes("otp")) {
             navigate("/auth/link-expired", { replace: true });
             return;
           }
@@ -40,14 +54,24 @@ export default function AuthCallbackPage() {
           return;
         }
 
+        // Check if we had auth params but no session (indicates expired/used link)
+        const hadAuthParams = 
+          window.location.hash.includes("access_token") || 
+          window.location.hash.includes("error") ||
+          window.location.search.includes("code=");
+          
         if (!session?.user) {
-          // No session - may be expired link or invalid
-          navigate("/auth/link-expired", { replace: true });
+          if (hadAuthParams) {
+            // Had auth params but no session = expired/invalid link
+            navigate("/auth/link-expired", { replace: true });
+          } else {
+            // No auth params, no session = just visiting callback directly
+            navigate("/auth/sign-in", { replace: true });
+          }
           return;
         }
 
         // Session established - let RootRedirect handle state resolution
-        // This avoids duplicating the accessState logic here
         navigate("/", { replace: true });
         
       } catch (err) {
