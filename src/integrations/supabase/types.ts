@@ -14,26 +14,285 @@ export type Database = {
   }
   public: {
     Tables: {
-      user_profiles: {
+      audit_logs: {
         Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: unknown
+          resource_id: string | null
+          resource_type: string
+          tenant_id: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown
+          resource_id?: string | null
+          resource_type: string
+          tenant_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown
+          resource_id?: string | null
+          resource_type?: string
+          tenant_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_submissions: {
+        Row: {
+          company: string | null
           created_at: string
           email: string
           id: string
+          ip_address: unknown
+          message: string
+          name: string
+          processed: boolean | null
+          processed_at: string | null
+          processed_by: string | null
+          source: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          ip_address?: unknown
+          message: string
+          name: string
+          processed?: boolean | null
+          processed_at?: string | null
+          processed_by?: string | null
+          source?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          ip_address?: unknown
+          message?: string
+          name?: string
+          processed?: boolean | null
+          processed_at?: string | null
+          processed_by?: string | null
+          source?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      data_catalog_columns: {
+        Row: {
+          column_name: string
+          created_at: string
+          description: string | null
+          id: string
+          is_encrypted: boolean | null
+          sensitivity_tag: Database["public"]["Enums"]["sensitivity_tag"]
+          table_name: string
+          table_schema: string
+          updated_at: string
+        }
+        Insert: {
+          column_name: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_encrypted?: boolean | null
+          sensitivity_tag?: Database["public"]["Enums"]["sensitivity_tag"]
+          table_name: string
+          table_schema?: string
+          updated_at?: string
+        }
+        Update: {
+          column_name?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_encrypted?: boolean | null
+          sensitivity_tag?: Database["public"]["Enums"]["sensitivity_tag"]
+          table_name?: string
+          table_schema?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      data_catalog_tables: {
+        Row: {
+          classification_level: Database["public"]["Enums"]["classification_level"]
+          contains_pii: boolean | null
+          created_at: string
+          description: string | null
+          id: string
+          legal_hold: boolean | null
+          owner: string | null
+          retention_class: Database["public"]["Enums"]["retention_class"]
+          table_name: string
+          table_schema: string
+          updated_at: string
+        }
+        Insert: {
+          classification_level?: Database["public"]["Enums"]["classification_level"]
+          contains_pii?: boolean | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          legal_hold?: boolean | null
+          owner?: string | null
+          retention_class?: Database["public"]["Enums"]["retention_class"]
+          table_name: string
+          table_schema?: string
+          updated_at?: string
+        }
+        Update: {
+          classification_level?: Database["public"]["Enums"]["classification_level"]
+          contains_pii?: boolean | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          legal_hold?: boolean | null
+          owner?: string | null
+          retention_class?: Database["public"]["Enums"]["retention_class"]
+          table_name?: string
+          table_schema?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tenant_memberships: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          id: string
+          membership_role: Database["public"]["Enums"]["membership_role"]
+          status: Database["public"]["Enums"]["membership_status"]
+          tenant_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          membership_role?: Database["public"]["Enums"]["membership_role"]
+          status?: Database["public"]["Enums"]["membership_status"]
+          tenant_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          membership_role?: Database["public"]["Enums"]["membership_role"]
+          status?: Database["public"]["Enums"]["membership_status"]
+          tenant_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_memberships_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenants: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          deletion_eligible_at: string | null
+          id: string
+          legal_hold: boolean | null
+          legal_name: string
+          settings: Json | null
+          slug: string
+          status: Database["public"]["Enums"]["tenant_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          deletion_eligible_at?: string | null
+          id?: string
+          legal_hold?: boolean | null
+          legal_name: string
+          settings?: Json | null
+          slug: string
+          status?: Database["public"]["Enums"]["tenant_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          deletion_eligible_at?: string | null
+          id?: string
+          legal_hold?: boolean | null
+          legal_name?: string
+          settings?: Json | null
+          slug?: string
+          status?: Database["public"]["Enums"]["tenant_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          deletion_eligible_at: string | null
+          email: string
+          id: string
           last_login_at: string | null
+          legal_hold: boolean | null
           status: Database["public"]["Enums"]["user_status"]
         }
         Insert: {
           created_at?: string
+          deleted_at?: string | null
+          deletion_eligible_at?: string | null
           email: string
           id: string
           last_login_at?: string | null
+          legal_hold?: boolean | null
           status?: Database["public"]["Enums"]["user_status"]
         }
         Update: {
           created_at?: string
+          deleted_at?: string | null
+          deletion_eligible_at?: string | null
           email?: string
           id?: string
           last_login_at?: string | null
+          legal_hold?: boolean | null
           status?: Database["public"]["Enums"]["user_status"]
         }
         Relationships: []
@@ -71,6 +330,7 @@ export type Database = {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
       }
+      get_user_tenant_ids: { Args: { _user_id: string }; Returns: string[] }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["user_role"]
@@ -78,8 +338,37 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_tenant_access: {
+        Args: { _tenant_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_platform_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_tenant_admin: {
+        Args: { _tenant_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
+      classification_level:
+        | "public"
+        | "internal"
+        | "confidential"
+        | "restricted"
+      membership_role: "admin" | "member" | "viewer"
+      membership_status: "active" | "suspended" | "invited"
+      retention_class:
+        | "transient"
+        | "short_term"
+        | "standard"
+        | "long_term"
+        | "permanent"
+      sensitivity_tag:
+        | "none"
+        | "pii"
+        | "financial"
+        | "credentials"
+        | "proprietary"
+      tenant_status: "active" | "suspended"
       user_role: "admin" | "client" | "licensing"
       user_status: "active" | "suspended"
     }
@@ -209,6 +498,29 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      classification_level: [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+      ],
+      membership_role: ["admin", "member", "viewer"],
+      membership_status: ["active", "suspended", "invited"],
+      retention_class: [
+        "transient",
+        "short_term",
+        "standard",
+        "long_term",
+        "permanent",
+      ],
+      sensitivity_tag: [
+        "none",
+        "pii",
+        "financial",
+        "credentials",
+        "proprietary",
+      ],
+      tenant_status: ["active", "suspended"],
       user_role: ["admin", "client", "licensing"],
       user_status: ["active", "suspended"],
     },

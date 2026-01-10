@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import RoleProtectedRoute from "@/components/RoleProtectedRoute";
+import RootRedirect from "@/components/RootRedirect";
 
 // Auth pages
 import SignInPage from "@/pages/auth/SignInPage";
@@ -31,8 +32,8 @@ const App = () => (
           <Toaster />
           <Sonner />
           <Routes>
-            {/* Root redirect */}
-            <Route path="/" element={<Navigate to="/auth/sign-in" replace />} />
+            {/* Root redirect - smart routing based on auth/role */}
+            <Route path="/" element={<RootRedirect />} />
             
             {/* Auth redirect */}
             <Route path="/auth" element={<Navigate to="/auth/sign-in" replace />} />
