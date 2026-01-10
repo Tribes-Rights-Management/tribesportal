@@ -2,8 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { Routes, Route, Navigate } from "react-router-dom";
 import RoleProtectedRoute from "@/components/RoleProtectedRoute";
 import RootRedirect from "@/components/RootRedirect";
 
@@ -26,68 +25,64 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            {/* Root redirect - smart routing based on auth/role */}
-            <Route path="/" element={<RootRedirect />} />
-            
-            {/* Auth redirect */}
-            <Route path="/auth" element={<Navigate to="/auth/sign-in" replace />} />
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <Routes>
+        {/* Root redirect - smart routing based on auth/role */}
+        <Route path="/" element={<RootRedirect />} />
 
-            {/* Public auth routes */}
-            <Route path="/auth/sign-in" element={<SignInPage />} />
-            <Route path="/auth/check-email" element={<CheckEmailPage />} />
-            <Route path="/auth/error" element={<AuthErrorPage />} />
-            <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        {/* Auth redirect */}
+        <Route path="/auth" element={<Navigate to="/auth/sign-in" replace />} />
 
-            {/* Protected routes - Client */}
-            <Route 
-              path="/dashboard" 
-              element={
-                <RoleProtectedRoute allowedRoles={["client"]}>
-                  <DashboardPage />
-                </RoleProtectedRoute>
-              } 
-            />
+        {/* Public auth routes */}
+        <Route path="/auth/sign-in" element={<SignInPage />} />
+        <Route path="/auth/check-email" element={<CheckEmailPage />} />
+        <Route path="/auth/error" element={<AuthErrorPage />} />
+        <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
-            {/* Protected routes - Licensing */}
-            <Route 
-              path="/licensing" 
-              element={
-                <RoleProtectedRoute allowedRoles={["licensing"]}>
-                  <LicensingPage />
-                </RoleProtectedRoute>
-              } 
-            />
+        {/* Protected routes - Client */}
+        <Route
+          path="/dashboard"
+          element={
+            <RoleProtectedRoute allowedRoles={["client"]}>
+              <DashboardPage />
+            </RoleProtectedRoute>
+          }
+        />
 
-            {/* Protected routes - Admin */}
-            <Route 
-              path="/admin" 
-              element={
-                <RoleProtectedRoute allowedRoles={["admin"]}>
-                  <AdminDashboard />
-                </RoleProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/admin/users" 
-              element={
-                <RoleProtectedRoute allowedRoles={["admin"]}>
-                  <UserDirectoryPage />
-                </RoleProtectedRoute>
-              } 
-            />
+        {/* Protected routes - Licensing */}
+        <Route
+          path="/licensing"
+          element={
+            <RoleProtectedRoute allowedRoles={["licensing"]}>
+              <LicensingPage />
+            </RoleProtectedRoute>
+          }
+        />
 
-            {/* Catch-all 404 */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </TooltipProvider>
-      </AuthProvider>
-    </BrowserRouter>
+        {/* Protected routes - Admin */}
+        <Route
+          path="/admin"
+          element={
+            <RoleProtectedRoute allowedRoles={["admin"]}>
+              <AdminDashboard />
+            </RoleProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <RoleProtectedRoute allowedRoles={["admin"]}>
+              <UserDirectoryPage />
+            </RoleProtectedRoute>
+          }
+        />
+
+        {/* Catch-all 404 */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 

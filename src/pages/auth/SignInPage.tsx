@@ -6,11 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function SignInPage() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, signInWithMagicLink } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { signInWithMagicLink } = useAuth();
 
   // If already authenticated with valid profile, redirect to appropriate dashboard
   if (!loading && user && profile) {
