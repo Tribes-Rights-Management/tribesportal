@@ -15,34 +15,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowLeft, Play, Check, X, AlertTriangle, Shield, Database, Lock, Globe, FileCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
-// Code-defined RLS coverage expectations
+// Code-defined RLS coverage expectations for existing tables
 const RLS_COVERAGE = [
-  // Template A - Access Control
+  // Core tables
   { table: "tenants", template: "A", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: false }, notes: "Platform admin + member read" },
-  { table: "tenant_memberships", template: "A", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Managers only write" },
-  { table: "membership_roles", template: "A", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Via membership FK" },
-  
-  // Template L - Licensing
-  { table: "license_requests", template: "L", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Active member read; licensing user create" },
-  { table: "licenses", template: "L", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Active member read; admin write" },
-  
-  // Template P - Publishing
-  { table: "works", template: "P", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Publishing roles only" },
-  { table: "splits", template: "P", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Publishing roles only" },
-  { table: "registrations", template: "P", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Publishing roles only" },
-  { table: "statements", template: "P", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Publishing roles only" },
-  { table: "payments", template: "P", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Publishing roles only" },
-  
-  // Template S - Shared
-  { table: "documents", template: "S", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Active member read; privileged write" },
-  { table: "tenant_notes", template: "S", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Active member read; privileged write" },
-  
-  // Platform tables
+  { table: "tenant_memberships", template: "A", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "User own + admin" },
   { table: "user_profiles", template: "-", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: false }, notes: "User own + admin" },
-  { table: "user_roles", template: "-", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: false }, notes: "Admin only write" },
-  { table: "context_permissions", template: "-", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "Auth read; admin write" },
-  { table: "audit_logs", template: "-", requiresTenantId: true, expectedPolicies: { select: true, insert: false, update: false, delete: false }, notes: "Read only; service insert" },
-  { table: "contact_submissions", template: "-", requiresTenantId: false, expectedPolicies: { select: true, insert: false, update: true, delete: false }, notes: "Admin only; service insert" },
+  { table: "access_requests", template: "-", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: false }, notes: "User own + admin" },
 ];
 
 type CheckResult = {
@@ -114,11 +93,8 @@ export default function SecurityVerificationPage() {
   const { user } = useAuth();
   const [checks, setChecks] = useState<CheckResult[]>([
     { name: "Active Memberships", description: "Count user's active tenant memberships", status: "pending", details: "", category: "tenant" },
-    { name: "Available Contexts", description: "List allowed portal contexts", status: "pending", details: "", category: "auth" },
     { name: "Tenant Isolation", description: "Verify no cross-tenant data leakage", status: "pending", details: "", category: "tenant" },
     { name: "Approval Gate", description: "Verify pending users see zero data", status: "pending", details: "", category: "auth" },
-    { name: "Publishing Isolation", description: "Verify licensing users cannot read publishing tables", status: "pending", details: "", category: "data" },
-    { name: "Storage Access", description: "Verify document access is tenant-scoped", status: "pending", details: "", category: "storage" },
     { name: "Auth Redirect Config", description: "Verify session and redirect configuration", status: "pending", details: "", category: "auth" },
   ]);
   const [isRunning, setIsRunning] = useState(false);
@@ -156,33 +132,7 @@ export default function SecurityVerificationPage() {
       });
     }
 
-    // Check 2: Available contexts
-    try {
-      const { data: contexts } = await supabase
-        .from("context_permissions")
-        .select("context, role, allowed")
-        .eq("allowed", true);
-      
-      const uniqueContexts = [...new Set(contexts?.map(c => c.context) ?? [])];
-      
-      results.push({
-        name: "Available Contexts",
-        description: "List allowed portal contexts",
-        status: uniqueContexts.length > 0 ? "pass" : "warning",
-        details: `Contexts: ${uniqueContexts.join(", ") || "None configured"}`,
-        category: "auth",
-      });
-    } catch (err) {
-      results.push({
-        name: "Available Contexts",
-        description: "List allowed portal contexts",
-        status: "fail",
-        details: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-        category: "auth",
-      });
-    }
-
-    // Check 3: Tenant isolation - try to read tenants user shouldn't have access to
+    // Check 2: Tenant isolation - try to read tenants user shouldn't have access to
     try {
       // Get user's tenant IDs first
       const { data: userMemberships } = await supabase
@@ -221,23 +171,20 @@ export default function SecurityVerificationPage() {
       });
     }
 
-    // Check 4: Approval gate - verify data visibility requires active status
+    // Check 3: Approval gate - verify data visibility requires active status
     try {
-      // Count rows in various tenant-scoped tables
-      const [worksResult, docsResult, licensesResult] = await Promise.all([
-        supabase.from("works").select("id", { count: "exact", head: true }),
-        supabase.from("documents").select("id", { count: "exact", head: true }),
-        supabase.from("licenses").select("id", { count: "exact", head: true }),
-      ]);
-      
-      const totalRows = (worksResult.count ?? 0) + (docsResult.count ?? 0) + (licensesResult.count ?? 0);
+      // Count rows in tenant_memberships for current user
+      const { count } = await supabase
+        .from("tenant_memberships")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id);
       
       results.push({
         name: "Approval Gate",
         description: "Verify pending users see zero data",
         status: "pass",
-        details: `RLS active. Visible rows across checked tables: ${totalRows}`,
-        rowCount: totalRows,
+        details: `RLS active. User can see ${count ?? 0} of their own membership(s).`,
+        rowCount: count ?? 0,
         category: "auth",
       });
     } catch (err) {
@@ -250,69 +197,7 @@ export default function SecurityVerificationPage() {
       });
     }
 
-    // Check 5: Publishing isolation
-    try {
-      const [worksResult, splitsResult, statementsResult, paymentsResult] = await Promise.all([
-        supabase.from("works").select("id", { count: "exact", head: true }),
-        supabase.from("splits").select("id", { count: "exact", head: true }),
-        supabase.from("statements").select("id", { count: "exact", head: true }),
-        supabase.from("payments").select("id", { count: "exact", head: true }),
-      ]);
-      
-      const publishingRowCount = 
-        (worksResult.count ?? 0) + 
-        (splitsResult.count ?? 0) + 
-        (statementsResult.count ?? 0) + 
-        (paymentsResult.count ?? 0);
-      
-      results.push({
-        name: "Publishing Isolation",
-        description: "Verify licensing users cannot read publishing tables",
-        status: "pass",
-        details: `Publishing tables visible rows: ${publishingRowCount} (based on current user roles)`,
-        rowCount: publishingRowCount,
-        category: "data",
-      });
-    } catch (err) {
-      results.push({
-        name: "Publishing Isolation",
-        description: "Verify licensing users cannot read publishing tables",
-        status: "fail",
-        details: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-        category: "data",
-      });
-    }
-
-    // Check 6: Storage access sanity
-    try {
-      // Check if there are storage buckets and their policies
-      const { data: documents } = await supabase
-        .from("documents")
-        .select("id, tenant_id, file_url")
-        .limit(5);
-      
-      const docCount = documents?.length ?? 0;
-      const hasUrls = documents?.filter(d => d.file_url).length ?? 0;
-      
-      results.push({
-        name: "Storage Access",
-        description: "Verify document access is tenant-scoped",
-        status: "pass",
-        details: `Documents accessible: ${docCount}. With file URLs: ${hasUrls}. Access via tenant-scoped RLS.`,
-        rowCount: docCount,
-        category: "storage",
-      });
-    } catch (err) {
-      results.push({
-        name: "Storage Access",
-        description: "Verify document access is tenant-scoped",
-        status: "fail",
-        details: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-        category: "storage",
-      });
-    }
-
-    // Check 7: Auth redirect configuration
+    // Check 4: Auth redirect configuration
     try {
       const session = await supabase.auth.getSession();
       const hasSession = !!session.data.session;
@@ -393,7 +278,7 @@ export default function SecurityVerificationPage() {
                       <TableCell>{getTemplateBadge(row.template)}</TableCell>
                       <TableCell className="text-center">
                         {row.requiresTenantId ? (
-                          <Check className="h-3.5 w-3.5 text-green-600 mx-auto" />
+                          <Check className="h-3.5 w-3.5 text-blue-600 mx-auto" />
                         ) : (
                           <span className="text-[10px] text-[#A1A1AA]">—</span>
                         )}
@@ -411,21 +296,21 @@ export default function SecurityVerificationPage() {
           </CardContent>
         </Card>
 
-        {/* Verification Checks */}
+        {/* Security Checks */}
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-[15px] font-medium">Verification Checks</CardTitle>
+                <CardTitle className="text-[15px] font-medium">Live Security Checks</CardTitle>
                 <CardDescription className="text-[12px]">
-                  Run read-only queries to verify RLS enforcement for current session
+                  Run real-time validation against your current session
                 </CardDescription>
               </div>
               <Button 
-                size="sm" 
                 onClick={runChecks} 
-                disabled={isRunning}
-                className="bg-[#0A0A0A] hover:bg-[#262626] text-[12px]"
+                disabled={isRunning || !user}
+                size="sm"
+                className="h-8 px-3 text-[12px]"
               >
                 <Play className="h-3.5 w-3.5 mr-1.5" />
                 {isRunning ? "Running..." : "Run Checks"}
@@ -439,8 +324,7 @@ export default function SecurityVerificationPage() {
                   <TableRow className="bg-[#F4F4F5]">
                     <TableHead className="text-[11px] font-medium text-[#71717A] uppercase w-8"></TableHead>
                     <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Check</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Description</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase text-center">Status</TableHead>
+                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Status</TableHead>
                     <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Details</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -450,39 +334,22 @@ export default function SecurityVerificationPage() {
                       <TableCell className="text-center">
                         <CategoryIcon category={check.category} />
                       </TableCell>
-                      <TableCell className="text-[12px] font-medium text-[#0A0A0A]">{check.name}</TableCell>
-                      <TableCell className="text-[12px] text-[#71717A]">{check.description}</TableCell>
-                      <TableCell className="text-center"><CheckStatusBadge status={check.status} /></TableCell>
-                      <TableCell className="text-[11px] text-[#52525B] max-w-[300px] truncate">{check.details}</TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="text-[12px] font-medium text-[#0A0A0A]">{check.name}</p>
+                          <p className="text-[10px] text-[#71717A]">{check.description}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <CheckStatusBadge status={check.status} />
+                      </TableCell>
+                      <TableCell className="text-[11px] text-[#52525B] max-w-[300px] truncate">
+                        {check.details || "—"}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Test Account Instructions */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-[15px] font-medium">Role-Specific Testing</CardTitle>
-            <CardDescription className="text-[12px]">
-              For complete verification, test with role-specific accounts
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3 text-[13px] text-[#52525B]">
-              <p>
-                To fully verify publishing isolation (licensing users cannot read publishing data), 
-                create test accounts with specific roles:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4 text-[12px]">
-                <li><code className="bg-[#F4F4F5] px-1.5 py-0.5 rounded text-[11px]">test-licensing@yourorg.com</code> — licensing_user role only</li>
-                <li><code className="bg-[#F4F4F5] px-1.5 py-0.5 rounded text-[11px]">test-publishing@yourorg.com</code> — publishing_admin role only</li>
-              </ul>
-              <p className="text-[12px] text-[#71717A] mt-4">
-                Sign in as each test user and run these checks to verify proper isolation.
-              </p>
             </div>
           </CardContent>
         </Card>

@@ -1,13 +1,13 @@
 import { Navigate } from "react-router-dom";
-import { useAuth, UserRole } from "@/contexts/AuthContext";
+import { useAuth, PlatformRole } from "@/contexts/AuthContext";
 
 interface RoleProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles: UserRole[];
+  allowedRoles: ("admin" | "user")[];
 }
 
 export default function RoleProtectedRoute({ children, allowedRoles }: RoleProtectedRouteProps) {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, isPlatformAdmin } = useAuth();
 
   if (loading) {
     return (
@@ -32,15 +32,13 @@ export default function RoleProtectedRoute({ children, allowedRoles }: RoleProte
     return <Navigate to="/auth/error" replace />;
   }
 
-  // Role not allowed
-  if (!allowedRoles.includes(profile.role)) {
-    // Redirect to their correct dashboard instead of error
-    const roleRoutes: Record<UserRole, string> = {
-      admin: "/admin",
-      client: "/dashboard",
-      licensing: "/licensing",
-    };
-    return <Navigate to={roleRoutes[profile.role]} replace />;
+  // Check role: "admin" maps to platform_admin
+  const isAdmin = isPlatformAdmin;
+  const hasAccess = allowedRoles.includes("admin") ? isAdmin : true;
+
+  if (!hasAccess) {
+    // Redirect non-admins to app
+    return <Navigate to="/app" replace />;
   }
 
   return <>{children}</>;

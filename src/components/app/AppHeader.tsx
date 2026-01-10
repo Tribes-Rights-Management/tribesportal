@@ -75,13 +75,13 @@ function TenantControl() {
     const newTenant = tenantMemberships.find(m => m.tenant_id === tenantId);
     if (newTenant) {
       // Check if current context is still available
-      if (activeContext && newTenant.available_contexts.includes(activeContext)) {
+      if (activeContext && newTenant.allowed_contexts.includes(activeContext)) {
         navigate(`/app/${activeContext}`);
-      } else if (newTenant.available_contexts.length > 0) {
+      } else if (newTenant.allowed_contexts.length > 0) {
         // Will be set to first available by setActiveTenant
-        const newContext = newTenant.available_contexts.includes("licensing") 
+        const newContext = newTenant.allowed_contexts.includes("licensing") 
           ? "licensing" 
-          : newTenant.available_contexts[0];
+          : newTenant.allowed_contexts[0];
         navigate(`/app/${newContext}`);
       }
     }
@@ -251,9 +251,9 @@ function AccountMenu() {
                 onClick={() => {
                   setActiveTenant(membership.tenant_id);
                   // Navigate to context dashboard
-                  const newContext = membership.available_contexts.includes(activeContext as any)
+                  const newContext = membership.allowed_contexts.includes(activeContext as any)
                     ? activeContext
-                    : membership.available_contexts[0];
+                    : membership.allowed_contexts[0];
                   if (newContext) {
                     navigate(`/app/${newContext}`);
                   }

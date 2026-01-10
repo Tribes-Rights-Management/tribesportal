@@ -22,16 +22,12 @@ export default function SignInPage() {
       return <Navigate to="/auth/error" replace />;
     }
     
-    switch (profile.role) {
-      case "admin":
-        return <Navigate to="/admin" replace />;
-      case "client":
-        return <Navigate to="/dashboard" replace />;
-      case "licensing":
-        return <Navigate to="/licensing" replace />;
-      default:
-        return <Navigate to="/auth/error" replace />;
+    // Platform admins go to admin, everyone else goes to app
+    if (profile.platform_role === "platform_admin") {
+      return <Navigate to="/admin" replace />;
     }
+    
+    return <Navigate to="/app" replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
