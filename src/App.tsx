@@ -11,16 +11,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PreLaunchPage from "./pages/PreLaunchPage";
 import AuthPage from "./pages/AuthPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
-import MarketingPage from "./pages/MarketingPage";
-import ContactPage from "./pages/ContactPage";
-import HowLicensingWorksPage from "./pages/HowLicensingWorksPage";
-import HowPublishingAdminWorksPage from "./pages/HowPublishingAdminWorksPage";
-import LicensingAccountPage from "./pages/LicensingAccountPage";
-import OurApproachPage from "./pages/OurApproachPage";
-import PrivacyPage from "./pages/PrivacyPage";
-import TermsPage from "./pages/TermsPage";
-import ServicesPage from "./pages/ServicesPage";
-import ServiceInquiryPage from "./pages/ServiceInquiryPage";
 import NotFound from "./pages/NotFound";
 
 // Portal pages (protected)
@@ -60,16 +50,6 @@ const App = () => (
             <Route path="/" element={<PreLaunchPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
-            <Route path="/marketing" element={<MarketingPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/how-licensing-works" element={<HowLicensingWorksPage />} />
-            <Route path="/how-publishing-admin-works" element={<HowPublishingAdminWorksPage />} />
-            <Route path="/licensing-account" element={<LicensingAccountPage />} />
-            <Route path="/our-approach" element={<OurApproachPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/services/inquiry" element={<ServiceInquiryPage />} />
 
             {/* Portal routes (protected) */}
             <Route path="/portal" element={<ProtectedRoute><PortalPage /></ProtectedRoute>} />
