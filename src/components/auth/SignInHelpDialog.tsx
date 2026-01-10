@@ -88,23 +88,22 @@ export function SignInHelpDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent 
         hideDefaultClose
-        className="w-[min(520px,calc(100vw-48px))] max-w-[520px] rounded-[16px] border border-black/8 bg-white p-7 shadow-[0_16px_48px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06)]"
+        className="w-[min(520px,calc(100vw-48px))] max-w-[520px] rounded-[16px] border border-black/8 bg-white p-6 pt-5 shadow-[0_16px_48px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06)]"
         overlayClassName="bg-black/40 backdrop-blur-[4px]"
       >
-        {/* Close button - 32px hit area, 16px icon */}
-        <button
-          onClick={() => handleOpenChange(false)}
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-black/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-1"
-          aria-label="Close"
-        >
-          <X className="h-4 w-4 text-[#6B7280] transition-colors group-hover:text-[#374151]" strokeWidth={1.5} />
-        </button>
-
-        <DialogHeader className="space-y-0 pb-0 pr-10">
+        {/* Header row: title + close icon aligned */}
+        <div className="flex items-center justify-between">
           <DialogTitle className="text-[17px] font-semibold text-foreground tracking-[-0.01em]">
             Trouble signing in?
           </DialogTitle>
-        </DialogHeader>
+          <button
+            onClick={() => handleOpenChange(false)}
+            className="flex items-center justify-center transition-colors hover:text-[#374151] focus:outline-none"
+            aria-label="Close"
+          >
+            <X className="h-4 w-4 text-[#9CA3AF]" strokeWidth={1.5} />
+          </button>
+        </div>
 
         <div className="mt-4">
           {/* Intro line */}
@@ -128,7 +127,7 @@ export function SignInHelpDialog({
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-black/35 mt-px select-none">•</span>
-                <span>Sign-in links expire quickly and can be used once.</span>
+                <span>Sign-in links expire quickly and can only be used once.</span>
               </li>
             </ul>
           </div>
@@ -157,7 +156,7 @@ export function SignInHelpDialog({
                 {copied ? (
                   <Check className="h-[14px] w-[14px] text-emerald-600" strokeWidth={1.5} />
                 ) : (
-                  <Copy className="h-[14px] w-[14px] text-[#6B7280]" strokeWidth={1.5} />
+                  <Copy className="h-[14px] w-[14px] text-[#9CA3AF] hover:text-[#6B7280]" strokeWidth={1.5} />
                 )}
               </button>
               {/* Copied tooltip */}
