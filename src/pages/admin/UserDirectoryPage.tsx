@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth, UserProfile, UserRole, UserStatus } from "@/contexts/AuthContext";
+import { useAuth, UserRole, UserStatus } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { writeAuditLog, AuditActions, ResourceTypes } from "@/lib/audit";
 
 interface UserWithRole {
   id: string;
@@ -28,10 +29,11 @@ export default function UserDirectoryPage() {
   const fetchUsers = async () => {
     setLoading(true);
     
-    // Fetch profiles
+    // Fetch profiles (excluding soft-deleted)
     const { data: profiles, error: profilesError } = await supabase
       .from("user_profiles")
       .select("id, email, status, created_at, last_login_at")
+      .is("deleted_at", null)
       .order("created_at", { ascending: false });
 
     if (profilesError) {
@@ -88,6 +90,9 @@ export default function UserDirectoryPage() {
       return;
     }
 
+    const targetUser = users.find(u => u.id === userId);
+    const oldRole = targetUser?.role;
+
     setUpdating(userId);
     const { error } = await supabase
       .from("user_roles")
@@ -101,6 +106,19 @@ export default function UserDirectoryPage() {
         variant: "destructive",
       });
     } else {
+      // Write audit log
+      await writeAuditLog({
+        userId: currentProfile?.id,
+        action: AuditActions.USER_ROLE_CHANGED,
+        resourceType: ResourceTypes.USER_ROLE,
+        resourceId: userId,
+        details: {
+          target_user_email: targetUser?.email,
+          old_role: oldRole,
+          new_role: newRole,
+        },
+      });
+
       toast({
         title: "Success",
         description: "User role updated",
@@ -120,6 +138,9 @@ export default function UserDirectoryPage() {
       return;
     }
 
+    const targetUser = users.find(u => u.id === userId);
+    const oldStatus = targetUser?.status;
+
     setUpdating(userId);
     const { error } = await supabase
       .from("user_profiles")
@@ -133,6 +154,19 @@ export default function UserDirectoryPage() {
         variant: "destructive",
       });
     } else {
+      // Write audit log
+      await writeAuditLog({
+        userId: currentProfile?.id,
+        action: AuditActions.USER_STATUS_CHANGED,
+        resourceType: ResourceTypes.USER,
+        resourceId: userId,
+        details: {
+          target_user_email: targetUser?.email,
+          old_status: oldStatus,
+          new_status: newStatus,
+        },
+      });
+
       toast({
         title: "Success",
         description: "User status updated",

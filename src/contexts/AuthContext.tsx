@@ -4,6 +4,17 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type UserRole = "admin" | "client" | "licensing";
 export type UserStatus = "active" | "suspended";
+export type MembershipRole = "admin" | "member" | "viewer";
+export type MembershipStatus = "active" | "suspended" | "invited";
+
+export interface TenantMembership {
+  id: string;
+  tenant_id: string;
+  tenant_name: string;
+  tenant_slug: string;
+  membership_role: MembershipRole;
+  status: MembershipStatus;
+}
 
 export interface UserProfile {
   id: string;
@@ -18,9 +29,13 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: UserProfile | null;
+  tenantMemberships: TenantMembership[];
+  activeTenant: TenantMembership | null;
   loading: boolean;
+  isPlatformAdmin: boolean;
   signInWithMagicLink: (email: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+  setActiveTenant: (tenantId: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,7 +44,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [tenantMemberships, setTenantMemberships] = useState<TenantMembership[]>([]);
+  const [activeTenant, setActiveTenantState] = useState<TenantMembership | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const isPlatformAdmin = profile?.role === "admin";
 
   useEffect(() => {
     // Get initial session
@@ -55,6 +74,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }, 0);
         } else {
           setProfile(null);
+          setTenantMemberships([]);
+          setActiveTenantState(null);
           setLoading(false);
         }
       }
@@ -65,18 +86,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function fetchProfile(userId: string) {
     try {
-      // Fetch profile and role separately (role is now in user_roles table)
-      const [profileResult, roleResult] = await Promise.all([
+      // Fetch profile, role, and tenant memberships in parallel
+      const [profileResult, roleResult, membershipsResult] = await Promise.all([
         supabase
           .from("user_profiles")
           .select("id, email, status, created_at, last_login_at")
           .eq("id", userId)
+          .is("deleted_at", null)
           .maybeSingle(),
         supabase
           .from("user_roles")
           .select("role")
           .eq("user_id", userId)
-          .maybeSingle()
+          .maybeSingle(),
+        supabase
+          .from("tenant_memberships")
+          .select(`
+            id,
+            tenant_id,
+            membership_role,
+            status,
+            tenants!inner(legal_name, slug)
+          `)
+          .eq("user_id", userId)
+          .eq("status", "active")
+          .is("deleted_at", null)
       ]);
 
       if (profileResult.error || !profileResult.data) {
@@ -92,6 +126,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         };
         setProfile(combinedProfile);
         
+        // Process tenant memberships
+        if (!membershipsResult.error && membershipsResult.data) {
+          const memberships: TenantMembership[] = membershipsResult.data.map((m: any) => ({
+            id: m.id,
+            tenant_id: m.tenant_id,
+            tenant_name: m.tenants.legal_name,
+            tenant_slug: m.tenants.slug,
+            membership_role: m.membership_role as MembershipRole,
+            status: m.status as MembershipStatus,
+          }));
+          setTenantMemberships(memberships);
+          
+          // Set active tenant from localStorage or default to first
+          const storedTenantId = localStorage.getItem("activeTenantId");
+          const storedTenant = memberships.find(m => m.tenant_id === storedTenantId);
+          setActiveTenantState(storedTenant || memberships[0] || null);
+        }
+        
         // Update last login
         await supabase
           .from("user_profiles")
@@ -102,6 +154,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   }
+
+  const setActiveTenant = (tenantId: string) => {
+    const tenant = tenantMemberships.find(m => m.tenant_id === tenantId);
+    if (tenant) {
+      setActiveTenantState(tenant);
+      localStorage.setItem("activeTenantId", tenantId);
+    }
+  };
 
   const signInWithMagicLink = async (email: string) => {
     const { error } = await supabase.auth.signInWithOtp({
@@ -116,6 +176,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     await supabase.auth.signOut();
     setProfile(null);
+    setTenantMemberships([]);
+    setActiveTenantState(null);
+    localStorage.removeItem("activeTenantId");
   };
 
   return (
@@ -123,9 +186,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user, 
       session, 
       profile,
-      loading, 
+      tenantMemberships,
+      activeTenant,
+      loading,
+      isPlatformAdmin,
       signInWithMagicLink, 
-      signOut 
+      signOut,
+      setActiveTenant,
     }}>
       {children}
     </AuthContext.Provider>
