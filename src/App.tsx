@@ -6,6 +6,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import RoleProtectedRoute from "@/components/RoleProtectedRoute";
 import { AppProtectedRoute } from "@/components/app/AppProtectedRoute";
 import { AppLayout } from "@/layouts/AppLayout";
+import { AppIndexRedirect } from "@/components/app/AppIndexRedirect";
 
 // Auth pages
 import SignInPage from "@/pages/auth/SignInPage";
@@ -71,6 +72,8 @@ const App = () => (
 
         {/* App routes with layout */}
         <Route path="/app" element={<AppProtectedRoute><AppLayout /></AppProtectedRoute>}>
+          {/* Index route - redirects to active context */}
+          <Route index element={<AppIndexRedirect />} />
           {/* Licensing context routes */}
           <Route path="licensing" element={<AppProtectedRoute requiredContext="licensing"><LicensingDashboard /></AppProtectedRoute>} />
           <Route path="licensing/catalog" element={<AppProtectedRoute requiredContext="licensing"><LicensingCatalog /></AppProtectedRoute>} />
