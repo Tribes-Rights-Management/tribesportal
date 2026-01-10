@@ -14,6 +14,7 @@ import CheckEmailPage from "@/pages/auth/CheckEmailPage";
 import AuthErrorPage from "@/pages/auth/AuthErrorPage";
 import AuthCallbackPage from "@/pages/auth/AuthCallbackPage";
 import LinkExpiredPage from "@/pages/auth/LinkExpiredPage";
+import UnauthorizedPage from "@/pages/auth/UnauthorizedPage";
 
 // App pages - Licensing
 import LicensingDashboard from "@/pages/app/licensing/LicensingDashboard";
@@ -70,6 +71,7 @@ const App = () => (
         <Route path="/auth/check-email" element={<CheckEmailPage />} />
         <Route path="/auth/error" element={<AuthErrorPage />} />
         <Route path="/auth/link-expired" element={<LinkExpiredPage />} />
+        <Route path="/auth/unauthorized" element={<UnauthorizedPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
         {/* App access state pages (outside protected layout) */}
