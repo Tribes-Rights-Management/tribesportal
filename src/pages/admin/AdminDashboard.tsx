@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogOut, Users, Shield } from "lucide-react";
+import { LogOut, Users, Shield, Building2, ClipboardCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function AdminDashboard() {
@@ -51,16 +51,37 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Administration</CardTitle>
-            <CardDescription>Manage users and system settings</CardDescription>
+            <CardTitle>Access Management</CardTitle>
+            <CardDescription>Approve users and manage tenant access</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-3">
             <Button asChild>
+              <Link to="/admin/approvals">
+                <ClipboardCheck className="mr-2 h-4 w-4" />
+                Pending Approvals
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
               <Link to="/admin/users">
                 <Users className="mr-2 h-4 w-4" />
                 User Directory
               </Link>
             </Button>
+            <Button asChild variant="outline">
+              <Link to="/admin/tenants">
+                <Building2 className="mr-2 h-4 w-4" />
+                Tenants
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Security & Compliance</CardTitle>
+            <CardDescription>Audit tools and security verification</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-3">
             <Button asChild variant="outline">
               <Link to="/admin/rls-audit">
                 <Shield className="mr-2 h-4 w-4" />

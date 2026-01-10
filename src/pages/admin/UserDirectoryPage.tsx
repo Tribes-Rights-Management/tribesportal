@@ -6,10 +6,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, RefreshCw } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { writeAuditLog, AuditActions, ResourceTypes } from "@/lib/audit";
+import type { Database } from "@/integrations/supabase/types";
+
+type PortalRole = Database["public"]["Enums"]["portal_role"];
+type MembershipStatus = Database["public"]["Enums"]["membership_status"];
+
+interface TenantMembership {
+  id: string;
+  tenant_id: string;
+  tenant_name: string;
+  status: MembershipStatus;
+  roles: PortalRole[];
+  created_at: string;
+}
 
 interface UserWithRole {
   id: string;
@@ -18,6 +32,7 @@ interface UserWithRole {
   created_at: string;
   last_login_at: string | null;
   role: UserRole;
+  memberships: TenantMembership[];
 }
 
 export default function UserDirectoryPage() {
@@ -25,6 +40,8 @@ export default function UserDirectoryPage() {
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [expandedUser, setExpandedUser] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserWithRole | null>(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -63,13 +80,46 @@ export default function UserDirectoryPage() {
       return;
     }
 
-    // Create a map of user_id to role
-    const roleMap = new Map(roles?.map(r => [r.user_id, r.role as UserRole]) || []);
+    // Fetch all memberships with tenant info and roles
+    const { data: memberships, error: membershipsError } = await supabase
+      .from("tenant_memberships")
+      .select(`
+        id,
+        user_id,
+        tenant_id,
+        status,
+        created_at,
+        tenants(legal_name),
+        membership_roles(role)
+      `)
+      .is("deleted_at", null);
 
-    // Combine profiles with roles
+    if (membershipsError) {
+      console.error("Error fetching memberships:", membershipsError);
+    }
+
+    // Create maps
+    const roleMap = new Map(roles?.map(r => [r.user_id, r.role as UserRole]) || []);
+    
+    const membershipsByUser = new Map<string, TenantMembership[]>();
+    memberships?.forEach((m: any) => {
+      const existing = membershipsByUser.get(m.user_id) || [];
+      existing.push({
+        id: m.id,
+        tenant_id: m.tenant_id,
+        tenant_name: m.tenants?.legal_name || "Unknown",
+        status: m.status,
+        roles: m.membership_roles?.map((mr: any) => mr.role) || [],
+        created_at: m.created_at,
+      });
+      membershipsByUser.set(m.user_id, existing);
+    });
+
+    // Combine profiles with roles and memberships
     const usersWithRoles: UserWithRole[] = (profiles || []).map(profile => ({
       ...profile,
-      role: roleMap.get(profile.id) || "client" as UserRole
+      role: roleMap.get(profile.id) || "client" as UserRole,
+      memberships: membershipsByUser.get(profile.id) || [],
     }));
 
     setUsers(usersWithRoles);
@@ -106,7 +156,6 @@ export default function UserDirectoryPage() {
         variant: "destructive",
       });
     } else {
-      // Write audit log
       await writeAuditLog({
         userId: currentProfile?.id,
         action: AuditActions.USER_ROLE_CHANGED,
@@ -154,7 +203,6 @@ export default function UserDirectoryPage() {
         variant: "destructive",
       });
     } else {
-      // Write audit log
       await writeAuditLog({
         userId: currentProfile?.id,
         action: AuditActions.USER_STATUS_CHANGED,
@@ -176,9 +224,65 @@ export default function UserDirectoryPage() {
     setUpdating(null);
   };
 
+  const updateMembershipStatus = async (membershipId: string, newStatus: MembershipStatus) => {
+    setUpdating(membershipId);
+    const { error } = await supabase
+      .from("tenant_memberships")
+      .update({ 
+        status: newStatus,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", membershipId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update membership",
+        variant: "destructive",
+      });
+    } else {
+      await writeAuditLog({
+        userId: currentProfile?.id,
+        action: AuditActions.TENANT_MEMBERSHIP_UPDATED,
+        resourceType: ResourceTypes.TENANT_MEMBERSHIP,
+        resourceId: membershipId,
+        details: { new_status: newStatus },
+      });
+
+      toast({
+        title: "Success",
+        description: "Membership updated",
+      });
+      fetchUsers();
+    }
+    setUpdating(null);
+  };
+
+  const getMembershipBadgeVariant = (status: MembershipStatus) => {
+    switch (status) {
+      case "active": return "default";
+      case "invited": return "secondary";
+      case "suspended": return "destructive";
+      default: return "outline";
+    }
+  };
+
+  const formatRoles = (roles: PortalRole[]): string => {
+    return roles.map(r => {
+      switch (r) {
+        case "tenant_owner": return "Owner";
+        case "publishing_admin": return "Pub Admin";
+        case "licensing_user": return "Licensing";
+        case "read_only": return "Read Only";
+        case "internal_admin": return "Internal";
+        default: return r;
+      }
+    }).join(", ") || "No roles";
+  };
+
   return (
     <div className="min-h-screen bg-muted/30 p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="sm" asChild>
@@ -198,7 +302,7 @@ export default function UserDirectoryPage() {
           <CardHeader>
             <CardTitle>All Users</CardTitle>
             <CardDescription>
-              Manage user roles and account status. {users.length} user(s) total.
+              Manage user roles, status, and tenant memberships. {users.length} user(s) total.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -210,62 +314,141 @@ export default function UserDirectoryPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-8"></TableHead>
                     <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
+                    <TableHead>Platform Role</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Memberships</TableHead>
                     <TableHead>Created</TableHead>
                     <TableHead>Last Login</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {users.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">
-                        {user.email}
-                        {user.id === currentProfile?.id && (
-                          <Badge variant="outline" className="ml-2">You</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Select
-                          value={user.role}
-                          onValueChange={(value) => updateUserRole(user.id, value as UserRole)}
-                          disabled={updating === user.id || user.id === currentProfile?.id}
-                        >
-                          <SelectTrigger className="w-32">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="admin">Admin</SelectItem>
-                            <SelectItem value="client">Client</SelectItem>
-                            <SelectItem value="licensing">Licensing</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell>
-                        <Select
-                          value={user.status}
-                          onValueChange={(value) => updateUserStatus(user.id, value as UserStatus)}
-                          disabled={updating === user.id || user.id === currentProfile?.id}
-                        >
-                          <SelectTrigger className="w-32">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="active">Active</SelectItem>
-                            <SelectItem value="suspended">Suspended</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {new Date(user.created_at).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {user.last_login_at
-                          ? new Date(user.last_login_at).toLocaleString()
-                          : "Never"}
-                      </TableCell>
-                    </TableRow>
+                    <>
+                      <TableRow key={user.id}>
+                        <TableCell>
+                          {user.memberships.length > 0 && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0"
+                              onClick={() => setExpandedUser(expandedUser === user.id ? null : user.id)}
+                            >
+                              {expandedUser === user.id ? (
+                                <ChevronUp className="h-4 w-4" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4" />
+                              )}
+                            </Button>
+                          )}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {user.email}
+                          {user.id === currentProfile?.id && (
+                            <Badge variant="outline" className="ml-2">You</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                            value={user.role}
+                            onValueChange={(value) => updateUserRole(user.id, value as UserRole)}
+                            disabled={updating === user.id || user.id === currentProfile?.id}
+                          >
+                            <SelectTrigger className="w-28">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="admin">Admin</SelectItem>
+                              <SelectItem value="client">Client</SelectItem>
+                              <SelectItem value="licensing">Licensing</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                            value={user.status}
+                            onValueChange={(value) => updateUserStatus(user.id, value as UserStatus)}
+                            disabled={updating === user.id || user.id === currentProfile?.id}
+                          >
+                            <SelectTrigger className="w-28">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="active">Active</SelectItem>
+                              <SelectItem value="suspended">Suspended</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell>
+                          {user.memberships.length === 0 ? (
+                            <span className="text-muted-foreground text-sm">None</span>
+                          ) : (
+                            <span className="text-sm">
+                              {user.memberships.filter(m => m.status === "active").length} active
+                              {user.memberships.some(m => m.status === "invited") && (
+                                <span className="text-muted-foreground ml-1">
+                                  ({user.memberships.filter(m => m.status === "invited").length} pending)
+                                </span>
+                              )}
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {new Date(user.created_at).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {user.last_login_at
+                            ? new Date(user.last_login_at).toLocaleString()
+                            : "Never"}
+                        </TableCell>
+                      </TableRow>
+                      {expandedUser === user.id && user.memberships.length > 0 && (
+                        <TableRow className="bg-muted/50">
+                          <TableCell colSpan={7} className="py-4">
+                            <div className="pl-8 space-y-3">
+                              <p className="text-sm font-medium text-muted-foreground mb-2">
+                                Tenant Memberships
+                              </p>
+                              <div className="space-y-2">
+                                {user.memberships.map((membership) => (
+                                  <div
+                                    key={membership.id}
+                                    className="flex items-center justify-between bg-background rounded-md p-3 border"
+                                  >
+                                    <div className="flex items-center gap-4">
+                                      <span className="font-medium">{membership.tenant_name}</span>
+                                      <Badge variant={getMembershipBadgeVariant(membership.status)}>
+                                        {membership.status}
+                                      </Badge>
+                                      <span className="text-sm text-muted-foreground">
+                                        {formatRoles(membership.roles)}
+                                      </span>
+                                    </div>
+                                    <Select
+                                      value={membership.status}
+                                      onValueChange={(value) =>
+                                        updateMembershipStatus(membership.id, value as MembershipStatus)
+                                      }
+                                      disabled={updating === membership.id}
+                                    >
+                                      <SelectTrigger className="w-32">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="active">Active</SelectItem>
+                                        <SelectItem value="invited">Invited</SelectItem>
+                                        <SelectItem value="suspended">Suspended</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </>
                   ))}
                 </TableBody>
               </Table>

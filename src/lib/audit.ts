@@ -56,6 +56,11 @@ export const AuditActions = {
   TENANT_MEMBERSHIP_UPDATED: "tenant_membership_updated",
   TENANT_MEMBERSHIP_REMOVED: "tenant_membership_removed",
   
+  // Access provisioning
+  MEMBERSHIP_APPROVED: "membership_approved",
+  MEMBERSHIP_DENIED: "membership_denied",
+  MEMBERSHIP_ROLE_CHANGED: "membership_role_changed",
+  
   // Contact
   CONTACT_SUBMISSION_CREATED: "contact_submission_created",
   CONTACT_SUBMISSION_PROCESSED: "contact_submission_processed",
