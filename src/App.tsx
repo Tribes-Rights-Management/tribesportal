@@ -8,7 +8,6 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Public pages
-import PreLaunchPage from "./pages/PreLaunchPage";
 import AuthPage from "./pages/AuthPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
 import NotFound from "./pages/NotFound";
@@ -47,8 +46,7 @@ const App = () => (
           <ScrollToTop />
           <Routes>
             {/* Public routes */}
-            <Route path="/" element={<PreLaunchPage />} />
-            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/" element={<AuthPage />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
             {/* Portal routes (protected) */}
