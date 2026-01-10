@@ -106,6 +106,30 @@ export type Database = {
         }
         Relationships: []
       }
+      context_permissions: {
+        Row: {
+          allowed: boolean
+          context: Database["public"]["Enums"]["portal_context"]
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["portal_role"]
+        }
+        Insert: {
+          allowed?: boolean
+          context: Database["public"]["Enums"]["portal_context"]
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["portal_role"]
+        }
+        Update: {
+          allowed?: boolean
+          context?: Database["public"]["Enums"]["portal_context"]
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["portal_role"]
+        }
+        Relationships: []
+      }
       data_catalog_columns: {
         Row: {
           column_name: string
@@ -183,6 +207,35 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      membership_roles: {
+        Row: {
+          created_at: string
+          id: string
+          membership_id: string
+          role: Database["public"]["Enums"]["portal_role"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          membership_id: string
+          role: Database["public"]["Enums"]["portal_role"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          membership_id?: string
+          role?: Database["public"]["Enums"]["portal_role"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "membership_roles_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: false
+            referencedRelation: "tenant_memberships"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tenant_memberships: {
         Row: {
@@ -267,6 +320,8 @@ export type Database = {
       user_profiles: {
         Row: {
           created_at: string
+          default_context: Database["public"]["Enums"]["portal_context"] | null
+          default_tenant_id: string | null
           deleted_at: string | null
           deletion_eligible_at: string | null
           email: string
@@ -277,6 +332,8 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          default_context?: Database["public"]["Enums"]["portal_context"] | null
+          default_tenant_id?: string | null
           deleted_at?: string | null
           deletion_eligible_at?: string | null
           email: string
@@ -287,6 +344,8 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          default_context?: Database["public"]["Enums"]["portal_context"] | null
+          default_tenant_id?: string | null
           deleted_at?: string | null
           deletion_eligible_at?: string | null
           email?: string
@@ -295,7 +354,15 @@ export type Database = {
           legal_hold?: boolean | null
           status?: Database["public"]["Enums"]["user_status"]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_profiles_default_tenant_id_fkey"
+            columns: ["default_tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -326,11 +393,35 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_context: {
+        Args: {
+          _context: Database["public"]["Enums"]["portal_context"]
+          _tenant_id: string
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      get_membership_roles: {
+        Args: { _membership_id: string }
+        Returns: Database["public"]["Enums"]["portal_role"][]
+      }
+      get_user_contexts: {
+        Args: { _tenant_id: string; _user_id: string }
+        Returns: Database["public"]["Enums"]["portal_context"][]
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
       }
       get_user_tenant_ids: { Args: { _user_id: string }; Returns: string[] }
+      has_portal_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["portal_role"]
+          _tenant_id: string
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["user_role"]
@@ -356,6 +447,13 @@ export type Database = {
         | "restricted"
       membership_role: "admin" | "member" | "viewer"
       membership_status: "active" | "suspended" | "invited"
+      portal_context: "licensing" | "publishing"
+      portal_role:
+        | "tenant_owner"
+        | "publishing_admin"
+        | "licensing_user"
+        | "read_only"
+        | "internal_admin"
       retention_class:
         | "transient"
         | "short_term"
@@ -506,6 +604,14 @@ export const Constants = {
       ],
       membership_role: ["admin", "member", "viewer"],
       membership_status: ["active", "suspended", "invited"],
+      portal_context: ["licensing", "publishing"],
+      portal_role: [
+        "tenant_owner",
+        "publishing_admin",
+        "licensing_user",
+        "read_only",
+        "internal_admin",
+      ],
       retention_class: [
         "transient",
         "short_term",
