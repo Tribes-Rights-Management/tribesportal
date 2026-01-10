@@ -208,6 +208,202 @@ export type Database = {
         }
         Relationships: []
       }
+      documents: {
+        Row: {
+          context: string | null
+          created_at: string
+          description: string | null
+          document_type: string
+          file_size_bytes: number | null
+          file_url: string | null
+          id: string
+          mime_type: string | null
+          related_entity_id: string | null
+          related_entity_type: string | null
+          tenant_id: string
+          title: string
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string
+          description?: string | null
+          document_type?: string
+          file_size_bytes?: number | null
+          file_url?: string | null
+          id?: string
+          mime_type?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          tenant_id: string
+          title: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          context?: string | null
+          created_at?: string
+          description?: string | null
+          document_type?: string
+          file_size_bytes?: number | null
+          file_url?: string | null
+          id?: string
+          mime_type?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          tenant_id?: string
+          title?: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      license_requests: {
+        Row: {
+          created_at: string
+          description: string | null
+          fee_proposed: number | null
+          id: string
+          notes: string | null
+          requester_id: string
+          status: string
+          tenant_id: string
+          term_end: string | null
+          term_start: string | null
+          territory: string | null
+          title: string
+          updated_at: string
+          usage_type: string | null
+          work_ids: string[] | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          fee_proposed?: number | null
+          id?: string
+          notes?: string | null
+          requester_id: string
+          status?: string
+          tenant_id: string
+          term_end?: string | null
+          term_start?: string | null
+          territory?: string | null
+          title: string
+          updated_at?: string
+          usage_type?: string | null
+          work_ids?: string[] | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          fee_proposed?: number | null
+          id?: string
+          notes?: string | null
+          requester_id?: string
+          status?: string
+          tenant_id?: string
+          term_end?: string | null
+          term_start?: string | null
+          territory?: string | null
+          title?: string
+          updated_at?: string
+          usage_type?: string | null
+          work_ids?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "license_requests_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      licenses: {
+        Row: {
+          created_at: string
+          document_url: string | null
+          fee: number | null
+          id: string
+          issued_at: string | null
+          license_request_id: string | null
+          licensee_email: string | null
+          licensee_name: string
+          notes: string | null
+          status: string
+          tenant_id: string
+          term_end: string | null
+          term_start: string
+          territory: string
+          updated_at: string
+          usage_type: string
+          work_ids: string[] | null
+        }
+        Insert: {
+          created_at?: string
+          document_url?: string | null
+          fee?: number | null
+          id?: string
+          issued_at?: string | null
+          license_request_id?: string | null
+          licensee_email?: string | null
+          licensee_name: string
+          notes?: string | null
+          status?: string
+          tenant_id: string
+          term_end?: string | null
+          term_start: string
+          territory?: string
+          updated_at?: string
+          usage_type: string
+          work_ids?: string[] | null
+        }
+        Update: {
+          created_at?: string
+          document_url?: string | null
+          fee?: number | null
+          id?: string
+          issued_at?: string | null
+          license_request_id?: string | null
+          licensee_email?: string | null
+          licensee_name?: string
+          notes?: string | null
+          status?: string
+          tenant_id?: string
+          term_end?: string | null
+          term_start?: string
+          territory?: string
+          updated_at?: string
+          usage_type?: string
+          work_ids?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "licenses_license_request_id_fkey"
+            columns: ["license_request_id"]
+            isOneToOne: false
+            referencedRelation: "license_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "licenses_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       membership_roles: {
         Row: {
           created_at: string
@@ -233,6 +429,242 @@ export type Database = {
             columns: ["membership_id"]
             isOneToOne: false
             referencedRelation: "tenant_memberships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          notes: string | null
+          paid_at: string | null
+          payee_name: string
+          payment_method: string | null
+          reference_number: string | null
+          statement_id: string | null
+          status: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payee_name: string
+          payment_method?: string | null
+          reference_number?: string | null
+          statement_id?: string | null
+          status?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payee_name?: string
+          payment_method?: string | null
+          reference_number?: string | null
+          statement_id?: string | null
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_statement_id_fkey"
+            columns: ["statement_id"]
+            isOneToOne: false
+            referencedRelation: "statements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      registrations: {
+        Row: {
+          confirmed_at: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          registration_number: string | null
+          society_code: string
+          status: string
+          submitted_at: string | null
+          tenant_id: string
+          updated_at: string
+          work_id: string
+        }
+        Insert: {
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          registration_number?: string | null
+          society_code: string
+          status?: string
+          submitted_at?: string | null
+          tenant_id: string
+          updated_at?: string
+          work_id: string
+        }
+        Update: {
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          registration_number?: string | null
+          society_code?: string
+          status?: string
+          submitted_at?: string | null
+          tenant_id?: string
+          updated_at?: string
+          work_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registrations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "registrations_work_id_fkey"
+            columns: ["work_id"]
+            isOneToOne: false
+            referencedRelation: "works"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      splits: {
+        Row: {
+          created_at: string
+          effective_date: string | null
+          id: string
+          ipi_number: string | null
+          notes: string | null
+          ownership_percentage: number
+          party_name: string
+          party_role: string
+          pro_affiliation: string | null
+          tenant_id: string
+          updated_at: string
+          work_id: string
+        }
+        Insert: {
+          created_at?: string
+          effective_date?: string | null
+          id?: string
+          ipi_number?: string | null
+          notes?: string | null
+          ownership_percentage: number
+          party_name: string
+          party_role: string
+          pro_affiliation?: string | null
+          tenant_id: string
+          updated_at?: string
+          work_id: string
+        }
+        Update: {
+          created_at?: string
+          effective_date?: string | null
+          id?: string
+          ipi_number?: string | null
+          notes?: string | null
+          ownership_percentage?: number
+          party_name?: string
+          party_role?: string
+          pro_affiliation?: string | null
+          tenant_id?: string
+          updated_at?: string
+          work_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "splits_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "splits_work_id_fkey"
+            columns: ["work_id"]
+            isOneToOne: false
+            referencedRelation: "works"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      statements: {
+        Row: {
+          created_at: string
+          currency: string
+          document_url: string | null
+          gross_amount: number
+          id: string
+          net_amount: number
+          notes: string | null
+          period_end: string
+          period_start: string
+          source: string
+          status: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          document_url?: string | null
+          gross_amount?: number
+          id?: string
+          net_amount?: number
+          notes?: string | null
+          period_end: string
+          period_start: string
+          source: string
+          status?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          document_url?: string | null
+          gross_amount?: number
+          id?: string
+          net_amount?: number
+          notes?: string | null
+          period_end?: string
+          period_start?: string
+          source?: string
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "statements_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -271,6 +703,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "tenant_memberships_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenant_notes: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          id: string
+          pinned: boolean | null
+          tenant_id: string
+          title: string | null
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          id?: string
+          pinned?: boolean | null
+          tenant_id: string
+          title?: string | null
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          pinned?: boolean | null
+          tenant_id?: string
+          title?: string | null
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_notes_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -388,6 +864,62 @@ export type Database = {
         }
         Relationships: []
       }
+      works: {
+        Row: {
+          alternate_titles: string[] | null
+          created_at: string
+          duration_seconds: number | null
+          genre: string | null
+          id: string
+          iswc: string | null
+          language: string | null
+          metadata: Json | null
+          release_date: string | null
+          status: string
+          tenant_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          alternate_titles?: string[] | null
+          created_at?: string
+          duration_seconds?: number | null
+          genre?: string | null
+          id?: string
+          iswc?: string | null
+          language?: string | null
+          metadata?: Json | null
+          release_date?: string | null
+          status?: string
+          tenant_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          alternate_titles?: string[] | null
+          created_at?: string
+          duration_seconds?: number | null
+          genre?: string | null
+          id?: string
+          iswc?: string | null
+          language?: string | null
+          metadata?: Json | null
+          release_date?: string | null
+          status?: string
+          tenant_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "works_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -433,6 +965,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_publishing_access: { Args: { p_tenant_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["user_role"]
