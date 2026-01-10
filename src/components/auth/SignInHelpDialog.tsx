@@ -98,8 +98,9 @@ export function SignInHelpDialog({
           </DialogTitle>
           <button
             onClick={() => handleOpenChange(false)}
-            className="flex items-center justify-center transition-colors hover:text-[#374151] focus:outline-none"
-            aria-label="Close"
+            className="flex items-center justify-center rounded-sm transition-colors hover:text-[#374151] focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-1"
+            aria-label="Close dialog"
+            type="button"
           >
             <X className="h-4 w-4 text-[#9CA3AF]" strokeWidth={1.5} />
           </button>
