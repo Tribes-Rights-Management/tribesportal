@@ -2,21 +2,25 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-type AppRole = "admin" | "moderator" | "user";
+export type UserRole = "admin" | "client" | "licensing";
+export type UserStatus = "active" | "suspended";
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  role: UserRole;
+  status: UserStatus;
+  created_at: string;
+  last_login_at: string | null;
+}
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
+  profile: UserProfile | null;
   loading: boolean;
-  roles: AppRole[];
-  isSuperAdmin: boolean;
-  isAdminView: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signInWithMagicLink: (email: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<{ error: Error | null }>;
-  updatePassword: (password: string) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,8 +28,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [roles, setRoles] = useState<AppRole[]>([]);
 
   useEffect(() => {
     // Get initial session
@@ -33,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchRoles(session.user.id);
+        fetchProfile(session.user.id);
       } else {
         setLoading(false);
       }
@@ -41,13 +45,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          fetchRoles(session.user.id);
+          await fetchProfile(session.user.id);
         } else {
-          setRoles([]);
+          setProfile(null);
           setLoading(false);
         }
       }
@@ -56,48 +60,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  async function fetchRoles(userId: string) {
+  async function fetchProfile(userId: string) {
     try {
       const { data, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId);
+        .from("user_profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
 
       if (error) {
-        console.error("Error fetching roles:", error);
-        setRoles([]);
+        console.error("Error fetching profile:", error);
+        setProfile(null);
       } else {
-        setRoles(data?.map((r) => r.role as AppRole) ?? []);
+        setProfile(data as UserProfile);
+        // Update last login
+        await supabase
+          .from("user_profiles")
+          .update({ last_login_at: new Date().toISOString() })
+          .eq("id", userId);
       }
     } finally {
       setLoading(false);
     }
   }
 
-  const isSuperAdmin = roles.includes("admin");
-  const isAdminView = roles.includes("moderator") && !isSuperAdmin;
-
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error as Error | null };
-  };
-
-  const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ 
-      email, 
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/portal`,
-      }
-    });
-    return { error: error as Error | null };
-  };
-
   const signInWithMagicLink = async (email: string) => {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/portal`,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
     return { error: error as Error | null };
@@ -105,34 +96,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-  };
-
-  const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth?reset=true`,
-    });
-    return { error: error as Error | null };
-  };
-
-  const updatePassword = async (password: string) => {
-    const { error } = await supabase.auth.updateUser({ password });
-    return { error: error as Error | null };
+    setProfile(null);
   };
 
   return (
     <AuthContext.Provider value={{ 
       user, 
       session, 
+      profile,
       loading, 
-      roles,
-      isSuperAdmin,
-      isAdminView,
-      signIn, 
-      signUp, 
       signInWithMagicLink, 
-      signOut, 
-      resetPassword, 
-      updatePassword 
+      signOut 
     }}>
       {children}
     </AuthContext.Provider>
