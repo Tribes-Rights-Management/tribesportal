@@ -8,11 +8,13 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
       <input
         type={type}
         className={cn(
-          // INSTITUTIONAL FORM FIELD (LOCKED)
-          // - Height: 44px (h-11), tight horizontal padding (px-3)
-          // - Neutral gray border, white bg
-          // - Focus: border darkens, no ring/glow
-          "flex h-11 w-full rounded-md border border-[#d4d4d4] bg-white px-3 py-2 text-[15px] leading-normal text-foreground placeholder:text-muted-foreground/60 transition-colors duration-150 ease-out focus:outline-none focus:border-[#737373] disabled:cursor-not-allowed disabled:bg-[#fafafa] disabled:opacity-60",
+          // Marketing site alignment:
+          // - Height: 52px, radius: 14px
+          // - Border: rgba(0,0,0,0.18)
+          // - Placeholder: rgba(11,15,20,0.35)
+          // - Focus: subtle ring with rgba(0,0,0,0.12)
+          // - Transition: 180-220ms cubic-bezier
+          "flex h-[52px] w-full rounded-[14px] border border-[rgba(0,0,0,0.18)] bg-white px-4 py-3 text-base leading-normal text-foreground placeholder:text-[rgba(11,15,20,0.35)] transition-all duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] focus:outline-none focus:border-foreground focus:ring-2 focus:ring-[rgba(0,0,0,0.12)] disabled:cursor-not-allowed disabled:bg-[#fafafa] disabled:opacity-45",
           className,
         )}
         ref={ref}

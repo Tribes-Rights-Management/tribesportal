@@ -50,29 +50,29 @@ export default function SignInPage() {
   if (loading) {
     return (
       <AuthLayout>
-        <p className="text-[#71717A] text-[13px] tracking-wide text-center">Verifying access...</p>
+        <p className="text-muted-foreground text-base text-center">Verifying access...</p>
       </AuthLayout>
     );
   }
 
   return (
     <AuthLayout>
-      {/* Header */}
-      <div className="text-center mb-7">
-        <h1 className="text-[22px] font-medium text-[#0A0A0A] tracking-[-0.01em] leading-tight">
+      {/* Header - Marketing site alignment */}
+      <div className="text-center mb-8">
+        <h1 className="text-[32px] font-bold text-foreground tracking-[-0.02em] leading-[1.125]">
           Sign in to Tribes
         </h1>
-        <p className="mt-2 text-[13px] text-[#71717A]">
+        <p className="mt-3 text-base text-muted-foreground">
           Secure access via email sign-in link
         </p>
       </div>
 
-      {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-1.5">
+      {/* Form - Marketing site alignment */}
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="space-y-2">
           <Label 
             htmlFor="email" 
-            className="text-[12px] font-medium text-[#52525B] block"
+            className="text-[14px] font-semibold text-[rgba(11,15,20,0.80)] block"
           >
             Email address
           </Label>
@@ -85,13 +85,13 @@ export default function SignInPage() {
             required
             autoFocus
             autoComplete="email"
-            className="h-10 px-3 text-[14px] text-[#0A0A0A] bg-white border-[#E4E4E7] rounded-[5px] placeholder:text-[#A1A1AA] focus:border-[#0A0A0A] focus:ring-1 focus:ring-[#0A0A0A] transition-colors"
+            className="h-[52px] px-4 text-base text-foreground bg-white border-[rgba(0,0,0,0.18)] rounded-[14px] placeholder:text-[rgba(11,15,20,0.35)] focus:border-foreground focus:ring-2 focus:ring-foreground/12 transition-all duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
           />
         </div>
 
         <Button 
           type="submit" 
-          className="w-full h-10 bg-[#0A0A0A] hover:bg-[#171717] text-white text-[13px] font-medium rounded-[5px] transition-colors"
+          className="w-full"
           disabled={isSubmitting || !email.trim()}
         >
           {isSubmitting ? "Sending..." : "Continue"}
@@ -99,16 +99,16 @@ export default function SignInPage() {
       </form>
 
       {/* Institutional Notice */}
-      <p className="mt-6 text-center text-[12px] text-[#A1A1AA]">
+      <p className="mt-8 text-center text-[14px] text-muted-foreground">
         Access is restricted to approved accounts.
       </p>
 
       {/* Help Link */}
-      <p className="mt-3 text-center">
+      <p className="mt-4 text-center">
         <button 
           type="button"
           onClick={() => setHelpDialogOpen(true)}
-          className="text-[12px] text-[#71717A] hover:text-[#0A0A0A] transition-colors"
+          className="text-[14px] text-muted-foreground hover:text-foreground transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
         >
           Trouble signing in?
         </button>
