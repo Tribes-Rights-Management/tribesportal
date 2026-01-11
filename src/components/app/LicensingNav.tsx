@@ -22,7 +22,7 @@ const navItems = [
 
 export function LicensingNav() {
   return (
-    <nav className="w-56 border-r border-[#E4E4E7] bg-[#FAFAFA] py-4">
+    <nav className="w-56 border-r border-border bg-muted/30 py-4">
       <div className="px-3 space-y-1">
         {navItems.map((item) => (
           <NavLink
@@ -31,10 +31,10 @@ export function LicensingNav() {
             end={item.exact}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-md transition-colors",
+                "flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-md transition-colors duration-200",
                 isActive
-                  ? "bg-white text-[#0A0A0A] shadow-sm border border-[#E4E4E7]"
-                  : "text-[#71717A] hover:text-[#3F3F46] hover:bg-white/50"
+                  ? "bg-background text-foreground shadow-sm border border-border"
+                  : "text-muted-foreground hover:text-foreground hover:bg-background/50"
               )
             }
           >
