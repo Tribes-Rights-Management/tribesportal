@@ -1,5 +1,4 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,15 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { LogOut, Settings, Shield, Moon, Sun, Monitor, Check } from "lucide-react";
+import { LogOut, Settings, Shield } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 type PortalMode = "publishing" | "licensing";
 
@@ -96,7 +91,6 @@ function PortalSwitcher() {
   const navigate = useNavigate();
   const currentMode = useCurrentMode();
 
-  // Only show if user has access to both portals and not in admin
   const hasPublishing = availableContexts.includes("publishing");
   const hasLicensing = availableContexts.includes("licensing");
   
@@ -109,7 +103,6 @@ function PortalSwitcher() {
     navigate(`/app/${mode}`);
   };
 
-  // If only one portal, show as static text
   if (!hasPublishing || !hasLicensing) {
     return (
       <span className="text-[13px] font-medium text-foreground">
@@ -146,82 +139,15 @@ function PortalSwitcher() {
   );
 }
 
-// Theme toggle with popover menu - Apple-grade sizing
-function ThemeToggle() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
-
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <button
-          className="h-8 w-8 inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors duration-150"
-          aria-label="Toggle theme"
-        >
-          {resolvedTheme === "dark" ? (
-            <Moon className="h-[18px] w-[18px]" />
-          ) : (
-            <Sun className="h-[18px] w-[18px]" />
-          )}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="w-36 p-1 bg-popover" sideOffset={8}>
-        <button
-          onClick={() => setTheme("light")}
-          className={cn(
-            "flex items-center justify-between w-full px-2.5 py-1.5 text-[13px] rounded-md transition-colors",
-            theme === "light" 
-              ? "bg-muted text-foreground" 
-              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-          )}
-        >
-          <span className="flex items-center gap-2">
-            <Sun className="h-4 w-4" />
-            Light
-          </span>
-          {theme === "light" && <Check className="h-3.5 w-3.5" />}
-        </button>
-        <button
-          onClick={() => setTheme("dark")}
-          className={cn(
-            "flex items-center justify-between w-full px-2.5 py-1.5 text-[13px] rounded-md transition-colors",
-            theme === "dark" 
-              ? "bg-muted text-foreground" 
-              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-          )}
-        >
-          <span className="flex items-center gap-2">
-            <Moon className="h-4 w-4" />
-            Dark
-          </span>
-          {theme === "dark" && <Check className="h-3.5 w-3.5" />}
-        </button>
-        <button
-          onClick={() => setTheme("system")}
-          className={cn(
-            "flex items-center justify-between w-full px-2.5 py-1.5 text-[13px] rounded-md transition-colors",
-            theme === "system" 
-              ? "bg-muted text-foreground" 
-              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-          )}
-        >
-          <span className="flex items-center gap-2">
-            <Monitor className="h-4 w-4" />
-            System
-          </span>
-          {theme === "system" && <Check className="h-3.5 w-3.5" />}
-        </button>
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-// Account menu with user initials - 32px avatar
+// Compact account menu - 32px avatar with dropdown
 function AccountMenu() {
   const { 
     profile, 
     signOut, 
     activeContext,
+    availableContexts,
     isPlatformAdmin,
+    setActiveContext,
   } = useAuth();
   const navigate = useNavigate();
   const currentMode = useCurrentMode();
@@ -231,7 +157,6 @@ function AccountMenu() {
     navigate("/auth/sign-in");
   };
 
-  // Get user initials
   const getInitials = () => {
     if (profile?.full_name) {
       const parts = profile.full_name.trim().split(/\s+/);
@@ -250,7 +175,7 @@ function AccountMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="h-8 w-8 rounded-full bg-muted/60 hover:bg-muted shrink-0 text-[11px] font-medium text-muted-foreground inline-flex items-center justify-center transition-colors duration-150"
+          className="h-8 w-8 rounded-full bg-muted/60 hover:bg-muted shrink-0 text-[11px] font-medium text-muted-foreground inline-flex items-center justify-center transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           aria-label="Account menu"
         >
           {getInitials()}
@@ -274,18 +199,46 @@ function AccountMenu() {
         
         <DropdownMenuSeparator />
         
+        {/* Admin link - only for platform admins */}
         {isPlatformAdmin && (
+          <DropdownMenuItem
+            onClick={() => navigate("/admin")}
+            className={cn("text-[13px] py-2", currentMode === "admin" && "bg-muted")}
+          >
+            <Shield className="mr-2 h-4 w-4" />
+            Administration
+          </DropdownMenuItem>
+        )}
+        
+        {/* Portal navigation - only show if not in admin and has multiple contexts */}
+        {currentMode !== "admin" && availableContexts.length > 0 && (
           <>
-            <DropdownMenuItem
-              onClick={() => navigate("/admin")}
-              className={cn("text-[13px] py-2", currentMode === "admin" && "bg-muted")}
-            >
-              <Shield className="mr-2 h-4 w-4" />
-              Administration
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            {availableContexts.includes("publishing") && (
+              <DropdownMenuItem
+                onClick={() => {
+                  setActiveContext("publishing");
+                  navigate("/app/publishing");
+                }}
+                className={cn("text-[13px] py-2", currentMode === "publishing" && "bg-muted")}
+              >
+                Client Portal
+              </DropdownMenuItem>
+            )}
+            {availableContexts.includes("licensing") && (
+              <DropdownMenuItem
+                onClick={() => {
+                  setActiveContext("licensing");
+                  navigate("/app/licensing");
+                }}
+                className={cn("text-[13px] py-2", currentMode === "licensing" && "bg-muted")}
+              >
+                Licensing
+              </DropdownMenuItem>
+            )}
           </>
         )}
+        
+        {(isPlatformAdmin || availableContexts.length > 0) && <DropdownMenuSeparator />}
         
         <DropdownMenuItem
           onClick={() => {
@@ -447,7 +400,7 @@ export function GlobalHeader() {
         )}
       </div>
 
-      {/* Right: Theme toggle + Account menu */}
+      {/* Right: Theme toggle + Account menu (compact, 32px) */}
       <div className="flex items-center gap-1">
         <ThemeToggle />
         <AccountMenu />

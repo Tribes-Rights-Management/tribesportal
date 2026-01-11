@@ -6,10 +6,9 @@ interface AuthLayoutProps {
 
 /**
  * System-level auth layout - centered access surface
- * Premium Apple-grade: soft muted background, centered card
+ * Apple-grade: soft neutral gray background (#F5F5F7), white card
  */
 export function AuthLayout({ children }: AuthLayoutProps) {
-  // Add/remove body class to prevent scroll on auth pages
   useEffect(() => {
     document.body.classList.add("auth-no-scroll");
     return () => {
@@ -18,9 +17,9 @@ export function AuthLayout({ children }: AuthLayoutProps) {
   }, []);
 
   return (
-    <div className="min-h-dvh h-dvh overflow-hidden flex items-center justify-center bg-muted">
+    <div className="min-h-dvh h-dvh overflow-hidden flex items-center justify-center bg-app-surface">
       <div className="w-full max-w-[420px] px-6">
-        <div className="bg-background rounded-2xl p-8 shadow-sm border border-border/50">
+        <div className="bg-background rounded-2xl p-8 shadow-sm border border-border/40">
           {children}
         </div>
       </div>
