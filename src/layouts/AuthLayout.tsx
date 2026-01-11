@@ -6,7 +6,7 @@ interface AuthLayoutProps {
 
 /**
  * System-level auth layout - centered access surface
- * Marketing site alignment: 100dvh viewport, no scroll, dead-center
+ * Premium Apple-grade: soft muted background, centered card
  */
 export function AuthLayout({ children }: AuthLayoutProps) {
   // Add/remove body class to prevent scroll on auth pages
@@ -18,9 +18,11 @@ export function AuthLayout({ children }: AuthLayoutProps) {
   }, []);
 
   return (
-    <div className="min-h-dvh h-dvh overflow-hidden flex items-center justify-center bg-white">
+    <div className="min-h-dvh h-dvh overflow-hidden flex items-center justify-center bg-muted">
       <div className="w-full max-w-[420px] px-6">
-        {children}
+        <div className="bg-background rounded-2xl p-8 shadow-sm border border-border/50">
+          {children}
+        </div>
       </div>
     </div>
   );

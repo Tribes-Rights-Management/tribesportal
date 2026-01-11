@@ -57,22 +57,22 @@ export default function SignInPage() {
 
   return (
     <AuthLayout>
-      {/* Header - Marketing site alignment */}
+      {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-[32px] font-bold text-foreground tracking-[-0.02em] leading-[1.125]">
+        <h1 className="text-[28px] font-semibold text-foreground tracking-[-0.02em] leading-[1.2]">
           Sign in to Tribes
         </h1>
-        <p className="mt-3 text-base text-muted-foreground">
+        <p className="mt-2 text-[15px] text-muted-foreground">
           Secure access via email sign-in link
         </p>
       </div>
 
-      {/* Form - Marketing site alignment */}
+      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
           <Label 
             htmlFor="email" 
-            className="text-[14px] font-semibold text-[rgba(11,15,20,0.80)] block"
+            className="text-[14px] font-medium text-foreground block"
           >
             Email address
           </Label>
@@ -85,13 +85,13 @@ export default function SignInPage() {
             required
             autoFocus
             autoComplete="email"
-            className="h-[52px] px-4 text-base text-foreground bg-white border-[rgba(0,0,0,0.18)] rounded-[14px] placeholder:text-[rgba(11,15,20,0.35)] focus:border-foreground focus:ring-2 focus:ring-foreground/12 transition-all duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
+            className="h-[48px] px-4 text-[15px] text-foreground bg-background border-input rounded-xl placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
           />
         </div>
 
         <Button 
           type="submit" 
-          className="w-full"
+          className="w-full h-[48px] text-[15px] font-medium rounded-xl"
           disabled={isSubmitting || !email.trim()}
         >
           {isSubmitting ? "Sending..." : "Continue"}
@@ -99,16 +99,16 @@ export default function SignInPage() {
       </form>
 
       {/* Institutional Notice */}
-      <p className="mt-8 text-center text-[14px] text-muted-foreground">
+      <p className="mt-6 text-center text-[13px] text-muted-foreground">
         Access is restricted to approved accounts.
       </p>
 
       {/* Help Link */}
-      <p className="mt-4 text-center">
+      <p className="mt-3 text-center">
         <button 
           type="button"
           onClick={() => setHelpDialogOpen(true)}
-          className="text-[14px] text-muted-foreground hover:text-foreground transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
+          className="text-[13px] text-muted-foreground hover:text-foreground transition-colors duration-200"
         >
           Trouble signing in?
         </button>
