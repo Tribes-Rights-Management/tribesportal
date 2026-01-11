@@ -6,6 +6,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import RoleProtectedRoute from "@/components/RoleProtectedRoute";
 import { AppProtectedRoute } from "@/components/app/AppProtectedRoute";
 import { AppLayout } from "@/layouts/AppLayout";
+import { AdminLayout } from "@/layouts/AdminLayout";
 import { AppIndexRedirect } from "@/components/app/AppIndexRedirect";
 
 // Auth pages
@@ -108,13 +109,15 @@ const App = () => (
           <Route path="publishing/settings" element={<AppProtectedRoute requiredContext="publishing"><PublishingSettings /></AppProtectedRoute>} />
         </Route>
 
-        {/* Admin routes */}
-        <Route path="/admin" element={<RoleProtectedRoute allowedRoles={["admin"]}><AdminDashboard /></RoleProtectedRoute>} />
-        <Route path="/admin/approvals" element={<RoleProtectedRoute allowedRoles={["admin"]}><ApprovalsPage /></RoleProtectedRoute>} />
-        <Route path="/admin/tenants" element={<RoleProtectedRoute allowedRoles={["admin"]}><TenantsPage /></RoleProtectedRoute>} />
-        <Route path="/admin/users" element={<RoleProtectedRoute allowedRoles={["admin"]}><UserDirectoryPage /></RoleProtectedRoute>} />
-        <Route path="/admin/rls-audit" element={<RoleProtectedRoute allowedRoles={["admin"]}><RLSAuditPage /></RoleProtectedRoute>} />
-        <Route path="/admin/security" element={<RoleProtectedRoute allowedRoles={["admin"]}><AuthAccessReviewPage /></RoleProtectedRoute>} />
+        {/* Admin routes with layout */}
+        <Route path="/admin" element={<RoleProtectedRoute allowedRoles={["admin"]}><AdminLayout /></RoleProtectedRoute>}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="approvals" element={<ApprovalsPage />} />
+          <Route path="tenants" element={<TenantsPage />} />
+          <Route path="users" element={<UserDirectoryPage />} />
+          <Route path="rls-audit" element={<RLSAuditPage />} />
+          <Route path="security" element={<AuthAccessReviewPage />} />
+        </Route>
 
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFoundPage />} />
