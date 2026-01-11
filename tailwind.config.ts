@@ -31,13 +31,15 @@ export default {
         "8": "64px",
       },
       fontSize: {
-        "xs": ["10px", { lineHeight: "1.4", fontWeight: "400" }],
-        "sm": ["11px", { lineHeight: "1.45", fontWeight: "400" }],
-        "base": ["13px", { lineHeight: "1.5", fontWeight: "400" }],
-        "lg": ["14px", { lineHeight: "1.4", fontWeight: "500" }],
-        "xl": ["15px", { lineHeight: "1.35", fontWeight: "500" }],
-        "2xl": ["22px", { lineHeight: "1.2", fontWeight: "600" }],
-        "3xl": ["28px", { lineHeight: "1.15", fontWeight: "600" }],
+        /* Marketing site alignment: base 16px, institutional scale */
+        "xs": ["12px", { lineHeight: "1.4", fontWeight: "400" }],
+        "sm": ["14px", { lineHeight: "1.5", fontWeight: "400" }],
+        "base": ["16px", { lineHeight: "1.5", fontWeight: "400" }],
+        "lg": ["17px", { lineHeight: "1.4", fontWeight: "500" }],
+        "xl": ["20px", { lineHeight: "1.35", fontWeight: "500" }],
+        "2xl": ["24px", { lineHeight: "1.2", fontWeight: "600" }],
+        "3xl": ["32px", { lineHeight: "1.125", fontWeight: "700" }],
+        "4xl": ["40px", { lineHeight: "1.1", fontWeight: "700" }],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -97,9 +99,12 @@ export default {
         },
       },
       borderRadius: {
-        lg: "12px",
-        md: "10px",
+        /* Marketing site alignment */
+        lg: "16px",
+        md: "12px",
         sm: "8px",
+        input: "14px",
+        button: "16px",
       },
       fontFamily: {
         sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
@@ -151,13 +156,15 @@ export default {
         "exit": "fade-out 280ms ease-in-out, scale-out 280ms ease-in-out",
       },
       transitionDuration: {
+        '180': '180ms',
+        '200': '200ms',
+        '220': '220ms',
         '280': '280ms',
         '320': '320ms',
-        '360': '360ms',
-        '400': '400ms',
       },
       transitionTimingFunction: {
-        'institutional': 'ease-in-out',
+        /* Marketing site alignment: precise, calm easing */
+        'institutional': 'cubic-bezier(0.2, 0.8, 0.2, 1)',
       },
     },
   },

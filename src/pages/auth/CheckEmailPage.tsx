@@ -37,40 +37,40 @@ export default function CheckEmailPage() {
 
   return (
     <AuthLayout>
-      {/* Header */}
-      <div className="text-center mb-5">
-        <h1 className="text-[22px] font-medium text-[#0A0A0A] tracking-[-0.01em] leading-tight">
+      {/* Header - Marketing site alignment */}
+      <div className="text-center mb-6">
+        <h1 className="text-[32px] font-bold text-foreground tracking-[-0.02em] leading-[1.125]">
           Check your email
         </h1>
-        <p className="mt-2 text-[13px] text-[#71717A]">
+        <p className="mt-3 text-base text-muted-foreground">
           We've sent a secure sign-in link to
         </p>
       </div>
 
       {/* Email Display */}
-      <div className="bg-[#FAFAFA] border border-[#E4E4E7] rounded-[5px] py-3 px-4 mb-5">
-        <p className="text-[14px] font-medium text-[#0A0A0A] text-center break-all">
+      <div className="bg-[#f8f9fa] border border-[rgba(0,0,0,0.10)] rounded-[12px] py-4 px-5 mb-6">
+        <p className="text-base font-medium text-foreground text-center break-all">
           {email}
         </p>
       </div>
 
       {/* Expiration Notice */}
-      <p className="text-[12px] text-[#A1A1AA] text-center">
+      <p className="text-[14px] text-muted-foreground text-center">
         This link expires shortly and can only be used once.
       </p>
 
       {/* Secondary Actions */}
-      <div className="mt-7 flex flex-col items-center gap-2">
+      <div className="mt-8 flex flex-col items-center gap-3">
         <button
           onClick={handleResend}
           disabled={isResending}
-          className="text-[12px] text-[#71717A] hover:text-[#0A0A0A] transition-colors disabled:opacity-50"
+          className="text-[14px] text-muted-foreground hover:text-foreground transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] disabled:opacity-45"
         >
           {isResending ? "Sending..." : "Resend sign-in link"}
         </button>
         <Link 
           to="/auth/sign-in"
-          className="text-[12px] text-[#71717A] hover:text-[#0A0A0A] transition-colors"
+          className="text-[14px] text-muted-foreground hover:text-foreground transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
         >
           Use a different email
         </Link>

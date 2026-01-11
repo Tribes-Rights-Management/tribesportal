@@ -133,42 +133,57 @@
     /* Site black (LOCKED) — used as the global baseline behind all pages */
     --site-black: 210 21% 5%;
 
+    /* ─────────────────────────────────────────────────────────────────────────────
+       MARKETING SITE ALIGNMENT — INSTITUTIONAL DESIGN TOKENS
+       ───────────────────────────────────────────────────────────────────────────── */
+    
     /* Background & Surface */
     --background: 0 0% 100%;
-    --foreground: 0 0% 9%;
+    /* Foreground: #0B0F14 = hsl(215 28% 6%) */
+    --foreground: 215 28% 6%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 9%;
+    --card-foreground: 215 28% 6%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 9%;
+    --popover-foreground: 215 28% 6%;
 
-    /* Primary - Neutral dark */
-    --primary: 0 0% 9%;
+    /* Primary - Marketing site: #0B0F14 */
+    --primary: 215 28% 6%;
     --primary-foreground: 0 0% 100%;
 
     /* Secondary - Soft gray */
     --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary-foreground: 215 28% 6%;
 
-    /* Muted */
+    /* Muted: rgba(11,15,20,0.55) on white ≈ #747983 */
     --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted-foreground: 220 6% 49%;
 
     /* Accent */
     --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 9%;
+    --accent-foreground: 215 28% 6%;
 
     /* Destructive */
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders & Inputs */
+    /* Borders: rgba(0,0,0,0.10) ≈ #e6e6e6 on white */
     --border: 0 0% 90%;
+    /* Input border: rgba(0,0,0,0.18) ≈ #d1d1d1 */
+    --input-border: 0 0% 82%;
     --input: 0 0% 90%;
-    --ring: 0 0% 9%;
+    --ring: 215 28% 6%;
 
-    --radius: 10px;
+    /* Marketing site radius scale */
+    --radius: 12px;
+    --radius-lg: 16px;
+    --radius-input: 14px;
+    --radius-button: 16px;
+
+    /* Marketing site component heights */
+    --button-height: 56px;
+    --input-height: 52px;
 
     /* Tribes consent checkbox tokens (LOCKED) */
     --tribes-checkbox-border: 0 0% 81%; /* ~#cfcfcf */
@@ -280,6 +295,9 @@
     min-height: 100%;
     /* Prevent bounce revealing light browser canvas */
     overscroll-behavior-y: none;
+    /* Marketing site alignment: prevent text size adjustments */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -290,19 +308,26 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-size: 13px;
+    /* Marketing site alignment: 16px base, 24px line-height */
+    font-size: 16px;
     line-height: 1.5;
-    letter-spacing: -0.003em;
+    letter-spacing: 0;
     margin: 0;
     padding: 0;
     /* Prevent horizontal overflow */
     overflow-x: hidden;
     /* Prevent bounce revealing light browser canvas */
     overscroll-behavior-y: none;
-    /* iOS Safari viewport fix - use all three for maximum compatibility */
+    /* iOS Safari viewport fix - use dvh for true viewport */
     min-height: 100vh;
     min-height: 100dvh;
-    min-height: 100svh;
+  }
+
+  /* Auth routes: prevent scroll, lock to viewport */
+  body.auth-no-scroll {
+    overflow: hidden;
+    height: 100dvh;
+    height: 100vh;
   }
 
   /* iOS Safari: fixed full-viewport underlay so overscroll can never reveal white */
@@ -332,12 +357,12 @@
     box-shadow: 0 100vh 0 100vh hsl(var(--site-black)), 0 -100vh 0 100vh hsl(var(--site-black));
   }
 
-  /* H1 — Primary page heading. Reduced ~15% for institutional scale. */
+  /* H1 — Primary page heading. Marketing site alignment: 32px, 700, -0.02em */
   h1 {
-    font-size: 22px;
-    font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: -0.01em;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.125;
+    letter-spacing: -0.02em;
     scroll-margin-top: calc(var(--header-height) + 16px);
   }
 
@@ -348,30 +373,30 @@
     }
     
     h1 {
-      font-size: 28px;
+      font-size: 40px;
     }
   }
 
-  /* H2 — Section titles. Clearly subordinate, modest increment. */
+  /* H2 — Section titles. Marketing site alignment. */
   h2 {
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1.35;
-    letter-spacing: -0.005em;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
     scroll-margin-top: calc(var(--header-height) + 16px);
   }
 
   /* H3-H6 — Subsection headings */
   h3 {
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.4;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.35;
   }
 
   h4, h5, h6 {
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 1.45;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
   }
 
   /* Paragraph rhythm — use gap between siblings, not stacked margins */
