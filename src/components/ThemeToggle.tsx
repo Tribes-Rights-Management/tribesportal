@@ -1,6 +1,4 @@
-"use client";
-
-import { useTheme } from "next-themes";
+import { useTheme } from "@/providers/ThemeProvider";
 import { Sun, Moon, Monitor, Check } from "lucide-react";
 import {
   DropdownMenu,

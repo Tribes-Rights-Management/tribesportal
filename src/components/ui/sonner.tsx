@@ -4,7 +4,8 @@ type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 /**
  * Sonner toaster - uses CSS variables for theming
- * Theme is automatically applied via .dark class on <html>
+ * Theme is automatically applied via .dark/.light class on <html>
+ * No theme context dependency - pure CSS-driven
  */
 const Toaster = ({ ...props }: ToasterProps) => {
   return (

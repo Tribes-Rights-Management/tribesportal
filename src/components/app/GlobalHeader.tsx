@@ -19,7 +19,7 @@ import { LogOut, Settings, Shield } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 type PortalMode = "publishing" | "licensing";
 
@@ -199,7 +199,7 @@ function AccountMenu() {
         
         <DropdownMenuSeparator />
         
-        {/* Admin link - only for platform admins */}
+        {/* Admin link - only for platform admins, first in list */}
         {isPlatformAdmin && (
           <DropdownMenuItem
             onClick={() => navigate("/admin")}
@@ -210,35 +210,31 @@ function AccountMenu() {
           </DropdownMenuItem>
         )}
         
-        {/* Portal navigation - only show if not in admin and has multiple contexts */}
-        {currentMode !== "admin" && availableContexts.length > 0 && (
-          <>
-            {availableContexts.includes("publishing") && (
-              <DropdownMenuItem
-                onClick={() => {
-                  setActiveContext("publishing");
-                  navigate("/app/publishing");
-                }}
-                className={cn("text-[13px] py-2", currentMode === "publishing" && "bg-muted")}
-              >
-                Client Portal
-              </DropdownMenuItem>
-            )}
-            {availableContexts.includes("licensing") && (
-              <DropdownMenuItem
-                onClick={() => {
-                  setActiveContext("licensing");
-                  navigate("/app/licensing");
-                }}
-                className={cn("text-[13px] py-2", currentMode === "licensing" && "bg-muted")}
-              >
-                Licensing
-              </DropdownMenuItem>
-            )}
-          </>
+        {/* Portal navigation */}
+        {availableContexts.includes("publishing") && (
+          <DropdownMenuItem
+            onClick={() => {
+              setActiveContext("publishing");
+              navigate("/app/publishing");
+            }}
+            className={cn("text-[13px] py-2", currentMode === "publishing" && "bg-muted")}
+          >
+            Client Portal
+          </DropdownMenuItem>
+        )}
+        {availableContexts.includes("licensing") && (
+          <DropdownMenuItem
+            onClick={() => {
+              setActiveContext("licensing");
+              navigate("/app/licensing");
+            }}
+            className={cn("text-[13px] py-2", currentMode === "licensing" && "bg-muted")}
+          >
+            Licensing
+          </DropdownMenuItem>
         )}
         
-        {(isPlatformAdmin || availableContexts.length > 0) && <DropdownMenuSeparator />}
+        <DropdownMenuSeparator />
         
         <DropdownMenuItem
           onClick={() => {
@@ -379,7 +375,7 @@ export function GlobalHeader() {
 
   return (
     <header className="h-14 border-b border-border/40 bg-background/95 backdrop-blur-sm px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40">
-      {/* Left: Wordmark + Portal Switcher */}
+      {/* Left: Wordmark only + Portal Switcher */}
       <div className="flex items-center gap-4 min-w-0">
         <button
           onClick={handleLogoClick}
@@ -400,7 +396,7 @@ export function GlobalHeader() {
         )}
       </div>
 
-      {/* Right: Theme toggle + Account menu (compact, 32px) */}
+      {/* Right: Theme toggle + Account menu (compact 32px icons) */}
       <div className="flex items-center gap-1">
         <ThemeToggle />
         <AccountMenu />
