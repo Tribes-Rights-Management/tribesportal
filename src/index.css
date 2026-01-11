@@ -17,21 +17,21 @@
 
 :root {
   /* ─────────────────────────────────────────────────────────────────────────────
-     SPACING SCALE — 8px base unit
+     SPACING SCALE — 8px base unit, reduced ~10-15% for institutional density
      ───────────────────────────────────────────────────────────────────────────── */
   --space-0: 0px;
-  --space-1: 8px;
-  --space-2: 12px;
-  --space-3: 16px;
-  --space-4: 24px;
-  --space-5: 32px;
-  --space-6: 48px;
-  --space-7: 64px;
-  --space-8: 80px;
-  --space-9: 96px;
-  --space-10: 120px;
-  --space-11: 160px;
-  --space-12: 200px;
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 14px;
+  --space-4: 20px;
+  --space-5: 28px;
+  --space-6: 40px;
+  --space-7: 56px;
+  --space-8: 72px;
+  --space-9: 84px;
+  --space-10: 104px;
+  --space-11: 140px;
+  --space-12: 176px;
   
   /* Footer-specific tokens — Institutional grade, balanced zones */
   --footer-pt-mobile: 72px;    /* Locked: equal top/bottom */
@@ -290,8 +290,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.65;
+    font-size: 14px;
+    line-height: 1.6;
     margin: 0;
     padding: 0;
     /* Prevent horizontal overflow */
@@ -333,13 +333,13 @@
     box-shadow: 0 100vh 0 100vh hsl(var(--site-black)), 0 -100vh 0 100vh hsl(var(--site-black));
   }
 
-  /* H1 — Primary page heading. Locked globally. */
+  /* H1 — Primary page heading. Reduced ~10% for institutional scale. */
   h1 {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 600;
-    line-height: 1.15;
-    letter-spacing: -0.015em;
-    scroll-margin-top: calc(var(--header-height) + 24px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    scroll-margin-top: calc(var(--header-height) + 20px);
   }
 
   @media (min-width: 768px) {
@@ -349,30 +349,30 @@
     }
     
     h1 {
-      font-size: 40px;
+      font-size: 36px;
     }
   }
 
-  /* H2 — Section titles. Fixed size, clearly subordinate. */
+  /* H2 — Section titles. Clearly subordinate, modest increment. */
   h2 {
-    font-size: 20px;
+    font-size: 17px;
     font-weight: 500;
-    line-height: 1.3;
-    letter-spacing: -0.01em;
-    scroll-margin-top: calc(var(--header-height) + 24px);
+    line-height: 1.35;
+    letter-spacing: -0.005em;
+    scroll-margin-top: calc(var(--header-height) + 20px);
   }
 
   /* H3-H6 — Subsection headings */
   h3 {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 500;
-    line-height: 1.35;
+    line-height: 1.4;
   }
 
   h4, h5, h6 {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    line-height: 1.4;
+    line-height: 1.45;
   }
 
   /* Paragraph rhythm — use gap between siblings, not stacked margins */
@@ -498,18 +498,18 @@
     outline-color: hsl(0 0% 100% / 0.4);
   }
 
-  /* Hover state - subtle opacity shift only */
+  /* Hover state - subtle opacity shift only, institutional timing */
   .hover-subtle {
-    @apply transition-opacity duration-150 ease-out;
+    @apply transition-opacity duration-[280ms] ease-in-out;
   }
 
   .hover-subtle:hover {
     opacity: 0.88;
   }
 
-  /* Button hover - subtle brightness shift */
+  /* Button hover - subtle brightness shift, institutional timing */
   .btn-hover {
-    @apply transition-[filter,opacity] duration-150 ease-out;
+    @apply transition-[filter,opacity] duration-[280ms] ease-in-out;
   }
 
   .btn-hover:hover {
@@ -517,12 +517,12 @@
   }
 
   .btn-hover:active {
-    opacity: 0.85;
+    opacity: 0.88;
   }
 
-  /* Link hover - underline emphasis */
+  /* Link hover - underline emphasis, institutional timing */
   .link-hover {
-    @apply transition-[text-decoration-color,opacity] duration-150 ease-out;
+    @apply transition-[text-decoration-color,opacity] duration-[280ms] ease-in-out;
     text-decoration: underline;
     text-decoration-color: transparent;
     text-underline-offset: 2px;
@@ -532,9 +532,9 @@
     text-decoration-color: currentColor;
   }
 
-  /* Link simple - opacity shift only (for navigation) */
+  /* Link simple - opacity shift only (for navigation), institutional timing */
   .link-simple {
-    @apply transition-opacity duration-150 ease-out;
+    @apply transition-opacity duration-[280ms] ease-in-out;
   }
 
   .link-simple:hover {
@@ -546,9 +546,9 @@
     @apply opacity-50 pointer-events-none cursor-not-allowed;
   }
 
-  /* Input focus - border emphasis, no ring glow */
+  /* Input focus - border emphasis, no ring glow, institutional timing */
   .input-focus {
-    @apply transition-[border-color] duration-150 ease-out;
+    @apply transition-[border-color] duration-[280ms] ease-in-out;
   }
 
   .input-focus:hover:not(:disabled):not(:focus) {
@@ -629,17 +629,17 @@
   :where(form) button[type="submit"],
   :where(form) button:not([type]) {
     border-radius: 6px;
-    min-height: 48px;
+    min-height: 44px;
   }
 
   :where(form) button[type="submit"] {
     width: 100%;
     background-color: hsl(var(--foreground));
     color: hsl(var(--background));
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
     box-shadow: none;
-    transition: opacity 150ms ease-out;
+    transition: opacity 280ms ease-in-out;
   }
 
   :where(form) button[type="submit"]:hover {
@@ -874,21 +874,21 @@
   }
 
   .internal-form-section-header {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 500;
     color: hsl(var(--muted-foreground));
     text-transform: uppercase;
-    letter-spacing: 0.03em;
-    margin-bottom: 16px;
-    padding-bottom: 8px;
+    letter-spacing: 0.04em;
+    margin-bottom: 14px;
+    padding-bottom: 6px;
     border-bottom: 1px solid hsl(var(--border));
   }
 
   .internal-form-section-title {
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 500;
     color: hsl(var(--foreground));
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
@@ -911,25 +911,25 @@
 
   /* Internal form label - concise, factual, always visible */
   .internal-form-label {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     color: hsl(var(--foreground));
-    line-height: 1.3;
+    line-height: 1.35;
   }
 
   /* Internal form helper text - minimal, low-contrast, factual */
   .internal-form-helper {
-    font-size: 12px;
+    font-size: 11px;
     color: hsl(var(--muted-foreground));
-    line-height: 1.4;
+    line-height: 1.45;
     margin-top: var(--internal-helper-gap);
   }
 
   /* Internal form error - inline, concise, specific */
   .internal-form-error {
-    font-size: 12px;
+    font-size: 11px;
     color: hsl(0 0% 35%);
-    line-height: 1.4;
+    line-height: 1.45;
     margin-top: var(--internal-helper-gap);
   }
 
@@ -1006,13 +1006,13 @@
   }
 
   .internal-form-inline-label {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     color: hsl(var(--foreground));
   }
 
   .internal-form-inline-value {
-    font-size: 13px;
+    font-size: 12px;
     color: hsl(var(--muted-foreground));
   }
 
@@ -1052,13 +1052,13 @@
   }
 
   .approval-form-identity-email {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     color: hsl(var(--foreground));
   }
 
   .approval-form-identity-meta {
-    font-size: 12px;
+    font-size: 11px;
     color: hsl(var(--muted-foreground));
   }
 
@@ -1089,9 +1089,9 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* Content fade - opacity only, 150ms */
+  /* Content fade - opacity only, institutional timing */
   .animate-content-fade {
-    animation: contentFade 0.15s ease-out forwards;
+    animation: contentFade 0.28s ease-in-out forwards;
   }
 
   @keyframes contentFade {
@@ -1099,9 +1099,9 @@
     to { opacity: 1; }
   }
 
-  /* Button active state - brief opacity reduction, instant feedback */
+  /* Button active state - subtle feedback, institutional timing */
   .btn-active {
-    @apply active:opacity-85 active:transition-opacity active:duration-75;
+    @apply active:opacity-88 active:transition-opacity active:duration-[280ms];
   }
 
   /* Global focus visible for dark surfaces */
@@ -1110,8 +1110,17 @@
     outline-offset: 2px;
   }
 
-  /* Global transition utility - locked duration */
+  /* Global transition utility - institutional locked duration */
   .transition-interaction {
-    @apply transition-all duration-150 ease-out;
+    @apply transition-all duration-[280ms] ease-in-out;
+  }
+
+  /* Overlay/drawer transitions - slower, financial-grade motion */
+  .transition-overlay {
+    @apply transition-all duration-[360ms] ease-in-out;
+  }
+
+  .transition-modal {
+    @apply transition-all duration-[400ms] ease-in-out;
   }
 }
