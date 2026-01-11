@@ -59,10 +59,10 @@ export default function SignInPage() {
     <AuthLayout>
       {/* Header */}
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+        <h1 className="text-2xl font-semibold tracking-tight text-[#1D1D1F] dark:text-[#F5F5F7]">
           Sign in to Tribes
         </h1>
-        <p className="mt-1.5 text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-2 text-sm text-black/60 dark:text-white/60">
           Secure access via email sign-in link
         </p>
       </div>
@@ -72,7 +72,7 @@ export default function SignInPage() {
         <div className="space-y-1.5">
           <Label 
             htmlFor="email" 
-            className="text-[13px] font-medium text-zinc-700 dark:text-zinc-300 block"
+            className="text-sm font-medium text-[#1D1D1F] dark:text-[#F5F5F7] block"
           >
             Email address
           </Label>
@@ -85,21 +85,21 @@ export default function SignInPage() {
             required
             autoFocus
             autoComplete="email"
-            className="h-11 px-3.5 text-[15px] bg-white dark:bg-white/5 border-zinc-300 dark:border-white/15 rounded-xl placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/10 dark:focus-visible:ring-white/15 focus-visible:border-zinc-400 dark:focus-visible:border-white/25 transition-colors"
+            className="h-11 px-3.5 text-[15px] bg-white dark:bg-[#0f1012] border-black/15 dark:border-white/15 rounded-xl placeholder:text-black/40 dark:placeholder:text-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]/50 transition-colors"
           />
         </div>
 
         <Button 
           type="submit" 
           disabled={isSubmitting || !email.trim()}
-          className="w-full h-11 text-[15px] font-medium rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 disabled:opacity-40"
+          className="w-full h-11 text-[15px] font-medium rounded-xl bg-[#111] text-white hover:bg-[#222] dark:bg-[#f5f5f5] dark:text-[#111] dark:hover:bg-[#e5e5e5] disabled:opacity-40 transition-colors"
         >
           {isSubmitting ? "Sending..." : "Continue"}
         </Button>
       </form>
 
       {/* Institutional Notice */}
-      <p className="mt-5 text-center text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="mt-5 text-center text-xs text-black/50 dark:text-white/50">
         Access is restricted to approved accounts.
       </p>
 
@@ -108,7 +108,7 @@ export default function SignInPage() {
         <button 
           type="button"
           onClick={() => setHelpDialogOpen(true)}
-          className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:underline transition-colors"
+          className="text-xs text-black/50 dark:text-white/50 hover:text-black/70 dark:hover:text-white/70 hover:underline transition-colors"
         >
           Trouble signing in?
         </button>
