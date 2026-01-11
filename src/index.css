@@ -191,8 +191,11 @@
     --tribes-checkbox-check: 0 0% 7%; /* ~#111 */
     --tribes-checkbox-focus: 0 0% 7% / 0.25;
 
+    /* App surface - Apple-style gray canvas */
+    --app-surface: 240 5% 96%;  /* #F5F5F7 */
+    
     /* Sidebar */
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 0 0% 45%;
     --sidebar-primary: 0 0% 9%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -246,6 +249,9 @@
     --input: 228 10% 15%;
     --ring: 220 10% 80%;
 
+    /* App surface - dark mode */
+    --app-surface: 228 10% 8%;
+    
     --sidebar-background: 228 10% 6%;
     --sidebar-foreground: 220 5% 60%;
     --sidebar-primary: 220 10% 97%;

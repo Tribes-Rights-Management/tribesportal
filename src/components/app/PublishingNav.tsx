@@ -27,7 +27,7 @@ const settingsItems = [
 
 export function PublishingNav() {
   return (
-    <nav className="w-56 shrink-0 border-r border-border bg-background flex flex-col">
+    <nav className="w-56 shrink-0 border-r border-border/50 bg-background flex flex-col">
       {/* Main navigation */}
       <div className="flex-1 py-4">
         <div className="px-3 space-y-0.5">
@@ -38,10 +38,10 @@ export function PublishingNav() {
               end={item.exact}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium rounded-md transition-colors duration-200",
+                  "flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium rounded-lg transition-colors duration-200",
                   isActive
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    ? "bg-muted/60 text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                 )
               }
             >
@@ -53,7 +53,7 @@ export function PublishingNav() {
       </div>
       
       {/* Settings at bottom */}
-      <div className="border-t border-border py-3">
+      <div className="border-t border-border/50 py-3">
         <div className="px-3 space-y-0.5">
           {settingsItems.map((item) => (
             <NavLink
@@ -61,10 +61,10 @@ export function PublishingNav() {
               to={item.to}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium rounded-md transition-colors duration-200",
+                  "flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium rounded-lg transition-colors duration-200",
                   isActive
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    ? "bg-muted/60 text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                 )
               }
             >

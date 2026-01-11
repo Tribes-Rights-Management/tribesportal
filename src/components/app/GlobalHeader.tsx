@@ -15,14 +15,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { User, LogOut, Settings, HelpCircle, Shield } from "lucide-react";
+import { User, LogOut, Settings, HelpCircle, Shield, Moon, Sun, Monitor } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
-type AppMode = "publishing" | "licensing" | "admin";
+type PortalMode = "publishing" | "licensing";
 
-function useCurrentMode(): AppMode {
+function useCurrentMode(): PortalMode | "admin" {
   const location = useLocation();
   if (location.pathname.startsWith("/admin")) return "admin";
   if (location.pathname.includes("/licensing")) return "licensing";
@@ -84,55 +85,85 @@ function TenantSelector() {
   );
 }
 
-// Mode switcher (Publishing | Licensing | Admin)
-function ModeSwitcher() {
-  const { availableContexts, isPlatformAdmin, setActiveContext } = useAuth();
+// Segmented control for portal switching
+function PortalSwitcher() {
+  const { availableContexts, setActiveContext } = useAuth();
   const navigate = useNavigate();
   const currentMode = useCurrentMode();
 
-  const modes: { key: AppMode; label: string }[] = [];
+  // Only show if user has access to both portals
+  const hasPublishing = availableContexts.includes("publishing");
+  const hasLicensing = availableContexts.includes("licensing");
   
-  if (availableContexts.includes("publishing")) {
-    modes.push({ key: "publishing", label: "Publishing" });
-  }
-  if (availableContexts.includes("licensing")) {
-    modes.push({ key: "licensing", label: "Licensing" });
-  }
-  if (isPlatformAdmin) {
-    modes.push({ key: "admin", label: "Admin" });
-  }
+  if (!hasPublishing || !hasLicensing) return null;
+  if (currentMode === "admin") return null;
 
-  if (modes.length <= 1 && !isPlatformAdmin) return null;
-
-  const handleModeSwitch = (mode: AppMode) => {
+  const handleSwitch = (mode: PortalMode) => {
     if (mode === currentMode) return;
-    
-    if (mode === "admin") {
-      navigate("/admin");
-    } else {
-      setActiveContext(mode);
-      navigate(`/app/${mode}`);
-    }
+    setActiveContext(mode);
+    navigate(`/app/${mode}`);
   };
 
   return (
-    <div className="flex items-center">
-      {modes.map((mode, index) => (
-        <button
-          key={mode.key}
-          onClick={() => handleModeSwitch(mode.key)}
-          className={cn(
-            "h-7 px-3 text-[13px] font-medium transition-colors duration-200",
-            currentMode === mode.key
-              ? "text-foreground"
-              : "text-muted-foreground hover:text-foreground",
-            index > 0 && "border-l border-border"
-          )}
-        >
-          {mode.label}
-        </button>
-      ))}
+    <div className="flex items-center h-8 p-0.5 rounded-lg bg-muted/60">
+      <button
+        onClick={() => handleSwitch("publishing")}
+        className={cn(
+          "h-7 px-3 rounded-md text-[13px] font-medium transition-all duration-200",
+          currentMode === "publishing"
+            ? "bg-background text-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Client Portal
+      </button>
+      <button
+        onClick={() => handleSwitch("licensing")}
+        className={cn(
+          "h-7 px-3 rounded-md text-[13px] font-medium transition-all duration-200",
+          currentMode === "licensing"
+            ? "bg-background text-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Licensing Portal
+      </button>
     </div>
+  );
+}
+
+// Theme toggle
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+        >
+          <Sun className="h-4 w-4 rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-32">
+        <DropdownMenuItem onClick={() => setTheme("light")} className="text-[13px]">
+          <Sun className="mr-2 h-4 w-4" />
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")} className="text-[13px]">
+          <Moon className="mr-2 h-4 w-4" />
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")} className="text-[13px]">
+          <Monitor className="mr-2 h-4 w-4" />
+          System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -158,9 +189,9 @@ function AccountMenu() {
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 w-8 rounded-full bg-muted hover:bg-muted/80 shrink-0"
+          className="h-7 w-7 rounded-full bg-muted/60 hover:bg-muted shrink-0 p-0"
         >
-          <User className="h-4 w-4 text-muted-foreground" />
+          <User className="h-3.5 w-3.5 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
@@ -196,12 +227,12 @@ function AccountMenu() {
           Support
         </DropdownMenuItem>
         
-        {isPlatformAdmin && currentMode !== "admin" && (
+        {isPlatformAdmin && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => navigate("/admin")}
-              className="text-[13px]"
+              className={cn("text-[13px]", currentMode === "admin" && "bg-muted")}
             >
               <Shield className="mr-2 h-4 w-4" />
               Administration
@@ -228,18 +259,23 @@ function MobileControls() {
     activeTenant, 
     availableContexts, 
     tenantMemberships, 
-    isPlatformAdmin,
     setActiveTenant,
     setActiveContext 
   } = useAuth();
   const navigate = useNavigate();
   const currentMode = useCurrentMode();
 
+  const getModeLabel = () => {
+    if (currentMode === "admin") return "Admin";
+    if (currentMode === "licensing") return "Licensing";
+    return "Client Portal";
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="h-7 px-2 text-[13px] font-medium">
-          {currentMode === "admin" ? "Admin" : currentMode === "licensing" ? "Licensing" : "Publishing"}
+          {getModeLabel()}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className="w-52">
@@ -277,40 +313,36 @@ function MobileControls() {
           </>
         )}
         
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel className="text-[10px] text-muted-foreground uppercase tracking-wide font-normal">
-          Switch Mode
-        </DropdownMenuLabel>
-        
-        {availableContexts.includes("publishing") && (
-          <DropdownMenuItem
-            onClick={() => {
-              setActiveContext("publishing");
-              navigate("/app/publishing");
-            }}
-            className={cn("text-[13px]", currentMode === "publishing" && "bg-muted")}
-          >
-            Publishing
-          </DropdownMenuItem>
-        )}
-        {availableContexts.includes("licensing") && (
-          <DropdownMenuItem
-            onClick={() => {
-              setActiveContext("licensing");
-              navigate("/app/licensing");
-            }}
-            className={cn("text-[13px]", currentMode === "licensing" && "bg-muted")}
-          >
-            Licensing
-          </DropdownMenuItem>
-        )}
-        {isPlatformAdmin && (
-          <DropdownMenuItem
-            onClick={() => navigate("/admin")}
-            className={cn("text-[13px]", currentMode === "admin" && "bg-muted")}
-          >
-            Admin
-          </DropdownMenuItem>
+        {currentMode !== "admin" && availableContexts.length > 1 && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-[10px] text-muted-foreground uppercase tracking-wide font-normal">
+              Switch Portal
+            </DropdownMenuLabel>
+            
+            {availableContexts.includes("publishing") && (
+              <DropdownMenuItem
+                onClick={() => {
+                  setActiveContext("publishing");
+                  navigate("/app/publishing");
+                }}
+                className={cn("text-[13px]", currentMode === "publishing" && "bg-muted")}
+              >
+                Client Portal
+              </DropdownMenuItem>
+            )}
+            {availableContexts.includes("licensing") && (
+              <DropdownMenuItem
+                onClick={() => {
+                  setActiveContext("licensing");
+                  navigate("/app/licensing");
+                }}
+                className={cn("text-[13px]", currentMode === "licensing" && "bg-muted")}
+              >
+                Licensing Portal
+              </DropdownMenuItem>
+            )}
+          </>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
@@ -332,7 +364,7 @@ export function GlobalHeader() {
   };
 
   return (
-    <header className="h-14 border-b border-border bg-background px-4 md:px-6 flex items-center shrink-0">
+    <header className="h-14 border-b border-border/60 bg-background px-4 md:px-6 flex items-center shrink-0">
       {/* Left: Wordmark */}
       <div className="flex items-center min-w-0">
         <button
@@ -343,21 +375,21 @@ export function GlobalHeader() {
         </button>
       </div>
 
-      {/* Center: Tenant + Mode Switcher */}
-      <div className="flex-1 flex items-center justify-center gap-2">
+      {/* Center: Tenant + Portal Switcher */}
+      <div className="flex-1 flex items-center justify-center gap-3">
         {!isMobile ? (
           <>
             <TenantSelector />
-            <span className="text-muted-foreground/50">·</span>
-            <ModeSwitcher />
+            <PortalSwitcher />
           </>
         ) : (
           <MobileControls />
         )}
       </div>
 
-      {/* Right: Account menu */}
-      <div className="flex items-center">
+      {/* Right: Theme toggle + Account menu */}
+      <div className="flex items-center gap-1">
+        <ThemeToggle />
         <AccountMenu />
       </div>
     </header>
