@@ -35,11 +35,11 @@ export function MagicLinkForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-2">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-1.5">
         <Label 
           htmlFor="email" 
-          className="text-[13px] font-medium text-[#3F3F46] block"
+          className="text-[12px] font-medium text-[#52525B] block"
         >
           Email address
         </Label>
@@ -52,13 +52,13 @@ export function MagicLinkForm({
           required
           autoFocus={autoFocus}
           autoComplete="email"
-          className="h-12 px-4 text-[15px] text-[#0A0A0A] bg-white border-[#D4D4D8] rounded-[6px] placeholder:text-[#A1A1AA] focus:border-[#0A0A0A] focus:ring-1 focus:ring-[#0A0A0A] transition-colors"
+          className="h-10 px-3 text-[14px] text-[#0A0A0A] bg-white border-[#E4E4E7] rounded-[5px] placeholder:text-[#A1A1AA] focus:border-[#0A0A0A] focus:ring-1 focus:ring-[#0A0A0A] transition-colors"
         />
       </div>
 
       <Button 
         type="submit" 
-        className="w-full h-12 bg-[#0A0A0A] hover:bg-[#171717] text-white text-[15px] font-medium rounded-[6px] transition-colors"
+        className="w-full h-10 bg-[#0A0A0A] hover:bg-[#171717] text-white text-[13px] font-medium rounded-[5px] transition-colors"
         disabled={isSubmitting || !email.trim()}
       >
         {isSubmitting ? "Sending..." : buttonLabel}

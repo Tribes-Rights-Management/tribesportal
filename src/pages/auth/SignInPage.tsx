@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SignInHelpDialog } from "@/components/auth/SignInHelpDialog";
+import { AuthLayout } from "@/layouts/AuthLayout";
+
 export default function SignInPage() {
   const { user, profile, loading, signInWithMagicLink } = useAuth();
   const navigate = useNavigate();
@@ -47,79 +49,77 @@ export default function SignInPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-[#71717A] text-[14px] tracking-wide">Verifying access...</p>
-      </div>
+      <AuthLayout>
+        <p className="text-[#71717A] text-[13px] tracking-wide text-center">Verifying access...</p>
+      </AuthLayout>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-6">
-      <div className="w-full max-w-[440px]">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-[28px] sm:text-[32px] font-medium text-[#0A0A0A] tracking-[-0.02em] leading-tight">
-            Sign in to Tribes
-          </h1>
-          <p className="mt-3 text-[15px] text-[#6B6B6B] leading-relaxed">
-            Secure access via email sign-in link
-          </p>
+    <AuthLayout>
+      {/* Header */}
+      <div className="text-center mb-7">
+        <h1 className="text-[22px] font-medium text-[#0A0A0A] tracking-[-0.01em] leading-tight">
+          Sign in to Tribes
+        </h1>
+        <p className="mt-2 text-[13px] text-[#71717A]">
+          Secure access via email sign-in link
+        </p>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-1.5">
+          <Label 
+            htmlFor="email" 
+            className="text-[12px] font-medium text-[#52525B] block"
+          >
+            Email address
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@company.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoFocus
+            autoComplete="email"
+            className="h-10 px-3 text-[14px] text-[#0A0A0A] bg-white border-[#E4E4E7] rounded-[5px] placeholder:text-[#A1A1AA] focus:border-[#0A0A0A] focus:ring-1 focus:ring-[#0A0A0A] transition-colors"
+          />
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label 
-              htmlFor="email" 
-              className="text-[13px] font-medium text-[#3F3F46] block"
-            >
-              Email address
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@company.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoFocus
-              autoComplete="email"
-              className="h-12 px-4 text-[15px] text-[#0A0A0A] bg-white border-[#D4D4D8] rounded-[6px] placeholder:text-[#A1A1AA] focus:border-[#0A0A0A] focus:ring-1 focus:ring-[#0A0A0A] transition-colors"
-            />
-          </div>
+        <Button 
+          type="submit" 
+          className="w-full h-10 bg-[#0A0A0A] hover:bg-[#171717] text-white text-[13px] font-medium rounded-[5px] transition-colors"
+          disabled={isSubmitting || !email.trim()}
+        >
+          {isSubmitting ? "Sending..." : "Continue"}
+        </Button>
+      </form>
 
-          <Button 
-            type="submit" 
-            className="w-full h-12 bg-[#0A0A0A] hover:bg-[#171717] text-white text-[15px] font-medium rounded-[6px] transition-colors"
-            disabled={isSubmitting || !email.trim()}
-          >
-            {isSubmitting ? "Sending..." : "Continue"}
-          </Button>
-        </form>
+      {/* Institutional Notice */}
+      <p className="mt-6 text-center text-[12px] text-[#A1A1AA]">
+        Access is restricted to approved accounts.
+      </p>
 
-        {/* Institutional Notice */}
-        <p className="mt-8 text-center text-[13px] text-[#A1A1AA] leading-relaxed">
-          Access is restricted to approved accounts.
-        </p>
+      {/* Help Link */}
+      <p className="mt-3 text-center">
+        <button 
+          type="button"
+          onClick={() => setHelpDialogOpen(true)}
+          className="text-[12px] text-[#71717A] hover:text-[#0A0A0A] transition-colors"
+        >
+          Trouble signing in?
+        </button>
+      </p>
 
-        {/* Help Link */}
-        <p className="mt-4 text-center">
-          <button 
-            type="button"
-            onClick={() => setHelpDialogOpen(true)}
-            className="text-[13px] text-[#71717A] hover:text-[#0A0A0A] transition-colors"
-          >
-            Trouble signing in?
-          </button>
-        </p>
-
-        <SignInHelpDialog
-          open={helpDialogOpen}
-          onOpenChange={setHelpDialogOpen}
-          email={email}
-          onResendLink={handleResendLink}
-        />
-      </div>
-    </div>
+      <SignInHelpDialog
+        open={helpDialogOpen}
+        onOpenChange={setHelpDialogOpen}
+        email={email}
+        onResendLink={handleResendLink}
+      />
+    </AuthLayout>
   );
 }
