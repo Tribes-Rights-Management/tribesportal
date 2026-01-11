@@ -5,7 +5,7 @@ export function AdminLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <GlobalHeader />
-      <main className="flex-1">
+      <main className="flex-1 overflow-y-auto">
         <Outlet />
       </main>
     </div>

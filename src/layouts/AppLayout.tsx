@@ -10,10 +10,10 @@ export function AppLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <GlobalHeader />
-      <div className="flex flex-1">
+      <div className="flex flex-1 overflow-hidden">
         {activeContext === "licensing" && <LicensingNav />}
         {activeContext === "publishing" && <PublishingNav />}
-        <main className="flex-1 p-6 bg-background">
+        <main className="flex-1 overflow-y-auto bg-background">
           <Outlet />
         </main>
       </div>

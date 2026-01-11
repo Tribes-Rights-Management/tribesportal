@@ -1,5 +1,4 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Users, 
   Building2, 
@@ -7,9 +6,13 @@ import {
   Settings, 
   ArrowRight,
   Music,
-  FileText
+  FileText,
+  UserCheck,
+  KeyRound,
+  ClipboardCheck,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 export default function AdminDashboard() {
   const { setActiveContext } = useAuth();
@@ -21,104 +24,152 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-12">
-      <div className="space-y-12">
-        {/* Hero */}
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">Command Center</h1>
-          <p className="text-muted-foreground">
-            Select a portal to manage or access platform administration tools.
+    <div className="max-w-[960px] mx-auto px-6 py-10">
+      <div className="space-y-10">
+        {/* Header */}
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Administration</h1>
+          <p className="text-[15px] text-muted-foreground">
+            Manage platform access, organizations, and security settings.
           </p>
         </div>
 
-        {/* Choose Your Path */}
-        <section className="space-y-4">
+        {/* Portal Access */}
+        <section className="space-y-3">
           <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            Choose Your Path
+            Portal Access
           </h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            {/* Publishing Portal */}
-            <button 
-              onClick={() => handlePortalClick("publishing")} 
-              className="group text-left w-full"
-            >
-              <Card className="h-full border-border hover:border-foreground/20 transition-colors cursor-pointer">
-                <CardHeader className="space-y-4">
-                  <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center group-hover:bg-muted/80 transition-colors">
-                    <Music className="h-6 w-6 text-foreground/70" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <CardTitle className="text-lg font-medium flex items-center justify-between">
-                      Publishing Portal
-                      <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      Manage works, registrations, splits, and royalty statements for publishing clients.
-                    </CardDescription>
-                  </div>
-                </CardHeader>
-              </Card>
-            </button>
-
-            {/* Licensing Portal */}
-            <button 
-              onClick={() => handlePortalClick("licensing")} 
-              className="group text-left w-full"
-            >
-              <Card className="h-full border-border hover:border-foreground/20 transition-colors cursor-pointer">
-                <CardHeader className="space-y-4">
-                  <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center group-hover:bg-muted/80 transition-colors">
-                    <FileText className="h-6 w-6 text-foreground/70" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <CardTitle className="text-lg font-medium flex items-center justify-between">
-                      Licensing Portal
-                      <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      Review catalog, process license requests, and manage licensing agreements.
-                    </CardDescription>
-                  </div>
-                </CardHeader>
-              </Card>
-            </button>
+          <div className="grid md:grid-cols-2 gap-3">
+            <PortalCard
+              onClick={() => handlePortalClick("publishing")}
+              icon={Music}
+              title="Publishing Portal"
+              description="Manage works, registrations, splits, and royalty statements."
+            />
+            <PortalCard
+              onClick={() => handlePortalClick("licensing")}
+              icon={FileText}
+              title="Licensing Portal"
+              description="Review catalog, process license requests, and manage agreements."
+            />
           </div>
         </section>
 
-        {/* Administration */}
-        <section className="space-y-4">
+        {/* Access Control */}
+        <section className="space-y-3">
           <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            Administration
+            Access Control
           </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <AdminNavCard
               to="/admin/approvals"
-              icon={Users}
-              title="Access Control"
-              description="Approve users and manage permissions"
+              icon={UserCheck}
+              title="Pending Requests"
+              description="Review and approve access requests"
             />
+            <AdminNavCard
+              to="/admin/users"
+              icon={Users}
+              title="User Directory"
+              description="Manage user accounts and permissions"
+            />
+            <AdminNavCard
+              to="/admin/roles"
+              icon={KeyRound}
+              title="Roles & Permissions"
+              description="Configure role-based access"
+            />
+          </div>
+        </section>
+
+        {/* Organizations */}
+        <section className="space-y-3">
+          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+            Organizations
+          </h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <AdminNavCard
               to="/admin/tenants"
               icon={Building2}
-              title="Organizations"
-              description="Manage tenants and access scopes"
+              title="Tenants"
+              description="Manage organizations and scopes"
+            />
+          </div>
+        </section>
+
+        {/* Security & Governance */}
+        <section className="space-y-3">
+          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+            Security & Governance
+          </h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <AdminNavCard
+              to="/admin/security/rls"
+              icon={Shield}
+              title="RLS Audit"
+              description="Verify row-level security coverage"
             />
             <AdminNavCard
-              to="/admin/security"
-              icon={Shield}
-              title="Security & Governance"
-              description="Audit RLS and platform security"
+              to="/admin/security/auth"
+              icon={ClipboardCheck}
+              title="Auth Review"
+              description="Authentication and session settings"
             />
+          </div>
+        </section>
+
+        {/* Account */}
+        <section className="space-y-3">
+          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+            Account
+          </h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <AdminNavCard
               to="/admin/settings"
               icon={Settings}
-              title="Account Settings"
-              description="Platform configuration"
+              title="Platform Settings"
+              description="Configure platform preferences"
             />
           </div>
         </section>
       </div>
     </div>
+  );
+}
+
+function PortalCard({ 
+  onClick, 
+  icon: Icon, 
+  title, 
+  description 
+}: { 
+  onClick: () => void;
+  icon: React.ElementType; 
+  title: string; 
+  description: string;
+}) {
+  return (
+    <button 
+      onClick={onClick} 
+      className="group text-left w-full"
+    >
+      <div className="h-full p-5 rounded-lg border border-border bg-background hover:border-foreground/20 hover:bg-muted/30 transition-all duration-200">
+        <div className="flex items-start gap-4">
+          <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-muted/80 transition-colors">
+            <Icon className="h-5 w-5 text-foreground/70" />
+          </div>
+          <div className="flex-1 min-w-0 space-y-1">
+            <p className="text-[15px] font-medium text-foreground flex items-center gap-2">
+              {title}
+              <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+            </p>
+            <p className="text-[13px] text-muted-foreground leading-relaxed">
+              {description}
+            </p>
+          </div>
+        </div>
+      </div>
+    </button>
   );
 }
 
@@ -135,14 +186,14 @@ function AdminNavCard({
 }) {
   return (
     <Link to={to} className="group">
-      <div className="h-full p-4 rounded-lg border border-border hover:border-foreground/20 hover:bg-muted/50 transition-all">
+      <div className="h-full p-4 rounded-lg border border-border bg-background hover:border-foreground/15 hover:bg-muted/30 transition-all duration-200">
         <div className="flex items-start gap-3">
-          <div className="h-9 w-9 rounded-md bg-muted flex items-center justify-center shrink-0 group-hover:bg-foreground/5 transition-colors">
+          <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center shrink-0">
             <Icon className="h-4 w-4 text-muted-foreground" />
           </div>
-          <div className="space-y-0.5 min-w-0">
-            <p className="text-sm font-medium truncate">{title}</p>
-            <p className="text-xs text-muted-foreground line-clamp-2">{description}</p>
+          <div className="min-w-0 space-y-0.5">
+            <p className="text-[14px] font-medium text-foreground">{title}</p>
+            <p className="text-[12px] text-muted-foreground line-clamp-2">{description}</p>
           </div>
         </div>
       </div>
