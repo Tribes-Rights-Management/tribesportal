@@ -35,11 +35,11 @@ export function MagicLinkForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="space-y-2">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-1.5">
         <Label 
           htmlFor="email" 
-          className="text-[14px] font-semibold text-[rgba(11,15,20,0.80)] block"
+          className="text-[13px] font-medium text-zinc-700 dark:text-zinc-300 block"
         >
           Email address
         </Label>
@@ -52,14 +52,14 @@ export function MagicLinkForm({
           required
           autoFocus={autoFocus}
           autoComplete="email"
-          className="h-[52px] px-4 text-base text-foreground bg-white border-[rgba(0,0,0,0.18)] rounded-[14px] placeholder:text-[rgba(11,15,20,0.35)] focus:border-foreground focus:ring-2 focus:ring-foreground/12 transition-all duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
+          className="h-11 px-3.5 text-[15px] bg-white dark:bg-white/5 border-zinc-300 dark:border-white/15 rounded-xl placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/10 dark:focus-visible:ring-white/15 focus-visible:border-zinc-400 dark:focus-visible:border-white/25 transition-colors"
         />
       </div>
 
       <Button 
         type="submit" 
-        className="w-full"
         disabled={isSubmitting || !email.trim()}
+        className="w-full h-11 text-[15px] font-medium rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 disabled:opacity-40"
       >
         {isSubmitting ? "Sending..." : buttonLabel}
       </Button>
