@@ -58,21 +58,21 @@ export default function SignInPage() {
   return (
     <AuthLayout>
       {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-[28px] font-semibold text-foreground tracking-[-0.02em] leading-[1.2]">
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
           Sign in to Tribes
         </h1>
-        <p className="mt-2 text-[15px] text-muted-foreground">
+        <p className="mt-1.5 text-sm text-zinc-500 dark:text-zinc-400">
           Secure access via email sign-in link
         </p>
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="space-y-2">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-1.5">
           <Label 
             htmlFor="email" 
-            className="text-[14px] font-medium text-foreground block"
+            className="text-[13px] font-medium text-zinc-700 dark:text-zinc-300 block"
           >
             Email address
           </Label>
@@ -85,30 +85,30 @@ export default function SignInPage() {
             required
             autoFocus
             autoComplete="email"
-            className="h-[48px] px-4 text-[15px] text-foreground bg-background border-input rounded-xl placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
+            className="h-11 px-3.5 text-[15px] bg-white dark:bg-white/5 border-zinc-300 dark:border-white/15 rounded-xl placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/10 dark:focus-visible:ring-white/15 focus-visible:border-zinc-400 dark:focus-visible:border-white/25 transition-colors"
           />
         </div>
 
         <Button 
           type="submit" 
-          className="w-full h-[48px] text-[15px] font-medium rounded-xl"
           disabled={isSubmitting || !email.trim()}
+          className="w-full h-11 text-[15px] font-medium rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 disabled:opacity-40"
         >
           {isSubmitting ? "Sending..." : "Continue"}
         </Button>
       </form>
 
       {/* Institutional Notice */}
-      <p className="mt-6 text-center text-[13px] text-muted-foreground">
+      <p className="mt-5 text-center text-xs text-zinc-500 dark:text-zinc-400">
         Access is restricted to approved accounts.
       </p>
 
       {/* Help Link */}
-      <p className="mt-3 text-center">
+      <p className="mt-2 text-center">
         <button 
           type="button"
           onClick={() => setHelpDialogOpen(true)}
-          className="text-[13px] text-muted-foreground hover:text-foreground transition-colors duration-200"
+          className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:underline transition-colors"
         >
           Trouble signing in?
         </button>
