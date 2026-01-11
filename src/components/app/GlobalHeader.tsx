@@ -1,5 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "@/components/ThemeProvider";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,7 +21,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { User, LogOut, Settings, Shield, Moon, Sun, Monitor, Check } from "lucide-react";
+import { LogOut, Settings, Shield, Moon, Sun, Monitor, Check } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -146,25 +146,23 @@ function PortalSwitcher() {
   );
 }
 
-// Theme toggle with popover menu
+// Theme toggle with popover menu - Apple-grade sizing
 function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full"
+        <button
+          className="h-8 w-8 inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors duration-150"
+          aria-label="Toggle theme"
         >
           {resolvedTheme === "dark" ? (
             <Moon className="h-[18px] w-[18px]" />
           ) : (
             <Sun className="h-[18px] w-[18px]" />
           )}
-          <span className="sr-only">Toggle theme</span>
-        </Button>
+        </button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-36 p-1 bg-popover" sideOffset={8}>
         <button
@@ -217,7 +215,7 @@ function ThemeToggle() {
   );
 }
 
-// Account menu with user initials
+// Account menu with user initials - 32px avatar
 function AccountMenu() {
   const { 
     profile, 
@@ -251,13 +249,12 @@ function AccountMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 w-8 rounded-full bg-muted/60 hover:bg-muted shrink-0 p-0 text-[11px] font-medium text-muted-foreground"
+        <button
+          className="h-8 w-8 rounded-full bg-muted/60 hover:bg-muted shrink-0 text-[11px] font-medium text-muted-foreground inline-flex items-center justify-center transition-colors duration-150"
+          aria-label="Account menu"
         >
           {getInitials()}
-        </Button>
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
