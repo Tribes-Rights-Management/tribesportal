@@ -17,21 +17,21 @@
 
 :root {
   /* ─────────────────────────────────────────────────────────────────────────────
-     SPACING SCALE — 8px base unit, reduced ~10-15% for institutional density
+     SPACING SCALE — 8px base unit, reduced ~15-20% for institutional density
      ───────────────────────────────────────────────────────────────────────────── */
   --space-0: 0px;
-  --space-1: 6px;
-  --space-2: 10px;
-  --space-3: 14px;
-  --space-4: 20px;
-  --space-5: 28px;
-  --space-6: 40px;
-  --space-7: 56px;
-  --space-8: 72px;
-  --space-9: 84px;
-  --space-10: 104px;
-  --space-11: 140px;
-  --space-12: 176px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 72px;
+  --space-10: 88px;
+  --space-11: 120px;
+  --space-12: 160px;
   
   /* Footer-specific tokens — Institutional grade, balanced zones */
   --footer-pt-mobile: 72px;    /* Locked: equal top/bottom */
@@ -290,16 +290,15 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1.5;
+    letter-spacing: -0.003em;
     margin: 0;
     padding: 0;
     /* Prevent horizontal overflow */
     overflow-x: hidden;
     /* Prevent bounce revealing light browser canvas */
     overscroll-behavior-y: none;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     /* iOS Safari viewport fix - use all three for maximum compatibility */
     min-height: 100vh;
     min-height: 100dvh;
@@ -333,13 +332,13 @@
     box-shadow: 0 100vh 0 100vh hsl(var(--site-black)), 0 -100vh 0 100vh hsl(var(--site-black));
   }
 
-  /* H1 — Primary page heading. Reduced ~10% for institutional scale. */
+  /* H1 — Primary page heading. Reduced ~15% for institutional scale. */
   h1 {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.25;
     letter-spacing: -0.01em;
-    scroll-margin-top: calc(var(--header-height) + 20px);
+    scroll-margin-top: calc(var(--header-height) + 16px);
   }
 
   @media (min-width: 768px) {
@@ -349,28 +348,28 @@
     }
     
     h1 {
-      font-size: 36px;
+      font-size: 28px;
     }
   }
 
   /* H2 — Section titles. Clearly subordinate, modest increment. */
   h2 {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 500;
     line-height: 1.35;
     letter-spacing: -0.005em;
-    scroll-margin-top: calc(var(--header-height) + 20px);
+    scroll-margin-top: calc(var(--header-height) + 16px);
   }
 
   /* H3-H6 — Subsection headings */
   h3 {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
     line-height: 1.4;
   }
 
   h4, h5, h6 {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     line-height: 1.45;
   }
@@ -595,10 +594,10 @@
     border-color: hsl(0 0% 82%); /* ~#d0d0d0 */
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-size: 15px;
+    font-size: 13px;
     line-height: 1.4;
-    padding: 10px 12px; /* dense, contractual */
-    min-height: 48px;
+    padding: 8px 10px; /* compact, institutional */
+    min-height: 40px;
     box-shadow: none;
   }
 
@@ -629,14 +628,14 @@
   :where(form) button[type="submit"],
   :where(form) button:not([type]) {
     border-radius: 6px;
-    min-height: 44px;
+    min-height: 38px;
   }
 
   :where(form) button[type="submit"] {
     width: 100%;
     background-color: hsl(var(--foreground));
     color: hsl(var(--background));
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     box-shadow: none;
     transition: opacity 280ms ease-in-out;
@@ -830,17 +829,17 @@
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* Internal form spacing tokens */
-  --internal-field-gap: 14px;      /* 12-16px range, centered */
-  --internal-section-gap: 28px;    /* 24-32px range */
-  --internal-label-gap: 5px;       /* 4-6px range, centered */
-  --internal-button-gap: 20px;     /* 16-24px range */
-  --internal-helper-gap: 4px;      /* Helper text spacing */
+  /* Internal form spacing tokens - tighter for institutional density */
+  --internal-field-gap: 12px;      /* Reduced for compact forms */
+  --internal-section-gap: 24px;    /* Tighter section gaps */
+  --internal-label-gap: 4px;       /* Minimal label spacing */
+  --internal-button-gap: 16px;     /* Compact button separation */
+  --internal-helper-gap: 3px;      /* Tight helper text */
   
   /* Internal form max-width (aligned to app content grid) */
-  --internal-form-width: 560px;
-  --internal-form-width-narrow: 400px;
-  --internal-form-width-wide: 720px;
+  --internal-form-width: 520px;
+  --internal-form-width-narrow: 380px;
+  --internal-form-width-wide: 680px;
 }
 
 @layer components {
@@ -874,21 +873,21 @@
   }
 
   .internal-form-section-header {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
     color: hsl(var(--muted-foreground));
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 14px;
-    padding-bottom: 6px;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+    padding-bottom: 5px;
     border-bottom: 1px solid hsl(var(--border));
   }
 
   .internal-form-section-title {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     color: hsl(var(--foreground));
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
@@ -911,7 +910,7 @@
 
   /* Internal form label - concise, factual, always visible */
   .internal-form-label {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     color: hsl(var(--foreground));
     line-height: 1.35;
@@ -919,17 +918,17 @@
 
   /* Internal form helper text - minimal, low-contrast, factual */
   .internal-form-helper {
-    font-size: 11px;
+    font-size: 10px;
     color: hsl(var(--muted-foreground));
-    line-height: 1.45;
+    line-height: 1.4;
     margin-top: var(--internal-helper-gap);
   }
 
   /* Internal form error - inline, concise, specific */
   .internal-form-error {
-    font-size: 11px;
+    font-size: 10px;
     color: hsl(0 0% 35%);
-    line-height: 1.45;
+    line-height: 1.4;
     margin-top: var(--internal-helper-gap);
   }
 
