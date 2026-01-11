@@ -1,175 +1,114 @@
-import { useAuth } from "@/contexts/AuthContext";
-import { 
-  Users, 
-  Building2, 
-  Shield, 
-  Settings, 
-  ArrowRight,
-  Music,
-  FileText,
-  UserCheck,
-  KeyRound,
-  ClipboardCheck,
-} from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 
 export default function AdminDashboard() {
-  const { setActiveContext } = useAuth();
-  const navigate = useNavigate();
-
-  const handlePortalClick = (context: "publishing" | "licensing") => {
-    setActiveContext(context);
-    navigate(`/app/${context}`);
-  };
-
   return (
-    <div className="max-w-[960px] mx-auto px-6 py-10">
+    <div className="max-w-[640px] mx-auto px-6 py-12">
+      {/* Header */}
+      <header className="mb-12">
+        <h1 className="text-[28px] font-semibold tracking-tight text-foreground">
+          Administration
+        </h1>
+        <p className="text-[15px] text-muted-foreground mt-1">
+          Platform access, governance, and security
+        </p>
+      </header>
+
+      {/* Sections */}
       <div className="space-y-10">
-        {/* Header */}
-        <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Administration</h1>
-          <p className="text-[15px] text-muted-foreground">
-            Manage platform access, organizations, and security settings.
-          </p>
-        </div>
-
-        {/* Portal Access */}
-        <section className="space-y-3">
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            Portal Access
-          </h2>
-          <div className="grid md:grid-cols-2 gap-3">
-            <PortalCard
-              onClick={() => handlePortalClick("publishing")}
-              icon={Music}
-              title="Publishing Portal"
-              description="Manage works, registrations, splits, and royalty statements."
-            />
-            <PortalCard
-              onClick={() => handlePortalClick("licensing")}
-              icon={FileText}
-              title="Licensing Portal"
-              description="Review catalog, process license requests, and manage agreements."
-            />
-          </div>
-        </section>
-
-        {/* Access Control */}
-        <section className="space-y-3">
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            Access Control
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <AdminNavCard
-              to="/admin/approvals"
-              icon={UserCheck}
-              title="Pending Requests"
-              description="Review and approve access requests"
-            />
-            <AdminNavCard
-              to="/admin/users"
-              icon={Users}
-              title="User Directory"
-              description="Manage user accounts and permissions"
-            />
-            <AdminNavCard
-              to="/admin/roles"
-              icon={KeyRound}
-              title="Roles & Permissions"
-              description="Configure role-based access"
-            />
-          </div>
-        </section>
+        {/* Access & Identity */}
+        <Section title="Access & Identity">
+          <NavItem
+            to="/admin/approvals"
+            label="Access Control"
+            description="Users, roles, and pending requests"
+          />
+        </Section>
 
         {/* Organizations */}
-        <section className="space-y-3">
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            Organizations
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <AdminNavCard
-              to="/admin/tenants"
-              icon={Building2}
-              title="Tenants"
-              description="Manage organizations and scopes"
-            />
-          </div>
-        </section>
+        <Section title="Organizations">
+          <NavItem
+            to="/admin/tenants"
+            label="Organizations"
+            description="Tenants and memberships"
+          />
+        </Section>
 
         {/* Security & Governance */}
-        <section className="space-y-3">
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            Security & Governance
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <AdminNavCard
-              to="/admin/security/rls"
-              icon={Shield}
-              title="RLS Audit"
-              description="Verify row-level security coverage"
-            />
-            <AdminNavCard
-              to="/admin/security/auth"
-              icon={ClipboardCheck}
-              title="Auth Review"
-              description="Authentication and session settings"
-            />
-          </div>
-        </section>
+        <Section title="Security & Governance">
+          <NavItem
+            to="/admin/security/rls"
+            label="RLS Verification"
+            description="Row-level security policy coverage"
+          />
+          <NavItem
+            to="/admin/security/auth"
+            label="Audit Coverage"
+            description="Authentication and access logging"
+          />
+          <NavItem
+            to="/admin/security/sessions"
+            label="Session Integrity"
+            description="Active sessions and token management"
+          />
+        </Section>
 
-        {/* Account */}
-        <section className="space-y-3">
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            Account
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <AdminNavCard
-              to="/admin/settings"
-              icon={Settings}
-              title="Platform Settings"
-              description="Configure platform preferences"
-            />
-          </div>
-        </section>
+        {/* Platform Account */}
+        <Section title="Platform Account">
+          <NavItem
+            to="/admin/settings"
+            label="Account Settings"
+            description="Platform configuration and preferences"
+          />
+        </Section>
       </div>
     </div>
   );
 }
 
-function PortalCard({ 
-  onClick, 
-  icon: Icon, 
+function Section({ 
   title, 
+  children 
+}: { 
+  title: string; 
+  children: React.ReactNode;
+}) {
+  return (
+    <section>
+      <h2 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-3">
+        {title}
+      </h2>
+      <div className="border-t border-border">
+        {children}
+      </div>
+    </section>
+  );
+}
+
+function NavItem({ 
+  to, 
+  label, 
   description 
 }: { 
-  onClick: () => void;
-  icon: React.ElementType; 
-  title: string; 
+  to: string; 
+  label: string; 
   description: string;
 }) {
   return (
-    <button 
-      onClick={onClick} 
-      className="group text-left w-full"
+    <Link 
+      to={to} 
+      className="flex items-center justify-between py-4 border-b border-border group hover:bg-muted/30 -mx-3 px-3 transition-colors duration-150"
     >
-      <div className="h-full p-5 rounded-lg border border-border bg-background hover:border-foreground/20 hover:bg-muted/30 transition-all duration-200">
-        <div className="flex items-start gap-4">
-          <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-muted/80 transition-colors">
-            <Icon className="h-5 w-5 text-foreground/70" />
-          </div>
-          <div className="flex-1 min-w-0 space-y-1">
-            <p className="text-[15px] font-medium text-foreground flex items-center gap-2">
-              {title}
-              <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-            </p>
-            <p className="text-[13px] text-muted-foreground leading-relaxed">
-              {description}
-            </p>
-          </div>
-        </div>
+      <div className="space-y-0.5">
+        <p className="text-[15px] font-medium text-foreground group-hover:text-foreground/80">
+          {label}
+        </p>
+        <p className="text-[13px] text-muted-foreground">
+          {description}
+        </p>
       </div>
-    </button>
+      <ChevronRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
+    </Link>
   );
 }
 
