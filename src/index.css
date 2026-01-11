@@ -1090,7 +1090,7 @@
 
   /* Content fade - opacity only, institutional timing */
   .animate-content-fade {
-    animation: contentFade 0.28s ease-in-out forwards;
+    animation: contentFade 280ms ease-in-out forwards;
   }
 
   @keyframes contentFade {
@@ -1100,7 +1100,7 @@
 
   /* Button active state - subtle feedback, institutional timing */
   .btn-active {
-    @apply active:opacity-88 active:transition-opacity active:duration-[280ms];
+    @apply active:opacity-90 active:transition-opacity active:duration-[280ms] active:ease-in-out;
   }
 
   /* Global focus visible for dark surfaces */
@@ -1109,9 +1109,24 @@
     outline-offset: 2px;
   }
 
-  /* Global transition utility - institutional locked duration */
+  /* ═══════════════════════════════════════════════════════════════════════════
+     INSTITUTIONAL MOTION SYSTEM — LOCKED
+     
+     All motion uses calm, financial-grade timing:
+     - Micro-interactions: 280ms
+     - Standard transitions: 320ms  
+     - Overlays/modals: 360-400ms
+     - Easing: ease-in-out only (no bounce, no elastic, no spring)
+     ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* Standard interaction - hover, focus, state changes */
   .transition-interaction {
     @apply transition-all duration-[280ms] ease-in-out;
+  }
+
+  /* Element transitions - accordions, tabs, content swaps */
+  .transition-element {
+    @apply transition-all duration-[320ms] ease-in-out;
   }
 
   /* Overlay/drawer transitions - slower, financial-grade motion */
@@ -1119,7 +1134,18 @@
     @apply transition-all duration-[360ms] ease-in-out;
   }
 
+  /* Modal transitions - deliberate, premium feel */
   .transition-modal {
     @apply transition-all duration-[400ms] ease-in-out;
+  }
+
+  /* Opacity-only transitions for subtle state changes */
+  .transition-opacity-institutional {
+    @apply transition-opacity duration-[280ms] ease-in-out;
+  }
+
+  /* Transform transitions for position/scale changes */
+  .transition-transform-institutional {
+    @apply transition-transform duration-[320ms] ease-in-out;
   }
 }

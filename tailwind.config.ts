@@ -106,16 +106,28 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+          from: { height: "0", opacity: "0" },
+          to: { height: "var(--radix-accordion-content-height)", opacity: "1" },
         },
         "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+          from: { height: "var(--radix-accordion-content-height)", opacity: "1" },
+          to: { height: "0", opacity: "0" },
         },
-        "content-fade": {
+        "fade-in": {
           from: { opacity: "0" },
           to: { opacity: "1" },
+        },
+        "fade-out": {
+          from: { opacity: "1" },
+          to: { opacity: "0" },
+        },
+        "scale-in": {
+          from: { opacity: "0", transform: "scale(0.98)" },
+          to: { opacity: "1", transform: "scale(1)" },
+        },
+        "scale-out": {
+          from: { opacity: "1", transform: "scale(1)" },
+          to: { opacity: "0", transform: "scale(0.98)" },
         },
         "slide-in-right": {
           from: { transform: "translateX(100%)" },
@@ -127,11 +139,16 @@ export default {
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.32s ease-in-out",
-        "accordion-up": "accordion-up 0.32s ease-in-out",
-        "content-fade": "content-fade 0.28s ease-in-out",
-        "slide-in-right": "slide-in-right 0.36s ease-in-out",
-        "slide-out-right": "slide-out-right 0.36s ease-in-out",
+        "accordion-down": "accordion-down 320ms ease-in-out",
+        "accordion-up": "accordion-up 320ms ease-in-out",
+        "fade-in": "fade-in 280ms ease-in-out",
+        "fade-out": "fade-out 280ms ease-in-out",
+        "scale-in": "scale-in 320ms ease-in-out",
+        "scale-out": "scale-out 280ms ease-in-out",
+        "slide-in-right": "slide-in-right 360ms ease-in-out",
+        "slide-out-right": "slide-out-right 320ms ease-in-out",
+        "enter": "fade-in 280ms ease-in-out, scale-in 320ms ease-in-out",
+        "exit": "fade-out 280ms ease-in-out, scale-out 280ms ease-in-out",
       },
       transitionDuration: {
         '280': '280ms',
