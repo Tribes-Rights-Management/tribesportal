@@ -3,9 +3,9 @@ import { ChevronRight } from "lucide-react";
 
 export default function AdminDashboard() {
   return (
-    <div className="max-w-[640px] mx-auto px-6 py-12">
+    <div className="max-w-[720px] mx-auto px-6 py-12">
       {/* Header */}
-      <header className="mb-12">
+      <header className="mb-10">
         <h1 className="text-[28px] font-semibold tracking-tight text-foreground">
           Administration
         </h1>
@@ -14,28 +14,28 @@ export default function AdminDashboard() {
         </p>
       </header>
 
-      {/* Sections */}
-      <div className="space-y-10">
+      {/* White content surface */}
+      <div className="bg-background rounded-xl border border-border/50 divide-y divide-border/50">
         {/* Access & Identity */}
-        <Section title="Access & Identity">
+        <ContentSection title="Access & Identity">
           <NavItem
             to="/admin/approvals"
             label="Access Control"
             description="Users, roles, and pending requests"
           />
-        </Section>
+        </ContentSection>
 
         {/* Organizations */}
-        <Section title="Organizations">
+        <ContentSection title="Organizations">
           <NavItem
             to="/admin/tenants"
             label="Organizations"
             description="Tenants and memberships"
           />
-        </Section>
+        </ContentSection>
 
         {/* Security & Governance */}
-        <Section title="Security & Governance">
+        <ContentSection title="Security & Governance">
           <NavItem
             to="/admin/security/rls"
             label="RLS Verification"
@@ -51,22 +51,22 @@ export default function AdminDashboard() {
             label="Session Integrity"
             description="Active sessions and token management"
           />
-        </Section>
+        </ContentSection>
 
         {/* Platform Account */}
-        <Section title="Platform Account">
+        <ContentSection title="Platform Account">
           <NavItem
             to="/admin/settings"
             label="Account Settings"
             description="Platform configuration and preferences"
           />
-        </Section>
+        </ContentSection>
       </div>
     </div>
   );
 }
 
-function Section({ 
+function ContentSection({ 
   title, 
   children 
 }: { 
@@ -74,11 +74,11 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section>
+    <section className="px-6 py-5">
       <h2 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-3">
         {title}
       </h2>
-      <div className="border-t border-border">
+      <div className="space-y-0">
         {children}
       </div>
     </section>
@@ -97,7 +97,7 @@ function NavItem({
   return (
     <Link 
       to={to} 
-      className="flex items-center justify-between py-4 border-b border-border group hover:bg-muted/30 -mx-3 px-3 transition-colors duration-150"
+      className="flex items-center justify-between py-3 group hover:bg-muted/40 -mx-2 px-2 rounded-lg transition-colors duration-150"
     >
       <div className="space-y-0.5">
         <p className="text-[15px] font-medium text-foreground group-hover:text-foreground/80">
@@ -107,35 +107,7 @@ function NavItem({
           {description}
         </p>
       </div>
-      <ChevronRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
-    </Link>
-  );
-}
-
-function AdminNavCard({ 
-  to, 
-  icon: Icon, 
-  title, 
-  description 
-}: { 
-  to: string; 
-  icon: React.ElementType; 
-  title: string; 
-  description: string;
-}) {
-  return (
-    <Link to={to} className="group">
-      <div className="h-full p-4 rounded-lg border border-border bg-background hover:border-foreground/15 hover:bg-muted/30 transition-all duration-200">
-        <div className="flex items-start gap-3">
-          <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center shrink-0">
-            <Icon className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <div className="min-w-0 space-y-0.5">
-            <p className="text-[14px] font-medium text-foreground">{title}</p>
-            <p className="text-[12px] text-muted-foreground line-clamp-2">{description}</p>
-          </div>
-        </div>
-      </div>
+      <ChevronRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
     </Link>
   );
 }

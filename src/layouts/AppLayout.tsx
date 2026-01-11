@@ -8,12 +8,12 @@ export function AppLayout() {
   const { activeContext } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-[hsl(var(--app-surface))]">
       <GlobalHeader />
       <div className="flex flex-1 overflow-hidden">
         {activeContext === "licensing" && <LicensingNav />}
         {activeContext === "publishing" && <PublishingNav />}
-        <main className="flex-1 overflow-y-auto bg-background">
+        <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>
       </div>

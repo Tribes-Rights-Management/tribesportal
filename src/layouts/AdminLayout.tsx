@@ -3,7 +3,7 @@ import { GlobalHeader } from "@/components/app/GlobalHeader";
 
 export function AdminLayout() {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-[hsl(var(--app-surface))]">
       <GlobalHeader />
       <main className="flex-1 overflow-y-auto">
         <Outlet />
