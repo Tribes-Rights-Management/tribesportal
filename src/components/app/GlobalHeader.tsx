@@ -139,7 +139,7 @@ function PortalSwitcher() {
   );
 }
 
-// Compact account menu - 32px avatar with dropdown
+// Premium account menu - 32px avatar with subtle styling
 function AccountMenu() {
   const { 
     profile, 
@@ -175,7 +175,7 @@ function AccountMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="h-8 w-8 rounded-full bg-muted/60 hover:bg-muted shrink-0 text-[11px] font-medium text-muted-foreground inline-flex items-center justify-center transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="h-8 w-8 rounded-full shrink-0 inline-flex items-center justify-center border border-border/50 bg-muted/30 hover:bg-muted/60 text-[11px] font-medium text-muted-foreground transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           aria-label="Account menu"
         >
           {getInitials()}
@@ -183,7 +183,7 @@ function AccountMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-56 bg-popover rounded-xl shadow-lg border border-border/50"
+        className="w-56 rounded-xl"
         sideOffset={8}
       >
         <div className="px-3 py-2.5">
@@ -205,7 +205,7 @@ function AccountMenu() {
             onClick={() => navigate("/admin")}
             className={cn("text-[13px] py-2", currentMode === "admin" && "bg-muted")}
           >
-            <Shield className="mr-2 h-4 w-4" />
+            <Shield size={16} strokeWidth={1.5} className="mr-2" />
             Administration
           </DropdownMenuItem>
         )}
@@ -246,7 +246,7 @@ function AccountMenu() {
           }}
           className="text-[13px] py-2"
         >
-          <Settings className="mr-2 h-4 w-4" />
+          <Settings size={16} strokeWidth={1.5} className="mr-2" />
           Account Settings
         </DropdownMenuItem>
         
@@ -255,7 +255,7 @@ function AccountMenu() {
           onClick={handleSignOut}
           className="text-[13px] py-2 text-destructive focus:text-destructive"
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut size={16} strokeWidth={1.5} className="mr-2" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>

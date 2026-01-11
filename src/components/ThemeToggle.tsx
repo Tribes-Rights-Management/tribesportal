@@ -9,8 +9,9 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * Compact theme toggle - Apple-grade styling
- * 32px button with 18px icon glyph
+ * Premium theme toggle - Apple-grade styling
+ * 32px button target with 18px icons, strokeWidth 1.5
+ * Ring only on focus-visible (keyboard), never persistent
  */
 export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -19,55 +20,55 @@ export function ThemeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="h-8 w-8 inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="h-8 w-8 inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           aria-label="Toggle theme"
         >
           {resolvedTheme === "dark" ? (
-            <Moon className="h-[18px] w-[18px]" />
+            <Moon size={18} strokeWidth={1.5} />
           ) : (
-            <Sun className="h-[18px] w-[18px]" />
+            <Sun size={18} strokeWidth={1.5} />
           )}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-36 bg-popover" sideOffset={8}>
+      <DropdownMenuContent align="end" className="w-36" sideOffset={8}>
         <DropdownMenuItem
           onClick={() => setTheme("system")}
           className={cn(
-            "flex items-center justify-between text-[13px] cursor-pointer",
+            "flex items-center justify-between text-[13px] cursor-pointer gap-2",
             theme === "system" && "bg-muted"
           )}
         >
           <span className="flex items-center gap-2">
-            <Monitor className="h-4 w-4" />
+            <Monitor size={16} strokeWidth={1.5} />
             System
           </span>
-          {theme === "system" && <Check className="h-3.5 w-3.5" />}
+          {theme === "system" && <Check size={14} strokeWidth={1.5} />}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("light")}
           className={cn(
-            "flex items-center justify-between text-[13px] cursor-pointer",
+            "flex items-center justify-between text-[13px] cursor-pointer gap-2",
             theme === "light" && "bg-muted"
           )}
         >
           <span className="flex items-center gap-2">
-            <Sun className="h-4 w-4" />
+            <Sun size={16} strokeWidth={1.5} />
             Light
           </span>
-          {theme === "light" && <Check className="h-3.5 w-3.5" />}
+          {theme === "light" && <Check size={14} strokeWidth={1.5} />}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("dark")}
           className={cn(
-            "flex items-center justify-between text-[13px] cursor-pointer",
+            "flex items-center justify-between text-[13px] cursor-pointer gap-2",
             theme === "dark" && "bg-muted"
           )}
         >
           <span className="flex items-center gap-2">
-            <Moon className="h-4 w-4" />
+            <Moon size={16} strokeWidth={1.5} />
             Dark
           </span>
-          {theme === "dark" && <Check className="h-3.5 w-3.5" />}
+          {theme === "dark" && <Check size={14} strokeWidth={1.5} />}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
