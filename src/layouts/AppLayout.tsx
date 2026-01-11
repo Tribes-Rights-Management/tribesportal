@@ -8,7 +8,7 @@ export function AppLayout() {
   const { activeContext } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[hsl(var(--app-surface))]">
+    <div className="min-h-screen flex flex-col bg-app-surface">
       <GlobalHeader />
       <div className="flex flex-1 overflow-hidden">
         {activeContext === "licensing" && <LicensingNav />}

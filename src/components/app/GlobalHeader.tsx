@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,11 +16,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { User, LogOut, Settings, HelpCircle, Shield, Moon, Sun, Monitor } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { User, LogOut, Settings, Shield, Moon, Sun, Monitor, Check } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { useTheme } from "next-themes";
 
 type PortalMode = "publishing" | "licensing";
 
@@ -39,7 +44,7 @@ function TenantSelector() {
   if (tenantMemberships.length <= 1) {
     if (activeTenant) {
       return (
-        <span className="text-[13px] font-medium text-foreground truncate max-w-[160px]">
+        <span className="text-[13px] font-medium text-muted-foreground truncate max-w-[160px]">
           {activeTenant.tenant_name}
         </span>
       );
@@ -67,10 +72,10 @@ function TenantSelector() {
       value={activeTenant?.tenant_id ?? ""}
       onValueChange={handleTenantChange}
     >
-      <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-muted text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0">
+      <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-muted/50 text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 text-muted-foreground">
         <SelectValue placeholder="Select tenant" />
       </SelectTrigger>
-      <SelectContent align="center">
+      <SelectContent align="center" className="bg-popover">
         {tenantMemberships.map((membership) => (
           <SelectItem
             key={membership.tenant_id}
@@ -91,11 +96,11 @@ function PortalSwitcher() {
   const navigate = useNavigate();
   const currentMode = useCurrentMode();
 
-  // Only show if user has access to both portals
+  // Only show if user has access to both portals and not in admin
   const hasPublishing = availableContexts.includes("publishing");
   const hasLicensing = availableContexts.includes("licensing");
   
-  if (!hasPublishing || !hasLicensing) return null;
+  if (!hasPublishing && !hasLicensing) return null;
   if (currentMode === "admin") return null;
 
   const handleSwitch = (mode: PortalMode) => {
@@ -104,12 +109,21 @@ function PortalSwitcher() {
     navigate(`/app/${mode}`);
   };
 
+  // If only one portal, show as static text
+  if (!hasPublishing || !hasLicensing) {
+    return (
+      <span className="text-[13px] font-medium text-foreground">
+        {hasPublishing ? "Client Portal" : "Licensing"}
+      </span>
+    );
+  }
+
   return (
-    <div className="flex items-center h-8 p-0.5 rounded-lg bg-muted/60">
+    <div className="flex items-center h-7 p-0.5 rounded-md bg-muted/50 border border-border/40">
       <button
         onClick={() => handleSwitch("publishing")}
         className={cn(
-          "h-7 px-3 rounded-md text-[13px] font-medium transition-all duration-200",
+          "h-6 px-2.5 rounded text-[12px] font-medium transition-all duration-150",
           currentMode === "publishing"
             ? "bg-background text-foreground shadow-sm"
             : "text-muted-foreground hover:text-foreground"
@@ -120,54 +134,90 @@ function PortalSwitcher() {
       <button
         onClick={() => handleSwitch("licensing")}
         className={cn(
-          "h-7 px-3 rounded-md text-[13px] font-medium transition-all duration-200",
+          "h-6 px-2.5 rounded text-[12px] font-medium transition-all duration-150",
           currentMode === "licensing"
             ? "bg-background text-foreground shadow-sm"
             : "text-muted-foreground hover:text-foreground"
         )}
       >
-        Licensing Portal
+        Licensing
       </button>
     </div>
   );
 }
 
-// Theme toggle
+// Theme toggle with popover menu
 function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Popover>
+      <PopoverTrigger asChild>
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+          className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full"
         >
-          <Sun className="h-4 w-4 rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" />
+          {resolvedTheme === "dark" ? (
+            <Moon className="h-[18px] w-[18px]" />
+          ) : (
+            <Sun className="h-[18px] w-[18px]" />
+          )}
           <span className="sr-only">Toggle theme</span>
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-32">
-        <DropdownMenuItem onClick={() => setTheme("light")} className="text-[13px]">
-          <Sun className="mr-2 h-4 w-4" />
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")} className="text-[13px]">
-          <Moon className="mr-2 h-4 w-4" />
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")} className="text-[13px]">
-          <Monitor className="mr-2 h-4 w-4" />
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-36 p-1 bg-popover" sideOffset={8}>
+        <button
+          onClick={() => setTheme("light")}
+          className={cn(
+            "flex items-center justify-between w-full px-2.5 py-1.5 text-[13px] rounded-md transition-colors",
+            theme === "light" 
+              ? "bg-muted text-foreground" 
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          )}
+        >
+          <span className="flex items-center gap-2">
+            <Sun className="h-4 w-4" />
+            Light
+          </span>
+          {theme === "light" && <Check className="h-3.5 w-3.5" />}
+        </button>
+        <button
+          onClick={() => setTheme("dark")}
+          className={cn(
+            "flex items-center justify-between w-full px-2.5 py-1.5 text-[13px] rounded-md transition-colors",
+            theme === "dark" 
+              ? "bg-muted text-foreground" 
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          )}
+        >
+          <span className="flex items-center gap-2">
+            <Moon className="h-4 w-4" />
+            Dark
+          </span>
+          {theme === "dark" && <Check className="h-3.5 w-3.5" />}
+        </button>
+        <button
+          onClick={() => setTheme("system")}
+          className={cn(
+            "flex items-center justify-between w-full px-2.5 py-1.5 text-[13px] rounded-md transition-colors",
+            theme === "system" 
+              ? "bg-muted text-foreground" 
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          )}
+        >
+          <span className="flex items-center gap-2">
+            <Monitor className="h-4 w-4" />
+            System
+          </span>
+          {theme === "system" && <Check className="h-3.5 w-3.5" />}
+        </button>
+      </PopoverContent>
+    </Popover>
   );
 }
 
-// Account menu
+// Account menu with user initials
 function AccountMenu() {
   const { 
     profile, 
@@ -183,19 +233,38 @@ function AccountMenu() {
     navigate("/auth/sign-in");
   };
 
+  // Get user initials
+  const getInitials = () => {
+    if (profile?.full_name) {
+      const parts = profile.full_name.trim().split(/\s+/);
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      }
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+    if (profile?.email) {
+      return profile.email.slice(0, 2).toUpperCase();
+    }
+    return "U";
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 w-7 rounded-full bg-muted/60 hover:bg-muted shrink-0 p-0"
+          className="h-8 w-8 rounded-full bg-muted/60 hover:bg-muted shrink-0 p-0 text-[11px] font-medium text-muted-foreground"
         >
-          <User className="h-3.5 w-3.5 text-muted-foreground" />
+          {getInitials()}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <div className="px-3 py-2">
+      <DropdownMenuContent 
+        align="end" 
+        className="w-56 bg-popover rounded-xl shadow-lg border border-border/50"
+        sideOffset={8}
+      >
+        <div className="px-3 py-2.5">
           <p className="text-[13px] font-medium text-foreground truncate">
             {profile?.full_name || profile?.email}
           </p>
@@ -208,6 +277,19 @@ function AccountMenu() {
         
         <DropdownMenuSeparator />
         
+        {isPlatformAdmin && (
+          <>
+            <DropdownMenuItem
+              onClick={() => navigate("/admin")}
+              className={cn("text-[13px] py-2", currentMode === "admin" && "bg-muted")}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Administration
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
+        
         <DropdownMenuItem
           onClick={() => {
             if (currentMode === "admin") {
@@ -216,34 +298,16 @@ function AccountMenu() {
               navigate(`/app/${activeContext}/settings`);
             }
           }}
-          className="text-[13px]"
+          className="text-[13px] py-2"
         >
           <Settings className="mr-2 h-4 w-4" />
-          Settings
+          Account Settings
         </DropdownMenuItem>
-        
-        <DropdownMenuItem className="text-[13px]">
-          <HelpCircle className="mr-2 h-4 w-4" />
-          Support
-        </DropdownMenuItem>
-        
-        {isPlatformAdmin && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => navigate("/admin")}
-              className={cn("text-[13px]", currentMode === "admin" && "bg-muted")}
-            >
-              <Shield className="mr-2 h-4 w-4" />
-              Administration
-            </DropdownMenuItem>
-          </>
-        )}
         
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="text-[13px] text-destructive focus:text-destructive"
+          className="text-[13px] py-2 text-destructive focus:text-destructive"
         >
           <LogOut className="mr-2 h-4 w-4" />
           Sign out
@@ -278,7 +342,7 @@ function MobileControls() {
           {getModeLabel()}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" className="w-52">
+      <DropdownMenuContent align="center" className="w-52 bg-popover">
         {activeTenant && (
           <div className="px-3 py-2">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Organization</p>
@@ -339,7 +403,7 @@ function MobileControls() {
                 }}
                 className={cn("text-[13px]", currentMode === "licensing" && "bg-muted")}
               >
-                Licensing Portal
+                Licensing
               </DropdownMenuItem>
             )}
           </>
@@ -364,24 +428,23 @@ export function GlobalHeader() {
   };
 
   return (
-    <header className="h-14 border-b border-border/60 bg-background px-4 md:px-6 flex items-center shrink-0">
-      {/* Left: Wordmark */}
-      <div className="flex items-center min-w-0">
+    <header className="h-14 border-b border-border/40 bg-background/95 backdrop-blur-sm px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40">
+      {/* Left: Wordmark + Portal Switcher */}
+      <div className="flex items-center gap-4 min-w-0">
         <button
           onClick={handleLogoClick}
-          className="text-[15px] font-semibold text-foreground tracking-[-0.01em] hover:text-muted-foreground transition-colors duration-200"
+          className="text-[15px] font-semibold text-foreground tracking-[-0.01em] hover:text-muted-foreground transition-colors duration-150"
         >
           Tribes
         </button>
+        
+        {!isMobile && <PortalSwitcher />}
       </div>
 
-      {/* Center: Tenant + Portal Switcher */}
-      <div className="flex-1 flex items-center justify-center gap-3">
+      {/* Center: Tenant (desktop) or Mobile Controls */}
+      <div className="flex-1 flex items-center justify-center">
         {!isMobile ? (
-          <>
-            <TenantSelector />
-            <PortalSwitcher />
-          </>
+          <TenantSelector />
         ) : (
           <MobileControls />
         )}
