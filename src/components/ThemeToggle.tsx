@@ -1,4 +1,4 @@
-import { useTheme } from "@/providers/ThemeProvider";
+import { useTheme } from "@/theme/ThemeProvider";
 import { Sun, Moon, Monitor, Check } from "lucide-react";
 import {
   DropdownMenu,
