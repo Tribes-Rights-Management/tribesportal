@@ -25,10 +25,10 @@ export default function NoAccessPage() {
         {/* Support line */}
         <p className="mt-6 text-[14px] text-[#52525B]">
           <a 
-            href="mailto:admin@tribesassets.com" 
+            href="mailto:contact@tribesassets.com" 
             className="text-[#0A0A0A] hover:underline font-medium"
           >
-            admin@tribesassets.com
+            contact@tribesassets.com
           </a>
         </p>
 

@@ -20,10 +20,10 @@ export default function AuthErrorPage() {
             If you believe this is an error, contact administration.
           </p>
           <a 
-            href="mailto:admin@tribesassets.com" 
+            href="mailto:contact@tribesassets.com" 
             className="inline-block text-[15px] font-medium text-[#0A0A0A] hover:underline"
           >
-            admin@tribesassets.com
+            contact@tribesassets.com
           </a>
         </div>
 
