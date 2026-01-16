@@ -15,7 +15,7 @@ export default function PublishingSettings() {
     >
       <div className="max-w-[640px]">
         <PageHeader 
-          title="Settings"
+          title="Configuration"
           description="Publishing portal configuration"
         />
 

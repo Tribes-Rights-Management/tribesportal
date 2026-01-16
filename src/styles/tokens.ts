@@ -860,15 +860,15 @@ export const NAV_LABELS = {
   LICENSING: "Licensing",
   ADMINISTRATION: "Administration",
   
-  // Publishing nav
-  DASHBOARD: "Dashboard",
+  // Publishing nav - INSTITUTIONAL TERMINOLOGY
+  OVERVIEW: "Overview", // Replaces "Dashboard"
   WORKS: "Works",
   SPLITS: "Splits & Ownership",
   REGISTRATIONS: "Registrations",
   STATEMENTS: "Statements",
   PAYMENTS: "Payments",
   DOCUMENTS: "Documents",
-  SETTINGS: "Settings",
+  CONFIGURATION: "Configuration", // Replaces "Settings"
   
   // Licensing nav
   CATALOG: "Catalog",

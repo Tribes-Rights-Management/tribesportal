@@ -80,11 +80,11 @@ export default function AdminDashboard() {
             <NavRow
               to="/admin/approvals"
               label="Access Control"
-              description="Users, roles, and approvals"
+              description="Accounts, roles, and approvals"
             />
             <NavRow
               to="/admin/users"
-              label="User Directory"
+              label="Member Directory"
               description="Account status and permissions"
             />
           </NavSection>

@@ -8,7 +8,7 @@ export default function LicensingSettings() {
   return (
     <div className="p-6" style={{ backgroundColor: 'var(--platform-canvas)' }}>
       <div className="max-w-[640px]">
-        <PageHeader title="Settings" description="Licensing portal configuration" />
+        <PageHeader title="Configuration" description="Licensing portal configuration" />
         <div className="space-y-4">
           <Panel>
             <PanelHeader><PanelTitle>Account</PanelTitle></PanelHeader>
