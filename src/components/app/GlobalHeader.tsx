@@ -19,7 +19,6 @@ import { LogOut, Settings, Shield } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 
 type PortalMode = "publishing" | "licensing";
@@ -397,9 +396,8 @@ export function GlobalHeader() {
         )}
       </div>
 
-      {/* Right: Theme toggle + Account menu */}
-      <div className="flex items-center gap-2">
-        <ThemeToggle />
+      {/* Right: Account menu only (no theme toggle) */}
+      <div className="flex items-center">
         <AccountMenu />
       </div>
     </header>
