@@ -683,3 +683,208 @@ export const DATA_LABELS = {
   UPDATED: "Updated",
   VERSION: "Version",
 } as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CANONICAL RECORD LABELS — DATA IMMUTABILITY
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * DATA IMMUTABILITY RULES:
+ * - Canonical records cannot be deleted
+ * - Edits create new versions; originals remain intact
+ * - Version history is always accessible
+ * - System clearly indicates the current effective version
+ * - The system must behave like a registry, not a spreadsheet
+ */
+export const RECORD_LABELS = {
+  // Version indicators
+  CURRENT_VERSION: "Current version",
+  EFFECTIVE_VERSION: "Effective version",
+  EFFECTIVE_AS_OF: "Effective as of",
+  VERSION_HISTORY: "Version history",
+  PREVIOUS_VERSION: "Previous version",
+  SUPERSEDED: "Superseded",
+  
+  // Record types (canonical)
+  WORK: "Work",
+  AGREEMENT: "Agreement",
+  OWNERSHIP_SPLIT: "Ownership split",
+  LICENSE: "License",
+  STATEMENT: "Statement",
+  
+  // Record status
+  ACTIVE: "Active",
+  ARCHIVED: "Archived",
+  DRAFT: "Draft",
+  
+  // Record metadata display
+  RECORD_ID: "Record ID",
+  CREATED_BY: "Created by",
+  CREATED_AT: "Created",
+  LAST_MODIFIED: "Last modified",
+  MODIFIED_BY: "Modified by",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// AUDIT TRAIL LABELS — WHO, WHAT, WHEN
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * AUDIT TRAIL RULES:
+ * - Comprehensive tracking for all sensitive actions
+ * - Audit logs are readable, chronological, immutable
+ * - No hiding behind "advanced settings"
+ * - Audit trails are first-class citizens, not developer artifacts
+ */
+export const AUDIT_LABELS = {
+  // Section headers
+  AUDIT_TRAIL: "Audit trail",
+  ACTIVITY_LOG: "Activity log",
+  HISTORY: "History",
+  
+  // Tracked events
+  RECORD_CREATED: "Record created",
+  RECORD_UPDATED: "Record updated",
+  RECORD_APPROVED: "Record approved",
+  RECORD_REJECTED: "Record rejected",
+  ACCESS_GRANTED: "Access granted",
+  ACCESS_REVOKED: "Access revoked",
+  EXPORT_GENERATED: "Export generated",
+  DOCUMENT_UPLOADED: "Document uploaded",
+  DOCUMENT_REMOVED: "Document removed",
+  
+  // Audit fields
+  ACTOR: "Actor",
+  ACTION: "Action",
+  TIMESTAMP: "Timestamp",
+  AFFECTED_RECORD: "Affected record",
+  DETAILS: "Details",
+  
+  // System actor
+  SYSTEM: "System",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// APPROVAL WORKFLOW LABELS — DELIBERATE STATE CHANGES
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * APPROVAL RULES:
+ * - Sensitive actions require explicit approval workflows
+ * - No instant commits for sensitive actions
+ * - Pending states must be clearly labeled
+ * - Approvals require named actors
+ * - Treat approvals as governance events, not consumer-style modals
+ */
+export const APPROVAL_LABELS = {
+  // Approval states
+  PENDING_APPROVAL: "Pending approval",
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+  WITHDRAWN: "Withdrawn",
+  EXPIRED: "Expired",
+  
+  // Actions
+  SUBMIT_FOR_APPROVAL: "Submit for approval",
+  APPROVE: "Approve",
+  REJECT: "Reject",
+  WITHDRAW: "Withdraw",
+  
+  // Metadata
+  SUBMITTED_BY: "Submitted by",
+  SUBMITTED_AT: "Submitted",
+  APPROVED_BY: "Approved by",
+  APPROVED_AT: "Approved",
+  REJECTED_BY: "Rejected by",
+  REJECTED_AT: "Rejected",
+  REJECTION_REASON: "Rejection reason",
+  
+  // Approval types
+  OWNERSHIP_CHANGE: "Ownership change",
+  LICENSE_ISSUANCE: "License issuance",
+  AGREEMENT_AMENDMENT: "Agreement amendment",
+  ACCESS_REQUEST: "Access request",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TRUST SIGNALS — QUIET, STRUCTURAL
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * TRUST SIGNAL RULES:
+ * - Subtle, noticed subconsciously, not announced
+ * - No badges or trophies
+ * - No marketing icons
+ * - Use restrained typographic indicators
+ */
+export const TRUST_LABELS = {
+  // Trust indicators
+  SYSTEM_OF_RECORD: "System of record",
+  VERIFIED_DOCUMENT: "Verified document",
+  APPROVED_VERSION: "Approved version",
+  OFFICIAL_RECORD: "Official record",
+  REGISTERED: "Registered",
+  
+  // Verification status
+  VERIFIED: "Verified",
+  UNVERIFIED: "Unverified",
+  PENDING_VERIFICATION: "Pending verification",
+  
+  // Source indicators
+  SOURCE_DOCUMENT: "Source document",
+  REFERENCE: "Reference",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EXPORT INTEGRITY LABELS — CHAIN OF CUSTODY
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * EXPORT RULES:
+ * - Exports include record IDs
+ * - Include generation timestamp
+ * - Identify exporting account
+ * - No celebration, no download animations
+ * - Exports must feel admissible and verifiable
+ */
+export const EXPORT_LABELS = {
+  // Actions
+  GENERATE_REPORT: "Generate report",
+  EXPORT_RECORD: "Export record",
+  DOWNLOAD_FILE: "Download file",
+  
+  // Status
+  EXPORT_GENERATED: "Export generated",
+  FILE_AVAILABLE: "File available",
+  PREPARING_EXPORT: "Preparing export…",
+  
+  // Metadata (included in exports)
+  GENERATED_AT: "Generated",
+  GENERATED_BY: "Generated by",
+  INCLUDES_RECORDS: "Includes records",
+  EXPORT_ID: "Export ID",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SYSTEM DISCLAIMERS — PRECISION OVER LEGAL FLUFF
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * DISCLAIMER RULES:
+ * - One sentence max
+ * - Neutral tone
+ * - No legal overexplanation
+ * - Support clarity, not protection theater
+ */
+export const DISCLAIMERS = {
+  // Record accuracy
+  RECORD_EFFECTIVE_DATE: "This record reflects the information on file as of the effective date shown.",
+  DATA_AS_OF: "Data current as of the timestamp indicated.",
+  
+  // Export disclaimers
+  EXPORT_POINT_IN_TIME: "This export represents a point-in-time snapshot.",
+  
+  // System disclaimers
+  PENDING_CHANGES: "Changes pending approval are not reflected.",
+  VERSION_SUPERSEDED: "This version has been superseded.",
+} as const;
