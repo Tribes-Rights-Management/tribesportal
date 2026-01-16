@@ -55,16 +55,26 @@ Company-level governance and oversight only.
 ### What System Console Must NEVER Contain
 - ❌ Licensing
 - ❌ Tribes Admin
+- ❌ Tribes Team
 - ❌ Operational queues
 - ❌ Catalogs
 - ❌ Requests
 - ❌ Client or licensee actions
+- ❌ Any organization-scoped views
+- ❌ Any workspace-specific data
+- ❌ Any operational workflows or actions
 
 ### Navigation Rules
 - No product navigation
 - No workspace switcher
 - Accessed only via user/profile menu
 - UI must feel sparse, supervisory, and non-operational
+
+### Mobile Behavior (System Console)
+- Read-only inspection only
+- No primary actions permitted on mobile
+- No configuration or bulk operations
+- Displays "System Console is read-only on mobile" notice
 
 ---
 
@@ -156,6 +166,8 @@ They own operational data and workflows.
 - Read-only governance, audit, disclosures
 - No workspace switcher
 - No operational tools
+- No primary actions permitted
+- Displays read-only notice banner
 
 ### Tribes Team (Mobile)
 - Queues, approvals, messages, alerts

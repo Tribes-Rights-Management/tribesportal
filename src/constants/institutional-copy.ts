@@ -384,4 +384,5 @@ export const MOBILE_COPY = {
   DESKTOP_ONLY_ACTION: "This action is available on desktop.",
   DESKTOP_ONLY_CONFIGURATION: "Configuration is available on desktop.",
   DESKTOP_ONLY_BULK: "Bulk operations are available on desktop.",
+  SYSTEM_CONSOLE_READ_ONLY: "System Console is read-only on mobile. Actions require desktop access.",
 } as const;
