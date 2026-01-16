@@ -66,6 +66,15 @@ import AccountSettingsPage from "@/pages/admin/AccountSettingsPage";
 import RLSAuditPage from "@/pages/admin/RLSAuditPage";
 import AuthAccessReviewPage from "@/pages/admin/AuthAccessReviewPage";
 
+// Account pages
+import AccountPage from "@/pages/account/AccountPage";
+import AccountProfilePage from "@/pages/account/AccountProfilePage";
+import AccountSecurityPage from "@/pages/account/AccountSecurityPage";
+import AccountPreferencesPage from "@/pages/account/AccountPreferencesPage";
+
+// Access state pages
+import AccessRestrictedPage from "@/pages/app/AccessRestrictedPage";
+
 // Error pages
 import NotFoundPage from "@/pages/NotFoundPage";
 
@@ -96,6 +105,7 @@ const App = () => (
         <Route path="/app/pending" element={<PendingApprovalPage />} />
         <Route path="/app/no-access" element={<NoAccessPage />} />
         <Route path="/app/suspended" element={<AccessSuspendedPage />} />
+        <Route path="/app/restricted" element={<AccessRestrictedPage />} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
             FIRST-CLASS MODULE: LICENSING (/licensing)
@@ -170,6 +180,19 @@ const App = () => (
           <Route path="security/auth" element={<AuthAccessReviewPage />} />
           <Route path="security/sessions" element={<AccountSettingsPage />} />
         </Route>
+
+        {/* ═══════════════════════════════════════════════════════════════════════
+            ACCOUNT SETTINGS HUB (/account)
+            Available to all authenticated users
+        ═══════════════════════════════════════════════════════════════════════ */}
+        <Route path="/account" element={<AccountPage />}>
+          <Route path="profile" element={<AccountProfilePage />} />
+          <Route path="security" element={<AccountSecurityPage />} />
+          <Route path="preferences" element={<AccountPreferencesPage />} />
+        </Route>
+
+        {/* Access restricted page - for permission issues (NOT a 404) */}
+        <Route path="/restricted" element={<AccessRestrictedPage />} />
 
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFoundPage />} />
