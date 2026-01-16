@@ -1,9 +1,30 @@
 /**
  * INSTITUTIONAL DESIGN TOKENS — TRIBES PLATFORM
  * 
- * AUTHORITATIVE. These tokens supersede prior UI conventions.
- * This is infrastructure, not a growth product.
- * Design benchmark: financial registries, custodial systems, audit surfaces.
+ * ═══════════════════════════════════════════════════════════════════════════
+ * MASTER ENFORCEMENT DIRECTIVE — LOCKED ARCHITECTURE
+ * ═══════════════════════════════════════════════════════════════════════════
+ * 
+ * HIERARCHY (TWO LAYERS ONLY):
+ * 
+ * 1) COMPANY LAYER (NOT A WORKSPACE):
+ *    • System Console — governance, audit, compliance, security
+ *    • Accessed via user/profile menu only
+ *    • NO workspace selector, NO product navigation
+ *    • Access: platform_owner, external_auditor (read-only)
+ * 
+ * 2) WORKSPACE LAYER (OPERATING ENVIRONMENTS):
+ *    • Tribes Team — internal operations (tribes_team_admin, tribes_team_staff)
+ *    • Licensing — external licensees (licensing_user)
+ *    • Tribes Admin — administration clients (portal_client_admin, portal_client_user)
+ *    • Products exist ONLY inside workspaces
+ *    • Workspace switcher NEVER lists System Console
+ * 
+ * NAVIGATION RULES (ENFORCED):
+ * - Company Console ≠ Workspace
+ * - System Console = sparse, supervisory, non-operational
+ * - Products appear ONLY within workspaces
+ * - Mobile: one primary action per screen, no hover-only actions
  * 
  * QA GUARDRAILS:
  * - Any deviation from these tokens is a regression
@@ -11,6 +32,7 @@
  * - No colorful icons, excessive animations, or playful elements
  * - TRIBES must be ALL CAPS everywhere
  * - No "Tribes Platform" label - it adds no institutional value
+ * ═══════════════════════════════════════════════════════════════════════════
  */
 
 // ═══════════════════════════════════════════════════════════════════════════

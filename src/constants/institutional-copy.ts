@@ -294,10 +294,36 @@ export const AUDIT_COPY = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
-// WORKSPACE LANDING COPY
+// WORKSPACE LANDING COPY — LOCKED HIERARCHY
 // ═══════════════════════════════════════════════════════════════════════════
 
+/**
+ * WORKSPACE HIERARCHY (LOCKED):
+ * 
+ * COMPANY LAYER (NOT A WORKSPACE):
+ * - System Console: governance, audit, compliance, security
+ * 
+ * WORKSPACE LAYER (OPERATING ENVIRONMENTS):
+ * - Tribes Team: internal operations
+ * - Licensing: external licensees
+ * - Tribes Admin: administration clients
+ */
+
 export const WORKSPACE_LANDING = {
+  // ─────────────────────────────────────────────────────────────────────────
+  // WORKSPACE: TRIBES TEAM (Internal Operations)
+  // ─────────────────────────────────────────────────────────────────────────
+  TRIBES_TEAM: {
+    title: "Tribes Team",
+    description: "Internal operations and oversight",
+    empty_title: "Operations queue",
+    empty_body: "No items require attention at this time.",
+    empty_detail: "Pending requests and operational items will appear here.",
+  },
+  
+  // ─────────────────────────────────────────────────────────────────────────
+  // WORKSPACE: LICENSING (External Licensees)
+  // ─────────────────────────────────────────────────────────────────────────
   LICENSING: {
     title: "Licensing requests",
     description: "Submit and manage licensing requests",
@@ -307,6 +333,10 @@ export const WORKSPACE_LANDING = {
     cta: "Submit a licensing request",
     footer: "All licensing activity is permanently recorded.",
   },
+  
+  // ─────────────────────────────────────────────────────────────────────────
+  // WORKSPACE: TRIBES ADMIN (Administration Clients)
+  // ─────────────────────────────────────────────────────────────────────────
   PORTAL: {
     title: "Your records",
     description: "Agreements, submissions, and permanent administration records",
@@ -316,8 +346,42 @@ export const WORKSPACE_LANDING = {
     primary_cta: "Submit a song for administration",
     secondary_cta: "View agreements",
   },
-  ADMIN: {
-    title: "Tribes Team",
-    description: "Platform operations and governance",
+  
+  // Alias for Tribes Admin (new canonical name)
+  TRIBES_ADMIN: {
+    title: "Your records",
+    description: "Agreements, submissions, and permanent administration records",
+    empty_title: "Your records",
+    empty_body: "This workspace contains your agreements, submissions, and permanent administration records.",
+    empty_detail: "No records are available yet.",
+    primary_cta: "Submit a song for administration",
+    secondary_cta: "View agreements",
   },
+  
+  // ─────────────────────────────────────────────────────────────────────────
+  // COMPANY LAYER: SYSTEM CONSOLE (NOT A WORKSPACE)
+  // ─────────────────────────────────────────────────────────────────────────
+  SYSTEM_CONSOLE: {
+    title: "System Console",
+    description: "Company governance, audit oversight, and compliance",
+    empty_title: "System operational",
+    empty_body: "No outstanding items require attention.",
+    empty_detail: "Governance dashboards and audit surfaces are available via navigation.",
+  },
+  
+  // Legacy alias (deprecated - use SYSTEM_CONSOLE)
+  ADMIN: {
+    title: "System Console",
+    description: "Company governance, audit oversight, and compliance",
+  },
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MOBILE BEHAVIOR COPY — LOCKED
+// ═══════════════════════════════════════════════════════════════════════════
+
+export const MOBILE_COPY = {
+  DESKTOP_ONLY_ACTION: "This action is available on desktop.",
+  DESKTOP_ONLY_CONFIGURATION: "Configuration is available on desktop.",
+  DESKTOP_ONLY_BULK: "Bulk operations are available on desktop.",
 } as const;

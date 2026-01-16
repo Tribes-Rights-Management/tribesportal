@@ -23,23 +23,46 @@ import { NAV_LABELS, ICON_SIZE, ICON_STROKE, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } 
 /**
  * GLOBAL HEADER — ORGANIZATION WORKSPACE NAVIGATION
  * 
- * ARCHITECTURE RULES (LOCKED):
+ * ═══════════════════════════════════════════════════════════════════════════
+ * MASTER ENFORCEMENT DIRECTIVE — LOCKED ARCHITECTURE
+ * ═══════════════════════════════════════════════════════════════════════════
+ * 
+ * HIERARCHY (TWO LAYERS ONLY):
+ * 
+ * 1) COMPANY LAYER (NOT A WORKSPACE):
+ *    • System Console — accessed via user/profile menu ONLY
+ *    • NO workspace selector in System Console
+ *    • NO product navigation in System Console
+ * 
+ * 2) WORKSPACE LAYER (OPERATING ENVIRONMENTS):
+ *    • Tribes Team — internal operations
+ *    • Licensing — external licensees
+ *    • Tribes Admin — administration clients
+ *    • Products appear ONLY within workspaces
+ *    • Workspace switcher NEVER lists System Console
+ * 
+ * NAVIGATION RULES:
  * - Company Console ≠ Organization Workspace
- * - Products (Tribes Admin, Licensing) appear ONLY within organizations
+ * - Products appear ONLY within organizations
  * - Organization switcher NEVER lists company-level consoles
  * - This architecture is enforced across desktop and mobile views
+ * - Mobile: one primary action per screen, no hover-only actions
  * 
- * Navigation Visibility:
- * - Platform Admin: Tribes Admin + Licensing (in org context) + System Console (in dropdown)
- * - Org Admin: Tribes Admin + Licensing (based on permissions)
- * - Client: Tribes Admin only
+ * ROLE-BASED VISIBILITY:
+ * - platform_owner: System Console (in dropdown) + Workspace products
+ * - external_auditor: Read-only audit access (no products)
+ * - tribes_team_*: Tribes Team workspace
+ * - licensing_user: Licensing workspace
+ * - portal_client_*: Tribes Admin workspace
+ * ═══════════════════════════════════════════════════════════════════════════
  */
 
-type PortalMode = "publishing" | "licensing" | "portal" | "admin";
+type PortalMode = "publishing" | "licensing" | "portal" | "admin" | "auditor";
 
 function useCurrentMode(): PortalMode {
   const location = useLocation();
   if (location.pathname.startsWith("/admin")) return "admin";
+  if (location.pathname.startsWith("/auditor")) return "auditor";
   if (location.pathname.startsWith("/licensing")) return "licensing";
   if (location.pathname.startsWith("/portal")) return "portal";
   if (location.pathname.includes("/licensing")) return "licensing";
@@ -47,13 +70,13 @@ function useCurrentMode(): PortalMode {
 }
 
 /**
- * WORKSPACE SELECTOR — ORGANIZATION-SCOPED
+ * WORKSPACE SELECTOR — ORGANIZATION-SCOPED ONLY
  * 
- * Terminology: "Workspace" represents separate operating environments
- * Workspaces are organizations, NOT company-level consoles
- * 
- * Microcopy rules:
- * - Label: "Workspace"
+ * RULES (LOCKED):
+ * - Lists ONLY operating workspaces (organizations)
+ * - NEVER lists System Console or company-level surfaces
+ * - Switching workspaces changes data scope everywhere
+ * - Label: "Workspace" (not "Organization")
  * - Helper: "Workspaces represent separate operating environments"
  * - Never implies product or account switching
  */
