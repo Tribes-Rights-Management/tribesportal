@@ -145,6 +145,29 @@
     --ring: rgba(0,0,0,0.20);
 
     /* ─────────────────────────────────────────────────────────────────────────────
+       AUTH GATEWAY TOKENS (LOCKED — SECTION 4)
+       Institutional access gateway dimensions. No local overrides.
+       ───────────────────────────────────────────────────────────────────────────── */
+    --auth-panel-width: 420px;
+    --auth-input-height: 48px;
+    --auth-button-height: 48px;
+    --auth-border-radius: 10px;
+    --auth-font-scale: 15px;
+    --auth-bg: #F7F7F8;
+    --auth-panel-bg: #FFFFFF;
+    --auth-panel-border: rgba(0,0,0,0.08);
+    --auth-input-border: #D4D4D8;
+    --auth-input-border-focus: #A1A1AA;
+    --auth-button-bg: #18181B;
+    --auth-button-text: #FFFFFF;
+    --auth-button-disabled-bg: #E4E4E7;
+    --auth-button-disabled-text: #A1A1AA;
+    --auth-heading: #18181B;
+    --auth-subtext: #71717A;
+    --auth-label: #52525B;
+    --auth-system-label: #A1A1AA;
+
+    /* ─────────────────────────────────────────────────────────────────────────────
        APPLE-GRADE DESIGN TOKENS
        Light: #F5F5F7 page bg, #FFFFFF cards, #1D1D1F text, #6E6E73 secondary
        ───────────────────────────────────────────────────────────────────────────── */
