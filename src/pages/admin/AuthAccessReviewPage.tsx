@@ -343,8 +343,13 @@ export default function SecurityVerificationPage() {
                       <TableCell>
                         <CheckStatusBadge status={check.status} />
                       </TableCell>
-                      <TableCell className="text-[11px] text-[#52525B] max-w-[300px] truncate">
-                        {check.details || "—"}
+                      <TableCell 
+                        className="text-[11px] max-w-[300px]"
+                        style={{ color: 'var(--tribes-text-muted)' }}
+                      >
+                        <span className="line-clamp-2 break-words" style={{ lineHeight: '1.45' }}>
+                          {check.details || "—"}
+                        </span>
                       </TableCell>
                     </TableRow>
                   ))}

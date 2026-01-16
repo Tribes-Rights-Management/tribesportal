@@ -91,12 +91,21 @@ function WorkspaceRow({
       )}
     >
       <div className="min-w-0 flex-1">
-        {/* Workspace name */}
-        <p className="text-[14px] font-medium text-white/90 truncate">
+        {/* Workspace name - single line with ellipsis */}
+        <p 
+          className="text-[14px] font-medium truncate"
+          style={{ color: 'var(--tribes-text)' }}
+        >
           {membership.tenant_name}
         </p>
-        {/* Purpose descriptor */}
-        <p className="text-[12px] text-white/40 mt-0.5 truncate">
+        {/* Purpose descriptor - 2-line clamp for mobile readability */}
+        <p 
+          className="text-[12px] mt-0.5 line-clamp-2 break-words"
+          style={{ 
+            color: 'var(--tribes-text-muted)', 
+            lineHeight: '1.45',
+          }}
+        >
           {purpose}
         </p>
       </div>

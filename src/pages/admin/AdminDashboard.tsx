@@ -330,27 +330,31 @@ function NavRow({
   return (
     <Link 
       to={to} 
-      className="flex items-center justify-between px-4 md:px-5 py-3 md:py-3.5 transition-colors duration-150 group hover:bg-white/[0.02]"
+      className="flex items-center justify-between gap-3 px-4 md:px-5 py-3 md:py-3.5 transition-colors duration-150 group hover:bg-white/[0.02]"
       style={{ 
         borderBottom: '1px solid var(--platform-border)',
       }}
     >
       <div className="min-w-0 flex-1">
         <p 
-          className="text-[13px] md:text-[14px]"
+          className="text-[13px] md:text-[14px] truncate"
           style={{ color: 'var(--platform-text)' }}
         >
           {label}
         </p>
         <p 
-          className="text-[11px] md:text-[12px] mt-0.5 truncate"
-          style={{ color: 'var(--platform-text-muted)', opacity: 0.7 }}
+          className="text-[11px] md:text-[12px] mt-0.5 line-clamp-2 break-words"
+          style={{ 
+            color: 'var(--platform-text-muted)', 
+            opacity: 0.7,
+            lineHeight: '1.45',
+          }}
         >
           {description}
         </p>
       </div>
       <ChevronRight 
-        className="h-3.5 w-3.5 shrink-0 ml-3 opacity-30 group-hover:opacity-50 transition-opacity"
+        className="h-3.5 w-3.5 shrink-0 opacity-30 group-hover:opacity-50 transition-opacity"
         style={{ color: 'var(--platform-text-muted)' }}
       />
     </Link>
