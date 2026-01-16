@@ -66,12 +66,14 @@ import AccountSettingsPage from "@/pages/admin/AccountSettingsPage";
 import RLSAuditPage from "@/pages/admin/RLSAuditPage";
 import AuthAccessReviewPage from "@/pages/admin/AuthAccessReviewPage";
 import DisclosuresPage from "@/pages/admin/DisclosuresPage";
+import CorrelationChainPage from "@/pages/admin/CorrelationChainPage";
 
 // Auditor pages
 import AuditorLanding from "@/pages/auditor/AuditorLanding";
 import AuditorActivityLogPage from "@/pages/auditor/AuditorActivityLogPage";
 import AuditorLicensingPage from "@/pages/auditor/AuditorLicensingPage";
 import AuditorAccessLogPage from "@/pages/auditor/AuditorAccessLogPage";
+import AuditorChainPage from "@/pages/auditor/AuditorChainPage";
 
 // Account pages
 import AccountPage from "@/pages/account/AccountPage";
@@ -187,6 +189,7 @@ const App = () => (
           <Route path="security/auth" element={<AuthAccessReviewPage />} />
           <Route path="security/sessions" element={<AccountSettingsPage />} />
           <Route path="disclosures" element={<DisclosuresPage />} />
+          <Route path="chain" element={<CorrelationChainPage />} />
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
@@ -197,6 +200,7 @@ const App = () => (
         <Route path="/auditor/activity" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorActivityLogPage /></RoleProtectedRoute>} />
         <Route path="/auditor/licensing" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorLicensingPage /></RoleProtectedRoute>} />
         <Route path="/auditor/access" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorAccessLogPage /></RoleProtectedRoute>} />
+        <Route path="/auditor/chain" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorChainPage /></RoleProtectedRoute>} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
             ACCOUNT SETTINGS HUB (/account)
