@@ -48,6 +48,7 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 import ApprovalsPage from "@/pages/admin/ApprovalsPage";
 import TenantsPage from "@/pages/admin/TenantsPage";
 import UserDirectoryPage from "@/pages/admin/UserDirectoryPage";
+import PermissionsPage from "@/pages/admin/PermissionsPage";
 import RLSAuditPage from "@/pages/admin/RLSAuditPage";
 import AuthAccessReviewPage from "@/pages/admin/AuthAccessReviewPage";
 
@@ -115,6 +116,7 @@ const App = () => (
           <Route path="approvals" element={<ApprovalsPage />} />
           <Route path="tenants" element={<TenantsPage />} />
           <Route path="users" element={<UserDirectoryPage />} />
+          <Route path="users/:userId/permissions" element={<PermissionsPage />} />
           <Route path="rls-audit" element={<RLSAuditPage />} />
           <Route path="security" element={<AuthAccessReviewPage />} />
         </Route>
