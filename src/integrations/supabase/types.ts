@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_logs: {
+        Row: {
+          access_type: string
+          accessed_at: string
+          id: string
+          record_id: string
+          record_type: string
+          tenant_id: string | null
+          user_email: string
+          user_id: string
+        }
+        Insert: {
+          access_type: string
+          accessed_at?: string
+          id?: string
+          record_id: string
+          record_type: string
+          tenant_id?: string | null
+          user_email: string
+          user_id: string
+        }
+        Update: {
+          access_type?: string
+          accessed_at?: string
+          id?: string
+          record_id?: string
+          record_type?: string
+          tenant_id?: string | null
+          user_email?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       access_requests: {
         Row: {
           created_at: string
@@ -49,6 +90,62 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      audit_logs: {
+        Row: {
+          action: Database["public"]["Enums"]["audit_action"]
+          action_label: string
+          actor_email: string | null
+          actor_id: string | null
+          actor_type: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: unknown
+          record_id: string | null
+          record_type: string | null
+          tenant_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["audit_action"]
+          action_label: string
+          actor_email?: string | null
+          actor_id?: string | null
+          actor_type?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown
+          record_id?: string | null
+          record_type?: string | null
+          tenant_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["audit_action"]
+          action_label?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          actor_type?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown
+          record_id?: string | null
+          record_type?: string | null
+          tenant_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tenant_memberships: {
         Row: {
@@ -181,9 +278,42 @@ export type Database = {
         Args: { _tenant_id: string; _user_id: string }
         Returns: boolean
       }
+      log_access_event: {
+        Args: {
+          _access_type: string
+          _record_id: string
+          _record_type: string
+          _tenant_id?: string
+        }
+        Returns: string
+      }
+      log_audit_event: {
+        Args: {
+          _action: Database["public"]["Enums"]["audit_action"]
+          _action_label: string
+          _details?: Json
+          _record_id?: string
+          _record_type?: string
+          _tenant_id?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       access_request_status: "pending" | "processed"
+      audit_action:
+        | "record_created"
+        | "record_updated"
+        | "record_approved"
+        | "record_rejected"
+        | "access_granted"
+        | "access_revoked"
+        | "export_generated"
+        | "document_uploaded"
+        | "document_removed"
+        | "login"
+        | "logout"
+        | "record_viewed"
       membership_status:
         | "pending"
         | "active"
@@ -321,6 +451,20 @@ export const Constants = {
   public: {
     Enums: {
       access_request_status: ["pending", "processed"],
+      audit_action: [
+        "record_created",
+        "record_updated",
+        "record_approved",
+        "record_rejected",
+        "access_granted",
+        "access_revoked",
+        "export_generated",
+        "document_uploaded",
+        "document_removed",
+        "login",
+        "logout",
+        "record_viewed",
+      ],
       membership_status: [
         "pending",
         "active",
