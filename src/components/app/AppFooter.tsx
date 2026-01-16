@@ -1,3 +1,5 @@
+import { FOOTER_COPY } from "@/constants/institutional-copy";
+
 /**
  * APP FOOTER — INSTITUTIONAL GLOBAL FOOTER
  * 
@@ -6,6 +8,7 @@
  */
 export function AppFooter() {
   const currentYear = new Date().getFullYear();
+  const copyright = FOOTER_COPY.COPYRIGHT.replace("{year}", currentYear.toString());
   
   return (
     <footer 
@@ -17,13 +20,13 @@ export function AppFooter() {
           className="text-[12px]"
           style={{ color: 'var(--platform-text-muted)' }}
         >
-          © {currentYear} Tribes Rights Management LLC. All rights reserved.
+          {copyright}
         </p>
         <p 
           className="text-[11px]"
           style={{ color: 'var(--platform-text-muted)', opacity: 0.6 }}
         >
-          Access and activity are logged for security and audit purposes.
+          {FOOTER_COPY.AUDIT_NOTICE}
         </p>
       </div>
     </footer>

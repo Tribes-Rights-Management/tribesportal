@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { EMPTY_STATES, BUTTON_LABELS } from "@/constants/institutional-copy";
 
 /**
  * INSTITUTIONAL STATE COMPONENTS — CANONICAL ERROR & EMPTY STATES
@@ -6,9 +7,9 @@ import { cn } from "@/lib/utils";
  * DESIGN PRINCIPLES:
  * 
  * EMPTY STATES — Expected, not apologetic:
- * - No illustrations, icons, or CTAs
+ * - No illustrations, icons, or CTAs (unless explicitly needed)
  * - Text-only, subdued contrast
- * - Structure: Title + Description + Optional Note
+ * - Structure: Title + Description
  * - Feels permanent, calm, expected
  * 
  * ERROR STATES — Trust-forward, not alarming:
@@ -18,6 +19,12 @@ import { cn } from "@/lib/utils";
  * - Feels procedural, not dramatic
  * 
  * All states use platform dark-theme tokens.
+ * 
+ * NON-NEGOTIABLES:
+ * - Copy must be identical wherever reused
+ * - Do not paraphrase
+ * - Do not "improve tone"
+ * - Do not add friendliness
  */
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -32,10 +39,6 @@ interface EmptyStateProps {
 
 /**
  * Standard empty state for pages and sections
- * 
- * Examples:
- * - "No works available." / "Works will appear once added to your catalog."
- * - "No royalty statements available." / "Statements will appear once processed."
  */
 export function InstitutionalEmptyState({
   title,
@@ -86,6 +89,100 @@ export function InstitutionalEmptyPanel({
     >
       <InstitutionalEmptyState title={title} description={description} />
     </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PRESET EMPTY STATES — USE THESE FOR CONSISTENCY
+// ═══════════════════════════════════════════════════════════════════════════
+
+export function LicensingRequestsEmptyState({ className }: { className?: string }) {
+  return (
+    <InstitutionalEmptyPanel
+      title={EMPTY_STATES.LICENSING_REQUESTS.title}
+      description={EMPTY_STATES.LICENSING_REQUESTS.description}
+      className={className}
+    />
+  );
+}
+
+export function LicensingAgreementsEmptyState({ className }: { className?: string }) {
+  return (
+    <InstitutionalEmptyPanel
+      title={EMPTY_STATES.LICENSING_AGREEMENTS.title}
+      description={EMPTY_STATES.LICENSING_AGREEMENTS.description}
+      className={className}
+    />
+  );
+}
+
+export function PortalAgreementsEmptyState({ className }: { className?: string }) {
+  return (
+    <InstitutionalEmptyPanel
+      title={EMPTY_STATES.PORTAL_AGREEMENTS.title}
+      description={EMPTY_STATES.PORTAL_AGREEMENTS.description}
+      className={className}
+    />
+  );
+}
+
+export function PortalSubmissionsEmptyState({ className }: { className?: string }) {
+  return (
+    <InstitutionalEmptyPanel
+      title={EMPTY_STATES.PORTAL_SUBMISSIONS.title}
+      description={EMPTY_STATES.PORTAL_SUBMISSIONS.description}
+      className={className}
+    />
+  );
+}
+
+export function PortalDocumentsEmptyState({ className }: { className?: string }) {
+  return (
+    <InstitutionalEmptyPanel
+      title={EMPTY_STATES.PORTAL_DOCUMENTS.title}
+      description={EMPTY_STATES.PORTAL_DOCUMENTS.description}
+      className={className}
+    />
+  );
+}
+
+export function PortalStatementsEmptyState({ className }: { className?: string }) {
+  return (
+    <InstitutionalEmptyPanel
+      title={EMPTY_STATES.PORTAL_STATEMENTS.title}
+      description={EMPTY_STATES.PORTAL_STATEMENTS.description}
+      className={className}
+    />
+  );
+}
+
+export function PendingApprovalsEmptyState({ className }: { className?: string }) {
+  return (
+    <InstitutionalEmptyState
+      title={EMPTY_STATES.PENDING_APPROVALS.title}
+      description={EMPTY_STATES.PENDING_APPROVALS.description}
+      className={className}
+    />
+  );
+}
+
+export function SystemAlertsEmptyState({ className }: { className?: string }) {
+  return (
+    <InstitutionalEmptyState
+      title={EMPTY_STATES.SYSTEM_ALERTS.title}
+      description={EMPTY_STATES.SYSTEM_ALERTS.description}
+      className={className}
+    />
+  );
+}
+
+export function MessagesEmptyState({ className }: { className?: string }) {
+  return (
+    <InstitutionalEmptyPanel
+      title={EMPTY_STATES.MESSAGES.title}
+      description={EMPTY_STATES.MESSAGES.description}
+      className={className}
+    />
   );
 }
 
@@ -163,7 +260,7 @@ export function SystemErrorState({
           className="mt-4 text-[13px] font-medium transition-colors duration-75"
           style={{ color: "var(--platform-text)" }}
         >
-          Retry
+          {BUTTON_LABELS.RETRY}
         </button>
       )}
     </div>

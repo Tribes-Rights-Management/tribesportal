@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
+import { EMPTY_STATES, WORKSPACE_LANDING } from "@/constants/institutional-copy";
 
 /**
  * ADMIN DASHBOARD — TRIBES TEAM LANDING (CANONICAL)
@@ -29,13 +30,13 @@ export default function AdminDashboard() {
             className="text-[28px] font-semibold tracking-[-0.02em]"
             style={{ color: 'var(--platform-text)' }}
           >
-            Tribes Team
+            {WORKSPACE_LANDING.ADMIN.title}
           </h1>
           <p 
             className="text-[15px] mt-1.5 leading-relaxed"
             style={{ color: 'var(--platform-text-secondary)' }}
           >
-            Platform operations and governance
+            {WORKSPACE_LANDING.ADMIN.description}
           </p>
         </header>
 
@@ -64,13 +65,13 @@ export default function AdminDashboard() {
                 className="text-[14px] font-medium"
                 style={{ color: 'var(--platform-text-secondary)' }}
               >
-                No pending approvals
+                {EMPTY_STATES.PENDING_APPROVALS.title}
               </p>
               <p 
                 className="text-[13px] mt-1"
                 style={{ color: 'var(--platform-text-muted)' }}
               >
-                All current access requests have been reviewed.
+                {EMPTY_STATES.PENDING_APPROVALS.description}
               </p>
             </div>
           </div>
@@ -101,13 +102,13 @@ export default function AdminDashboard() {
                 className="text-[14px] font-medium"
                 style={{ color: 'var(--platform-text-secondary)' }}
               >
-                No active alerts
+                {EMPTY_STATES.SYSTEM_ALERTS.title}
               </p>
               <p 
                 className="text-[13px] mt-1"
                 style={{ color: 'var(--platform-text-muted)' }}
               >
-                The platform is operating normally.
+                {EMPTY_STATES.SYSTEM_ALERTS.description}
               </p>
             </div>
           </div>
