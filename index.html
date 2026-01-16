@@ -3,8 +3,8 @@
   <script>
     (function() {
       var stored = localStorage.getItem('tribes.themeMode');
-      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      var theme = stored === 'dark' ? 'dark' : stored === 'light' ? 'light' : (prefersDark ? 'dark' : 'light');
+      // Default to light mode unless explicitly set to dark
+      var theme = stored === 'dark' ? 'dark' : 'light';
       document.documentElement.classList.remove('light', 'dark');
       document.documentElement.classList.add(theme);
     })();
