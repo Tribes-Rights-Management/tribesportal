@@ -47,7 +47,7 @@ export default function SignInPage() {
   if (loading) {
     return (
       <AuthLayout>
-        <p className="text-center text-base" style={{ color: "rgba(0,0,0,0.62)" }}>
+        <p className="text-center text-[15px] text-black/60">
           Verifying access...
         </p>
       </AuthLayout>
@@ -57,28 +57,21 @@ export default function SignInPage() {
   return (
     <AuthLayout>
       {/* Header */}
-      <div className="text-center mb-6">
-        <h1 
-          className="text-[28px] font-semibold tracking-tight leading-[1.2]"
-          style={{ color: "rgba(0,0,0,0.92)" }}
-        >
+      <div className="text-center mb-7">
+        <h1 className="text-[28px] font-semibold tracking-[-0.02em] leading-[1.15] text-black/90">
           Sign in to Tribes
         </h1>
-        <p 
-          className="mt-2 text-[15px]"
-          style={{ color: "rgba(0,0,0,0.62)" }}
-        >
+        <p className="mt-2.5 text-[15px] text-black/55">
           Secure access via email sign-in link
         </p>
       </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           <label 
             htmlFor="email" 
-            className="text-[14px] font-medium block"
-            style={{ color: "rgba(0,0,0,0.92)" }}
+            className="text-[14px] font-medium block text-black/85"
           >
             Email address
           </label>
@@ -91,40 +84,21 @@ export default function SignInPage() {
             required
             autoFocus
             autoComplete="email"
-            className="w-full h-[44px] px-3.5 text-[15px] rounded-[12px] transition-shadow duration-150"
-            style={{
-              background: "#ffffff",
-              border: "1px solid rgba(0,0,0,0.10)",
-              color: "rgba(0,0,0,0.92)",
-              outline: "none",
-            }}
-            onFocus={(e) => {
-              e.target.style.boxShadow = "0 0 0 2px rgba(0,0,0,0.20)";
-            }}
-            onBlur={(e) => {
-              e.target.style.boxShadow = "none";
-            }}
+            className="w-full h-11 px-3.5 text-[15px] rounded-[10px] bg-white border border-black/10 text-black/90 placeholder:text-black/35 outline-none transition-shadow duration-150 focus:ring-2 focus:ring-black/15"
           />
         </div>
 
         <button 
           type="submit" 
           disabled={isSubmitting || !email.trim()}
-          className="w-full h-[44px] text-[15px] font-medium rounded-[12px] transition-all duration-150 disabled:opacity-40"
-          style={{
-            background: "rgba(0,0,0,0.92)",
-            color: "#ffffff",
-          }}
+          className="w-full h-11 text-[15px] font-medium rounded-[10px] bg-[#111] text-white transition-all duration-150 hover:bg-[#222] disabled:opacity-40 disabled:bg-neutral-400"
         >
           {isSubmitting ? "Sending..." : "Continue"}
         </button>
       </form>
 
       {/* Institutional Notice */}
-      <p 
-        className="mt-5 text-center text-[13px]"
-        style={{ color: "rgba(0,0,0,0.46)" }}
-      >
+      <p className="mt-6 text-center text-[13px] text-black/45">
         Access is restricted to approved accounts.
       </p>
 
@@ -133,8 +107,7 @@ export default function SignInPage() {
         <button 
           type="button"
           onClick={() => setHelpDialogOpen(true)}
-          className="text-[13px] hover:underline transition-colors duration-150"
-          style={{ color: "rgba(0,0,0,0.46)" }}
+          className="text-[13px] text-black/45 hover:text-black/70 hover:underline transition-colors duration-150"
         >
           Trouble signing in?
         </button>

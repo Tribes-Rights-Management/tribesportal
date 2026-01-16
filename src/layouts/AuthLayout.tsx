@@ -5,9 +5,15 @@ interface AuthLayoutProps {
 }
 
 /**
- * Premium auth layout - Northwestern Mutual / Apple grade
+ * Premium auth layout - Apple/Northwestern Mutual grade
  * Isolated from app shell - no header, no navigation
  * Light mode only - institutional aesthetic
+ * 
+ * Specs:
+ * - Background: #F5F5F7 (Apple gray)
+ * - Card: white, 420px max, 20px radius, subtle border/shadow
+ * - Inputs: 44px height, 12px radius
+ * - Primary button: near-black (#111), 44px height
  */
 export function AuthLayout({ children }: AuthLayoutProps) {
   useEffect(() => {
@@ -19,16 +25,19 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center px-4 py-10 overflow-auto"
-      style={{ background: "#f5f5f5" }}
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-auto"
+      style={{ background: "#F5F5F7" }}
     >
-      <div className="w-full" style={{ maxWidth: "min(440px, calc(100vw - 32px))" }}>
+      <div 
+        className="w-full"
+        style={{ maxWidth: "min(420px, calc(100vw - 32px))" }}
+      >
         <div 
-          className="rounded-[18px] px-6 py-8 sm:px-8 sm:py-10"
+          className="rounded-[20px] px-7 py-8 sm:px-8 sm:py-10"
           style={{
             background: "#ffffff",
-            border: "1px solid rgba(0,0,0,0.10)",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+            border: "1px solid rgba(0,0,0,0.08)",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
           }}
         >
           {children}
