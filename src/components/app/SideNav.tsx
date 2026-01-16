@@ -3,15 +3,16 @@ import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
 
 /**
- * INSTITUTIONAL SIDE NAVIGATION (CANONICAL)
+ * INSTITUTIONAL SIDE NAVIGATION — DARK CANVAS (CANONICAL)
  * 
  * Design Rules:
+ * - Dark surface matching platform canvas
  * - Left-aligned, no icons unless strictly necessary
  * - Active state is typographic (weight/opacity), not color-heavy
  * - No pills, chips, or floating nav
  * - Flat hierarchy, clear functional groupings
  * - No shadows or elevation
- * - No animated transitions beyond essential feedback
+ * - Hairline border separation
  */
 
 interface NavItem {
@@ -27,8 +28,8 @@ interface SideNavProps {
 }
 
 /**
- * Side navigation link - institutional styling
- * Active state: weight/opacity, not background color blocks
+ * Side navigation link - dark institutional styling
+ * Active state: weight/opacity, subtle background
  */
 function SideNavLink({ 
   to, 
@@ -46,10 +47,10 @@ function SideNavLink({
           "flex items-center gap-2.5 px-3 py-2 text-[13px] rounded",
           // Transition: only essential feedback (180ms institutional spec)
           "transition-colors duration-[180ms]",
-          // Active: typographic emphasis, minimal background
+          // Active: typographic emphasis, subtle surface
           isActive
-            ? "font-medium text-[#111] bg-black/[0.04]"
-            : "text-[#6B6B6B] hover:text-[#111] hover:bg-black/[0.02]"
+            ? "font-medium text-[var(--platform-text)] bg-white/[0.06]"
+            : "text-[var(--platform-text-secondary)] hover:text-[var(--platform-text)] hover:bg-white/[0.03]"
         )
       }
     >
@@ -62,7 +63,11 @@ function SideNavLink({
 export function SideNav({ items, settingsItems }: SideNavProps) {
   return (
     <nav 
-      className="w-48 shrink-0 border-r border-[#E8E8E8] bg-[#FAFAFA] flex flex-col"
+      className="w-48 shrink-0 flex flex-col"
+      style={{ 
+        backgroundColor: 'var(--platform-surface)',
+        borderRight: '1px solid var(--platform-border)'
+      }}
     >
       {/* Main navigation - functional grouping */}
       <div className="flex-1 py-3">
@@ -73,9 +78,12 @@ export function SideNav({ items, settingsItems }: SideNavProps) {
         </div>
       </div>
       
-      {/* Settings at bottom - separated by minimal divider */}
+      {/* Settings at bottom - separated by hairline */}
       {settingsItems && settingsItems.length > 0 && (
-        <div className="border-t border-[#E8E8E8] py-2">
+        <div 
+          className="py-2"
+          style={{ borderTop: '1px solid var(--platform-border)' }}
+        >
           <div className="px-2 space-y-0.5">
             {settingsItems.map((item) => (
               <SideNavLink key={item.to} {...item} />

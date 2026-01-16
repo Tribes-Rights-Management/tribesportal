@@ -3,30 +3,61 @@ import { ChevronRight } from "lucide-react";
 import { NAV_LABELS } from "@/styles/tokens";
 
 /**
- * ADMIN DASHBOARD — GOVERNANCE COMMAND CENTER (CANONICAL)
+ * ADMIN DASHBOARD — INSTITUTIONAL COMMAND CENTER (CANONICAL)
  * 
  * Design Rules:
+ * - Dark canvas, no light "page canvas"
  * - Text-first hierarchy, no card metrics
- * - Inline status descriptions, not celebrated numbers
- * - Tables prioritized over cards
- * - Dense, institutional spacing
+ * - Status rows instead of stat cards
+ * - Narrow content column (institutional density)
+ * - Flat panels with hairline borders
  * - Language: Access Control, Organizations, Audit Coverage
  */
 export default function AdminDashboard() {
   return (
-    <div className="max-w-[640px] mx-auto px-6 py-8">
+    <div className="max-w-[560px] mx-auto px-6 py-8">
       {/* Header - dense, authoritative */}
       <header className="mb-6">
-        <h1 className="text-[20px] font-medium tracking-[-0.01em] text-[#111]">
+        <h1 className="text-[18px] font-medium tracking-[-0.01em] text-[var(--platform-text)]">
           {NAV_LABELS.ADMINISTRATION}
         </h1>
-        <p className="text-[13px] text-[#6B6B6B] mt-1">
+        <p className="text-[13px] text-[var(--platform-text-secondary)] mt-1">
           Platform governance and access control
         </p>
       </header>
 
-      {/* Navigation sections - flat, functional */}
-      <div className="border border-[#E5E5E5] rounded-md divide-y divide-[#E5E5E5] bg-white">
+      {/* System Status - text-first, not card metrics */}
+      <section className="mb-6">
+        <div 
+          className="rounded-md"
+          style={{ 
+            backgroundColor: 'var(--platform-surface)',
+            border: '1px solid var(--platform-border)'
+          }}
+        >
+          <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--platform-border)' }}>
+            <p className="text-[10px] font-medium uppercase tracking-[0.06em] text-[var(--platform-text-muted)]">
+              System Status
+            </p>
+          </div>
+          <div className="divide-y" style={{ borderColor: 'var(--platform-border)' }}>
+            <StatusRow label="Pending approvals" value="0" />
+            <StatusRow label="Active users" value="0" />
+            <StatusRow label="Active organizations" value="0" />
+            <StatusRow label="Security alerts" value="0" />
+          </div>
+        </div>
+      </section>
+
+      {/* Navigation sections - flat panels */}
+      <div 
+        className="rounded-md divide-y"
+        style={{ 
+          backgroundColor: 'var(--platform-surface)',
+          border: '1px solid var(--platform-border)',
+          borderColor: 'var(--platform-border)'
+        }}
+      >
         {/* Access & Identity */}
         <Section title="Access & Identity">
           <NavRow
@@ -82,6 +113,19 @@ export default function AdminDashboard() {
   );
 }
 
+/** Status row - inline text, not celebrated metric */
+function StatusRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div 
+      className="flex items-center justify-between px-4 py-2.5"
+      style={{ borderColor: 'var(--platform-border)' }}
+    >
+      <span className="text-[13px] text-[var(--platform-text-secondary)]">{label}</span>
+      <span className="text-[13px] font-medium text-[var(--platform-text)]">{value}</span>
+    </div>
+  );
+}
+
 function Section({ 
   title, 
   children 
@@ -91,7 +135,7 @@ function Section({
 }) {
   return (
     <div className="px-4 py-3">
-      <p className="text-[10px] font-medium uppercase tracking-[0.06em] text-[#8A8A8A] mb-2">
+      <p className="text-[10px] font-medium uppercase tracking-[0.06em] text-[var(--platform-text-muted)] mb-2">
         {title}
       </p>
       <div className="space-y-0">
@@ -113,17 +157,17 @@ function NavRow({
   return (
     <Link 
       to={to} 
-      className="flex items-center justify-between py-2 -mx-1 px-1 rounded hover:bg-[#F5F5F5] transition-colors duration-[180ms] group"
+      className="flex items-center justify-between py-2 -mx-1 px-1 rounded hover:bg-white/[0.03] transition-colors duration-[180ms] group"
     >
       <div>
-        <p className="text-[14px] font-medium text-[#111]">
+        <p className="text-[14px] font-medium text-[var(--platform-text)]">
           {label}
         </p>
-        <p className="text-[12px] text-[#8A8A8A]">
+        <p className="text-[12px] text-[var(--platform-text-muted)]">
           {meta}
         </p>
       </div>
-      <ChevronRight className="h-4 w-4 text-[#D4D4D4] group-hover:text-[#8A8A8A] transition-colors" />
+      <ChevronRight className="h-4 w-4 text-[var(--platform-text-muted)] group-hover:text-[var(--platform-text-secondary)] transition-colors" />
     </Link>
   );
 }
