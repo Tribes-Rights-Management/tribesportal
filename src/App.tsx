@@ -98,6 +98,18 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      {/* iOS Safari underlay - prevents white bleed during bounce/overscroll */}
+      <div
+        id="ios-underlay"
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: -1,
+          background: "var(--tribes-bg)",
+          pointerEvents: "none",
+        }}
+      />
       <Toaster />
       <Sonner />
       <Routes>
