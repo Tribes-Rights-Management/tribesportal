@@ -59,10 +59,10 @@ export default function SignInPage() {
     <AuthLayout>
       {/* Header */}
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-[#1D1D1F] dark:text-[#F5F5F7]">
+        <h1 className="text-2xl font-semibold tracking-tight text-[#1D1D1F]">
           Sign in to Tribes
         </h1>
-        <p className="mt-2 text-sm text-black/60 dark:text-white/60">
+        <p className="mt-2 text-sm text-black/60">
           Secure access via email sign-in link
         </p>
       </div>
@@ -72,7 +72,7 @@ export default function SignInPage() {
         <div className="space-y-1.5">
           <Label 
             htmlFor="email" 
-            className="text-sm font-medium text-[#1D1D1F] dark:text-[#F5F5F7] block"
+            className="text-sm font-medium text-[#1D1D1F] block"
           >
             Email address
           </Label>
@@ -85,21 +85,21 @@ export default function SignInPage() {
             required
             autoFocus
             autoComplete="email"
-            className="h-11 px-3.5 text-[15px] bg-white dark:bg-[#0f1012] border-black/15 dark:border-white/15 rounded-xl placeholder:text-black/40 dark:placeholder:text-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]/50 transition-colors"
+            className="h-11 px-3.5 text-[15px] bg-white border-black/15 rounded-xl placeholder:text-black/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]/50 transition-colors"
           />
         </div>
 
         <Button 
           type="submit" 
           disabled={isSubmitting || !email.trim()}
-          className="w-full h-11 text-[15px] font-medium rounded-xl bg-[#111] text-white hover:bg-[#222] dark:bg-[#f5f5f5] dark:text-[#111] dark:hover:bg-[#e5e5e5] disabled:opacity-40 transition-colors"
+          className="w-full h-11 text-[15px] font-medium rounded-xl bg-[#111] text-white hover:bg-[#222] disabled:opacity-40 transition-colors"
         >
           {isSubmitting ? "Sending..." : "Continue"}
         </Button>
       </form>
 
       {/* Institutional Notice */}
-      <p className="mt-5 text-center text-xs text-black/50 dark:text-white/50">
+      <p className="mt-5 text-center text-xs text-black/50">
         Access is restricted to approved accounts.
       </p>
 
@@ -108,7 +108,7 @@ export default function SignInPage() {
         <button 
           type="button"
           onClick={() => setHelpDialogOpen(true)}
-          className="text-xs text-black/50 dark:text-white/50 hover:text-black/70 dark:hover:text-white/70 hover:underline transition-colors"
+          className="text-xs text-black/50 hover:text-black/70 hover:underline transition-colors"
         >
           Trouble signing in?
         </button>

@@ -1,22 +1,13 @@
 <!doctype html>
 <html lang="en" class="light">
   <head>
-    <script>
-      (function() {
-        var stored = localStorage.getItem('tribes.themeMode');
-        // Default to light mode unless explicitly set to dark
-        var theme = stored === 'dark' ? 'dark' : 'light';
-        document.documentElement.classList.remove('light', 'dark');
-        document.documentElement.classList.add(theme);
-      })();
-    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     
     <!-- NOINDEX: This is an authenticated portal, not for public discovery -->
     <meta name="robots" content="noindex, nofollow" />
     
-    <!-- iOS Safari: Dark status bar + full viewport -->
+    <!-- iOS Safari: Light status bar + full viewport -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="theme-color" content="#ffffff" />
