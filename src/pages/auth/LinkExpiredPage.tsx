@@ -1,55 +1,124 @@
 import { Link } from "react-router-dom";
 import { AuthLayout } from "@/layouts/AuthLayout";
-import { SYSTEM_COPY } from "@/styles/tokens";
 
 /**
- * LinkExpiredPage - System boundary for expired verification links
+ * LinkExpiredPage — System boundary for expired verification links
  * 
- * DESIGN: Same dark environment as auth, institutional language
- * NO friendly messaging, NO card UI
+ * DESIGN: Dark canvas, institutional language
+ * Same surface as AuthSurface - no visual mode switch
  */
 export default function LinkExpiredPage() {
+  const colors = {
+    heading: '#E8E8E6',
+    body: '#8A8A8A',
+    muted: '#5A5A5A',
+    buttonBg: '#E8E8E6',
+    buttonText: '#0A0A0B',
+    buttonHover: '#D0D0CE',
+  };
+
   return (
     <AuthLayout>
       {/* System identifier */}
-      <div className="mb-10 text-center">
-        <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-[#4A4A4A]">
-          Tribes Rights Management System
+      <div style={{ marginBottom: '40px' }}>
+        <span 
+          style={{ 
+            fontSize: '10px', 
+            fontWeight: 500, 
+            letterSpacing: '0.16em', 
+            textTransform: 'uppercase',
+            color: colors.muted,
+          }}
+        >
+          Tribes Rights Management
         </span>
       </div>
 
-      {/* Heading - declarative, not apologetic */}
-      <h1 className="text-[22px] font-medium leading-[1.25] text-[#E5E5E3] text-center tracking-[-0.02em]">
-        {SYSTEM_COPY.LINK_EXPIRED_TITLE}
+      {/* Heading — declarative, not apologetic */}
+      <h1 
+        style={{ 
+          fontSize: '28px', 
+          fontWeight: 500, 
+          lineHeight: 1.2,
+          color: colors.heading,
+          letterSpacing: '-0.02em',
+          margin: 0,
+        }}
+      >
+        Verification link expired
       </h1>
 
-      {/* Body - procedural, neutral */}
-      <p className="mt-4 text-[14px] leading-[1.6] text-[#707070] text-center">
-        {SYSTEM_COPY.LINK_EXPIRED_BODY}
+      {/* Body — procedural, neutral */}
+      <p 
+        style={{ 
+          marginTop: '12px', 
+          fontSize: '14px', 
+          lineHeight: 1.5,
+          color: colors.body,
+        }}
+      >
+        This access link is no longer valid. Request a new verification link to continue.
       </p>
 
       {/* Action */}
-      <div className="mt-10">
+      <div style={{ marginTop: '32px' }}>
         <Link
           to="/auth/sign-in"
-          className="block w-full h-[52px] rounded-[6px] bg-[#E5E5E3] text-[#0A0A0B] text-[15px] font-medium text-center leading-[52px] hover:bg-[#D5D5D3] transition-colors duration-75"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '48px',
+            borderRadius: '6px',
+            backgroundColor: colors.buttonBg,
+            color: colors.buttonText,
+            fontSize: '15px',
+            fontWeight: 500,
+            textDecoration: 'none',
+            transition: 'background-color 100ms ease',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = colors.buttonHover;
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = colors.buttonBg;
+          }}
         >
-          Request new access link
+          Request new verification link
         </Link>
       </div>
 
       {/* Policy notice */}
-      <p className="mt-12 text-center text-[12px] leading-[1.5] text-[#4A4A4A]">
-        {SYSTEM_COPY.CONTACT_ADMIN}
+      <p 
+        style={{ 
+          marginTop: '48px', 
+          fontSize: '12px', 
+          lineHeight: 1.5,
+          color: colors.muted,
+        }}
+      >
+        Contact administrator for access assistance.
       </p>
 
       {/* Support */}
-      <p className="mt-2 text-center">
+      <p style={{ marginTop: '8px' }}>
         <a 
-          href={`mailto:${SYSTEM_COPY.SUPPORT_EMAIL}`}
-          className="text-[12px] text-[#4A4A4A] hover:text-[#606060] transition-colors duration-75"
+          href="mailto:contact@tribesassets.com"
+          style={{
+            fontSize: '12px',
+            color: colors.muted,
+            textDecoration: 'none',
+            transition: 'color 100ms ease',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.color = colors.body;
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.color = colors.muted;
+          }}
         >
-          {SYSTEM_COPY.SUPPORT_EMAIL}
+          contact@tribesassets.com
         </a>
       </p>
     </AuthLayout>

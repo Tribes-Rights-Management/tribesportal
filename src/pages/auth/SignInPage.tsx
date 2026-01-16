@@ -27,8 +27,8 @@ export default function SignInPage() {
   if (loading) {
     return (
       <AuthLayout>
-        <p className="text-center text-[14px] text-[#505050]">
-          Verifying access…
+        <p style={{ fontSize: '14px', color: '#8A8A8A' }}>
+          Verifying access
         </p>
       </AuthLayout>
     );

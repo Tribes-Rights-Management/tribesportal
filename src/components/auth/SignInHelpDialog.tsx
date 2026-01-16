@@ -15,6 +15,12 @@ interface SignInHelpDialogProps {
   onResendLink: () => Promise<{ error: Error | null }>;
 }
 
+/**
+ * SignInHelpDialog — Institutional access assistance modal
+ * 
+ * DESIGN: Dark theme to match auth surface
+ * Minimal, functional, no friendly language
+ */
 export function SignInHelpDialog({
   open,
   onOpenChange,
@@ -24,15 +30,25 @@ export function SignInHelpDialog({
   const { toast } = useToast();
   const [isResending, setIsResending] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [showCopiedTooltip, setShowCopiedTooltip] = useState(false);
 
   const supportEmail = "contact@tribesassets.com";
+
+  const colors = {
+    bg: '#141415',
+    border: 'rgba(255,255,255,0.08)',
+    heading: '#E8E8E6',
+    body: '#8A8A8A',
+    muted: '#5A5A5A',
+    buttonBg: '#E8E8E6',
+    buttonText: '#0A0A0B',
+    buttonHover: '#D0D0CE',
+  };
 
   const handleResendLink = async () => {
     if (!email.trim()) {
       toast({
         title: "Email required",
-        description: "Please enter your email address first.",
+        description: "Enter your email address first.",
         variant: "destructive",
       });
       onOpenChange(false);
@@ -46,13 +62,13 @@ export function SignInHelpDialog({
     if (error) {
       toast({
         title: "Unable to send",
-        description: "Please try again or contact support.",
+        description: "Try again or contact support.",
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Sign-in link sent",
-        description: "Check your inbox for a new link.",
+        title: "Verification link sent",
+        description: "Check your inbox.",
       });
       onOpenChange(false);
     }
@@ -62,11 +78,7 @@ export function SignInHelpDialog({
     try {
       await navigator.clipboard.writeText(supportEmail);
       setCopied(true);
-      setShowCopiedTooltip(true);
-      setTimeout(() => {
-        setCopied(false);
-        setShowCopiedTooltip(false);
-      }, 1200);
+      setTimeout(() => setCopied(false), 1200);
     } catch {
       toast({
         title: "Unable to copy",
@@ -75,11 +87,9 @@ export function SignInHelpDialog({
     }
   };
 
-  // Reset state when modal closes
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
       setCopied(false);
-      setShowCopiedTooltip(false);
     }
     onOpenChange(newOpen);
   };
@@ -88,91 +98,132 @@ export function SignInHelpDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent 
         hideDefaultClose
-        className="w-[min(520px,calc(100vw-48px))] max-w-[520px] rounded-[16px] border border-black/8 bg-white p-6 pt-5 shadow-[0_16px_48px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06)]"
-        overlayClassName="bg-black/40 backdrop-blur-[4px]"
+        className="w-[min(400px,calc(100vw-48px))] max-w-[400px] p-0 border-0 bg-transparent shadow-none"
+        overlayClassName="bg-black/60 backdrop-blur-[2px]"
       >
-        {/* Header row: title + close icon aligned */}
-        <div className="flex items-center justify-between">
-          <DialogTitle className="text-[17px] font-semibold text-foreground tracking-[-0.01em]">
-            Trouble signing in?
-          </DialogTitle>
-          <button
-            onClick={() => handleOpenChange(false)}
-            className="flex items-center justify-center rounded-sm transition-colors hover:text-[#374151] focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-1"
-            aria-label="Close dialog"
-            type="button"
-          >
-            <X className="h-4 w-4 text-[#9CA3AF]" strokeWidth={1.5} />
-          </button>
-        </div>
-
-        <div className="mt-4">
-          {/* Intro line */}
-          <p className="text-[14px] leading-[1.5] text-black/65">
-            Tribes uses secure email sign-in links.
-          </p>
-
-          {/* Troubleshooting list */}
-          <div className="mt-3">
-            <p className="text-[14px] leading-[1.5] text-black/65 mb-2">
-              If you're having trouble:
-            </p>
-            <ul className="space-y-2 text-[14px] leading-[1.5] text-black/65">
-              <li className="flex items-start gap-2">
-                <span className="text-black/35 mt-px select-none">•</span>
-                <span>Confirm you entered the correct email address.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-black/35 mt-px select-none">•</span>
-                <span>Check your spam or junk folder.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-black/35 mt-px select-none">•</span>
-                <span>Sign-in links expire quickly and can only be used once.</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Primary action - Tribes-style button */}
-          <div className="mt-5">
-            <button
-              onClick={handleResendLink}
-              disabled={isResending || !email.trim()}
-              className="h-11 w-full rounded-[10px] bg-[#111111] px-4 text-[15px] font-medium text-white transition-all hover:bg-[#000000] hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-2"
+        <div
+          style={{
+            backgroundColor: colors.bg,
+            border: `1px solid ${colors.border}`,
+            borderRadius: '8px',
+            padding: '24px',
+          }}
+        >
+          {/* Header row */}
+          <div className="flex items-center justify-between">
+            <DialogTitle 
+              style={{
+                fontSize: '16px',
+                fontWeight: 500,
+                color: colors.heading,
+                letterSpacing: '-0.01em',
+              }}
             >
-              {isResending ? "Sending..." : "Resend sign-in link"}
+              Access assistance
+            </DialogTitle>
+            <button
+              onClick={() => handleOpenChange(false)}
+              className="flex items-center justify-center transition-opacity hover:opacity-70 focus:outline-none"
+              aria-label="Close dialog"
+              type="button"
+            >
+              <X 
+                className="h-4 w-4" 
+                strokeWidth={1.5} 
+                style={{ color: colors.muted }}
+              />
             </button>
           </div>
 
-          {/* Support row - compact inline: label + email + icon */}
-          <div className="mt-3.5 flex items-center gap-2">
-            <span className="text-[12px] text-black/40">Support</span>
-            <span className="text-[13px] text-black/55">{supportEmail}</span>
-            <div className="relative ml-1">
+          <div style={{ marginTop: '20px' }}>
+            {/* Intro */}
+            <p style={{ fontSize: '14px', lineHeight: 1.5, color: colors.body }}>
+              Tribes uses secure email verification links.
+            </p>
+
+            {/* Troubleshooting list */}
+            <div style={{ marginTop: '16px' }}>
+              <p style={{ fontSize: '14px', lineHeight: 1.5, color: colors.body, marginBottom: '8px' }}>
+                If verification fails:
+              </p>
+              <ul style={{ margin: 0, paddingLeft: '16px' }}>
+                <li style={{ fontSize: '14px', lineHeight: 1.6, color: colors.body, marginBottom: '4px' }}>
+                  Confirm the email address is correct.
+                </li>
+                <li style={{ fontSize: '14px', lineHeight: 1.6, color: colors.body, marginBottom: '4px' }}>
+                  Check spam or junk folders.
+                </li>
+                <li style={{ fontSize: '14px', lineHeight: 1.6, color: colors.body }}>
+                  Links expire and are single-use.
+                </li>
+              </ul>
+            </div>
+
+            {/* Primary action */}
+            <div style={{ marginTop: '24px' }}>
+              <button
+                onClick={handleResendLink}
+                disabled={isResending || !email.trim()}
+                style={{
+                  width: '100%',
+                  height: '44px',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  border: 'none',
+                  cursor: isResending || !email.trim() ? 'not-allowed' : 'pointer',
+                  backgroundColor: isResending || !email.trim() ? 'rgba(255,255,255,0.08)' : colors.buttonBg,
+                  color: isResending || !email.trim() ? colors.muted : colors.buttonText,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background-color 100ms ease',
+                }}
+                onMouseOver={(e) => {
+                  if (!isResending && email.trim()) {
+                    e.currentTarget.style.backgroundColor = colors.buttonHover;
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!isResending && email.trim()) {
+                    e.currentTarget.style.backgroundColor = colors.buttonBg;
+                  }
+                }}
+              >
+                {isResending ? "Sending" : "Resend verification link"}
+              </button>
+            </div>
+
+            {/* Support row */}
+            <div 
+              style={{ 
+                marginTop: '16px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px' 
+              }}
+            >
+              <span style={{ fontSize: '12px', color: colors.muted }}>Support</span>
+              <span style={{ fontSize: '13px', color: colors.body }}>{supportEmail}</span>
               <button
                 onClick={handleCopyEmail}
-                className="flex items-center justify-center p-0.5 transition-colors hover:opacity-70 focus:outline-none cursor-pointer"
+                className="flex items-center justify-center transition-opacity hover:opacity-70 focus:outline-none"
                 aria-label="Copy email address"
+                style={{ marginLeft: '4px' }}
               >
                 {copied ? (
-                  <Check className="h-[14px] w-[14px] text-emerald-600" strokeWidth={1.5} />
+                  <Check className="h-3.5 w-3.5" strokeWidth={1.5} style={{ color: '#6B8E6B' }} />
                 ) : (
-                  <Copy className="h-[14px] w-[14px] text-[#9CA3AF] hover:text-[#6B7280]" strokeWidth={1.5} />
+                  <Copy className="h-3.5 w-3.5" strokeWidth={1.5} style={{ color: colors.muted }} />
                 )}
               </button>
-              {/* Copied tooltip */}
-              {showCopiedTooltip && (
-                <div className="absolute left-1/2 -translate-x-1/2 -top-7 px-2 py-1 bg-[#1f1f1f] text-white text-[11px] rounded shadow-sm whitespace-nowrap animate-in fade-in duration-150">
-                  Copied
-                </div>
-              )}
             </div>
-          </div>
 
-          {/* Footer - quiet restriction line */}
-          <p className="mt-2.5 text-[12px] leading-[1.5] text-black/40">
-            Access is restricted to approved accounts.
-          </p>
+            {/* Footer */}
+            <p style={{ marginTop: '12px', fontSize: '12px', lineHeight: 1.5, color: colors.muted }}>
+              Access is restricted to approved accounts.
+            </p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
