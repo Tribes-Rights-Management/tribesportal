@@ -147,6 +147,215 @@ export type Database = {
           },
         ]
       }
+      licensing_agreements: {
+        Row: {
+          agreement_title: string
+          created_at: string
+          document_url: string | null
+          effective_date: string | null
+          end_date: string | null
+          id: string
+          request_id: string | null
+          status: Database["public"]["Enums"]["agreement_status"]
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          agreement_title: string
+          created_at?: string
+          document_url?: string | null
+          effective_date?: string | null
+          end_date?: string | null
+          id?: string
+          request_id?: string | null
+          status?: Database["public"]["Enums"]["agreement_status"]
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          agreement_title?: string
+          created_at?: string
+          document_url?: string | null
+          effective_date?: string | null
+          end_date?: string | null
+          id?: string
+          request_id?: string | null
+          status?: Database["public"]["Enums"]["agreement_status"]
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "licensing_agreements_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "licensing_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "licensing_agreements_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      licensing_requests: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          requester_email: string | null
+          requester_user_id: string | null
+          status: Database["public"]["Enums"]["licensing_request_status"]
+          tenant_id: string
+          term_description: string | null
+          territory: string | null
+          updated_at: string
+          usage_type: string | null
+          work_title: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          requester_email?: string | null
+          requester_user_id?: string | null
+          status?: Database["public"]["Enums"]["licensing_request_status"]
+          tenant_id: string
+          term_description?: string | null
+          territory?: string | null
+          updated_at?: string
+          usage_type?: string | null
+          work_title?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          requester_email?: string | null
+          requester_user_id?: string | null
+          status?: Database["public"]["Enums"]["licensing_request_status"]
+          tenant_id?: string
+          term_description?: string | null
+          territory?: string | null
+          updated_at?: string
+          usage_type?: string | null
+          work_title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "licensing_requests_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_agreements: {
+        Row: {
+          agreement_title: string
+          created_at: string
+          document_url: string
+          id: string
+          status: Database["public"]["Enums"]["agreement_status"]
+          tenant_id: string
+        }
+        Insert: {
+          agreement_title: string
+          created_at?: string
+          document_url: string
+          id?: string
+          status?: Database["public"]["Enums"]["agreement_status"]
+          tenant_id: string
+        }
+        Update: {
+          agreement_title?: string
+          created_at?: string
+          document_url?: string
+          id?: string
+          status?: Database["public"]["Enums"]["agreement_status"]
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_agreements_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_documents: {
+        Row: {
+          created_at: string
+          document_type: string | null
+          document_url: string
+          id: string
+          tenant_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          document_type?: string | null
+          document_url: string
+          id?: string
+          tenant_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          document_type?: string | null
+          document_url?: string
+          id?: string
+          tenant_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_documents_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_statements: {
+        Row: {
+          created_at: string
+          id: string
+          statement_period: string
+          statement_url: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          statement_period: string
+          statement_url: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          statement_period?: string
+          statement_url?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_statements_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_memberships: {
         Row: {
           allowed_contexts: Database["public"]["Enums"]["portal_context"][]
@@ -264,6 +473,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      can_access_licensing_context: {
+        Args: { _tenant_id: string }
+        Returns: boolean
+      }
+      can_access_publishing_context: {
+        Args: { _tenant_id: string }
+        Returns: boolean
+      }
       get_user_contexts: {
         Args: { _tenant_id: string; _user_id: string }
         Returns: Database["public"]["Enums"]["portal_context"][]
@@ -301,6 +518,7 @@ export type Database = {
     }
     Enums: {
       access_request_status: "pending" | "processed"
+      agreement_status: "draft" | "active" | "expired" | "terminated"
       audit_action:
         | "record_created"
         | "record_updated"
@@ -314,6 +532,13 @@ export type Database = {
         | "login"
         | "logout"
         | "record_viewed"
+      licensing_request_status:
+        | "draft"
+        | "submitted"
+        | "under_review"
+        | "approved"
+        | "rejected"
+        | "cancelled"
       membership_status:
         | "pending"
         | "active"
@@ -451,6 +676,7 @@ export const Constants = {
   public: {
     Enums: {
       access_request_status: ["pending", "processed"],
+      agreement_status: ["draft", "active", "expired", "terminated"],
       audit_action: [
         "record_created",
         "record_updated",
@@ -464,6 +690,14 @@ export const Constants = {
         "login",
         "logout",
         "record_viewed",
+      ],
+      licensing_request_status: [
+        "draft",
+        "submitted",
+        "under_review",
+        "approved",
+        "rejected",
+        "cancelled",
       ],
       membership_status: [
         "pending",
