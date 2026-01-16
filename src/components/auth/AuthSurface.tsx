@@ -7,16 +7,15 @@ import { SignInHelpDialog } from "./SignInHelpDialog";
 type AuthState = "enter-email" | "check-email";
 
 /**
- * AuthSurface - Institutional dark access control surface
+ * AuthSurface - Institutional access control surface
  * 
- * DESIGN STANDARD (AUTHORITATIVE - DARK):
+ * DESIGN STANDARD (AUTHORITATIVE):
  * - Single stateful surface (NO page transitions)
- * - Dark charcoal environment
- * - Typography: calm, neutral, administrative
+ * - Dark environment, off-white panel
+ * - Typography: calm, factual, unexcited
  * - Copy: institutional language, NO SaaS cues
- * - Text: soft light gray (#C8C8C6), never pure white
- * 
- * This is access control, not onboarding.
+ * - Inputs: administrative, not friendly
+ * - This is access control, not onboarding
  */
 export function AuthSurface() {
   const { signInWithMagicLink } = useAuth();
@@ -82,19 +81,19 @@ export function AuthSurface() {
   return (
     <>
       {/* System identifier - subtle, institutional */}
-      <div className="mb-6 text-center">
-        <span className="text-[10px] font-medium tracking-[0.14em] uppercase text-[#666]">
-          Tribes Rights Management
+      <div className="mb-8 text-center">
+        <span className="text-[11px] font-medium tracking-[0.12em] uppercase text-[#8A8A8A]">
+          Tribes Rights Management System
         </span>
       </div>
 
-      {/* Heading - calm, neutral, administrative */}
-      <h1 className="text-[18px] font-medium leading-[1.3] text-[#E8E8E6] text-center tracking-[-0.01em]">
+      {/* Heading - calm, factual, unexcited */}
+      <h1 className="text-[20px] font-medium leading-[1.3] text-[#111] text-center tracking-[-0.01em]">
         {state === "enter-email" ? "Sign in to Tribes" : "Check your email"}
       </h1>
 
       {/* Supporting text - institutional, not friendly */}
-      <p className="mt-2 text-[13px] leading-[1.5] text-[#888] text-center">
+      <p className="mt-2 text-[14px] leading-[1.5] text-[#6B6B6B] text-center">
         {state === "enter-email"
           ? "Access is granted via secure email verification."
           : "A secure sign-in link has been issued to:"}
@@ -103,11 +102,11 @@ export function AuthSurface() {
       {/* Body */}
       <div className="mt-6">
         {state === "enter-email" ? (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label 
                 htmlFor="email" 
-                className="block text-[11px] font-medium text-[#888] tracking-[0.02em]"
+                className="block text-[12px] font-medium text-[#6B6B6B] tracking-[0.02em]"
               >
                 Email address
               </label>
@@ -122,11 +121,11 @@ export function AuthSurface() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 className={[
-                  "mt-2 w-full h-10 rounded-lg",
-                  "border border-[#333] bg-[#141416]",
-                  "px-3.5 text-[14px] text-[#E8E8E6]",
-                  "placeholder:text-[#555]",
-                  "focus:outline-none focus:border-[#555]",
+                  "mt-2 w-full h-11 rounded-lg",
+                  "border border-[#C4C4C4] bg-white",
+                  "px-4 text-[15px] text-[#111]",
+                  "placeholder:text-[#9CA3AF]",
+                  "focus:outline-none focus:border-[#888]",
                 ].join(" ")}
               />
             </div>
@@ -140,24 +139,24 @@ export function AuthSurface() {
             </PrimaryButton>
           </form>
         ) : (
-          /* Check Email State - same panel, same background */
-          <div className="space-y-4">
-            {/* Email display - system confirmation */}
-            <div className="w-full rounded-lg border border-[#333] bg-[#141416] px-3.5 py-2.5">
-              <div className="truncate text-[14px] font-medium text-[#E8E8E6]">
+          /* Check Email State - same panel, same structure */
+          <div className="space-y-5">
+            {/* Email display - system confirmation, not form field */}
+            <div className="w-full rounded-lg border border-[#C4C4C4] bg-[#F5F5F3] px-4 py-3">
+              <div className="truncate text-[15px] font-medium text-[#111]">
                 {email}
               </div>
             </div>
 
             {/* Resend feedback */}
             {resendMessage && (
-              <p className="text-[12px] leading-[1.5] text-[#C8C8C6] text-center font-medium">
+              <p className="text-[13px] leading-[1.5] text-[#111] text-center font-medium">
                 {resendMessage}
               </p>
             )}
 
             {/* Actions */}
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               <PrimaryButton 
                 type="button" 
                 onClick={handleResend} 
@@ -167,11 +166,11 @@ export function AuthSurface() {
                 Resend sign-in link
               </PrimaryButton>
 
-              {/* Secondary action - muted, no theatrics */}
+              {/* Secondary action - visually recedes */}
               <button
                 type="button"
                 onClick={handleChangeEmail}
-                className="w-full text-center text-[13px] font-medium text-[#666] hover:text-[#888] py-2"
+                className="w-full text-center text-[13px] font-medium text-[#8A8A8A] hover:text-[#6B6B6B] py-2"
               >
                 Use a different email
               </button>
@@ -181,16 +180,16 @@ export function AuthSurface() {
       </div>
 
       {/* Policy notice - institutional rule */}
-      <p className="mt-6 text-center text-[11px] leading-[1.5] text-[#555]">
+      <p className="mt-6 text-center text-[12px] leading-[1.5] text-[#9CA3AF]">
         Access is restricted to approved accounts.
       </p>
 
-      {/* Support link - recedes visually */}
+      {/* Support link - de-emphasized, procedural */}
       <p className="mt-2 text-center">
         <button 
           type="button"
           onClick={() => setHelpDialogOpen(true)}
-          className="text-[11px] text-[#555] hover:text-[#777]"
+          className="text-[12px] text-[#9CA3AF] hover:text-[#6B6B6B]"
         >
           Trouble signing in?
         </button>
