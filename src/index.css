@@ -688,11 +688,12 @@
 
 /* C) TAP TARGETS — Minimum 44px touch area for mobile accessibility */
 @layer base {
-  /* Ensure all interactive elements have adequate tap area */
+  /* Ensure all interactive elements have adequate tap area + centered content */
   a, button {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
   }
   
   /* CRITICAL: Radix checkbox renders as button — prevent inflation */

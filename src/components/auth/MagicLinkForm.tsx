@@ -60,9 +60,9 @@ export function MagicLinkForm({
       <button 
         type="submit" 
         disabled={isSubmitting || !email.trim()}
-        className="w-full h-[44px] flex items-center justify-center px-4 rounded-[12px] bg-[#111111] text-white text-[15px] font-medium leading-[20px] tracking-[-0.01em] transition-opacity duration-150 hover:opacity-[0.92] active:opacity-[0.88] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F7] disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full h-[44px] inline-flex items-center justify-center text-center px-4 rounded-[12px] bg-[#111111] text-white text-[15px] font-semibold leading-[20px] tracking-[-0.01em] transition-colors duration-150 hover:bg-[#1a1a1a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F7] disabled:bg-[#a3a3a3] disabled:cursor-not-allowed"
       >
-        {isSubmitting ? "Sending..." : buttonLabel}
+        <span className="text-center">{isSubmitting ? "Sending..." : buttonLabel}</span>
       </button>
     </form>
   );
