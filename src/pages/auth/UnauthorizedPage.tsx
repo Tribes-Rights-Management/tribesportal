@@ -1,9 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { SupportEmailRow } from "@/components/auth/SupportEmailRow";
+import { AuthLayout } from "@/layouts/AuthLayout";
+import { SYSTEM_COPY } from "@/styles/tokens";
 
+/**
+ * UnauthorizedPage - System boundary for pending authorization
+ * 
+ * DESIGN: Same dark environment as auth, institutional language
+ * NO friendly messaging, NO card UI
+ */
 export default function UnauthorizedPage() {
   const navigate = useNavigate();
   const { profile, signOut, refreshProfile } = useAuth();
@@ -15,10 +21,7 @@ export default function UnauthorizedPage() {
     setHasChecked(false);
 
     try {
-      // Re-fetch profile and membership status
       await refreshProfile();
-      
-      // Navigate to root - RootRedirect will handle routing based on new state
       navigate("/", { replace: true });
     } catch (error) {
       console.error("Error checking access:", error);
@@ -29,72 +32,81 @@ export default function UnauthorizedPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-6">
-      <div className="w-full max-w-[440px]">
-        {/* Title */}
-        <h1 className="text-[28px] sm:text-[32px] font-medium text-[#0A0A0A] tracking-[-0.02em] leading-tight">
-          Access pending approval
-        </h1>
-
-        {/* Body copy */}
-        <p className="mt-6 text-[15px] text-[#6B6B6B] leading-relaxed">
-          Your sign-in was successful, but your account does not yet have access to Tribes.
-        </p>
-        <p className="mt-3 text-[15px] text-[#6B6B6B] leading-relaxed">
-          If you believe this is an error, contact support.
-        </p>
-
-        {/* Status line */}
-        <div className="mt-8 flex items-center gap-2">
-          <span className="text-[13px] text-[#A1A1AA]">Status:</span>
-          <span className="text-[13px] text-[#52525B] font-medium">Pending approval</span>
-        </div>
-
-        {/* Primary action */}
-        <div className="mt-6">
-          <Button
-            onClick={handleCheckAgain}
-            disabled={isChecking}
-            className="w-full h-11 bg-[#0A0A0A] text-white text-[14px] font-medium hover:bg-[#1a1a1a] transition-colors"
-          >
-            {isChecking ? "Checking..." : "Check again"}
-          </Button>
-        </div>
-
-        {/* Subtle confirmation after check */}
-        {hasChecked && (
-          <p className="mt-3 text-[13px] text-[#A1A1AA] text-center">
-            Access still pending. Please try again later.
-          </p>
-        )}
-
-        {/* Support row */}
-        <div className="mt-8">
-          <SupportEmailRow />
-        </div>
-
-        {/* Signed in as */}
-        {profile?.email && (
-          <p className="mt-8 text-[12px] text-[#A1A1AA]">
-            Signed in as: {profile.email}
-          </p>
-        )}
-
-        {/* Sign out link */}
-        <div className="mt-4">
-          <button
-            onClick={signOut}
-            className="text-[13px] text-[#71717A] hover:text-[#3F3F46] transition-colors"
-          >
-            Sign out
-          </button>
-        </div>
-
-        {/* Footer */}
-        <p className="mt-10 text-[12px] text-[#A1A1AA]">
-          Access is restricted to approved accounts.
-        </p>
+    <AuthLayout>
+      {/* System identifier */}
+      <div className="mb-10 text-center">
+        <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-[#4A4A4A]">
+          Tribes Rights Management System
+        </span>
       </div>
-    </div>
+
+      {/* Heading */}
+      <h1 className="text-[22px] font-medium leading-[1.25] text-[#E5E5E3] text-center tracking-[-0.02em]">
+        {SYSTEM_COPY.ACCESS_PENDING_TITLE}
+      </h1>
+
+      {/* Body */}
+      <p className="mt-4 text-[14px] leading-[1.6] text-[#707070] text-center">
+        {SYSTEM_COPY.ACCESS_PENDING_BODY}
+      </p>
+
+      {/* Account display */}
+      {profile?.email && (
+        <div className="mt-8 text-center">
+          <span className="text-[13px] text-[#505050]">Account: </span>
+          <span className="text-[13px] font-medium text-[#E5E5E3]">{profile.email}</span>
+        </div>
+      )}
+
+      {/* Status */}
+      <div className="mt-4 text-center">
+        <span className="text-[12px] text-[#505050]">Status: </span>
+        <span className="text-[12px] font-medium text-[#707070]">Pending authorization</span>
+      </div>
+
+      {/* Actions */}
+      <div className="mt-10 space-y-3">
+        <button
+          onClick={handleCheckAgain}
+          disabled={isChecking}
+          className={[
+            "w-full h-[48px] rounded-[6px] text-[14px] font-medium transition-colors duration-75",
+            isChecking
+              ? "bg-[#1A1A1C] text-[#4A4A4A] cursor-not-allowed"
+              : "bg-[#E5E5E3] text-[#0A0A0B] hover:bg-[#D5D5D3]",
+          ].join(" ")}
+        >
+          {isChecking ? "Checking…" : "Check status"}
+        </button>
+
+        <button
+          onClick={signOut}
+          className="w-full text-center text-[13px] text-[#505050] hover:text-[#707070] py-2 transition-colors duration-75"
+        >
+          Sign out
+        </button>
+      </div>
+
+      {/* Check feedback */}
+      {hasChecked && (
+        <p className="mt-4 text-[13px] text-[#505050] text-center">
+          Authorization still pending.
+        </p>
+      )}
+
+      {/* Contact */}
+      <p className="mt-12 text-center text-[12px] leading-[1.5] text-[#4A4A4A]">
+        {SYSTEM_COPY.CONTACT_ADMIN}
+      </p>
+
+      <p className="mt-2 text-center">
+        <a 
+          href={`mailto:${SYSTEM_COPY.SUPPORT_EMAIL}`}
+          className="text-[12px] text-[#4A4A4A] hover:text-[#606060] transition-colors duration-75"
+        >
+          {SYSTEM_COPY.SUPPORT_EMAIL}
+        </a>
+      </p>
+    </AuthLayout>
   );
 }

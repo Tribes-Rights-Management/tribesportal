@@ -1,42 +1,57 @@
 import { Link } from "react-router-dom";
+import { AuthLayout } from "@/layouts/AuthLayout";
+import { SYSTEM_COPY } from "@/styles/tokens";
 
+/**
+ * AuthErrorPage - System boundary for access restriction
+ * 
+ * DESIGN: Same dark environment as auth, institutional language
+ * NO friendly messaging, NO card UI
+ */
 export default function AuthErrorPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-6">
-      <div className="w-full max-w-[440px]">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-[28px] sm:text-[32px] font-medium text-[#0A0A0A] tracking-[-0.02em] leading-tight">
-            Access Restricted
-          </h1>
-          <p className="mt-3 text-[15px] text-[#6B6B6B] leading-relaxed">
-            This account is not approved for portal access.
-          </p>
-        </div>
-
-        {/* Notice */}
-        <div className="text-center space-y-3">
-          <p className="text-[15px] text-[#52525B] leading-relaxed">
-            If you believe this is an error, contact administration.
-          </p>
-          <a 
-            href="mailto:contact@tribesassets.com" 
-            className="inline-block text-[15px] font-medium text-[#0A0A0A] hover:underline"
-          >
-            contact@tribesassets.com
-          </a>
-        </div>
-
-        {/* Back Link */}
-        <p className="mt-10 text-center">
-          <Link 
-            to="/auth/sign-in"
-            className="text-[13px] text-[#71717A] hover:text-[#0A0A0A] transition-colors"
-          >
-            Return to sign in
-          </Link>
-        </p>
+    <AuthLayout>
+      {/* System identifier */}
+      <div className="mb-10 text-center">
+        <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-[#4A4A4A]">
+          Tribes Rights Management System
+        </span>
       </div>
-    </div>
+
+      {/* Heading - declarative, not apologetic */}
+      <h1 className="text-[22px] font-medium leading-[1.25] text-[#E5E5E3] text-center tracking-[-0.02em]">
+        {SYSTEM_COPY.ACCESS_RESTRICTED_TITLE}
+      </h1>
+
+      {/* Body - procedural, neutral */}
+      <p className="mt-4 text-[14px] leading-[1.6] text-[#707070] text-center">
+        {SYSTEM_COPY.ACCESS_RESTRICTED_BODY}
+      </p>
+
+      {/* Contact */}
+      <p className="mt-8 text-[13px] text-[#505050] text-center">
+        {SYSTEM_COPY.CONTACT_ADMIN}
+      </p>
+
+      {/* Support email */}
+      <p className="mt-2 text-center">
+        <a 
+          href={`mailto:${SYSTEM_COPY.SUPPORT_EMAIL}`}
+          className="text-[14px] font-medium text-[#E5E5E3] hover:text-[#FFFFFF] transition-colors duration-75"
+        >
+          {SYSTEM_COPY.SUPPORT_EMAIL}
+        </a>
+      </p>
+
+      {/* Back link */}
+      <p className="mt-12 text-center">
+        <Link 
+          to="/auth/sign-in"
+          className="text-[13px] text-[#505050] hover:text-[#707070] transition-colors duration-75"
+        >
+          Return to sign in
+        </Link>
+      </p>
+    </AuthLayout>
   );
 }
