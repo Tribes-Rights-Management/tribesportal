@@ -1,173 +1,231 @@
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
-import { NAV_LABELS } from "@/styles/tokens";
 
 /**
- * ADMIN DASHBOARD — INSTITUTIONAL COMMAND CENTER (CANONICAL)
+ * ADMIN DASHBOARD — INSTITUTIONAL CONTROL SURFACE (CANONICAL)
+ * 
+ * This is NOT a dashboard. It is a system administration surface.
  * 
  * Design Rules:
- * - Dark canvas, no light "page canvas"
- * - Text-first hierarchy, no card metrics
- * - Status rows instead of stat cards
- * - Narrow content column (institutional density)
+ * - Dark canvas, no white page background
+ * - Centered narrow column (~960-1000px max)
  * - Flat panels with hairline borders
- * - Language: Access Control, Organizations, Audit Coverage
+ * - Status list (not metric cards)
+ * - Navigation rows (not clickable cards)
+ * - Typography matches auth (30-32px H1, reduced weights)
+ * - Language: declarative, institutional, non-conversational
  */
 export default function AdminDashboard() {
   return (
-    <div className="max-w-[560px] mx-auto px-6 py-8">
-      {/* Header - dense, authoritative */}
-      <header className="mb-6">
-        <h1 className="text-[18px] font-medium tracking-[-0.01em] text-[var(--platform-text)]">
-          {NAV_LABELS.ADMINISTRATION}
-        </h1>
-        <p className="text-[13px] text-[var(--platform-text-secondary)] mt-1">
-          Platform governance and access control
-        </p>
-      </header>
+    <div 
+      className="min-h-full py-10 px-6"
+      style={{ backgroundColor: 'var(--platform-canvas)' }}
+    >
+      <div className="max-w-[960px] mx-auto">
+        {/* Page Header - auth-matched typography */}
+        <header className="mb-8">
+          <h1 
+            className="text-[28px] font-semibold tracking-[-0.02em]"
+            style={{ color: 'var(--platform-text)' }}
+          >
+            Administration
+          </h1>
+          <p 
+            className="text-[15px] mt-1.5 leading-relaxed"
+            style={{ color: 'var(--platform-text-secondary)' }}
+          >
+            Platform access, governance, and security
+          </p>
+        </header>
 
-      {/* System Status - text-first, not card metrics */}
-      <section className="mb-6">
+        {/* System Status - vertical list, not cards */}
+        <section className="mb-8">
+          <div 
+            className="rounded"
+            style={{ 
+              backgroundColor: 'var(--platform-surface)',
+              border: '1px solid var(--platform-border)'
+            }}
+          >
+            <div 
+              className="px-5 py-3"
+              style={{ borderBottom: '1px solid var(--platform-border)' }}
+            >
+              <p 
+                className="text-[10px] font-medium uppercase tracking-[0.08em]"
+                style={{ color: 'var(--platform-text-muted)' }}
+              >
+                System Status
+              </p>
+            </div>
+            <div>
+              <StatusRow label="Pending approvals" value="0" />
+              <StatusRow label="Active users" value="0" />
+              <StatusRow label="Active organizations" value="0" />
+              <StatusRow label="Security alerts" value="0" />
+            </div>
+          </div>
+        </section>
+
+        {/* Navigation Sections - rows, not cards */}
         <div 
-          className="rounded-md"
+          className="rounded"
           style={{ 
             backgroundColor: 'var(--platform-surface)',
             border: '1px solid var(--platform-border)'
           }}
         >
-          <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--platform-border)' }}>
-            <p className="text-[10px] font-medium uppercase tracking-[0.06em] text-[var(--platform-text-muted)]">
-              System Status
-            </p>
-          </div>
-          <div className="divide-y" style={{ borderColor: 'var(--platform-border)' }}>
-            <StatusRow label="Pending approvals" value="0" />
-            <StatusRow label="Active users" value="0" />
-            <StatusRow label="Active organizations" value="0" />
-            <StatusRow label="Security alerts" value="0" />
-          </div>
+          {/* Access & Identity */}
+          <NavSection title="Access & Identity">
+            <NavRow
+              to="/admin/approvals"
+              label="Access Control"
+              description="Pending approvals, role assignment"
+            />
+            <NavRow
+              to="/admin/users"
+              label="User Directory"
+              description="Account status, permissions"
+            />
+          </NavSection>
+
+          {/* Organizations */}
+          <NavSection title="Organizations" hasBorder>
+            <NavRow
+              to="/admin/tenants"
+              label="Organizations"
+              description="Tenant configuration, memberships"
+            />
+          </NavSection>
+
+          {/* Security & Governance */}
+          <NavSection title="Security & Governance" hasBorder>
+            <NavRow
+              to="/admin/security/rls"
+              label="RLS Verification"
+              description="Row-level security policy coverage"
+            />
+            <NavRow
+              to="/admin/security/auth"
+              label="Audit Coverage"
+              description="Authentication and access logging"
+            />
+            <NavRow
+              to="/admin/security/sessions"
+              label="Session Integrity"
+              description="Active sessions, token management"
+            />
+          </NavSection>
+
+          {/* Platform Account */}
+          <NavSection title="Platform Account" hasBorder>
+            <NavRow
+              to="/admin/settings"
+              label="Settings"
+              description="Platform configuration"
+            />
+          </NavSection>
         </div>
-      </section>
-
-      {/* Navigation sections - flat panels */}
-      <div 
-        className="rounded-md divide-y"
-        style={{ 
-          backgroundColor: 'var(--platform-surface)',
-          border: '1px solid var(--platform-border)',
-          borderColor: 'var(--platform-border)'
-        }}
-      >
-        {/* Access & Identity */}
-        <Section title="Access & Identity">
-          <NavRow
-            to="/admin/approvals"
-            label="Access Control"
-            meta="Pending approvals, role assignment"
-          />
-          <NavRow
-            to="/admin/users"
-            label="User Directory"
-            meta="Account status, permissions"
-          />
-        </Section>
-
-        {/* Organizations */}
-        <Section title="Organizations">
-          <NavRow
-            to="/admin/tenants"
-            label="Organizations"
-            meta="Tenant configuration, memberships"
-          />
-        </Section>
-
-        {/* Security & Governance */}
-        <Section title="Security & Governance">
-          <NavRow
-            to="/admin/security/rls"
-            label="RLS Verification"
-            meta="Row-level security policy coverage"
-          />
-          <NavRow
-            to="/admin/security/auth"
-            label="Audit Coverage"
-            meta="Authentication and access logging"
-          />
-          <NavRow
-            to="/admin/security/sessions"
-            label="Session Integrity"
-            meta="Active sessions, token management"
-          />
-        </Section>
-
-        {/* Platform */}
-        <Section title="Platform">
-          <NavRow
-            to="/admin/settings"
-            label="Settings"
-            meta="Platform configuration"
-          />
-        </Section>
       </div>
     </div>
   );
 }
 
-/** Status row - inline text, not celebrated metric */
+/** 
+ * Status Row — inline label + right-aligned value
+ * Administrative truth, not analytics
+ */
 function StatusRow({ label, value }: { label: string; value: string }) {
   return (
     <div 
-      className="flex items-center justify-between px-4 py-2.5"
-      style={{ borderColor: 'var(--platform-border)' }}
+      className="flex items-center justify-between px-5 py-3"
+      style={{ borderBottom: '1px solid var(--platform-border)' }}
     >
-      <span className="text-[13px] text-[var(--platform-text-secondary)]">{label}</span>
-      <span className="text-[13px] font-medium text-[var(--platform-text)]">{value}</span>
+      <span 
+        className="text-[14px]"
+        style={{ color: 'var(--platform-text-secondary)' }}
+      >
+        {label}
+      </span>
+      <span 
+        className="text-[14px] font-medium tabular-nums"
+        style={{ color: 'var(--platform-text)' }}
+      >
+        {value}
+      </span>
     </div>
   );
 }
 
-function Section({ 
+/** 
+ * Navigation Section — small caps header with grouped rows
+ */
+function NavSection({ 
   title, 
-  children 
+  children,
+  hasBorder = false
 }: { 
   title: string; 
   children: React.ReactNode;
+  hasBorder?: boolean;
 }) {
   return (
-    <div className="px-4 py-3">
-      <p className="text-[10px] font-medium uppercase tracking-[0.06em] text-[var(--platform-text-muted)] mb-2">
+    <div 
+      className="px-5 py-4"
+      style={hasBorder ? { borderTop: '1px solid var(--platform-border)' } : undefined}
+    >
+      <p 
+        className="text-[10px] font-medium uppercase tracking-[0.08em] mb-3"
+        style={{ color: 'var(--platform-text-muted)' }}
+      >
         {title}
       </p>
-      <div className="space-y-0">
+      <div className="space-y-1">
         {children}
       </div>
     </div>
   );
 }
 
+/** 
+ * Navigation Row — full-width click target, no icons
+ * Feels like entering a secured subsystem
+ */
 function NavRow({ 
   to, 
   label, 
-  meta 
+  description 
 }: { 
   to: string; 
   label: string; 
-  meta: string;
+  description: string;
 }) {
   return (
     <Link 
       to={to} 
-      className="flex items-center justify-between py-2 -mx-1 px-1 rounded hover:bg-white/[0.03] transition-colors duration-[180ms] group"
+      className="flex items-center justify-between py-2.5 -mx-2 px-2 rounded transition-colors duration-[180ms] group"
+      style={{ backgroundColor: 'transparent' }}
+      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'}
+      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
     >
       <div>
-        <p className="text-[14px] font-medium text-[var(--platform-text)]">
+        <p 
+          className="text-[15px] font-medium"
+          style={{ color: 'var(--platform-text)' }}
+        >
           {label}
         </p>
-        <p className="text-[12px] text-[var(--platform-text-muted)]">
-          {meta}
+        <p 
+          className="text-[13px] mt-0.5"
+          style={{ color: 'var(--platform-text-muted)' }}
+        >
+          {description}
         </p>
       </div>
-      <ChevronRight className="h-4 w-4 text-[var(--platform-text-muted)] group-hover:text-[var(--platform-text-secondary)] transition-colors" />
+      <ChevronRight 
+        className="h-4 w-4 shrink-0 transition-colors duration-[180ms]"
+        style={{ color: 'var(--platform-text-muted)' }}
+      />
     </Link>
   );
 }
