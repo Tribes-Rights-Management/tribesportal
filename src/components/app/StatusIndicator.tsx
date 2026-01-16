@@ -1,13 +1,14 @@
 import { cn } from "@/lib/utils";
 
 /**
- * INSTITUTIONAL STATUS INDICATOR
+ * INSTITUTIONAL STATUS INDICATOR — DARK THEME
  * 
  * Dashboard Rules:
  * - Show counts, states, alerts
  * - No charts for storytelling
  * - No friendly language
  * - Communicate operational state, not performance
+ * - Uses platform dark-theme tokens
  */
 
 export type StatusLevel = "neutral" | "warning" | "alert" | "info";
@@ -26,6 +27,7 @@ interface StatusIndicatorProps {
  * - Dense, data-first
  * - Minimal visual treatment
  * - Color only for alerts/warnings
+ * - Dark theme using platform tokens
  */
 export function StatusIndicator({
   label,
@@ -35,22 +37,27 @@ export function StatusIndicator({
 }: StatusIndicatorProps) {
   return (
     <div
-      className={cn(
-        "bg-white border border-[#E8E8E8] rounded-md p-4",
-        className
-      )}
+      className={cn("rounded p-4", className)}
+      style={{ 
+        backgroundColor: 'var(--platform-surface)',
+        border: '1px solid var(--platform-border)'
+      }}
     >
-      <p className="text-[11px] font-medium uppercase tracking-[0.04em] text-[#6B6B6B]">
+      <p 
+        className="text-[11px] font-medium uppercase tracking-[0.04em]"
+        style={{ color: 'var(--platform-text-muted)' }}
+      >
         {label}
       </p>
       <p
         className={cn(
           "text-[28px] font-semibold mt-1 tracking-tight",
-          level === "neutral" && "text-[#111]",
-          level === "warning" && "text-[#B45309]",
-          level === "alert" && "text-[#DC2626]",
-          level === "info" && "text-[#0369A1]"
+          level === "neutral" && "text-[var(--platform-text)]",
+          level === "warning" && "text-amber-500",
+          level === "alert" && "text-red-500",
+          level === "info" && "text-blue-400"
         )}
+        style={level === "neutral" ? { color: 'var(--platform-text)' } : undefined}
       >
         {count}
       </p>
@@ -65,6 +72,7 @@ export function StatusIndicator({
  * - Flat, text-only
  * - No icons unless critical
  * - Declarative language
+ * - Dark theme using platform tokens
  */
 interface StatusAlertProps {
   message: string;
@@ -81,12 +89,13 @@ export function StatusAlert({
     <div
       className={cn(
         "py-2 px-3 text-[13px]",
-        level === "neutral" && "text-[#6B6B6B]",
-        level === "warning" && "text-[#B45309]",
-        level === "alert" && "text-[#DC2626]",
-        level === "info" && "text-[#0369A1]",
+        level === "neutral" && "text-[var(--platform-text-secondary)]",
+        level === "warning" && "text-amber-500",
+        level === "alert" && "text-red-500",
+        level === "info" && "text-blue-400",
         className
       )}
+      style={level === "neutral" ? { color: 'var(--platform-text-secondary)' } : undefined}
     >
       {message}
     </div>

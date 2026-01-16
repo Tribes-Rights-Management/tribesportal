@@ -1,20 +1,12 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { InstitutionalEmptyPanel } from "@/components/ui/institutional-states";
 
-/**
- * Licensing Catalog - Institutional mode
- */
 export default function LicensingCatalog() {
   return (
-    <div className="p-6 max-w-5xl">
-      <PageHeader 
-        title="Catalog"
-        description="Licensed works and assets"
-      />
-
-      <div className="bg-white border border-[#E8E8E8] rounded-md p-6 text-center">
-        <p className="text-[14px] text-[#6B6B6B]">
-          No records available.
-        </p>
+    <div className="p-6" style={{ backgroundColor: 'var(--platform-canvas)' }}>
+      <div className="max-w-[960px]">
+        <PageHeader title="Catalog" description="Licensed works and assets" />
+        <InstitutionalEmptyPanel title="No catalog entries available." description="Catalog items will appear once added." />
       </div>
     </div>
   );

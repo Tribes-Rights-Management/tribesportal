@@ -1,20 +1,25 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { InstitutionalEmptyPanel } from "@/components/ui/institutional-states";
 
 /**
- * Publishing Catalog - Institutional mode
+ * PUBLISHING CATALOG — INSTITUTIONAL MODE
  */
 export default function PublishingCatalog() {
   return (
-    <div className="p-6 max-w-5xl">
-      <PageHeader 
-        title="Catalog"
-        description="Full catalog access and management"
-      />
+    <div 
+      className="p-6"
+      style={{ backgroundColor: 'var(--platform-canvas)' }}
+    >
+      <div className="max-w-[960px]">
+        <PageHeader 
+          title="Catalog"
+          description="Full catalog access and management"
+        />
 
-      <div className="bg-white border border-[#E8E8E8] rounded-md p-6 text-center">
-        <p className="text-[14px] text-[#6B6B6B]">
-          No records available.
-        </p>
+        <InstitutionalEmptyPanel
+          title="No catalog entries available."
+          description="Catalog items will appear once added to your account."
+        />
       </div>
     </div>
   );

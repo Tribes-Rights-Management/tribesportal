@@ -1,20 +1,12 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { InstitutionalEmptyPanel } from "@/components/ui/institutional-states";
 
-/**
- * Licensing Reports - Institutional mode
- */
 export default function LicensingReports() {
   return (
-    <div className="p-6 max-w-5xl">
-      <PageHeader 
-        title="Reports"
-        description="Usage reports and analytics"
-      />
-
-      <div className="bg-white border border-[#E8E8E8] rounded-md p-6 text-center">
-        <p className="text-[14px] text-[#6B6B6B]">
-          No records available.
-        </p>
+    <div className="p-6" style={{ backgroundColor: 'var(--platform-canvas)' }}>
+      <div className="max-w-[960px]">
+        <PageHeader title="Reports" description="Usage reports and analytics" />
+        <InstitutionalEmptyPanel title="No reports available." description="Reports will appear once data is processed." />
       </div>
     </div>
   );
