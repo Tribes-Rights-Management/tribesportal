@@ -75,17 +75,17 @@ function DataRow({
       >
         {label}
       </dt>
-      <dd className="text-right">
+      <dd className="text-right min-w-0 flex-1">
         <span 
-          className="text-[13px]"
-          style={{ color: 'var(--platform-text)' }}
+          className="text-[13px] break-words"
+          style={{ color: 'var(--platform-text)', lineHeight: '1.45' }}
         >
           {value || "—"}
         </span>
         {managed && (
           <span 
             className="block text-[11px] mt-0.5"
-            style={{ color: 'var(--platform-text-muted)' }}
+            style={{ color: 'var(--platform-text-muted)', lineHeight: '1.45' }}
           >
             Managed by organization policy
           </span>
