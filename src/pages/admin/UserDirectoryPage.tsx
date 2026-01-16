@@ -3,8 +3,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowLeft, ChevronDown, ChevronUp, ChevronRight } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -44,6 +44,7 @@ interface UserWithProfile {
  * - Restrained hover states
  */
 export default function UserDirectoryPage() {
+  const navigate = useNavigate();
   const { profile: currentProfile } = useAuth();
   const [users, setUsers] = useState<UserWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -276,6 +277,7 @@ export default function UserDirectoryPage() {
                   <TableHead>Status</TableHead>
                   <TableHead>Memberships</TableHead>
                   <TableHead>Created</TableHead>
+                  <TableHead className="w-20"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -358,6 +360,18 @@ export default function UserDirectoryPage() {
                       </TableCell>
                       <TableCell style={{ color: 'var(--platform-text-secondary)' }}>
                         {new Date(user.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <button
+                          onClick={() => navigate(`/admin/users/${user.user_id}/permissions`)}
+                          className="flex items-center gap-1 px-2 py-1 text-[12px] rounded transition-colors"
+                          style={{ color: 'var(--platform-text-secondary)' }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        >
+                          Authority
+                          <ChevronRight className="h-3 w-3" />
+                        </button>
                       </TableCell>
                     </TableRow>
                     {expandedUser === user.id && user.memberships.length > 0 && (
