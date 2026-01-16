@@ -1,8 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface MagicLinkFormProps {
@@ -10,6 +7,10 @@ interface MagicLinkFormProps {
   autoFocus?: boolean;
 }
 
+/**
+ * MagicLinkForm - Premium auth form component
+ * Light mode only, Apple-grade styling
+ */
 export function MagicLinkForm({ 
   buttonLabel = "Continue",
   autoFocus = true 
@@ -36,14 +37,14 @@ export function MagicLinkForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-1.5">
-        <Label 
+      <div className="space-y-2">
+        <label 
           htmlFor="email" 
-          className="text-sm font-medium text-[#1D1D1F] dark:text-[#F5F5F7] block"
+          className="text-[14px] font-medium block text-black/85"
         >
           Email address
-        </Label>
-        <Input
+        </label>
+        <input
           id="email"
           type="email"
           placeholder="you@company.com"
@@ -52,17 +53,17 @@ export function MagicLinkForm({
           required
           autoFocus={autoFocus}
           autoComplete="email"
-          className="h-11 px-3.5 text-[15px] bg-white dark:bg-[#0f1012] border-black/15 dark:border-white/15 rounded-xl placeholder:text-black/40 dark:placeholder:text-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]/50 transition-colors"
+          className="w-full h-11 px-3.5 text-[15px] rounded-[10px] bg-white border border-black/10 text-black/90 placeholder:text-black/35 outline-none transition-shadow duration-150 focus:ring-2 focus:ring-black/15"
         />
       </div>
 
-      <Button 
+      <button 
         type="submit" 
         disabled={isSubmitting || !email.trim()}
-        className="w-full h-11 text-[15px] font-medium rounded-xl bg-[#111] text-white hover:bg-[#222] dark:bg-[#f5f5f5] dark:text-[#111] dark:hover:bg-[#e5e5e5] disabled:opacity-40 transition-colors"
+        className="w-full h-11 text-[15px] font-medium rounded-[10px] bg-[#111] text-white transition-all duration-150 hover:bg-[#222] disabled:opacity-40 disabled:bg-neutral-400"
       >
         {isSubmitting ? "Sending..." : buttonLabel}
-      </Button>
+      </button>
     </form>
   );
 }

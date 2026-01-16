@@ -15,10 +15,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LogOut, Settings, Shield } from "lucide-react";
+import { LogOut, Settings, Shield, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+
+/**
+ * GlobalHeader - Premium Tribes header
+ * 
+ * Layout: 
+ * - Left: "Tribes" wordmark
+ * - Center: Tenant selector (desktop) or mobile controls
+ * - Right: Portal nav (Client Portal | Licensing) + Account menu
+ * 
+ * Rules:
+ * - NO "Tribes Platform" text anywhere
+ * - Admin access is inside profile dropdown only
+ * - Icons: 18px, strokeWidth 1.5
+ * - Avatar: 32px, subtle focus ring
+ * - Light mode only
+ */
 
 
 type PortalMode = "publishing" | "licensing";
@@ -39,7 +55,7 @@ function TenantSelector() {
   if (tenantMemberships.length <= 1) {
     if (activeTenant) {
       return (
-        <span className="text-[13px] font-medium text-muted-foreground truncate max-w-[160px]">
+        <span className="text-[13px] font-medium text-neutral-500 truncate max-w-[160px]">
           {activeTenant.tenant_name}
         </span>
       );
@@ -67,10 +83,10 @@ function TenantSelector() {
       value={activeTenant?.tenant_id ?? ""}
       onValueChange={handleTenantChange}
     >
-      <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-muted/50 text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 text-muted-foreground">
+      <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-neutral-100 text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 focus-visible:ring-2 focus-visible:ring-black/15 text-neutral-500">
         <SelectValue placeholder="Select tenant" />
       </SelectTrigger>
-      <SelectContent align="center" className="bg-popover">
+      <SelectContent align="center" className="bg-white border-neutral-200/80">
         {tenantMemberships.map((membership) => (
           <SelectItem
             key={membership.tenant_id}
@@ -85,69 +101,13 @@ function TenantSelector() {
   );
 }
 
-// Segmented control for portal switching
-function PortalSwitcher() {
-  const { availableContexts, setActiveContext } = useAuth();
-  const navigate = useNavigate();
-  const currentMode = useCurrentMode();
-
-  const hasPublishing = availableContexts.includes("publishing");
-  const hasLicensing = availableContexts.includes("licensing");
-  
-  if (!hasPublishing && !hasLicensing) return null;
-  if (currentMode === "admin") return null;
-
-  const handleSwitch = (mode: PortalMode) => {
-    if (mode === currentMode) return;
-    setActiveContext(mode);
-    navigate(`/app/${mode}`);
-  };
-
-  if (!hasPublishing || !hasLicensing) {
-    return (
-      <span className="text-[13px] font-medium text-foreground">
-        {hasPublishing ? "Client Portal" : "Licensing"}
-      </span>
-    );
-  }
-
-  return (
-    <div className="flex items-center h-7 p-0.5 rounded-md bg-muted/50 border border-border/40">
-      <button
-        onClick={() => handleSwitch("publishing")}
-        className={cn(
-          "h-6 px-2.5 rounded text-[12px] font-medium transition-all duration-150",
-          currentMode === "publishing"
-            ? "bg-background text-foreground shadow-sm"
-            : "text-muted-foreground hover:text-foreground"
-        )}
-      >
-        Client Portal
-      </button>
-      <button
-        onClick={() => handleSwitch("licensing")}
-        className={cn(
-          "h-6 px-2.5 rounded text-[12px] font-medium transition-all duration-150",
-          currentMode === "licensing"
-            ? "bg-background text-foreground shadow-sm"
-            : "text-muted-foreground hover:text-foreground"
-        )}
-      >
-        Licensing
-      </button>
-    </div>
-  );
-}
-
-// Premium account menu - 28px avatar with subtle styling
+// Premium account menu - 32px avatar with Apple-like subtle styling
 function AccountMenu() {
   const { 
     profile, 
     signOut, 
     activeContext,
-    availableContexts,
     isPlatformAdmin,
-    setActiveContext,
   } = useAuth();
   const navigate = useNavigate();
   const currentMode = useCurrentMode();
@@ -175,7 +135,7 @@ function AccountMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="h-7 w-7 rounded-full shrink-0 inline-flex items-center justify-center bg-muted/40 text-[10px] font-medium text-muted-foreground transition-colors duration-150 hover:bg-muted/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-1"
+          className="h-8 w-8 rounded-full shrink-0 inline-flex items-center justify-center bg-neutral-100 text-[11px] font-medium text-neutral-600 border border-neutral-200/60 transition-colors duration-150 hover:bg-neutral-200/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/15 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F7]"
           aria-label="Account menu"
         >
           {getInitials()}
@@ -183,7 +143,7 @@ function AccountMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-56 rounded-xl"
+        className="w-56 rounded-xl border-neutral-200/80"
         sideOffset={8}
       >
         <div className="px-3 py-2.5">
@@ -199,38 +159,14 @@ function AccountMenu() {
         
         <DropdownMenuSeparator />
         
-        {/* Admin link - only for platform admins, first in list */}
+        {/* Admin link - only for platform admins */}
         {isPlatformAdmin && (
           <DropdownMenuItem
             onClick={() => navigate("/admin")}
             className={cn("text-[13px] py-2", currentMode === "admin" && "bg-muted")}
           >
-            <Shield size={16} strokeWidth={1.5} className="mr-2" />
+            <Shield size={18} strokeWidth={1.5} className="mr-2" />
             Administration
-          </DropdownMenuItem>
-        )}
-        
-        {/* Portal navigation */}
-        {availableContexts.includes("publishing") && (
-          <DropdownMenuItem
-            onClick={() => {
-              setActiveContext("publishing");
-              navigate("/app/publishing");
-            }}
-            className={cn("text-[13px] py-2", currentMode === "publishing" && "bg-muted")}
-          >
-            Client Portal
-          </DropdownMenuItem>
-        )}
-        {availableContexts.includes("licensing") && (
-          <DropdownMenuItem
-            onClick={() => {
-              setActiveContext("licensing");
-              navigate("/app/licensing");
-            }}
-            className={cn("text-[13px] py-2", currentMode === "licensing" && "bg-muted")}
-          >
-            Licensing
           </DropdownMenuItem>
         )}
         
@@ -246,7 +182,7 @@ function AccountMenu() {
           }}
           className="text-[13px] py-2"
         >
-          <Settings size={16} strokeWidth={1.5} className="mr-2" />
+          <Settings size={18} strokeWidth={1.5} className="mr-2" />
           Account Settings
         </DropdownMenuItem>
         
@@ -255,7 +191,7 @@ function AccountMenu() {
           onClick={handleSignOut}
           className="text-[13px] py-2 text-destructive focus:text-destructive"
         >
-          <LogOut size={16} strokeWidth={1.5} className="mr-2" />
+          <LogOut size={18} strokeWidth={1.5} className="mr-2" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -363,7 +299,7 @@ export function GlobalHeader() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const currentMode = useCurrentMode();
-  const { activeContext } = useAuth();
+  const { activeContext, availableContexts, setActiveContext } = useAuth();
 
   const handleLogoClick = () => {
     if (currentMode === "admin") {
@@ -373,18 +309,19 @@ export function GlobalHeader() {
     }
   };
 
+  const hasPublishing = availableContexts.includes("publishing");
+  const hasLicensing = availableContexts.includes("licensing");
+
   return (
-    <header className="h-14 border-b border-border/40 bg-background/95 backdrop-blur-sm px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40">
-      {/* Left: Wordmark only + Portal Switcher */}
-      <div className="flex items-center gap-4 min-w-0">
+    <header className="h-14 border-b border-neutral-200/60 bg-white px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40">
+      {/* Left: Wordmark only */}
+      <div className="flex items-center min-w-0">
         <button
           onClick={handleLogoClick}
-          className="text-[15px] font-semibold text-foreground tracking-[-0.01em] hover:text-muted-foreground transition-colors duration-150"
+          className="text-[15px] font-semibold text-neutral-900 tracking-[-0.01em] hover:text-neutral-600 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/15 focus-visible:ring-offset-2 rounded"
         >
           Tribes
         </button>
-        
-        {!isMobile && <PortalSwitcher />}
       </div>
 
       {/* Center: Tenant (desktop) or Mobile Controls */}
@@ -396,8 +333,46 @@ export function GlobalHeader() {
         )}
       </div>
 
-      {/* Right: Account menu only (no theme toggle) */}
-      <div className="flex items-center">
+      {/* Right: Portal nav links + Account menu */}
+      <div className="flex items-center gap-1">
+        {/* Portal navigation as links - desktop only */}
+        {!isMobile && currentMode !== "admin" && (
+          <nav className="flex items-center gap-1 mr-3">
+            {hasPublishing && (
+              <button
+                onClick={() => {
+                  setActiveContext("publishing");
+                  navigate("/app/publishing");
+                }}
+                className={cn(
+                  "h-8 px-3 rounded-lg text-[13px] font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/15",
+                  currentMode === "publishing"
+                    ? "bg-neutral-100 text-neutral-900"
+                    : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50"
+                )}
+              >
+                Client Portal
+              </button>
+            )}
+            {hasLicensing && (
+              <button
+                onClick={() => {
+                  setActiveContext("licensing");
+                  navigate("/app/licensing");
+                }}
+                className={cn(
+                  "h-8 px-3 rounded-lg text-[13px] font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/15",
+                  currentMode === "licensing"
+                    ? "bg-neutral-100 text-neutral-900"
+                    : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50"
+                )}
+              >
+                Licensing
+              </button>
+            )}
+          </nav>
+        )}
+        
         <AccountMenu />
       </div>
     </header>
