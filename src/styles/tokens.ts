@@ -1302,3 +1302,199 @@ export const EXECUTIVE_STANDARDS = {
     "Hidden IDs",
   ],
 } as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// THEME ENFORCEMENT — COMPONENT-LEVEL LOCK (CANONICAL)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * THEME ENFORCEMENT RULES:
+ * 
+ * This system prevents visual drift by locking design tokens and component 
+ * behavior globally. Any deviation is a regression.
+ * 
+ * LOCKED ELEMENTS:
+ * - Header background: #0A0A0B (matches marketing site)
+ * - Page background: #0A0A0B (same as marketing)
+ * - Typography: System font stack, no substitutions
+ * - TRIBES wordmark: ALL CAPS, 13px, 600 weight, 0.08em tracking
+ * 
+ * COMPONENT RULES:
+ * - Buttons: Flat, restrained, no gradients
+ * - Cards: Minimal radius (6-8px), subtle elevation only
+ * - Tables: Divider-based, no boxed cells
+ * - Avatars: 28px max, perfect circle, neutral background
+ * 
+ * PROHIBITED (REGRESSION):
+ * - New colors outside token system
+ * - New font weights
+ * - Decorative animation
+ * - Gradient backgrounds
+ * - Drop shadows for decoration
+ * - Pill shapes for core UI
+ * - Consumer SaaS patterns
+ */
+export const THEME_ENFORCEMENT = {
+  // Locked header values
+  HEADER: {
+    background: "#0A0A0B",
+    height: 56,
+    heightDesktop: 64,
+    borderColor: "rgba(255,255,255,0.08)",
+  },
+  
+  // Locked page canvas
+  PAGE: {
+    background: "#0A0A0B",
+    surfacePrimary: "#111113",
+    surfaceSecondary: "#161618",
+    surfaceTertiary: "#1A1A1C",
+  },
+  
+  // Locked typography
+  TYPOGRAPHY: {
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+    baseFontSize: 14,
+    wordmark: {
+      text: "TRIBES",
+      size: 13,
+      weight: 600,
+      tracking: "0.08em",
+      case: "uppercase",
+    },
+  },
+  
+  // Locked component constraints
+  COMPONENTS: {
+    button: {
+      borderRadius: 6,
+      heightPrimary: 40,
+      heightCompact: 36,
+      noGradients: true,
+      noShadows: true,
+    },
+    card: {
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.08)",
+      noDropShadows: true,
+    },
+    table: {
+      rowHeight: 44,
+      headerHeight: 40,
+      dividerOnly: true,
+      noZebraStripes: true,
+      noBoxedCells: true,
+    },
+    avatar: {
+      sizeMax: 28,
+      shape: "circle",
+      background: "#2A2A2C",
+      noGlow: true,
+      noBorder: true,
+    },
+    input: {
+      borderRadius: 6,
+      height: 40,
+      heightAuth: 48,
+    },
+  },
+  
+  // Prohibited patterns - rejection criteria
+  PROHIBITED: [
+    "gradient-backgrounds",
+    "decorative-shadows",
+    "pill-shapes",
+    "colorful-icons",
+    "bounce-animations",
+    "slide-animations",
+    "success-celebrations",
+    "encouragement-language",
+    "inline-color-overrides",
+    "new-font-weights",
+    "marketing-tone",
+    "consumer-saas-patterns",
+  ],
+  
+  // Audit checklist - use before shipping
+  AUDIT: [
+    "Header matches marketing site exactly?",
+    "Page background is #0A0A0B?",
+    "TRIBES appears in ALL CAPS?",
+    "No new colors outside token system?",
+    "No gradient buttons?",
+    "No decorative animations?",
+    "Tables are flat and ledger-like?",
+    "Avatars are 28px max circles?",
+    "Language is institutional, not friendly?",
+  ],
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LONG-SESSION UX — FATIGUE REDUCTION TOKENS (CANONICAL)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * LONG-SESSION UX RULES:
+ * 
+ * Optimize for hours-long administrative use, not quick logins.
+ * 
+ * VISUAL:
+ * - Reduce contrast fatigue: no pure white on pure black
+ * - Use soft off-black backgrounds (#0A0A0B, not #000)
+ * - Muted dividers (rgba 8-12%, not solid lines)
+ * - Avoid high-saturation accents except for critical alerts
+ * 
+ * INTERACTION:
+ * - No modal-heavy flows for primary tasks
+ * - Prefer inline panels and dedicated pages
+ * - Preserve scroll position on navigation return
+ * 
+ * STATE:
+ * - Remember table sorting, filters, pagination per user
+ * - Do not reset views on refresh unless data changes
+ */
+export const LONG_SESSION_UX = {
+  // Text contrast optimized for extended viewing
+  TEXT: {
+    primary: "#E8E8E6",        // Slightly warm off-white (not #FFF)
+    secondary: "#8A8A8A",      // Comfortable gray
+    muted: "#5A5A5A",          // Subdued for metadata
+    faint: "#4A4A4A",          // Minimal emphasis
+  },
+  
+  // Background optimized for extended viewing
+  BACKGROUND: {
+    canvas: "#0A0A0B",         // Near-black (not pure #000)
+    surface: "#111113",        // Slightly lifted
+    elevated: "#161618",       // Subtle elevation
+    hover: "rgba(255,255,255,0.02)", // Barely visible hover
+    active: "rgba(255,255,255,0.04)", // Subtle selection
+  },
+  
+  // Borders optimized for non-fatiguing structure
+  BORDER: {
+    subtle: "rgba(255,255,255,0.08)",
+    normal: "rgba(255,255,255,0.10)",
+    strong: "rgba(255,255,255,0.12)",
+    // Never use solid white/gray borders
+  },
+  
+  // Accent colors - reserved for critical states only
+  ACCENT: {
+    critical: "#EF4444",       // Red - errors, alerts
+    warning: "#F59E0B",        // Amber - warnings only
+    success: "#10B981",        // Green - confirmations only
+    info: "#3B82F6",           // Blue - links, focus only
+    // Never use for decoration
+  },
+  
+  // Interaction preferences
+  INTERACTION: {
+    preferInlinePanels: true,
+    avoidModalsForPrimaryTasks: true,
+    preserveScrollPosition: true,
+    persistTableState: true,
+    persistFilterState: true,
+  },
+} as const;
