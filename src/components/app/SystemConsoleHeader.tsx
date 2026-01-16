@@ -155,7 +155,7 @@ export function SystemConsoleHeader() {
   // Show "Enter Workspace" only if user has accessible workspaces
   const hasWorkspaces = tenantMemberships.length > 0;
 
-  // Mobile: Two-row layout with CSS Grid
+  // Mobile: Clean single-row header with stable height
   if (isMobile) {
     return (
       <>
@@ -166,89 +166,70 @@ export function SystemConsoleHeader() {
             borderBottom: '1px solid var(--tribes-border)',
           }}
         >
-          {/* Mobile Grid Layout: 2 rows */}
+          {/* Mobile: CSS Grid 3-zone layout — stable single row */}
           <div 
-            className="grid gap-0"
+            className="grid items-center px-4"
             style={{
-              gridTemplateRows: 'auto auto',
+              gridTemplateColumns: 'auto 1fr auto',
+              height: '56px',
+              gap: '12px',
             }}
           >
-            {/* Row 1: Wordmark + Avatar */}
-            <div 
-              className="flex items-center justify-between px-4"
-              style={{ 
-                minHeight: '48px',
-                paddingTop: '12px',
-                paddingBottom: '8px',
+            {/* Left: Wordmark (fixed width, no wrap) */}
+            <button
+              onClick={handleLogoClick}
+              className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase whitespace-nowrap"
+              style={{
+                fontSize: '11px',
+                letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
+                color: 'var(--tribes-text)',
               }}
             >
-              {/* Left: Wordmark */}
-              <button
-                onClick={handleLogoClick}
-                className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
-                style={{
-                  fontSize: '11px',
-                  letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-                  color: 'var(--tribes-text)',
-                }}
-              >
-                {NAV_LABELS.BRAND_WORDMARK}
-              </button>
+              {NAV_LABELS.BRAND_WORDMARK}
+            </button>
 
-              {/* Right: Avatar (32px, perfectly circular) */}
-              <ConsoleAccountMenu />
+            {/* Center: Context label + read-only badge (truncated if needed) */}
+            <div className="flex items-center justify-center gap-2 min-w-0 overflow-hidden">
+              <span 
+                className="text-[10px] font-medium uppercase tracking-wider truncate"
+                style={{ color: 'var(--tribes-text-muted)' }}
+              >
+                {NAV_LABELS.SYSTEM_CONSOLE}
+              </span>
+              {isExternalAuditor && (
+                <span 
+                  className="inline-flex items-center gap-1 text-[8px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0"
+                  style={{ 
+                    backgroundColor: 'var(--tribes-surface)',
+                    color: 'var(--tribes-text-muted)'
+                  }}
+                >
+                  <Eye className="h-2.5 w-2.5" />
+                </span>
+              )}
             </div>
 
-            {/* Row 2: Context label + Primary action */}
-            <div 
-              className="flex items-center justify-between px-4"
-              style={{ 
-                minHeight: '44px',
-                paddingTop: '4px',
-                paddingBottom: '12px',
-              }}
-            >
-              {/* Left: Context label */}
-              <div className="flex items-center gap-2 min-w-0 flex-1 mr-3">
-                <span 
-                  className="text-[11px] font-medium uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis"
-                  style={{ color: 'var(--tribes-text-muted)' }}
-                >
-                  {NAV_LABELS.SYSTEM_CONSOLE}
-                </span>
-                {isExternalAuditor && (
-                  <span 
-                    className="inline-flex items-center gap-1 text-[9px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0"
-                    style={{ 
-                      backgroundColor: 'var(--tribes-surface)',
-                      color: 'var(--tribes-text-muted)'
-                    }}
-                  >
-                    <Eye className="h-2.5 w-2.5" />
-                    Read-only
-                  </span>
-                )}
-              </div>
-
-              {/* Right: Primary action */}
+            {/* Right: Primary action (icon-only on narrow) + Avatar */}
+            <div className="flex items-center gap-2 shrink-0">
               {hasWorkspaces && (
                 <button
                   onClick={() => setWorkspaceModalOpen(true)}
                   className={cn(
-                    "flex items-center gap-1.5 px-3 rounded shrink-0",
-                    "text-[12px] font-medium whitespace-nowrap",
+                    "flex items-center justify-center rounded shrink-0",
                     "hover:bg-white/[0.04] transition-colors duration-150",
                     "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
                   )}
                   style={{ 
                     color: 'var(--tribes-text-secondary)',
-                    height: '36px',
+                    height: '32px',
+                    width: '32px',
                   }}
+                  aria-label="Enter Workspace"
                 >
-                  <span className="overflow-hidden text-ellipsis">{NAV_LABELS.ENTER_WORKSPACE}</span>
-                  <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                  <ArrowRight className="h-4 w-4" />
                 </button>
               )}
+              <ConsoleAccountMenu />
             </div>
           </div>
         </header>
