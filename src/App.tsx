@@ -7,6 +7,8 @@ import RoleProtectedRoute from "@/components/RoleProtectedRoute";
 import { AppProtectedRoute } from "@/components/app/AppProtectedRoute";
 import { AppLayout } from "@/layouts/AppLayout";
 import { AdminLayout } from "@/layouts/AdminLayout";
+import { ModuleLayout } from "@/layouts/ModuleLayout";
+import { ModuleProtectedRoute } from "@/components/modules/ModuleProtectedRoute";
 import { AppIndexRedirect } from "@/components/app/AppIndexRedirect";
 
 // Auth pages
@@ -17,7 +19,7 @@ import AuthCallbackPage from "@/pages/auth/AuthCallbackPage";
 import LinkExpiredPage from "@/pages/auth/LinkExpiredPage";
 import UnauthorizedPage from "@/pages/auth/UnauthorizedPage";
 
-// App pages - Licensing
+// App pages - Licensing (legacy /app/licensing routes)
 import LicensingDashboard from "@/pages/app/licensing/LicensingDashboard";
 import LicensingCatalog from "@/pages/app/licensing/LicensingCatalog";
 import LicensingRequests from "@/pages/app/licensing/LicensingRequests";
@@ -26,7 +28,7 @@ import LicensingReports from "@/pages/app/licensing/LicensingReports";
 import LicensingDocuments from "@/pages/app/licensing/LicensingDocuments";
 import LicensingSettings from "@/pages/app/licensing/LicensingSettings";
 
-// App pages - Publishing
+// App pages - Publishing (legacy /app/publishing routes)
 import PublishingDashboard from "@/pages/app/publishing/PublishingDashboard";
 import PublishingCatalog from "@/pages/app/publishing/PublishingCatalog";
 import PublishingWorks from "@/pages/app/publishing/PublishingWorks";
@@ -37,6 +39,17 @@ import PublishingPayments from "@/pages/app/publishing/PublishingPayments";
 import PublishingDocuments from "@/pages/app/publishing/PublishingDocuments";
 import AccessRequestsPage from "@/pages/app/publishing/AccessRequestsPage";
 import PublishingSettings from "@/pages/app/publishing/PublishingSettings";
+
+// First-class module pages - Licensing (/licensing)
+import LicensingOverview from "@/pages/modules/licensing/LicensingOverview";
+import LicensingRequestsPage from "@/pages/modules/licensing/LicensingRequestsPage";
+import LicensingAgreementsPage from "@/pages/modules/licensing/LicensingAgreementsPage";
+
+// First-class module pages - Client Portal (/portal)
+import PortalOverview from "@/pages/modules/portal/PortalOverview";
+import PortalAgreementsPage from "@/pages/modules/portal/PortalAgreementsPage";
+import PortalStatementsPage from "@/pages/modules/portal/PortalStatementsPage";
+import PortalDocumentsPage from "@/pages/modules/portal/PortalDocumentsPage";
 
 // App pages - Access states
 import PendingApprovalPage from "@/pages/app/PendingApprovalPage";
@@ -84,7 +97,39 @@ const App = () => (
         <Route path="/app/no-access" element={<NoAccessPage />} />
         <Route path="/app/suspended" element={<AccessSuspendedPage />} />
 
-        {/* App routes with layout */}
+        {/* ═══════════════════════════════════════════════════════════════════════
+            FIRST-CLASS MODULE: LICENSING (/licensing)
+            Permission: licensing.view, licensing.manage, licensing.approve
+        ═══════════════════════════════════════════════════════════════════════ */}
+        <Route path="/licensing" element={
+          <ModuleProtectedRoute requiredPermission="licensing.view">
+            <ModuleLayout />
+          </ModuleProtectedRoute>
+        }>
+          <Route index element={<LicensingOverview />} />
+          <Route path="requests" element={<LicensingRequestsPage />} />
+          <Route path="agreements" element={<LicensingAgreementsPage />} />
+        </Route>
+
+        {/* ═══════════════════════════════════════════════════════════════════════
+            FIRST-CLASS MODULE: CLIENT PORTAL (/portal)
+            Permission: portal.view, portal.download, portal.submit
+        ═══════════════════════════════════════════════════════════════════════ */}
+        <Route path="/portal" element={
+          <ModuleProtectedRoute requiredPermission="portal.view">
+            <ModuleLayout />
+          </ModuleProtectedRoute>
+        }>
+          <Route index element={<PortalOverview />} />
+          <Route path="agreements" element={<PortalAgreementsPage />} />
+          <Route path="statements" element={<PortalStatementsPage />} />
+          <Route path="documents" element={<PortalDocumentsPage />} />
+        </Route>
+
+        {/* ═══════════════════════════════════════════════════════════════════════
+            LEGACY APP ROUTES (/app)
+            These remain for backward compatibility with existing context system
+        ═══════════════════════════════════════════════════════════════════════ */}
         <Route path="/app" element={<AppProtectedRoute><AppLayout /></AppProtectedRoute>}>
           {/* Index route - redirects to active context */}
           <Route index element={<AppIndexRedirect />} />

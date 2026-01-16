@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useRoleAccess } from "@/hooks/useRoleAccess";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,13 +31,20 @@ import { NAV_LABELS, ICON_SIZE, ICON_STROKE, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } 
  * - Active state is typographic (opacity), not color-heavy
  * - No pills, chips, or floating nav
  * - Minimal indicator for account (initials), no avatar personality
+ * 
+ * Navigation Visibility:
+ * - Platform Admin: Client Portal + Licensing + Administration (in dropdown)
+ * - Org Admin: Client Portal + Licensing (based on permissions)
+ * - Client: Client Portal only
  */
 
-type PortalMode = "publishing" | "licensing";
+type PortalMode = "publishing" | "licensing" | "portal" | "admin";
 
-function useCurrentMode(): PortalMode | "admin" {
+function useCurrentMode(): PortalMode {
   const location = useLocation();
   if (location.pathname.startsWith("/admin")) return "admin";
+  if (location.pathname.startsWith("/licensing")) return "licensing";
+  if (location.pathname.startsWith("/portal")) return "portal";
   if (location.pathname.includes("/licensing")) return "licensing";
   return "publishing";
 }
@@ -316,16 +324,26 @@ export function GlobalHeader() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const currentMode = useCurrentMode();
-  const { activeContext, availableContexts, setActiveContext } = useAuth();
+  const { activeContext, availableContexts, setActiveContext, isPlatformAdmin } = useAuth();
+  const { canAccessLicensing, canAccessPortal } = useRoleAccess();
 
   const handleLogoClick = () => {
     if (currentMode === "admin") {
       navigate("/admin");
+    } else if (currentMode === "portal") {
+      navigate("/portal");
+    } else if (currentMode === "licensing") {
+      navigate("/licensing");
     } else {
       navigate(`/app/${activeContext}`);
     }
   };
 
+  // Module visibility based on permissions (not just context)
+  const showPortal = isPlatformAdmin || canAccessPortal;
+  const showLicensing = isPlatformAdmin || canAccessLicensing;
+  
+  // Legacy context access for backward compatibility
   const hasPublishing = availableContexts.includes("publishing");
   const hasLicensing = availableContexts.includes("licensing");
 
@@ -357,21 +375,19 @@ export function GlobalHeader() {
         )}
       </div>
 
-      {/* Right: Portal nav + Account */}
+      {/* Right: Module nav + Account */}
       <div className="flex items-center gap-1">
-        {/* Portal navigation - flat, typographic active state */}
+        {/* Primary module navigation - flat, typographic active state */}
         {!isMobile && currentMode !== "admin" && (
           <nav className="flex items-center gap-1 mr-3">
-            {hasPublishing && (
+            {/* Client Portal - first-class module */}
+            {showPortal && (
               <button
-                onClick={() => {
-                  setActiveContext("publishing");
-                  navigate("/app/publishing");
-                }}
+                onClick={() => navigate("/portal")}
                 className={cn(
                   "h-7 px-3 rounded text-[13px] font-medium transition-opacity duration-[180ms]",
                   "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30",
-                  currentMode === "publishing" 
+                  (currentMode === "portal" || currentMode === "publishing")
                     ? "text-white" 
                     : "text-white/50 hover:text-white/80"
                 )}
@@ -379,12 +395,10 @@ export function GlobalHeader() {
                 {NAV_LABELS.CLIENT_PORTAL}
               </button>
             )}
-            {hasLicensing && (
+            {/* Licensing - first-class module */}
+            {showLicensing && (
               <button
-                onClick={() => {
-                  setActiveContext("licensing");
-                  navigate("/app/licensing");
-                }}
+                onClick={() => navigate("/licensing")}
                 className={cn(
                   "h-7 px-3 rounded text-[13px] font-medium transition-opacity duration-[180ms]",
                   "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30",
