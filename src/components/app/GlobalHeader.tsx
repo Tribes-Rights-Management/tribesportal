@@ -107,13 +107,13 @@ function WorkspaceSelector() {
         <div className="flex flex-col items-center">
           <span 
             className="text-[10px] uppercase tracking-wider"
-            style={{ color: 'var(--tribes-fg-muted)' }}
+            style={{ color: 'var(--tribes-text-muted)' }}
           >
             Workspace
           </span>
           <span 
             className="text-[13px] font-medium truncate max-w-[160px]"
-            style={{ color: 'var(--tribes-fg-secondary)' }}
+            style={{ color: 'var(--tribes-text-secondary)' }}
           >
             {activeTenant.tenant_name}
           </span>
@@ -142,7 +142,7 @@ function WorkspaceSelector() {
     <div className="flex flex-col items-center gap-0.5">
       <span 
         className="text-[10px] uppercase tracking-wider"
-        style={{ color: 'var(--tribes-fg-muted)' }}
+        style={{ color: 'var(--tribes-text-muted)' }}
       >
         Workspace
       </span>
@@ -150,15 +150,18 @@ function WorkspaceSelector() {
         value={activeTenant?.tenant_id ?? ""}
         onValueChange={handleWorkspaceChange}
       >
-        <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-white/5 text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 focus-visible:ring-1 focus-visible:ring-white/20 text-white/60">
+        <SelectTrigger 
+          className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-white/5 text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 focus-visible:ring-1 focus-visible:ring-white/20"
+          style={{ color: 'var(--tribes-text-secondary)' }}
+        >
           <SelectValue placeholder={NAV_LABELS.SELECT_WORKSPACE} />
         </SelectTrigger>
-        <SelectContent align="center" className="bg-[var(--tribes-header-bg)] border-[var(--tribes-border)] text-[var(--tribes-fg)]">
-          <div className="px-3 py-2 border-b border-white/5">
-            <p className="text-[10px] text-white/40 uppercase tracking-wide">
+        <SelectContent align="center" className="bg-[var(--tribes-header-bg)] border-[var(--tribes-border)]">
+          <div className="px-3 py-2 border-b" style={{ borderColor: 'var(--tribes-border)' }}>
+            <p className="text-[10px] uppercase tracking-wide" style={{ color: 'var(--tribes-text-muted)' }}>
               Switch Workspace
             </p>
-            <p className="text-[11px] text-white/30 mt-0.5">
+            <p className="text-[11px] mt-0.5" style={{ color: 'var(--tribes-text-muted)' }}>
               Workspaces represent separate operating environments
             </p>
           </div>
@@ -166,7 +169,8 @@ function WorkspaceSelector() {
             <SelectItem
               key={membership.tenant_id}
               value={membership.tenant_id}
-              className="text-[13px] text-white/80 focus:bg-white/10 focus:text-white"
+              className="text-[13px] focus:bg-white/10"
+              style={{ color: 'var(--tribes-text-secondary)' }}
             >
               {membership.tenant_name}
             </SelectItem>
@@ -239,33 +243,38 @@ function AccountMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-56 rounded-lg bg-[var(--tribes-header-bg)] border-[var(--tribes-border)] text-[var(--tribes-fg)]"
+        className="w-56 rounded-lg"
+        style={{
+          backgroundColor: 'var(--tribes-header-bg)',
+          borderColor: 'var(--tribes-border)',
+        }}
         sideOffset={8}
       >
         <div className="px-3 py-2.5">
-          <p className="text-[13px] font-medium text-white/90 truncate">
+          <p className="text-[13px] font-medium truncate" style={{ color: 'var(--tribes-text)' }}>
             {profile?.full_name || profile?.email}
           </p>
           {profile?.email && profile?.full_name && (
-            <p className="text-[11px] text-white/50 truncate mt-0.5">
+            <p className="text-[11px] truncate mt-0.5" style={{ color: 'var(--tribes-text-muted)' }}>
               {profile.email}
             </p>
           )}
         </div>
         
-        <DropdownMenuSeparator className="bg-white/10" />
+        <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
         
         {/* Return to System Console - shown when in workspace */}
         {showReturnToConsole && (
           <>
             <DropdownMenuItem
               onClick={() => navigate("/admin")}
-              className="text-[13px] py-2 text-white/70 focus:bg-white/10 focus:text-white"
+              className="text-[13px] py-2 focus:bg-white/5"
+              style={{ color: 'var(--tribes-text-secondary)' }}
             >
               <ArrowLeft size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
               Return to System Console
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-white/10" />
+            <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
           </>
         )}
         
@@ -273,7 +282,8 @@ function AccountMenu() {
         {isPlatformAdmin && currentMode === "admin" && (
           <DropdownMenuItem
             onClick={() => navigate("/admin")}
-            className="text-[13px] py-2 text-white/70 focus:bg-white/10 focus:text-white bg-white/5"
+            className="text-[13px] py-2 focus:bg-white/5 bg-white/[0.02]"
+            style={{ color: 'var(--tribes-text-secondary)' }}
           >
             <Shield size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
             {NAV_LABELS.SYSTEM_CONSOLE}
@@ -282,16 +292,17 @@ function AccountMenu() {
         
         <DropdownMenuItem
           onClick={() => navigate("/account")}
-          className="text-[13px] py-2 text-white/70 focus:bg-white/10 focus:text-white"
+          className="text-[13px] py-2 focus:bg-white/5"
+          style={{ color: 'var(--tribes-text-secondary)' }}
         >
           <Settings size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
           {NAV_LABELS.ACCOUNT_SETTINGS}
         </DropdownMenuItem>
         
-        <DropdownMenuSeparator className="bg-white/10" />
+        <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="text-[13px] py-2 text-red-400 focus:bg-white/10 focus:text-red-300"
+          className="text-[13px] py-2 text-red-400 focus:bg-white/5 focus:text-red-300"
         >
           <LogOut size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
           Sign out
@@ -325,25 +336,35 @@ function MobileControls() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="h-7 px-2 text-[13px] font-medium text-white/70 hover:text-white/90 flex items-center gap-1">
+        <button 
+          className="h-7 px-2 text-[13px] font-medium flex items-center gap-1 hover:opacity-80"
+          style={{ color: 'var(--tribes-text-secondary)' }}
+        >
           {hasActiveWorkspace ? getModeLabel() : "Select Workspace"}
           <ChevronDown className="h-3 w-3 opacity-50" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" className="w-52 bg-[var(--tribes-header-bg)] border-[var(--tribes-border)] text-[var(--tribes-fg)]">
+      <DropdownMenuContent 
+        align="center" 
+        className="w-52"
+        style={{
+          backgroundColor: 'var(--tribes-header-bg)',
+          borderColor: 'var(--tribes-border)',
+        }}
+      >
         {activeTenant && (
           <div className="px-3 py-2">
-            <p className="text-[10px] text-white/40 uppercase tracking-wide">Active Workspace</p>
-            <p className="text-[13px] font-medium text-white/80 truncate">{activeTenant.tenant_name}</p>
+            <p className="text-[10px] uppercase tracking-wide" style={{ color: 'var(--tribes-text-muted)' }}>Active Workspace</p>
+            <p className="text-[13px] font-medium truncate" style={{ color: 'var(--tribes-text-secondary)' }}>{activeTenant.tenant_name}</p>
           </div>
         )}
         
         {tenantMemberships.length > 1 && (
           <>
-            <DropdownMenuSeparator className="bg-white/10" />
+            <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
             <div className="px-3 py-1">
-              <p className="text-[10px] text-white/40 uppercase tracking-wide">Switch Workspace</p>
-              <p className="text-[9px] text-white/25 mt-0.5">
+              <p className="text-[10px] uppercase tracking-wide" style={{ color: 'var(--tribes-text-muted)' }}>Switch Workspace</p>
+              <p className="text-[9px] mt-0.5" style={{ color: 'var(--tribes-text-muted)' }}>
                 Workspaces are separate environments
               </p>
             </div>
@@ -358,9 +379,10 @@ function MobileControls() {
                   }
                 }}
                 className={cn(
-                  "text-[13px] text-white/70 focus:bg-white/10 focus:text-white",
-                  activeTenant?.tenant_id === membership.tenant_id && "bg-white/5"
+                  "text-[13px] focus:bg-white/5",
+                  activeTenant?.tenant_id === membership.tenant_id && "bg-white/[0.02]"
                 )}
+                style={{ color: 'var(--tribes-text-secondary)' }}
               >
                 {membership.tenant_name}
               </DropdownMenuItem>
@@ -371,9 +393,9 @@ function MobileControls() {
         {/* Products only available with active workspace */}
         {hasActiveWorkspace && currentMode !== "admin" && availableContexts.length > 1 && (
           <>
-            <DropdownMenuSeparator className="bg-white/10" />
+            <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
             <div className="px-3 py-1">
-              <p className="text-[10px] text-white/40 uppercase tracking-wide">Products</p>
+              <p className="text-[10px] uppercase tracking-wide" style={{ color: 'var(--tribes-text-muted)' }}>Products</p>
             </div>
             
             {availableContexts.includes("publishing") && (
@@ -383,9 +405,10 @@ function MobileControls() {
                   navigate("/app/publishing");
                 }}
                 className={cn(
-                  "text-[13px] text-white/70 focus:bg-white/10 focus:text-white",
-                  currentMode === "publishing" && "bg-white/5"
+                  "text-[13px] focus:bg-white/5",
+                  currentMode === "publishing" && "bg-white/[0.02]"
                 )}
+                style={{ color: 'var(--tribes-text-secondary)' }}
               >
                 {NAV_LABELS.TRIBES_ADMIN}
               </DropdownMenuItem>
@@ -397,9 +420,10 @@ function MobileControls() {
                   navigate("/app/licensing");
                 }}
                 className={cn(
-                  "text-[13px] text-white/70 focus:bg-white/10 focus:text-white",
-                  currentMode === "licensing" && "bg-white/5"
+                  "text-[13px] focus:bg-white/5",
+                  currentMode === "licensing" && "bg-white/[0.02]"
                 )}
+                style={{ color: 'var(--tribes-text-secondary)' }}
               >
                 {NAV_LABELS.LICENSING}
               </DropdownMenuItem>
@@ -469,10 +493,11 @@ export function GlobalHeader() {
             {/* Left: Wordmark */}
             <button
               onClick={handleLogoClick}
-              className="font-semibold text-white hover:text-white/70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
+              className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
               style={{
                 fontSize: '11px',
                 letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
+                color: 'var(--tribes-text)',
               }}
             >
               {NAV_LABELS.BRAND_WORDMARK}
@@ -532,10 +557,11 @@ export function GlobalHeader() {
       <div className="flex items-center min-w-0 gap-3">
         <button
           onClick={handleLogoClick}
-          className="font-semibold text-white hover:text-white/70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
+          className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
           style={{
             fontSize: PORTAL_TYPOGRAPHY.brandWordmark.size,
             letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
+            color: 'var(--tribes-text)',
           }}
         >
           {NAV_LABELS.BRAND_WORDMARK}
@@ -544,7 +570,7 @@ export function GlobalHeader() {
         {/* Header subtitle - shows workspace context when active */}
         {hasActiveWorkspace && contextLabel && (
           <div className="flex items-center gap-1.5">
-            <span className="text-white/20">·</span>
+            <span style={{ color: 'var(--tribes-text-muted)' }}>·</span>
             <span 
               className="text-[11px] font-medium uppercase tracking-wider"
               style={{ color: 'var(--tribes-text-muted)' }}
@@ -571,11 +597,13 @@ export function GlobalHeader() {
                 onClick={() => navigate("/portal")}
                 className={cn(
                   "h-7 px-3 rounded text-[13px] font-medium transition-opacity duration-[180ms]",
-                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30",
-                  (currentMode === "portal" || currentMode === "publishing")
-                    ? "text-white" 
-                    : "text-white/50 hover:text-white/80"
+                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
                 )}
+                style={{
+                  color: (currentMode === "portal" || currentMode === "publishing")
+                    ? 'var(--tribes-text)' 
+                    : 'var(--tribes-text-muted)'
+                }}
               >
                 {NAV_LABELS.TRIBES_ADMIN}
               </button>
@@ -586,11 +614,13 @@ export function GlobalHeader() {
                 onClick={() => navigate("/licensing")}
                 className={cn(
                   "h-7 px-3 rounded text-[13px] font-medium transition-opacity duration-[180ms]",
-                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30",
-                  currentMode === "licensing" 
-                    ? "text-white" 
-                    : "text-white/50 hover:text-white/80"
+                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
                 )}
+                style={{
+                  color: currentMode === "licensing" 
+                    ? 'var(--tribes-text)' 
+                    : 'var(--tribes-text-muted)'
+                }}
               >
                 {NAV_LABELS.LICENSING}
               </button>

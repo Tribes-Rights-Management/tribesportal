@@ -4,16 +4,20 @@
  * ═══════════════════════════════════════════════════════════════════════════════
  * 
  * This file defines the AUTHORITATIVE color system for the Tribes application.
- * All values are cloned from the public website to ensure exact visual parity.
+ * All values are cloned from the website repo: tribes_website-main/src/lib/theme.ts
  * 
- * REFERENCES:
- * - Page background: THEME_DARK_BG from website (#0B0F14)
- * - Header background: getHeaderBackground() dark mode (#111214)
+ * WEBSITE SOURCE VALUES (EXACT):
+ * - BG (page): #0B0F14
+ * - Surface: rgba(255,255,255,0.03)
+ * - Border: rgba(255,255,255,0.08)
+ * - Text primary: #F2F4F7
+ * - Text secondary: #AAB1BA
+ * - Text muted: #6E7681
  * 
  * ENFORCEMENT:
  * - No component may hardcode colors outside these tokens
  * - All backgrounds must derive from --tribes-bg or --tribes-surface
- * - All text must derive from --tribes-fg / --tribes-fg-secondary / --tribes-fg-muted
+ * - All text must derive from --tribes-text / --tribes-text-secondary / --tribes-text-muted
  * - No new "near-black" values may be introduced
  * 
  * This file is IMMUTABLE and must not be modified without design system approval.
@@ -22,58 +26,58 @@
 
 :root {
   /* ═══════════════════════════════════════════════════════════════════════════
-     GLOBAL FOUNDATION — EXACT MATCH with public website (LOCKED)
-     Source: tribesrightsmanagement.com tokens
+     GLOBAL FOUNDATION — EXACT MATCH with website theme.ts (LOCKED)
+     Source: tribes_website-main/src/lib/theme.ts
      ═══════════════════════════════════════════════════════════════════════════ */
   
-  /* Page background: website THEME_DARK_BG (EXACT) */
+  /* Page background: website BG (EXACT) */
   --tribes-bg: #0B0F14;
   
-  /* Header background: website getHeaderBackground() dark (EXACT) */
+  /* Header background: slightly elevated from page */
   --tribes-header-bg: #111214;
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     TEXT HIERARCHY — EXACT MATCH with website tokens (LOCKED)
-     Source: THEME_DARK_TEXT_PRIMARY, THEME_DARK_TEXT_SECONDARY, THEME_DARK_TEXT_MUTED
+     TEXT HIERARCHY — EXACT MATCH with website theme.ts (LOCKED)
+     Source: Text primary, Text secondary, Text muted from theme.ts
      ═══════════════════════════════════════════════════════════════════════════ */
   
-  /* Primary text: website THEME_DARK_TEXT_PRIMARY */
-  --tribes-fg: rgba(255, 255, 255, 0.92);
-  --tribes-text: rgba(255, 255, 255, 0.92);
+  /* Primary text: website Text primary #F2F4F7 */
+  --tribes-fg: #F2F4F7;
+  --tribes-text: #F2F4F7;
   
-  /* Secondary text: website THEME_DARK_TEXT_SECONDARY */
-  --tribes-fg-secondary: rgba(255, 255, 255, 0.72);
-  --tribes-text-secondary: rgba(255, 255, 255, 0.72);
+  /* Secondary text: website Text secondary #AAB1BA */
+  --tribes-fg-secondary: #AAB1BA;
+  --tribes-text-secondary: #AAB1BA;
   
-  /* Muted text: website THEME_DARK_TEXT_MUTED */
-  --tribes-fg-muted: rgba(255, 255, 255, 0.55);
-  --tribes-text-muted: rgba(255, 255, 255, 0.55);
+  /* Muted text: website Text muted #6E7681 */
+  --tribes-fg-muted: #6E7681;
+  --tribes-text-muted: #6E7681;
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     SURFACE SYSTEM — Elevated content areas (LOCKED)
+     SURFACE SYSTEM — Website-matched values (LOCKED)
      ═══════════════════════════════════════════════════════════════════════════ */
   
-  /* Card/panel surface: slight elevation above page */
-  --tribes-card: rgba(255, 255, 255, 0.04);
-  --tribes-surface: rgba(255, 255, 255, 0.04);
+  /* Card/panel surface: website Surface rgba(255,255,255,0.03) */
+  --tribes-card: rgba(255, 255, 255, 0.03);
+  --tribes-surface: rgba(255, 255, 255, 0.03);
   
-  /* Card border */
+  /* Card border: website Border rgba(255,255,255,0.08) */
   --tribes-card-border: rgba(255, 255, 255, 0.08);
   
-  /* Table surface: identical to card (never sits on page directly) */
-  --tribes-surface-table: rgba(255, 255, 255, 0.04);
+  /* Table surface: identical to card */
+  --tribes-surface-table: rgba(255, 255, 255, 0.03);
   
   /* Elevated surface: secondary elevation for nested content */
-  --tribes-surface-elevated: rgba(255, 255, 255, 0.06);
+  --tribes-surface-elevated: rgba(255, 255, 255, 0.05);
   
   /* Nested surface: tertiary elevation for deeply nested content */
-  --tribes-surface-nested: rgba(255, 255, 255, 0.08);
+  --tribes-surface-nested: rgba(255, 255, 255, 0.07);
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     BORDERS & DIVIDERS — Institutional, subtle separation (LOCKED)
+     BORDERS & DIVIDERS — Website-matched (LOCKED)
      ═══════════════════════════════════════════════════════════════════════════ */
   
-  /* Hairline borders: low-contrast dividers */
+  /* Hairline borders: website Border rgba(255,255,255,0.08) */
   --tribes-border: rgba(255, 255, 255, 0.08);
   
   /* Divider: slightly stronger for visual separation */
@@ -93,10 +97,10 @@
   --tribes-focus-ring: rgba(255, 255, 255, 0.35);
   
   /* Hover state: subtle surface highlight */
-  --tribes-hover: rgba(255, 255, 255, 0.06);
+  --tribes-hover: rgba(255, 255, 255, 0.05);
   
   /* Active state: pressed feedback */
-  --tribes-active: rgba(255, 255, 255, 0.10);
+  --tribes-active: rgba(255, 255, 255, 0.08);
 }
 
 /* iOS underlay rule - ensures underlay uses exact background */

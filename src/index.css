@@ -197,40 +197,42 @@
     --auth-button-disabled-text: var(--tribes-fg-muted);
 
     /* ─────────────────────────────────────────────────────────────────────────────
-       INSTITUTIONAL DARK THEME (Shadcn HSL tokens mapped to dark palette)
-       Mercury/Stripe-grade: #0B0F14 canvas (website match), light text
+       INSTITUTIONAL DARK THEME (Shadcn HSL tokens mapped to website palette)
+       EXACT MATCH: #0B0F14 canvas, #F2F4F7 primary, #AAB1BA secondary, #6E7681 muted
        ───────────────────────────────────────────────────────────────────────────── */
     
     /* Background & Surface - Dark institutional canvas (HSL of #0B0F14 ≈ 214 28% 6%) */
     --background: 214 28% 6%;
-    --foreground: 0 0% 100%;
+    /* Foreground - HSL of #F2F4F7 ≈ 213 18% 96% */
+    --foreground: 213 18% 96%;
 
-    /* Card surface (HSL of rgba surface on #0B0F14) */
-    --card: 214 20% 10%;
-    --card-foreground: 0 0% 100%;
+    /* Card surface (slight elevation) */
+    --card: 214 20% 8%;
+    --card-foreground: 213 18% 96%;
 
-    --popover: 214 20% 10%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 214 20% 8%;
+    --popover-foreground: 213 18% 96%;
 
     /* Primary - Light accent on dark */
-    --primary: 0 0% 100%;
+    --primary: 213 18% 96%;
     --primary-foreground: 214 28% 6%;
 
     /* Secondary - Subtle surface */
-    --secondary: 214 20% 12%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 214 20% 10%;
+    --secondary-foreground: 213 18% 96%;
 
-    /* Muted: dark surface with readable subdued text (matches website 72%) */
-    --muted: 214 15% 14%;
-    --muted-foreground: 0 0% 72%;
+    /* Muted: dark surface with readable subdued text 
+       --muted-foreground uses #AAB1BA (HSL ≈ 213 12% 70%) */
+    --muted: 214 15% 12%;
+    --muted-foreground: 213 12% 70%;
 
     /* Accent */
-    --accent: 214 20% 14%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 214 20% 12%;
+    --accent-foreground: 213 18% 96%;
 
     /* Destructive */
     --destructive: 0 62% 55%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 213 18% 96%;
 
     /* Borders: subtle white opacity */
     --border-hsl: 0 0% 100% / 0.08;
@@ -258,22 +260,22 @@
     --app-surface: 214 28% 6%;
     
     /* Sidebar - dark institutional (aligned with website) */
-    --sidebar-background: 214 20% 8%;
-    --sidebar-foreground: 0 0% 72%;
-    --sidebar-primary: 0 0% 100%;
+    --sidebar-background: 214 20% 7%;
+    --sidebar-foreground: 213 12% 70%;
+    --sidebar-primary: 213 18% 96%;
     --sidebar-primary-foreground: 214 28% 6%;
-    --sidebar-accent: 214 20% 12%;
-    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-accent: 214 20% 10%;
+    --sidebar-accent-foreground: 213 18% 96%;
     --sidebar-border: 0 0% 100% / 0.08;
     --sidebar-ring: 0 0% 100% / 0.20;
 
     /* Semantic */
     --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
+    --success-foreground: 213 18% 96%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 9%;
     --info: 199 89% 48%;
-    --info-foreground: 0 0% 100%;
+    --info-foreground: 213 18% 96%;
   }
 }
 

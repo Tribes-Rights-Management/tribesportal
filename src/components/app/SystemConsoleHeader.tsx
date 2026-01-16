@@ -189,7 +189,7 @@ export function SystemConsoleHeader() {
                 style={{
                   fontSize: '11px',
                   letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-                  color: 'var(--tribes-fg)',
+                  color: 'var(--tribes-text)',
                 }}
               >
                 {NAV_LABELS.BRAND_WORDMARK}
@@ -280,7 +280,7 @@ export function SystemConsoleHeader() {
             style={{
               fontSize: PORTAL_TYPOGRAPHY.brandWordmark.size,
               letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-              color: 'var(--tribes-fg)',
+              color: 'var(--tribes-text)',
             }}
           >
             {NAV_LABELS.BRAND_WORDMARK}
