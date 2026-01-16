@@ -2,27 +2,45 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * INSTITUTIONAL TABLE SYSTEM — DARK CANVAS (CANONICAL)
+ * INSTITUTIONAL TABLE SYSTEM — FUNDRISE/MERCURY CLASS (CANONICAL)
  * 
  * DESIGN STANDARD (AUTHORITATIVE):
- * - Dark surface, hairline borders
- * - Flat, rectangular layout
- * - Minimal dividers
- * - No card-style rows
- * - No hover glow, lift, or animation
- * - Dense, optimized for scanning
- * - Headers: small, uppercase, muted
+ * - Tables sit directly on page surface (NO card wrapping)
+ * - Horizontal dividers only (no boxed cells)
+ * - No zebra striping
+ * - No shadows, no motion on hover
+ * - Dense, archival, reviewable
  * 
- * Tables should resemble internal financial systems, not consumer dashboards.
+ * ROW DENSITY:
+ * - Default: 48px row height
+ * - Compact: 40px (admin-only, future toggle)
+ * - Never exceed 56px
+ * 
+ * COLUMN SPACING:
+ * - Left/right padding: 20px
+ * - Numeric columns: right-aligned
+ * - Status columns: center-aligned
+ * 
+ * TYPOGRAPHY:
+ * - Header: 12px, uppercase, +0.04em tracking, muted
+ * - Body: 14px, normal weight, near-black (on dark: off-white)
  */
 
-const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
-  ({ className, ...props }, ref) => (
+type TableDensity = "default" | "compact";
+
+interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
+  density?: TableDensity;
+}
+
+const Table = React.forwardRef<HTMLTableElement, TableProps>(
+  ({ className, density = "default", ...props }, ref) => (
     <div className="relative w-full overflow-auto">
       <table 
         ref={ref} 
+        data-density={density}
         className={cn(
-          "w-full caption-bottom text-[13px]",
+          "w-full caption-bottom",
+          density === "compact" ? "text-[13px]" : "text-[14px]",
           className
         )} 
         {...props} 
@@ -76,16 +94,22 @@ const TableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttribut
 );
 TableFooter.displayName = "TableFooter";
 
-const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(
-  ({ className, ...props }, ref) => (
+interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+  /** Make entire row clickable */
+  clickable?: boolean;
+}
+
+const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
+  ({ className, clickable, ...props }, ref) => (
     <tr
       ref={ref}
       className={cn(
-        // Minimal divider, subtle hover - no animation, no lift
-        // Height controlled by cell padding for 44px compact rows
-        "border-b hover:bg-white/[0.02]",
+        // Horizontal divider only, subtle hover tint
+        // NO shadows, NO motion, NO lift
+        "border-b",
+        "hover:bg-white/[0.02]",
         "data-[state=selected]:bg-white/[0.04]",
-        "transition-colors duration-[150ms]",
+        clickable && "cursor-pointer",
         className
       )}
       style={{ borderColor: 'var(--platform-border)' }}
@@ -95,24 +119,25 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
 );
 TableRow.displayName = "TableRow";
 
-/**
- * DATA DENSITY VARIANTS
- * compact = 44px rows, minimal padding (default for institutional)
- * standard = 48px rows, comfortable padding
- */
 type TableHeadProps = React.ThHTMLAttributes<HTMLTableCellElement> & {
-  numeric?: boolean; // Right-align numeric columns
+  /** Right-align numeric columns */
+  numeric?: boolean;
+  /** Center-align status columns */
+  status?: boolean;
 };
 
 const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
-  ({ className, numeric, ...props }, ref) => (
+  ({ className, numeric, status, ...props }, ref) => (
     <th
       ref={ref}
       className={cn(
-        // Institutional header: small, uppercase, muted, compact
-        "h-11 px-4 align-middle",
-        "text-[10px] font-medium tracking-[0.04em] uppercase",
-        numeric ? "text-right" : "text-left",
+        // Institutional header: 12px, uppercase, +0.04em tracking, muted
+        // Height controlled for 48px default row
+        "h-12 px-5 align-middle",
+        "text-[12px] font-medium tracking-[0.04em] uppercase",
+        numeric && "text-right",
+        status && "text-center",
+        !numeric && !status && "text-left",
         "[&:has([role=checkbox])]:pr-0",
         className,
       )}
@@ -124,19 +149,24 @@ const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
 TableHead.displayName = "TableHead";
 
 type TableCellProps = React.TdHTMLAttributes<HTMLTableCellElement> & {
-  numeric?: boolean; // Right-align numeric values
-  muted?: boolean;   // Secondary/meta styling
+  /** Right-align numeric values */
+  numeric?: boolean;
+  /** Center-align status values */
+  status?: boolean;
+  /** Secondary/meta styling */
+  muted?: boolean;
 };
 
 const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
-  ({ className, numeric, muted, ...props }, ref) => (
+  ({ className, numeric, status, muted, ...props }, ref) => (
     <td 
       ref={ref} 
       className={cn(
-        // Compact, ledger-like cell (44px effective row height)
-        "px-4 py-2.5 align-middle text-[13px]",
+        // 48px row height via padding (py-3.5 = 14px * 2 + 14px text ≈ 48px)
+        "px-5 py-3.5 align-middle text-[14px]",
         numeric && "text-right tabular-nums font-medium",
-        muted && "text-[12px]",
+        status && "text-center",
+        muted && "text-[13px]",
         "[&:has([role=checkbox])]:pr-0",
         className
       )}
@@ -152,7 +182,7 @@ const TableCaption = React.forwardRef<HTMLTableCaptionElement, React.HTMLAttribu
     <caption 
       ref={ref} 
       className={cn(
-        "mt-4 text-[12px]",
+        "mt-4 text-[13px]",
         className
       )}
       style={{ color: 'var(--platform-text-secondary)' }}
@@ -162,4 +192,51 @@ const TableCaption = React.forwardRef<HTMLTableCaptionElement, React.HTMLAttribu
 );
 TableCaption.displayName = "TableCaption";
 
-export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };
+/**
+ * EMPTY TABLE ROW — Institutional empty state
+ * Uses standardized language, no illustrations, no "helpful" tips
+ */
+interface TableEmptyRowProps {
+  colSpan: number;
+  title: string;
+  description?: string;
+}
+
+const TableEmptyRow = React.forwardRef<HTMLTableRowElement, TableEmptyRowProps>(
+  ({ colSpan, title, description }, ref) => (
+    <tr ref={ref}>
+      <td 
+        colSpan={colSpan} 
+        className="px-5 py-10 text-center"
+      >
+        <p 
+          className="text-[14px] font-medium"
+          style={{ color: 'var(--platform-text-secondary)' }}
+        >
+          {title}
+        </p>
+        {description && (
+          <p 
+            className="text-[13px] mt-1"
+            style={{ color: 'var(--platform-text-muted)' }}
+          >
+            {description}
+          </p>
+        )}
+      </td>
+    </tr>
+  ),
+);
+TableEmptyRow.displayName = "TableEmptyRow";
+
+export { 
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableFooter, 
+  TableHead, 
+  TableRow, 
+  TableCell, 
+  TableCaption,
+  TableEmptyRow,
+};

@@ -57,6 +57,10 @@ export const BUTTON_LABELS = {
   
   // Cancel
   CANCEL: "Cancel",
+  
+  // Export
+  EXPORT: "Export",
+  EXPORT_RECORD: "Export record",
 } as const;
 
 // PROHIBITED BUTTON LANGUAGE — NEVER USE:
@@ -274,6 +278,19 @@ export const CONFIRMATIONS = {
 export const FOOTER_COPY = {
   COPYRIGHT: "© {year} Tribes Rights Management LLC. All rights reserved.",
   AUDIT_NOTICE: "Access and activity are logged for security and audit purposes.",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// AUDIT LABELS — SYSTEM LOGGING LANGUAGE
+// ═══════════════════════════════════════════════════════════════════════════
+
+export const AUDIT_COPY = {
+  APPROVAL_LOGGED: "All approvals are logged with timestamp and administrator identity.",
+  ACCESS_LOGGED: "All access requests are logged and reviewed.",
+  EXPORT_LOGGED: "Exports are logged for audit purposes.",
+  EXPORT_TIMESTAMP: "Exports reflect the data as of the time generated.",
+  CHANGES_LOGGED: "Changes will be logged and may require review.",
+  PERMANENT_ACTION: "This action is permanent and cannot be undone.",
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
