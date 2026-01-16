@@ -4,7 +4,182 @@
  * AUTHORITATIVE. These tokens supersede prior UI conventions.
  * This is infrastructure, not a growth product.
  * Design benchmark: financial registries, custodial systems, audit surfaces.
+ * 
+ * QA GUARDRAILS:
+ * - Any deviation from these tokens is a regression
+ * - No "friendly" UI patterns allowed
+ * - No colorful icons, excessive animations, or playful elements
+ * - TRIBES must be ALL CAPS everywhere
+ * - No "Tribes Platform" label - it adds no institutional value
  */
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PORTAL TYPOGRAPHY — INSTITUTIONAL STANDARD (LOCKED)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * PORTAL TYPOGRAPHY RULES:
+ * - Same font family as marketing site (system font stack)
+ * - Headlines: restrained, confident
+ * - Body: calm, readable, no "UI filler"
+ * - TRIBES must be ALL CAPS everywhere
+ * - Section headers: Title Case
+ * - Labels: Sentence case
+ * - Status text: Sentence case
+ */
+export const PORTAL_TYPOGRAPHY = {
+  // Font family - matches marketing site
+  fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+  
+  // Brand wordmark
+  brandWordmark: {
+    text: "TRIBES",
+    size: 13,
+    weight: 600,
+    tracking: 0.08, // em
+  },
+  
+  // Page title - large, restrained
+  pageTitle: {
+    size: 28,
+    weight: 600,
+    tracking: -0.02, // em
+    lineHeight: 1.2,
+  },
+  
+  // Section header - medium
+  sectionHeader: {
+    size: 15,
+    weight: 500,
+    lineHeight: 1.3,
+  },
+  
+  // Body - neutral
+  body: {
+    size: 14,
+    weight: 400,
+    lineHeight: 1.5,
+  },
+  
+  // Metadata - small, muted
+  meta: {
+    size: 13,
+    weight: 400,
+    lineHeight: 1.4,
+  },
+  
+  // Small labels
+  label: {
+    size: 10,
+    weight: 500,
+    tracking: 0.08, // em
+    uppercase: true,
+  },
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PORTAL AVATAR — INSTITUTIONAL STANDARD (LOCKED)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * AVATAR RULES:
+ * - Perfect circle (never oval, never pill)
+ * - Small diameter (28-32px max, never dominant)
+ * - Flat fill (no gradient, no glow)
+ * - Initials only unless user uploads image
+ * - No hover enlargement or animation
+ */
+export const PORTAL_AVATAR = {
+  // Desktop size
+  sizeDesktop: 28,
+  // Mobile size
+  sizeMobile: 28,
+  // Background color - neutral dark
+  bgColor: "#2A2A2C",
+  bgColorHover: "#333335",
+  // Text color
+  textColor: "rgba(255,255,255,0.7)",
+  // Initials
+  initialsSize: 10,
+  initialsWeight: 500,
+  uppercase: true,
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PORTAL MOTION — NEAR-INVISIBLE (LOCKED)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * MOTION RULES:
+ * - Near-invisible
+ * - No bounce, slide, or delight animations
+ * - State changes only
+ * - Duration: 150-180ms for interactions
+ * - Timing: ease or cubic-bezier(0.2, 0.8, 0.2, 1)
+ */
+export const PORTAL_MOTION = {
+  // Standard duration
+  duration: 180,
+  durationFast: 150,
+  // Timing function
+  timing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INSTITUTIONAL QA GUARDRAILS — NEVER REGRESS
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * QA GUARDRAILS:
+ * These checks must be applied before any UI change ships.
+ * If any check fails, the change is a regression and must be rejected.
+ */
+export const QA_GUARDRAILS = {
+  // Visual Authority Checks
+  visualAuthorityChecks: [
+    "Does this feel closer to Mercury / Stripe / Apple than Notion?",
+    "Is anything playful, friendly, or decorative?",
+    "Are there unnecessary cards, pills, or shadows?",
+  ],
+  
+  // Language Discipline
+  prohibitedLanguage: [
+    "Get started",
+    "Coming soon",
+    "Oops",
+    "Sorry",
+    "Great job",
+    "Awesome",
+    "You're all set",
+    "Successfully",
+    "Let's go",
+    "Welcome back",
+  ],
+  
+  // Consistency Checks
+  consistencyChecks: [
+    "Does TRIBES appear in ALL CAPS?",
+    "Does typography match the marketing site exactly?",
+    "Are tables flat and calm?",
+    "Are avatars small and circular?",
+  ],
+  
+  // Interaction Discipline
+  interactionChecks: [
+    "Are there unnecessary animations?",
+    "Are there CTA buttons where status text would suffice?",
+    "Is hover doing too much?",
+  ],
+  
+  // Empty State Discipline
+  emptyStateChecks: [
+    "Do empty states communicate status, not encouragement?",
+    "Are they calm, non-interactive, and factual?",
+  ],
+  
+  // Final Gate
+  finalGate: "If a feature feels trendy, friendly, or like a startup - it does not ship.",
+} as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // AUTH ENVIRONMENT — LOCKED, IMMUTABLE
@@ -673,8 +848,13 @@ export const DASHBOARD_LABELS = {
  * - No "friendly" labels
  * - Flat hierarchy, clear groupings
  * - No novelty navigation patterns
+ * - TRIBES must be ALL CAPS everywhere
+ * - No "Tribes Platform" label - it adds no institutional value
  */
 export const NAV_LABELS = {
+  // Brand
+  BRAND_WORDMARK: "TRIBES",
+  
   // Portal modes
   CLIENT_PORTAL: "Client Portal",
   LICENSING: "Licensing",
