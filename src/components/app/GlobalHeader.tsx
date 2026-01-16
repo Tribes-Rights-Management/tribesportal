@@ -19,6 +19,14 @@ import { LogOut, Settings, Shield, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import {
+  AVATAR_BUTTON_CLASSES,
+  NAV_BUTTON_CLASSES,
+  NAV_BUTTON_ACTIVE,
+  NAV_BUTTON_INACTIVE,
+  ICON_SIZE,
+  ICON_STROKE,
+} from "@/styles/tokens";
 
 /**
  * GlobalHeader - Premium Tribes header
@@ -135,7 +143,7 @@ function AccountMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="h-8 w-8 rounded-full shrink-0 inline-flex items-center justify-center bg-neutral-100 text-[11px] font-medium text-neutral-600 border border-neutral-200/60 transition-colors duration-150 hover:bg-neutral-200/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/15 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F7]"
+          className={AVATAR_BUTTON_CLASSES}
           aria-label="Account menu"
         >
           {getInitials()}
@@ -165,7 +173,7 @@ function AccountMenu() {
             onClick={() => navigate("/admin")}
             className={cn("text-[13px] py-2", currentMode === "admin" && "bg-muted")}
           >
-            <Shield size={18} strokeWidth={1.5} className="mr-2" />
+            <Shield size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
             Administration
           </DropdownMenuItem>
         )}
@@ -182,7 +190,7 @@ function AccountMenu() {
           }}
           className="text-[13px] py-2"
         >
-          <Settings size={18} strokeWidth={1.5} className="mr-2" />
+          <Settings size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
           Account Settings
         </DropdownMenuItem>
         
@@ -191,7 +199,7 @@ function AccountMenu() {
           onClick={handleSignOut}
           className="text-[13px] py-2 text-destructive focus:text-destructive"
         >
-          <LogOut size={18} strokeWidth={1.5} className="mr-2" />
+          <LogOut size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -345,10 +353,8 @@ export function GlobalHeader() {
                   navigate("/app/publishing");
                 }}
                 className={cn(
-                  "h-8 px-3 rounded-lg text-[13px] font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/15",
-                  currentMode === "publishing"
-                    ? "bg-neutral-100 text-neutral-900"
-                    : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50"
+                  NAV_BUTTON_CLASSES,
+                  currentMode === "publishing" ? NAV_BUTTON_ACTIVE : NAV_BUTTON_INACTIVE
                 )}
               >
                 Client Portal
@@ -361,10 +367,8 @@ export function GlobalHeader() {
                   navigate("/app/licensing");
                 }}
                 className={cn(
-                  "h-8 px-3 rounded-lg text-[13px] font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/15",
-                  currentMode === "licensing"
-                    ? "bg-neutral-100 text-neutral-900"
-                    : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50"
+                  NAV_BUTTON_CLASSES,
+                  currentMode === "licensing" ? NAV_BUTTON_ACTIVE : NAV_BUTTON_INACTIVE
                 )}
               >
                 Licensing

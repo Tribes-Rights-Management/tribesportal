@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document tracks the Row Level Security (RLS) implementation status across all tenant-scoped tables in the Tribes platform. Every table follows one of four security templates to ensure consistent, auditable access control.
+This document tracks the Row Level Security (RLS) implementation status across all tenant-scoped tables in Tribes. Every table follows one of four security templates to ensure consistent, auditable access control.
 
 ## Security Templates
 
