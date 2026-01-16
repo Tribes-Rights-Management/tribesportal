@@ -220,7 +220,7 @@
     --secondary: 214 20% 12%;
     --secondary-foreground: 0 0% 100%;
 
-    /* Muted: dark surface with subdued text */
+    /* Muted: dark surface with readable subdued text (matches website 72%) */
     --muted: 214 15% 14%;
     --muted-foreground: 0 0% 72%;
 
@@ -307,22 +307,31 @@
      Light pages explicitly paint their own white background via layout wrappers.
      ═══════════════════════════════════════════════════════════════════════════ */
   html {
-    /* Institutional dark canvas - EXACT MATCH with website THEME_DARK_BG */
+    /* ═══════════════════════════════════════════════════════════════════════
+       AUTHORITATIVE GLOBAL BACKGROUND — EXACT MATCH with website THEME_DARK_BG
+       This is the single source of truth for the outer canvas color.
+       ═══════════════════════════════════════════════════════════════════════ */
+    background: var(--tribes-bg) !important;
     background-color: var(--tribes-bg) !important;
     margin: 0;
     padding: 0;
     min-height: 100%;
-    /* Prevent bounce */
+    /* Prevent bounce showing different color */
     overscroll-behavior-y: none;
-    /* Prevent text size adjustments */
+    /* Prevent text size adjustments on iOS */
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
 
   body {
-    /* Institutional dark canvas - EXACT MATCH with website THEME_DARK_BG */
+    /* ═══════════════════════════════════════════════════════════════════════
+       AUTHORITATIVE BODY BACKGROUND — EXACT MATCH with website THEME_DARK_BG
+       ═══════════════════════════════════════════════════════════════════════ */
+    background: var(--tribes-bg) !important;
     background-color: var(--tribes-bg) !important;
-    color: var(--tribes-fg);
+    /* Text uses website THEME_DARK_TEXT_PRIMARY (92% white) */
+    color: var(--tribes-text);
+    /* Apple-grade font smoothing */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -334,7 +343,7 @@
     padding: 0;
     /* Prevent horizontal overflow */
     overflow-x: hidden;
-    /* Prevent bounce */
+    /* Prevent bounce showing different color */
     overscroll-behavior-y: none;
     /* iOS Safari viewport fix - use dvh for true viewport */
     min-height: 100vh;
@@ -354,13 +363,26 @@
     position: relative;
     z-index: 1;
     /* Institutional dark canvas - EXACT MATCH with website */
-    background: var(--tribes-bg);
+    background: var(--tribes-bg) !important;
+    background-color: var(--tribes-bg) !important;
     /* iOS Safari viewport units - cascading fallbacks */
     min-height: 100vh;
     min-height: 100dvh;
     min-height: 100svh;
     /* Safe area padding for notched devices */
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* iOS underlay - paints behind everything to prevent white bleed */
+  #ios-underlay {
+    background: var(--tribes-bg) !important;
+    background-color: var(--tribes-bg) !important;
+  }
+
+  /* App shell wrapper - inherits canonical background */
+  .app-shell {
+    background: var(--platform-canvas);
+    color: var(--platform-text);
   }
 
   /* H1 — Primary page heading. Marketing site alignment: 32px, 700, -0.02em */

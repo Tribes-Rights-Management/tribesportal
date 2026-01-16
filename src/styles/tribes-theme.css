@@ -22,34 +22,43 @@
 
 :root {
   /* ═══════════════════════════════════════════════════════════════════════════
-     GLOBAL FOUNDATION — Exact match with public website
+     GLOBAL FOUNDATION — EXACT MATCH with public website (LOCKED)
+     Source: tribesrightsmanagement.com tokens
      ═══════════════════════════════════════════════════════════════════════════ */
   
-  /* Page background: website THEME_DARK_BG */
+  /* Page background: website THEME_DARK_BG (EXACT) */
   --tribes-bg: #0B0F14;
   
-  /* Header background: website dark header */
+  /* Header background: website getHeaderBackground() dark (EXACT) */
   --tribes-header-bg: #111214;
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     TEXT HIERARCHY — Readable contrast on dark backgrounds
+     TEXT HIERARCHY — EXACT MATCH with website tokens (LOCKED)
+     Source: THEME_DARK_TEXT_PRIMARY, THEME_DARK_TEXT_SECONDARY, THEME_DARK_TEXT_MUTED
      ═══════════════════════════════════════════════════════════════════════════ */
   
-  /* Primary text: pure white, maximum contrast */
-  --tribes-fg: #FFFFFF;
+  /* Primary text: website THEME_DARK_TEXT_PRIMARY */
+  --tribes-fg: rgba(255, 255, 255, 0.92);
+  --tribes-text: rgba(255, 255, 255, 0.92);
   
-  /* Secondary text: readable for body copy (72% opacity equivalent) */
+  /* Secondary text: website THEME_DARK_TEXT_SECONDARY */
   --tribes-fg-secondary: rgba(255, 255, 255, 0.72);
+  --tribes-text-secondary: rgba(255, 255, 255, 0.72);
   
-  /* Muted text: captions, labels, meta (56% opacity equivalent) */
-  --tribes-fg-muted: rgba(255, 255, 255, 0.56);
+  /* Muted text: website THEME_DARK_TEXT_MUTED */
+  --tribes-fg-muted: rgba(255, 255, 255, 0.55);
+  --tribes-text-muted: rgba(255, 255, 255, 0.55);
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     SURFACE SYSTEM — Elevated content areas
+     SURFACE SYSTEM — Elevated content areas (LOCKED)
      ═══════════════════════════════════════════════════════════════════════════ */
   
   /* Card/panel surface: slight elevation above page */
+  --tribes-card: rgba(255, 255, 255, 0.04);
   --tribes-surface: rgba(255, 255, 255, 0.04);
+  
+  /* Card border */
+  --tribes-card-border: rgba(255, 255, 255, 0.08);
   
   /* Table surface: identical to card (never sits on page directly) */
   --tribes-surface-table: rgba(255, 255, 255, 0.04);
@@ -61,11 +70,14 @@
   --tribes-surface-nested: rgba(255, 255, 255, 0.08);
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     BORDERS & SHADOWS — Institutional, subtle separation
+     BORDERS & DIVIDERS — Institutional, subtle separation (LOCKED)
      ═══════════════════════════════════════════════════════════════════════════ */
   
   /* Hairline borders: low-contrast dividers */
   --tribes-border: rgba(255, 255, 255, 0.08);
+  
+  /* Divider: slightly stronger for visual separation */
+  --tribes-divider: rgba(255, 255, 255, 0.10);
   
   /* Strong borders: emphasized separation */
   --tribes-border-strong: rgba(255, 255, 255, 0.12);
@@ -74,7 +86,7 @@
   --tribes-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     INTERACTIVE STATES — Focus, hover, active
+     INTERACTIVE STATES — Focus, hover, active (LOCKED)
      ═══════════════════════════════════════════════════════════════════════════ */
   
   /* Focus ring: subtle, institutional */
@@ -85,4 +97,9 @@
   
   /* Active state: pressed feedback */
   --tribes-active: rgba(255, 255, 255, 0.10);
+}
+
+/* iOS underlay rule - ensures underlay uses exact background */
+#ios-underlay {
+  background: var(--tribes-bg) !important;
 }
