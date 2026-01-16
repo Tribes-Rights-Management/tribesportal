@@ -44,7 +44,7 @@ export function PrimaryButton({
       ].join(" ")}
     >
       <span className="min-w-0 text-center whitespace-nowrap">
-        {loading ? "Please wait…" : children}
+        {loading ? "Processing" : children}
       </span>
     </button>
   );

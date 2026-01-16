@@ -238,7 +238,7 @@ export default function UserDirectoryPage() {
             <h1 className="text-2xl font-semibold">User Directory</h1>
           </div>
           <Button variant="outline" onClick={fetchUsers} disabled={loading}>
-            <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            <RefreshCw className="mr-2 h-4 w-4" strokeWidth={1.5} />
             Refresh
           </Button>
         </div>
@@ -252,7 +252,7 @@ export default function UserDirectoryPage() {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="text-center py-8 text-[#6B6B6B] text-[14px]">Loading data</div>
+              <div className="text-center py-8 text-[#6B6B6B] text-[14px]">Retrieving records</div>
             ) : users.length === 0 ? (
               <div className="text-center py-8 text-[#6B6B6B] text-[14px]">No records available.</div>
             ) : (

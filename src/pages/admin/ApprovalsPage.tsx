@@ -272,7 +272,7 @@ export default function ApprovalsPage() {
             <h1 className="text-2xl font-semibold">Pending Approvals</h1>
           </div>
           <Button variant="outline" onClick={fetchData} disabled={loading}>
-            <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            <RefreshCw className="mr-2 h-4 w-4" strokeWidth={1.5} />
             Refresh
           </Button>
         </div>
@@ -288,11 +288,10 @@ export default function ApprovalsPage() {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="text-center py-8 text-muted-foreground">Loading...</div>
+              <div className="text-center py-8 text-[#6B6B6B] text-[14px]">Retrieving records</div>
             ) : pendingMemberships.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <p className="text-lg">No pending approvals</p>
-                <p className="text-sm mt-1">All access requests have been processed</p>
+              <div className="text-center py-12 text-[#6B6B6B] text-[14px]">
+                No pending approvals.
               </div>
             ) : (
               <Table>

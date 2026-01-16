@@ -144,7 +144,7 @@ export function AuthSurface() {
                   : "bg-[#E5E5E3] text-[#0A0A0B] hover:bg-[#D5D5D3]",
               ].join(" ")}
             >
-              {isSubmitting ? "Processing…" : "Request access link"}
+              {isSubmitting ? "Applying changes" : "Request access link"}
             </button>
           </form>
         ) : (
@@ -185,7 +185,7 @@ export function AuthSurface() {
                     : "bg-[#E5E5E3] text-[#0A0A0B] hover:bg-[#D5D5D3]",
                 ].join(" ")}
               >
-                {isSubmitting ? "Processing…" : "Reissue access link"}
+                {isSubmitting ? "Applying changes" : "Reissue access link"}
               </button>
 
               {/* Secondary: Change email - very low emphasis */}

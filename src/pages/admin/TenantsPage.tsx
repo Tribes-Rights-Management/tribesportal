@@ -169,7 +169,7 @@ export default function TenantsPage() {
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={fetchTenants} disabled={loading}>
-              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className="mr-2 h-4 w-4" strokeWidth={1.5} />
               Refresh
             </Button>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -224,7 +224,7 @@ export default function TenantsPage() {
                     Cancel
                   </Button>
                   <Button onClick={saveTenant} disabled={saving}>
-                    {saving ? "Saving..." : editingTenant ? "Update" : "Create"}
+                    {saving ? "Saving" : editingTenant ? "Update" : "Create"}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -241,13 +241,12 @@ export default function TenantsPage() {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="text-center py-8 text-muted-foreground">
-                Loading...
+              <div className="text-center py-8 text-[#6B6B6B] text-[14px]">
+                Retrieving records
               </div>
             ) : tenants.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <p className="text-lg">No tenants yet</p>
-                <p className="text-sm mt-1">Create your first tenant to get started</p>
+              <div className="text-center py-12 text-[#6B6B6B] text-[14px]">
+                No tenants available.
               </div>
             ) : (
               <Table>
