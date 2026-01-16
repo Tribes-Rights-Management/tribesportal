@@ -154,21 +154,27 @@ export function AuthSurface() {
             </PrimaryButton>
           </form>
         ) : (
-          /* Check Email State */
-          <div className="space-y-5">
-            {/* Email pill - truncates elegantly, never breaks mid-word */}
-            <div className="flex justify-center">
-              <div className="max-w-full min-w-0 rounded-[14px] border border-black/10 bg-black/[0.02] px-5 py-4 text-center">
-                <div className="truncate text-[15px] font-semibold tracking-[-0.01em] text-[#111]">
+          /* Check Email State - Institutional grade */
+          <div className="space-y-6">
+            {/* Identity row */}
+            <div className="text-left">
+              <div className="text-[13px] font-medium text-black/55">Sending link to</div>
+              <div className="mt-2 w-full min-w-0 rounded-[12px] border border-black/10 bg-[#FAFAFB] px-4 py-3">
+                <div className="truncate text-[15px] font-semibold text-[#111]">
                   {email}
                 </div>
               </div>
             </div>
 
-            {/* Expiry notice */}
-            <p className="text-[13px] leading-[1.5] text-[#9CA3AF] text-center">
-              This link expires shortly and can only be used once.
-            </p>
+            {/* Security note */}
+            <div className="rounded-[12px] border border-black/10 bg-white px-4 py-3">
+              <div className="text-[12px] font-semibold tracking-[0.08em] uppercase text-black/40">
+                Security
+              </div>
+              <div className="mt-1 text-[13px] leading-[1.35] text-black/45">
+                Links expire shortly and can only be used once.
+              </div>
+            </div>
 
             {/* Resend feedback */}
             {resendMessage && (
@@ -178,34 +184,39 @@ export function AuthSurface() {
             )}
 
             {/* Actions */}
-            <div className="space-y-3 text-center">
+            <div className="space-y-3">
+              <PrimaryButton 
+                type="button" 
+                onClick={handleResend} 
+                disabled={isSubmitting || !email.trim()} 
+                loading={isSubmitting}
+              >
+                Resend sign-in link
+              </PrimaryButton>
+
               <button
                 type="button"
-                onClick={handleResend}
-                disabled={isSubmitting}
-                className="text-[15px] text-black/55 hover:text-black underline underline-offset-4 decoration-black/20 disabled:opacity-50 transition-colors duration-150"
+                onClick={handleChangeEmail}
+                className="w-full text-center text-[15px] font-medium text-black/55 hover:text-black transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F7] rounded-[10px] py-2"
               >
-                {isSubmitting ? "Sending..." : "Resend sign-in link"}
+                Use a different email
               </button>
+            </div>
 
-              <div>
-                <button
-                  type="button"
-                  onClick={handleChangeEmail}
-                  className="text-[15px] text-black/55 hover:text-black underline underline-offset-4 decoration-black/20 transition-colors duration-150"
-                >
-                  Use a different email
-                </button>
-              </div>
+            {/* Divider and access policy */}
+            <div className="pt-2 border-t border-black/5 text-center text-[13px] leading-5 text-black/45">
+              Access is restricted to approved accounts.
             </div>
           </div>
         )}
       </div>
 
-      {/* Footer - Consistent across states */}
-      <p className="mt-6 text-center text-[13px] leading-[1.5] text-[#9CA3AF]">
-        Access is restricted to approved accounts.
-      </p>
+      {/* Footer - Only show in enter-email state */}
+      {state === "enter-email" && (
+        <p className="mt-6 text-center text-[13px] leading-[1.5] text-[#9CA3AF]">
+          Access is restricted to approved accounts.
+        </p>
+      )}
 
       {/* Help Link - only show in enter-email state */}
       {state === "enter-email" && (
