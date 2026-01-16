@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import {
@@ -7,11 +8,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, Eye } from "lucide-react";
+import { LogOut, Settings, Eye, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { NAV_LABELS, ICON_SIZE, ICON_STROKE, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } from "@/styles/tokens";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { WorkspaceSelectorModal } from "@/components/admin/WorkspaceSelectorModal";
 
 /**
  * SYSTEM CONSOLE HEADER — COMPANY-LEVEL GOVERNANCE (CANONICAL)
@@ -28,6 +30,12 @@ import { useIsMobile } from "@/hooks/use-mobile";
  *   • external_auditor (read-only access)
  * - Scoped to: governance, audit oversight, compliance, security
  * - Mobile: read-only inspection only, no primary actions
+ * 
+ * WORKSPACE ENTRY (CANONICAL):
+ * - "Enter Workspace" button opens modal selector
+ * - User must EXPLICITLY choose a workspace
+ * - No implicit switching, no auto-selection
+ * - Transition is intentional and explicit
  * 
  * This header is for company-level governance operations only.
  * Organization workspaces use GlobalHeader instead.
@@ -126,55 +134,86 @@ export function SystemConsoleHeader() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { isExternalAuditor } = useRoleAccess();
+  const { tenantMemberships } = useAuth();
+  const [workspaceModalOpen, setWorkspaceModalOpen] = useState(false);
 
   const handleLogoClick = () => {
     navigate("/admin");
   };
 
-  return (
-    <header 
-      className="h-14 border-b border-white/8 px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40"
-      style={{ backgroundColor: '#0A0A0B' }}
-    >
-      {/* Left: Wordmark */}
-      <div className="flex items-center min-w-0">
-        <button
-          onClick={handleLogoClick}
-          className="font-semibold text-white hover:text-white/70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
-          style={{
-            fontSize: isMobile ? '11px' : PORTAL_TYPOGRAPHY.brandWordmark.size,
-            letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-          }}
-        >
-          {NAV_LABELS.BRAND_WORDMARK}
-        </button>
-      </div>
+  // Show "Enter Workspace" only if user has accessible workspaces
+  const hasWorkspaces = tenantMemberships.length > 0;
 
-      {/* Center: System Console label + read-only indicator for auditors */}
-      <div className="flex-1 flex items-center justify-center gap-2">
-        <span 
-          className="text-[11px] md:text-[13px] font-medium text-white/40 uppercase tracking-wider"
-        >
-          {NAV_LABELS.SYSTEM_CONSOLE}
-        </span>
-        {isExternalAuditor && (
-          <span 
-            className="hidden md:inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded"
-            style={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.06)',
-              color: 'var(--platform-text-muted)'
+  return (
+    <>
+      <header 
+        className="h-14 border-b border-white/8 px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40"
+        style={{ backgroundColor: '#0A0A0B' }}
+      >
+        {/* Left: Wordmark */}
+        <div className="flex items-center min-w-0">
+          <button
+            onClick={handleLogoClick}
+            className="font-semibold text-white hover:text-white/70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
+            style={{
+              fontSize: isMobile ? '11px' : PORTAL_TYPOGRAPHY.brandWordmark.size,
+              letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
             }}
           >
-            <Eye className="h-3 w-3" />
-            Read-only
-          </span>
-        )}
-      </div>
+            {NAV_LABELS.BRAND_WORDMARK}
+          </button>
+        </div>
 
-      {/* Right: Account only - NO product navigation */}
-      <div className="flex items-center">
-        <ConsoleAccountMenu />
-      </div>
-    </header>
+        {/* Center: System Console label + read-only indicator for auditors */}
+        <div className="flex-1 flex items-center justify-center gap-2">
+          <span 
+            className="text-[11px] md:text-[13px] font-medium text-white/40 uppercase tracking-wider"
+          >
+            {NAV_LABELS.SYSTEM_CONSOLE}
+          </span>
+          {isExternalAuditor && (
+            <span 
+              className="hidden md:inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded"
+              style={{ 
+                backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                color: 'var(--platform-text-muted)'
+              }}
+            >
+              <Eye className="h-3 w-3" />
+              Read-only
+            </span>
+          )}
+        </div>
+
+        {/* Right: Enter Workspace button + Account */}
+        <div className="flex items-center gap-3">
+          {/* Enter Workspace - secondary action, not primary CTA */}
+          {hasWorkspaces && (
+            <button
+              onClick={() => setWorkspaceModalOpen(true)}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded",
+                "text-[12px] font-medium text-white/50 hover:text-white/70",
+                "hover:bg-white/[0.04] transition-colors duration-150",
+                "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30",
+                // Mobile: full-width secondary action
+                isMobile && "flex-1 justify-center py-2"
+              )}
+            >
+              <span>{NAV_LABELS.ENTER_WORKSPACE}</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          )}
+          
+          <ConsoleAccountMenu />
+        </div>
+      </header>
+
+      {/* Workspace Selector Modal */}
+      <WorkspaceSelectorModal 
+        open={workspaceModalOpen} 
+        onOpenChange={setWorkspaceModalOpen} 
+      />
+    </>
   );
 }
