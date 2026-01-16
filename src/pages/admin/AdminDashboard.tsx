@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
+import { useRoleAccess } from "@/hooks/useRoleAccess";
 
 /**
  * ADMIN DASHBOARD — INSTITUTIONAL CONTROL SURFACE (CANONICAL)
@@ -14,6 +15,11 @@ import { ChevronRight } from "lucide-react";
  * - Navigation rows (not clickable cards)
  * - Typography matches auth (30-32px H1, reduced weights)
  * - Language: declarative, institutional, non-conversational
+ * 
+ * Role-Based Surface Pruning:
+ * - Only Platform Administrators see this surface
+ * - Navigation sections filtered by permission
+ * - No empty sections, no placeholders
  */
 export default function AdminDashboard() {
   return (
