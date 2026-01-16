@@ -490,6 +490,7 @@ export type Database = {
         Args: { _tenant_id: string; _user_id: string }
         Returns: boolean
       }
+      is_external_auditor: { Args: { _user_id: string }; Returns: boolean }
       is_platform_admin: { Args: { _user_id: string }; Returns: boolean }
       is_tenant_admin: {
         Args: { _tenant_id: string; _user_id: string }
@@ -545,7 +546,7 @@ export type Database = {
         | "denied"
         | "revoked"
         | "suspended"
-      platform_role: "platform_admin" | "platform_user"
+      platform_role: "platform_admin" | "platform_user" | "external_auditor"
       portal_context: "publishing" | "licensing"
       portal_role: "tenant_admin" | "tenant_user" | "viewer"
     }
@@ -706,7 +707,7 @@ export const Constants = {
         "revoked",
         "suspended",
       ],
-      platform_role: ["platform_admin", "platform_user"],
+      platform_role: ["platform_admin", "platform_user", "external_auditor"],
       portal_context: ["publishing", "licensing"],
       portal_role: ["tenant_admin", "tenant_user", "viewer"],
     },

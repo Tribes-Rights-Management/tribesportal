@@ -27,6 +27,11 @@ export type Permission =
   | "platform:manage_tenants"
   | "platform:view_audit_logs"
   | "platform:manage_security"
+  // External auditor permissions (read-only)
+  | "auditor:view_logs"
+  | "auditor:view_licensing"
+  | "auditor:view_agreements"
+  | "auditor:view_disclosures"
   // Tenant-level permissions
   | "tenant:admin"
   | "tenant:manage_members"
@@ -75,11 +80,18 @@ export const MODULES = {
     navLabel: "Administration",
     requiredPermission: "platform:admin" as Permission,
   },
+  auditor: {
+    routePrefix: "/auditor",
+    permissionNamespace: "auditor",
+    navLabel: "Auditor Access",
+    requiredPermission: "auditor:view_logs" as Permission,
+  },
 } as const;
 
 interface RoleAccessResult {
   // Core checks
   isPlatformAdmin: boolean;
+  isExternalAuditor: boolean;
   isTenantAdmin: boolean;
   isViewer: boolean;
   isMember: boolean;
@@ -92,6 +104,7 @@ interface RoleAccessResult {
   // Context access
   canAccessContext: (context: PortalContext) => boolean;
   canAccessAdmin: boolean;
+  canAccessAuditor: boolean;
   
   // Module access (new first-class modules)
   canAccessLicensing: boolean;
@@ -100,6 +113,9 @@ interface RoleAccessResult {
   // Surface visibility helpers
   shouldRenderSurface: (requiredPermission: Permission) => boolean;
   shouldRenderNavItem: (requiredPermission: Permission) => boolean;
+  
+  // Read-only mode (for auditors)
+  isReadOnlyMode: boolean;
   
   // Navigation visibility
   visibleModules: Array<{ key: string; label: string; path: string }>;
@@ -126,19 +142,37 @@ export function useRoleAccess(): RoleAccessResult {
   const result = useMemo(() => {
     // Core role checks
     const isPlatformAdmin = authIsPlatformAdmin;
+    const isExternalAuditor = profile?.platform_role === 'external_auditor' && profile?.status === 'active';
     const isTenantAdmin = hasPortalRole("tenant_admin");
     const isMember = hasPortalRole("tenant_user");
     const isViewer = hasPortalRole("viewer");
 
     // Determine user's effective role tier for permission resolution
-    // Role tiers: platform_admin > tenant_admin > tenant_user > viewer
+    // Role tiers: platform_admin > external_auditor (read-only) > tenant_admin > tenant_user > viewer
     const isOrgAdmin = isTenantAdmin;
-    const isClient = isViewer || (!isPlatformAdmin && !isTenantAdmin && !isMember);
+    const isClient = isViewer || (!isPlatformAdmin && !isExternalAuditor && !isTenantAdmin && !isMember);
+
+    // Read-only mode for external auditors (no action buttons)
+    const isReadOnlyMode = isExternalAuditor;
 
     // Permission resolution based on role hierarchy with DEFAULT DENY
     const hasPermission = (permission: Permission): boolean => {
       // Platform admins have all permissions
       if (isPlatformAdmin) return true;
+
+      // External auditors have specific read-only permissions
+      if (isExternalAuditor) {
+        switch (permission) {
+          case "auditor:view_logs":
+          case "auditor:view_licensing":
+          case "auditor:view_agreements":
+          case "auditor:view_disclosures":
+          case "records:view":
+            return true;
+          default:
+            return false; // External auditors can ONLY view, not create/edit/delete
+        }
+      }
 
       switch (permission) {
         // ═══════════════════════════════════════════════════════════════════════
@@ -150,6 +184,15 @@ export function useRoleAccess(): RoleAccessResult {
         case "platform:view_audit_logs":
         case "platform:manage_security":
           return false; // DEFAULT DENY for non-admins
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // EXTERNAL AUDITOR PERMISSIONS — read-only
+        // ═══════════════════════════════════════════════════════════════════════
+        case "auditor:view_logs":
+        case "auditor:view_licensing":
+        case "auditor:view_agreements":
+        case "auditor:view_disclosures":
+          return false; // Only external auditors and platform admins
 
         // ═══════════════════════════════════════════════════════════════════════
         // TENANT-LEVEL PERMISSIONS
@@ -238,6 +281,7 @@ export function useRoleAccess(): RoleAccessResult {
 
     const canAccessContext = authCanAccessContext;
     const canAccessAdmin = isPlatformAdmin;
+    const canAccessAuditor = isExternalAuditor || isPlatformAdmin;
     
     // First-class module access
     const canAccessLicensing = hasPermission("licensing.view");
@@ -256,20 +300,29 @@ export function useRoleAccess(): RoleAccessResult {
     // Build visible modules for navigation
     const visibleModules: Array<{ key: string; label: string; path: string }> = [];
     
-    if (canAccessPortal) {
+    // External auditors only see their audit access
+    if (isExternalAuditor) {
       visibleModules.push({
-        key: "portal",
-        label: MODULES.portal.navLabel,
-        path: MODULES.portal.routePrefix,
+        key: "auditor",
+        label: MODULES.auditor.navLabel,
+        path: MODULES.auditor.routePrefix,
       });
-    }
-    
-    if (canAccessLicensing) {
-      visibleModules.push({
-        key: "licensing",
-        label: MODULES.licensing.navLabel,
-        path: MODULES.licensing.routePrefix,
-      });
+    } else {
+      if (canAccessPortal) {
+        visibleModules.push({
+          key: "portal",
+          label: MODULES.portal.navLabel,
+          path: MODULES.portal.routePrefix,
+        });
+      }
+      
+      if (canAccessLicensing) {
+        visibleModules.push({
+          key: "licensing",
+          label: MODULES.licensing.navLabel,
+          path: MODULES.licensing.routePrefix,
+        });
+      }
     }
     
     // Administration is only shown in dropdown, not primary nav
@@ -277,6 +330,7 @@ export function useRoleAccess(): RoleAccessResult {
 
     return {
       isPlatformAdmin,
+      isExternalAuditor,
       isTenantAdmin,
       isViewer,
       isMember,
@@ -285,10 +339,12 @@ export function useRoleAccess(): RoleAccessResult {
       hasAllPermissions,
       canAccessContext,
       canAccessAdmin,
+      canAccessAuditor,
       canAccessLicensing,
       canAccessPortal,
       shouldRenderSurface,
       shouldRenderNavItem,
+      isReadOnlyMode,
       visibleModules,
     };
   }, [
