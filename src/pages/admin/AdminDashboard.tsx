@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { ChevronRight, Monitor } from "lucide-react";
+import { Monitor } from "lucide-react";
 import { MOBILE_COPY } from "@/constants/institutional-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
+import { AdminListRow, AdminMetricRow, AdminSection } from "@/components/admin/AdminListRow";
 
 /**
  * SYSTEM CONSOLE LANDING — EXECUTIVE-GRADE GOVERNANCE (CANONICAL)
@@ -130,90 +130,90 @@ export default function AdminDashboard() {
             SECTION 1: GOVERNANCE OVERVIEW
             Purpose: "Is the system healthy?" at a glance
         ───────────────────────────────────────────────────────────────── */}
-        <Section label="Governance Overview">
-          <MetricRow
+        <AdminSection label="Governance Overview">
+          <AdminMetricRow
             to="/admin/tenants"
             label="Active workspaces"
             value={loading ? "—" : metrics.activeWorkspaces.toString()}
           />
-          <MetricRow
+          <AdminMetricRow
             to="/admin/users"
             label="Active users"
             value={loading ? "—" : metrics.activeUsers.toString()}
           />
-          <MetricRow
+          <AdminMetricRow
             to="/admin/approvals"
             label="Pending access requests"
             value={loading ? "—" : metrics.pendingAccessRequests.toString()}
             highlight={metrics.pendingAccessRequests > 0}
           />
-          <MetricRow
+          <AdminMetricRow
             to="/admin/security"
             label="Open exceptions"
             value={loading ? "—" : metrics.openExceptions === 0 ? "None" : metrics.openExceptions.toString()}
           />
-        </Section>
+        </AdminSection>
 
         {/* ─────────────────────────────────────────────────────────────────
             SECTION 2: AUDIT & ACTIVITY
             Purpose: "Can this system be trusted under scrutiny?"
         ───────────────────────────────────────────────────────────────── */}
-        <Section label="Audit & Activity">
-          <NavRow
+        <AdminSection label="Audit & Activity">
+          <AdminListRow
             to="/admin/approvals"
-            label="Activity Log"
-            description="Chronological record of system events"
+            title="Activity Log"
+            description="Chronological record of system events including user actions, access changes, and data modifications"
           />
-          <NavRow
+          <AdminListRow
             to="/admin/chain"
-            label="Correlation Viewer"
-            description="Cross-workspace request tracing"
+            title="Correlation Viewer"
+            description="Cross-workspace request tracing for end-to-end audit visibility"
           />
-          <NavRow
+          <AdminListRow
             to="/admin/approvals"
-            label="Approval History"
-            description="Access grants and permission changes"
+            title="Approval History"
+            description="Access grants and permission changes with full audit trail"
           />
-        </Section>
+        </AdminSection>
 
         {/* ─────────────────────────────────────────────────────────────────
             SECTION 3: REGULATORY & DISCLOSURES
             Purpose: "Can we respond to a formal request immediately?"
         ───────────────────────────────────────────────────────────────── */}
-        <Section label="Regulatory & Disclosures">
-          <NavRow
+        <AdminSection label="Regulatory & Disclosures">
+          <AdminListRow
             to="/admin/disclosures"
-            label="Disclosure Exports"
-            description="Generate regulatory disclosure packs"
+            title="Disclosure Exports"
+            description="Generate regulatory disclosure packs for compliance and legal requests"
           />
-          <NavRow
+          <AdminListRow
             to="/admin/disclosures"
-            label="Export History"
-            description="Previously generated disclosure records"
+            title="Export History"
+            description="Previously generated disclosure records with timestamps and integrity verification"
           />
-        </Section>
+        </AdminSection>
 
         {/* ─────────────────────────────────────────────────────────────────
             SECTION 4: SECURITY & INTEGRITY
             Purpose: "Is access controlled and defensible?"
         ───────────────────────────────────────────────────────────────── */}
-        <Section label="Security & Integrity">
-          <NavRow
+        <AdminSection label="Security & Integrity">
+          <AdminListRow
             to="/admin/users"
-            label="Access Roles"
-            description="Member directory and permissions"
+            title="Access Roles"
+            description="Member directory and permissions management across all workspaces"
           />
-          <NavRow
+          <AdminListRow
             to="/admin/security"
-            label="Session Integrity"
-            description="Authentication and session configuration"
+            title="Session Integrity"
+            description="Authentication and session configuration for secure access"
           />
-          <NavRow
+          <AdminListRow
             to="/admin/rls-audit"
-            label="Security Events"
-            description="RLS verification and access controls"
+            title="Security Events"
+            description="RLS verification and access controls with real-time monitoring"
           />
-        </Section>
+        </AdminSection>
 
           {/* ─────────────────────────────────────────────────────────────────
               FOOTER — Minimal, institutional
@@ -232,131 +232,5 @@ export default function AdminDashboard() {
         </div>
       </div>
     </div>
-  );
-}
-
-/**
- * SECTION — Sparse grouping with small caps label
- * Content sits on elevated surface (--platform-surface-2)
- */
-function Section({ 
-  label, 
-  children 
-}: { 
-  label: string; 
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="mb-8 md:mb-10">
-      <h2 
-        className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.1em] mb-3 md:mb-4"
-        style={{ color: 'var(--platform-text-muted)', opacity: 0.7 }}
-      >
-        {label}
-      </h2>
-      <div 
-        className="rounded-md overflow-hidden"
-        style={{ 
-          backgroundColor: 'var(--platform-surface-2)',
-          border: '1px solid var(--platform-border)',
-        }}
-      >
-        {children}
-      </div>
-    </section>
-  );
-}
-
-/**
- * METRIC ROW — Read-only count with subtle link
- * No action affordance. Link goes to detail view.
- */
-function MetricRow({ 
-  to, 
-  label, 
-  value,
-  highlight = false
-}: { 
-  to: string; 
-  label: string; 
-  value: string;
-  highlight?: boolean;
-}) {
-  return (
-    <Link 
-      to={to} 
-      className="flex items-center justify-between px-4 md:px-5 py-3 md:py-3.5 transition-colors duration-150 group hover:bg-white/[0.02]"
-      style={{ 
-        borderBottom: '1px solid var(--platform-border)',
-      }}
-    >
-      <span 
-        className="text-[13px] md:text-[14px]"
-        style={{ color: 'var(--platform-text-secondary)' }}
-      >
-        {label}
-      </span>
-      <div className="flex items-center gap-2">
-        <span 
-          className="text-[13px] md:text-[14px] font-medium tabular-nums"
-          style={{ 
-            color: highlight ? 'var(--platform-text)' : 'var(--platform-text-muted)'
-          }}
-        >
-          {value}
-        </span>
-        <ChevronRight 
-          className="h-3.5 w-3.5 opacity-30 group-hover:opacity-50 transition-opacity"
-          style={{ color: 'var(--platform-text-muted)' }}
-        />
-      </div>
-    </Link>
-  );
-}
-
-/**
- * NAV ROW — Secondary navigation link
- * No primary CTA styling. Subtle, intentional.
- */
-function NavRow({ 
-  to, 
-  label, 
-  description 
-}: { 
-  to: string; 
-  label: string; 
-  description: string;
-}) {
-  return (
-    <Link 
-      to={to} 
-      className="flex items-center justify-between gap-3 px-4 md:px-5 py-3 md:py-3.5 transition-colors duration-150 group hover:bg-white/[0.02]"
-      style={{ 
-        borderBottom: '1px solid var(--platform-border)',
-      }}
-    >
-      <div className="min-w-0 flex-1">
-        <p 
-          className="text-[13px] md:text-[14px] truncate"
-          style={{ color: 'var(--platform-text)' }}
-        >
-          {label}
-        </p>
-        <p 
-          className="text-[11px] md:text-[12px] mt-0.5 line-clamp-2 break-words"
-          style={{ 
-            color: 'var(--platform-text-muted)', 
-            opacity: 0.7,
-            lineHeight: '1.45',
-          }}
-        >
-          {description}
-        </p>
-      </div>
-      <ChevronRight 
-        className="h-3.5 w-3.5 shrink-0 opacity-30 group-hover:opacity-50 transition-opacity"
-        style={{ color: 'var(--platform-text-muted)' }}
-      />
-    </Link>
   );
 }
