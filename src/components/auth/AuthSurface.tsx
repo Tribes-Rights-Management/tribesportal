@@ -6,19 +6,22 @@ import { SignInHelpDialog } from "./SignInHelpDialog";
 type AuthState = "enter-email" | "check-email";
 
 /**
- * AuthSurface - Institutional Access Gateway (AUTHORITATIVE — SECTION 2)
+ * AuthSurface — Institutional Access Gateway (CANONICAL)
  * 
  * DESIGN CONSTRAINTS (NON-NEGOTIABLE):
- * - Uses locked auth tokens from CSS custom properties
- * - No friendly or marketing language
- * - No playful spacing, shadows, or animations
+ * - Dark canvas, no card UI
+ * - Left-aligned text preferred
+ * - Sharp/restrained radius (≤8px)
  * - Same surface for all states (no page changes)
+ * - Minimal motion (fades only)
  * 
  * LANGUAGE STANDARD:
- * - "Access Tribes" (not "Sign in to Tribes")
- * - "Request access link" (not "Continue")
+ * - "Authenticate" / "Secure Access"
+ * - "Send verification link" (not "Continue")
  * - "Verification link sent" (not "Check your email")
  * - "Access assistance" (not "Trouble signing in?")
+ * 
+ * Security signaling through restraint, not symbols.
  */
 export function AuthSurface() {
   const { signInWithMagicLink } = useAuth();
@@ -68,9 +71,9 @@ export function AuthSurface() {
     setIsSubmitting(false);
 
     if (error) {
-      setResendMessage("Unable to send. Verify address and retry.");
+      setResendMessage("Unable to send. Verify address.");
     } else {
-      setResendMessage("Access link issued");
+      setResendMessage("Verification link sent");
     }
   };
 
@@ -81,75 +84,92 @@ export function AuthSurface() {
     setSearchParams({}, { replace: true });
   };
 
-  // Shared input styles using auth tokens
-  const inputStyles: React.CSSProperties = {
-    width: '100%',
-    height: 'var(--auth-input-height)',
-    borderRadius: 'var(--auth-border-radius)',
-    border: '1px solid var(--auth-input-border)',
-    backgroundColor: '#FFFFFF',
-    padding: '0 16px',
-    fontSize: 'var(--auth-font-scale)',
-    color: 'var(--auth-heading)',
-    outline: 'none',
+  // Color tokens for dark canvas
+  const colors = {
+    heading: '#E8E8E6',
+    body: '#8A8A8A',
+    muted: '#5A5A5A',
+    label: '#6A6A6A',
+    inputBg: 'rgba(255,255,255,0.04)',
+    inputBorder: 'rgba(255,255,255,0.12)',
+    inputBorderFocus: 'rgba(255,255,255,0.24)',
+    inputText: '#E8E8E6',
+    buttonBg: '#E8E8E6',
+    buttonText: '#0A0A0B',
+    buttonHover: '#D0D0CE',
+    buttonDisabledBg: 'rgba(255,255,255,0.08)',
+    buttonDisabledText: '#5A5A5A',
   };
 
-  // Shared button styles using auth tokens
+  // Input styles — dark canvas, subtle border
+  const inputStyles: React.CSSProperties = {
+    width: '100%',
+    height: '48px',
+    borderRadius: '6px',
+    border: `1px solid ${colors.inputBorder}`,
+    backgroundColor: colors.inputBg,
+    padding: '0 14px',
+    fontSize: '15px',
+    color: colors.inputText,
+    outline: 'none',
+    transition: 'border-color 150ms ease',
+  };
+
+  // Button styles — solid, institutional
   const buttonStyles = (disabled: boolean): React.CSSProperties => ({
     width: '100%',
-    height: 'var(--auth-button-height)',
-    borderRadius: 'var(--auth-border-radius)',
-    fontSize: 'var(--auth-font-scale)',
+    height: '48px',
+    borderRadius: '6px',
+    fontSize: '15px',
     fontWeight: 500,
     border: 'none',
     cursor: disabled ? 'not-allowed' : 'pointer',
-    backgroundColor: disabled ? 'var(--auth-button-disabled-bg)' : 'var(--auth-button-bg)',
-    color: disabled ? 'var(--auth-button-disabled-text)' : 'var(--auth-button-text)',
+    backgroundColor: disabled ? colors.buttonDisabledBg : colors.buttonBg,
+    color: disabled ? colors.buttonDisabledText : colors.buttonText,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    transition: 'background-color 100ms ease, opacity 100ms ease',
   });
 
   return (
     <>
       {/* System identifier — uppercase, letter-spaced, muted */}
-      <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+      <div style={{ marginBottom: '40px' }}>
         <span 
           style={{ 
             fontSize: '10px', 
             fontWeight: 500, 
-            letterSpacing: '0.12em', 
+            letterSpacing: '0.16em', 
             textTransform: 'uppercase',
-            color: 'var(--auth-system-label)',
+            color: colors.muted,
           }}
         >
-          Tribes Rights Management System
+          Tribes Rights Management
         </span>
       </div>
 
-      {/* Primary heading — medium weight, not bold */}
+      {/* Primary heading — medium weight, institutional */}
       <h1 
         style={{ 
-          fontSize: '22px', 
+          fontSize: '28px', 
           fontWeight: 500, 
-          lineHeight: 1.3,
-          color: 'var(--auth-heading)',
-          textAlign: 'center',
-          letterSpacing: '-0.01em',
+          lineHeight: 1.2,
+          color: colors.heading,
+          letterSpacing: '-0.02em',
           margin: 0,
         }}
       >
-        {state === "enter-email" ? "Access Tribes" : "Verification link sent"}
+        {state === "enter-email" ? "Secure Access" : "Verification link sent"}
       </h1>
 
-      {/* Subtext — one line only, neutral, informational */}
+      {/* Subtext — one line, neutral, factual */}
       <p 
         style={{ 
           marginTop: '12px', 
           fontSize: '14px', 
           lineHeight: 1.5,
-          color: 'var(--auth-subtext)',
-          textAlign: 'center',
+          color: colors.body,
         }}
       >
         {state === "enter-email"
@@ -158,10 +178,22 @@ export function AuthSurface() {
       </p>
 
       {/* Body */}
-      <div style={{ marginTop: '28px' }}>
+      <div style={{ marginTop: '32px' }}>
         {state === "enter-email" ? (
           <form onSubmit={handleSubmit}>
             <div>
+              <label 
+                htmlFor="email"
+                style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  color: colors.label,
+                  marginBottom: '8px',
+                }}
+              >
+                Email address
+              </label>
               <input
                 id="email"
                 type="email"
@@ -174,35 +206,46 @@ export function AuthSurface() {
                 placeholder="name@organization.com"
                 style={inputStyles}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--auth-input-border-focus)';
+                  e.target.style.borderColor = colors.inputBorderFocus;
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'var(--auth-input-border)';
+                  e.target.style.borderColor = colors.inputBorder;
                 }}
               />
             </div>
 
-            {/* Primary action — solid, dark neutral */}
+            {/* Primary action */}
             <button
               type="submit"
               disabled={!email.trim() || isSubmitting}
-              style={{ ...buttonStyles(!email.trim() || isSubmitting), marginTop: '16px' }}
+              style={{ ...buttonStyles(!email.trim() || isSubmitting), marginTop: '20px' }}
+              onMouseOver={(e) => {
+                if (email.trim() && !isSubmitting) {
+                  e.currentTarget.style.backgroundColor = colors.buttonHover;
+                }
+              }}
+              onMouseOut={(e) => {
+                if (email.trim() && !isSubmitting) {
+                  e.currentTarget.style.backgroundColor = colors.buttonBg;
+                }
+              }}
             >
-              {isSubmitting ? "Processing" : "Request access link"}
+              {isSubmitting ? "Processing" : "Send verification link"}
             </button>
           </form>
         ) : (
           /* Verification state — same surface, content changes only */
           <div>
-            {/* Email display — bordered, non-editable field (treated as record) */}
+            {/* Email display — bordered record field */}
             <div
               style={{
                 ...inputStyles,
                 display: 'flex',
                 alignItems: 'center',
-                backgroundColor: '#FAFAFA',
-                color: 'var(--auth-heading)',
+                backgroundColor: 'rgba(255,255,255,0.02)',
+                color: colors.heading,
                 fontWeight: 500,
+                cursor: 'default',
               }}
             >
               <span style={{ 
@@ -221,8 +264,7 @@ export function AuthSurface() {
                 marginTop: '16px',
                 fontSize: '13px', 
                 lineHeight: 1.5, 
-                color: 'var(--auth-subtext)',
-                textAlign: 'center',
+                color: colors.muted,
               }}
             >
               This link expires shortly and may be used once.
@@ -235,8 +277,7 @@ export function AuthSurface() {
                   marginTop: '12px',
                   fontSize: '13px', 
                   lineHeight: 1.5, 
-                  color: 'var(--auth-label)',
-                  textAlign: 'center',
+                  color: colors.body,
                 }}
               >
                 {resendMessage}
@@ -244,15 +285,25 @@ export function AuthSurface() {
             )}
 
             {/* Actions */}
-            <div style={{ marginTop: '20px' }}>
+            <div style={{ marginTop: '24px' }}>
               {/* Primary: Resend */}
               <button
                 type="button"
                 onClick={handleResend}
                 disabled={isSubmitting || !email.trim()}
                 style={buttonStyles(isSubmitting || !email.trim())}
+                onMouseOver={(e) => {
+                  if (email.trim() && !isSubmitting) {
+                    e.currentTarget.style.backgroundColor = colors.buttonHover;
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (email.trim() && !isSubmitting) {
+                    e.currentTarget.style.backgroundColor = colors.buttonBg;
+                  }
+                }}
               >
-                {isSubmitting ? "Processing" : "Resend access link"}
+                {isSubmitting ? "Processing" : "Resend verification link"}
               </button>
 
               {/* Secondary: Change email — text link, muted */}
@@ -266,9 +317,16 @@ export function AuthSurface() {
                   background: 'none',
                   border: 'none',
                   fontSize: '13px',
-                  color: 'var(--auth-subtext)',
+                  color: colors.muted,
                   cursor: 'pointer',
-                  textAlign: 'center',
+                  textAlign: 'left',
+                  transition: 'color 100ms ease',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.color = colors.body;
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.color = colors.muted;
                 }}
               >
                 Use a different email
@@ -278,21 +336,20 @@ export function AuthSurface() {
         )}
       </div>
 
-      {/* Footer — restrained */}
+      {/* Footer — restrained, institutional */}
       <p 
         style={{ 
-          marginTop: '32px', 
+          marginTop: '48px', 
           fontSize: '12px', 
           lineHeight: 1.5,
-          color: 'var(--auth-system-label)',
-          textAlign: 'center',
+          color: colors.muted,
         }}
       >
         Access is restricted to approved accounts.
       </p>
 
       {/* Support link — minimal emphasis */}
-      <p style={{ marginTop: '8px', textAlign: 'center' }}>
+      <p style={{ marginTop: '8px' }}>
         <button 
           type="button"
           onClick={() => setHelpDialogOpen(true)}
@@ -300,9 +357,17 @@ export function AuthSurface() {
             background: 'none',
             border: 'none',
             fontSize: '12px',
-            color: 'var(--auth-subtext)',
+            color: colors.muted,
             cursor: 'pointer',
             textDecoration: 'none',
+            padding: 0,
+            transition: 'color 100ms ease',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.color = colors.body;
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.color = colors.muted;
           }}
         >
           Access assistance

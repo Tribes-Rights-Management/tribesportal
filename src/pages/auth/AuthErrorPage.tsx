@@ -1,53 +1,112 @@
 import { Link } from "react-router-dom";
 import { AuthLayout } from "@/layouts/AuthLayout";
-import { SYSTEM_COPY } from "@/styles/tokens";
 
 /**
- * AuthErrorPage - System boundary for access restriction
+ * AuthErrorPage — System boundary for access restriction
  * 
- * DESIGN: Same dark environment as auth, institutional language
- * NO friendly messaging, NO card UI
+ * DESIGN: Dark canvas, institutional language
+ * Same surface as AuthSurface - no visual mode switch
  */
 export default function AuthErrorPage() {
+  const colors = {
+    heading: '#E8E8E6',
+    body: '#8A8A8A',
+    muted: '#5A5A5A',
+  };
+
   return (
     <AuthLayout>
       {/* System identifier */}
-      <div className="mb-10 text-center">
-        <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-[#4A4A4A]">
-          Tribes Rights Management System
+      <div style={{ marginBottom: '40px' }}>
+        <span 
+          style={{ 
+            fontSize: '10px', 
+            fontWeight: 500, 
+            letterSpacing: '0.16em', 
+            textTransform: 'uppercase',
+            color: colors.muted,
+          }}
+        >
+          Tribes Rights Management
         </span>
       </div>
 
-      {/* Heading - declarative, not apologetic */}
-      <h1 className="text-[22px] font-medium leading-[1.25] text-[#E5E5E3] text-center tracking-[-0.02em]">
-        {SYSTEM_COPY.ACCESS_RESTRICTED_TITLE}
+      {/* Heading — declarative, not apologetic */}
+      <h1 
+        style={{ 
+          fontSize: '28px', 
+          fontWeight: 500, 
+          lineHeight: 1.2,
+          color: colors.heading,
+          letterSpacing: '-0.02em',
+          margin: 0,
+        }}
+      >
+        Access restricted
       </h1>
 
-      {/* Body - procedural, neutral */}
-      <p className="mt-4 text-[14px] leading-[1.6] text-[#707070] text-center">
-        {SYSTEM_COPY.ACCESS_RESTRICTED_BODY}
+      {/* Body — procedural, neutral */}
+      <p 
+        style={{ 
+          marginTop: '12px', 
+          fontSize: '14px', 
+          lineHeight: 1.5,
+          color: colors.body,
+        }}
+      >
+        Your account is not authorized for access. Contact your administrator if you believe this is an error.
       </p>
 
       {/* Contact */}
-      <p className="mt-8 text-[13px] text-[#505050] text-center">
-        {SYSTEM_COPY.CONTACT_ADMIN}
+      <p 
+        style={{ 
+          marginTop: '32px', 
+          fontSize: '13px', 
+          lineHeight: 1.5,
+          color: colors.muted,
+        }}
+      >
+        Contact administrator for access assistance.
       </p>
 
       {/* Support email */}
-      <p className="mt-2 text-center">
+      <p style={{ marginTop: '8px' }}>
         <a 
-          href={`mailto:${SYSTEM_COPY.SUPPORT_EMAIL}`}
-          className="text-[14px] font-medium text-[#E5E5E3] hover:text-[#FFFFFF] transition-colors duration-75"
+          href="mailto:contact@tribesassets.com"
+          style={{
+            fontSize: '14px',
+            fontWeight: 500,
+            color: colors.heading,
+            textDecoration: 'none',
+            transition: 'opacity 100ms ease',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.opacity = '0.8';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.opacity = '1';
+          }}
         >
-          {SYSTEM_COPY.SUPPORT_EMAIL}
+          contact@tribesassets.com
         </a>
       </p>
 
       {/* Back link */}
-      <p className="mt-12 text-center">
+      <p style={{ marginTop: '48px' }}>
         <Link 
           to="/auth/sign-in"
-          className="text-[13px] text-[#505050] hover:text-[#707070] transition-colors duration-75"
+          style={{
+            fontSize: '13px',
+            color: colors.muted,
+            textDecoration: 'none',
+            transition: 'color 100ms ease',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.color = colors.body;
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.color = colors.muted;
+          }}
         >
           Return to sign in
         </Link>

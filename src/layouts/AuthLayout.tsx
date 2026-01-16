@@ -1,36 +1,47 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 interface AuthLayoutProps {
   children: ReactNode;
 }
 
 /**
- * AuthLayout - Institutional Access Gateway
+ * AuthLayout — Institutional System Boundary (CANONICAL)
  * 
- * DESIGN STANDARD (AUTHORITATIVE — SECTION 2):
- * - Full-height viewport
- * - Neutral background (#F7F7F8) — not pure white, not dark
- * - Centered access panel (420px fixed width)
- * - Panel radius: 12px max
- * - Single soft shadow OR 1px border — not both
+ * DESIGN STANDARD (NON-NEGOTIABLE):
+ * - Full-bleed dark background matching marketing site
+ * - NO cards, NO floating containers, NO soft shadows
+ * - Content embedded in infrastructure, not placed on top
+ * - Vertical composition, anchored slightly above center
+ * - Left-aligned text block (not centered card)
  * 
- * This is an access gateway, not a sign-in form.
+ * This is an access threshold, not a sign-in form.
  */
 export function AuthLayout({ children }: AuthLayoutProps) {
+  // Prevent body scroll on auth routes
+  useEffect(() => {
+    document.body.classList.add("auth-no-scroll");
+    return () => document.body.classList.remove("auth-no-scroll");
+  }, []);
+
   return (
     <div 
-      className="min-h-dvh w-full flex items-center justify-center px-6 py-12"
-      style={{ backgroundColor: 'var(--auth-bg)' }}
+      className="fixed inset-0 flex items-center justify-center px-6"
+      style={{ 
+        backgroundColor: '#0A0A0B',
+        // Subtle depth — matching marketing site
+        background: 'linear-gradient(180deg, #0A0A0B 0%, #0F0F10 100%)',
+      }}
     >
-      {/* Access Panel — fixed width, subtle elevation */}
+      {/* 
+        Auth content container — no card, no elevation
+        Width constrained, left-aligned text, embedded in dark canvas
+      */}
       <div 
         className="w-full"
         style={{ 
-          maxWidth: 'var(--auth-panel-width)',
-          backgroundColor: 'var(--auth-panel-bg)',
-          borderRadius: '12px',
-          border: '1px solid var(--auth-panel-border)',
-          padding: '40px 32px',
+          maxWidth: '380px',
+          // Anchor slightly above center
+          marginBottom: '5vh',
         }}
       >
         {children}
