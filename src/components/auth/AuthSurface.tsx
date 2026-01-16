@@ -10,7 +10,13 @@ type AuthState = "enter-email" | "check-email";
 /**
  * AuthSurface - Unified auth component with in-place state transitions
  * Two states: "enter-email" (form) and "check-email" (confirmation)
- * Premium, institutional-grade design. Light mode only.
+ * 
+ * LOCKED DESIGN TOKENS:
+ * - H1: 24px, font-semibold, color #111, centered
+ * - Body/subtitle: 14px, color #6B6B6B, centered
+ * - State transition: 150ms ease-out fade
+ * 
+ * Light mode only. Institutional-grade.
  */
 export function AuthSurface() {
   const { signInWithMagicLink } = useAuth();
@@ -25,6 +31,7 @@ export function AuthSurface() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resendMessage, setResendMessage] = useState<string | null>(null);
   const [helpDialogOpen, setHelpDialogOpen] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Clear resend message after 3 seconds
   useEffect(() => {
@@ -38,6 +45,14 @@ export function AuthSurface() {
     return signInWithMagicLink(email.trim());
   };
 
+  const transitionToState = (newState: AuthState) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setState(newState);
+      setIsTransitioning(false);
+    }, 150);
+  };
+
   const handleSubmit = async () => {
     if (!email.trim()) return;
 
@@ -49,8 +64,8 @@ export function AuthSurface() {
       console.error("Sign-in error:", error);
     }
     
-    // Transition to "check-email" state and update URL for refresh persistence
-    setState("check-email");
+    // Transition to "check-email" state with animation
+    transitionToState("check-email");
     setSearchParams({ sent: "1", email: encodeURIComponent(email.trim()) }, { replace: true });
   };
 
@@ -69,14 +84,17 @@ export function AuthSurface() {
   };
 
   const handleChangeEmail = () => {
-    setState("enter-email");
+    transitionToState("enter-email");
     setEmail("");
     setResendMessage(null);
     setSearchParams({}, { replace: true });
   };
 
   return (
-    <>
+    <div 
+      className="transition-opacity duration-150 ease-out"
+      style={{ opacity: isTransitioning ? 0 : 1 }}
+    >
       {/* Header */}
       <h1 className="text-[24px] font-semibold text-[#111] text-center">
         {state === "enter-email" ? "Sign in to Tribes" : "Check your email"}
@@ -108,20 +126,19 @@ export function AuthSurface() {
         )}
       </div>
 
-      {/* Footer - only show in enter-email state */}
+      {/* Footer */}
+      <p className="mt-6 text-center text-[13px] text-[#9CA3AF]">
+        Access is restricted to approved accounts.
+      </p>
+
+      {/* Help Link - only show in enter-email state */}
       {state === "enter-email" && (
         <>
-          {/* Institutional Notice */}
-          <p className="mt-6 text-center text-[13px] text-black/45">
-            Access is restricted to approved accounts.
-          </p>
-
-          {/* Help Link */}
           <p className="mt-2 text-center">
             <button 
               type="button"
               onClick={() => setHelpDialogOpen(true)}
-              className="text-[13px] text-black/45 hover:text-black/70 hover:underline transition-colors duration-150"
+              className="text-[13px] text-[#9CA3AF] hover:text-[#6B6B6B] hover:underline transition-colors duration-150"
             >
               Trouble signing in?
             </button>
@@ -135,13 +152,6 @@ export function AuthSurface() {
           />
         </>
       )}
-
-      {/* Footer - check-email state */}
-      {state === "check-email" && (
-        <p className="mt-8 text-center text-[13px] text-black/45">
-          Access is restricted to approved accounts.
-        </p>
-      )}
-    </>
+    </div>
   );
 }
