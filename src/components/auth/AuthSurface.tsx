@@ -91,23 +91,26 @@ export function AuthSurface() {
   };
 
   return (
-    <div 
-      className="transition-opacity duration-150 ease-out"
-      style={{ opacity: isTransitioning ? 0 : 1 }}
-    >
-      {/* Header */}
-      <h1 className="text-[24px] font-semibold text-[#111] text-center">
+    <>
+      {/* Header - Fixed position, stable across states */}
+      <h1 className="text-[24px] font-semibold leading-[1.3] text-[#111] text-center">
         {state === "enter-email" ? "Sign in to Tribes" : "Check your email"}
       </h1>
 
-      <p className="mt-2 text-[14px] text-[#6B6B6B] text-center">
+      <p className="mt-2 text-[14px] leading-[1.5] text-[#6B6B6B] text-center">
         {state === "enter-email"
           ? "Secure access via email sign-in link"
           : "We've sent a secure sign-in link to"}
       </p>
 
-      {/* Body */}
-      <div className="mt-6">
+      {/* Body - Animated content only */}
+      <div 
+        className="mt-6 transition-all duration-150 ease-out"
+        style={{ 
+          opacity: isTransitioning ? 0 : 1,
+          transform: isTransitioning ? 'translateY(4px)' : 'translateY(0)'
+        }}
+      >
         {state === "enter-email" ? (
           <EmailForm
             email={email}
@@ -126,8 +129,8 @@ export function AuthSurface() {
         )}
       </div>
 
-      {/* Footer */}
-      <p className="mt-6 text-center text-[13px] text-[#9CA3AF]">
+      {/* Footer - Consistent across states */}
+      <p className="mt-6 text-center text-[13px] leading-[1.5] text-[#9CA3AF]">
         Access is restricted to approved accounts.
       </p>
 
@@ -152,6 +155,6 @@ export function AuthSurface() {
           />
         </>
       )}
-    </div>
+    </>
   );
 }
