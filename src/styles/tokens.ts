@@ -497,34 +497,63 @@ export const ACTION_MESSAGES = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
-// PLATFORM STATE COPY — INFRASTRUCTURE VOICE
+// PLATFORM STATE COPY — INFRASTRUCTURE VOICE (ACQUISITION-GRADE)
 // ═══════════════════════════════════════════════════════════════════════════
 
 /**
- * STATE COPY RULES:
+ * STATE COPY RULES (PHASE 5 — ACQUISITION-GRADE):
  * - No empathy, no personality, no reassurance
  * - Neutral, informational, infrastructure voice
+ * - Predictable over fast — system feels reliable, not reactive
+ * - Calm under load — no apologetic language, no error dramatization
+ * - Edge cases are expected system states — no surprise states
+ * - Quiet confidence — short, neutral, declarative
+ * - Language assumes competence
  */
 export const STATE_COPY = {
-  // Loading states
+  // Loading states — predictable, not fast
   LOADING: "Loading data",
   LOADING_RECORDS: "Retrieving records",
   LOADING_DATA: "Loading data",
-  PROCESSING: "Processing…",
+  PROCESSING: "Applying changes",
+  OPERATION_IN_PROGRESS: "Operation in progress",
+  PROCESSING_REQUEST: "Processing request",
   
-  // Empty states
+  // Empty states — expected system state
   NO_RECORDS: "No records available.",
   NO_DATA: "No data available.",
   NO_RESULTS: "No results.",
+  EMPTY_DATASET: "Dataset empty.",
   
-  // Error states
+  // Error states — calm, managed, not dramatized
   OPERATION_FAILED: "Operation failed.",
   VERIFICATION_REQUIRED: "Verification required.",
-  CONNECTION_FAILED: "Connection failed.",
+  CONNECTION_FAILED: "Connection unavailable.",
+  REQUEST_TIMEOUT: "Request timeout.",
+  TIMEOUT_EXPLICIT: "Operation timed out. Retry when ready.",
   
-  // Permission states
+  // Permission states — structural, not explained
   ACCESS_NOT_AUTHORIZED: "Access not authorized.",
   PERMISSION_RESTRICTED: "Permission restricted.",
+  PARTIAL_PERMISSIONS: "Partial access.",
+  
+  // Session states — expected edge cases
+  SESSION_EXPIRED: "Session expired.",
+  SESSION_INVALID: "Session invalid.",
+  REAUTHENTICATION_REQUIRED: "Reauthentication required.",
+  
+  // Data states — expected edge cases
+  MISSING_UPSTREAM_DATA: "Upstream data unavailable.",
+  PARTIAL_DATA: "Partial data loaded.",
+  SYNC_PENDING: "Sync pending.",
+  
+  // Completion states — quiet confidence
+  COMPLETE: "Complete",
+  SUBMITTED: "Submitted",
+  RECORDED: "Recorded",
+  SAVED: "Saved",
+  APPLIED: "Applied",
+  CONFIRMED: "Confirmed",
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -887,4 +916,141 @@ export const DISCLAIMERS = {
   // System disclaimers
   PENDING_CHANGES: "Changes pending approval are not reflected.",
   VERSION_SUPERSEDED: "This version has been superseded.",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ACQUISITION-GRADE MICROCOPY — QUIET CONFIDENCE
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * MICROCOPY RULES (PHASE 5):
+ * - Short, neutral, declarative
+ * - Avoid encouragement, confirmation fluff, "You're all set"
+ * - Prefer: "Complete", "Submitted", "Recorded"
+ * - Language assumes competence
+ */
+export const MICROCOPY = {
+  // Completion states (prefer these)
+  COMPLETE: "Complete",
+  SUBMITTED: "Submitted",
+  RECORDED: "Recorded",
+  SAVED: "Saved",
+  APPLIED: "Applied",
+  CONFIRMED: "Confirmed",
+  UPDATED: "Updated",
+  REMOVED: "Removed",
+  
+  // Action states (neutral)
+  PROCESSING: "Applying changes",
+  LOADING: "Loading data",
+  PREPARING: "Preparing",
+  GENERATING: "Generating",
+  EXPORTING: "Preparing export",
+  
+  // Prompt labels (declarative)
+  CONTINUE: "Continue",
+  CANCEL: "Cancel",
+  RETRY: "Retry",
+  CONFIRM: "Confirm",
+  SUBMIT: "Submit",
+  SAVE: "Save",
+  DELETE: "Remove",
+  CLOSE: "Close",
+  
+  // Prohibited patterns (NEVER USE):
+  // - "You're all set"
+  // - "Great job"
+  // - "Successfully"
+  // - "Awesome"
+  // - "Oops"
+  // - "Sorry"
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VISUAL RESTRAINT — ACQUISITION-GRADE POLISH
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * VISUAL RESTRAINT RULES (PHASE 5):
+ * - Remove excessive rounding
+ * - Remove colorful icons
+ * - Remove decorative dividers
+ * - Remove overuse of cards
+ * - Standardize: flat surfaces, muted colors, typography-led hierarchy
+ * - If an element draws attention to itself, reduce it
+ */
+export const VISUAL_RESTRAINT = {
+  // Maximum border radius values
+  RADIUS_MAX_CARD: 8,    // Cards, panels
+  RADIUS_MAX_CONTROL: 6, // Buttons, inputs
+  RADIUS_MAX_SMALL: 4,   // Badges, pills
+  
+  // Shadow usage - minimal
+  SHADOW_CARD: "none",              // No card shadows by default
+  SHADOW_DROPDOWN: "0 2px 8px rgba(0,0,0,0.08)", // Minimal dropdown shadow
+  SHADOW_MODAL: "0 4px 16px rgba(0,0,0,0.12)",   // Subtle modal shadow
+  
+  // Border colors - muted
+  BORDER_DEFAULT: "#E5E5E5",
+  BORDER_SUBTLE: "#F0F0F0",
+  BORDER_STRONG: "#D4D4D4",
+  
+  // Background surfaces - flat
+  BG_PAGE: "#F5F5F7",
+  BG_CARD: "#FFFFFF",
+  BG_MUTED: "#FAFAFA",
+  BG_SUBTLE: "#F8F8F8",
+  
+  // No decorative dividers - functional only
+  DIVIDER_COLOR: "#E5E5E5",
+  DIVIDER_WIDTH: 1,
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EXECUTIVE LENS — FINAL TRUST PASS
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * EXECUTIVE LENS (PHASE 5):
+ * 
+ * Evaluate every UI decision:
+ * - Would this hold up in diligence?
+ * - Would legal teams trust this?
+ * - Would an acquirer believe this system has permanence?
+ * 
+ * Correct anything that feels:
+ * - Temporary
+ * - Persuasive (marketing tone)
+ * - Reversible when it should not be
+ * 
+ * The platform must feel built to exist for decades.
+ */
+export const EXECUTIVE_STANDARDS = {
+  // These UI patterns indicate permanence
+  PERMANENT_PATTERNS: [
+    "Flat surfaces",
+    "Muted colors",
+    "Typography-led hierarchy",
+    "Dense information presentation",
+    "Minimal animation",
+    "Declarative language",
+    "Structural permissions",
+    "Audit trail visibility",
+    "Version history access",
+    "Record ID visibility",
+  ],
+  
+  // These UI patterns indicate temporary/SaaS
+  TEMPORARY_PATTERNS: [
+    "Excessive animation",
+    "Colorful gradients",
+    "Playful icons",
+    "Encouraging language",
+    "Celebration modals",
+    "Gamification elements",
+    "Soft, bubbly edges",
+    "Marketing tone",
+    "Success confetti",
+    "Hidden IDs",
+  ],
 } as const;

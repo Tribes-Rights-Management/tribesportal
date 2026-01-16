@@ -46,11 +46,11 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
     hasAutoSwitched.current = false;
   }, [location.pathname]);
 
-  // Handle loading state
+  // Handle loading state — predictable, not fast
   if (accessState === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-[15px] text-[#71717A]">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F5F7]">
+        <p className="text-[14px] text-[#6B6B6B]">Loading data</p>
       </div>
     );
   }

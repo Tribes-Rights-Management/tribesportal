@@ -8,11 +8,11 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function RootRedirect() {
   const { accessState, activeContext, isPlatformAdmin } = useAuth();
 
-  // Loading
+  // Loading — predictable, not fast
   if (accessState === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-[15px] text-[#71717A]">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F5F7]">
+        <p className="text-[14px] text-[#6B6B6B]">Loading data</p>
       </div>
     );
   }

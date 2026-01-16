@@ -3,15 +3,25 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
+/**
+ * INSTITUTIONAL BADGE — ACQUISITION-GRADE
+ * 
+ * PHASE 5 VISUAL RESTRAINT:
+ * - No colorful badges
+ * - Muted, typography-led
+ * - Restrained border radius (4px, not pill)
+ * - Minimal visual weight
+ */
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded border px-2 py-0.5 text-[11px] font-medium transition-colors focus:outline-none",
   {
     variants: {
       variant: {
-        default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
+        default: "border-[#D4D4D4] bg-[#F5F5F5] text-[#111]",
+        secondary: "border-[#E5E5E5] bg-[#FAFAFA] text-[#6B6B6B]",
+        destructive: "border-[#FECACA] bg-[#FEF2F2] text-[#991B1B]",
+        outline: "border-[#E5E5E5] text-[#6B6B6B]",
+        success: "border-[#BBF7D0] bg-[#F0FDF4] text-[#166534]",
       },
     },
     defaultVariants: {
