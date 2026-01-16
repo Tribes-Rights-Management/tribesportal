@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { SignInHelpDialog } from "@/components/auth/SignInHelpDialog";
 import { AuthLayout } from "@/layouts/AuthLayout";
 
@@ -50,7 +47,9 @@ export default function SignInPage() {
   if (loading) {
     return (
       <AuthLayout>
-        <p className="text-muted-foreground text-base text-center">Verifying access...</p>
+        <p style={{ color: "var(--muted)", textAlign: "center", fontSize: "16px" }}>
+          Verifying access...
+        </p>
       </AuthLayout>
     );
   }
@@ -59,10 +58,16 @@ export default function SignInPage() {
     <AuthLayout>
       {/* Header */}
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-[#1D1D1F]">
+        <h1 
+          className="text-[28px] font-semibold tracking-tight leading-[1.2]"
+          style={{ color: "var(--text)" }}
+        >
           Sign in to Tribes
         </h1>
-        <p className="mt-2 text-sm text-black/60">
+        <p 
+          className="mt-2 text-[15px]"
+          style={{ color: "var(--muted)" }}
+        >
           Secure access via email sign-in link
         </p>
       </div>
@@ -70,13 +75,14 @@ export default function SignInPage() {
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
-          <Label 
+          <label 
             htmlFor="email" 
-            className="text-sm font-medium text-[#1D1D1F] block"
+            className="text-[14px] font-medium block"
+            style={{ color: "var(--text)" }}
           >
             Email address
-          </Label>
-          <Input
+          </label>
+          <input
             id="email"
             type="email"
             placeholder="you@company.com"
@@ -85,21 +91,40 @@ export default function SignInPage() {
             required
             autoFocus
             autoComplete="email"
-            className="h-11 px-3.5 text-[15px] bg-white border-black/15 rounded-xl placeholder:text-black/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]/50 transition-colors"
+            className="w-full h-[44px] px-3.5 text-[15px] rounded-[12px] transition-shadow duration-150"
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              color: "var(--text)",
+              outline: "none",
+            }}
+            onFocus={(e) => {
+              e.target.style.boxShadow = "0 0 0 2px var(--ring)";
+            }}
+            onBlur={(e) => {
+              e.target.style.boxShadow = "none";
+            }}
           />
         </div>
 
-        <Button 
+        <button 
           type="submit" 
           disabled={isSubmitting || !email.trim()}
-          className="w-full h-11 text-[15px] font-medium rounded-xl bg-[#111] text-white hover:bg-[#222] disabled:opacity-40 transition-colors"
+          className="w-full h-[44px] text-[15px] font-medium rounded-[12px] transition-all duration-150 disabled:opacity-40"
+          style={{
+            background: "var(--text)",
+            color: "var(--bg)",
+          }}
         >
           {isSubmitting ? "Sending..." : "Continue"}
-        </Button>
+        </button>
       </form>
 
       {/* Institutional Notice */}
-      <p className="mt-5 text-center text-xs text-black/50">
+      <p 
+        className="mt-5 text-center text-[13px]"
+        style={{ color: "var(--muted-2)" }}
+      >
         Access is restricted to approved accounts.
       </p>
 
@@ -108,7 +133,8 @@ export default function SignInPage() {
         <button 
           type="button"
           onClick={() => setHelpDialogOpen(true)}
-          className="text-xs text-black/50 hover:text-black/70 hover:underline transition-colors"
+          className="text-[13px] hover:underline transition-colors duration-150"
+          style={{ color: "var(--muted-2)" }}
         >
           Trouble signing in?
         </button>

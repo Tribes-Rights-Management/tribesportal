@@ -19,6 +19,7 @@ import { LogOut, Settings, Shield } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 
 type PortalMode = "publishing" | "licensing";
@@ -139,7 +140,7 @@ function PortalSwitcher() {
   );
 }
 
-// Premium account menu - 32px avatar with subtle styling
+// Premium account menu - 28px avatar with subtle styling
 function AccountMenu() {
   const { 
     profile, 
@@ -175,7 +176,7 @@ function AccountMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="h-8 w-8 rounded-full shrink-0 inline-flex items-center justify-center border border-border/50 bg-muted/30 hover:bg-muted/60 text-[11px] font-medium text-muted-foreground transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="h-7 w-7 rounded-full shrink-0 inline-flex items-center justify-center bg-muted/40 text-[10px] font-medium text-muted-foreground transition-colors duration-150 hover:bg-muted/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-1"
           aria-label="Account menu"
         >
           {getInitials()}
@@ -396,8 +397,9 @@ export function GlobalHeader() {
         )}
       </div>
 
-      {/* Right: Account menu */}
-      <div className="flex items-center">
+      {/* Right: Theme toggle + Account menu */}
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
         <AccountMenu />
       </div>
     </header>

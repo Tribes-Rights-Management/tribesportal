@@ -1,6 +1,19 @@
 <!doctype html>
-<html lang="en" class="light">
+<html lang="en" data-theme="light" class="light">
   <head>
+    <script>
+      (function() {
+        var stored = localStorage.getItem('tribes-theme');
+        var theme = stored || 'system';
+        var resolved = theme;
+        if (theme === 'system') {
+          resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = resolved;
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(resolved);
+      })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     

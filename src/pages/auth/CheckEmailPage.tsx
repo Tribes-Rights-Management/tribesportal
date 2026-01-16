@@ -37,25 +37,43 @@ export default function CheckEmailPage() {
 
   return (
     <AuthLayout>
-      {/* Header - Marketing site alignment */}
+      {/* Header */}
       <div className="text-center mb-6">
-        <h1 className="text-[32px] font-bold text-foreground tracking-[-0.02em] leading-[1.125]">
+        <h1 
+          className="text-[28px] font-semibold tracking-tight leading-[1.2]"
+          style={{ color: "var(--text)" }}
+        >
           Check your email
         </h1>
-        <p className="mt-3 text-base text-muted-foreground">
+        <p 
+          className="mt-3 text-[15px]"
+          style={{ color: "var(--muted)" }}
+        >
           We've sent a secure sign-in link to
         </p>
       </div>
 
       {/* Email Display */}
-      <div className="bg-[#f8f9fa] border border-[rgba(0,0,0,0.10)] rounded-[12px] py-4 px-5 mb-6">
-        <p className="text-base font-medium text-foreground text-center break-all">
+      <div 
+        className="rounded-[12px] py-4 px-5 mb-6"
+        style={{
+          background: "var(--surface-2)",
+          border: "1px solid var(--border)",
+        }}
+      >
+        <p 
+          className="text-[15px] font-medium text-center break-all"
+          style={{ color: "var(--text)" }}
+        >
           {email}
         </p>
       </div>
 
       {/* Expiration Notice */}
-      <p className="text-[14px] text-muted-foreground text-center">
+      <p 
+        className="text-[14px] text-center"
+        style={{ color: "var(--muted)" }}
+      >
         This link expires shortly and can only be used once.
       </p>
 
@@ -64,13 +82,19 @@ export default function CheckEmailPage() {
         <button
           onClick={handleResend}
           disabled={isResending}
-          className="text-[14px] text-muted-foreground hover:text-foreground transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] disabled:opacity-45"
+          className="text-[14px] transition-colors duration-150 disabled:opacity-45"
+          style={{ color: "var(--muted)" }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "var(--muted)"; }}
         >
           {isResending ? "Sending..." : "Resend sign-in link"}
         </button>
         <Link 
           to="/auth/sign-in"
-          className="text-[14px] text-muted-foreground hover:text-foreground transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
+          className="text-[14px] transition-colors duration-150"
+          style={{ color: "var(--muted)" }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "var(--muted)"; }}
         >
           Use a different email
         </Link>
