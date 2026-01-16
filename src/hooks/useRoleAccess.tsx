@@ -11,6 +11,13 @@ import { useAuth, PortalRole, PortalContext, PlatformRole } from "@/contexts/Aut
  * - Platform Administrator: Full platform visibility
  * - Organization Admin: Organization-scoped visibility
  * - Member / Viewer: Read-only, scoped surfaces only
+ * 
+ * Permission Namespaces:
+ * - licensing.* : Licensing module permissions
+ * - portal.* : Client Portal module permissions
+ * - platform:* : Platform administration permissions
+ * - tenant:* : Tenant-level permissions
+ * - records:* : Record-level CRUD permissions
  */
 
 export type Permission =
@@ -24,7 +31,7 @@ export type Permission =
   | "tenant:admin"
   | "tenant:manage_members"
   | "tenant:view_reports"
-  // Context-level permissions
+  // Context-level permissions (legacy)
   | "context:publishing"
   | "context:licensing"
   // Record-level permissions
@@ -32,7 +39,43 @@ export type Permission =
   | "records:edit"
   | "records:delete"
   | "records:view"
-  | "records:export";
+  | "records:export"
+  // ═══════════════════════════════════════════════════════════════════════════
+  // LICENSING MODULE PERMISSIONS — DEFAULT DENY
+  // ═══════════════════════════════════════════════════════════════════════════
+  | "licensing.view"      // View licensing module and data
+  | "licensing.manage"    // Create/edit licensing requests and agreements
+  | "licensing.approve"   // Approve/reject licensing requests
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CLIENT PORTAL MODULE PERMISSIONS — DEFAULT DENY
+  // ═══════════════════════════════════════════════════════════════════════════
+  | "portal.view"         // View client portal module
+  | "portal.download"     // Download statements and documents
+  | "portal.submit";      // Submit requests/data through portal
+
+/**
+ * Module definitions for route prefixes and permission namespaces
+ */
+export const MODULES = {
+  licensing: {
+    routePrefix: "/licensing",
+    permissionNamespace: "licensing",
+    navLabel: "Licensing",
+    requiredPermission: "licensing.view" as Permission,
+  },
+  portal: {
+    routePrefix: "/portal",
+    permissionNamespace: "portal",
+    navLabel: "Client Portal",
+    requiredPermission: "portal.view" as Permission,
+  },
+  admin: {
+    routePrefix: "/admin",
+    permissionNamespace: "platform",
+    navLabel: "Administration",
+    requiredPermission: "platform:admin" as Permission,
+  },
+} as const;
 
 interface RoleAccessResult {
   // Core checks
@@ -50,19 +93,26 @@ interface RoleAccessResult {
   canAccessContext: (context: PortalContext) => boolean;
   canAccessAdmin: boolean;
   
+  // Module access (new first-class modules)
+  canAccessLicensing: boolean;
+  canAccessPortal: boolean;
+  
   // Surface visibility helpers
   shouldRenderSurface: (requiredPermission: Permission) => boolean;
   shouldRenderNavItem: (requiredPermission: Permission) => boolean;
+  
+  // Navigation visibility
+  visibleModules: Array<{ key: string; label: string; path: string }>;
 }
 
 /**
  * Role-based access hook for surface pruning
  * 
  * Usage:
- * const { hasPermission, shouldRenderSurface } = useRoleAccess();
+ * const { hasPermission, shouldRenderSurface, visibleModules } = useRoleAccess();
  * 
  * // In components:
- * {shouldRenderSurface("platform:admin") && <AdminSection />}
+ * {shouldRenderSurface("licensing.view") && <LicensingSection />}
  */
 export function useRoleAccess(): RoleAccessResult {
   const { 
@@ -80,46 +130,101 @@ export function useRoleAccess(): RoleAccessResult {
     const isMember = hasPortalRole("tenant_user");
     const isViewer = hasPortalRole("viewer");
 
-    // Permission resolution based on role hierarchy
+    // Determine user's effective role tier for permission resolution
+    // Role tiers: platform_admin > tenant_admin > tenant_user > viewer
+    const isOrgAdmin = isTenantAdmin;
+    const isClient = isViewer || (!isPlatformAdmin && !isTenantAdmin && !isMember);
+
+    // Permission resolution based on role hierarchy with DEFAULT DENY
     const hasPermission = (permission: Permission): boolean => {
       // Platform admins have all permissions
       if (isPlatformAdmin) return true;
 
       switch (permission) {
-        // Platform-level: admin only
+        // ═══════════════════════════════════════════════════════════════════════
+        // PLATFORM-LEVEL PERMISSIONS — platform_admin only
+        // ═══════════════════════════════════════════════════════════════════════
         case "platform:admin":
         case "platform:manage_users":
         case "platform:manage_tenants":
         case "platform:view_audit_logs":
         case "platform:manage_security":
-          return isPlatformAdmin;
+          return false; // DEFAULT DENY for non-admins
 
-        // Tenant-level: tenant_admin or above
+        // ═══════════════════════════════════════════════════════════════════════
+        // TENANT-LEVEL PERMISSIONS
+        // ═══════════════════════════════════════════════════════════════════════
         case "tenant:admin":
         case "tenant:manage_members":
-          return isTenantAdmin;
+          return isOrgAdmin;
         
         case "tenant:view_reports":
-          return isTenantAdmin || isMember;
+          return isOrgAdmin || isMember;
 
-        // Context access
+        // ═══════════════════════════════════════════════════════════════════════
+        // CONTEXT ACCESS (legacy compatibility)
+        // ═══════════════════════════════════════════════════════════════════════
         case "context:publishing":
           return authCanAccessContext("publishing");
         case "context:licensing":
           return authCanAccessContext("licensing");
 
-        // Record operations
+        // ═══════════════════════════════════════════════════════════════════════
+        // RECORD OPERATIONS
+        // ═══════════════════════════════════════════════════════════════════════
         case "records:create":
         case "records:edit":
         case "records:delete":
-          return isTenantAdmin || isMember;
+          return isOrgAdmin || isMember;
         
         case "records:view":
         case "records:export":
-          return isTenantAdmin || isMember || isViewer;
+          return isOrgAdmin || isMember || isViewer;
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // LICENSING MODULE PERMISSIONS — DEFAULT DENY
+        // ═══════════════════════════════════════════════════════════════════════
+        case "licensing.view":
+          // Platform Admin: YES
+          // Org Admin: YES (if context allowed)
+          // Client: NO
+          return isOrgAdmin && authCanAccessContext("licensing");
+        
+        case "licensing.manage":
+          // Platform Admin: YES
+          // Org Admin: YES (if context allowed)
+          // Client: NO
+          return isOrgAdmin && authCanAccessContext("licensing");
+        
+        case "licensing.approve":
+          // Platform Admin: YES
+          // Org Admin: NO (requires platform-level approval)
+          // Client: NO
+          return false; // Only platform admins
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // CLIENT PORTAL PERMISSIONS — DEFAULT DENY
+        // ═══════════════════════════════════════════════════════════════════════
+        case "portal.view":
+          // Platform Admin: YES
+          // Org Admin: YES (if context allowed)
+          // Client: YES (if context allowed)
+          return (isOrgAdmin || isMember || isViewer) && authCanAccessContext("publishing");
+        
+        case "portal.download":
+          // Platform Admin: YES
+          // Org Admin: YES
+          // Client: YES
+          return (isOrgAdmin || isMember || isViewer) && authCanAccessContext("publishing");
+        
+        case "portal.submit":
+          // Platform Admin: YES
+          // Org Admin: NO (clients submit, admins review)
+          // Client: NO (readonly client role)
+          return isMember && authCanAccessContext("publishing");
 
         default:
-          return false;
+          return false; // DEFAULT DENY
       }
     };
 
@@ -133,6 +238,10 @@ export function useRoleAccess(): RoleAccessResult {
 
     const canAccessContext = authCanAccessContext;
     const canAccessAdmin = isPlatformAdmin;
+    
+    // First-class module access
+    const canAccessLicensing = hasPermission("licensing.view");
+    const canAccessPortal = hasPermission("portal.view");
 
     // Surface visibility: if no permission, surface is NOT rendered
     // No disabled buttons, no placeholders
@@ -144,6 +253,28 @@ export function useRoleAccess(): RoleAccessResult {
       return hasPermission(requiredPermission);
     };
 
+    // Build visible modules for navigation
+    const visibleModules: Array<{ key: string; label: string; path: string }> = [];
+    
+    if (canAccessPortal) {
+      visibleModules.push({
+        key: "portal",
+        label: MODULES.portal.navLabel,
+        path: MODULES.portal.routePrefix,
+      });
+    }
+    
+    if (canAccessLicensing) {
+      visibleModules.push({
+        key: "licensing",
+        label: MODULES.licensing.navLabel,
+        path: MODULES.licensing.routePrefix,
+      });
+    }
+    
+    // Administration is only shown in dropdown, not primary nav
+    // Platform admins see it in account menu
+
     return {
       isPlatformAdmin,
       isTenantAdmin,
@@ -154,8 +285,11 @@ export function useRoleAccess(): RoleAccessResult {
       hasAllPermissions,
       canAccessContext,
       canAccessAdmin,
+      canAccessLicensing,
+      canAccessPortal,
       shouldRenderSurface,
       shouldRenderNavItem,
+      visibleModules,
     };
   }, [
     authIsPlatformAdmin,
