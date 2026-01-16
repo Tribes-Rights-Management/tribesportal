@@ -1,16 +1,17 @@
 import React from "react";
 
 /**
- * PrimaryButton - Institutional authority button
+ * PrimaryButton - Institutional command button
  * 
- * LOCKED SPECS (NON-NEGOTIABLE):
- * - Height: 44-48px
- * - Radius: 10-12px (NOT pill-like)
- * - Disabled: muted gray, clearly inactive
- * - Enabled: solid black, white text
+ * DESIGN STANDARD (AUTHORITATIVE):
+ * - Background: solid black (enabled), muted (disabled)
+ * - Text: white, perfectly centered
+ * - Height: slightly taller than default (48px)
+ * - Radius: moderate (8px), NOT pill
+ * - Padding: generous horizontal
  * - NO gradient, NO glow, NO animation
- * - Text: perfectly centered, generous padding
- * - Focus: subtle, not decorative
+ * 
+ * Tone: Executing an instruction, not requesting permission.
  */
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;
@@ -30,15 +31,14 @@ export function PrimaryButton({
       {...rest}
       disabled={isDisabled}
       className={[
-        "w-full h-[46px] rounded-[10px]",
+        "w-full h-12 rounded-lg",
         "inline-flex items-center justify-center",
-        "px-6",
-        "text-[15px] font-medium",
-        // Institutional states: muted gray disabled, solid black enabled
+        "px-8",
+        "text-[15px] font-medium tracking-[-0.01em]",
         isDisabled 
-          ? "bg-[#E5E5E5] text-[#9CA3AF] cursor-not-allowed" 
+          ? "bg-[#D4D4D4] text-[#8A8A8A] cursor-not-allowed" 
           : "bg-[#111] text-white",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111]/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF8]",
         className,
       ].join(" ")}
     >
