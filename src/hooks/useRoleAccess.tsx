@@ -4,64 +4,109 @@ import { useAuth, PortalRole, PortalContext, PlatformRole } from "@/contexts/Aut
 /**
  * ROLE-BASED ACCESS HOOK — INSTITUTIONAL SURFACE PRUNING
  * 
- * Purpose: Enable strict role-based visibility. No decorative access.
- * No disabled buttons. No "request access" prompts.
+ * ═══════════════════════════════════════════════════════════════════════════
+ * MASTER ENFORCEMENT DIRECTIVE — LOCKED ARCHITECTURE
+ * ═══════════════════════════════════════════════════════════════════════════
  * 
- * Role hierarchy:
- * - Platform Administrator: Full platform visibility
- * - Organization Admin: Organization-scoped visibility
- * - Member / Viewer: Read-only, scoped surfaces only
+ * HIERARCHY (TWO LAYERS ONLY):
  * 
- * Permission Namespaces:
- * - licensing.* : Licensing module permissions
- * - portal.* : Client Portal module permissions
- * - platform:* : Platform administration permissions
- * - tenant:* : Tenant-level permissions
- * - records:* : Record-level CRUD permissions
+ * 1) COMPANY LAYER (NOT A WORKSPACE):
+ *    • System Console — governance, audit, compliance, security
+ *    • Access: platform_owner, external_auditor (read-only)
+ *    • NO workspace selector, NO product navigation
+ * 
+ * 2) WORKSPACE LAYER (OPERATING ENVIRONMENTS):
+ *    • Tribes Team — internal operations
+ *    • Licensing — external licensees
+ *    • Tribes Admin — administration clients
+ * 
+ * ROLE HIERARCHY:
+ * 
+ * COMPANY-LEVEL ROLES:
+ * - platform_owner: Full System Console access, optional workspace access
+ * - external_auditor: Read-only System Console, read-only approved workspace views
+ * 
+ * WORKSPACE ROLES:
+ * - tribes_team_admin: Internal operations admin
+ * - tribes_team_staff: Internal operations staff
+ * - licensing_user: External licensee
+ * - portal_client_admin: Tribes Admin client admin
+ * - portal_client_user: Tribes Admin client user
+ * 
+ * RULES:
+ * - Default deny
+ * - All routes guarded (Access restricted, never 404)
+ * - All privileged actions logged immutably
+ * - RLS enforced by workspace + role
+ * ═══════════════════════════════════════════════════════════════════════════
  */
 
 export type Permission =
-  // Platform-level permissions (platform_admin only)
+  // ═══════════════════════════════════════════════════════════════════════════
+  // COMPANY-LEVEL PERMISSIONS (System Console only)
+  // ═══════════════════════════════════════════════════════════════════════════
   | "platform:admin"
+  | "platform:owner"           // Executive access
   | "platform:manage_users"
   | "platform:manage_tenants"
   | "platform:view_audit_logs"
   | "platform:manage_security"
-  // External auditor permissions (read-only)
+  | "platform:view_governance"
+  | "platform:view_disclosures"
+  | "platform:cross_workspace_read"
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EXTERNAL AUDITOR PERMISSIONS (read-only)
+  // ═══════════════════════════════════════════════════════════════════════════
   | "auditor:view_logs"
   | "auditor:view_licensing"
   | "auditor:view_agreements"
   | "auditor:view_disclosures"
-  // Tenant-level permissions
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // WORKSPACE PERMISSIONS — TRIBES TEAM (internal operations)
+  // ═══════════════════════════════════════════════════════════════════════════
+  | "tribes_team:admin"
+  | "tribes_team:review"       // Review and approve requests
+  | "tribes_team:queues"       // Operational queues
+  | "tribes_team:messaging"    // Internal messaging
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // WORKSPACE PERMISSIONS — LICENSING (external licensees)
+  // ═══════════════════════════════════════════════════════════════════════════
+  | "licensing.view"           // View licensing module and data
+  | "licensing.manage"         // Create/edit licensing requests and agreements
+  | "licensing.approve"        // Approve/reject licensing requests
+  | "licensing.submit"         // Submit licensing requests
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // WORKSPACE PERMISSIONS — TRIBES ADMIN (administration clients)
+  // ═══════════════════════════════════════════════════════════════════════════
+  | "portal.view"              // View Tribes Admin module
+  | "portal.download"          // Download statements and documents
+  | "portal.submit"            // Submit requests/data through portal
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // LEGACY PERMISSIONS (backward compatibility)
+  // ═══════════════════════════════════════════════════════════════════════════
   | "tenant:admin"
   | "tenant:manage_members"
   | "tenant:view_reports"
-  // Context-level permissions (legacy)
   | "context:publishing"
   | "context:licensing"
-  // Record-level permissions
   | "records:create"
   | "records:edit"
   | "records:delete"
   | "records:view"
-  | "records:export"
-  // ═══════════════════════════════════════════════════════════════════════════
-  // LICENSING MODULE PERMISSIONS — DEFAULT DENY
-  // ═══════════════════════════════════════════════════════════════════════════
-  | "licensing.view"      // View licensing module and data
-  | "licensing.manage"    // Create/edit licensing requests and agreements
-  | "licensing.approve"   // Approve/reject licensing requests
-  // ═══════════════════════════════════════════════════════════════════════════
-  // CLIENT PORTAL MODULE PERMISSIONS — DEFAULT DENY
-  // ═══════════════════════════════════════════════════════════════════════════
-  | "portal.view"         // View client portal module
-  | "portal.download"     // Download statements and documents
-  | "portal.submit";      // Submit requests/data through portal
+  | "records:export";
 
 /**
  * Module definitions for route prefixes and permission namespaces
  */
 export const MODULES = {
+  // ─────────────────────────────────────────────────────────────────────────
+  // WORKSPACE MODULES (organization-scoped)
+  // ─────────────────────────────────────────────────────────────────────────
   licensing: {
     routePrefix: "/licensing",
     permissionNamespace: "licensing",
@@ -71,15 +116,23 @@ export const MODULES = {
   portal: {
     routePrefix: "/portal",
     permissionNamespace: "portal",
-    navLabel: "Tribes Admin",  // Renamed from "Client Portal"
+    navLabel: "Tribes Admin",
     requiredPermission: "portal.view" as Permission,
   },
+  
+  // ─────────────────────────────────────────────────────────────────────────
+  // COMPANY-LEVEL MODULE (NOT workspace-scoped)
+  // ─────────────────────────────────────────────────────────────────────────
   admin: {
     routePrefix: "/admin",
     permissionNamespace: "platform",
-    navLabel: "System Console",  // Company-level governance (not org-scoped)
+    navLabel: "System Console",
     requiredPermission: "platform:admin" as Permission,
   },
+  
+  // ─────────────────────────────────────────────────────────────────────────
+  // AUDITOR ACCESS (read-only, cross-workspace)
+  // ─────────────────────────────────────────────────────────────────────────
   auditor: {
     routePrefix: "/auditor",
     permissionNamespace: "auditor",

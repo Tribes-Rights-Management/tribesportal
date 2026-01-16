@@ -3,19 +3,36 @@ import { ChevronRight } from "lucide-react";
 import { EMPTY_STATES, WORKSPACE_LANDING } from "@/constants/institutional-copy";
 
 /**
- * ADMIN DASHBOARD — TRIBES TEAM LANDING (CANONICAL)
+ * SYSTEM CONSOLE DASHBOARD — COMPANY-LEVEL GOVERNANCE (CANONICAL)
  * 
- * Internal operations workspace for staff.
- * Handles approvals for ALL external access (Licensing + Portal).
- * Provides system health + audit + security views.
+ * ═══════════════════════════════════════════════════════════════════════════
+ * MASTER ENFORCEMENT DIRECTIVE — LOCKED ARCHITECTURE
+ * ═══════════════════════════════════════════════════════════════════════════
  * 
- * Design Rules:
- * - Dark canvas, no white page background
- * - Centered narrow column (~960-1000px max)
- * - Flat panels with hairline borders
- * - Status list (not metric cards)
- * - Navigation rows (not clickable cards)
- * - Language: declarative, institutional, non-conversational
+ * System Console is NOT a workspace. It is company-level governance.
+ * 
+ * PURPOSE:
+ * - Governance dashboards
+ * - Security posture
+ * - Audit logs
+ * - Regulatory disclosures
+ * - Cross-workspace reporting
+ * - Correlation views
+ * 
+ * WHAT SYSTEM CONSOLE MUST NEVER CONTAIN:
+ * - Licensing
+ * - Tribes Admin
+ * - Operational queues
+ * - Catalogs
+ * - Requests
+ * - Client or licensee actions
+ * 
+ * UI RULES:
+ * - Dark canvas, sparse, supervisory
+ * - No workspace selector
+ * - No product navigation
+ * - Accessed only via user/profile menu
+ * ═══════════════════════════════════════════════════════════════════════════
  */
 export default function AdminDashboard() {
   return (
@@ -30,13 +47,13 @@ export default function AdminDashboard() {
             className="text-[28px] font-semibold tracking-[-0.02em]"
             style={{ color: 'var(--platform-text)' }}
           >
-            {WORKSPACE_LANDING.ADMIN.title}
+            {WORKSPACE_LANDING.SYSTEM_CONSOLE.title}
           </h1>
           <p 
             className="text-[15px] mt-1.5 leading-relaxed"
             style={{ color: 'var(--platform-text-secondary)' }}
           >
-            {WORKSPACE_LANDING.ADMIN.description}
+            {WORKSPACE_LANDING.SYSTEM_CONSOLE.description}
           </p>
         </header>
 
@@ -114,7 +131,7 @@ export default function AdminDashboard() {
           </div>
         </section>
 
-        {/* Navigation Sections */}
+        {/* Navigation Sections — GOVERNANCE ONLY */}
         <div 
           className="rounded"
           style={{ 
@@ -122,21 +139,40 @@ export default function AdminDashboard() {
             border: '1px solid var(--platform-border)'
           }}
         >
-          {/* Organizations */}
-          <NavSection title="Organizations">
+          {/* Governance */}
+          <NavSection title="Governance">
             <NavRow
-              to="/admin/tenants"
-              label="Organizations overview"
-              description="View client and licensing organizations managed by Tribes."
+              to="/admin/disclosures"
+              label="Regulatory Disclosures"
+              description="Disclosure registry and export history"
+            />
+            <NavRow
+              to="/admin/chain"
+              label="Correlation Chain"
+              description="Cross-workspace activity tracing"
             />
           </NavSection>
 
-          {/* Access & Identity */}
-          <NavSection title="Access & Identity" hasBorder>
+          {/* Security & Compliance */}
+          <NavSection title="Security & Compliance" hasBorder>
+            <NavRow
+              to="/admin/rls-audit"
+              label="RLS Verification"
+              description="Row-level security coverage audit"
+            />
+            <NavRow
+              to="/admin/security"
+              label="Authentication & Access"
+              description="Auth configuration and session integrity"
+            />
+          </NavSection>
+
+          {/* Audit */}
+          <NavSection title="Audit Oversight" hasBorder>
             <NavRow
               to="/admin/approvals"
-              label="Access Control"
-              description="Accounts, roles, and approvals"
+              label="Access Control Log"
+              description="Approval history and access grants"
             />
             <NavRow
               to="/admin/users"
@@ -145,26 +181,12 @@ export default function AdminDashboard() {
             />
           </NavSection>
 
-          {/* Security & Governance */}
-          <NavSection title="Security & Governance" hasBorder>
+          {/* Organizations (read-only view) */}
+          <NavSection title="Cross-Workspace" hasBorder>
             <NavRow
-              to="/admin/rls-audit"
-              label="RLS Verification"
-              description="Row-level security coverage"
-            />
-            <NavRow
-              to="/admin/security"
-              label="Audit Coverage"
-              description="Authentication and access logs"
-            />
-          </NavSection>
-
-          {/* Platform Account */}
-          <NavSection title="Platform Account" hasBorder>
-            <NavRow
-              to="/account"
-              label="Account Settings"
-              description="Profile, preferences, and security configuration"
+              to="/admin/tenants"
+              label="Workspaces Overview"
+              description="View registered workspaces (read-only)"
             />
           </NavSection>
         </div>

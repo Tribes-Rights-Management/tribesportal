@@ -4,16 +4,38 @@ import { SystemConsoleHeader } from "@/components/app/SystemConsoleHeader";
 /**
  * SYSTEM CONSOLE LAYOUT — COMPANY-LEVEL GOVERNANCE
  * 
- * ARCHITECTURE RULES (LOCKED):
+ * ═══════════════════════════════════════════════════════════════════════════
+ * MASTER ENFORCEMENT DIRECTIVE — LOCKED ARCHITECTURE
+ * ═══════════════════════════════════════════════════════════════════════════
+ * 
+ * System Console is NOT a workspace. It is company-level governance.
+ * 
+ * ARCHITECTURE RULES (IMMUTABLE):
  * - System Console ≠ Organization Workspace
  * - NO workspace selector (this is company-scoped, not org-scoped)
  * - NO product navigation (Licensing, Tribes Admin are org-scoped)
- * - Access restricted to executive roles (platform_admin) only
+ * - Access restricted to executive roles (platform_owner) only
+ * - External auditors have read-only access
  * - Scoped to: governance, audit oversight, compliance, security
  * 
- * Products (Licensing, Tribes Admin) require an active organization context.
- * Users cannot access products without selecting an organization.
- * Each organization represents an independent operating workspace.
+ * WHAT SYSTEM CONSOLE MAY CONTAIN:
+ * - Governance dashboards
+ * - Security posture
+ * - Audit logs
+ * - Regulatory disclosures
+ * - Cross-workspace reporting
+ * - Correlation views
+ * 
+ * WHAT SYSTEM CONSOLE MUST NEVER CONTAIN:
+ * - Licensing
+ * - Tribes Admin
+ * - Operational queues
+ * - Catalogs
+ * - Requests
+ * - Client or licensee actions
+ * 
+ * UI FEEL: Sparse, supervisory, non-operational
+ * ═══════════════════════════════════════════════════════════════════════════
  */
 export function SystemConsoleLayout() {
   return (
