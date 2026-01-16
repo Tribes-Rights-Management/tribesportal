@@ -107,8 +107,8 @@ export function DataRow({ label, value, className }: DataRowProps) {
         {label}
       </dt>
       <dd 
-        className="text-[13px]"
-        style={{ color: 'var(--platform-text)' }}
+        className="text-[13px] min-w-0 flex-1 break-words"
+        style={{ color: 'var(--platform-text)', lineHeight: '1.45' }}
       >
         {value}
       </dd>

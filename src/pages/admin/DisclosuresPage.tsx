@@ -452,8 +452,8 @@ export default function DisclosuresPage() {
           </div>
 
           <p 
-            className="text-[13px]"
-            style={{ color: 'hsl(var(--platform-text-muted))' }}
+            className="text-[13px] line-clamp-2 break-words"
+            style={{ color: 'hsl(var(--platform-text-muted))', lineHeight: '1.45' }}
           >
             {EXPORT_TYPE_DESCRIPTIONS[selectedType]}
           </p>
@@ -641,8 +641,8 @@ export default function DisclosuresPage() {
                   {EXPORT_TYPE_LABELS[selectedExport.export_type]}
                 </p>
                 <p 
-                  className="text-[12px] mt-1"
-                  style={{ color: 'hsl(var(--platform-text-muted))' }}
+                  className="text-[12px] mt-1 line-clamp-2 break-words"
+                  style={{ color: 'hsl(var(--platform-text-muted))', lineHeight: '1.45' }}
                 >
                   {EXPORT_TYPE_DESCRIPTIONS[selectedExport.export_type]}
                 </p>
