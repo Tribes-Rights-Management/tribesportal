@@ -27,9 +27,9 @@ export function AuthLayout({ children }: AuthLayoutProps) {
     <div 
       className="fixed inset-0 flex items-center justify-center px-6"
       style={{ 
-        backgroundColor: '#0A0A0B',
-        // Subtle depth — matching marketing site
-        background: 'linear-gradient(180deg, #0A0A0B 0%, #0F0F10 100%)',
+        // Derives from canonical tribes-theme.css tokens (LOCKED)
+        backgroundColor: 'var(--tribes-bg)',
+        background: 'var(--auth-canvas-gradient)',
       }}
     >
       {/* 

@@ -381,8 +381,8 @@
 
   /* App shell wrapper - inherits canonical background */
   .app-shell {
-    background: var(--platform-canvas);
-    color: var(--platform-text);
+    background: var(--tribes-bg);
+    color: var(--tribes-fg);
   }
 
   /* H1 — Primary page heading. Marketing site alignment: 32px, 700, -0.02em */

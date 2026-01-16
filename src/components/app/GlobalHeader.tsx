@@ -153,7 +153,7 @@ function WorkspaceSelector() {
         <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-white/5 text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 focus-visible:ring-1 focus-visible:ring-white/20 text-white/60">
           <SelectValue placeholder={NAV_LABELS.SELECT_WORKSPACE} />
         </SelectTrigger>
-        <SelectContent align="center" className="bg-[#1A1A1B] border-white/10 text-white">
+        <SelectContent align="center" className="bg-[var(--tribes-header-bg)] border-[var(--tribes-border)] text-[var(--tribes-fg)]">
           <div className="px-3 py-2 border-b border-white/5">
             <p className="text-[10px] text-white/40 uppercase tracking-wide">
               Switch Workspace
@@ -233,7 +233,7 @@ function AccountMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-56 rounded-lg bg-[#1A1A1B] border-white/10 text-white"
+        className="w-56 rounded-lg bg-[var(--tribes-header-bg)] border-[var(--tribes-border)] text-[var(--tribes-fg)]"
         sideOffset={8}
       >
         <div className="px-3 py-2.5">
@@ -324,7 +324,7 @@ function MobileControls() {
           <ChevronDown className="h-3 w-3 opacity-50" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" className="w-52 bg-[#1A1A1B] border-white/10 text-white">
+      <DropdownMenuContent align="center" className="w-52 bg-[var(--tribes-header-bg)] border-[var(--tribes-border)] text-[var(--tribes-fg)]">
         {activeTenant && (
           <div className="px-3 py-2">
             <p className="text-[10px] text-white/40 uppercase tracking-wide">Active Workspace</p>

@@ -55,10 +55,10 @@ function SideNavLink({
           "flex items-center gap-2.5 px-3 py-2 text-[13px] rounded",
           // Transition: only essential feedback (180ms institutional spec)
           "transition-colors duration-[180ms]",
-          // Active: typographic emphasis, subtle surface
+          // Active: typographic emphasis, subtle surface (uses canonical tokens)
           isActive
-            ? "font-medium text-[var(--platform-text)] bg-white/[0.06]"
-            : "text-[var(--platform-text-secondary)] hover:text-[var(--platform-text)] hover:bg-white/[0.03]"
+            ? "font-medium text-[var(--tribes-fg)] bg-[var(--tribes-hover)]"
+            : "text-[var(--tribes-fg-secondary)] hover:text-[var(--tribes-fg)] hover:bg-[var(--tribes-hover)]"
         )
       }
     >
@@ -89,8 +89,8 @@ export function SideNav({ items, settingsItems }: SideNavProps) {
     <nav 
       className="w-48 shrink-0 flex flex-col"
       style={{ 
-        backgroundColor: 'var(--platform-surface)',
-        borderRight: '1px solid var(--platform-border)'
+        backgroundColor: 'var(--tribes-surface)',
+        borderRight: '1px solid var(--tribes-border)'
       }}
     >
       {/* Main navigation - functional grouping */}
@@ -108,7 +108,7 @@ export function SideNav({ items, settingsItems }: SideNavProps) {
       {visibleSettingsItems && visibleSettingsItems.length > 0 && (
         <div 
           className="py-2"
-          style={{ borderTop: '1px solid var(--platform-border)' }}
+          style={{ borderTop: '1px solid var(--tribes-border)' }}
         >
           <div className="px-2 space-y-0.5">
             {visibleSettingsItems.map((item) => (

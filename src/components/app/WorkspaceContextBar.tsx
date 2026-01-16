@@ -47,19 +47,19 @@ export function WorkspaceContextBar() {
         "flex items-center justify-between gap-4"
       )}
       style={{
-        backgroundColor: 'var(--tribes-surface-card)',
-        borderColor: 'var(--tribes-border-subtle)',
+        backgroundColor: 'var(--tribes-surface)',
+        borderColor: 'var(--tribes-border)',
       }}
     >
       {/* Context confirmation */}
       <p 
         className="text-[12px]"
-        style={{ color: 'var(--tribes-text-secondary)' }}
+        style={{ color: 'var(--tribes-fg-secondary)' }}
       >
         <span className="hidden sm:inline">You are operating inside the </span>
         <span 
           className="font-medium"
-          style={{ color: 'var(--tribes-text-primary)' }}
+          style={{ color: 'var(--tribes-fg)' }}
         >
           {contextLabel}
         </span>
@@ -70,7 +70,7 @@ export function WorkspaceContextBar() {
       {/* Workspace name - subtle, desktop only */}
       <span 
         className="text-[11px] font-medium uppercase tracking-wider truncate max-w-[150px] hidden md:block"
-        style={{ color: 'var(--tribes-text-muted)' }}
+        style={{ color: 'var(--tribes-fg-muted)' }}
       >
         {activeTenant.tenant_name}
       </span>
