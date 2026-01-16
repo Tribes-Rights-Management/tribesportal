@@ -34,12 +34,14 @@ interface UserWithProfile {
 }
 
 /**
- * USER DIRECTORY PAGE — ACCESS MANAGEMENT (CANONICAL)
+ * USER DIRECTORY PAGE — ACCESS MANAGEMENT (INSTITUTIONAL STANDARD)
  * 
  * Design Rules:
- * - Flat table layout, no card wrappers
- * - Dense, institutional spacing
- * - Explicit actions, no hover-only affordances
+ * - Dark canvas, flat panels with hairline borders
+ * - Table sits within centered content column
+ * - No shadows, no cards, no elevation
+ * - Plain text status, no badges or pills
+ * - Restrained hover states
  */
 export default function UserDirectoryPage() {
   const { profile: currentProfile } = useAuth();
@@ -206,186 +208,224 @@ export default function UserDirectoryPage() {
     return contexts.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(", ") || "None";
   };
 
-  const getStatusStyle = (status: MembershipStatus): string => {
-    switch (status) {
-      case "active": return "text-[#111]";
-      case "pending": return "text-[#8A8A8A]";
-      case "denied": 
-      case "suspended": 
-      case "revoked": return "text-[#DC2626]";
-      default: return "text-[#6B6B6B]";
-    }
-  };
-
   return (
-    <div className="max-w-[1100px] mx-auto px-6 py-8">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <Link 
-          to="/admin" 
-          className="h-8 w-8 rounded flex items-center justify-center hover:bg-black/5 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4 text-[#6B6B6B]" />
-        </Link>
-        <div>
-          <h1 className="text-[20px] font-medium tracking-[-0.01em] text-[#111]">
-            User Directory
-          </h1>
-          <p className="text-[13px] text-[#6B6B6B]">
-            {users.length} user(s)
-          </p>
+    <div 
+      className="min-h-full py-10 px-6"
+      style={{ backgroundColor: 'var(--platform-canvas)' }}
+    >
+      <div className="max-w-[960px] mx-auto">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-8">
+          <Link 
+            to="/admin" 
+            className="h-8 w-8 rounded flex items-center justify-center transition-colors"
+            style={{ color: 'var(--platform-text-secondary)' }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <div>
+            <h1 
+              className="text-[28px] font-semibold tracking-[-0.02em]"
+              style={{ color: 'var(--platform-text)' }}
+            >
+              User Directory
+            </h1>
+            <p 
+              className="text-[15px] mt-0.5"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              {users.length} user(s)
+            </p>
+          </div>
         </div>
-      </div>
 
-      {/* Table - flat, no card wrapper */}
-      <div className="border border-[#E5E5E5] rounded-md bg-white overflow-hidden">
-        {loading ? (
-          <div className="py-12 text-center text-[14px] text-[#6B6B6B]">
-            Retrieving records
-          </div>
-        ) : users.length === 0 ? (
-          <div className="py-12 text-center text-[14px] text-[#6B6B6B]">
-            No users.
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-8"></TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Platform Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Memberships</TableHead>
-                <TableHead>Created</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map((user) => (
-                <>
-                  <TableRow key={user.id}>
-                    <TableCell>
-                      {user.memberships.length > 0 && (
-                        <button
-                          className="h-6 w-6 rounded flex items-center justify-center hover:bg-black/5"
-                          onClick={() => setExpandedUser(expandedUser === user.id ? null : user.id)}
+        {/* Table Panel */}
+        <div 
+          className="rounded overflow-hidden"
+          style={{ 
+            backgroundColor: 'var(--platform-surface)',
+            border: '1px solid var(--platform-border)'
+          }}
+        >
+          {loading ? (
+            <div 
+              className="py-16 text-center text-[14px]"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              Retrieving records
+            </div>
+          ) : users.length === 0 ? (
+            <div 
+              className="py-16 text-center"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              <p className="text-[14px]">No users.</p>
+              <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text-muted)' }}>
+                Records will appear when users are provisioned.
+              </p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-8"></TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Platform Role</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Memberships</TableHead>
+                  <TableHead>Created</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {users.map((user) => (
+                  <>
+                    <TableRow key={user.id}>
+                      <TableCell>
+                        {user.memberships.length > 0 && (
+                          <button
+                            className="h-6 w-6 rounded flex items-center justify-center transition-colors"
+                            style={{ color: 'var(--platform-text-secondary)' }}
+                            onClick={() => setExpandedUser(expandedUser === user.id ? null : user.id)}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                          >
+                            {expandedUser === user.id ? (
+                              <ChevronUp className="h-3.5 w-3.5" />
+                            ) : (
+                              <ChevronDown className="h-3.5 w-3.5" />
+                            )}
+                          </button>
+                        )}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {user.email}
+                        {user.user_id === currentProfile?.user_id && (
+                          <span 
+                            className="ml-2 text-[10px] uppercase tracking-wide"
+                            style={{ color: 'var(--platform-text-muted)' }}
+                          >
+                            (you)
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          value={user.platform_role}
+                          onValueChange={(value) => updatePlatformRole(user.user_id, user.id, value as PlatformRole)}
+                          disabled={updating === user.id || user.user_id === currentProfile?.user_id}
                         >
-                          {expandedUser === user.id ? (
-                            <ChevronUp className="h-3.5 w-3.5 text-[#6B6B6B]" />
-                          ) : (
-                            <ChevronDown className="h-3.5 w-3.5 text-[#6B6B6B]" />
-                          )}
-                        </button>
-                      )}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {user.email}
-                      {user.user_id === currentProfile?.user_id && (
-                        <span className="ml-2 text-[11px] text-[#8A8A8A] uppercase tracking-wide">(you)</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        value={user.platform_role}
-                        onValueChange={(value) => updatePlatformRole(user.user_id, user.id, value as PlatformRole)}
-                        disabled={updating === user.id || user.user_id === currentProfile?.user_id}
-                      >
-                        <SelectTrigger className="w-32 h-8 text-[13px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="platform_admin">Admin</SelectItem>
-                          <SelectItem value="platform_user">User</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        value={user.status}
-                        onValueChange={(value) => updateUserStatus(user.user_id, user.id, value as MembershipStatus)}
-                        disabled={updating === user.id || user.user_id === currentProfile?.user_id}
-                      >
-                        <SelectTrigger className="w-28 h-8 text-[13px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="active">Active</SelectItem>
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="suspended">Suspended</SelectItem>
-                          <SelectItem value="revoked">Revoked</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell className="text-[13px]">
-                      {user.memberships.length === 0 ? (
-                        <span className="text-[#8A8A8A]">None</span>
-                      ) : (
-                        <span>
-                          {user.memberships.filter(m => m.status === "active").length} active
-                          {user.memberships.some(m => m.status === "pending") && (
-                            <span className="text-[#8A8A8A] ml-1">
-                              ({user.memberships.filter(m => m.status === "pending").length} pending)
-                            </span>
-                          )}
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-[#6B6B6B]">
-                      {new Date(user.created_at).toLocaleDateString()}
-                    </TableCell>
-                  </TableRow>
-                  {expandedUser === user.id && user.memberships.length > 0 && (
-                    <TableRow className="bg-[#FAFAFA]">
-                      <TableCell colSpan={6} className="py-3">
-                        <div className="pl-8 space-y-2">
-                          <p className="text-[11px] font-medium uppercase tracking-[0.04em] text-[#8A8A8A] mb-2">
-                            Tenant Memberships
-                          </p>
-                          {user.memberships.map((membership) => (
-                            <div
-                              key={membership.id}
-                              className="flex items-center justify-between bg-white rounded border border-[#E8E8E8] px-3 py-2"
-                            >
-                              <div className="flex items-center gap-4 text-[13px]">
-                                <span className="font-medium">{membership.tenant_name}</span>
-                                <span className={getStatusStyle(membership.status)}>
-                                  {membership.status}
-                                </span>
-                                <span className="text-[#8A8A8A]">
-                                  {formatRole(membership.role)}
-                                </span>
-                                <span className="text-[#8A8A8A]">
-                                  ({formatContexts(membership.allowed_contexts)})
-                                </span>
-                              </div>
-                              <Select
-                                value={membership.status}
-                                onValueChange={(value) =>
-                                  updateMembershipStatus(membership.id, value as MembershipStatus)
-                                }
-                                disabled={updating === membership.id}
-                              >
-                                <SelectTrigger className="w-28 h-7 text-[12px]">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="active">Active</SelectItem>
-                                  <SelectItem value="pending">Pending</SelectItem>
-                                  <SelectItem value="suspended">Suspended</SelectItem>
-                                  <SelectItem value="revoked">Revoked</SelectItem>
-                                  <SelectItem value="denied">Denied</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          ))}
-                        </div>
+                          <SelectTrigger className="w-28 h-8 text-[13px] bg-transparent border-white/10 text-white/90">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#1A1A1B] border-white/10">
+                            <SelectItem value="platform_admin" className="text-white/80 focus:bg-white/10 focus:text-white">Admin</SelectItem>
+                            <SelectItem value="platform_user" className="text-white/80 focus:bg-white/10 focus:text-white">User</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          value={user.status}
+                          onValueChange={(value) => updateUserStatus(user.user_id, user.id, value as MembershipStatus)}
+                          disabled={updating === user.id || user.user_id === currentProfile?.user_id}
+                        >
+                          <SelectTrigger className="w-28 h-8 text-[13px] bg-transparent border-white/10 text-white/90">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#1A1A1B] border-white/10">
+                            <SelectItem value="active" className="text-white/80 focus:bg-white/10 focus:text-white">Active</SelectItem>
+                            <SelectItem value="pending" className="text-white/80 focus:bg-white/10 focus:text-white">Pending</SelectItem>
+                            <SelectItem value="suspended" className="text-white/80 focus:bg-white/10 focus:text-white">Suspended</SelectItem>
+                            <SelectItem value="revoked" className="text-white/80 focus:bg-white/10 focus:text-white">Revoked</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell className="text-[13px]">
+                        {user.memberships.length === 0 ? (
+                          <span style={{ color: 'var(--platform-text-muted)' }}>None</span>
+                        ) : (
+                          <span>
+                            {user.memberships.filter(m => m.status === "active").length} active
+                            {user.memberships.some(m => m.status === "pending") && (
+                              <span className="ml-1" style={{ color: 'var(--platform-text-muted)' }}>
+                                ({user.memberships.filter(m => m.status === "pending").length} pending)
+                              </span>
+                            )}
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell style={{ color: 'var(--platform-text-secondary)' }}>
+                        {new Date(user.created_at).toLocaleDateString()}
                       </TableCell>
                     </TableRow>
-                  )}
-                </>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+                    {expandedUser === user.id && user.memberships.length > 0 && (
+                      <TableRow style={{ backgroundColor: 'var(--platform-surface-2)' }}>
+                        <TableCell colSpan={6} className="py-3">
+                          <div className="pl-8 space-y-2">
+                            <p 
+                              className="text-[10px] font-medium uppercase tracking-[0.04em] mb-2"
+                              style={{ color: 'var(--platform-text-muted)' }}
+                            >
+                              Tenant Memberships
+                            </p>
+                            {user.memberships.map((membership) => (
+                              <div
+                                key={membership.id}
+                                className="flex items-center justify-between rounded px-3 py-2"
+                                style={{ 
+                                  backgroundColor: 'var(--platform-surface)',
+                                  border: '1px solid var(--platform-border)'
+                                }}
+                              >
+                                <div className="flex items-center gap-4 text-[13px]">
+                                  <span 
+                                    className="font-medium"
+                                    style={{ color: 'var(--platform-text)' }}
+                                  >
+                                    {membership.tenant_name}
+                                  </span>
+                                  <span style={{ color: 'var(--platform-text-secondary)' }}>
+                                    {membership.status}
+                                  </span>
+                                  <span style={{ color: 'var(--platform-text-muted)' }}>
+                                    {formatRole(membership.role)}
+                                  </span>
+                                  <span style={{ color: 'var(--platform-text-muted)' }}>
+                                    ({formatContexts(membership.allowed_contexts)})
+                                  </span>
+                                </div>
+                                <Select
+                                  value={membership.status}
+                                  onValueChange={(value) =>
+                                    updateMembershipStatus(membership.id, value as MembershipStatus)
+                                  }
+                                  disabled={updating === membership.id}
+                                >
+                                  <SelectTrigger className="w-28 h-7 text-[12px] bg-transparent border-white/10 text-white/90">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent className="bg-[#1A1A1B] border-white/10">
+                                    <SelectItem value="active" className="text-white/80 focus:bg-white/10 focus:text-white">Active</SelectItem>
+                                    <SelectItem value="pending" className="text-white/80 focus:bg-white/10 focus:text-white">Pending</SelectItem>
+                                    <SelectItem value="suspended" className="text-white/80 focus:bg-white/10 focus:text-white">Suspended</SelectItem>
+                                    <SelectItem value="revoked" className="text-white/80 focus:bg-white/10 focus:text-white">Revoked</SelectItem>
+                                    <SelectItem value="denied" className="text-white/80 focus:bg-white/10 focus:text-white">Denied</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            ))}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
       </div>
     </div>
   );

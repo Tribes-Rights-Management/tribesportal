@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Check, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
@@ -36,13 +36,14 @@ interface ApprovalFormState {
 }
 
 /**
- * APPROVALS PAGE — ACCESS CONTROL (CANONICAL)
+ * APPROVALS PAGE — ACCESS CONTROL (INSTITUTIONAL STANDARD)
  * 
  * Design Rules:
- * - Flat table layout, no card wrappers
- * - Dense, institutional spacing
- * - Explicit actions, no hover-only affordances
- * - Language: Access approved, Access denied (not "Great job!")
+ * - Dark canvas, flat panels with hairline borders
+ * - Table sits within centered content column
+ * - No shadows, no cards, no elevation
+ * - Plain text status, no badges or pills
+ * - Restrained hover states
  */
 export default function ApprovalsPage() {
   const { profile: currentProfile } = useAuth();
@@ -252,174 +253,223 @@ export default function ApprovalsPage() {
   ];
 
   return (
-    <div className="max-w-[1100px] mx-auto px-6 py-8">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <Link 
-          to="/admin" 
-          className="h-8 w-8 rounded flex items-center justify-center hover:bg-black/5 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4 text-[#6B6B6B]" />
-        </Link>
-        <div>
-          <h1 className="text-[20px] font-medium tracking-[-0.01em] text-[#111]">
-            Access Control
-          </h1>
-          <p className="text-[13px] text-[#6B6B6B]">
-            {pendingMemberships.length === 0 
-              ? "No pending requests" 
-              : `${pendingMemberships.length} pending`}
-          </p>
+    <div 
+      className="min-h-full py-10 px-6"
+      style={{ backgroundColor: 'var(--platform-canvas)' }}
+    >
+      <div className="max-w-[960px] mx-auto">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-8">
+          <Link 
+            to="/admin" 
+            className="h-8 w-8 rounded flex items-center justify-center transition-colors"
+            style={{ color: 'var(--platform-text-secondary)' }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <div>
+            <h1 
+              className="text-[28px] font-semibold tracking-[-0.02em]"
+              style={{ color: 'var(--platform-text)' }}
+            >
+              Access Control
+            </h1>
+            <p 
+              className="text-[15px] mt-0.5"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              {pendingMemberships.length === 0 
+                ? "No pending requests" 
+                : `${pendingMemberships.length} pending`}
+            </p>
+          </div>
         </div>
-      </div>
 
-      {/* Table - flat, no card wrapper */}
-      <div className="border border-[#E5E5E5] rounded-md bg-white overflow-hidden">
-        {loading ? (
-          <div className="py-12 text-center text-[14px] text-[#6B6B6B]">
-            Retrieving records
-          </div>
-        ) : pendingMemberships.length === 0 ? (
-          <div className="py-12 text-center text-[14px] text-[#6B6B6B]">
-            No pending approvals.
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Email</TableHead>
-                <TableHead>Requested</TableHead>
-                <TableHead>Organization</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Contexts</TableHead>
-                <TableHead>Default</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {pendingMemberships.map((membership) => {
-                const formState = formStates[membership.id] || {
-                  tenant_id: "",
-                  role: "tenant_user" as PortalRole,
-                  contexts: [],
-                  default_context: null,
-                };
-                
-                return (
-                  <TableRow key={membership.id}>
-                    <TableCell className="font-medium">
-                      {membership.user_email}
-                    </TableCell>
-                    <TableCell className="text-[#6B6B6B]">
-                      {new Date(membership.created_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        value={formState.tenant_id}
-                        onValueChange={(value) =>
-                          updateFormState(membership.id, { tenant_id: value })
-                        }
-                        disabled={processing === membership.id}
-                      >
-                        <SelectTrigger className="w-40 h-8 text-[13px]">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {tenants.map((tenant) => (
-                            <SelectItem key={tenant.id} value={tenant.id}>
-                              {tenant.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        value={formState.role}
-                        onValueChange={(value) =>
-                          updateFormState(membership.id, { role: value as PortalRole })
-                        }
-                        disabled={processing === membership.id}
-                      >
-                        <SelectTrigger className="w-28 h-8 text-[13px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableRoles.map((role) => (
-                            <SelectItem key={role.value} value={role.value}>
-                              {role.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-1">
-                        {availableContexts.map((context) => (
-                          <label
-                            key={context.value}
-                            className="flex items-center gap-2 text-[13px] cursor-pointer"
-                          >
-                            <Checkbox
-                              checked={formState.contexts.includes(context.value)}
-                              onCheckedChange={() =>
-                                toggleContext(membership.id, context.value)
-                              }
-                              disabled={processing === membership.id}
-                            />
-                            {context.label}
-                          </label>
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        value={formState.default_context || ""}
-                        onValueChange={(value) =>
-                          updateFormState(membership.id, {
-                            default_context: value as PortalContext,
-                          })
-                        }
-                        disabled={processing === membership.id}
-                      >
-                        <SelectTrigger className="w-24 h-8 text-[13px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {formState.contexts.map((ctx) => (
-                            <SelectItem key={ctx} value={ctx}>
-                              {ctx === "licensing" ? "Licensing" : "Publishing"}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => approveMembership(membership)}
-                          disabled={processing === membership.id || !formState.tenant_id}
-                          className="h-8 px-3 rounded text-[13px] font-medium bg-[#111] text-white hover:bg-[#222] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
-                        >
-                          <Check className="h-3.5 w-3.5" />
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => denyMembership(membership)}
+        {/* Table Panel */}
+        <div 
+          className="rounded overflow-hidden"
+          style={{ 
+            backgroundColor: 'var(--platform-surface)',
+            border: '1px solid var(--platform-border)'
+          }}
+        >
+          {loading ? (
+            <div 
+              className="py-16 text-center text-[14px]"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              Retrieving records
+            </div>
+          ) : pendingMemberships.length === 0 ? (
+            <div 
+              className="py-16 text-center"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              <p className="text-[14px]">No pending approvals.</p>
+              <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text-muted)' }}>
+                Records will appear when users request access.
+              </p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Requested</TableHead>
+                  <TableHead>Organization</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Contexts</TableHead>
+                  <TableHead>Default</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {pendingMemberships.map((membership) => {
+                  const formState = formStates[membership.id] || {
+                    tenant_id: "",
+                    role: "tenant_user" as PortalRole,
+                    contexts: [],
+                    default_context: null,
+                  };
+                  
+                  return (
+                    <TableRow key={membership.id}>
+                      <TableCell className="font-medium">
+                        {membership.user_email}
+                      </TableCell>
+                      <TableCell style={{ color: 'var(--platform-text-secondary)' }}>
+                        {new Date(membership.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          value={formState.tenant_id}
+                          onValueChange={(value) =>
+                            updateFormState(membership.id, { tenant_id: value })
+                          }
                           disabled={processing === membership.id}
-                          className="h-8 px-3 rounded text-[13px] font-medium border border-[#E5E5E5] text-[#6B6B6B] hover:border-[#D4D4D4] hover:text-[#111] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
                         >
-                          <X className="h-3.5 w-3.5" />
-                          Deny
-                        </button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        )}
+                          <SelectTrigger className="w-40 h-8 text-[13px] bg-transparent border-white/10 text-white/90">
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#1A1A1B] border-white/10">
+                            {tenants.map((tenant) => (
+                              <SelectItem 
+                                key={tenant.id} 
+                                value={tenant.id}
+                                className="text-white/80 focus:bg-white/10 focus:text-white"
+                              >
+                                {tenant.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          value={formState.role}
+                          onValueChange={(value) =>
+                            updateFormState(membership.id, { role: value as PortalRole })
+                          }
+                          disabled={processing === membership.id}
+                        >
+                          <SelectTrigger className="w-28 h-8 text-[13px] bg-transparent border-white/10 text-white/90">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#1A1A1B] border-white/10">
+                            {availableRoles.map((role) => (
+                              <SelectItem 
+                                key={role.value} 
+                                value={role.value}
+                                className="text-white/80 focus:bg-white/10 focus:text-white"
+                              >
+                                {role.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col gap-1.5">
+                          {availableContexts.map((context) => (
+                            <label
+                              key={context.value}
+                              className="flex items-center gap-2 text-[13px] cursor-pointer"
+                              style={{ color: 'var(--platform-text-secondary)' }}
+                            >
+                              <Checkbox
+                                checked={formState.contexts.includes(context.value)}
+                                onCheckedChange={() =>
+                                  toggleContext(membership.id, context.value)
+                                }
+                                disabled={processing === membership.id}
+                                className="border-white/20 data-[state=checked]:bg-white/90 data-[state=checked]:border-white/90"
+                              />
+                              {context.label}
+                            </label>
+                          ))}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          value={formState.default_context || ""}
+                          onValueChange={(value) =>
+                            updateFormState(membership.id, {
+                              default_context: value as PortalContext,
+                            })
+                          }
+                          disabled={processing === membership.id}
+                        >
+                          <SelectTrigger className="w-24 h-8 text-[13px] bg-transparent border-white/10 text-white/90">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#1A1A1B] border-white/10">
+                            {formState.contexts.map((ctx) => (
+                              <SelectItem 
+                                key={ctx} 
+                                value={ctx}
+                                className="text-white/80 focus:bg-white/10 focus:text-white"
+                              >
+                                {ctx === "licensing" ? "Licensing" : "Publishing"}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => approveMembership(membership)}
+                            disabled={processing === membership.id || !formState.tenant_id}
+                            className="h-8 px-3 rounded text-[13px] font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            style={{ 
+                              backgroundColor: 'var(--platform-text)',
+                              color: 'var(--platform-canvas)'
+                            }}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => denyMembership(membership)}
+                            disabled={processing === membership.id}
+                            className="h-8 px-3 rounded text-[13px] font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            style={{ 
+                              border: '1px solid var(--platform-border)',
+                              color: 'var(--platform-text-secondary)'
+                            }}
+                          >
+                            Deny
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          )}
+        </div>
       </div>
     </div>
   );
