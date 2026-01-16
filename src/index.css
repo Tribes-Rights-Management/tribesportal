@@ -130,9 +130,6 @@
     /* Mobile-aware header height variable used by hero sections */
     --header-h: 56px; /* Mobile: 56px (h-14) */
 
-    /* Site black (LOCKED) — used as the global baseline behind all pages */
-    --site-black: 210 21% 5%;
-
     /* ─────────────────────────────────────────────────────────────────────────────
        PREMIUM THEME TOKENS (Auth + Global)
        Used by AuthLayout and global surfaces for consistent theming
@@ -227,75 +224,6 @@
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
   }
-
-  .dark,
-  html[data-theme="dark"] {
-    /* ─────────────────────────────────────────────────────────────────────────────
-       PREMIUM DARK THEME TOKENS (Auth + Global)
-       ───────────────────────────────────────────────────────────────────────────── */
-    --bg: #0b0b0d;
-    --surface: #111114;
-    --surface-2: #0f0f12;
-    --border: rgba(255,255,255,0.10);
-    --text: rgba(255,255,255,0.92);
-    --muted: rgba(255,255,255,0.64);
-    --muted-2: rgba(255,255,255,0.46);
-    --shadow: 0 10px 30px rgba(0,0,0,0.55);
-    --ring: rgba(255,255,255,0.22);
-
-    /* ─────────────────────────────────────────────────────────────────────────────
-       DARK MODE TOKENS
-       Page: #0F0F12, Cards: #1C1C1E, Text: #F5F5F7, Secondary: #9A9AA0
-       ───────────────────────────────────────────────────────────────────────────── */
-    
-    /* Near-black backgrounds - #0F0F12 */
-    --background: 240 10% 6%;
-    /* Primary text: #F5F5F7 */
-    --foreground: 240 5% 97%;
-
-    /* Cards: #1C1C1E */
-    --card: 240 5% 12%;
-    --card-foreground: 240 5% 97%;
-
-    --popover: 240 5% 12%;
-    --popover-foreground: 240 5% 97%;
-
-    /* Primary inverts for dark */
-    --primary: 240 5% 97%;
-    --primary-foreground: 240 10% 6%;
-
-    /* Secondary surfaces */
-    --secondary: 240 5% 15%;
-    --secondary-foreground: 240 5% 97%;
-
-    /* Muted - #9A9AA0 secondary text (HSL for Tailwind) */
-    --muted: 240 5% 15%;
-    --muted-foreground: 240 2% 62%;
-
-    /* Accent */
-    --accent: 240 5% 15%;
-    --accent-foreground: 240 5% 97%;
-
-    --destructive: 0 62% 45%;
-    --destructive-foreground: 240 5% 97%;
-
-    /* Borders: #2C2C2E (HSL for Tailwind) */
-    --border-hsl: 240 3% 18%;
-    --input: 240 5% 18%;
-    --ring-hsl: 240 5% 80%;
-
-    /* App surface - dark mode #0F0F12 */
-    --app-surface: 240 10% 7%;
-    
-    --sidebar-background: 240 10% 6%;
-    --sidebar-foreground: 240 2% 62%;
-    --sidebar-primary: 240 5% 97%;
-    --sidebar-primary-foreground: 240 10% 6%;
-    --sidebar-accent: 240 5% 15%;
-    --sidebar-accent-foreground: 240 5% 97%;
-    --sidebar-border: 240 3% 18%;
-    --sidebar-ring: 240 5% 80%;
-  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
@@ -328,23 +256,21 @@
      Light pages explicitly paint their own white background via layout wrappers.
      ═══════════════════════════════════════════════════════════════════════════ */
   html {
-    /* Site black baseline - prevents iOS white flash */
-    background-color: hsl(210 21% 5%) !important;
-    background-color: hsl(var(--site-black)) !important;
+    /* Light mode only - Apple-like gray background */
+    background-color: #f5f5f5 !important;
     margin: 0;
     padding: 0;
     min-height: 100%;
-    /* Prevent bounce revealing light browser canvas */
+    /* Prevent bounce */
     overscroll-behavior-y: none;
-    /* Marketing site alignment: prevent text size adjustments */
+    /* Prevent text size adjustments */
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
 
   body {
-    /* Site black baseline for iOS Safari */
-    background-color: hsl(210 21% 5%) !important;
-    background-color: hsl(var(--site-black)) !important;
+    /* Light mode only - Apple-like gray background */
+    background-color: #f5f5f5 !important;
     color: hsl(var(--foreground));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -357,7 +283,7 @@
     padding: 0;
     /* Prevent horizontal overflow */
     overflow-x: hidden;
-    /* Prevent bounce revealing light browser canvas */
+    /* Prevent bounce */
     overscroll-behavior-y: none;
     /* iOS Safari viewport fix - use dvh for true viewport */
     min-height: 100vh;
@@ -371,31 +297,19 @@
     height: 100vh;
   }
 
-  /* iOS Safari: fixed full-viewport underlay so overscroll can never reveal white */
-  #ios-underlay {
-    position: fixed;
-    inset: 0;
-    background-color: hsl(210 21% 5%);
-    background-color: hsl(var(--site-black));
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  /* App root element(s) - ensures full viewport coverage on iOS Safari */
+  /* App root element(s) - ensures full viewport coverage */
   #root,
   #__next {
     position: relative;
     z-index: 1;
-    /* Dark background as baseline - prevents white flash on overscroll */
-    background: hsl(var(--site-black));
+    /* Light mode background */
+    background: #f5f5f5;
     /* iOS Safari viewport units - cascading fallbacks */
     min-height: 100vh;
     min-height: 100dvh;
     min-height: 100svh;
     /* Safe area padding for notched devices */
     padding-bottom: env(safe-area-inset-bottom);
-    /* Extra insurance: extend dark color beyond viewport edges during bounce */
-    box-shadow: 0 100vh 0 100vh hsl(var(--site-black)), 0 -100vh 0 100vh hsl(var(--site-black));
   }
 
   /* H1 — Primary page heading. Marketing site alignment: 32px, 700, -0.02em */

@@ -41,13 +41,13 @@ export default function CheckEmailPage() {
       <div className="text-center mb-6">
         <h1 
           className="text-[28px] font-semibold tracking-tight leading-[1.2]"
-          style={{ color: "var(--text)" }}
+          style={{ color: "rgba(0,0,0,0.92)" }}
         >
           Check your email
         </h1>
         <p 
           className="mt-3 text-[15px]"
-          style={{ color: "var(--muted)" }}
+          style={{ color: "rgba(0,0,0,0.62)" }}
         >
           We've sent a secure sign-in link to
         </p>
@@ -57,13 +57,13 @@ export default function CheckEmailPage() {
       <div 
         className="rounded-[12px] py-4 px-5 mb-6"
         style={{
-          background: "var(--surface-2)",
-          border: "1px solid var(--border)",
+          background: "#fbfbfb",
+          border: "1px solid rgba(0,0,0,0.10)",
         }}
       >
         <p 
           className="text-[15px] font-medium text-center break-all"
-          style={{ color: "var(--text)" }}
+          style={{ color: "rgba(0,0,0,0.92)" }}
         >
           {email}
         </p>
@@ -72,7 +72,7 @@ export default function CheckEmailPage() {
       {/* Expiration Notice */}
       <p 
         className="text-[14px] text-center"
-        style={{ color: "var(--muted)" }}
+        style={{ color: "rgba(0,0,0,0.62)" }}
       >
         This link expires shortly and can only be used once.
       </p>
@@ -83,18 +83,18 @@ export default function CheckEmailPage() {
           onClick={handleResend}
           disabled={isResending}
           className="text-[14px] transition-colors duration-150 disabled:opacity-45"
-          style={{ color: "var(--muted)" }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = "var(--muted)"; }}
+          style={{ color: "rgba(0,0,0,0.62)" }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "rgba(0,0,0,0.92)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(0,0,0,0.62)"; }}
         >
           {isResending ? "Sending..." : "Resend sign-in link"}
         </button>
         <Link 
           to="/auth/sign-in"
           className="text-[14px] transition-colors duration-150"
-          style={{ color: "var(--muted)" }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = "var(--muted)"; }}
+          style={{ color: "rgba(0,0,0,0.62)" }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "rgba(0,0,0,0.92)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(0,0,0,0.62)"; }}
         >
           Use a different email
         </Link>

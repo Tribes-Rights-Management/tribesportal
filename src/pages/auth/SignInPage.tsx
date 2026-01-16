@@ -47,7 +47,7 @@ export default function SignInPage() {
   if (loading) {
     return (
       <AuthLayout>
-        <p style={{ color: "var(--muted)", textAlign: "center", fontSize: "16px" }}>
+        <p className="text-center text-base" style={{ color: "rgba(0,0,0,0.62)" }}>
           Verifying access...
         </p>
       </AuthLayout>
@@ -60,13 +60,13 @@ export default function SignInPage() {
       <div className="text-center mb-6">
         <h1 
           className="text-[28px] font-semibold tracking-tight leading-[1.2]"
-          style={{ color: "var(--text)" }}
+          style={{ color: "rgba(0,0,0,0.92)" }}
         >
           Sign in to Tribes
         </h1>
         <p 
           className="mt-2 text-[15px]"
-          style={{ color: "var(--muted)" }}
+          style={{ color: "rgba(0,0,0,0.62)" }}
         >
           Secure access via email sign-in link
         </p>
@@ -78,7 +78,7 @@ export default function SignInPage() {
           <label 
             htmlFor="email" 
             className="text-[14px] font-medium block"
-            style={{ color: "var(--text)" }}
+            style={{ color: "rgba(0,0,0,0.92)" }}
           >
             Email address
           </label>
@@ -93,13 +93,13 @@ export default function SignInPage() {
             autoComplete="email"
             className="w-full h-[44px] px-3.5 text-[15px] rounded-[12px] transition-shadow duration-150"
             style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              color: "var(--text)",
+              background: "#ffffff",
+              border: "1px solid rgba(0,0,0,0.10)",
+              color: "rgba(0,0,0,0.92)",
               outline: "none",
             }}
             onFocus={(e) => {
-              e.target.style.boxShadow = "0 0 0 2px var(--ring)";
+              e.target.style.boxShadow = "0 0 0 2px rgba(0,0,0,0.20)";
             }}
             onBlur={(e) => {
               e.target.style.boxShadow = "none";
@@ -112,8 +112,8 @@ export default function SignInPage() {
           disabled={isSubmitting || !email.trim()}
           className="w-full h-[44px] text-[15px] font-medium rounded-[12px] transition-all duration-150 disabled:opacity-40"
           style={{
-            background: "var(--text)",
-            color: "var(--bg)",
+            background: "rgba(0,0,0,0.92)",
+            color: "#ffffff",
           }}
         >
           {isSubmitting ? "Sending..." : "Continue"}
@@ -123,7 +123,7 @@ export default function SignInPage() {
       {/* Institutional Notice */}
       <p 
         className="mt-5 text-center text-[13px]"
-        style={{ color: "var(--muted-2)" }}
+        style={{ color: "rgba(0,0,0,0.46)" }}
       >
         Access is restricted to approved accounts.
       </p>
@@ -134,7 +134,7 @@ export default function SignInPage() {
           type="button"
           onClick={() => setHelpDialogOpen(true)}
           className="text-[13px] hover:underline transition-colors duration-150"
-          style={{ color: "var(--muted-2)" }}
+          style={{ color: "rgba(0,0,0,0.46)" }}
         >
           Trouble signing in?
         </button>
