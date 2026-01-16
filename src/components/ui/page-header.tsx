@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
  * - Functional, not expressive
  * - Compact, restrained sizing
  * - Dense vertical rhythm
+ * - No text clipping - uses h-auto, min-h-*, proper line-height
  */
 
 interface PageHeaderProps {
@@ -25,17 +26,20 @@ export function PageHeader({
 }: PageHeaderProps) {
   return (
     <div className={cn("mb-6", className)}>
-      <div className="flex items-center justify-between gap-4">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div className="min-w-0 flex-1">
           <h1 
-            className="text-[20px] font-medium tracking-[-0.01em]"
-            style={{ color: 'var(--platform-text)' }}
+            className="text-[18px] sm:text-[20px] font-medium leading-[1.2] sm:leading-[1.25]"
+            style={{ 
+              color: 'var(--platform-text)',
+              letterSpacing: '-0.01em',
+            }}
           >
             {title}
           </h1>
           {description && (
             <p 
-              className="mt-1 text-[14px]"
+              className="mt-1 text-[13px] sm:text-[14px] leading-[1.5]"
               style={{ color: 'var(--platform-text-secondary)' }}
             >
               {description}
@@ -43,7 +47,7 @@ export function PageHeader({
           )}
         </div>
         {children && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             {children}
           </div>
         )}
@@ -56,6 +60,9 @@ export function PageHeader({
  * INSTITUTIONAL SECTION HEADER
  * 
  * For subsections within pages
+ * - No fixed heights
+ * - Readable line heights
+ * - No text clipping
  */
 interface SectionHeaderProps {
   title: string;
@@ -72,17 +79,17 @@ export function SectionHeader({
 }: SectionHeaderProps) {
   return (
     <div className={cn("mb-4", className)}>
-      <div className="flex items-center justify-between gap-4">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+        <div className="min-w-0 flex-1">
           <h2 
-            className="text-[16px] font-medium"
+            className="text-[15px] sm:text-[16px] font-medium leading-[1.3]"
             style={{ color: 'var(--platform-text)' }}
           >
             {title}
           </h2>
           {description && (
             <p 
-              className="mt-0.5 text-[13px]"
+              className="mt-0.5 text-[12px] sm:text-[13px] leading-[1.5]"
               style={{ color: 'var(--platform-text-secondary)' }}
             >
               {description}
@@ -90,7 +97,7 @@ export function SectionHeader({
           )}
         </div>
         {children && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             {children}
           </div>
         )}
