@@ -7,7 +7,7 @@ interface AuthLayoutProps {
 /**
  * Premium auth layout - Northwestern Mutual / Apple grade
  * Isolated from app shell - no header, no navigation
- * Neutral shell with restrained card, no vignettes or gradients
+ * Uses CSS variables for light/dark theme support
  */
 export function AuthLayout({ children }: AuthLayoutProps) {
   useEffect(() => {
@@ -18,16 +18,18 @@ export function AuthLayout({ children }: AuthLayoutProps) {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#f5f5f5] px-4 py-10 overflow-auto">
-      <div className="w-full max-w-[420px]">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 py-10 overflow-auto"
+      style={{ background: "var(--bg)" }}
+    >
+      <div className="w-full" style={{ maxWidth: "min(440px, calc(100vw - 32px))" }}>
         <div 
-          className="
-            bg-white 
-            rounded-2xl 
-            px-6 py-8 sm:px-8 sm:py-10
-            border border-black/10
-            shadow-[0_10px_30px_rgba(0,0,0,0.08)]
-          "
+          className="rounded-[18px] px-6 py-8 sm:px-8 sm:py-10"
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            boxShadow: "var(--shadow)",
+          }}
         >
           {children}
         </div>
