@@ -1,20 +1,12 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { InstitutionalEmptyPanel } from "@/components/ui/institutional-states";
 
-/**
- * Licensing Licenses - Institutional mode
- */
 export default function LicensingLicenses() {
   return (
-    <div className="p-6 max-w-5xl">
-      <PageHeader 
-        title="Licenses"
-        description="Issued licenses and terms"
-      />
-
-      <div className="bg-white border border-[#E8E8E8] rounded-md p-6 text-center">
-        <p className="text-[14px] text-[#6B6B6B]">
-          No records available.
-        </p>
+    <div className="p-6" style={{ backgroundColor: 'var(--platform-canvas)' }}>
+      <div className="max-w-[960px]">
+        <PageHeader title="Licenses" description="Issued licenses and terms" />
+        <InstitutionalEmptyPanel title="No licenses available." description="Issued licenses will appear once processed." />
       </div>
     </div>
   );

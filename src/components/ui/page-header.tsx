@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 
 /**
- * INSTITUTIONAL PAGE HEADER
+ * INSTITUTIONAL PAGE HEADER — CANONICAL
  * 
  * DESIGN STANDARD (AUTHORITATIVE):
+ * - Uses platform dark-theme tokens
  * - Functional, not expressive
  * - Compact, restrained sizing
- * - No marketing-style emphasis
  * - Dense vertical rhythm
  */
 
@@ -27,11 +27,17 @@ export function PageHeader({
     <div className={cn("mb-6", className)}>
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-[20px] font-medium text-[#111] tracking-[-0.01em]">
+          <h1 
+            className="text-[20px] font-medium tracking-[-0.01em]"
+            style={{ color: 'var(--platform-text)' }}
+          >
             {title}
           </h1>
           {description && (
-            <p className="mt-1 text-[14px] text-[#6B6B6B]">
+            <p 
+              className="mt-1 text-[14px]"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
               {description}
             </p>
           )}
@@ -68,11 +74,17 @@ export function SectionHeader({
     <div className={cn("mb-4", className)}>
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-[16px] font-medium text-[#111]">
+          <h2 
+            className="text-[16px] font-medium"
+            style={{ color: 'var(--platform-text)' }}
+          >
             {title}
           </h2>
           {description && (
-            <p className="mt-0.5 text-[13px] text-[#6B6B6B]">
+            <p 
+              className="mt-0.5 text-[13px]"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
               {description}
             </p>
           )}

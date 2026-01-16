@@ -4,7 +4,7 @@ import { StatusIndicator } from "@/components/app/StatusIndicator";
 import { DASHBOARD_LABELS } from "@/styles/tokens";
 
 /**
- * PUBLISHING DASHBOARD — STATUS VIEW
+ * PUBLISHING DASHBOARD — INSTITUTIONAL STATUS VIEW
  * 
  * Dashboard Rules:
  * - Status over summary
@@ -12,49 +12,70 @@ import { DASHBOARD_LABELS } from "@/styles/tokens";
  * - No charts for storytelling
  * - No KPIs as motivation
  * - Communicate operational state, not performance
+ * - Dark theme using platform tokens
  */
 export default function PublishingDashboard() {
   const { activeTenant } = useAuth();
 
   return (
-    <div className="p-6 max-w-5xl">
-      <PageHeader 
-        title="Publishing"
-        description={activeTenant?.tenant_name}
-      />
+    <div 
+      className="p-6"
+      style={{ backgroundColor: 'var(--platform-canvas)' }}
+    >
+      <div className="max-w-[960px]">
+        <PageHeader 
+          title="Publishing"
+          description={activeTenant?.tenant_name}
+        />
 
-      {/* Status indicators - operational state */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-        <StatusIndicator 
-          label={DASHBOARD_LABELS.TOTAL_WORKS} 
-          count={0} 
-        />
-        <StatusIndicator 
-          label={DASHBOARD_LABELS.UNREGISTERED_WORKS} 
-          count={0}
-          level="warning"
-        />
-        <StatusIndicator 
-          label={DASHBOARD_LABELS.PENDING_REGISTRATIONS} 
-          count={0}
-        />
-        <StatusIndicator 
-          label={DASHBOARD_LABELS.PENDING_DOCUMENTATION} 
-          count={0}
-        />
-      </div>
-
-      {/* Operational alerts - flat, text-only */}
-      <div className="mt-6 bg-white border border-[#E8E8E8] rounded-md">
-        <div className="px-4 py-3 border-b border-[#E8E8E8]">
-          <h2 className="text-[11px] font-medium uppercase tracking-[0.04em] text-[#6B6B6B]">
-            {DASHBOARD_LABELS.REQUIRES_ACTION}
-          </h2>
+        {/* Status indicators - operational state */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <StatusIndicator 
+            label={DASHBOARD_LABELS.TOTAL_WORKS} 
+            count={0} 
+          />
+          <StatusIndicator 
+            label={DASHBOARD_LABELS.UNREGISTERED_WORKS} 
+            count={0}
+            level="warning"
+          />
+          <StatusIndicator 
+            label={DASHBOARD_LABELS.PENDING_REGISTRATIONS} 
+            count={0}
+          />
+          <StatusIndicator 
+            label={DASHBOARD_LABELS.PENDING_DOCUMENTATION} 
+            count={0}
+          />
         </div>
-        <div className="px-4 py-4">
-          <p className="text-[13px] text-[#6B6B6B]">
-            No items require action.
-          </p>
+
+        {/* Operational alerts - flat, text-only */}
+        <div 
+          className="mt-6 rounded"
+          style={{ 
+            backgroundColor: 'var(--platform-surface)',
+            border: '1px solid var(--platform-border)'
+          }}
+        >
+          <div 
+            className="px-4 py-3"
+            style={{ borderBottom: '1px solid var(--platform-border)' }}
+          >
+            <h2 
+              className="text-[11px] font-medium uppercase tracking-[0.04em]"
+              style={{ color: 'var(--platform-text-muted)' }}
+            >
+              {DASHBOARD_LABELS.REQUIRES_ACTION}
+            </h2>
+          </div>
+          <div className="px-4 py-4">
+            <p 
+              className="text-[13px]"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              No items require action.
+            </p>
+          </div>
         </div>
       </div>
     </div>
