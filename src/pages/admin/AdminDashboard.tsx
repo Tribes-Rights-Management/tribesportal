@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
-import { useRoleAccess } from "@/hooks/useRoleAccess";
 
 /**
- * ADMIN DASHBOARD — INSTITUTIONAL CONTROL SURFACE (CANONICAL)
+ * ADMIN DASHBOARD — TRIBES TEAM LANDING (CANONICAL)
  * 
- * This is NOT a dashboard. It is a system administration surface.
+ * Internal operations workspace for staff.
+ * Handles approvals for ALL external access (Licensing + Portal).
+ * Provides system health + audit + security views.
  * 
  * Design Rules:
  * - Dark canvas, no white page background
@@ -13,13 +14,7 @@ import { useRoleAccess } from "@/hooks/useRoleAccess";
  * - Flat panels with hairline borders
  * - Status list (not metric cards)
  * - Navigation rows (not clickable cards)
- * - Typography matches auth (30-32px H1, reduced weights)
  * - Language: declarative, institutional, non-conversational
- * 
- * Role-Based Surface Pruning:
- * - Only Platform Administrators see this surface
- * - Navigation sections filtered by permission
- * - No empty sections, no placeholders
  */
 export default function AdminDashboard() {
   return (
@@ -28,24 +23,24 @@ export default function AdminDashboard() {
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <div className="max-w-[960px] mx-auto">
-        {/* Page Header - auth-matched typography */}
+        {/* Page Header */}
         <header className="mb-8">
           <h1 
             className="text-[28px] font-semibold tracking-[-0.02em]"
             style={{ color: 'var(--platform-text)' }}
           >
-            Administration
+            Tribes Team
           </h1>
           <p 
             className="text-[15px] mt-1.5 leading-relaxed"
             style={{ color: 'var(--platform-text-secondary)' }}
           >
-            Platform access, governance, and security
+            Platform operations and governance
           </p>
         </header>
 
-        {/* System Status - vertical list, not cards */}
-        <section className="mb-8">
+        {/* Pending Approvals Section */}
+        <section className="mb-6">
           <div 
             className="rounded"
             style={{ 
@@ -61,19 +56,64 @@ export default function AdminDashboard() {
                 className="text-[10px] font-medium uppercase tracking-[0.08em]"
                 style={{ color: 'var(--platform-text-muted)' }}
               >
-                System Status
+                Pending Approvals
               </p>
             </div>
-            <div>
-              <StatusRow label="Pending approvals" value="0" />
-              <StatusRow label="Active users" value="0" />
-              <StatusRow label="Active organizations" value="0" />
-              <StatusRow label="Security alerts" value="0" />
+            <div className="px-5 py-8 text-center">
+              <p 
+                className="text-[14px] font-medium"
+                style={{ color: 'var(--platform-text-secondary)' }}
+              >
+                No pending approvals
+              </p>
+              <p 
+                className="text-[13px] mt-1"
+                style={{ color: 'var(--platform-text-muted)' }}
+              >
+                All current access requests have been reviewed.
+              </p>
             </div>
           </div>
         </section>
 
-        {/* Navigation Sections - rows, not cards */}
+        {/* System Alerts Section */}
+        <section className="mb-6">
+          <div 
+            className="rounded"
+            style={{ 
+              backgroundColor: 'var(--platform-surface)',
+              border: '1px solid var(--platform-border)'
+            }}
+          >
+            <div 
+              className="px-5 py-3"
+              style={{ borderBottom: '1px solid var(--platform-border)' }}
+            >
+              <p 
+                className="text-[10px] font-medium uppercase tracking-[0.08em]"
+                style={{ color: 'var(--platform-text-muted)' }}
+              >
+                System Alerts
+              </p>
+            </div>
+            <div className="px-5 py-8 text-center">
+              <p 
+                className="text-[14px] font-medium"
+                style={{ color: 'var(--platform-text-secondary)' }}
+              >
+                No active alerts
+              </p>
+              <p 
+                className="text-[13px] mt-1"
+                style={{ color: 'var(--platform-text-muted)' }}
+              >
+                The platform is operating normally.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Navigation Sections */}
         <div 
           className="rounded"
           style={{ 
@@ -81,8 +121,17 @@ export default function AdminDashboard() {
             border: '1px solid var(--platform-border)'
           }}
         >
+          {/* Organizations */}
+          <NavSection title="Organizations">
+            <NavRow
+              to="/admin/tenants"
+              label="Organizations overview"
+              description="View client and licensing organizations managed by Tribes."
+            />
+          </NavSection>
+
           {/* Access & Identity */}
-          <NavSection title="Access & Identity">
+          <NavSection title="Access & Identity" hasBorder>
             <NavRow
               to="/admin/approvals"
               label="Access Control"
@@ -92,15 +141,6 @@ export default function AdminDashboard() {
               to="/admin/users"
               label="Member Directory"
               description="Account status and permissions"
-            />
-          </NavSection>
-
-          {/* Organizations */}
-          <NavSection title="Organizations" hasBorder>
-            <NavRow
-              to="/admin/tenants"
-              label="Organizations"
-              description="Tenant configuration, memberships"
             />
           </NavSection>
 
@@ -120,40 +160,14 @@ export default function AdminDashboard() {
 
           {/* Platform Account */}
           <NavSection title="Platform Account" hasBorder>
-          <NavRow
-              to="/admin/settings"
+            <NavRow
+              to="/account"
               label="Account Settings"
               description="Profile, preferences, and security configuration"
             />
           </NavSection>
         </div>
       </div>
-    </div>
-  );
-}
-
-/** 
- * Status Row — inline label + right-aligned value
- * Administrative truth, not analytics
- */
-function StatusRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div 
-      className="flex items-center justify-between px-5 py-3"
-      style={{ borderBottom: '1px solid var(--platform-border)' }}
-    >
-      <span 
-        className="text-[14px]"
-        style={{ color: 'var(--platform-text-secondary)' }}
-      >
-        {label}
-      </span>
-      <span 
-        className="text-[14px] font-medium tabular-nums"
-        style={{ color: 'var(--platform-text)' }}
-      >
-        {value}
-      </span>
     </div>
   );
 }
@@ -190,7 +204,6 @@ function NavSection({
 
 /** 
  * Navigation Row — full-width click target, no icons
- * Feels like entering a secured subsystem
  */
 function NavRow({ 
   to, 

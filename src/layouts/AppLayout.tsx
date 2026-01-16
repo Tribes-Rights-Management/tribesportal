@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { GlobalHeader } from "@/components/app/GlobalHeader";
 import { LicensingNav } from "@/components/app/LicensingNav";
 import { PublishingNav } from "@/components/app/PublishingNav";
+import { AppFooter } from "@/components/app/AppFooter";
 
 /**
  * APP LAYOUT — INSTITUTIONAL DARK CANVAS (CANONICAL)
@@ -26,8 +27,11 @@ export function AppLayout() {
       <div className="flex flex-1 overflow-hidden">
         {activeContext === "licensing" && <LicensingNav />}
         {activeContext === "publishing" && <PublishingNav />}
-        <main className="flex-1 overflow-y-auto">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto flex flex-col">
+          <div className="flex-1">
+            <Outlet />
+          </div>
+          <AppFooter />
         </main>
       </div>
     </div>
