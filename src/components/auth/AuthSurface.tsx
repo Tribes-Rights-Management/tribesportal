@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { EmailForm } from "./EmailForm";
-import { CheckEmailState } from "./CheckEmailState";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { SignInHelpDialog } from "./SignInHelpDialog";
 
 type AuthState = "enter-email" | "check-email";
@@ -14,7 +13,9 @@ type AuthState = "enter-email" | "check-email";
  * LOCKED DESIGN TOKENS:
  * - H1: 24px, font-semibold, color #111, centered
  * - Body/subtitle: 14px, color #6B6B6B, centered
- * - State transition: 150ms ease-out fade
+ * - Input: h-11, rounded-[12px], border black/10
+ * - Button: h-11, rounded-[12px], bg #111, centered label
+ * - State transition: 150ms ease-out fade + translateY
  * 
  * Light mode only. Institutional-grade.
  */
@@ -53,7 +54,8 @@ export function AuthSurface() {
     }, 150);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!email.trim()) return;
 
     setIsSubmitting(true);
@@ -112,20 +114,91 @@ export function AuthSurface() {
         }}
       >
         {state === "enter-email" ? (
-          <EmailForm
-            email={email}
-            onChange={setEmail}
-            onSubmit={handleSubmit}
-            isSubmitting={isSubmitting}
-          />
+          /* Email Form */
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label 
+                htmlFor="email" 
+                className="block text-[13px] font-medium text-black/70"
+              >
+                Email address
+              </label>
+              <input
+                id="email"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                autoFocus
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@company.com"
+                className={[
+                  "mt-2 w-full h-11 rounded-[12px]",
+                  "border border-black/10 bg-white",
+                  "px-4 text-[15px] text-[#111]",
+                  "placeholder:text-black/35",
+                  "shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                  "transition-shadow duration-150",
+                ].join(" ")}
+              />
+            </div>
+
+            <PrimaryButton 
+              type="submit" 
+              disabled={!email.trim()} 
+              loading={isSubmitting}
+            >
+              Continue
+            </PrimaryButton>
+          </form>
         ) : (
-          <CheckEmailState
-            email={email}
-            onResend={handleResend}
-            onChangeEmail={handleChangeEmail}
-            isResending={isSubmitting}
-            resendMessage={resendMessage}
-          />
+          /* Check Email State */
+          <div className="space-y-5">
+            {/* Email pill - truncates elegantly, never breaks mid-word */}
+            <div className="flex justify-center">
+              <div className="max-w-full min-w-0 rounded-[14px] border border-black/10 bg-black/[0.02] px-5 py-4 text-center">
+                <div className="truncate text-[15px] font-semibold tracking-[-0.01em] text-[#111]">
+                  {email}
+                </div>
+              </div>
+            </div>
+
+            {/* Expiry notice */}
+            <p className="text-[13px] leading-[1.5] text-[#9CA3AF] text-center">
+              This link expires shortly and can only be used once.
+            </p>
+
+            {/* Resend feedback */}
+            {resendMessage && (
+              <p className="text-[13px] leading-[1.5] text-[#111] text-center font-medium">
+                {resendMessage}
+              </p>
+            )}
+
+            {/* Actions */}
+            <div className="space-y-3 text-center">
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={isSubmitting}
+                className="text-[15px] text-black/55 hover:text-black underline underline-offset-4 decoration-black/20 disabled:opacity-50 transition-colors duration-150"
+              >
+                {isSubmitting ? "Sending..." : "Resend sign-in link"}
+              </button>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={handleChangeEmail}
+                  className="text-[15px] text-black/55 hover:text-black underline underline-offset-4 decoration-black/20 transition-colors duration-150"
+                >
+                  Use a different email
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
 
