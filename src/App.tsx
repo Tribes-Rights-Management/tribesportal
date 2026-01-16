@@ -65,6 +65,7 @@ import PermissionsPage from "@/pages/admin/PermissionsPage";
 import AccountSettingsPage from "@/pages/admin/AccountSettingsPage";
 import RLSAuditPage from "@/pages/admin/RLSAuditPage";
 import AuthAccessReviewPage from "@/pages/admin/AuthAccessReviewPage";
+import DisclosuresPage from "@/pages/admin/DisclosuresPage";
 
 // Auditor pages
 import AuditorLanding from "@/pages/auditor/AuditorLanding";
@@ -185,6 +186,7 @@ const App = () => (
           <Route path="security/rls" element={<RLSAuditPage />} />
           <Route path="security/auth" element={<AuthAccessReviewPage />} />
           <Route path="security/sessions" element={<AccountSettingsPage />} />
+          <Route path="disclosures" element={<DisclosuresPage />} />
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
