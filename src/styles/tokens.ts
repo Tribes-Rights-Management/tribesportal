@@ -519,11 +519,79 @@ export const STATE_COPY = {
   OPERATION_IN_PROGRESS: "Operation in progress",
   PROCESSING_REQUEST: "Processing request",
   
-  // Empty states — expected system state
+  // Empty states — expected system state (CANONICAL COPY)
+  // Structure: { title, description, note? }
   NO_RECORDS: "No records available.",
   NO_DATA: "No data available.",
   NO_RESULTS: "No results.",
   EMPTY_DATASET: "Dataset empty.",
+} as const;
+
+/**
+ * CANONICAL EMPTY STATE COPY — INSTITUTIONAL STANDARD
+ * 
+ * Structure:
+ * - title: Declarative status (1 line)
+ * - description: System explanation (1 sentence)
+ * - note: Optional permission/availability context
+ * 
+ * NEVER include: illustrations, icons, CTAs, "Get started", "Coming soon"
+ */
+export const EMPTY_STATE_COPY = {
+  // Generic (default)
+  GENERIC: {
+    title: "No records available",
+    description: "This area will populate once data is available.",
+    note: "Availability depends on account configuration and permissions.",
+  },
+  
+  // Tables (Users, Organizations, Assets, Agreements)
+  TABLE: {
+    title: "No entries found",
+    description: "No records currently meet the selected criteria.",
+  },
+  
+  // Permissions / Access
+  PERMISSIONS: {
+    title: "No access changes recorded",
+    description: "Permission updates will appear here once applied.",
+  },
+  
+  // Reports / Financials
+  REPORTS: {
+    title: "No activity recorded",
+    description: "Reporting data will appear once transactions are processed.",
+  },
+  
+  // Admin Dashboards
+  ADMIN: {
+    title: "System operational",
+    description: "No outstanding items require attention at this time.",
+  },
+  
+  // Approvals
+  APPROVALS: {
+    title: "No pending approvals",
+    description: "Records will appear when users request access.",
+  },
+  
+  // Audit / Activity
+  AUDIT: {
+    title: "No activity recorded",
+    description: "Events will appear once actions are performed.",
+  },
+  
+  // Users
+  USERS: {
+    title: "No users",
+    description: "Records will appear when users are provisioned.",
+  },
+  
+  // Organizations
+  ORGANIZATIONS: {
+    title: "No organizations",
+    description: "Organizations will appear when configured.",
+  },
   
   // Error states — calm, managed, not dramatized
   OPERATION_FAILED: "Operation failed.",

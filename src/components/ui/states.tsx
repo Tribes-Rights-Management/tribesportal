@@ -62,7 +62,7 @@ export function LoadingState({
 }: LoadingStateProps) {
   return (
     <StateContainer className={className}>
-      <p className="text-[14px] text-[#6B6B6B]">{message}</p>
+      <p className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>{message}</p>
     </StateContainer>
   );
 }
@@ -74,7 +74,7 @@ export function LoadingStateInline({
   message = "Loading data" 
 }: { message?: string }) {
   return (
-    <span className="text-[14px] text-[#6B6B6B]">{message}</span>
+    <span className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>{message}</span>
   );
 }
 
@@ -88,31 +88,73 @@ export function ProcessingState({
 }: LoadingStateProps) {
   return (
     <StateContainer className={className}>
-      <p className="text-[14px] text-[#6B6B6B]">{message}</p>
+      <p className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>{message}</p>
     </StateContainer>
   );
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// EMPTY STATES — EXPECTED SYSTEM STATE
+// EMPTY STATES — EXPECTED SYSTEM STATE (INSTITUTIONAL STANDARD)
+//
+// Structure:
+// - Title (1 line) — declarative status
+// - Description (1 sentence) — system explanation
+// - Note (optional, muted) — availability/permission context
+//
+// NEVER include: illustrations, icons, CTAs, "Get started", "Coming soon"
 // ═══════════════════════════════════════════════════════════════════════════
 
 interface EmptyStateProps {
+  /** Primary title — declarative, not encouraging */
+  title?: string;
+  /** System explanation — calm, factual */
+  description?: string;
+  /** Optional note — permission/availability context */
+  note?: string;
+  /** Legacy single-line message (deprecated, use title+description) */
   message?: string;
   className?: string;
 }
 
 /**
- * Standard empty state — calm, expected
- * Default: "No records available."
+ * Standard empty state — institutional, calm, expected
+ * 
+ * Canonical copy:
+ * - Generic: "No records available." / "This area will populate once data is available."
+ * - Tables: "No entries found." / "No records currently meet the selected criteria."
+ * - Permissions: "No access changes recorded." / "Permission updates will appear here once applied."
+ * - Reports: "No activity recorded." / "Reporting data will appear once transactions are processed."
+ * - Admin: "System operational." / "No outstanding items require attention at this time."
  */
 export function EmptyState({ 
-  message = "No records available.", 
+  title = "No records available",
+  description = "This area will populate once data is available.",
+  note,
+  message,
   className 
 }: EmptyStateProps) {
+  // Legacy support: if only message is provided, use it as title
+  if (message && !title) {
+    return (
+      <StateContainer className={className}>
+        <p className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>{message}</p>
+      </StateContainer>
+    );
+  }
+
   return (
     <StateContainer className={className}>
-      <p className="text-[14px] text-[#6B6B6B]">{message}</p>
+      <p className="text-[14px] font-medium" style={{ color: 'var(--platform-text-secondary)' }}>
+        {title}
+      </p>
+      <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text-muted)' }}>
+        {description}
+      </p>
+      {note && (
+        <p className="text-[12px] mt-2" style={{ color: 'var(--platform-text-muted)', opacity: 0.7 }}>
+          {note}
+        </p>
+      )}
     </StateContainer>
   );
 }
@@ -121,13 +163,43 @@ export function EmptyState({
  * Table-specific empty state — maintains table structure
  */
 export function TableEmptyState({ 
-  message = "No records available.",
+  title = "No entries found",
+  description = "No records currently meet the selected criteria.",
+  note,
+  message,
   colSpan = 1 
-}: { message?: string; colSpan?: number }) {
+}: { 
+  title?: string;
+  description?: string;
+  note?: string;
+  message?: string;
+  colSpan?: number;
+}) {
+  // Legacy support
+  if (message) {
+    return (
+      <tr>
+        <td colSpan={colSpan} className="py-12 text-center">
+          <p className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>{message}</p>
+        </td>
+      </tr>
+    );
+  }
+
   return (
     <tr>
       <td colSpan={colSpan} className="py-12 text-center">
-        <p className="text-[14px] text-[#6B6B6B]">{message}</p>
+        <p className="text-[14px] font-medium" style={{ color: 'var(--platform-text-secondary)' }}>
+          {title}
+        </p>
+        <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text-muted)' }}>
+          {description}
+        </p>
+        {note && (
+          <p className="text-[12px] mt-2" style={{ color: 'var(--platform-text-muted)', opacity: 0.7 }}>
+            {note}
+          </p>
+        )}
       </td>
     </tr>
   );
@@ -155,11 +227,12 @@ export function ErrorState({
 }: ErrorStateProps) {
   return (
     <StateContainer className={className}>
-      <p className="text-[14px] text-[#6B6B6B]">{message}</p>
+      <p className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-4 text-[13px] font-medium text-[#111] hover:text-[#333] transition-colors duration-75"
+          className="mt-4 text-[13px] font-medium transition-colors duration-75"
+          style={{ color: 'var(--platform-text)' }}
         >
           Retry
         </button>
@@ -178,11 +251,12 @@ export function TimeoutState({
 }: ErrorStateProps) {
   return (
     <StateContainer className={className}>
-      <p className="text-[14px] text-[#6B6B6B]">{message}</p>
+      <p className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-4 text-[13px] font-medium text-[#111] hover:text-[#333] transition-colors duration-75"
+          className="mt-4 text-[13px] font-medium transition-colors duration-75"
+          style={{ color: 'var(--platform-text)' }}
         >
           Retry
         </button>
@@ -201,11 +275,12 @@ export function ConnectionErrorState({
 }: ErrorStateProps) {
   return (
     <StateContainer className={className}>
-      <p className="text-[14px] text-[#6B6B6B]">{message}</p>
+      <p className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-4 text-[13px] font-medium text-[#111] hover:text-[#333] transition-colors duration-75"
+          className="mt-4 text-[13px] font-medium transition-colors duration-75"
+          style={{ color: 'var(--platform-text)' }}
         >
           Retry
         </button>
@@ -228,7 +303,7 @@ interface PermissionDeniedProps {
 export function PermissionDenied({ className }: PermissionDeniedProps) {
   return (
     <StateContainer className={className}>
-      <p className="text-[14px] text-[#6B6B6B]">Access not authorized.</p>
+      <p className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>Access not authorized.</p>
     </StateContainer>
   );
 }
@@ -237,12 +312,12 @@ export function PermissionDenied({ className }: PermissionDeniedProps) {
  * Partial permission state — for edge case partial access
  */
 export function PartialAccess({ 
-  message = "Partial access.",
+  title = "Partial access",
   className 
-}: EmptyStateProps) {
+}: { title?: string; className?: string }) {
   return (
     <StateContainer className={className}>
-      <p className="text-[14px] text-[#6B6B6B]">{message}</p>
+      <p className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>{title}</p>
     </StateContainer>
   );
 }
@@ -269,11 +344,12 @@ export function SessionExpiredState({
 }: SessionStateProps) {
   return (
     <StateContainer className={className}>
-      <p className="text-[14px] text-[#6B6B6B]">{message}</p>
+      <p className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>{message}</p>
       {onAction && (
         <button
           onClick={onAction}
-          className="mt-4 text-[13px] font-medium text-[#111] hover:text-[#333] transition-colors duration-75"
+          className="mt-4 text-[13px] font-medium transition-colors duration-75"
+          style={{ color: 'var(--platform-text)' }}
         >
           {actionLabel}
         </button>
@@ -292,7 +368,7 @@ export function SessionExpiredState({
 export function PageLoading({ message = "Loading data" }: { message?: string }) {
   return (
     <div className="flex items-center justify-center py-24">
-      <p className="text-[14px] text-[#6B6B6B]">{message}</p>
+      <p className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>{message}</p>
     </div>
   );
 }
@@ -306,11 +382,12 @@ export function PageError({
 }: { message?: string; onRetry?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-24">
-      <p className="text-[14px] text-[#6B6B6B]">{message}</p>
+      <p className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-4 text-[13px] font-medium text-[#111] hover:text-[#333] transition-colors duration-75"
+          className="mt-4 text-[13px] font-medium transition-colors duration-75"
+          style={{ color: 'var(--platform-text)' }}
         >
           Retry
         </button>
@@ -322,10 +399,21 @@ export function PageError({
 /**
  * Full-page empty state — expected, calm
  */
-export function PageEmpty({ message = "No records available." }: { message?: string }) {
+export function PageEmpty({ 
+  title = "No records available",
+  description = "This area will populate once data is available."
+}: { 
+  title?: string;
+  description?: string;
+}) {
   return (
-    <div className="flex items-center justify-center py-24">
-      <p className="text-[14px] text-[#6B6B6B]">{message}</p>
+    <div className="flex flex-col items-center justify-center py-24 text-center">
+      <p className="text-[14px] font-medium" style={{ color: 'var(--platform-text-secondary)' }}>
+        {title}
+      </p>
+      <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text-muted)' }}>
+        {description}
+      </p>
     </div>
   );
 }
