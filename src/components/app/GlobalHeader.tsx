@@ -1,12 +1,10 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import {
   Select,
@@ -15,29 +13,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LogOut, Settings, Shield } from "lucide-react";
+import { LogOut, Settings, Shield, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import {
-  AVATAR_BUTTON_CLASSES,
-  NAV_BUTTON_CLASSES,
-  NAV_BUTTON_ACTIVE,
-  NAV_BUTTON_INACTIVE,
-  ICON_SIZE,
-  ICON_STROKE,
-  NAV_LABELS,
-} from "@/styles/tokens";
+import { NAV_LABELS, ICON_SIZE, ICON_STROKE } from "@/styles/tokens";
 
 /**
- * GLOBAL HEADER — INSTITUTIONAL SYSTEM NAVIGATION
+ * GLOBAL HEADER — INSTITUTIONAL SYSTEM NAVIGATION (CANONICAL)
  * 
  * Design Rules:
+ * - Single-height, fixed, no shadows, no translucency
+ * - Background matches marketing dark header (#0A0A0B)
+ * - Brand wordmark only (no slogan)
  * - Navigation is functional, not expressive
- * - No personality, no storytelling
- * - No "friendly" labels
- * - Minimal contrast, no shadows or elevation
- * - No animated transitions beyond essential feedback
+ * - Active state is typographic (opacity), not color-heavy
+ * - No pills, chips, or floating nav
+ * - Minimal indicator for account (initials), no avatar personality
  */
 
 type PortalMode = "publishing" | "licensing";
@@ -49,7 +41,7 @@ function useCurrentMode(): PortalMode | "admin" {
   return "publishing";
 }
 
-// Tenant selector - flat, functional
+// Tenant selector - flat, dark theme
 function TenantSelector() {
   const { tenantMemberships, activeTenant, setActiveTenant, activeContext } = useAuth();
   const navigate = useNavigate();
@@ -58,7 +50,7 @@ function TenantSelector() {
   if (tenantMemberships.length <= 1) {
     if (activeTenant) {
       return (
-        <span className="text-[13px] font-medium text-[#6B6B6B] truncate max-w-[160px]">
+        <span className="text-[13px] font-medium text-white/50 truncate max-w-[160px]">
           {activeTenant.tenant_name}
         </span>
       );
@@ -86,15 +78,15 @@ function TenantSelector() {
       value={activeTenant?.tenant_id ?? ""}
       onValueChange={handleTenantChange}
     >
-      <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-[#F0F0F0] text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 focus-visible:ring-2 focus-visible:ring-black/15 text-[#6B6B6B]">
+      <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-white/5 text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 focus-visible:ring-1 focus-visible:ring-white/20 text-white/50">
         <SelectValue placeholder="Select organization" />
       </SelectTrigger>
-      <SelectContent align="center" className="bg-white border-[#E5E5E5]">
+      <SelectContent align="center" className="bg-[#1A1A1B] border-white/10 text-white">
         {tenantMemberships.map((membership) => (
           <SelectItem
             key={membership.tenant_id}
             value={membership.tenant_id}
-            className="text-[13px]"
+            className="text-[13px] text-white/80 focus:bg-white/10 focus:text-white"
           >
             {membership.tenant_name}
           </SelectItem>
@@ -104,7 +96,7 @@ function TenantSelector() {
   );
 }
 
-// Account menu - institutional, no decoration
+// Account menu - institutional, dark theme
 function AccountMenu() {
   const { 
     profile, 
@@ -138,7 +130,12 @@ function AccountMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className={AVATAR_BUTTON_CLASSES}
+          className={cn(
+            "h-7 w-7 rounded-full shrink-0 inline-flex items-center justify-center",
+            "bg-white/10 text-[10px] font-medium text-white/70",
+            "hover:bg-white/15",
+            "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
+          )}
           aria-label="Account menu"
         >
           {getInitials()}
@@ -146,34 +143,37 @@ function AccountMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-56 rounded-lg border-[#E5E5E5]"
+        className="w-56 rounded-lg bg-[#1A1A1B] border-white/10 text-white"
         sideOffset={8}
       >
         <div className="px-3 py-2.5">
-          <p className="text-[13px] font-medium text-[#111] truncate">
+          <p className="text-[13px] font-medium text-white/90 truncate">
             {profile?.full_name || profile?.email}
           </p>
           {profile?.email && profile?.full_name && (
-            <p className="text-[11px] text-[#6B6B6B] truncate mt-0.5">
+            <p className="text-[11px] text-white/50 truncate mt-0.5">
               {profile.email}
             </p>
           )}
         </div>
         
-        <DropdownMenuSeparator className="bg-[#E5E5E5]" />
+        <DropdownMenuSeparator className="bg-white/10" />
         
         {/* Admin link - platform admins only */}
         {isPlatformAdmin && (
           <DropdownMenuItem
             onClick={() => navigate("/admin")}
-            className={cn("text-[13px] py-2", currentMode === "admin" && "bg-[#F5F5F5]")}
+            className={cn(
+              "text-[13px] py-2 text-white/70 focus:bg-white/10 focus:text-white",
+              currentMode === "admin" && "bg-white/5"
+            )}
           >
-            <Shield size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
+            <Shield size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
             {NAV_LABELS.ADMINISTRATION}
           </DropdownMenuItem>
         )}
         
-        <DropdownMenuSeparator className="bg-[#E5E5E5]" />
+        <DropdownMenuSeparator className="bg-white/10" />
         
         <DropdownMenuItem
           onClick={() => {
@@ -183,16 +183,16 @@ function AccountMenu() {
               navigate(`/app/${activeContext}/settings`);
             }
           }}
-          className="text-[13px] py-2"
+          className="text-[13px] py-2 text-white/70 focus:bg-white/10 focus:text-white"
         >
-          <Settings size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
+          <Settings size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
           {NAV_LABELS.ACCOUNT_SETTINGS}
         </DropdownMenuItem>
         
-        <DropdownMenuSeparator className="bg-[#E5E5E5]" />
+        <DropdownMenuSeparator className="bg-white/10" />
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="text-[13px] py-2 text-[#DC2626] focus:text-[#DC2626]"
+          className="text-[13px] py-2 text-red-400 focus:bg-white/10 focus:text-red-300"
         >
           <LogOut size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
           Sign out
@@ -202,7 +202,7 @@ function AccountMenu() {
   );
 }
 
-// Mobile controls - compact, functional
+// Mobile controls - compact, dark theme
 function MobileControls() {
   const { 
     activeTenant, 
@@ -223,24 +223,25 @@ function MobileControls() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-7 px-2 text-[13px] font-medium">
+        <button className="h-7 px-2 text-[13px] font-medium text-white/70 hover:text-white/90 flex items-center gap-1">
           {getModeLabel()}
-        </Button>
+          <ChevronDown className="h-3 w-3 opacity-50" />
+        </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" className="w-52 bg-white border-[#E5E5E5]">
+      <DropdownMenuContent align="center" className="w-52 bg-[#1A1A1B] border-white/10 text-white">
         {activeTenant && (
           <div className="px-3 py-2">
-            <p className="text-[10px] text-[#6B6B6B] uppercase tracking-wide">Organization</p>
-            <p className="text-[13px] font-medium truncate">{activeTenant.tenant_name}</p>
+            <p className="text-[10px] text-white/40 uppercase tracking-wide">Organization</p>
+            <p className="text-[13px] font-medium text-white/80 truncate">{activeTenant.tenant_name}</p>
           </div>
         )}
         
         {tenantMemberships.length > 1 && (
           <>
-            <DropdownMenuSeparator className="bg-[#E5E5E5]" />
-            <DropdownMenuLabel className="text-[10px] text-[#6B6B6B] uppercase tracking-wide font-normal">
-              Switch Organization
-            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-white/10" />
+            <div className="px-3 py-1">
+              <p className="text-[10px] text-white/40 uppercase tracking-wide">Switch Organization</p>
+            </div>
             {tenantMemberships.map((membership) => (
               <DropdownMenuItem
                 key={membership.tenant_id}
@@ -252,8 +253,8 @@ function MobileControls() {
                   }
                 }}
                 className={cn(
-                  "text-[13px]",
-                  activeTenant?.tenant_id === membership.tenant_id && "bg-[#F5F5F5]"
+                  "text-[13px] text-white/70 focus:bg-white/10 focus:text-white",
+                  activeTenant?.tenant_id === membership.tenant_id && "bg-white/5"
                 )}
               >
                 {membership.tenant_name}
@@ -264,10 +265,10 @@ function MobileControls() {
         
         {currentMode !== "admin" && availableContexts.length > 1 && (
           <>
-            <DropdownMenuSeparator className="bg-[#E5E5E5]" />
-            <DropdownMenuLabel className="text-[10px] text-[#6B6B6B] uppercase tracking-wide font-normal">
-              Switch Portal
-            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-white/10" />
+            <div className="px-3 py-1">
+              <p className="text-[10px] text-white/40 uppercase tracking-wide">Switch Portal</p>
+            </div>
             
             {availableContexts.includes("publishing") && (
               <DropdownMenuItem
@@ -275,7 +276,10 @@ function MobileControls() {
                   setActiveContext("publishing");
                   navigate("/app/publishing");
                 }}
-                className={cn("text-[13px]", currentMode === "publishing" && "bg-[#F5F5F5]")}
+                className={cn(
+                  "text-[13px] text-white/70 focus:bg-white/10 focus:text-white",
+                  currentMode === "publishing" && "bg-white/5"
+                )}
               >
                 {NAV_LABELS.CLIENT_PORTAL}
               </DropdownMenuItem>
@@ -286,7 +290,10 @@ function MobileControls() {
                   setActiveContext("licensing");
                   navigate("/app/licensing");
                 }}
-                className={cn("text-[13px]", currentMode === "licensing" && "bg-[#F5F5F5]")}
+                className={cn(
+                  "text-[13px] text-white/70 focus:bg-white/10 focus:text-white",
+                  currentMode === "licensing" && "bg-white/5"
+                )}
               >
                 {NAV_LABELS.LICENSING}
               </DropdownMenuItem>
@@ -316,12 +323,15 @@ export function GlobalHeader() {
   const hasLicensing = availableContexts.includes("licensing");
 
   return (
-    <header className="h-14 border-b border-[#E5E5E5] bg-white px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40">
+    <header 
+      className="h-14 border-b border-white/8 px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40"
+      style={{ backgroundColor: '#0A0A0B' }}
+    >
       {/* Left: Wordmark - functional, not expressive */}
       <div className="flex items-center min-w-0">
         <button
           onClick={handleLogoClick}
-          className="text-[15px] font-semibold text-[#111] tracking-[-0.01em] hover:text-[#6B6B6B] transition-colors duration-[180ms] focus:outline-none focus-visible:ring-2 focus-visible:ring-black/15 focus-visible:ring-offset-2 rounded"
+          className="text-[15px] font-semibold text-white tracking-[-0.01em] hover:text-white/70 transition-opacity duration-[180ms] focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded"
         >
           Tribes
         </button>
@@ -338,7 +348,7 @@ export function GlobalHeader() {
 
       {/* Right: Portal nav + Account */}
       <div className="flex items-center gap-1">
-        {/* Portal navigation - flat, minimal contrast */}
+        {/* Portal navigation - flat, typographic active state */}
         {!isMobile && currentMode !== "admin" && (
           <nav className="flex items-center gap-1 mr-3">
             {hasPublishing && (
@@ -348,8 +358,11 @@ export function GlobalHeader() {
                   navigate("/app/publishing");
                 }}
                 className={cn(
-                  NAV_BUTTON_CLASSES,
-                  currentMode === "publishing" ? NAV_BUTTON_ACTIVE : NAV_BUTTON_INACTIVE
+                  "h-7 px-3 rounded text-[13px] font-medium transition-opacity duration-[180ms]",
+                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30",
+                  currentMode === "publishing" 
+                    ? "text-white" 
+                    : "text-white/50 hover:text-white/80"
                 )}
               >
                 {NAV_LABELS.CLIENT_PORTAL}
@@ -362,8 +375,11 @@ export function GlobalHeader() {
                   navigate("/app/licensing");
                 }}
                 className={cn(
-                  NAV_BUTTON_CLASSES,
-                  currentMode === "licensing" ? NAV_BUTTON_ACTIVE : NAV_BUTTON_INACTIVE
+                  "h-7 px-3 rounded text-[13px] font-medium transition-opacity duration-[180ms]",
+                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30",
+                  currentMode === "licensing" 
+                    ? "text-white" 
+                    : "text-white/50 hover:text-white/80"
                 )}
               >
                 {NAV_LABELS.LICENSING}

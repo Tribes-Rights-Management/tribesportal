@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ArrowLeft, RefreshCw, Plus, Pencil } from "lucide-react";
+import { ArrowLeft, Plus, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
@@ -19,8 +16,15 @@ interface Tenant {
   member_count?: number;
 }
 
+/**
+ * TENANTS PAGE — ORGANIZATIONS (CANONICAL)
+ * 
+ * Design Rules:
+ * - Flat table layout, no card wrappers
+ * - Dense, institutional spacing
+ * - Explicit actions, no hover-only affordances
+ */
 export default function TenantsPage() {
-  const { profile: currentProfile } = useAuth();
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -39,15 +43,14 @@ export default function TenantsPage() {
     if (tenantsError) {
       console.error("Error fetching tenants:", tenantsError);
       toast({
-        title: "Error",
-        description: "Failed to load tenants",
+        title: "Operation failed",
+        description: "Unable to retrieve organizations",
         variant: "destructive",
       });
       setLoading(false);
       return;
     }
 
-    // Fetch member counts
     const { data: memberCounts } = await supabase
       .from("tenant_memberships")
       .select("tenant_id")
@@ -101,8 +104,8 @@ export default function TenantsPage() {
   const saveTenant = async () => {
     if (!formData.name.trim() || !formData.slug.trim()) {
       toast({
-        title: "Error",
-        description: "Name and slug are required",
+        title: "Validation error",
+        description: "Name and slug required",
         variant: "destructive",
       });
       return;
@@ -112,7 +115,6 @@ export default function TenantsPage() {
 
     try {
       if (editingTenant) {
-        // Update existing tenant
         const { error } = await supabase
           .from("tenants")
           .update({
@@ -124,9 +126,8 @@ export default function TenantsPage() {
 
         if (error) throw error;
 
-        toast({ title: "Tenant updated" });
+        toast({ title: "Organization updated" });
       } else {
-        // Create new tenant
         const { error } = await supabase
           .from("tenants")
           .insert({
@@ -136,7 +137,7 @@ export default function TenantsPage() {
 
         if (error) throw error;
 
-        toast({ title: "Tenant created" });
+        toast({ title: "Organization created" });
       }
 
       setDialogOpen(false);
@@ -144,10 +145,10 @@ export default function TenantsPage() {
     } catch (error: any) {
       console.error("Save tenant error:", error);
       toast({
-        title: "Error",
+        title: "Operation failed",
         description: error.message?.includes("duplicate")
-          ? "A tenant with this slug already exists"
-          : "Failed to save tenant",
+          ? "Slug already exists"
+          : "Unable to save organization",
         variant: "destructive",
       });
     }
@@ -156,138 +157,140 @@ export default function TenantsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30 p-6">
-      <div className="max-w-5xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/admin">
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
-            </Button>
-            <h1 className="text-2xl font-semibold">Tenants</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={fetchTenants} disabled={loading}>
-              <RefreshCw className="mr-2 h-4 w-4" strokeWidth={1.5} />
-              Refresh
-            </Button>
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button onClick={openCreateDialog}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  New Tenant
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>
-                    {editingTenant ? "Edit Tenant" : "Create Tenant"}
-                  </DialogTitle>
-                  <DialogDescription>
-                    {editingTenant
-                      ? "Update the tenant details."
-                      : "Add a new organization to the platform."}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => handleNameChange(e.target.value)}
-                      placeholder="Acme Publishing Inc."
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="slug">Slug</Label>
-                    <Input
-                      id="slug"
-                      value={formData.slug}
-                      onChange={(e) =>
-                        setFormData({ ...formData, slug: e.target.value })
-                      }
-                      placeholder="acme-publishing"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      URL-friendly identifier. Must be unique.
-                    </p>
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => setDialogOpen(false)}
-                    disabled={saving}
-                  >
-                    Cancel
-                  </Button>
-                  <Button onClick={saveTenant} disabled={saving}>
-                    {saving ? "Saving" : editingTenant ? "Update" : "Create"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+    <div className="max-w-[900px] mx-auto px-6 py-8">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Link 
+            to="/admin" 
+            className="h-8 w-8 rounded flex items-center justify-center hover:bg-black/5 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4 text-[#6B6B6B]" />
+          </Link>
+          <div>
+            <h1 className="text-[20px] font-medium tracking-[-0.01em] text-[#111]">
+              Organizations
+            </h1>
+            <p className="text-[13px] text-[#6B6B6B]">
+              {tenants.length} organization(s)
+            </p>
           </div>
         </div>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <button 
+              onClick={openCreateDialog}
+              className="h-8 px-3 rounded text-[13px] font-medium bg-[#111] text-white hover:bg-[#222] flex items-center gap-1.5"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Add organization
+            </button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[400px]">
+            <DialogHeader>
+              <DialogTitle className="text-[16px] font-medium">
+                {editingTenant ? "Edit organization" : "Add organization"}
+              </DialogTitle>
+              <DialogDescription className="text-[13px]">
+                {editingTenant
+                  ? "Update organization details."
+                  : "Create a new organization."}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-[13px]">Name</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  placeholder="Acme Publishing"
+                  className="h-9 text-[14px]"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="slug" className="text-[13px]">Slug</Label>
+                <Input
+                  id="slug"
+                  value={formData.slug}
+                  onChange={(e) =>
+                    setFormData({ ...formData, slug: e.target.value })
+                  }
+                  placeholder="acme-publishing"
+                  className="h-9 text-[14px] font-mono"
+                />
+                <p className="text-[12px] text-[#8A8A8A]">
+                  URL-friendly identifier. Must be unique.
+                </p>
+              </div>
+            </div>
+            <DialogFooter>
+              <button
+                onClick={() => setDialogOpen(false)}
+                disabled={saving}
+                className="h-8 px-3 rounded text-[13px] font-medium border border-[#E5E5E5] text-[#6B6B6B] hover:border-[#D4D4D4] hover:text-[#111]"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={saveTenant} 
+                disabled={saving}
+                className="h-8 px-3 rounded text-[13px] font-medium bg-[#111] text-white hover:bg-[#222] disabled:opacity-40"
+              >
+                {saving ? "Saving" : editingTenant ? "Update" : "Create"}
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>All Tenants</CardTitle>
-            <CardDescription>
-              {tenants.length} organization(s) on the platform
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-center py-8 text-[#6B6B6B] text-[14px]">
-                Retrieving records
-              </div>
-            ) : tenants.length === 0 ? (
-              <div className="text-center py-12 text-[#6B6B6B] text-[14px]">
-                No tenants available.
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Slug</TableHead>
-                    <TableHead>Members</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {tenants.map((tenant) => (
-                    <TableRow key={tenant.id}>
-                      <TableCell className="font-medium">
-                        {tenant.name}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground font-mono text-sm">
-                        {tenant.slug}
-                      </TableCell>
-                      <TableCell>{tenant.member_count}</TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {new Date(tenant.created_at).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openEditDialog(tenant)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+      {/* Table - flat, no card wrapper */}
+      <div className="border border-[#E5E5E5] rounded-md bg-white overflow-hidden">
+        {loading ? (
+          <div className="py-12 text-center text-[14px] text-[#6B6B6B]">
+            Retrieving records
+          </div>
+        ) : tenants.length === 0 ? (
+          <div className="py-12 text-center text-[14px] text-[#6B6B6B]">
+            No organizations.
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Slug</TableHead>
+                <TableHead>Members</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead className="w-12"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tenants.map((tenant) => (
+                <TableRow key={tenant.id}>
+                  <TableCell className="font-medium">
+                    {tenant.name}
+                  </TableCell>
+                  <TableCell className="text-[#6B6B6B] font-mono text-[13px]">
+                    {tenant.slug}
+                  </TableCell>
+                  <TableCell>{tenant.member_count}</TableCell>
+                  <TableCell className="text-[#6B6B6B]">
+                    {new Date(tenant.created_at).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <button
+                      onClick={() => openEditDialog(tenant)}
+                      className="h-7 w-7 rounded flex items-center justify-center hover:bg-black/5 transition-colors"
+                    >
+                      <Pencil className="h-3.5 w-3.5 text-[#6B6B6B]" />
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </div>
   );

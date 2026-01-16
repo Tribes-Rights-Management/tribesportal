@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, RefreshCw, Check, X } from "lucide-react";
+import { ArrowLeft, Check, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
@@ -37,6 +35,15 @@ interface ApprovalFormState {
   default_context: PortalContext | null;
 }
 
+/**
+ * APPROVALS PAGE — ACCESS CONTROL (CANONICAL)
+ * 
+ * Design Rules:
+ * - Flat table layout, no card wrappers
+ * - Dense, institutional spacing
+ * - Explicit actions, no hover-only affordances
+ * - Language: Access approved, Access denied (not "Great job!")
+ */
 export default function ApprovalsPage() {
   const { profile: currentProfile } = useAuth();
   const [pendingMemberships, setPendingMemberships] = useState<PendingMembership[]>([]);
@@ -48,7 +55,6 @@ export default function ApprovalsPage() {
   const fetchData = async () => {
     setLoading(true);
     
-    // Fetch pending memberships (status = 'pending')
     const { data: memberships, error: membershipsError } = await supabase
       .from("tenant_memberships")
       .select(`
@@ -66,15 +72,14 @@ export default function ApprovalsPage() {
     if (membershipsError) {
       console.error("Error fetching pending memberships:", membershipsError);
       toast({
-        title: "Error",
-        description: "Failed to load pending approvals",
+        title: "Operation failed",
+        description: "Unable to retrieve pending approvals",
         variant: "destructive",
       });
       setLoading(false);
       return;
     }
 
-    // Fetch all tenants
     const { data: tenantsData, error: tenantsError } = await supabase
       .from("tenants")
       .select("id, name, slug")
@@ -82,16 +87,10 @@ export default function ApprovalsPage() {
 
     if (tenantsError) {
       console.error("Error fetching tenants:", tenantsError);
-      toast({
-        title: "Error",
-        description: "Failed to load tenants",
-        variant: "destructive",
-      });
     }
 
     setTenants(tenantsData || []);
 
-    // Transform memberships data
     const pending: PendingMembership[] = (memberships || []).map((m: any) => ({
       id: m.id,
       user_id: m.user_id,
@@ -104,7 +103,6 @@ export default function ApprovalsPage() {
 
     setPendingMemberships(pending);
 
-    // Initialize form states
     const initialStates: Record<string, ApprovalFormState> = {};
     pending.forEach((m) => {
       initialStates[m.id] = {
@@ -140,10 +138,8 @@ export default function ApprovalsPage() {
         ? current.filter((c) => c !== context)
         : [...current, context];
       
-      // Ensure at least one context
       if (newContexts.length === 0) return prev;
       
-      // Update default_context if needed
       let defaultContext = prev[membershipId]?.default_context;
       if (defaultContext && !newContexts.includes(defaultContext)) {
         defaultContext = newContexts[0];
@@ -164,8 +160,8 @@ export default function ApprovalsPage() {
     const formState = formStates[membership.id];
     if (!formState?.tenant_id) {
       toast({
-        title: "Error",
-        description: "Please select a tenant",
+        title: "Validation error",
+        description: "Select a tenant",
         variant: "destructive",
       });
       return;
@@ -174,7 +170,6 @@ export default function ApprovalsPage() {
     setProcessing(membership.id);
 
     try {
-      // Update the membership to active and set tenant, role, contexts
       const { error: membershipError } = await supabase
         .from("tenant_memberships")
         .update({
@@ -189,7 +184,6 @@ export default function ApprovalsPage() {
 
       if (membershipError) throw membershipError;
 
-      // Also activate the user profile if it's still pending
       await supabase
         .from("user_profiles")
         .update({ status: "active" })
@@ -198,16 +192,15 @@ export default function ApprovalsPage() {
 
       toast({
         title: "Access approved",
-        description: `${membership.user_email} now has access`,
+        description: membership.user_email,
       });
 
-      // Remove from list
       setPendingMemberships((prev) => prev.filter((m) => m.id !== membership.id));
     } catch (error) {
       console.error("Approval error:", error);
       toast({
-        title: "Error",
-        description: "Failed to approve access",
+        title: "Operation failed",
+        description: "Unable to approve access",
         variant: "destructive",
       });
     }
@@ -231,16 +224,15 @@ export default function ApprovalsPage() {
 
       toast({
         title: "Access denied",
-        description: `${membership.user_email} was denied access`,
+        description: membership.user_email,
       });
 
-      // Remove from list
       setPendingMemberships((prev) => prev.filter((m) => m.id !== membership.id));
     } catch (error) {
       console.error("Deny error:", error);
       toast({
-        title: "Error",
-        description: "Failed to deny access",
+        title: "Operation failed",
+        description: "Unable to deny access",
         variant: "destructive",
       });
     }
@@ -249,8 +241,8 @@ export default function ApprovalsPage() {
   };
 
   const availableRoles: { value: PortalRole; label: string }[] = [
-    { value: "tenant_admin", label: "Tenant Admin" },
-    { value: "tenant_user", label: "Tenant User" },
+    { value: "tenant_admin", label: "Admin" },
+    { value: "tenant_user", label: "User" },
     { value: "viewer", label: "Viewer" },
   ];
 
@@ -260,179 +252,174 @@ export default function ApprovalsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-muted/30 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/admin">
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
-            </Button>
-            <h1 className="text-2xl font-semibold">Pending Approvals</h1>
-          </div>
-          <Button variant="outline" onClick={fetchData} disabled={loading}>
-            <RefreshCw className="mr-2 h-4 w-4" strokeWidth={1.5} />
-            Refresh
-          </Button>
+    <div className="max-w-[1100px] mx-auto px-6 py-8">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <Link 
+          to="/admin" 
+          className="h-8 w-8 rounded flex items-center justify-center hover:bg-black/5 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 text-[#6B6B6B]" />
+        </Link>
+        <div>
+          <h1 className="text-[20px] font-medium tracking-[-0.01em] text-[#111]">
+            Access Control
+          </h1>
+          <p className="text-[13px] text-[#6B6B6B]">
+            {pendingMemberships.length === 0 
+              ? "No pending requests" 
+              : `${pendingMemberships.length} pending`}
+          </p>
         </div>
+      </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Pending Access Requests</CardTitle>
-            <CardDescription>
-              {pendingMemberships.length === 0
-                ? "No pending approvals"
-                : `${pendingMemberships.length} request(s) pending review`}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-center py-8 text-[#6B6B6B] text-[14px]">Retrieving records</div>
-            ) : pendingMemberships.length === 0 ? (
-              <div className="text-center py-12 text-[#6B6B6B] text-[14px]">
-                No pending approvals.
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Requested</TableHead>
-                    <TableHead>Tenant</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Contexts</TableHead>
-                    <TableHead>Default</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pendingMemberships.map((membership) => {
-                    const formState = formStates[membership.id] || {
-                      tenant_id: "",
-                      role: "tenant_user" as PortalRole,
-                      contexts: [],
-                      default_context: null,
-                    };
-                    
-                    return (
-                      <TableRow key={membership.id}>
-                        <TableCell className="font-medium">
-                          {membership.user_email}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {new Date(membership.created_at).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <Select
-                            value={formState.tenant_id}
-                            onValueChange={(value) =>
-                              updateFormState(membership.id, { tenant_id: value })
-                            }
-                            disabled={processing === membership.id}
+      {/* Table - flat, no card wrapper */}
+      <div className="border border-[#E5E5E5] rounded-md bg-white overflow-hidden">
+        {loading ? (
+          <div className="py-12 text-center text-[14px] text-[#6B6B6B]">
+            Retrieving records
+          </div>
+        ) : pendingMemberships.length === 0 ? (
+          <div className="py-12 text-center text-[14px] text-[#6B6B6B]">
+            No pending approvals.
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Email</TableHead>
+                <TableHead>Requested</TableHead>
+                <TableHead>Organization</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Contexts</TableHead>
+                <TableHead>Default</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {pendingMemberships.map((membership) => {
+                const formState = formStates[membership.id] || {
+                  tenant_id: "",
+                  role: "tenant_user" as PortalRole,
+                  contexts: [],
+                  default_context: null,
+                };
+                
+                return (
+                  <TableRow key={membership.id}>
+                    <TableCell className="font-medium">
+                      {membership.user_email}
+                    </TableCell>
+                    <TableCell className="text-[#6B6B6B]">
+                      {new Date(membership.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={formState.tenant_id}
+                        onValueChange={(value) =>
+                          updateFormState(membership.id, { tenant_id: value })
+                        }
+                        disabled={processing === membership.id}
+                      >
+                        <SelectTrigger className="w-40 h-8 text-[13px]">
+                          <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {tenants.map((tenant) => (
+                            <SelectItem key={tenant.id} value={tenant.id}>
+                              {tenant.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={formState.role}
+                        onValueChange={(value) =>
+                          updateFormState(membership.id, { role: value as PortalRole })
+                        }
+                        disabled={processing === membership.id}
+                      >
+                        <SelectTrigger className="w-28 h-8 text-[13px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableRoles.map((role) => (
+                            <SelectItem key={role.value} value={role.value}>
+                              {role.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        {availableContexts.map((context) => (
+                          <label
+                            key={context.value}
+                            className="flex items-center gap-2 text-[13px] cursor-pointer"
                           >
-                            <SelectTrigger className="w-44">
-                              <SelectValue placeholder="Select tenant" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {tenants.map((tenant) => (
-                                <SelectItem key={tenant.id} value={tenant.id}>
-                                  {tenant.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell>
-                          <Select
-                            value={formState.role}
-                            onValueChange={(value) =>
-                              updateFormState(membership.id, { role: value as PortalRole })
-                            }
-                            disabled={processing === membership.id}
-                          >
-                            <SelectTrigger className="w-36">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {availableRoles.map((role) => (
-                                <SelectItem key={role.value} value={role.value}>
-                                  {role.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-col gap-1.5">
-                            {availableContexts.map((context) => (
-                              <label
-                                key={context.value}
-                                className="flex items-center gap-2 text-sm cursor-pointer"
-                              >
-                                <Checkbox
-                                  checked={formState.contexts.includes(context.value)}
-                                  onCheckedChange={() =>
-                                    toggleContext(membership.id, context.value)
-                                  }
-                                  disabled={processing === membership.id}
-                                />
-                                {context.label}
-                              </label>
-                            ))}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Select
-                            value={formState.default_context || ""}
-                            onValueChange={(value) =>
-                              updateFormState(membership.id, {
-                                default_context: value as PortalContext,
-                              })
-                            }
-                            disabled={processing === membership.id}
-                          >
-                            <SelectTrigger className="w-28">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {formState.contexts.map((ctx) => (
-                                <SelectItem key={ctx} value={ctx}>
-                                  {ctx === "licensing" ? "Licensing" : "Publishing"}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              size="sm"
-                              onClick={() => approveMembership(membership)}
-                              disabled={processing === membership.id || !formState.tenant_id}
-                            >
-                              <Check className="h-4 w-4 mr-1" />
-                              Approve
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => denyMembership(membership)}
+                            <Checkbox
+                              checked={formState.contexts.includes(context.value)}
+                              onCheckedChange={() =>
+                                toggleContext(membership.id, context.value)
+                              }
                               disabled={processing === membership.id}
-                            >
-                              <X className="h-4 w-4 mr-1" />
-                              Deny
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+                            />
+                            {context.label}
+                          </label>
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={formState.default_context || ""}
+                        onValueChange={(value) =>
+                          updateFormState(membership.id, {
+                            default_context: value as PortalContext,
+                          })
+                        }
+                        disabled={processing === membership.id}
+                      >
+                        <SelectTrigger className="w-24 h-8 text-[13px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {formState.contexts.map((ctx) => (
+                            <SelectItem key={ctx} value={ctx}>
+                              {ctx === "licensing" ? "Licensing" : "Publishing"}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => approveMembership(membership)}
+                          disabled={processing === membership.id || !formState.tenant_id}
+                          className="h-8 px-3 rounded text-[13px] font-medium bg-[#111] text-white hover:bg-[#222] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+                        >
+                          <Check className="h-3.5 w-3.5" />
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => denyMembership(membership)}
+                          disabled={processing === membership.id}
+                          className="h-8 px-3 rounded text-[13px] font-medium border border-[#E5E5E5] text-[#6B6B6B] hover:border-[#D4D4D4] hover:text-[#111] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                          Deny
+                        </button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </div>
   );
