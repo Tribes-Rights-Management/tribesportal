@@ -1,53 +1,56 @@
 import { Link } from "react-router-dom";
-import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
-import { SupportEmailRow } from "@/components/auth/SupportEmailRow";
 import { AuthLayout } from "@/layouts/AuthLayout";
+import { SYSTEM_COPY } from "@/styles/tokens";
 
 /**
- * LinkExpiredPage - Recovery state for expired magic links
- * Uses unified auth design tokens
+ * LinkExpiredPage - System boundary for expired verification links
  * 
- * LOCKED DESIGN TOKENS:
- * - H1: 24px, font-semibold, color #111, centered
- * - Body: 14px, color #6B6B6B, centered
+ * DESIGN: Same dark environment as auth, institutional language
+ * NO friendly messaging, NO card UI
  */
 export default function LinkExpiredPage() {
   return (
     <AuthLayout>
-      {/* Header - matching AuthSurface styling */}
-      <div className="text-center mb-6">
-        <h1 className="text-[24px] font-semibold text-[#111]">
-          This link has expired
-        </h1>
-        <p className="mt-2 text-[14px] text-[#6B6B6B]">
-          For security, each link expires quickly and can only be used once.
-        </p>
-        <p className="mt-1 text-[14px] text-[#6B6B6B]">
-          Request a new link below.
-        </p>
+      {/* System identifier */}
+      <div className="mb-10 text-center">
+        <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-[#4A4A4A]">
+          Tribes Rights Management System
+        </span>
       </div>
 
-      {/* Reuse the same form from sign-in */}
-      <MagicLinkForm buttonLabel="Request new link" />
+      {/* Heading - declarative, not apologetic */}
+      <h1 className="text-[22px] font-medium leading-[1.25] text-[#E5E5E3] text-center tracking-[-0.02em]">
+        {SYSTEM_COPY.LINK_EXPIRED_TITLE}
+      </h1>
 
-      {/* Support section */}
-      <div className="mt-6">
-        <SupportEmailRow />
-      </div>
-
-      {/* Footer */}
-      <p className="mt-6 text-center text-[13px] text-[#9CA3AF]">
-        Access is restricted to approved accounts.
+      {/* Body - procedural, neutral */}
+      <p className="mt-4 text-[14px] leading-[1.6] text-[#707070] text-center">
+        {SYSTEM_COPY.LINK_EXPIRED_BODY}
       </p>
 
-      {/* Back Link */}
-      <p className="mt-2 text-center">
-        <Link 
+      {/* Action */}
+      <div className="mt-10">
+        <Link
           to="/auth/sign-in"
-          className="text-[13px] text-[#9CA3AF] hover:text-[#6B6B6B] hover:underline transition-colors duration-150"
+          className="block w-full h-[52px] rounded-[6px] bg-[#E5E5E3] text-[#0A0A0B] text-[15px] font-medium text-center leading-[52px] hover:bg-[#D5D5D3] transition-colors duration-75"
         >
-          Return to sign in
+          Request new access link
         </Link>
+      </div>
+
+      {/* Policy notice */}
+      <p className="mt-12 text-center text-[12px] leading-[1.5] text-[#4A4A4A]">
+        {SYSTEM_COPY.CONTACT_ADMIN}
+      </p>
+
+      {/* Support */}
+      <p className="mt-2 text-center">
+        <a 
+          href={`mailto:${SYSTEM_COPY.SUPPORT_EMAIL}`}
+          className="text-[12px] text-[#4A4A4A] hover:text-[#606060] transition-colors duration-75"
+        >
+          {SYSTEM_COPY.SUPPORT_EMAIL}
+        </a>
       </p>
     </AuthLayout>
   );
