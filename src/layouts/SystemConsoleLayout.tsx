@@ -64,7 +64,7 @@ export function SystemConsoleLayout() {
   return (
     <div 
       className="min-h-screen flex flex-col"
-      style={{ backgroundColor: 'var(--platform-canvas)' }}
+      style={{ backgroundColor: 'var(--tribes-bg-page)' }}
     >
       <SystemConsoleHeader />
       <main className="flex-1 overflow-y-auto">

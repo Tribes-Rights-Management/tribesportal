@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LogOut, Settings, Shield, ChevronDown } from "lucide-react";
+import { LogOut, Settings, Shield, ChevronDown, ArrowLeft } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -40,6 +40,11 @@ import { NAV_LABELS, ICON_SIZE, ICON_STROKE, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } 
  *    • Tribes Admin — administration clients
  *    • Products appear ONLY within workspaces
  *    • Workspace switcher NEVER lists System Console
+ * 
+ * WORKSPACE ENTRY TRANSITION:
+ * - Header subtitle changes from "SYSTEM CONSOLE" to "WORKSPACE · {Context}"
+ * - Navigation structure changes (sidebar appears)
+ * - Exit affordance: "← Return to System Console" in user menu
  * 
  * NAVIGATION RULES:
  * - Company Console ≠ Organization Workspace
@@ -67,6 +72,16 @@ function useCurrentMode(): PortalMode {
   if (location.pathname.startsWith("/portal")) return "portal";
   if (location.pathname.includes("/licensing")) return "licensing";
   return "publishing";
+}
+
+// Get context label for header subtitle
+function getContextLabel(mode: PortalMode): string {
+  switch (mode) {
+    case "licensing": return "Licensing";
+    case "portal": return "Tribes Admin";
+    case "publishing": return "Publishing";
+    default: return "";
+  }
 }
 
 /**
@@ -182,6 +197,9 @@ function AccountMenu() {
     return "U";
   };
 
+  // Show "Return to System Console" when in a workspace (not admin mode)
+  const showReturnToConsole = isPlatformAdmin && currentMode !== "admin";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -222,21 +240,30 @@ function AccountMenu() {
         
         <DropdownMenuSeparator className="bg-white/10" />
         
-        {/* System Console link - platform admins only */}
-        {isPlatformAdmin && (
+        {/* Return to System Console - shown when in workspace */}
+        {showReturnToConsole && (
+          <>
+            <DropdownMenuItem
+              onClick={() => navigate("/admin")}
+              className="text-[13px] py-2 text-white/70 focus:bg-white/10 focus:text-white"
+            >
+              <ArrowLeft size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
+              Return to System Console
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-white/10" />
+          </>
+        )}
+        
+        {/* System Console link - only in admin mode for completeness */}
+        {isPlatformAdmin && currentMode === "admin" && (
           <DropdownMenuItem
             onClick={() => navigate("/admin")}
-            className={cn(
-              "text-[13px] py-2 text-white/70 focus:bg-white/10 focus:text-white",
-              currentMode === "admin" && "bg-white/5"
-            )}
+            className="text-[13px] py-2 text-white/70 focus:bg-white/10 focus:text-white bg-white/5"
           >
             <Shield size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
             {NAV_LABELS.SYSTEM_CONSOLE}
           </DropdownMenuItem>
         )}
-        
-        <DropdownMenuSeparator className="bg-white/10" />
         
         <DropdownMenuItem
           onClick={() => navigate("/account")}
@@ -395,13 +422,16 @@ export function GlobalHeader() {
   const showPortal = hasActiveWorkspace && (isPlatformAdmin || canAccessPortal);
   const showLicensing = hasActiveWorkspace && (isPlatformAdmin || canAccessLicensing);
 
+  // Get context label for header subtitle
+  const contextLabel = getContextLabel(currentMode);
+
   return (
     <header 
       className="h-14 border-b border-white/8 px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40"
-      style={{ backgroundColor: '#0A0A0B' }}
+      style={{ backgroundColor: 'var(--tribes-bg-header)' }}
     >
-      {/* Left: Wordmark - functional, not expressive */}
-      <div className="flex items-center min-w-0">
+      {/* Left: Wordmark + Context indicator */}
+      <div className="flex items-center min-w-0 gap-3">
         <button
           onClick={handleLogoClick}
           className="font-semibold text-white hover:text-white/70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
@@ -412,6 +442,19 @@ export function GlobalHeader() {
         >
           {NAV_LABELS.BRAND_WORDMARK}
         </button>
+        
+        {/* Header subtitle - shows workspace context when active */}
+        {hasActiveWorkspace && contextLabel && !isMobile && (
+          <div className="flex items-center gap-1.5">
+            <span className="text-white/20">·</span>
+            <span 
+              className="text-[11px] font-medium uppercase tracking-wider"
+              style={{ color: 'var(--tribes-text-muted)' }}
+            >
+              {contextLabel}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Center: Workspace selector - organization-scoped */}
