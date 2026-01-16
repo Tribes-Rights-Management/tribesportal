@@ -87,7 +87,7 @@ function DataRow({
             className="block text-[11px] mt-0.5"
             style={{ color: 'var(--platform-text-muted)' }}
           >
-            Managed by organization
+            Managed by organization policy
           </span>
         )}
       </dd>
@@ -223,8 +223,8 @@ export default function AccountSettingsPage() {
           className="mt-6 text-[13px]"
           style={{ color: 'var(--platform-text-muted)' }}
         >
-          Account configuration is managed through organizational policies. 
-          Contact administration for access-related changes.
+          Account configuration is governed by organizational policies. 
+          Contact your administrator for access-related changes.
         </p>
       </div>
     </div>
