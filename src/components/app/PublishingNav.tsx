@@ -20,7 +20,7 @@ import {
  */
 
 const navItems = [
-  { to: "/app/publishing", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/app/publishing", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/app/publishing/works", label: "Works", icon: Music },
   { to: "/app/publishing/splits", label: "Splits & Ownership", icon: GitBranch },
   { to: "/app/publishing/registrations", label: "Registrations", icon: FileCheck },
@@ -30,7 +30,7 @@ const navItems = [
 ];
 
 const settingsItems = [
-  { to: "/app/publishing/settings", label: "Settings", icon: Settings },
+  { to: "/app/publishing/settings", label: "Configuration", icon: Settings },
 ];
 
 export function PublishingNav() {

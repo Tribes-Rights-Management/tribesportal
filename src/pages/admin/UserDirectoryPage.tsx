@@ -199,7 +199,7 @@ export default function UserDirectoryPage() {
   const formatRole = (role: PortalRole): string => {
     switch (role) {
       case "tenant_admin": return "Admin";
-      case "tenant_user": return "User";
+      case "tenant_user": return "Member";
       case "viewer": return "Viewer";
       default: return role;
     }
@@ -231,13 +231,13 @@ export default function UserDirectoryPage() {
               className="text-[28px] font-semibold tracking-[-0.02em]"
               style={{ color: 'var(--platform-text)' }}
             >
-              User Directory
+              Member Directory
             </h1>
             <p 
               className="text-[15px] mt-0.5"
               style={{ color: 'var(--platform-text-secondary)' }}
             >
-              {users.length} user(s)
+              {users.length} account(s)
             </p>
           </div>
         </div>

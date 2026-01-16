@@ -18,7 +18,7 @@ import {
  */
 
 const navItems = [
-  { to: "/app/licensing", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/app/licensing", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/app/licensing/catalog", label: "Catalog", icon: Library },
   { to: "/app/licensing/requests", label: "License Requests", icon: FileText },
   { to: "/app/licensing/licenses", label: "Agreements", icon: Scale },
@@ -26,7 +26,7 @@ const navItems = [
 ];
 
 const settingsItems = [
-  { to: "/app/licensing/settings", label: "Settings", icon: Settings },
+  { to: "/app/licensing/settings", label: "Configuration", icon: Settings },
 ];
 
 export function LicensingNav() {

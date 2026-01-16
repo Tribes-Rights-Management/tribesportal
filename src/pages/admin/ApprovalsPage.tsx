@@ -243,7 +243,7 @@ export default function ApprovalsPage() {
 
   const availableRoles: { value: PortalRole; label: string }[] = [
     { value: "tenant_admin", label: "Admin" },
-    { value: "tenant_user", label: "User" },
+    { value: "tenant_user", label: "Member" },
     { value: "viewer", label: "Viewer" },
   ];
 
