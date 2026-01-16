@@ -147,6 +147,54 @@ export type Database = {
           },
         ]
       }
+      disclosure_exports: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          export_type: Database["public"]["Enums"]["disclosure_export_type"]
+          file_name: string | null
+          file_url: string | null
+          generated_at: string
+          generated_by: string
+          id: string
+          parameters: Json
+          record_count: number | null
+          status: Database["public"]["Enums"]["disclosure_export_status"]
+          watermark: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          export_type: Database["public"]["Enums"]["disclosure_export_type"]
+          file_name?: string | null
+          file_url?: string | null
+          generated_at?: string
+          generated_by: string
+          id?: string
+          parameters?: Json
+          record_count?: number | null
+          status?: Database["public"]["Enums"]["disclosure_export_status"]
+          watermark: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          export_type?: Database["public"]["Enums"]["disclosure_export_type"]
+          file_name?: string | null
+          file_url?: string | null
+          generated_at?: string
+          generated_by?: string
+          id?: string
+          parameters?: Json
+          record_count?: number | null
+          status?: Database["public"]["Enums"]["disclosure_export_status"]
+          watermark?: string
+        }
+        Relationships: []
+      }
       licensing_agreements: {
         Row: {
           agreement_title: string
@@ -533,6 +581,11 @@ export type Database = {
         | "login"
         | "logout"
         | "record_viewed"
+      disclosure_export_status: "generating" | "completed" | "failed"
+      disclosure_export_type:
+        | "licensing_activity"
+        | "approval_history"
+        | "agreement_registry"
       licensing_request_status:
         | "draft"
         | "submitted"
@@ -691,6 +744,12 @@ export const Constants = {
         "login",
         "logout",
         "record_viewed",
+      ],
+      disclosure_export_status: ["generating", "completed", "failed"],
+      disclosure_export_type: [
+        "licensing_activity",
+        "approval_history",
+        "agreement_registry",
       ],
       licensing_request_status: [
         "draft",

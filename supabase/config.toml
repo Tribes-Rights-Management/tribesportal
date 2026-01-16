@@ -16,3 +16,6 @@ mailer_urlpaths.email_change = "/auth/callback"
 [auth.email.template.magic_link]
 subject = "Sign in to Tribes"
 content_path = "./templates/magic_link.html"
+
+[functions.generate-disclosure-export]
+verify_jwt = false
