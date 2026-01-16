@@ -6,22 +6,19 @@ import { SignInHelpDialog } from "./SignInHelpDialog";
 type AuthState = "enter-email" | "check-email";
 
 /**
- * AuthSurface - Institutional system boundary (AUTHORITATIVE)
+ * AuthSurface - Institutional Access Gateway (AUTHORITATIVE — SECTION 2)
  * 
  * DESIGN CONSTRAINTS (NON-NEGOTIABLE):
- * - NO card-based SaaS UI
- * - NO white or light backgrounds
- * - NO onboarding metaphors
- * - NO friendly or marketing language
- * - NO playful spacing, shadows, or animations
+ * - Uses locked auth tokens from CSS custom properties
+ * - No friendly or marketing language
+ * - No playful spacing, shadows, or animations
+ * - Same surface for all states (no page changes)
  * 
- * VISUAL STRUCTURE:
- * - Full-viewport dark environment
- * - Typography-driven layout
- * - Minimal color usage
- * - One primary action only
- * 
- * This is access control, not onboarding.
+ * LANGUAGE STANDARD:
+ * - "Access Tribes" (not "Sign in to Tribes")
+ * - "Request access link" (not "Continue")
+ * - "Verification link sent" (not "Check your email")
+ * - "Access assistance" (not "Trouble signing in?")
  */
 export function AuthSurface() {
   const { signInWithMagicLink } = useAuth();
@@ -84,31 +81,86 @@ export function AuthSurface() {
     setSearchParams({}, { replace: true });
   };
 
+  // Shared input styles using auth tokens
+  const inputStyles: React.CSSProperties = {
+    width: '100%',
+    height: 'var(--auth-input-height)',
+    borderRadius: 'var(--auth-border-radius)',
+    border: '1px solid var(--auth-input-border)',
+    backgroundColor: '#FFFFFF',
+    padding: '0 16px',
+    fontSize: 'var(--auth-font-scale)',
+    color: 'var(--auth-heading)',
+    outline: 'none',
+  };
+
+  // Shared button styles using auth tokens
+  const buttonStyles = (disabled: boolean): React.CSSProperties => ({
+    width: '100%',
+    height: 'var(--auth-button-height)',
+    borderRadius: 'var(--auth-border-radius)',
+    fontSize: 'var(--auth-font-scale)',
+    fontWeight: 500,
+    border: 'none',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    backgroundColor: disabled ? 'var(--auth-button-disabled-bg)' : 'var(--auth-button-bg)',
+    color: disabled ? 'var(--auth-button-disabled-text)' : 'var(--auth-button-text)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  });
+
   return (
     <>
-      {/* System identifier - uppercase, letter-spaced, low contrast */}
-      <div className="mb-10 text-center">
-        <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-[#4A4A4A]">
+      {/* System identifier — uppercase, letter-spaced, muted */}
+      <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+        <span 
+          style={{ 
+            fontSize: '10px', 
+            fontWeight: 500, 
+            letterSpacing: '0.12em', 
+            textTransform: 'uppercase',
+            color: 'var(--auth-system-label)',
+          }}
+        >
           Tribes Rights Management System
         </span>
       </div>
 
-      {/* Primary heading - declarative, not welcoming */}
-      <h1 className="text-[24px] font-medium leading-[1.2] text-[#E5E5E3] text-center tracking-[-0.02em]">
-        {state === "enter-email" ? "Access Control" : "Verification link issued"}
+      {/* Primary heading — medium weight, not bold */}
+      <h1 
+        style={{ 
+          fontSize: '22px', 
+          fontWeight: 500, 
+          lineHeight: 1.3,
+          color: 'var(--auth-heading)',
+          textAlign: 'center',
+          letterSpacing: '-0.01em',
+          margin: 0,
+        }}
+      >
+        {state === "enter-email" ? "Access Tribes" : "Verification link sent"}
       </h1>
 
-      {/* Supporting text - neutral, procedural */}
-      <p className="mt-4 text-[14px] leading-[1.6] text-[#707070] text-center">
+      {/* Subtext — one line only, neutral, informational */}
+      <p 
+        style={{ 
+          marginTop: '12px', 
+          fontSize: '14px', 
+          lineHeight: 1.5,
+          color: 'var(--auth-subtext)',
+          textAlign: 'center',
+        }}
+      >
         {state === "enter-email"
-          ? "Authentication is performed via secure email verification."
+          ? "Access is granted via secure email verification."
           : "A secure access link has been sent to:"}
       </p>
 
       {/* Body */}
-      <div className="mt-10">
+      <div style={{ marginTop: '28px' }}>
         {state === "enter-email" ? (
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit}>
             <div>
               <input
                 id="email"
@@ -119,80 +171,105 @@ export function AuthSurface() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@organization.com"
-                className={[
-                  "w-full h-[52px] rounded-[6px]",
-                  "border border-[#2A2A2A] bg-[#141416]",
-                  "px-4 text-[15px] text-[#E5E5E3]",
-                  "placeholder:text-[#505050]",
-                  "focus:outline-none focus:border-[#3A3A3A]",
-                  "transition-colors duration-75",
-                ].join(" ")}
+                placeholder="name@organization.com"
+                style={inputStyles}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'var(--auth-input-border-focus)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'var(--auth-input-border)';
+                }}
               />
             </div>
 
-            {/* Primary action - authoritative, not friendly */}
+            {/* Primary action — solid, dark neutral */}
             <button
               type="submit"
               disabled={!email.trim() || isSubmitting}
-              className={[
-                "w-full h-[52px] rounded-[6px]",
-                "text-[15px] font-medium",
-                "transition-colors duration-75",
-                !email.trim() || isSubmitting
-                  ? "bg-[#1A1A1C] text-[#4A4A4A] cursor-not-allowed"
-                  : "bg-[#E5E5E3] text-[#0A0A0B] hover:bg-[#D5D5D3]",
-              ].join(" ")}
+              style={{ ...buttonStyles(!email.trim() || isSubmitting), marginTop: '16px' }}
             >
-              {isSubmitting ? "Applying changes" : "Request access link"}
+              {isSubmitting ? "Processing" : "Request access link"}
             </button>
           </form>
         ) : (
-          /* Verification state - same environment, content changes only */
-          <div className="space-y-6">
-            {/* Email display - system output, not styled input */}
-            <div className="text-center">
-              <span className="text-[15px] font-medium text-[#E5E5E3]">
+          /* Verification state — same surface, content changes only */
+          <div>
+            {/* Email display — bordered, non-editable field (treated as record) */}
+            <div
+              style={{
+                ...inputStyles,
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: '#FAFAFA',
+                color: 'var(--auth-heading)',
+                fontWeight: 500,
+              }}
+            >
+              <span style={{ 
+                overflow: 'hidden', 
+                textOverflow: 'ellipsis', 
+                whiteSpace: 'nowrap',
+                width: '100%',
+              }}>
                 {email}
               </span>
             </div>
 
             {/* Security note */}
-            <p className="text-[13px] leading-[1.5] text-[#505050] text-center">
+            <p 
+              style={{ 
+                marginTop: '16px',
+                fontSize: '13px', 
+                lineHeight: 1.5, 
+                color: 'var(--auth-subtext)',
+                textAlign: 'center',
+              }}
+            >
               This link expires shortly and may be used once.
             </p>
 
             {/* Resend feedback */}
             {resendMessage && (
-              <p className="text-[13px] leading-[1.5] text-[#707070] text-center">
+              <p 
+                style={{ 
+                  marginTop: '12px',
+                  fontSize: '13px', 
+                  lineHeight: 1.5, 
+                  color: 'var(--auth-label)',
+                  textAlign: 'center',
+                }}
+              >
                 {resendMessage}
               </p>
             )}
 
             {/* Actions */}
-            <div className="space-y-3 pt-2">
-              {/* Primary: Reissue */}
+            <div style={{ marginTop: '20px' }}>
+              {/* Primary: Resend */}
               <button
                 type="button"
                 onClick={handleResend}
                 disabled={isSubmitting || !email.trim()}
-                className={[
-                  "w-full h-[52px] rounded-[6px]",
-                  "text-[15px] font-medium",
-                  "transition-colors duration-75",
-                  isSubmitting
-                    ? "bg-[#1A1A1C] text-[#4A4A4A] cursor-not-allowed"
-                    : "bg-[#E5E5E3] text-[#0A0A0B] hover:bg-[#D5D5D3]",
-                ].join(" ")}
+                style={buttonStyles(isSubmitting || !email.trim())}
               >
-                {isSubmitting ? "Applying changes" : "Reissue access link"}
+                {isSubmitting ? "Processing" : "Resend access link"}
               </button>
 
-              {/* Secondary: Change email - very low emphasis */}
+              {/* Secondary: Change email — text link, muted */}
               <button
                 type="button"
                 onClick={handleChangeEmail}
-                className="w-full text-center text-[13px] text-[#505050] hover:text-[#707070] py-2 transition-colors duration-75"
+                style={{
+                  width: '100%',
+                  marginTop: '12px',
+                  padding: '8px 0',
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '13px',
+                  color: 'var(--auth-subtext)',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                }}
               >
                 Use a different email
               </button>
@@ -201,17 +278,32 @@ export function AuthSurface() {
         )}
       </div>
 
-      {/* Policy notice - firm, procedural */}
-      <p className="mt-12 text-center text-[12px] leading-[1.5] text-[#4A4A4A]">
+      {/* Footer — restrained */}
+      <p 
+        style={{ 
+          marginTop: '32px', 
+          fontSize: '12px', 
+          lineHeight: 1.5,
+          color: 'var(--auth-system-label)',
+          textAlign: 'center',
+        }}
+      >
         Access is restricted to approved accounts.
       </p>
 
-      {/* Support link - minimal emphasis */}
-      <p className="mt-3 text-center">
+      {/* Support link — minimal emphasis */}
+      <p style={{ marginTop: '8px', textAlign: 'center' }}>
         <button 
           type="button"
           onClick={() => setHelpDialogOpen(true)}
-          className="text-[12px] text-[#4A4A4A] hover:text-[#606060] transition-colors duration-75"
+          style={{
+            background: 'none',
+            border: 'none',
+            fontSize: '12px',
+            color: 'var(--auth-subtext)',
+            cursor: 'pointer',
+            textDecoration: 'none',
+          }}
         >
           Access assistance
         </button>
