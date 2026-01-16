@@ -17,7 +17,7 @@ import { LogOut, Settings, Shield, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { NAV_LABELS, ICON_SIZE, ICON_STROKE } from "@/styles/tokens";
+import { NAV_LABELS, ICON_SIZE, ICON_STROKE, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } from "@/styles/tokens";
 
 /**
  * GLOBAL HEADER — INSTITUTIONAL SYSTEM NAVIGATION (CANONICAL)
@@ -131,11 +131,18 @@ function AccountMenu() {
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "h-7 w-7 rounded-full shrink-0 inline-flex items-center justify-center",
-            "bg-[#2A2A2C] text-[10px] font-medium text-white/70 uppercase",
-            "hover:bg-[#333335]",
+            "rounded-full shrink-0 inline-flex items-center justify-center",
+            "text-[10px] font-medium uppercase",
             "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
           )}
+          style={{
+            height: PORTAL_AVATAR.sizeDesktop,
+            width: PORTAL_AVATAR.sizeDesktop,
+            backgroundColor: PORTAL_AVATAR.bgColor,
+            color: PORTAL_AVATAR.textColor,
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = PORTAL_AVATAR.bgColorHover}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = PORTAL_AVATAR.bgColor}
           aria-label="Account menu"
         >
           {getInitials()}
@@ -331,9 +338,13 @@ export function GlobalHeader() {
       <div className="flex items-center min-w-0">
         <button
           onClick={handleLogoClick}
-          className="text-[13px] font-semibold text-white tracking-[0.08em] hover:text-white/70 transition-opacity duration-[180ms] focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
+          className="font-semibold text-white hover:text-white/70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
+          style={{
+            fontSize: PORTAL_TYPOGRAPHY.brandWordmark.size,
+            letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
+          }}
         >
-          TRIBES
+          {NAV_LABELS.BRAND_WORDMARK}
         </button>
       </div>
 
