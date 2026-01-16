@@ -209,6 +209,10 @@ function AccountMenu() {
   // Show "Return to System Console" when in a workspace (not admin mode)
   const showReturnToConsole = isPlatformAdmin && currentMode !== "admin";
 
+  const isMobileView = useIsMobile();
+  // Mobile: 32px avatar, Desktop: 28px
+  const avatarSize = isMobileView ? 32 : PORTAL_AVATAR.sizeDesktop;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -219,8 +223,10 @@ function AccountMenu() {
             "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
           )}
           style={{
-            height: PORTAL_AVATAR.sizeDesktop,
-            width: PORTAL_AVATAR.sizeDesktop,
+            height: avatarSize,
+            width: avatarSize,
+            minHeight: avatarSize,
+            minWidth: avatarSize,
             backgroundColor: PORTAL_AVATAR.bgColor,
             color: PORTAL_AVATAR.textColor,
           }}
@@ -434,9 +440,89 @@ export function GlobalHeader() {
   // Get context label for header subtitle
   const contextLabel = getContextLabel(currentMode);
 
+  // Mobile: Two-row layout with CSS Grid
+  if (isMobile) {
+    return (
+      <header 
+        className="shrink-0 sticky top-0 z-40"
+        style={{ 
+          backgroundColor: 'var(--tribes-header-bg)',
+          borderBottom: '1px solid var(--tribes-border)',
+        }}
+      >
+        {/* Mobile Grid Layout: 2 rows */}
+        <div 
+          className="grid gap-0"
+          style={{
+            gridTemplateRows: 'auto auto',
+          }}
+        >
+          {/* Row 1: Wordmark + Avatar */}
+          <div 
+            className="flex items-center justify-between px-4"
+            style={{ 
+              minHeight: '48px',
+              paddingTop: '12px',
+              paddingBottom: '8px',
+            }}
+          >
+            {/* Left: Wordmark */}
+            <button
+              onClick={handleLogoClick}
+              className="font-semibold text-white hover:text-white/70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
+              style={{
+                fontSize: '11px',
+                letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
+              }}
+            >
+              {NAV_LABELS.BRAND_WORDMARK}
+            </button>
+
+            {/* Right: Avatar (32px, perfectly circular) */}
+            <AccountMenu />
+          </div>
+
+          {/* Row 2: Context label + Mobile controls */}
+          <div 
+            className="flex items-center justify-between px-4"
+            style={{ 
+              minHeight: '44px',
+              paddingTop: '4px',
+              paddingBottom: '12px',
+            }}
+          >
+            {/* Left: Context label */}
+            <div className="flex items-center gap-2 min-w-0 flex-1 mr-3">
+              {hasActiveWorkspace && contextLabel && (
+                <span 
+                  className="text-[11px] font-medium uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis"
+                  style={{ color: 'var(--tribes-text-muted)' }}
+                >
+                  {contextLabel}
+                </span>
+              )}
+              {!hasActiveWorkspace && (
+                <span 
+                  className="text-[11px] font-medium uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis"
+                  style={{ color: 'var(--tribes-text-muted)' }}
+                >
+                  Select Workspace
+                </span>
+              )}
+            </div>
+
+            {/* Right: Mobile workspace/product selector */}
+            <MobileControls />
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+  // Desktop: Single-row layout
   return (
     <header 
-      className="h-14 border-b px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40"
+      className="h-14 border-b px-6 flex items-center shrink-0 sticky top-0 z-40"
       style={{ 
         backgroundColor: 'var(--tribes-header-bg)',
         borderColor: 'var(--tribes-border)',
@@ -456,7 +542,7 @@ export function GlobalHeader() {
         </button>
         
         {/* Header subtitle - shows workspace context when active */}
-        {hasActiveWorkspace && contextLabel && !isMobile && (
+        {hasActiveWorkspace && contextLabel && (
           <div className="flex items-center gap-1.5">
             <span className="text-white/20">·</span>
             <span 
@@ -471,17 +557,13 @@ export function GlobalHeader() {
 
       {/* Center: Workspace selector - organization-scoped */}
       <div className="flex-1 flex items-center justify-center">
-        {!isMobile ? (
-          <WorkspaceSelector />
-        ) : (
-          <MobileControls />
-        )}
+        <WorkspaceSelector />
       </div>
 
       {/* Right: Module nav + Account */}
       <div className="flex items-center gap-1">
         {/* Product navigation - ONLY visible with active workspace */}
-        {!isMobile && currentMode !== "admin" && (
+        {currentMode !== "admin" && (
           <nav className="flex items-center gap-1 mr-3">
             {/* Tribes Admin (was Client Portal) - organization-scoped */}
             {showPortal && (

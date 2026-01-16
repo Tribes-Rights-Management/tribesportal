@@ -66,6 +66,10 @@ function ConsoleAccountMenu() {
     return "U";
   };
 
+  const isMobileView = useIsMobile();
+  // Mobile: 32px avatar, Desktop: 28px
+  const avatarSize = isMobileView ? 32 : PORTAL_AVATAR.sizeDesktop;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -76,8 +80,10 @@ function ConsoleAccountMenu() {
             "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
           )}
           style={{
-            height: PORTAL_AVATAR.sizeDesktop,
-            width: PORTAL_AVATAR.sizeDesktop,
+            height: avatarSize,
+            width: avatarSize,
+            minHeight: avatarSize,
+            minWidth: avatarSize,
             backgroundColor: PORTAL_AVATAR.bgColor,
             color: PORTAL_AVATAR.textColor,
           }}
@@ -149,10 +155,118 @@ export function SystemConsoleHeader() {
   // Show "Enter Workspace" only if user has accessible workspaces
   const hasWorkspaces = tenantMemberships.length > 0;
 
+  // Mobile: Two-row layout with CSS Grid
+  if (isMobile) {
+    return (
+      <>
+        <header 
+          className="shrink-0 sticky top-0 z-40"
+          style={{ 
+            backgroundColor: 'var(--tribes-header-bg)',
+            borderBottom: '1px solid var(--tribes-border)',
+          }}
+        >
+          {/* Mobile Grid Layout: 2 rows */}
+          <div 
+            className="grid gap-0"
+            style={{
+              gridTemplateRows: 'auto auto',
+            }}
+          >
+            {/* Row 1: Wordmark + Avatar */}
+            <div 
+              className="flex items-center justify-between px-4"
+              style={{ 
+                minHeight: '48px',
+                paddingTop: '12px',
+                paddingBottom: '8px',
+              }}
+            >
+              {/* Left: Wordmark */}
+              <button
+                onClick={handleLogoClick}
+                className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
+                style={{
+                  fontSize: '11px',
+                  letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
+                  color: 'var(--tribes-fg)',
+                }}
+              >
+                {NAV_LABELS.BRAND_WORDMARK}
+              </button>
+
+              {/* Right: Avatar (32px, perfectly circular) */}
+              <ConsoleAccountMenu />
+            </div>
+
+            {/* Row 2: Context label + Primary action */}
+            <div 
+              className="flex items-center justify-between px-4"
+              style={{ 
+                minHeight: '44px',
+                paddingTop: '4px',
+                paddingBottom: '12px',
+              }}
+            >
+              {/* Left: Context label */}
+              <div className="flex items-center gap-2 min-w-0 flex-1 mr-3">
+                <span 
+                  className="text-[11px] font-medium uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis"
+                  style={{ color: 'var(--tribes-text-muted)' }}
+                >
+                  {NAV_LABELS.SYSTEM_CONSOLE}
+                </span>
+                {isExternalAuditor && (
+                  <span 
+                    className="inline-flex items-center gap-1 text-[9px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0"
+                    style={{ 
+                      backgroundColor: 'var(--tribes-surface)',
+                      color: 'var(--tribes-text-muted)'
+                    }}
+                  >
+                    <Eye className="h-2.5 w-2.5" />
+                    Read-only
+                  </span>
+                )}
+              </div>
+
+              {/* Right: Primary action */}
+              {hasWorkspaces && (
+                <button
+                  onClick={() => setWorkspaceModalOpen(true)}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 rounded shrink-0",
+                    "text-[12px] font-medium whitespace-nowrap",
+                    "hover:bg-white/[0.04] transition-colors duration-150",
+                    "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
+                  )}
+                  style={{ 
+                    color: 'var(--tribes-text-secondary)',
+                    height: '36px',
+                  }}
+                >
+                  <span className="overflow-hidden text-ellipsis">{NAV_LABELS.ENTER_WORKSPACE}</span>
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                </button>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Workspace Selector Modal */}
+        <WorkspaceSelectorModal 
+          open={workspaceModalOpen} 
+          onOpenChange={setWorkspaceModalOpen} 
+        />
+      </>
+    );
+  }
+
+  // Desktop: Single-row layout
   return (
     <>
       <header 
-        className="h-14 px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40"
+        className="h-14 px-6 flex items-center shrink-0 sticky top-0 z-40"
         style={{ 
           backgroundColor: 'var(--tribes-header-bg)',
           borderBottom: '1px solid var(--tribes-border)',
@@ -164,7 +278,7 @@ export function SystemConsoleHeader() {
             onClick={handleLogoClick}
             className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
             style={{
-              fontSize: isMobile ? '11px' : PORTAL_TYPOGRAPHY.brandWordmark.size,
+              fontSize: PORTAL_TYPOGRAPHY.brandWordmark.size,
               letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
               color: 'var(--tribes-fg)',
             }}
@@ -176,16 +290,16 @@ export function SystemConsoleHeader() {
         {/* Center: System Console label + read-only indicator for auditors */}
         <div className="flex-1 flex items-center justify-center gap-2">
           <span 
-            className="text-[11px] md:text-[13px] font-medium uppercase tracking-wider"
+            className="text-[13px] font-medium uppercase tracking-wider"
             style={{ color: 'var(--tribes-text-muted)' }}
           >
             {NAV_LABELS.SYSTEM_CONSOLE}
           </span>
           {isExternalAuditor && (
             <span 
-              className="hidden md:inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded"
+              className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded"
               style={{ 
-                backgroundColor: 'var(--tribes-border-subtle)',
+                backgroundColor: 'var(--tribes-surface)',
                 color: 'var(--tribes-text-muted)'
               }}
             >
@@ -197,7 +311,6 @@ export function SystemConsoleHeader() {
 
         {/* Right: Enter Workspace button + Account */}
         <div className="flex items-center gap-3">
-          {/* Enter Workspace - secondary action, not primary CTA */}
           {hasWorkspaces && (
             <button
               onClick={() => setWorkspaceModalOpen(true)}
@@ -205,9 +318,7 @@ export function SystemConsoleHeader() {
                 "flex items-center gap-1.5 px-3 py-1.5 rounded",
                 "text-[12px] font-medium",
                 "hover:bg-white/[0.04] transition-colors duration-150",
-                "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30",
-                // Mobile: full-width secondary action
-                isMobile && "flex-1 justify-center py-2"
+                "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
               )}
               style={{ color: 'var(--tribes-text-secondary)' }}
             >
@@ -219,25 +330,6 @@ export function SystemConsoleHeader() {
           <ConsoleAccountMenu />
         </div>
       </header>
-
-      {/* Mobile: Read-only notice bar for external auditors */}
-      {isMobile && isExternalAuditor && (
-        <div 
-          className="px-4 py-2 text-center"
-          style={{ 
-            backgroundColor: 'var(--tribes-surface)',
-            borderBottom: '1px solid var(--tribes-border)'
-          }}
-        >
-          <span 
-            className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider"
-            style={{ color: 'var(--tribes-fg-muted)' }}
-          >
-            <Eye className="h-3 w-3" />
-            System Console: Read-only access
-          </span>
-        </div>
-      )}
 
       {/* Workspace Selector Modal */}
       <WorkspaceSelectorModal 

@@ -433,6 +433,86 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MOBILE TEXT SAFETY + ANTI-CLIPPING RULES (LOCKED)
+
+   ENFORCED:
+   - No fixed heights on text containers that could clip content
+   - Proper line-height for all text elements (titles 1.2-1.3, body 1.4-1.6)
+   - Tap targets >= 44px for interactive elements
+   - No unintentional overflow-hidden that clips text
+
+   RULES:
+   - Titles may truncate to 1 line with ellipsis via line-clamp-1
+   - Descriptions may wrap OR use line-clamp-2 with drill-in affordance
+   - Never clip text without explicit truncation intent
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Mobile-safe typography defaults */
+@layer base {
+  /* Ensure readable line heights globally */
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  p, span, label, li, td, th {
+    line-height: 1.5;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Mobile tap target safety - minimum 44px for interactive elements */
+  @media (max-width: 640px) {
+    button,
+    [role="button"],
+    a[href],
+    input,
+    select,
+    textarea {
+      min-height: 44px;
+    }
+    
+    /* Exception: inline links and small icon buttons */
+    a.inline-link,
+    button.icon-button-sm,
+    [data-compact-button] {
+      min-height: auto;
+    }
+  }
+
+  /* Prevent accidental text clipping */
+  .card,
+  .panel,
+  [role="listitem"],
+  [role="row"] {
+    /* Use min-height instead of fixed height to allow text to expand */
+    height: auto;
+  }
+
+  /* Intentional truncation classes */
+  .truncate-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
 @layer components {
   /* Status chips - outline only, neutral */
   .status-chip {

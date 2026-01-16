@@ -43,22 +43,23 @@ export function WorkspaceContextBar() {
   return (
     <div 
       className={cn(
-        "px-4 md:px-6 py-2 border-b",
-        "flex items-center justify-between gap-4"
+        "px-4 md:px-6 py-2.5 border-b",
+        "flex items-center justify-between gap-3"
       )}
       style={{
         backgroundColor: 'var(--tribes-surface)',
         borderColor: 'var(--tribes-border)',
+        minHeight: '44px', // Mobile tap target
       }}
     >
       {/* Context confirmation */}
       <p 
-        className="text-[12px]"
+        className="text-[12px] leading-[1.4] min-w-0 flex-1"
         style={{ color: 'var(--tribes-fg-secondary)' }}
       >
         <span className="hidden sm:inline">You are operating inside the </span>
         <span 
-          className="font-medium"
+          className="font-medium whitespace-nowrap"
           style={{ color: 'var(--tribes-fg)' }}
         >
           {contextLabel}
@@ -69,7 +70,7 @@ export function WorkspaceContextBar() {
       
       {/* Workspace name - subtle, desktop only */}
       <span 
-        className="text-[11px] font-medium uppercase tracking-wider truncate max-w-[150px] hidden md:block"
+        className="text-[11px] font-medium uppercase tracking-wider truncate max-w-[150px] hidden md:block shrink-0"
         style={{ color: 'var(--tribes-fg-muted)' }}
       >
         {activeTenant.tenant_name}
