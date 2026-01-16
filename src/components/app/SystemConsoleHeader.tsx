@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useRoleAccess } from "@/hooks/useRoleAccess";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,23 +7,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, Settings, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { NAV_LABELS, ICON_SIZE, ICON_STROKE, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } from "@/styles/tokens";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
- * SYSTEM CONSOLE HEADER — COMPANY-LEVEL GOVERNANCE
+ * SYSTEM CONSOLE HEADER — COMPANY-LEVEL GOVERNANCE (CANONICAL)
  * 
+ * ═══════════════════════════════════════════════════════════════════════════
  * ARCHITECTURE RULES (LOCKED):
+ * ═══════════════════════════════════════════════════════════════════════════
+ * 
  * - System Console ≠ Organization Workspace
  * - NO workspace selector (System Console is company-scoped)
- * - NO product navigation (Licensing, Tribes Admin)
- * - Access restricted to executive roles (platform_admin) only
+ * - NO product navigation (Licensing, Tribes Admin, Tribes Team)
+ * - Access restricted to:
+ *   • platform_admin (full access)
+ *   • external_auditor (read-only access)
  * - Scoped to: governance, audit oversight, compliance, security
+ * - Mobile: read-only inspection only, no primary actions
  * 
  * This header is for company-level governance operations only.
  * Organization workspaces use GlobalHeader instead.
+ * ═══════════════════════════════════════════════════════════════════════════
  */
 
 // Account menu - minimal, governance-focused
@@ -115,6 +124,8 @@ function ConsoleAccountMenu() {
 
 export function SystemConsoleHeader() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const { isExternalAuditor } = useRoleAccess();
 
   const handleLogoClick = () => {
     navigate("/admin");
@@ -131,7 +142,7 @@ export function SystemConsoleHeader() {
           onClick={handleLogoClick}
           className="font-semibold text-white hover:text-white/70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
           style={{
-            fontSize: PORTAL_TYPOGRAPHY.brandWordmark.size,
+            fontSize: isMobile ? '11px' : PORTAL_TYPOGRAPHY.brandWordmark.size,
             letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
           }}
         >
@@ -139,11 +150,25 @@ export function SystemConsoleHeader() {
         </button>
       </div>
 
-      {/* Center: System Console label - NO workspace selector */}
-      <div className="flex-1 flex items-center justify-center">
-        <span className="text-[13px] font-medium text-white/40 uppercase tracking-wider">
+      {/* Center: System Console label + read-only indicator for auditors */}
+      <div className="flex-1 flex items-center justify-center gap-2">
+        <span 
+          className="text-[11px] md:text-[13px] font-medium text-white/40 uppercase tracking-wider"
+        >
           {NAV_LABELS.SYSTEM_CONSOLE}
         </span>
+        {isExternalAuditor && (
+          <span 
+            className="hidden md:inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded"
+            style={{ 
+              backgroundColor: 'rgba(255, 255, 255, 0.06)',
+              color: 'var(--platform-text-muted)'
+            }}
+          >
+            <Eye className="h-3 w-3" />
+            Read-only
+          </span>
+        )}
       </div>
 
       {/* Right: Account only - NO product navigation */}

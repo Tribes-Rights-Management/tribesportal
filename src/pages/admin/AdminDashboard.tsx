@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
-import { EMPTY_STATES, WORKSPACE_LANDING } from "@/constants/institutional-copy";
+import { ChevronRight, Monitor } from "lucide-react";
+import { EMPTY_STATES, WORKSPACE_LANDING, MOBILE_COPY } from "@/constants/institutional-copy";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
  * SYSTEM CONSOLE DASHBOARD — COMPANY-LEVEL GOVERNANCE (CANONICAL)
@@ -35,26 +36,42 @@ import { EMPTY_STATES, WORKSPACE_LANDING } from "@/constants/institutional-copy"
  * ═══════════════════════════════════════════════════════════════════════════
  */
 export default function AdminDashboard() {
+  const isMobile = useIsMobile();
+
   return (
     <div 
-      className="min-h-full py-10 px-6"
+      className="min-h-full py-10 px-4 md:px-6"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <div className="max-w-[960px] mx-auto">
         {/* Page Header */}
         <header className="mb-8">
           <h1 
-            className="text-[28px] font-semibold tracking-[-0.02em]"
+            className="text-[24px] md:text-[28px] font-semibold tracking-[-0.02em]"
             style={{ color: 'var(--platform-text)' }}
           >
             {WORKSPACE_LANDING.SYSTEM_CONSOLE.title}
           </h1>
           <p 
-            className="text-[15px] mt-1.5 leading-relaxed"
+            className="text-[14px] md:text-[15px] mt-1.5 leading-relaxed"
             style={{ color: 'var(--platform-text-secondary)' }}
           >
             {WORKSPACE_LANDING.SYSTEM_CONSOLE.description}
           </p>
+          {/* Mobile: Read-only governance notice */}
+          {isMobile && (
+            <div 
+              className="mt-4 flex items-center gap-2 text-[12px] px-3 py-2 rounded"
+              style={{ 
+                backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                color: 'var(--platform-text-muted)',
+                border: '1px solid var(--platform-border)'
+              }}
+            >
+              <Monitor className="h-3.5 w-3.5 shrink-0" />
+              <span>{MOBILE_COPY.SYSTEM_CONSOLE_READ_ONLY}</span>
+            </div>
+          )}
         </header>
 
         {/* Pending Approvals Section */}

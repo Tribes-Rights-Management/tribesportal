@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import { SystemConsoleHeader } from "@/components/app/SystemConsoleHeader";
 
 /**
- * SYSTEM CONSOLE LAYOUT — COMPANY-LEVEL GOVERNANCE
+ * SYSTEM CONSOLE LAYOUT — COMPANY-LEVEL GOVERNANCE (CANONICAL)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
  * MASTER ENFORCEMENT DIRECTIVE — LOCKED ARCHITECTURE
@@ -10,15 +10,24 @@ import { SystemConsoleHeader } from "@/components/app/SystemConsoleHeader";
  * 
  * System Console is NOT a workspace. It is company-level governance.
  * 
- * ARCHITECTURE RULES (IMMUTABLE):
+ * ─────────────────────────────────────────────────────────────────────────
+ * ACCESS CONTROL
+ * ─────────────────────────────────────────────────────────────────────────
+ * - platform_admin: Full access to all governance surfaces
+ * - external_auditor: Read-only access for inspection
+ * 
+ * ─────────────────────────────────────────────────────────────────────────
+ * ARCHITECTURE RULES (IMMUTABLE)
+ * ─────────────────────────────────────────────────────────────────────────
  * - System Console ≠ Organization Workspace
  * - NO workspace selector (this is company-scoped, not org-scoped)
- * - NO product navigation (Licensing, Tribes Admin are org-scoped)
- * - Access restricted to executive roles (platform_owner) only
+ * - NO product navigation (Licensing, Tribes Admin, Tribes Team)
  * - External auditors have read-only access
  * - Scoped to: governance, audit oversight, compliance, security
  * 
- * WHAT SYSTEM CONSOLE MAY CONTAIN:
+ * ─────────────────────────────────────────────────────────────────────────
+ * WHAT SYSTEM CONSOLE MAY CONTAIN
+ * ─────────────────────────────────────────────────────────────────────────
  * - Governance dashboards
  * - Security posture
  * - Audit logs
@@ -26,13 +35,27 @@ import { SystemConsoleHeader } from "@/components/app/SystemConsoleHeader";
  * - Cross-workspace reporting
  * - Correlation views
  * 
- * WHAT SYSTEM CONSOLE MUST NEVER CONTAIN:
+ * ─────────────────────────────────────────────────────────────────────────
+ * WHAT SYSTEM CONSOLE MUST NEVER CONTAIN
+ * ─────────────────────────────────────────────────────────────────────────
  * - Licensing
  * - Tribes Admin
+ * - Tribes Team
  * - Operational queues
  * - Catalogs
  * - Requests
  * - Client or licensee actions
+ * - Any organization-scoped views
+ * - Any workspace-specific data
+ * - Any operational workflows or actions
+ * 
+ * ─────────────────────────────────────────────────────────────────────────
+ * MOBILE BEHAVIOR
+ * ─────────────────────────────────────────────────────────────────────────
+ * - Read-only governance, audit, disclosures
+ * - No workspace switcher
+ * - No operational tools
+ * - No primary actions permitted on mobile
  * 
  * UI FEEL: Sparse, supervisory, non-operational
  * ═══════════════════════════════════════════════════════════════════════════

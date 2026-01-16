@@ -44,6 +44,10 @@ export default function RoleProtectedRoute({ children, allowedRoles }: RoleProte
   if (allowedRoles.includes("admin") && isAdmin) {
     hasAccess = true;
   }
+  if (allowedRoles.includes("admin") && isAuditor) {
+    // External auditors have read-only access to System Console
+    hasAccess = true;
+  }
   if (allowedRoles.includes("auditor") && (isAuditor || isAdmin)) {
     // Platform admins can also access auditor routes
     hasAccess = true;
