@@ -1,249 +1,314 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, Monitor } from "lucide-react";
-import { EMPTY_STATES, WORKSPACE_LANDING, MOBILE_COPY } from "@/constants/institutional-copy";
+import { MOBILE_COPY } from "@/constants/institutional-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
- * SYSTEM CONSOLE DASHBOARD — COMPANY-LEVEL GOVERNANCE (CANONICAL)
+ * SYSTEM CONSOLE LANDING — EXECUTIVE-GRADE GOVERNANCE (CANONICAL)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
- * MASTER ENFORCEMENT DIRECTIVE — LOCKED ARCHITECTURE
+ * PURPOSE: True executive control plane. Not a dashboard. Not operational.
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * System Console is NOT a workspace. It is company-level governance.
+ * WHAT THIS ANSWERS:
+ * - "Is the system healthy?" → Governance Overview
+ * - "Can this system be trusted under scrutiny?" → Audit & Activity
+ * - "Can we respond to a formal request immediately?" → Regulatory
+ * - "Is access controlled and defensible?" → Security & Integrity
  * 
- * PURPOSE:
- * - Governance dashboards
- * - Security posture
- * - Audit logs
- * - Regulatory disclosures
- * - Cross-workspace reporting
- * - Correlation views
+ * TONE RULES:
+ * - Declarative, not helpful
+ * - Sparse, not dense
+ * - No encouragement, no onboarding
+ * - Empty states: "No issues detected." — that's it.
  * 
- * WHAT SYSTEM CONSOLE MUST NEVER CONTAIN:
- * - Licensing
- * - Tribes Admin
- * - Operational queues
- * - Catalogs
- * - Requests
- * - Client or licensee actions
+ * VISUAL RULES:
+ * - Fewer elements than any workspace
+ * - More whitespace than operational pages
+ * - Muted palette, no accent colors for actions
+ * - No primary CTAs on landing
+ * - All navigation is secondary
  * 
- * UI RULES:
- * - Dark canvas, sparse, supervisory
- * - No workspace selector
- * - No product navigation
- * - Accessed only via user/profile menu
+ * MOBILE RULES:
+ * - Read-only inspection only
+ * - Vertical stacking
+ * - No buttons that imply action
+ * - Feels like inspection, not control
  * ═══════════════════════════════════════════════════════════════════════════
  */
+
+interface GovernanceMetrics {
+  activeWorkspaces: number;
+  activeUsers: number;
+  pendingAccessRequests: number;
+  openExceptions: number;
+}
+
 export default function AdminDashboard() {
   const isMobile = useIsMobile();
+  const [metrics, setMetrics] = useState<GovernanceMetrics>({
+    activeWorkspaces: 0,
+    activeUsers: 0,
+    pendingAccessRequests: 0,
+    openExceptions: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchMetrics() {
+      setLoading(true);
+      
+      const [tenantsRes, usersRes, accessReqRes] = await Promise.all([
+        supabase.from('tenants').select('id', { count: 'exact', head: true }),
+        supabase.from('user_profiles').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+        supabase.from('access_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      ]);
+
+      setMetrics({
+        activeWorkspaces: tenantsRes.count ?? 0,
+        activeUsers: usersRes.count ?? 0,
+        pendingAccessRequests: accessReqRes.count ?? 0,
+        openExceptions: 0, // Future: count from alerts/exceptions table
+      });
+      
+      setLoading(false);
+    }
+
+    fetchMetrics();
+  }, []);
 
   return (
     <div 
-      className="min-h-full py-10 px-4 md:px-6"
+      className="min-h-full py-12 md:py-16 px-4 md:px-6"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
-      <div className="max-w-[960px] mx-auto">
-        {/* Page Header */}
-        <header className="mb-8">
+      <div className="max-w-[800px] mx-auto">
+        {/* ─────────────────────────────────────────────────────────────────
+            HEADER — Sparse, authoritative
+        ───────────────────────────────────────────────────────────────── */}
+        <header className="mb-12 md:mb-16">
           <h1 
-            className="text-[24px] md:text-[28px] font-semibold tracking-[-0.02em]"
+            className="text-[22px] md:text-[26px] font-medium tracking-[-0.01em]"
             style={{ color: 'var(--platform-text)' }}
           >
-            {WORKSPACE_LANDING.SYSTEM_CONSOLE.title}
+            System Console
           </h1>
           <p 
-            className="text-[14px] md:text-[15px] mt-1.5 leading-relaxed"
-            style={{ color: 'var(--platform-text-secondary)' }}
+            className="text-[13px] md:text-[14px] mt-2"
+            style={{ color: 'var(--platform-text-muted)' }}
           >
-            {WORKSPACE_LANDING.SYSTEM_CONSOLE.description}
+            Company governance and oversight
           </p>
-          {/* Mobile: Read-only governance notice */}
+          
+          {/* Mobile: Read-only notice */}
           {isMobile && (
             <div 
-              className="mt-4 flex items-center gap-2 text-[12px] px-3 py-2 rounded"
+              className="mt-6 flex items-center gap-2.5 text-[11px] px-3 py-2.5 rounded"
               style={{ 
-                backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                backgroundColor: 'rgba(255, 255, 255, 0.02)',
                 color: 'var(--platform-text-muted)',
-                border: '1px solid var(--platform-border)'
+                border: '1px solid rgba(255, 255, 255, 0.06)'
               }}
             >
-              <Monitor className="h-3.5 w-3.5 shrink-0" />
+              <Monitor className="h-3.5 w-3.5 shrink-0 opacity-60" />
               <span>{MOBILE_COPY.SYSTEM_CONSOLE_READ_ONLY}</span>
             </div>
           )}
         </header>
 
-        {/* Pending Approvals Section */}
-        <section className="mb-6">
-          <div 
-            className="rounded"
-            style={{ 
-              backgroundColor: 'var(--platform-surface)',
-              border: '1px solid var(--platform-border)'
-            }}
-          >
-            <div 
-              className="px-5 py-3"
-              style={{ borderBottom: '1px solid var(--platform-border)' }}
-            >
-              <p 
-                className="text-[10px] font-medium uppercase tracking-[0.08em]"
-                style={{ color: 'var(--platform-text-muted)' }}
-              >
-                Pending Approvals
-              </p>
-            </div>
-            <div className="px-5 py-8 text-center">
-              <p 
-                className="text-[14px] font-medium"
-                style={{ color: 'var(--platform-text-secondary)' }}
-              >
-                {EMPTY_STATES.PENDING_APPROVALS.title}
-              </p>
-              <p 
-                className="text-[13px] mt-1"
-                style={{ color: 'var(--platform-text-muted)' }}
-              >
-                {EMPTY_STATES.PENDING_APPROVALS.description}
-              </p>
-            </div>
-          </div>
-        </section>
+        {/* ─────────────────────────────────────────────────────────────────
+            SECTION 1: GOVERNANCE OVERVIEW
+            Purpose: "Is the system healthy?" at a glance
+        ───────────────────────────────────────────────────────────────── */}
+        <Section label="Governance Overview">
+          <MetricRow
+            to="/admin/tenants"
+            label="Active workspaces"
+            value={loading ? "—" : metrics.activeWorkspaces.toString()}
+          />
+          <MetricRow
+            to="/admin/users"
+            label="Active users"
+            value={loading ? "—" : metrics.activeUsers.toString()}
+          />
+          <MetricRow
+            to="/admin/approvals"
+            label="Pending access requests"
+            value={loading ? "—" : metrics.pendingAccessRequests.toString()}
+            highlight={metrics.pendingAccessRequests > 0}
+          />
+          <MetricRow
+            to="/admin/security"
+            label="Open exceptions"
+            value={loading ? "—" : metrics.openExceptions === 0 ? "None" : metrics.openExceptions.toString()}
+          />
+        </Section>
 
-        {/* System Alerts Section */}
-        <section className="mb-6">
-          <div 
-            className="rounded"
-            style={{ 
-              backgroundColor: 'var(--platform-surface)',
-              border: '1px solid var(--platform-border)'
-            }}
-          >
-            <div 
-              className="px-5 py-3"
-              style={{ borderBottom: '1px solid var(--platform-border)' }}
-            >
-              <p 
-                className="text-[10px] font-medium uppercase tracking-[0.08em]"
-                style={{ color: 'var(--platform-text-muted)' }}
-              >
-                System Alerts
-              </p>
-            </div>
-            <div className="px-5 py-8 text-center">
-              <p 
-                className="text-[14px] font-medium"
-                style={{ color: 'var(--platform-text-secondary)' }}
-              >
-                {EMPTY_STATES.SYSTEM_ALERTS.title}
-              </p>
-              <p 
-                className="text-[13px] mt-1"
-                style={{ color: 'var(--platform-text-muted)' }}
-              >
-                {EMPTY_STATES.SYSTEM_ALERTS.description}
-              </p>
-            </div>
-          </div>
-        </section>
+        {/* ─────────────────────────────────────────────────────────────────
+            SECTION 2: AUDIT & ACTIVITY
+            Purpose: "Can this system be trusted under scrutiny?"
+        ───────────────────────────────────────────────────────────────── */}
+        <Section label="Audit & Activity">
+          <NavRow
+            to="/admin/approvals"
+            label="Activity Log"
+            description="Chronological record of system events"
+          />
+          <NavRow
+            to="/admin/chain"
+            label="Correlation Viewer"
+            description="Cross-workspace request tracing"
+          />
+          <NavRow
+            to="/admin/approvals"
+            label="Approval History"
+            description="Access grants and permission changes"
+          />
+        </Section>
 
-        {/* Navigation Sections — GOVERNANCE ONLY */}
-        <div 
-          className="rounded"
-          style={{ 
-            backgroundColor: 'var(--platform-surface)',
-            border: '1px solid var(--platform-border)'
-          }}
+        {/* ─────────────────────────────────────────────────────────────────
+            SECTION 3: REGULATORY & DISCLOSURES
+            Purpose: "Can we respond to a formal request immediately?"
+        ───────────────────────────────────────────────────────────────── */}
+        <Section label="Regulatory & Disclosures">
+          <NavRow
+            to="/admin/disclosures"
+            label="Disclosure Exports"
+            description="Generate regulatory disclosure packs"
+          />
+          <NavRow
+            to="/admin/disclosures"
+            label="Export History"
+            description="Previously generated disclosure records"
+          />
+        </Section>
+
+        {/* ─────────────────────────────────────────────────────────────────
+            SECTION 4: SECURITY & INTEGRITY
+            Purpose: "Is access controlled and defensible?"
+        ───────────────────────────────────────────────────────────────── */}
+        <Section label="Security & Integrity">
+          <NavRow
+            to="/admin/users"
+            label="Access Roles"
+            description="Member directory and permissions"
+          />
+          <NavRow
+            to="/admin/security"
+            label="Session Integrity"
+            description="Authentication and session configuration"
+          />
+          <NavRow
+            to="/admin/rls-audit"
+            label="Security Events"
+            description="RLS verification and access controls"
+          />
+        </Section>
+
+        {/* ─────────────────────────────────────────────────────────────────
+            FOOTER — Minimal, institutional
+        ───────────────────────────────────────────────────────────────── */}
+        <footer 
+          className="mt-16 pt-8 text-center"
+          style={{ borderTop: '1px solid rgba(255, 255, 255, 0.04)' }}
         >
-          {/* Governance */}
-          <NavSection title="Governance">
-            <NavRow
-              to="/admin/disclosures"
-              label="Regulatory Disclosures"
-              description="Disclosure registry and export history"
-            />
-            <NavRow
-              to="/admin/chain"
-              label="Correlation Chain"
-              description="Cross-workspace activity tracing"
-            />
-          </NavSection>
-
-          {/* Security & Compliance */}
-          <NavSection title="Security & Compliance" hasBorder>
-            <NavRow
-              to="/admin/rls-audit"
-              label="RLS Verification"
-              description="Row-level security coverage audit"
-            />
-            <NavRow
-              to="/admin/security"
-              label="Authentication & Access"
-              description="Auth configuration and session integrity"
-            />
-          </NavSection>
-
-          {/* Audit */}
-          <NavSection title="Audit Oversight" hasBorder>
-            <NavRow
-              to="/admin/approvals"
-              label="Access Control Log"
-              description="Approval history and access grants"
-            />
-            <NavRow
-              to="/admin/users"
-              label="Member Directory"
-              description="Account status and permissions"
-            />
-          </NavSection>
-
-          {/* Organizations (read-only view) */}
-          <NavSection title="Cross-Workspace" hasBorder>
-            <NavRow
-              to="/admin/tenants"
-              label="Workspaces Overview"
-              description="View registered workspaces (read-only)"
-            />
-          </NavSection>
-        </div>
+          <p 
+            className="text-[11px] uppercase tracking-[0.08em]"
+            style={{ color: 'var(--platform-text-muted)', opacity: 0.5 }}
+          >
+            Access and activity are logged
+          </p>
+        </footer>
       </div>
     </div>
   );
 }
 
-/** 
- * Navigation Section — small caps header with grouped rows
+/**
+ * SECTION — Sparse grouping with small caps label
  */
-function NavSection({ 
-  title, 
-  children,
-  hasBorder = false
+function Section({ 
+  label, 
+  children 
 }: { 
-  title: string; 
+  label: string; 
   children: React.ReactNode;
-  hasBorder?: boolean;
 }) {
   return (
-    <div 
-      className="px-5 py-4"
-      style={hasBorder ? { borderTop: '1px solid var(--platform-border)' } : undefined}
-    >
-      <p 
-        className="text-[10px] font-medium uppercase tracking-[0.08em] mb-3"
-        style={{ color: 'var(--platform-text-muted)' }}
+    <section className="mb-10 md:mb-12">
+      <h2 
+        className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.1em] mb-4 md:mb-5"
+        style={{ color: 'var(--platform-text-muted)', opacity: 0.7 }}
       >
-        {title}
-      </p>
-      <div className="space-y-1">
+        {label}
+      </h2>
+      <div 
+        className="rounded-lg overflow-hidden"
+        style={{ 
+          backgroundColor: 'rgba(255, 255, 255, 0.02)',
+          border: '1px solid rgba(255, 255, 255, 0.06)'
+        }}
+      >
         {children}
       </div>
-    </div>
+    </section>
   );
 }
 
-/** 
- * Navigation Row — full-width click target, no icons
+/**
+ * METRIC ROW — Read-only count with subtle link
+ * No action affordance. Link goes to detail view.
+ */
+function MetricRow({ 
+  to, 
+  label, 
+  value,
+  highlight = false
+}: { 
+  to: string; 
+  label: string; 
+  value: string;
+  highlight?: boolean;
+}) {
+  return (
+    <Link 
+      to={to} 
+      className="flex items-center justify-between px-4 md:px-5 py-3.5 md:py-4 transition-colors duration-150 group"
+      style={{ 
+        borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)'}
+      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+    >
+      <span 
+        className="text-[13px] md:text-[14px]"
+        style={{ color: 'var(--platform-text-secondary)' }}
+      >
+        {label}
+      </span>
+      <div className="flex items-center gap-2">
+        <span 
+          className="text-[13px] md:text-[14px] font-medium tabular-nums"
+          style={{ 
+            color: highlight ? 'rgba(255, 255, 255, 0.9)' : 'var(--platform-text-muted)'
+          }}
+        >
+          {value}
+        </span>
+        <ChevronRight 
+          className="h-3.5 w-3.5 opacity-30 group-hover:opacity-50 transition-opacity"
+          style={{ color: 'var(--platform-text-muted)' }}
+        />
+      </div>
+    </Link>
+  );
+}
+
+/**
+ * NAV ROW — Secondary navigation link
+ * No primary CTA styling. Subtle, intentional.
  */
 function NavRow({ 
   to, 
@@ -257,27 +322,29 @@ function NavRow({
   return (
     <Link 
       to={to} 
-      className="flex items-center justify-between py-2.5 -mx-2 px-2 rounded transition-colors duration-[180ms] group"
-      style={{ backgroundColor: 'transparent' }}
-      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'}
+      className="flex items-center justify-between px-4 md:px-5 py-3.5 md:py-4 transition-colors duration-150 group"
+      style={{ 
+        borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)'}
       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
     >
-      <div>
+      <div className="min-w-0 flex-1">
         <p 
-          className="text-[15px] font-medium"
+          className="text-[13px] md:text-[14px]"
           style={{ color: 'var(--platform-text)' }}
         >
           {label}
         </p>
         <p 
-          className="text-[13px] mt-0.5"
-          style={{ color: 'var(--platform-text-muted)' }}
+          className="text-[11px] md:text-[12px] mt-0.5 truncate"
+          style={{ color: 'var(--platform-text-muted)', opacity: 0.7 }}
         >
           {description}
         </p>
       </div>
       <ChevronRight 
-        className="h-4 w-4 shrink-0 transition-colors duration-[180ms]"
+        className="h-3.5 w-3.5 shrink-0 ml-3 opacity-30 group-hover:opacity-50 transition-opacity"
         style={{ color: 'var(--platform-text-muted)' }}
       />
     </Link>
