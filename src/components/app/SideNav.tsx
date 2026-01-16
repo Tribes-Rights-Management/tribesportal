@@ -3,14 +3,15 @@ import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
 
 /**
- * INSTITUTIONAL SIDE NAVIGATION
+ * INSTITUTIONAL SIDE NAVIGATION (CANONICAL)
  * 
  * Design Rules:
+ * - Left-aligned, no icons unless strictly necessary
+ * - Active state is typographic (weight/opacity), not color-heavy
+ * - No pills, chips, or floating nav
  * - Flat hierarchy, clear functional groupings
- * - No novelty navigation patterns
  * - No shadows or elevation
- * - No animated transitions
- * - Navigation is functional, not expressive
+ * - No animated transitions beyond essential feedback
  */
 
 interface NavItem {
@@ -27,11 +28,7 @@ interface SideNavProps {
 
 /**
  * Side navigation link - institutional styling
- * 
- * Visual Treatment:
- * - Minimal contrast
- * - No shadows or elevation
- * - No animated transitions beyond essential feedback
+ * Active state: weight/opacity, not background color blocks
  */
 function SideNavLink({ 
   to, 
@@ -46,17 +43,17 @@ function SideNavLink({
       className={({ isActive }) =>
         cn(
           // Base: flat, functional, minimal
-          "flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-md",
+          "flex items-center gap-2.5 px-3 py-2 text-[13px] rounded",
           // Transition: only essential feedback (180ms institutional spec)
           "transition-colors duration-[180ms]",
-          // Active: subtle highlight, no elevation
+          // Active: typographic emphasis, minimal background
           isActive
-            ? "bg-[#ECECEC] text-[#111]"
-            : "text-[#6B6B6B] hover:text-[#111] hover:bg-[#F5F5F5]"
+            ? "font-medium text-[#111] bg-black/[0.04]"
+            : "text-[#6B6B6B] hover:text-[#111] hover:bg-black/[0.02]"
         )
       }
     >
-      <Icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+      <Icon className="h-4 w-4 shrink-0 opacity-60" strokeWidth={1.5} />
       <span className="truncate">{label}</span>
     </NavLink>
   );
@@ -65,15 +62,11 @@ function SideNavLink({
 export function SideNav({ items, settingsItems }: SideNavProps) {
   return (
     <nav 
-      className={cn(
-        // Flat, no shadows, no elevation
-        "w-52 shrink-0 border-r border-[#E5E5E5] bg-white flex flex-col",
-        // No animated transitions
-      )}
+      className="w-48 shrink-0 border-r border-[#E8E8E8] bg-[#FAFAFA] flex flex-col"
     >
       {/* Main navigation - functional grouping */}
-      <div className="flex-1 py-4">
-        <div className="px-3 space-y-0.5">
+      <div className="flex-1 py-3">
+        <div className="px-2 space-y-0.5">
           {items.map((item) => (
             <SideNavLink key={item.to} {...item} />
           ))}
@@ -82,8 +75,8 @@ export function SideNav({ items, settingsItems }: SideNavProps) {
       
       {/* Settings at bottom - separated by minimal divider */}
       {settingsItems && settingsItems.length > 0 && (
-        <div className="border-t border-[#E5E5E5] py-3">
-          <div className="px-3 space-y-0.5">
+        <div className="border-t border-[#E8E8E8] py-2">
+          <div className="px-2 space-y-0.5">
             {settingsItems.map((item) => (
               <SideNavLink key={item.to} {...item} />
             ))}
