@@ -1,13 +1,13 @@
 import React from "react";
 
 /**
- * PrimaryButton - Institutional command button
+ * PrimaryButton - Institutional command button (Dark Theme)
  * 
  * DESIGN STANDARD (AUTHORITATIVE):
- * - Background: solid black (enabled), muted (disabled)
- * - Text: white, perfectly centered
- * - Height: slightly taller than default (48px)
- * - Radius: moderate (8px), NOT pill
+ * - Background: light surface on dark (#E8E8E6 enabled), muted (#3A3A3C disabled)
+ * - Text: dark (#111 enabled), muted (#6B6B6B disabled)
+ * - Height: 48px
+ * - Radius: 8px - institutional, NOT pill
  * - Padding: generous horizontal
  * - NO gradient, NO glow, NO animation
  * 
@@ -36,9 +36,10 @@ export function PrimaryButton({
         "px-8",
         "text-[15px] font-medium tracking-[-0.01em]",
         isDisabled 
-          ? "bg-[#D4D4D4] text-[#8A8A8A] cursor-not-allowed" 
-          : "bg-[#111] text-white",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111]/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF8]",
+          ? "bg-[#3A3A3C] text-[#6B6B6B] cursor-not-allowed" 
+          : "bg-[#E8E8E6] text-[#111] hover:bg-[#DCDCDA] active:bg-[#D0D0CE]",
+        "transition-colors duration-100",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8E8E6]/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1C1C1F]",
         className,
       ].join(" ")}
     >
