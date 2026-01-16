@@ -1,15 +1,16 @@
 import React from "react";
 
 /**
- * PrimaryButton - Bulletproof premium button
+ * PrimaryButton - Institutional authority button
  * 
- * LOCKED SPECS:
- * - Height: 44px (h-11)
- * - Radius: 12px
- * - Background: #111 (near-black)
- * - Label: ALWAYS centered via flex + justify-center
- * - Padding: px-5 minimum (prevents edge-touching)
- * - Focus: subtle ring-black/20
+ * LOCKED SPECS (NON-NEGOTIABLE):
+ * - Height: 44-48px
+ * - Radius: 10-12px (NOT pill-like)
+ * - Disabled: muted gray, clearly inactive
+ * - Enabled: solid black, white text
+ * - NO gradient, NO glow, NO animation
+ * - Text: perfectly centered, generous padding
+ * - Focus: subtle, not decorative
  */
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;
@@ -22,21 +23,22 @@ export function PrimaryButton({
   disabled,
   ...rest 
 }: Props) {
+  const isDisabled = disabled || loading;
+  
   return (
     <button
       {...rest}
-      disabled={disabled || loading}
+      disabled={isDisabled}
       className={[
-        "w-full h-11 rounded-[12px]",
-        "bg-[#111] text-white",
+        "w-full h-[46px] rounded-[10px]",
         "inline-flex items-center justify-center",
-        "px-5",
+        "px-6",
         "text-[15px] font-medium",
-        "shadow-[0_1px_0_rgba(0,0,0,0.25)]",
-        "hover:bg-black active:bg-[#0B0B0B]",
-        "disabled:opacity-60 disabled:cursor-not-allowed",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F7]",
-        "transition-colors duration-150",
+        // Institutional states: muted gray disabled, solid black enabled
+        isDisabled 
+          ? "bg-[#E5E5E5] text-[#9CA3AF] cursor-not-allowed" 
+          : "bg-[#111] text-white",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
         className,
       ].join(" ")}
     >

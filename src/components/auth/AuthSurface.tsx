@@ -7,15 +7,14 @@ import { SignInHelpDialog } from "./SignInHelpDialog";
 type AuthState = "enter-email" | "check-email";
 
 /**
- * AuthSurface - Unified auth component with in-place state transitions
- * Two states: "enter-email" (form) and "check-email" (confirmation)
+ * AuthSurface - Institutional-grade identity verification surface
  * 
- * LOCKED DESIGN TOKENS:
- * - H1: 24px, font-semibold, color #111, centered
- * - Body/subtitle: 14px, color #6B6B6B, centered
- * - Input: h-11, rounded-[12px], border black/10
- * - Button: h-11, rounded-[12px], bg #111, centered label
- * - State transition: 150ms ease-out fade + translateY
+ * LOCKED DESIGN STANDARD:
+ * - Single stateful surface (NO page transitions)
+ * - Card remains fixed, only content changes
+ * - NO animations, NO fades, NO delight effects
+ * - Typography: medium weight, calm authority
+ * - Copy: policy statements, NOT marketing tone
  * 
  * Light mode only. Institutional-grade.
  */
@@ -32,7 +31,6 @@ export function AuthSurface() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resendMessage, setResendMessage] = useState<string | null>(null);
   const [helpDialogOpen, setHelpDialogOpen] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Clear resend message after 3 seconds
   useEffect(() => {
@@ -44,14 +42,6 @@ export function AuthSurface() {
 
   const handleResendLink = async () => {
     return signInWithMagicLink(email.trim());
-  };
-
-  const transitionToState = (newState: AuthState) => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setState(newState);
-      setIsTransitioning(false);
-    }, 150);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -66,8 +56,8 @@ export function AuthSurface() {
       console.error("Sign-in error:", error);
     }
     
-    // Transition to "check-email" state with animation
-    transitionToState("check-email");
+    // Immediate state change - no animation
+    setState("check-email");
     setSearchParams({ sent: "1", email: encodeURIComponent(email.trim()) }, { replace: true });
   };
 
@@ -86,7 +76,7 @@ export function AuthSurface() {
   };
 
   const handleChangeEmail = () => {
-    transitionToState("enter-email");
+    setState("enter-email");
     setEmail("");
     setResendMessage(null);
     setSearchParams({}, { replace: true });
@@ -94,32 +84,27 @@ export function AuthSurface() {
 
   return (
     <>
-      {/* Header - Fixed position, stable across states */}
-      <h1 className="text-[24px] font-semibold leading-[1.3] text-[#111] text-center">
+      {/* Heading - Same size/weight across states */}
+      <h1 className="text-[22px] font-medium leading-[1.3] text-[#111] text-center">
         {state === "enter-email" ? "Sign in to Tribes" : "Check your email"}
       </h1>
 
-      <p className="mt-2 text-[14px] leading-[1.5] text-[#6B6B6B] text-center">
+      {/* Subtext - Policy statement, NOT marketing */}
+      <p className="mt-3 text-[14px] leading-[1.5] text-[#6B6B6B] text-center">
         {state === "enter-email"
-          ? "Secure access via email sign-in link"
-          : "We've sent a secure sign-in link to"}
+          ? "Access is granted via secure email verification."
+          : "A secure sign-in link has been sent to:"}
       </p>
 
-      {/* Body - Animated content only */}
-      <div 
-        className="mt-6 transition-all duration-150 ease-out"
-        style={{ 
-          opacity: isTransitioning ? 0 : 1,
-          transform: isTransitioning ? 'translateY(4px)' : 'translateY(0)'
-        }}
-      >
+      {/* Body - Content changes only, no layout shift */}
+      <div className="mt-6">
         {state === "enter-email" ? (
-          /* Email Form */
+          /* Enter Email State */
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label 
                 htmlFor="email" 
-                className="block text-[13px] font-medium text-black/70"
+                className="block text-[13px] font-medium text-[#6B6B6B]"
               >
                 Email address
               </label>
@@ -134,13 +119,11 @@ export function AuthSurface() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 className={[
-                  "mt-2 w-full h-11 rounded-[12px]",
-                  "border border-black/10 bg-white",
+                  "mt-2 w-full h-[46px] rounded-[10px]",
+                  "border border-[#D4D4D4] bg-white",
                   "px-4 text-[15px] text-[#111]",
-                  "placeholder:text-black/35",
-                  "shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
-                  "transition-shadow duration-150",
+                  "placeholder:text-[#9CA3AF]",
+                  "focus:outline-none focus:border-[#999]",
                 ].join(" ")}
               />
             </div>
@@ -154,25 +137,12 @@ export function AuthSurface() {
             </PrimaryButton>
           </form>
         ) : (
-          /* Check Email State - Institutional grade */
-          <div className="space-y-6">
-            {/* Identity row */}
-            <div className="text-left">
-              <div className="text-[13px] font-medium text-black/55">Sending link to</div>
-              <div className="mt-2 w-full min-w-0 rounded-[12px] border border-black/10 bg-[#FAFAFB] px-4 py-3">
-                <div className="truncate text-[15px] font-semibold text-[#111]">
-                  {email}
-                </div>
-              </div>
-            </div>
-
-            {/* Security note */}
-            <div className="rounded-[12px] border border-black/10 bg-white px-4 py-3">
-              <div className="text-[12px] font-semibold tracking-[0.08em] uppercase text-black/40">
-                Security
-              </div>
-              <div className="mt-1 text-[13px] leading-[1.35] text-black/45">
-                Links expire shortly and can only be used once.
+          /* Check Email State - Same card, same position */
+          <div className="space-y-5">
+            {/* Email display - Static system field, NOT editable */}
+            <div className="w-full rounded-[10px] border border-[#D4D4D4] bg-[#FAFAFA] px-4 py-3">
+              <div className="truncate text-[15px] font-medium text-[#111]">
+                {email}
               </div>
             </div>
 
@@ -194,51 +164,41 @@ export function AuthSurface() {
                 Resend sign-in link
               </PrimaryButton>
 
+              {/* Secondary action - de-emphasized, no underline */}
               <button
                 type="button"
                 onClick={handleChangeEmail}
-                className="w-full text-center text-[15px] font-medium text-black/55 hover:text-black transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F7] rounded-[10px] py-2"
+                className="w-full text-center text-[14px] font-medium text-[#6B6B6B] hover:text-[#111] py-2"
               >
                 Use a different email
               </button>
-            </div>
-
-            {/* Divider and access policy */}
-            <div className="pt-2 border-t border-black/5 text-center text-[13px] leading-5 text-black/45">
-              Access is restricted to approved accounts.
             </div>
           </div>
         )}
       </div>
 
-      {/* Footer - Only show in enter-email state */}
-      {state === "enter-email" && (
-        <p className="mt-6 text-center text-[13px] leading-[1.5] text-[#9CA3AF]">
-          Access is restricted to approved accounts.
-        </p>
-      )}
+      {/* Policy Notice - Separated, treated as a rule */}
+      <p className="mt-6 text-center text-[13px] leading-[1.5] text-[#9CA3AF]">
+        Access is restricted to approved accounts.
+      </p>
 
-      {/* Help Link - only show in enter-email state */}
-      {state === "enter-email" && (
-        <>
-          <p className="mt-2 text-center">
-            <button 
-              type="button"
-              onClick={() => setHelpDialogOpen(true)}
-              className="text-[13px] text-[#9CA3AF] hover:text-[#6B6B6B] hover:underline transition-colors duration-150"
-            >
-              Trouble signing in?
-            </button>
-          </p>
+      {/* Support Link - De-emphasized, procedural */}
+      <p className="mt-3 text-center">
+        <button 
+          type="button"
+          onClick={() => setHelpDialogOpen(true)}
+          className="text-[13px] text-[#9CA3AF] hover:text-[#6B6B6B]"
+        >
+          Trouble signing in?
+        </button>
+      </p>
 
-          <SignInHelpDialog
-            open={helpDialogOpen}
-            onOpenChange={setHelpDialogOpen}
-            email={email}
-            onResendLink={handleResendLink}
-          />
-        </>
-      )}
+      <SignInHelpDialog
+        open={helpDialogOpen}
+        onOpenChange={setHelpDialogOpen}
+        email={email}
+        onResendLink={handleResendLink}
+      />
     </>
   );
 }
