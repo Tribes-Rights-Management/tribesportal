@@ -855,9 +855,16 @@ export const NAV_LABELS = {
   // Brand
   BRAND_WORDMARK: "TRIBES",
   
-  // Portal modes
-  CLIENT_PORTAL: "Client Portal",
-  LICENSING: "Licensing",
+  // Workspace labels (replaces "Organization" in user-facing UI)
+  WORKSPACE: "Workspace",
+  WORKSPACES: "Workspaces",
+  SWITCH_WORKSPACE: "Switch Workspace",
+  SELECT_WORKSPACE: "Select workspace",
+  
+  // Portal modes - THREE CONTROLLED ACCESS SURFACES
+  TRIBES_TEAM: "Tribes Team",      // Internal operations
+  CLIENT_PORTAL: "Client Portal",  // Admin clients workspace
+  LICENSING: "Licensing",          // Licensee workspace
   ADMINISTRATION: "Administration",
   
   // Publishing nav - INSTITUTIONAL TERMINOLOGY
@@ -878,7 +885,7 @@ export const NAV_LABELS = {
   
   // Admin nav
   ACCESS_CONTROL: "Access Control",
-  ORGANIZATIONS: "Organizations",
+  ORGANIZATIONS: "Workspaces", // User-facing: "Workspaces" not "Organizations"
   RLS_VERIFICATION: "RLS Verification",
   AUDIT_COVERAGE: "Audit Coverage",
   SESSION_INTEGRITY: "Session Integrity",

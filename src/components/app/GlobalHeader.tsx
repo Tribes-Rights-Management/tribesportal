@@ -49,8 +49,8 @@ function useCurrentMode(): PortalMode {
   return "publishing";
 }
 
-// Tenant selector - flat, dark theme
-function TenantSelector() {
+// Workspace selector - flat, dark theme (replaces "Organization" terminology)
+function WorkspaceSelector() {
   const { tenantMemberships, activeTenant, setActiveTenant, activeContext } = useAuth();
   const navigate = useNavigate();
   const currentMode = useCurrentMode();
@@ -66,7 +66,7 @@ function TenantSelector() {
     return null;
   }
 
-  const handleTenantChange = (tenantId: string) => {
+  const handleWorkspaceChange = (tenantId: string) => {
     setActiveTenant(tenantId);
     const newTenant = tenantMemberships.find(m => m.tenant_id === tenantId);
     if (newTenant && currentMode !== "admin") {
@@ -84,10 +84,10 @@ function TenantSelector() {
   return (
     <Select
       value={activeTenant?.tenant_id ?? ""}
-      onValueChange={handleTenantChange}
+      onValueChange={handleWorkspaceChange}
     >
       <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-white/5 text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 focus-visible:ring-1 focus-visible:ring-white/20 text-white/50">
-        <SelectValue placeholder="Select organization" />
+        <SelectValue placeholder={NAV_LABELS.SELECT_WORKSPACE || "Select workspace"} />
       </SelectTrigger>
       <SelectContent align="center" className="bg-[#1A1A1B] border-white/10 text-white">
         {tenantMemberships.map((membership) => (
@@ -191,13 +191,7 @@ function AccountMenu() {
         <DropdownMenuSeparator className="bg-white/10" />
         
         <DropdownMenuItem
-          onClick={() => {
-            if (currentMode === "admin") {
-              navigate("/admin/settings");
-            } else {
-              navigate(`/app/${activeContext}/settings`);
-            }
-          }}
+          onClick={() => navigate("/account")}
           className="text-[13px] py-2 text-white/70 focus:bg-white/10 focus:text-white"
         >
           <Settings size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
@@ -246,7 +240,7 @@ function MobileControls() {
       <DropdownMenuContent align="center" className="w-52 bg-[#1A1A1B] border-white/10 text-white">
         {activeTenant && (
           <div className="px-3 py-2">
-            <p className="text-[10px] text-white/40 uppercase tracking-wide">Organization</p>
+            <p className="text-[10px] text-white/40 uppercase tracking-wide">Workspace</p>
             <p className="text-[13px] font-medium text-white/80 truncate">{activeTenant.tenant_name}</p>
           </div>
         )}
@@ -255,7 +249,7 @@ function MobileControls() {
           <>
             <DropdownMenuSeparator className="bg-white/10" />
             <div className="px-3 py-1">
-              <p className="text-[10px] text-white/40 uppercase tracking-wide">Switch Organization</p>
+              <p className="text-[10px] text-white/40 uppercase tracking-wide">Switch Workspace</p>
             </div>
             {tenantMemberships.map((membership) => (
               <DropdownMenuItem
@@ -366,10 +360,10 @@ export function GlobalHeader() {
         </button>
       </div>
 
-      {/* Center: Tenant selector */}
+      {/* Center: Workspace selector */}
       <div className="flex-1 flex items-center justify-center">
         {!isMobile ? (
-          <TenantSelector />
+          <WorkspaceSelector />
         ) : (
           <MobileControls />
         )}
