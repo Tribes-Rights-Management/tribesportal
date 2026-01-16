@@ -882,6 +882,7 @@ export const NAV_LABELS = {
   WORKSPACES: "Workspaces",
   SWITCH_WORKSPACE: "Switch Workspace",
   SELECT_WORKSPACE: "Select workspace",
+  ENTER_WORKSPACE: "Enter Workspace",  // System Console → Workspace transition
   
   // ═══════════════════════════════════════════════════════════════════════════
   // NAVIGATION SURFACES — LOCKED ARCHITECTURE
