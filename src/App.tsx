@@ -66,6 +66,12 @@ import AccountSettingsPage from "@/pages/admin/AccountSettingsPage";
 import RLSAuditPage from "@/pages/admin/RLSAuditPage";
 import AuthAccessReviewPage from "@/pages/admin/AuthAccessReviewPage";
 
+// Auditor pages
+import AuditorLanding from "@/pages/auditor/AuditorLanding";
+import AuditorActivityLogPage from "@/pages/auditor/AuditorActivityLogPage";
+import AuditorLicensingPage from "@/pages/auditor/AuditorLicensingPage";
+import AuditorAccessLogPage from "@/pages/auditor/AuditorAccessLogPage";
+
 // Account pages
 import AccountPage from "@/pages/account/AccountPage";
 import AccountProfilePage from "@/pages/account/AccountProfilePage";
@@ -180,6 +186,15 @@ const App = () => (
           <Route path="security/auth" element={<AuthAccessReviewPage />} />
           <Route path="security/sessions" element={<AccountSettingsPage />} />
         </Route>
+
+        {/* ═══════════════════════════════════════════════════════════════════════
+            EXTERNAL AUDITOR ROUTES (/auditor)
+            Permission: external_auditor role - read-only access
+        ═══════════════════════════════════════════════════════════════════════ */}
+        <Route path="/auditor" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorLanding /></RoleProtectedRoute>} />
+        <Route path="/auditor/activity" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorActivityLogPage /></RoleProtectedRoute>} />
+        <Route path="/auditor/licensing" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorLicensingPage /></RoleProtectedRoute>} />
+        <Route path="/auditor/access" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorAccessLogPage /></RoleProtectedRoute>} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
             ACCOUNT SETTINGS HUB (/account)

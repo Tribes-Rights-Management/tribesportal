@@ -1,13 +1,15 @@
 import { Navigate } from "react-router-dom";
-import { useAuth, PlatformRole } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRoleAccess } from "@/hooks/useRoleAccess";
 
 interface RoleProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles: ("admin" | "user")[];
+  allowedRoles: ("admin" | "user" | "auditor")[];
 }
 
 export default function RoleProtectedRoute({ children, allowedRoles }: RoleProtectedRouteProps) {
   const { user, profile, loading, isPlatformAdmin } = useAuth();
+  const { isExternalAuditor } = useRoleAccess();
 
   if (loading) {
     return (
@@ -32,13 +34,34 @@ export default function RoleProtectedRoute({ children, allowedRoles }: RoleProte
     return <Navigate to="/auth/error" replace />;
   }
 
-  // Check role: "admin" maps to platform_admin
+  // Check role access
   const isAdmin = isPlatformAdmin;
-  const hasAccess = allowedRoles.includes("admin") ? isAdmin : true;
+  const isAuditor = isExternalAuditor;
+
+  // Determine if user has required role
+  let hasAccess = false;
+  
+  if (allowedRoles.includes("admin") && isAdmin) {
+    hasAccess = true;
+  }
+  if (allowedRoles.includes("auditor") && (isAuditor || isAdmin)) {
+    // Platform admins can also access auditor routes
+    hasAccess = true;
+  }
+  if (allowedRoles.includes("user")) {
+    hasAccess = true;
+  }
 
   if (!hasAccess) {
-    // Redirect non-admins to app
-    return <Navigate to="/app" replace />;
+    // Redirect based on role
+    if (isAuditor) {
+      return <Navigate to="/auditor" replace />;
+    }
+    if (isAdmin) {
+      return <Navigate to="/admin" replace />;
+    }
+    // Non-privileged users go to app
+    return <Navigate to="/app/restricted" replace />;
   }
 
   return <>{children}</>;

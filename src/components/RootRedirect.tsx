@@ -1,12 +1,14 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRoleAccess } from "@/hooks/useRoleAccess";
 
 /**
  * Smart redirect component for the root route.
- * Routes to appropriate destination based on access state.
+ * Routes to appropriate destination based on access state and role.
  */
 export default function RootRedirect() {
   const { accessState, activeContext, isPlatformAdmin } = useAuth();
+  const { isExternalAuditor } = useRoleAccess();
 
   // Loading — predictable, not fast
   if (accessState === "loading") {
@@ -25,6 +27,11 @@ export default function RootRedirect() {
   // No profile or suspended profile
   if (accessState === "no-profile" || accessState === "suspended-profile") {
     return <Navigate to="/auth/error" replace />;
+  }
+
+  // External auditor goes to auditor landing
+  if (isExternalAuditor) {
+    return <Navigate to="/auditor" replace />;
   }
 
   // Platform admin goes to admin dashboard
