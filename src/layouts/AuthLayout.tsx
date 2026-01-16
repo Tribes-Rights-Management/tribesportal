@@ -1,45 +1,26 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode } from "react";
 
 interface AuthLayoutProps {
   children: ReactNode;
 }
 
 /**
- * AuthLayout - Institutional-grade auth shell
- * Light mode only. No header, no navigation.
+ * AuthLayout - Premium institutional-grade auth shell
  * 
  * LOCKED DESIGN TOKENS:
- * - Background: #F5F5F7
- * - Card: max-width 420px, radius 20px, white bg, border #E5E5EA, soft shadow
- * - Card padding: 32px desktop / 24px mobile
+ * - Page background: #F5F5F7
+ * - Card: max-w-[420px], rounded-[20px], white bg
+ * - Card border: black/5
+ * - Card shadow: 0_14px_40px_rgba(0,0,0,0.08)
+ * - Padding: 40px desktop / 28px mobile
+ * 
+ * Light mode only. Centered vertically and horizontally.
  */
 export function AuthLayout({ children }: AuthLayoutProps) {
-  useEffect(() => {
-    document.body.classList.add("auth-no-scroll");
-    return () => {
-      document.body.classList.remove("auth-no-scroll");
-    };
-  }, []);
-
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-auto"
-      style={{ background: "#F5F5F7" }}
-    >
-      <div 
-        className="w-full"
-        style={{ maxWidth: "min(420px, calc(100vw - 32px))" }}
-      >
-        <div 
-          className="rounded-[20px] px-6 py-6 sm:px-8 sm:py-8"
-          style={{
-            background: "#ffffff",
-            border: "1px solid #E5E5EA",
-            boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
-          }}
-        >
-          {children}
-        </div>
+    <div className="min-h-dvh w-full bg-[#F5F5F7] flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-[420px] rounded-[20px] bg-white border border-black/5 shadow-[0_14px_40px_rgba(0,0,0,0.08)] px-7 py-9 sm:px-10 sm:py-10">
+        {children}
       </div>
     </div>
   );
