@@ -1,3 +1,5 @@
+@import "./styles/tribes-theme.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -133,110 +135,98 @@
     /* ═══════════════════════════════════════════════════════════════════════════
        CANONICAL VISUAL TOKENS — TRIBES INSTITUTIONAL UI (LOCKED)
        
-       These tokens are AUTHORITATIVE and must not drift.
-       Page background matches public website exactly.
-       Header background matches public website header.
-       All content renders on elevated surfaces only.
-       
-       GLOBAL (SHARED WITH PUBLIC WEBSITE):
-       --tribes-bg-page → exact website page background
-       --tribes-bg-header → exact website header
-       --tribes-text-primary → near-white, high contrast
-       --tribes-text-secondary → muted gray for metadata
-       
-       APPLICATION SURFACES (ELEVATED ONLY):
-       --tribes-surface-card → elevated panel color
-       --tribes-surface-table → same as card, never page-level
-       --tribes-border-subtle → low-contrast dividers
-       --tribes-shadow-soft → restrained, institutional
+       All tokens now derive from src/styles/tribes-theme.css (single source of truth).
+       Page background = website THEME_DARK_BG (#0B0F14)
+       Header background = website dark header (#111214)
        
        ENFORCEMENT: No data, tables, lists, or controls may render 
        directly on page background. All content lives inside elevated surfaces.
        ═══════════════════════════════════════════════════════════════════════════ */
     
-    /* GLOBAL — Shared with public website (LOCKED) */
-    --tribes-bg-page: #0A0A0B;                        /* Exact website page background */
-    --tribes-bg-header: #0A0A0B;                      /* Exact website header color */
-    --tribes-text-primary: #E8E8E6;                   /* Near-white, high contrast */
-    --tribes-text-secondary: #8A8A8A;                 /* Muted gray for metadata */
-    --tribes-text-muted: #5A5A5A;                     /* Subdued for tertiary text */
+    /* GLOBAL — Derived from tribes-theme.css (LOCKED) */
+    --tribes-bg-page: var(--tribes-bg);               /* Exact website page background */
+    --tribes-bg-header: var(--tribes-header-bg);      /* Exact website header color */
+    --tribes-text-primary: var(--tribes-fg);          /* Pure white, maximum contrast */
+    --tribes-text-secondary: var(--tribes-fg-secondary); /* Readable body copy */
+    --tribes-text-muted: var(--tribes-fg-muted);      /* Captions, labels, meta */
     
-    /* APPLICATION SURFACES — Elevated only (LOCKED) */
-    --tribes-surface-card: #111113;                   /* Primary elevated surface */
-    --tribes-surface-table: #111113;                  /* Table surface = card surface */
-    --tribes-surface-elevated: #161618;               /* Secondary elevation */
-    --tribes-surface-nested: #1A1A1C;                 /* Tertiary/nested elevation */
-    --tribes-border-subtle: rgba(255,255,255,0.08);   /* Low-contrast dividers */
-    --tribes-border-strong: rgba(255,255,255,0.12);   /* Stronger separation */
-    --tribes-shadow-soft: 0 1px 2px rgba(0,0,0,0.1);  /* Restrained, institutional */
+    /* APPLICATION SURFACES — Derived from tribes-theme.css (LOCKED) */
+    --tribes-surface-card: var(--tribes-surface);     /* Primary elevated surface */
+    --tribes-surface-table: var(--tribes-surface-table); /* Table surface */
+    --tribes-surface-elevated: var(--tribes-surface-elevated); /* Secondary elevation */
+    --tribes-surface-nested: var(--tribes-surface-nested); /* Tertiary elevation */
+    --tribes-border-subtle: var(--tribes-border);     /* Low-contrast dividers */
+    --tribes-border-strong: var(--tribes-border-strong); /* Stronger separation */
+    --tribes-shadow-soft: var(--tribes-shadow);       /* Restrained, institutional */
     
     /* LEGACY ALIASES — Map to canonical tokens for backward compatibility */
-    --platform-canvas: var(--tribes-bg-page);
-    --platform-surface: var(--tribes-surface-card);
+    --platform-canvas: var(--tribes-bg);
+    --platform-surface: var(--tribes-surface);
     --platform-surface-2: var(--tribes-surface-elevated);
     --platform-surface-3: var(--tribes-surface-nested);
-    --platform-border: var(--tribes-border-subtle);
+    --platform-border: var(--tribes-border);
     --platform-border-strong: var(--tribes-border-strong);
-    --platform-text: var(--tribes-text-primary);
-    --platform-text-secondary: var(--tribes-text-secondary);
-    --platform-text-muted: var(--tribes-text-muted);
-    --platform-accent: var(--tribes-text-primary);
+    --platform-text: var(--tribes-fg);
+    --platform-text-secondary: var(--tribes-fg-secondary);
+    --platform-text-muted: var(--tribes-fg-muted);
+    --platform-accent: var(--tribes-fg);
 
     /* ─────────────────────────────────────────────────────────────────────────────
        AUTH GATEWAY TOKENS (LOCKED — CANONICAL)
-       Dark canvas institutional access boundary. No local overrides.
+       Dark canvas institutional access boundary. Derives from tribes-theme.css.
        ───────────────────────────────────────────────────────────────────────────── */
-    --auth-canvas-bg: #0A0A0B;
-    --auth-canvas-gradient: linear-gradient(180deg, #0A0A0B 0%, #0F0F10 100%);
+    --auth-canvas-bg: var(--tribes-bg);
+    --auth-canvas-gradient: linear-gradient(180deg, var(--tribes-bg) 0%, #101418 100%);
     --auth-content-width: 380px;
     --auth-input-height: 48px;
     --auth-button-height: 48px;
     --auth-border-radius: 6px;
     --auth-font-scale: 15px;
-    --auth-heading: #E8E8E6;
-    --auth-body: #8A8A8A;
-    --auth-muted: #5A5A5A;
-    --auth-label: #6A6A6A;
-    --auth-input-bg: rgba(255,255,255,0.04);
-    --auth-input-border: rgba(255,255,255,0.12);
+    --auth-heading: var(--tribes-fg);
+    --auth-body: var(--tribes-fg-secondary);
+    --auth-muted: var(--tribes-fg-muted);
+    --auth-label: var(--tribes-fg-muted);
+    --auth-input-bg: var(--tribes-surface);
+    --auth-input-border: var(--tribes-border-strong);
     --auth-input-border-focus: rgba(255,255,255,0.24);
-    --auth-input-text: #E8E8E6;
-    --auth-button-bg: #E8E8E6;
-    --auth-button-text: #0A0A0B;
-    --auth-button-hover: #D0D0CE;
-    --auth-button-disabled-bg: rgba(255,255,255,0.08);
-    --auth-button-disabled-text: #5A5A5A;
+    --auth-input-text: var(--tribes-fg);
+    --auth-button-bg: var(--tribes-fg);
+    --auth-button-text: var(--tribes-bg);
+    --auth-button-hover: #E8E8E8;
+    --auth-button-disabled-bg: var(--tribes-surface-elevated);
+    --auth-button-disabled-text: var(--tribes-fg-muted);
 
     /* ─────────────────────────────────────────────────────────────────────────────
        INSTITUTIONAL DARK THEME (Shadcn HSL tokens mapped to dark palette)
-       Mercury/Stripe-grade: #0A0A0B canvas, #111113 surfaces, light text
+       Mercury/Stripe-grade: #0B0F14 canvas (website match), light text
        ───────────────────────────────────────────────────────────────────────────── */
     
-    /* Background & Surface - Dark institutional canvas */
-    --background: 240 6% 4%;
-    --foreground: 40 6% 90%;
+    /* Background & Surface - Dark institutional canvas (HSL of #0B0F14 ≈ 214 28% 6%) */
+    --background: 214 28% 6%;
+    --foreground: 0 0% 100%;
 
-    --card: 240 4% 7%;
-    --card-foreground: 40 6% 90%;
+    /* Card surface (HSL of rgba surface on #0B0F14) */
+    --card: 214 20% 10%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 240 4% 7%;
-    --popover-foreground: 40 6% 90%;
+    --popover: 214 20% 10%;
+    --popover-foreground: 0 0% 100%;
 
     /* Primary - Light accent on dark */
-    --primary: 40 6% 90%;
-    --primary-foreground: 240 6% 4%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 214 28% 6%;
 
     /* Secondary - Subtle surface */
-    --secondary: 240 4% 10%;
-    --secondary-foreground: 40 6% 90%;
+    --secondary: 214 20% 12%;
+    --secondary-foreground: 0 0% 100%;
 
     /* Muted: dark surface with subdued text */
-    --muted: 240 4% 12%;
-    --muted-foreground: 0 0% 54%;
+    --muted: 214 15% 14%;
+    --muted-foreground: 0 0% 72%;
 
     /* Accent */
-    --accent: 240 4% 12%;
-    --accent-foreground: 40 6% 90%;
+    --accent: 214 20% 14%;
+    --accent-foreground: 0 0% 100%;
 
     /* Destructive */
     --destructive: 0 62% 55%;
@@ -261,19 +251,19 @@
     /* Tribes consent checkbox tokens (LOCKED) */
     --tribes-checkbox-border: 0 0% 100% / 0.15;
     --tribes-checkbox-border-checked: 0 0% 100% / 0.30;
-    --tribes-checkbox-check: 40 6% 90%;
+    --tribes-checkbox-check: 0 0% 100%;
     --tribes-checkbox-focus: 0 0% 100% / 0.15;
 
-    /* App surface - dark canvas */
-    --app-surface: 240 6% 4%;
+    /* App surface - dark canvas (matches website #0B0F14) */
+    --app-surface: 214 28% 6%;
     
-    /* Sidebar - dark institutional */
-    --sidebar-background: 240 4% 6%;
-    --sidebar-foreground: 0 0% 54%;
-    --sidebar-primary: 40 6% 90%;
-    --sidebar-primary-foreground: 240 6% 4%;
-    --sidebar-accent: 240 4% 10%;
-    --sidebar-accent-foreground: 40 6% 90%;
+    /* Sidebar - dark institutional (aligned with website) */
+    --sidebar-background: 214 20% 8%;
+    --sidebar-foreground: 0 0% 72%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 214 28% 6%;
+    --sidebar-accent: 214 20% 12%;
+    --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 100% / 0.08;
     --sidebar-ring: 0 0% 100% / 0.20;
 
@@ -317,8 +307,8 @@
      Light pages explicitly paint their own white background via layout wrappers.
      ═══════════════════════════════════════════════════════════════════════════ */
   html {
-    /* Institutional dark canvas - matches auth + marketing */
-    background-color: #0A0A0B !important;
+    /* Institutional dark canvas - EXACT MATCH with website THEME_DARK_BG */
+    background-color: var(--tribes-bg) !important;
     margin: 0;
     padding: 0;
     min-height: 100%;
@@ -330,9 +320,9 @@
   }
 
   body {
-    /* Institutional dark canvas - matches auth + marketing */
-    background-color: #0A0A0B !important;
-    color: #E8E8E6;
+    /* Institutional dark canvas - EXACT MATCH with website THEME_DARK_BG */
+    background-color: var(--tribes-bg) !important;
+    color: var(--tribes-fg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -363,8 +353,8 @@
   #__next {
     position: relative;
     z-index: 1;
-    /* Institutional dark canvas */
-    background: #0A0A0B;
+    /* Institutional dark canvas - EXACT MATCH with website */
+    background: var(--tribes-bg);
     /* iOS Safari viewport units - cascading fallbacks */
     min-height: 100vh;
     min-height: 100dvh;

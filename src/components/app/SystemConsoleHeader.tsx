@@ -90,37 +90,42 @@ function ConsoleAccountMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-56 rounded-lg bg-[#1A1A1B] border-white/10 text-white"
+        className="w-56 rounded-lg"
+        style={{
+          backgroundColor: 'var(--tribes-header-bg)',
+          borderColor: 'var(--tribes-border)',
+        }}
         sideOffset={8}
       >
         <div className="px-3 py-2.5">
-          <p className="text-[13px] font-medium text-white/90 truncate">
+          <p className="text-[13px] font-medium truncate" style={{ color: 'var(--tribes-fg)' }}>
             {profile?.full_name || profile?.email}
           </p>
           {profile?.email && profile?.full_name && (
-            <p className="text-[11px] text-white/50 truncate mt-0.5">
+            <p className="text-[11px] truncate mt-0.5" style={{ color: 'var(--tribes-fg-muted)' }}>
               {profile.email}
             </p>
           )}
-          <p className="text-[10px] text-white/30 uppercase tracking-wider mt-1">
+          <p className="text-[10px] uppercase tracking-wider mt-1" style={{ color: 'var(--tribes-fg-muted)' }}>
             {NAV_LABELS.SYSTEM_CONSOLE}
           </p>
         </div>
         
-        <DropdownMenuSeparator className="bg-white/10" />
+        <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
         
         <DropdownMenuItem
           onClick={() => navigate("/account")}
-          className="text-[13px] py-2 text-white/70 focus:bg-white/10 focus:text-white"
+          className="text-[13px] py-2 focus:bg-white/5"
+          style={{ color: 'var(--tribes-fg-secondary)' }}
         >
           <Settings size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
           {NAV_LABELS.ACCOUNT_SETTINGS}
         </DropdownMenuItem>
         
-        <DropdownMenuSeparator className="bg-white/10" />
+        <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="text-[13px] py-2 text-red-400 focus:bg-white/10 focus:text-red-300"
+          className="text-[13px] py-2 text-red-400 focus:bg-white/5 focus:text-red-300"
         >
           <LogOut size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
           Sign out
@@ -147,17 +152,21 @@ export function SystemConsoleHeader() {
   return (
     <>
       <header 
-        className="h-14 border-b border-white/8 px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40"
-        style={{ backgroundColor: 'var(--tribes-bg-header)' }}
+        className="h-14 px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40"
+        style={{ 
+          backgroundColor: 'var(--tribes-header-bg)',
+          borderBottom: '1px solid var(--tribes-border)',
+        }}
       >
         {/* Left: Wordmark */}
         <div className="flex items-center min-w-0">
           <button
             onClick={handleLogoClick}
-            className="font-semibold text-white hover:text-white/70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
+            className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
             style={{
               fontSize: isMobile ? '11px' : PORTAL_TYPOGRAPHY.brandWordmark.size,
               letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
+              color: 'var(--tribes-fg)',
             }}
           >
             {NAV_LABELS.BRAND_WORDMARK}

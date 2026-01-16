@@ -41,6 +41,24 @@ export default {
         "4xl": ["40px", { lineHeight: "1.1", fontWeight: "700" }],
       },
       colors: {
+        /* ═══════════════════════════════════════════════════════════════════════
+           TRIBES CANONICAL TOKENS — Mapped from src/styles/tribes-theme.css
+           These are the AUTHORITATIVE colors. No hardcoded values in components.
+           ═══════════════════════════════════════════════════════════════════════ */
+        tribes: {
+          bg: "var(--tribes-bg)",
+          "header-bg": "var(--tribes-header-bg)",
+          fg: "var(--tribes-fg)",
+          "fg-secondary": "var(--tribes-fg-secondary)",
+          "fg-muted": "var(--tribes-fg-muted)",
+          surface: "var(--tribes-surface)",
+          "surface-elevated": "var(--tribes-surface-elevated)",
+          "surface-nested": "var(--tribes-surface-nested)",
+          border: "var(--tribes-border)",
+          "border-strong": "var(--tribes-border-strong)",
+        },
+        
+        /* Shadcn semantic tokens */
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
