@@ -80,12 +80,12 @@ export default function AdminDashboard() {
             <NavRow
               to="/admin/approvals"
               label="Access Control"
-              description="Pending approvals, role assignment"
+              description="Users, roles, and approvals"
             />
             <NavRow
               to="/admin/users"
               label="User Directory"
-              description="Account status, permissions"
+              description="Account status and permissions"
             />
           </NavSection>
 
@@ -103,21 +103,21 @@ export default function AdminDashboard() {
             <NavRow
               to="/admin/rls-audit"
               label="RLS Verification"
-              description="Row-level security policy coverage"
+              description="Row-level security coverage"
             />
             <NavRow
               to="/admin/security"
-              label="Auth & Access Review"
-              description="Authentication and access logging"
+              label="Audit Coverage"
+              description="Authentication and access logs"
             />
           </NavSection>
 
           {/* Platform Account */}
           <NavSection title="Platform Account" hasBorder>
-            <NavRow
+          <NavRow
               to="/admin/settings"
-              label="Settings"
-              description="Platform configuration"
+              label="Account Settings"
+              description="Profile, preferences, and security configuration"
             />
           </NavSection>
         </div>
