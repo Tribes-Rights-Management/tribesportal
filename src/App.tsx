@@ -6,7 +6,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import RoleProtectedRoute from "@/components/RoleProtectedRoute";
 import { AppProtectedRoute } from "@/components/app/AppProtectedRoute";
 import { AppLayout } from "@/layouts/AppLayout";
-import { AdminLayout } from "@/layouts/AdminLayout";
+import { SystemConsoleLayout } from "@/layouts/SystemConsoleLayout";
 import { ModuleLayout } from "@/layouts/ModuleLayout";
 import { ModuleProtectedRoute } from "@/components/modules/ModuleProtectedRoute";
 import { AppIndexRedirect } from "@/components/app/AppIndexRedirect";
@@ -40,12 +40,13 @@ import PublishingDocuments from "@/pages/app/publishing/PublishingDocuments";
 import AccessRequestsPage from "@/pages/app/publishing/AccessRequestsPage";
 import PublishingSettings from "@/pages/app/publishing/PublishingSettings";
 
-// First-class module pages - Licensing (/licensing)
+// First-class module pages - Licensing (/licensing) - ORGANIZATION-SCOPED
 import LicensingOverview from "@/pages/modules/licensing/LicensingOverview";
 import LicensingRequestsPage from "@/pages/modules/licensing/LicensingRequestsPage";
 import LicensingAgreementsPage from "@/pages/modules/licensing/LicensingAgreementsPage";
 
-// First-class module pages - Client Portal (/portal)
+// First-class module pages - Tribes Admin (/portal) - ORGANIZATION-SCOPED
+// (Renamed from "Client Portal" to "Tribes Admin")
 import PortalOverview from "@/pages/modules/portal/PortalOverview";
 import PortalAgreementsPage from "@/pages/modules/portal/PortalAgreementsPage";
 import PortalStatementsPage from "@/pages/modules/portal/PortalStatementsPage";
@@ -56,7 +57,9 @@ import PendingApprovalPage from "@/pages/app/PendingApprovalPage";
 import NoAccessPage from "@/pages/app/NoAccessPage";
 import AccessSuspendedPage from "@/pages/app/AccessSuspendedPage";
 
-// Admin pages
+// System Console pages - COMPANY-LEVEL (executive only)
+// NO product navigation, NO workspace selector
+// Scoped to: governance, audit oversight, compliance, security
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import ApprovalsPage from "@/pages/admin/ApprovalsPage";
 import TenantsPage from "@/pages/admin/TenantsPage";
@@ -68,7 +71,7 @@ import AuthAccessReviewPage from "@/pages/admin/AuthAccessReviewPage";
 import DisclosuresPage from "@/pages/admin/DisclosuresPage";
 import CorrelationChainPage from "@/pages/admin/CorrelationChainPage";
 
-// Auditor pages
+// Auditor pages - READ-ONLY external access
 import AuditorLanding from "@/pages/auditor/AuditorLanding";
 import AuditorActivityLogPage from "@/pages/auditor/AuditorActivityLogPage";
 import AuditorLicensingPage from "@/pages/auditor/AuditorLicensingPage";
@@ -131,7 +134,8 @@ const App = () => (
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
-            FIRST-CLASS MODULE: CLIENT PORTAL (/portal)
+            FIRST-CLASS MODULE: TRIBES ADMIN (/portal) — ORGANIZATION-SCOPED
+            (Renamed from "Client Portal")
             Permission: portal.view, portal.download, portal.submit
         ═══════════════════════════════════════════════════════════════════════ */}
         <Route path="/portal" element={
@@ -175,8 +179,13 @@ const App = () => (
           <Route path="publishing/settings" element={<AppProtectedRoute requiredContext="publishing"><PublishingSettings /></AppProtectedRoute>} />
         </Route>
 
-        {/* Admin routes with layout */}
-        <Route path="/admin" element={<RoleProtectedRoute allowedRoles={["admin"]}><AdminLayout /></RoleProtectedRoute>}>
+        {/* ═══════════════════════════════════════════════════════════════════════
+            SYSTEM CONSOLE (/admin) — COMPANY-LEVEL GOVERNANCE
+            Access: platform_admin only (executive roles)
+            Scope: governance, audit oversight, compliance, security
+            NO product navigation, NO workspace selector
+        ═══════════════════════════════════════════════════════════════════════ */}
+        <Route path="/admin" element={<RoleProtectedRoute allowedRoles={["admin"]}><SystemConsoleLayout /></RoleProtectedRoute>}>
           <Route index element={<AdminDashboard />} />
           <Route path="approvals" element={<ApprovalsPage />} />
           <Route path="tenants" element={<TenantsPage />} />

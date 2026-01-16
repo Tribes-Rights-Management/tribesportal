@@ -71,13 +71,13 @@ export const MODULES = {
   portal: {
     routePrefix: "/portal",
     permissionNamespace: "portal",
-    navLabel: "Client Portal",
+    navLabel: "Tribes Admin",  // Renamed from "Client Portal"
     requiredPermission: "portal.view" as Permission,
   },
   admin: {
     routePrefix: "/admin",
     permissionNamespace: "platform",
-    navLabel: "Administration",
+    navLabel: "System Console",  // Company-level governance (not org-scoped)
     requiredPermission: "platform:admin" as Permission,
   },
   auditor: {

@@ -28,7 +28,7 @@ const licensingNavItems: NavItem[] = [
   { to: "/licensing/agreements", label: "Agreements", icon: Scale },
 ];
 
-// Client Portal module navigation
+// Tribes Admin module navigation (renamed from "Client Portal")
 const portalNavItems: NavItem[] = [
   { to: "/portal", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/portal/agreements", label: "Agreements", icon: FileCheck },

@@ -861,11 +861,24 @@ export const NAV_LABELS = {
   SWITCH_WORKSPACE: "Switch Workspace",
   SELECT_WORKSPACE: "Select workspace",
   
-  // Portal modes - THREE CONTROLLED ACCESS SURFACES
-  TRIBES_TEAM: "Tribes Team",      // Internal operations
-  CLIENT_PORTAL: "Client Portal",  // Admin clients workspace
-  LICENSING: "Licensing",          // Licensee workspace
-  ADMINISTRATION: "Administration",
+  // ═══════════════════════════════════════════════════════════════════════════
+  // NAVIGATION SURFACES — LOCKED ARCHITECTURE
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Company Console ≠ Organization Workspace
+  // Products appear only within organizations
+  // Organization switcher never lists company-level consoles
+  
+  // COMPANY-LEVEL (executive only, no products)
+  SYSTEM_CONSOLE: "System Console",  // Company governance, audit, compliance
+  
+  // ORGANIZATION-LEVEL (workspace-scoped products)
+  TRIBES_ADMIN: "Tribes Admin",      // Organization administration (was "Client Portal")
+  LICENSING: "Licensing",            // Licensee workspace
+  
+  // Deprecated labels
+  ADMINISTRATION: "System Console",  // Backward compat - use SYSTEM_CONSOLE
+  CLIENT_PORTAL: "Tribes Admin",     // Backward compat - use TRIBES_ADMIN
+  TRIBES_TEAM: "Tribes Team",        // Internal operations (deprecated)
   
   // Publishing nav - INSTITUTIONAL TERMINOLOGY
   OVERVIEW: "Overview", // Replaces "Dashboard"

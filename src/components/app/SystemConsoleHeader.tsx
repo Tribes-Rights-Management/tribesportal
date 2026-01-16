@@ -1,0 +1,155 @@
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LogOut, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { NAV_LABELS, ICON_SIZE, ICON_STROKE, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } from "@/styles/tokens";
+
+/**
+ * SYSTEM CONSOLE HEADER — COMPANY-LEVEL GOVERNANCE
+ * 
+ * ARCHITECTURE RULES (LOCKED):
+ * - System Console ≠ Organization Workspace
+ * - NO workspace selector (System Console is company-scoped)
+ * - NO product navigation (Licensing, Tribes Admin)
+ * - Access restricted to executive roles (platform_admin) only
+ * - Scoped to: governance, audit oversight, compliance, security
+ * 
+ * This header is for company-level governance operations only.
+ * Organization workspaces use GlobalHeader instead.
+ */
+
+// Account menu - minimal, governance-focused
+function ConsoleAccountMenu() {
+  const { profile, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth/sign-in");
+  };
+
+  const getInitials = () => {
+    if (profile?.full_name) {
+      const parts = profile.full_name.trim().split(/\s+/);
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      }
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+    if (profile?.email) {
+      return profile.email.slice(0, 2).toUpperCase();
+    }
+    return "U";
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className={cn(
+            "rounded-full shrink-0 inline-flex items-center justify-center",
+            "text-[10px] font-medium uppercase",
+            "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
+          )}
+          style={{
+            height: PORTAL_AVATAR.sizeDesktop,
+            width: PORTAL_AVATAR.sizeDesktop,
+            backgroundColor: PORTAL_AVATAR.bgColor,
+            color: PORTAL_AVATAR.textColor,
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = PORTAL_AVATAR.bgColorHover}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = PORTAL_AVATAR.bgColor}
+          aria-label="Account menu"
+        >
+          {getInitials()}
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent 
+        align="end" 
+        className="w-56 rounded-lg bg-[#1A1A1B] border-white/10 text-white"
+        sideOffset={8}
+      >
+        <div className="px-3 py-2.5">
+          <p className="text-[13px] font-medium text-white/90 truncate">
+            {profile?.full_name || profile?.email}
+          </p>
+          {profile?.email && profile?.full_name && (
+            <p className="text-[11px] text-white/50 truncate mt-0.5">
+              {profile.email}
+            </p>
+          )}
+          <p className="text-[10px] text-white/30 uppercase tracking-wider mt-1">
+            {NAV_LABELS.SYSTEM_CONSOLE}
+          </p>
+        </div>
+        
+        <DropdownMenuSeparator className="bg-white/10" />
+        
+        <DropdownMenuItem
+          onClick={() => navigate("/account")}
+          className="text-[13px] py-2 text-white/70 focus:bg-white/10 focus:text-white"
+        >
+          <Settings size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
+          {NAV_LABELS.ACCOUNT_SETTINGS}
+        </DropdownMenuItem>
+        
+        <DropdownMenuSeparator className="bg-white/10" />
+        <DropdownMenuItem
+          onClick={handleSignOut}
+          className="text-[13px] py-2 text-red-400 focus:bg-white/10 focus:text-red-300"
+        >
+          <LogOut size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export function SystemConsoleHeader() {
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate("/admin");
+  };
+
+  return (
+    <header 
+      className="h-14 border-b border-white/8 px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40"
+      style={{ backgroundColor: '#0A0A0B' }}
+    >
+      {/* Left: Wordmark */}
+      <div className="flex items-center min-w-0">
+        <button
+          onClick={handleLogoClick}
+          className="font-semibold text-white hover:text-white/70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
+          style={{
+            fontSize: PORTAL_TYPOGRAPHY.brandWordmark.size,
+            letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
+          }}
+        >
+          {NAV_LABELS.BRAND_WORDMARK}
+        </button>
+      </div>
+
+      {/* Center: System Console label - NO workspace selector */}
+      <div className="flex-1 flex items-center justify-center">
+        <span className="text-[13px] font-medium text-white/40 uppercase tracking-wider">
+          {NAV_LABELS.SYSTEM_CONSOLE}
+        </span>
+      </div>
+
+      {/* Right: Account only - NO product navigation */}
+      <div className="flex items-center">
+        <ConsoleAccountMenu />
+      </div>
+    </header>
+  );
+}

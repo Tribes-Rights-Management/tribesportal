@@ -21,21 +21,18 @@ import { cn } from "@/lib/utils";
 import { NAV_LABELS, ICON_SIZE, ICON_STROKE, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } from "@/styles/tokens";
 
 /**
- * GLOBAL HEADER — INSTITUTIONAL SYSTEM NAVIGATION (CANONICAL)
+ * GLOBAL HEADER — ORGANIZATION WORKSPACE NAVIGATION
  * 
- * Design Rules:
- * - Single-height, fixed, no shadows, no translucency
- * - Background matches marketing dark header (#0A0A0B)
- * - Brand wordmark only (no slogan)
- * - Navigation is functional, not expressive
- * - Active state is typographic (opacity), not color-heavy
- * - No pills, chips, or floating nav
- * - Minimal indicator for account (initials), no avatar personality
+ * ARCHITECTURE RULES (LOCKED):
+ * - Company Console ≠ Organization Workspace
+ * - Products (Tribes Admin, Licensing) appear ONLY within organizations
+ * - Organization switcher NEVER lists company-level consoles
+ * - This architecture is enforced across desktop and mobile views
  * 
  * Navigation Visibility:
- * - Platform Admin: Client Portal + Licensing + Administration (in dropdown)
- * - Org Admin: Client Portal + Licensing (based on permissions)
- * - Client: Client Portal only
+ * - Platform Admin: Tribes Admin + Licensing (in org context) + System Console (in dropdown)
+ * - Org Admin: Tribes Admin + Licensing (based on permissions)
+ * - Client: Tribes Admin only
  */
 
 type PortalMode = "publishing" | "licensing" | "portal" | "admin";
@@ -49,18 +46,34 @@ function useCurrentMode(): PortalMode {
   return "publishing";
 }
 
-// Workspace selector - flat, dark theme (replaces "Organization" terminology)
+/**
+ * WORKSPACE SELECTOR — ORGANIZATION-SCOPED
+ * 
+ * Terminology: "Workspace" represents separate operating environments
+ * Workspaces are organizations, NOT company-level consoles
+ * 
+ * Microcopy rules:
+ * - Label: "Workspace"
+ * - Helper: "Workspaces represent separate operating environments"
+ * - Never implies product or account switching
+ */
 function WorkspaceSelector() {
   const { tenantMemberships, activeTenant, setActiveTenant, activeContext } = useAuth();
   const navigate = useNavigate();
   const currentMode = useCurrentMode();
 
+  // Single workspace: show as static label (no selector needed)
   if (tenantMemberships.length <= 1) {
     if (activeTenant) {
       return (
-        <span className="text-[13px] font-medium text-white/50 truncate max-w-[160px]">
-          {activeTenant.tenant_name}
-        </span>
+        <div className="flex flex-col items-center">
+          <span className="text-[10px] text-white/30 uppercase tracking-wider">
+            Workspace
+          </span>
+          <span className="text-[13px] font-medium text-white/60 truncate max-w-[160px]">
+            {activeTenant.tenant_name}
+          </span>
+        </div>
       );
     }
     return null;
@@ -82,25 +95,38 @@ function WorkspaceSelector() {
   };
 
   return (
-    <Select
-      value={activeTenant?.tenant_id ?? ""}
-      onValueChange={handleWorkspaceChange}
-    >
-      <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-white/5 text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 focus-visible:ring-1 focus-visible:ring-white/20 text-white/50">
-        <SelectValue placeholder={NAV_LABELS.SELECT_WORKSPACE || "Select workspace"} />
-      </SelectTrigger>
-      <SelectContent align="center" className="bg-[#1A1A1B] border-white/10 text-white">
-        {tenantMemberships.map((membership) => (
-          <SelectItem
-            key={membership.tenant_id}
-            value={membership.tenant_id}
-            className="text-[13px] text-white/80 focus:bg-white/10 focus:text-white"
-          >
-            {membership.tenant_name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className="flex flex-col items-center gap-0.5">
+      <span className="text-[10px] text-white/30 uppercase tracking-wider">
+        Workspace
+      </span>
+      <Select
+        value={activeTenant?.tenant_id ?? ""}
+        onValueChange={handleWorkspaceChange}
+      >
+        <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-white/5 text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 focus-visible:ring-1 focus-visible:ring-white/20 text-white/60">
+          <SelectValue placeholder={NAV_LABELS.SELECT_WORKSPACE} />
+        </SelectTrigger>
+        <SelectContent align="center" className="bg-[#1A1A1B] border-white/10 text-white">
+          <div className="px-3 py-2 border-b border-white/5">
+            <p className="text-[10px] text-white/40 uppercase tracking-wide">
+              Switch Workspace
+            </p>
+            <p className="text-[11px] text-white/30 mt-0.5">
+              Workspaces represent separate operating environments
+            </p>
+          </div>
+          {tenantMemberships.map((membership) => (
+            <SelectItem
+              key={membership.tenant_id}
+              value={membership.tenant_id}
+              className="text-[13px] text-white/80 focus:bg-white/10 focus:text-white"
+            >
+              {membership.tenant_name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 }
 
@@ -109,7 +135,6 @@ function AccountMenu() {
   const { 
     profile, 
     signOut, 
-    activeContext,
     isPlatformAdmin,
   } = useAuth();
   const navigate = useNavigate();
@@ -174,7 +199,7 @@ function AccountMenu() {
         
         <DropdownMenuSeparator className="bg-white/10" />
         
-        {/* Admin link - platform admins only */}
+        {/* System Console link - platform admins only */}
         {isPlatformAdmin && (
           <DropdownMenuItem
             onClick={() => navigate("/admin")}
@@ -184,7 +209,7 @@ function AccountMenu() {
             )}
           >
             <Shield size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
-            {NAV_LABELS.ADMINISTRATION}
+            {NAV_LABELS.SYSTEM_CONSOLE}
           </DropdownMenuItem>
         )}
         
@@ -224,23 +249,26 @@ function MobileControls() {
   const currentMode = useCurrentMode();
 
   const getModeLabel = () => {
-    if (currentMode === "admin") return NAV_LABELS.ADMINISTRATION;
+    if (currentMode === "admin") return NAV_LABELS.SYSTEM_CONSOLE;
     if (currentMode === "licensing") return NAV_LABELS.LICENSING;
-    return NAV_LABELS.CLIENT_PORTAL;
+    return NAV_LABELS.TRIBES_ADMIN;
   };
+
+  // No products without active workspace
+  const hasActiveWorkspace = !!activeTenant;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="h-7 px-2 text-[13px] font-medium text-white/70 hover:text-white/90 flex items-center gap-1">
-          {getModeLabel()}
+          {hasActiveWorkspace ? getModeLabel() : "Select Workspace"}
           <ChevronDown className="h-3 w-3 opacity-50" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className="w-52 bg-[#1A1A1B] border-white/10 text-white">
         {activeTenant && (
           <div className="px-3 py-2">
-            <p className="text-[10px] text-white/40 uppercase tracking-wide">Workspace</p>
+            <p className="text-[10px] text-white/40 uppercase tracking-wide">Active Workspace</p>
             <p className="text-[13px] font-medium text-white/80 truncate">{activeTenant.tenant_name}</p>
           </div>
         )}
@@ -250,6 +278,9 @@ function MobileControls() {
             <DropdownMenuSeparator className="bg-white/10" />
             <div className="px-3 py-1">
               <p className="text-[10px] text-white/40 uppercase tracking-wide">Switch Workspace</p>
+              <p className="text-[9px] text-white/25 mt-0.5">
+                Workspaces are separate environments
+              </p>
             </div>
             {tenantMemberships.map((membership) => (
               <DropdownMenuItem
@@ -272,11 +303,12 @@ function MobileControls() {
           </>
         )}
         
-        {currentMode !== "admin" && availableContexts.length > 1 && (
+        {/* Products only available with active workspace */}
+        {hasActiveWorkspace && currentMode !== "admin" && availableContexts.length > 1 && (
           <>
             <DropdownMenuSeparator className="bg-white/10" />
             <div className="px-3 py-1">
-              <p className="text-[10px] text-white/40 uppercase tracking-wide">Switch Portal</p>
+              <p className="text-[10px] text-white/40 uppercase tracking-wide">Products</p>
             </div>
             
             {availableContexts.includes("publishing") && (
@@ -290,7 +322,7 @@ function MobileControls() {
                   currentMode === "publishing" && "bg-white/5"
                 )}
               >
-                {NAV_LABELS.CLIENT_PORTAL}
+                {NAV_LABELS.TRIBES_ADMIN}
               </DropdownMenuItem>
             )}
             {availableContexts.includes("licensing") && (
@@ -318,7 +350,7 @@ export function GlobalHeader() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const currentMode = useCurrentMode();
-  const { activeContext, availableContexts, setActiveContext, isPlatformAdmin } = useAuth();
+  const { activeContext, activeTenant, isPlatformAdmin } = useAuth();
   const { canAccessLicensing, canAccessPortal } = useRoleAccess();
 
   const handleLogoClick = () => {
@@ -333,13 +365,12 @@ export function GlobalHeader() {
     }
   };
 
-  // Module visibility based on permissions (not just context)
-  const showPortal = isPlatformAdmin || canAccessPortal;
-  const showLicensing = isPlatformAdmin || canAccessLicensing;
+  // Products require active workspace - ARCHITECTURAL RULE
+  const hasActiveWorkspace = !!activeTenant;
   
-  // Legacy context access for backward compatibility
-  const hasPublishing = availableContexts.includes("publishing");
-  const hasLicensing = availableContexts.includes("licensing");
+  // Module visibility based on permissions AND active workspace
+  const showPortal = hasActiveWorkspace && (isPlatformAdmin || canAccessPortal);
+  const showLicensing = hasActiveWorkspace && (isPlatformAdmin || canAccessLicensing);
 
   return (
     <header 
@@ -360,7 +391,7 @@ export function GlobalHeader() {
         </button>
       </div>
 
-      {/* Center: Workspace selector */}
+      {/* Center: Workspace selector - organization-scoped */}
       <div className="flex-1 flex items-center justify-center">
         {!isMobile ? (
           <WorkspaceSelector />
@@ -371,10 +402,10 @@ export function GlobalHeader() {
 
       {/* Right: Module nav + Account */}
       <div className="flex items-center gap-1">
-        {/* Primary module navigation - flat, typographic active state */}
+        {/* Product navigation - ONLY visible with active workspace */}
         {!isMobile && currentMode !== "admin" && (
           <nav className="flex items-center gap-1 mr-3">
-            {/* Client Portal - first-class module */}
+            {/* Tribes Admin (was Client Portal) - organization-scoped */}
             {showPortal && (
               <button
                 onClick={() => navigate("/portal")}
@@ -386,10 +417,10 @@ export function GlobalHeader() {
                     : "text-white/50 hover:text-white/80"
                 )}
               >
-                {NAV_LABELS.CLIENT_PORTAL}
+                {NAV_LABELS.TRIBES_ADMIN}
               </button>
             )}
-            {/* Licensing - first-class module */}
+            {/* Licensing - organization-scoped */}
             {showLicensing && (
               <button
                 onClick={() => navigate("/licensing")}
