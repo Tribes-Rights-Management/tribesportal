@@ -130,25 +130,57 @@
     /* Mobile-aware header height variable used by hero sections */
     --header-h: 56px; /* Mobile: 56px (h-14) */
 
-    /* ─────────────────────────────────────────────────────────────────────────────
-       INSTITUTIONAL PLATFORM TOKENS (LOCKED — CANONICAL)
-       Dark canvas system for entire app shell. Matches auth + marketing.
-       Optimized for LONG-SESSION UX: reduced contrast fatigue, soft off-black.
-       ───────────────────────────────────────────────────────────────────────────── */
-    --platform-canvas: #0A0A0B;        /* Near-black, not pure #000 */
-    --platform-surface: #111113;       /* Slightly lifted surface */
-    --platform-surface-2: #161618;     /* Elevated panels */
-    --platform-surface-3: #1A1A1C;     /* Tertiary elevation */
-    --platform-border: rgba(255,255,255,0.08);       /* Muted dividers */
-    --platform-border-strong: rgba(255,255,255,0.12); /* Stronger separation */
-    --platform-text: #E8E8E6;          /* Warm off-white (not pure #FFF) - reduces eye strain */
-    --platform-text-secondary: #8A8A8A; /* Comfortable secondary */
-    --platform-text-muted: #5A5A5A;    /* Subdued for metadata */
-    --platform-accent: #E8E8E6;        /* Primary accent (matches text) */
-    --platform-text: #E8E8E6;
-    --platform-text-secondary: #8A8A8A;
-    --platform-text-muted: #5A5A5A;
-    --platform-accent: #E8E8E6;
+    /* ═══════════════════════════════════════════════════════════════════════════
+       CANONICAL VISUAL TOKENS — TRIBES INSTITUTIONAL UI (LOCKED)
+       
+       These tokens are AUTHORITATIVE and must not drift.
+       Page background matches public website exactly.
+       Header background matches public website header.
+       All content renders on elevated surfaces only.
+       
+       GLOBAL (SHARED WITH PUBLIC WEBSITE):
+       --tribes-bg-page → exact website page background
+       --tribes-bg-header → exact website header
+       --tribes-text-primary → near-white, high contrast
+       --tribes-text-secondary → muted gray for metadata
+       
+       APPLICATION SURFACES (ELEVATED ONLY):
+       --tribes-surface-card → elevated panel color
+       --tribes-surface-table → same as card, never page-level
+       --tribes-border-subtle → low-contrast dividers
+       --tribes-shadow-soft → restrained, institutional
+       
+       ENFORCEMENT: No data, tables, lists, or controls may render 
+       directly on page background. All content lives inside elevated surfaces.
+       ═══════════════════════════════════════════════════════════════════════════ */
+    
+    /* GLOBAL — Shared with public website (LOCKED) */
+    --tribes-bg-page: #0A0A0B;                        /* Exact website page background */
+    --tribes-bg-header: #0A0A0B;                      /* Exact website header color */
+    --tribes-text-primary: #E8E8E6;                   /* Near-white, high contrast */
+    --tribes-text-secondary: #8A8A8A;                 /* Muted gray for metadata */
+    --tribes-text-muted: #5A5A5A;                     /* Subdued for tertiary text */
+    
+    /* APPLICATION SURFACES — Elevated only (LOCKED) */
+    --tribes-surface-card: #111113;                   /* Primary elevated surface */
+    --tribes-surface-table: #111113;                  /* Table surface = card surface */
+    --tribes-surface-elevated: #161618;               /* Secondary elevation */
+    --tribes-surface-nested: #1A1A1C;                 /* Tertiary/nested elevation */
+    --tribes-border-subtle: rgba(255,255,255,0.08);   /* Low-contrast dividers */
+    --tribes-border-strong: rgba(255,255,255,0.12);   /* Stronger separation */
+    --tribes-shadow-soft: 0 1px 2px rgba(0,0,0,0.1);  /* Restrained, institutional */
+    
+    /* LEGACY ALIASES — Map to canonical tokens for backward compatibility */
+    --platform-canvas: var(--tribes-bg-page);
+    --platform-surface: var(--tribes-surface-card);
+    --platform-surface-2: var(--tribes-surface-elevated);
+    --platform-surface-3: var(--tribes-surface-nested);
+    --platform-border: var(--tribes-border-subtle);
+    --platform-border-strong: var(--tribes-border-strong);
+    --platform-text: var(--tribes-text-primary);
+    --platform-text-secondary: var(--tribes-text-secondary);
+    --platform-text-muted: var(--tribes-text-muted);
+    --platform-accent: var(--tribes-text-primary);
 
     /* ─────────────────────────────────────────────────────────────────────────────
        AUTH GATEWAY TOKENS (LOCKED — CANONICAL)

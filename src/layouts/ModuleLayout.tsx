@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { GlobalHeader } from "@/components/app/GlobalHeader";
 import { SideNav } from "@/components/app/SideNav";
+import { WorkspaceContextBar } from "@/components/app/WorkspaceContextBar";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -19,6 +20,12 @@ import type { NavItem } from "@/components/app/SideNav";
  * - Flat hierarchy, no elevation
  * - Seamless continuation from marketing + auth
  * - Module-specific side navigation
+ * - WorkspaceContextBar confirms operational context
+ * 
+ * WORKSPACE TRANSITION:
+ * - When entering from System Console, sidebar appears
+ * - Context bar confirms active workspace
+ * - Exit to System Console via user menu only
  */
 
 // Licensing module navigation
@@ -53,9 +60,10 @@ export function ModuleLayout() {
   return (
     <div 
       className="min-h-screen flex flex-col"
-      style={{ backgroundColor: 'var(--platform-canvas)' }}
+      style={{ backgroundColor: 'var(--tribes-bg-page)' }}
     >
       <GlobalHeader />
+      <WorkspaceContextBar />
       <div className="flex flex-1 overflow-hidden">
         {navItems.length > 0 && <SideNav items={navItems} />}
         <main className="flex-1 overflow-y-auto">
