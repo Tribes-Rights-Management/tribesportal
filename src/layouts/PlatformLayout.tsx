@@ -6,17 +6,17 @@ import { cn } from "@/lib/utils";
  * This component is the single source of truth for all authenticated pages.
  * 
  * ENFORCED STANDARDS:
- * - Dark canvas (matches marketing/public website exactly - #0A0A0B)
+ * - Dark canvas (matches website exactly - #0B0F14 via --tribes-bg)
  * - Content rendered on elevated surfaces (cards/panels)
  * - Centered content column (max-width ~960-1040px)
  * - Shared typography scale
  * - Shared spacing tokens
  * - No page-level overrides allowed
  * 
- * SURFACE ELEVATION:
- * - Page background: --platform-canvas (#0A0A0B)
- * - Content cards: --platform-surface (#111113)
- * - Nested panels: --platform-surface-2 (#161618)
+ * SURFACE ELEVATION (via tribes-theme.css):
+ * - Page background: --tribes-bg (#0B0F14)
+ * - Header: --tribes-header-bg (#111214)
+ * - Content surfaces: --tribes-surface (rgba white overlay)
  * 
  * PROHIBITED OVERRIDES:
  * - Background color

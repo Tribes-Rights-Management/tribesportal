@@ -105,10 +105,16 @@ function WorkspaceSelector() {
     if (activeTenant) {
       return (
         <div className="flex flex-col items-center">
-          <span className="text-[10px] text-white/30 uppercase tracking-wider">
+          <span 
+            className="text-[10px] uppercase tracking-wider"
+            style={{ color: 'var(--tribes-fg-muted)' }}
+          >
             Workspace
           </span>
-          <span className="text-[13px] font-medium text-white/60 truncate max-w-[160px]">
+          <span 
+            className="text-[13px] font-medium truncate max-w-[160px]"
+            style={{ color: 'var(--tribes-fg-secondary)' }}
+          >
             {activeTenant.tenant_name}
           </span>
         </div>
@@ -134,7 +140,10 @@ function WorkspaceSelector() {
 
   return (
     <div className="flex flex-col items-center gap-0.5">
-      <span className="text-[10px] text-white/30 uppercase tracking-wider">
+      <span 
+        className="text-[10px] uppercase tracking-wider"
+        style={{ color: 'var(--tribes-fg-muted)' }}
+      >
         Workspace
       </span>
       <Select
@@ -427,8 +436,11 @@ export function GlobalHeader() {
 
   return (
     <header 
-      className="h-14 border-b border-white/8 px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40"
-      style={{ backgroundColor: 'var(--tribes-bg-header)' }}
+      className="h-14 border-b px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40"
+      style={{ 
+        backgroundColor: 'var(--tribes-header-bg)',
+        borderColor: 'var(--tribes-border)',
+      }}
     >
       {/* Left: Wordmark + Context indicator */}
       <div className="flex items-center min-w-0 gap-3">
