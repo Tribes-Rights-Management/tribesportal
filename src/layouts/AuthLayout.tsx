@@ -5,15 +5,13 @@ interface AuthLayoutProps {
 }
 
 /**
- * Premium auth layout - Apple/Northwestern Mutual grade
- * Isolated from app shell - no header, no navigation
- * Light mode only - institutional aesthetic
+ * AuthLayout - Institutional-grade auth shell
+ * Light mode only. No header, no navigation.
  * 
- * Specs:
- * - Background: #F5F5F7 (Apple gray)
- * - Card: white, 420px max, 20px radius, subtle border/shadow
- * - Inputs: 44px height, 12px radius
- * - Primary button: near-black (#111), 44px height
+ * LOCKED DESIGN TOKENS:
+ * - Background: #F5F5F7
+ * - Card: max-width 420px, radius 20px, white bg, border #E5E5EA, soft shadow
+ * - Card padding: 32px desktop / 24px mobile
  */
 export function AuthLayout({ children }: AuthLayoutProps) {
   useEffect(() => {
@@ -33,11 +31,11 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         style={{ maxWidth: "min(420px, calc(100vw - 32px))" }}
       >
         <div 
-          className="rounded-[20px] px-7 py-8 sm:px-8 sm:py-10"
+          className="rounded-[20px] px-6 py-6 sm:px-8 sm:py-8"
           style={{
             background: "#ffffff",
-            border: "1px solid rgba(0,0,0,0.08)",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+            border: "1px solid #E5E5EA",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
           }}
         >
           {children}
