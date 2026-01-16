@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           access_type: string
           accessed_at: string
+          correlation_id: string | null
           id: string
           record_id: string
           record_type: string
@@ -28,6 +29,7 @@ export type Database = {
         Insert: {
           access_type: string
           accessed_at?: string
+          correlation_id?: string | null
           id?: string
           record_id: string
           record_type: string
@@ -38,6 +40,7 @@ export type Database = {
         Update: {
           access_type?: string
           accessed_at?: string
+          correlation_id?: string | null
           id?: string
           record_id?: string
           record_type?: string
@@ -98,6 +101,7 @@ export type Database = {
           actor_email: string | null
           actor_id: string | null
           actor_type: string
+          correlation_id: string | null
           created_at: string
           details: Json | null
           id: string
@@ -113,6 +117,7 @@ export type Database = {
           actor_email?: string | null
           actor_id?: string | null
           actor_type?: string
+          correlation_id?: string | null
           created_at?: string
           details?: Json | null
           id?: string
@@ -128,6 +133,7 @@ export type Database = {
           actor_email?: string | null
           actor_id?: string | null
           actor_type?: string
+          correlation_id?: string | null
           created_at?: string
           details?: Json | null
           id?: string
@@ -198,6 +204,7 @@ export type Database = {
       licensing_agreements: {
         Row: {
           agreement_title: string
+          correlation_id: string | null
           created_at: string
           document_url: string | null
           effective_date: string | null
@@ -210,6 +217,7 @@ export type Database = {
         }
         Insert: {
           agreement_title: string
+          correlation_id?: string | null
           created_at?: string
           document_url?: string | null
           effective_date?: string | null
@@ -222,6 +230,7 @@ export type Database = {
         }
         Update: {
           agreement_title?: string
+          correlation_id?: string | null
           created_at?: string
           document_url?: string | null
           effective_date?: string | null
@@ -251,6 +260,7 @@ export type Database = {
       }
       licensing_requests: {
         Row: {
+          correlation_id: string | null
           created_at: string
           id: string
           notes: string | null
@@ -265,6 +275,7 @@ export type Database = {
           work_title: string | null
         }
         Insert: {
+          correlation_id?: string | null
           created_at?: string
           id?: string
           notes?: string | null
@@ -279,6 +290,7 @@ export type Database = {
           work_title?: string | null
         }
         Update: {
+          correlation_id?: string | null
           created_at?: string
           id?: string
           notes?: string | null
@@ -528,6 +540,21 @@ export type Database = {
       can_access_publishing_context: {
         Args: { _tenant_id: string }
         Returns: boolean
+      }
+      generate_correlation_id: { Args: never; Returns: string }
+      get_correlation_chain: {
+        Args: { _correlation_id: string }
+        Returns: {
+          action: string
+          actor: string
+          details: Json
+          event_id: string
+          event_timestamp: string
+          event_type: string
+          record_id: string
+          record_type: string
+          tenant_id: string
+        }[]
       }
       get_user_contexts: {
         Args: { _tenant_id: string; _user_id: string }

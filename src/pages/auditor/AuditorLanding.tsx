@@ -80,7 +80,7 @@ export default function AuditorLanding() {
         </h2>
 
         <AuditorNavItem 
-          href="/auditor/activity-log"
+          href="/auditor/activity"
           label="Activity Log"
           description="Immutable record of all platform actions"
         />
@@ -90,9 +90,14 @@ export default function AuditorLanding() {
           description="Requests, agreements, and approval history"
         />
         <AuditorNavItem 
-          href="/auditor/access-log"
+          href="/auditor/access"
           label="Access Log"
           description="Record access and download events"
+        />
+        <AuditorNavItem 
+          href="/auditor/chain"
+          label="Correlation Chain"
+          description="Trace related actions across the platform"
         />
       </section>
 
