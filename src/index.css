@@ -472,11 +472,6 @@
     outline-offset: 2px;
   }
 
-  .dark .focus-ring:focus-visible,
-  [data-dark="true"] .focus-ring:focus-visible {
-    outline-color: hsl(0 0% 100% / 0.4);
-  }
-
   /* Hover state - subtle opacity shift only, institutional timing */
   .hover-subtle {
     @apply transition-opacity duration-[280ms] ease-in-out;
