@@ -27,8 +27,8 @@ export default function SignInPage() {
   if (loading) {
     return (
       <AuthLayout>
-        <p className="text-center text-[15px] text-black/60">
-          Verifying access...
+        <p className="text-center text-[14px] text-[#505050]">
+          Verifying access…
         </p>
       </AuthLayout>
     );

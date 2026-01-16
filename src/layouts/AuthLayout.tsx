@@ -5,21 +5,19 @@ interface AuthLayoutProps {
 }
 
 /**
- * AuthLayout - Premium institutional-grade auth shell
+ * AuthLayout - Institutional system boundary
  * 
- * LOCKED DESIGN TOKENS:
- * - Page background: #F5F5F7
- * - Card: max-w-[420px], rounded-[20px], white bg
- * - Card border: black/5
- * - Card shadow: 0_14px_40px_rgba(0,0,0,0.08)
- * - Padding: 40px desktop / 28px mobile
- * 
- * Light mode only. Centered vertically and horizontally.
+ * DESIGN STANDARD (AUTHORITATIVE):
+ * - Full-viewport dark environment
+ * - NO card UI, NO SaaS containers
+ * - Typography-driven, content constrained by max-width column
+ * - Continuous with tribesrightsmanagement.com
+ * - This is a system gate, not a welcome page
  */
 export function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="min-h-dvh w-full bg-[#F5F5F7] flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-[420px] rounded-[20px] bg-white border border-black/5 shadow-[0_14px_40px_rgba(0,0,0,0.08)] px-7 py-9 sm:px-10 sm:py-10">
+    <div className="min-h-dvh w-full bg-[#0A0A0B] flex flex-col items-center justify-center px-6 py-12">
+      <div className="w-full max-w-[380px]">
         {children}
       </div>
     </div>
