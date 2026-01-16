@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ArrowLeft, Plus, Pencil } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
@@ -17,12 +17,14 @@ interface Tenant {
 }
 
 /**
- * TENANTS PAGE — ORGANIZATIONS (CANONICAL)
+ * TENANTS PAGE — ORGANIZATIONS (INSTITUTIONAL STANDARD)
  * 
  * Design Rules:
- * - Flat table layout, no card wrappers
- * - Dense, institutional spacing
- * - Explicit actions, no hover-only affordances
+ * - Dark canvas, flat panels with hairline borders
+ * - Table sits within centered content column
+ * - No shadows, no cards, no elevation
+ * - Plain text values, no badges or pills
+ * - Restrained hover states
  */
 export default function TenantsPage() {
   const [tenants, setTenants] = useState<Tenant[]>([]);
@@ -157,140 +159,217 @@ export default function TenantsPage() {
   };
 
   return (
-    <div className="max-w-[900px] mx-auto px-6 py-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <Link 
-            to="/admin" 
-            className="h-8 w-8 rounded flex items-center justify-center hover:bg-black/5 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4 text-[#6B6B6B]" />
-          </Link>
-          <div>
-            <h1 className="text-[20px] font-medium tracking-[-0.01em] text-[#111]">
-              Organizations
-            </h1>
-            <p className="text-[13px] text-[#6B6B6B]">
-              {tenants.length} organization(s)
-            </p>
-          </div>
-        </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <button 
-              onClick={openCreateDialog}
-              className="h-8 px-3 rounded text-[13px] font-medium bg-[#111] text-white hover:bg-[#222] flex items-center gap-1.5"
+    <div 
+      className="min-h-full py-10 px-6"
+      style={{ backgroundColor: 'var(--platform-canvas)' }}
+    >
+      <div className="max-w-[960px] mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <Link 
+              to="/admin" 
+              className="h-8 w-8 rounded flex items-center justify-center transition-colors"
+              style={{ color: 'var(--platform-text-secondary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
-              <Plus className="h-3.5 w-3.5" />
-              Add organization
-            </button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[400px]">
-            <DialogHeader>
-              <DialogTitle className="text-[16px] font-medium">
-                {editingTenant ? "Edit organization" : "Add organization"}
-              </DialogTitle>
-              <DialogDescription className="text-[13px]">
-                {editingTenant
-                  ? "Update organization details."
-                  : "Create a new organization."}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-[13px]">Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => handleNameChange(e.target.value)}
-                  placeholder="Acme Publishing"
-                  className="h-9 text-[14px]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="slug" className="text-[13px]">Slug</Label>
-                <Input
-                  id="slug"
-                  value={formData.slug}
-                  onChange={(e) =>
-                    setFormData({ ...formData, slug: e.target.value })
-                  }
-                  placeholder="acme-publishing"
-                  className="h-9 text-[14px] font-mono"
-                />
-                <p className="text-[12px] text-[#8A8A8A]">
-                  URL-friendly identifier. Must be unique.
-                </p>
-              </div>
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+            <div>
+              <h1 
+                className="text-[28px] font-semibold tracking-[-0.02em]"
+                style={{ color: 'var(--platform-text)' }}
+              >
+                Organizations
+              </h1>
+              <p 
+                className="text-[15px] mt-0.5"
+                style={{ color: 'var(--platform-text-secondary)' }}
+              >
+                {tenants.length} organization(s)
+              </p>
             </div>
-            <DialogFooter>
-              <button
-                onClick={() => setDialogOpen(false)}
-                disabled={saving}
-                className="h-8 px-3 rounded text-[13px] font-medium border border-[#E5E5E5] text-[#6B6B6B] hover:border-[#D4D4D4] hover:text-[#111]"
-              >
-                Cancel
-              </button>
+          </div>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
               <button 
-                onClick={saveTenant} 
-                disabled={saving}
-                className="h-8 px-3 rounded text-[13px] font-medium bg-[#111] text-white hover:bg-[#222] disabled:opacity-40"
+                onClick={openCreateDialog}
+                className="h-8 px-3 rounded text-[13px] font-medium flex items-center gap-1.5 transition-colors"
+                style={{ 
+                  backgroundColor: 'var(--platform-text)',
+                  color: 'var(--platform-canvas)'
+                }}
               >
-                {saving ? "Saving" : editingTenant ? "Update" : "Create"}
+                <Plus className="h-3.5 w-3.5" />
+                Add organization
               </button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
+            </DialogTrigger>
+            <DialogContent 
+              className="sm:max-w-[400px]"
+              style={{
+                backgroundColor: 'var(--platform-surface)',
+                border: '1px solid var(--platform-border)',
+                color: 'var(--platform-text)'
+              }}
+            >
+              <DialogHeader>
+                <DialogTitle 
+                  className="text-[16px] font-medium"
+                  style={{ color: 'var(--platform-text)' }}
+                >
+                  {editingTenant ? "Edit organization" : "Add organization"}
+                </DialogTitle>
+                <DialogDescription 
+                  className="text-[13px]"
+                  style={{ color: 'var(--platform-text-secondary)' }}
+                >
+                  {editingTenant
+                    ? "Update organization details."
+                    : "Create a new organization."}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label 
+                    htmlFor="name" 
+                    className="text-[13px]"
+                    style={{ color: 'var(--platform-text-secondary)' }}
+                  >
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => handleNameChange(e.target.value)}
+                    placeholder="Acme Publishing"
+                    className="h-9 text-[14px] bg-transparent border-white/10 text-white placeholder:text-white/30"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label 
+                    htmlFor="slug" 
+                    className="text-[13px]"
+                    style={{ color: 'var(--platform-text-secondary)' }}
+                  >
+                    Slug
+                  </Label>
+                  <Input
+                    id="slug"
+                    value={formData.slug}
+                    onChange={(e) =>
+                      setFormData({ ...formData, slug: e.target.value })
+                    }
+                    placeholder="acme-publishing"
+                    className="h-9 text-[14px] font-mono bg-transparent border-white/10 text-white placeholder:text-white/30"
+                  />
+                  <p 
+                    className="text-[12px]"
+                    style={{ color: 'var(--platform-text-muted)' }}
+                  >
+                    URL-friendly identifier. Must be unique.
+                  </p>
+                </div>
+              </div>
+              <DialogFooter>
+                <button
+                  onClick={() => setDialogOpen(false)}
+                  disabled={saving}
+                  className="h-8 px-3 rounded text-[13px] font-medium transition-colors"
+                  style={{ 
+                    border: '1px solid var(--platform-border)',
+                    color: 'var(--platform-text-secondary)'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={saveTenant} 
+                  disabled={saving}
+                  className="h-8 px-3 rounded text-[13px] font-medium disabled:opacity-40 transition-colors"
+                  style={{ 
+                    backgroundColor: 'var(--platform-text)',
+                    color: 'var(--platform-canvas)'
+                  }}
+                >
+                  {saving ? "Saving" : editingTenant ? "Update" : "Create"}
+                </button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
 
-      {/* Table - flat, no card wrapper */}
-      <div className="border border-[#E5E5E5] rounded-md bg-white overflow-hidden">
-        {loading ? (
-          <div className="py-12 text-center text-[14px] text-[#6B6B6B]">
-            Retrieving records
-          </div>
-        ) : tenants.length === 0 ? (
-          <div className="py-12 text-center text-[14px] text-[#6B6B6B]">
-            No organizations.
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Slug</TableHead>
-                <TableHead>Members</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="w-12"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {tenants.map((tenant) => (
-                <TableRow key={tenant.id}>
-                  <TableCell className="font-medium">
-                    {tenant.name}
-                  </TableCell>
-                  <TableCell className="text-[#6B6B6B] font-mono text-[13px]">
-                    {tenant.slug}
-                  </TableCell>
-                  <TableCell>{tenant.member_count}</TableCell>
-                  <TableCell className="text-[#6B6B6B]">
-                    {new Date(tenant.created_at).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <button
-                      onClick={() => openEditDialog(tenant)}
-                      className="h-7 w-7 rounded flex items-center justify-center hover:bg-black/5 transition-colors"
-                    >
-                      <Pencil className="h-3.5 w-3.5 text-[#6B6B6B]" />
-                    </button>
-                  </TableCell>
+        {/* Table Panel */}
+        <div 
+          className="rounded overflow-hidden"
+          style={{ 
+            backgroundColor: 'var(--platform-surface)',
+            border: '1px solid var(--platform-border)'
+          }}
+        >
+          {loading ? (
+            <div 
+              className="py-16 text-center text-[14px]"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              Retrieving records
+            </div>
+          ) : tenants.length === 0 ? (
+            <div 
+              className="py-16 text-center"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              <p className="text-[14px]">No organizations.</p>
+              <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text-muted)' }}>
+                Records will appear once organizations are created.
+              </p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Slug</TableHead>
+                  <TableHead className="text-right">Members</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead className="w-16"></TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+              </TableHeader>
+              <TableBody>
+                {tenants.map((tenant) => (
+                  <TableRow key={tenant.id}>
+                    <TableCell className="font-medium">
+                      {tenant.name}
+                    </TableCell>
+                    <TableCell 
+                      className="font-mono text-[12px]"
+                      style={{ color: 'var(--platform-text-secondary)' }}
+                    >
+                      {tenant.slug}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {tenant.member_count}
+                    </TableCell>
+                    <TableCell style={{ color: 'var(--platform-text-secondary)' }}>
+                      {new Date(tenant.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <button
+                        onClick={() => openEditDialog(tenant)}
+                        className="text-[13px] transition-colors"
+                        style={{ color: 'var(--platform-text-secondary)' }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--platform-text)'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--platform-text-secondary)'}
+                      >
+                        Edit
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
       </div>
     </div>
   );
