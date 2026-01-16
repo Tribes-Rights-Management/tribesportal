@@ -1,37 +1,36 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { PageHeader } from "@/components/ui/page-header";
+import { Panel, PanelHeader, PanelTitle, PanelContent, DataList, DataRow } from "@/components/ui/panel";
 
+/**
+ * Publishing Settings - Institutional mode
+ */
 export default function PublishingSettings() {
   const { profile, activeTenant } = useAuth();
 
   return (
-    <div className="max-w-2xl">
-      <div className="mb-8">
-        <h1 className="text-[24px] font-medium text-[#0A0A0A] tracking-[-0.02em]">
-          Settings
-        </h1>
-        <p className="mt-2 text-[15px] text-[#71717A]">
-          Publishing portal preferences and configuration.
-        </p>
-      </div>
+    <div className="p-6 max-w-2xl">
+      <PageHeader 
+        title="Settings"
+        description="Publishing portal configuration"
+      />
 
-      <div className="space-y-6">
-        <div className="p-6 border border-[#E4E4E7] rounded-lg bg-white">
-          <h2 className="text-[15px] font-medium text-[#0A0A0A]">Account</h2>
-          <div className="mt-4 space-y-3">
-            <div className="flex justify-between text-[13px]">
-              <span className="text-[#71717A]">Email</span>
-              <span className="text-[#0A0A0A]">{profile?.email}</span>
-            </div>
-            <div className="flex justify-between text-[13px]">
-              <span className="text-[#71717A]">Organization</span>
-              <span className="text-[#0A0A0A]">{activeTenant?.tenant_name}</span>
-            </div>
-          </div>
-        </div>
+      <div className="space-y-4">
+        <Panel>
+          <PanelHeader>
+            <PanelTitle>Account</PanelTitle>
+          </PanelHeader>
+          <PanelContent>
+            <DataList>
+              <DataRow label="Email" value={profile?.email || "—"} />
+              <DataRow label="Organization" value={activeTenant?.tenant_name || "—"} />
+            </DataList>
+          </PanelContent>
+        </Panel>
 
-        <div className="p-6 border border-[#E4E4E7] rounded-lg bg-[#FAFAFA]">
-          <p className="text-[13px] text-[#71717A]">
-            Additional settings will be available here.
+        <div className="bg-white border border-[#E8E8E8] rounded-md p-4">
+          <p className="text-[13px] text-[#6B6B6B]">
+            Additional configuration options will be available.
           </p>
         </div>
       </div>

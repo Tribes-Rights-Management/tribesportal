@@ -475,3 +475,34 @@ export const ACTION_MESSAGES = {
   RECORD_UPDATED: "Record updated",
   RECORD_DELETED: "Record removed",
 } as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PLATFORM STATE COPY — INFRASTRUCTURE VOICE
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * STATE COPY RULES:
+ * - No empathy, no personality, no reassurance
+ * - Neutral, informational, infrastructure voice
+ */
+export const STATE_COPY = {
+  // Loading states
+  LOADING: "Loading data",
+  LOADING_RECORDS: "Retrieving records",
+  LOADING_DATA: "Loading data",
+  PROCESSING: "Processing…",
+  
+  // Empty states
+  NO_RECORDS: "No records available.",
+  NO_DATA: "No data available.",
+  NO_RESULTS: "No results.",
+  
+  // Error states
+  OPERATION_FAILED: "Operation failed.",
+  VERIFICATION_REQUIRED: "Verification required.",
+  CONNECTION_FAILED: "Connection failed.",
+  
+  // Permission states
+  ACCESS_NOT_AUTHORIZED: "Access not authorized.",
+  PERMISSION_RESTRICTED: "Permission restricted.",
+} as const;
