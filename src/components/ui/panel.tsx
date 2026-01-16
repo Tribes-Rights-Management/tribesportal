@@ -1,11 +1,11 @@
 import { cn } from "@/lib/utils";
 
 /**
- * INSTITUTIONAL PANEL
+ * INSTITUTIONAL PANEL — DARK CANVAS (CANONICAL)
  * 
  * DESIGN STANDARD (AUTHORITATIVE):
+ * - Dark surface, hairline borders
  * - Flat, rectangular
- * - Minimal border
  * - No card-style shadows or lift
  * - Dense padding
  * 
@@ -21,9 +21,13 @@ export function Panel({ children, className }: PanelProps) {
   return (
     <div 
       className={cn(
-        "bg-white border border-[#E8E8E8] rounded-md",
+        "rounded-md",
         className
       )}
+      style={{
+        backgroundColor: 'var(--platform-surface)',
+        border: '1px solid var(--platform-border)'
+      }}
     >
       {children}
     </div>
@@ -39,9 +43,10 @@ export function PanelHeader({ children, className }: PanelHeaderProps) {
   return (
     <div 
       className={cn(
-        "px-4 py-3 border-b border-[#E8E8E8]",
+        "px-4 py-3",
         className
       )}
+      style={{ borderBottom: '1px solid var(--platform-border)' }}
     >
       {children}
     </div>
@@ -57,9 +62,10 @@ export function PanelTitle({ children, className }: PanelTitleProps) {
   return (
     <h3 
       className={cn(
-        "text-[14px] font-medium text-[#111]",
+        "text-[14px] font-medium",
         className
       )}
+      style={{ color: 'var(--platform-text)' }}
     >
       {children}
     </h3>
@@ -80,7 +86,7 @@ export function PanelContent({ children, className }: PanelContentProps) {
 }
 
 /**
- * INSTITUTIONAL DATA ROW
+ * INSTITUTIONAL DATA ROW — DARK CANVAS
  * 
  * For displaying key-value pairs in record views.
  * Flat, dense, audit-ready presentation.
@@ -94,10 +100,16 @@ interface DataRowProps {
 export function DataRow({ label, value, className }: DataRowProps) {
   return (
     <div className={cn("flex items-start gap-4 py-2", className)}>
-      <dt className="w-32 shrink-0 text-[13px] text-[#6B6B6B]">
+      <dt 
+        className="w-32 shrink-0 text-[13px]"
+        style={{ color: 'var(--platform-text-secondary)' }}
+      >
         {label}
       </dt>
-      <dd className="text-[14px] text-[#111]">
+      <dd 
+        className="text-[13px]"
+        style={{ color: 'var(--platform-text)' }}
+      >
         {value}
       </dd>
     </div>
@@ -105,7 +117,7 @@ export function DataRow({ label, value, className }: DataRowProps) {
 }
 
 /**
- * INSTITUTIONAL DATA LIST
+ * INSTITUTIONAL DATA LIST — DARK CANVAS
  * 
  * Container for DataRow components.
  */
@@ -116,16 +128,53 @@ interface DataListProps {
 
 export function DataList({ children, className }: DataListProps) {
   return (
-    <dl className={cn("divide-y divide-[#F0F0F0]", className)}>
+    <dl 
+      className={cn("divide-y", className)}
+      style={{ borderColor: 'var(--platform-border)' }}
+    >
       {children}
     </dl>
   );
 }
 
 /**
- * INSTITUTIONAL STAT CARD
+ * INSTITUTIONAL STATUS ROW — DARK CANVAS (PREFERRED OVER STAT CARDS)
  * 
- * For dashboard metrics. Dense, functional, no decoration.
+ * For inline status display. Text-first, not celebrated metrics.
+ */
+interface StatusRowProps {
+  label: string;
+  value: string | number;
+  className?: string;
+}
+
+export function StatusRow({ label, value, className }: StatusRowProps) {
+  return (
+    <div 
+      className={cn("flex items-center justify-between px-4 py-2.5", className)}
+      style={{ borderColor: 'var(--platform-border)' }}
+    >
+      <span 
+        className="text-[13px]"
+        style={{ color: 'var(--platform-text-secondary)' }}
+      >
+        {label}
+      </span>
+      <span 
+        className="text-[13px] font-medium tabular-nums"
+        style={{ color: 'var(--platform-text)' }}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}
+
+/**
+ * INSTITUTIONAL STAT CARD — DARK CANVAS
+ * 
+ * NOTE: Prefer StatusRow for institutional density.
+ * Only use StatCard when visual weight is specifically required.
  */
 interface StatCardProps {
   label: string;
@@ -137,14 +186,24 @@ export function StatCard({ label, value, className }: StatCardProps) {
   return (
     <div 
       className={cn(
-        "bg-white border border-[#E8E8E8] rounded-md p-4",
+        "rounded-md p-4",
         className
       )}
+      style={{
+        backgroundColor: 'var(--platform-surface)',
+        border: '1px solid var(--platform-border)'
+      }}
     >
-      <p className="text-[11px] font-medium tracking-[0.04em] uppercase text-[#6B6B6B]">
+      <p 
+        className="text-[10px] font-medium tracking-[0.04em] uppercase"
+        style={{ color: 'var(--platform-text-muted)' }}
+      >
         {label}
       </p>
-      <p className="mt-1 text-[24px] font-medium text-[#111] tabular-nums">
+      <p 
+        className="mt-1 text-[20px] font-medium tabular-nums"
+        style={{ color: 'var(--platform-text)' }}
+      >
         {value}
       </p>
     </div>

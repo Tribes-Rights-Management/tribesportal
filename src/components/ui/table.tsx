@@ -2,9 +2,10 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * INSTITUTIONAL TABLE SYSTEM
+ * INSTITUTIONAL TABLE SYSTEM — DARK CANVAS (CANONICAL)
  * 
  * DESIGN STANDARD (AUTHORITATIVE):
+ * - Dark surface, hairline borders
  * - Flat, rectangular layout
  * - Minimal dividers
  * - No card-style rows
@@ -21,7 +22,7 @@ const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableE
       <table 
         ref={ref} 
         className={cn(
-          "w-full caption-bottom text-[14px]",
+          "w-full caption-bottom text-[13px]",
           className
         )} 
         {...props} 
@@ -36,9 +37,10 @@ const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttribut
     <thead 
       ref={ref} 
       className={cn(
-        "border-b border-[#E8E8E8]",
+        "border-b",
         className
-      )} 
+      )}
+      style={{ borderColor: 'var(--platform-border)' }}
       {...props} 
     />
   ),
@@ -61,9 +63,13 @@ const TableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttribut
     <tfoot 
       ref={ref} 
       className={cn(
-        "border-t border-[#E8E8E8] bg-[#FAFAFA] font-medium [&>tr]:last:border-b-0",
+        "border-t font-medium [&>tr]:last:border-b-0",
         className
-      )} 
+      )}
+      style={{ 
+        borderColor: 'var(--platform-border)',
+        backgroundColor: 'var(--platform-surface-2)'
+      }}
       {...props} 
     />
   ),
@@ -76,10 +82,11 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
       ref={ref}
       className={cn(
         // Minimal divider, subtle hover - no animation, no lift
-        "border-b border-[#F0F0F0] hover:bg-[#FAFAFA]",
-        "data-[state=selected]:bg-[#F5F5F5]",
+        "border-b hover:bg-white/[0.02]",
+        "data-[state=selected]:bg-white/[0.04]",
         className
       )}
+      style={{ borderColor: 'var(--platform-border)' }}
       {...props}
     />
   ),
@@ -93,10 +100,11 @@ const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<
       className={cn(
         // Institutional header: small, uppercase, muted, dense
         "h-10 px-4 text-left align-middle",
-        "text-[11px] font-medium tracking-[0.04em] uppercase text-[#6B6B6B]",
+        "text-[10px] font-medium tracking-[0.04em] uppercase",
         "[&:has([role=checkbox])]:pr-0",
         className,
       )}
+      style={{ color: 'var(--platform-text-muted)' }}
       {...props}
     />
   ),
@@ -109,10 +117,11 @@ const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<
       ref={ref} 
       className={cn(
         // Dense, readable cell
-        "px-4 py-3 align-middle text-[14px] text-[#111]",
+        "px-4 py-3 align-middle text-[13px]",
         "[&:has([role=checkbox])]:pr-0",
         className
-      )} 
+      )}
+      style={{ color: 'var(--platform-text)' }}
       {...props} 
     />
   ),
@@ -124,9 +133,10 @@ const TableCaption = React.forwardRef<HTMLTableCaptionElement, React.HTMLAttribu
     <caption 
       ref={ref} 
       className={cn(
-        "mt-4 text-[13px] text-[#6B6B6B]",
+        "mt-4 text-[12px]",
         className
-      )} 
+      )}
+      style={{ color: 'var(--platform-text-secondary)' }}
       {...props} 
     />
   ),

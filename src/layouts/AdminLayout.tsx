@@ -2,9 +2,10 @@ import { Outlet } from "react-router-dom";
 import { GlobalHeader } from "@/components/app/GlobalHeader";
 
 /**
- * ADMIN LAYOUT — GOVERNANCE COMMAND CENTER
+ * ADMIN LAYOUT — INSTITUTIONAL COMMAND CENTER (CANONICAL)
  * 
  * Layout Rules:
+ * - Dark canvas persists (no light mode switch)
  * - Flat hierarchy, no elevation
  * - No shadows, no animated transitions
  * - Navigation is functional, not expressive
@@ -15,7 +16,10 @@ import { GlobalHeader } from "@/components/app/GlobalHeader";
  */
 export function AdminLayout() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F5F7]">
+    <div 
+      className="min-h-screen flex flex-col"
+      style={{ backgroundColor: 'var(--platform-canvas)' }}
+    >
       <GlobalHeader />
       <main className="flex-1 overflow-y-auto">
         <Outlet />
