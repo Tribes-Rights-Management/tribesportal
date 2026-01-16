@@ -131,11 +131,12 @@ function AccountMenu() {
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "h-7 w-7 rounded-full shrink-0 inline-flex items-center justify-center",
-            "bg-white/10 text-[10px] font-medium text-white/70",
-            "hover:bg-white/15",
+            "h-8 w-8 rounded-full shrink-0 inline-flex items-center justify-center",
+            "bg-[#2A2A2C] text-[11px] font-medium text-white/80 uppercase",
+            "hover:bg-[#333335]",
             "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
           )}
+          style={{ aspectRatio: '1 / 1' }}
           aria-label="Account menu"
         >
           {getInitials()}

@@ -101,19 +101,14 @@ export default function AdminDashboard() {
           {/* Security & Governance */}
           <NavSection title="Security & Governance" hasBorder>
             <NavRow
-              to="/admin/security/rls"
+              to="/admin/rls-audit"
               label="RLS Verification"
               description="Row-level security policy coverage"
             />
             <NavRow
-              to="/admin/security/auth"
-              label="Audit Coverage"
+              to="/admin/security"
+              label="Auth & Access Review"
               description="Authentication and access logging"
-            />
-            <NavRow
-              to="/admin/security/sessions"
-              label="Session Integrity"
-              description="Active sessions, token management"
             />
           </NavSection>
 
