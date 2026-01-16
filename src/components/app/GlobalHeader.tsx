@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LogOut, Settings, Shield, ChevronDown } from "lucide-react";
+import { LogOut, Settings, Shield } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -26,24 +26,19 @@ import {
   NAV_BUTTON_INACTIVE,
   ICON_SIZE,
   ICON_STROKE,
+  NAV_LABELS,
 } from "@/styles/tokens";
 
 /**
- * GlobalHeader - Premium Tribes header
+ * GLOBAL HEADER — INSTITUTIONAL SYSTEM NAVIGATION
  * 
- * Layout: 
- * - Left: "Tribes" wordmark
- * - Center: Tenant selector (desktop) or mobile controls
- * - Right: Portal nav (Client Portal | Licensing) + Account menu
- * 
- * Rules:
- * - NO "Tribes Platform" text anywhere
- * - Admin access is inside profile dropdown only
- * - Icons: 18px, strokeWidth 1.5
- * - Avatar: 32px, subtle focus ring
- * - Light mode only
+ * Design Rules:
+ * - Navigation is functional, not expressive
+ * - No personality, no storytelling
+ * - No "friendly" labels
+ * - Minimal contrast, no shadows or elevation
+ * - No animated transitions beyond essential feedback
  */
-
 
 type PortalMode = "publishing" | "licensing";
 
@@ -54,7 +49,7 @@ function useCurrentMode(): PortalMode | "admin" {
   return "publishing";
 }
 
-// Tenant selector dropdown
+// Tenant selector - flat, functional
 function TenantSelector() {
   const { tenantMemberships, activeTenant, setActiveTenant, activeContext } = useAuth();
   const navigate = useNavigate();
@@ -63,7 +58,7 @@ function TenantSelector() {
   if (tenantMemberships.length <= 1) {
     if (activeTenant) {
       return (
-        <span className="text-[13px] font-medium text-neutral-500 truncate max-w-[160px]">
+        <span className="text-[13px] font-medium text-[#6B6B6B] truncate max-w-[160px]">
           {activeTenant.tenant_name}
         </span>
       );
@@ -91,10 +86,10 @@ function TenantSelector() {
       value={activeTenant?.tenant_id ?? ""}
       onValueChange={handleTenantChange}
     >
-      <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-neutral-100 text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 focus-visible:ring-2 focus-visible:ring-black/15 text-neutral-500">
-        <SelectValue placeholder="Select tenant" />
+      <SelectTrigger className="h-7 w-auto min-w-[100px] max-w-[180px] border-0 bg-transparent hover:bg-[#F0F0F0] text-[13px] gap-1.5 px-2 font-medium shadow-none focus:ring-0 focus-visible:ring-2 focus-visible:ring-black/15 text-[#6B6B6B]">
+        <SelectValue placeholder="Select organization" />
       </SelectTrigger>
-      <SelectContent align="center" className="bg-white border-neutral-200/80">
+      <SelectContent align="center" className="bg-white border-[#E5E5E5]">
         {tenantMemberships.map((membership) => (
           <SelectItem
             key={membership.tenant_id}
@@ -109,7 +104,7 @@ function TenantSelector() {
   );
 }
 
-// Premium account menu - 32px avatar with Apple-like subtle styling
+// Account menu - institutional, no decoration
 function AccountMenu() {
   const { 
     profile, 
@@ -151,34 +146,34 @@ function AccountMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-56 rounded-xl border-neutral-200/80"
+        className="w-56 rounded-lg border-[#E5E5E5]"
         sideOffset={8}
       >
         <div className="px-3 py-2.5">
-          <p className="text-[13px] font-medium text-foreground truncate">
+          <p className="text-[13px] font-medium text-[#111] truncate">
             {profile?.full_name || profile?.email}
           </p>
           {profile?.email && profile?.full_name && (
-            <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+            <p className="text-[11px] text-[#6B6B6B] truncate mt-0.5">
               {profile.email}
             </p>
           )}
         </div>
         
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="bg-[#E5E5E5]" />
         
-        {/* Admin link - only for platform admins */}
+        {/* Admin link - platform admins only */}
         {isPlatformAdmin && (
           <DropdownMenuItem
             onClick={() => navigate("/admin")}
-            className={cn("text-[13px] py-2", currentMode === "admin" && "bg-muted")}
+            className={cn("text-[13px] py-2", currentMode === "admin" && "bg-[#F5F5F5]")}
           >
             <Shield size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
-            Administration
+            {NAV_LABELS.ADMINISTRATION}
           </DropdownMenuItem>
         )}
         
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="bg-[#E5E5E5]" />
         
         <DropdownMenuItem
           onClick={() => {
@@ -191,13 +186,13 @@ function AccountMenu() {
           className="text-[13px] py-2"
         >
           <Settings size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
-          Account Settings
+          {NAV_LABELS.ACCOUNT_SETTINGS}
         </DropdownMenuItem>
         
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="bg-[#E5E5E5]" />
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="text-[13px] py-2 text-destructive focus:text-destructive"
+          className="text-[13px] py-2 text-[#DC2626] focus:text-[#DC2626]"
         >
           <LogOut size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
           Sign out
@@ -207,7 +202,7 @@ function AccountMenu() {
   );
 }
 
-// Mobile header controls
+// Mobile controls - compact, functional
 function MobileControls() {
   const { 
     activeTenant, 
@@ -220,9 +215,9 @@ function MobileControls() {
   const currentMode = useCurrentMode();
 
   const getModeLabel = () => {
-    if (currentMode === "admin") return "Admin";
-    if (currentMode === "licensing") return "Licensing";
-    return "Client Portal";
+    if (currentMode === "admin") return NAV_LABELS.ADMINISTRATION;
+    if (currentMode === "licensing") return NAV_LABELS.LICENSING;
+    return NAV_LABELS.CLIENT_PORTAL;
   };
 
   return (
@@ -232,18 +227,18 @@ function MobileControls() {
           {getModeLabel()}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" className="w-52 bg-popover">
+      <DropdownMenuContent align="center" className="w-52 bg-white border-[#E5E5E5]">
         {activeTenant && (
           <div className="px-3 py-2">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Organization</p>
+            <p className="text-[10px] text-[#6B6B6B] uppercase tracking-wide">Organization</p>
             <p className="text-[13px] font-medium truncate">{activeTenant.tenant_name}</p>
           </div>
         )}
         
         {tenantMemberships.length > 1 && (
           <>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-[10px] text-muted-foreground uppercase tracking-wide font-normal">
+            <DropdownMenuSeparator className="bg-[#E5E5E5]" />
+            <DropdownMenuLabel className="text-[10px] text-[#6B6B6B] uppercase tracking-wide font-normal">
               Switch Organization
             </DropdownMenuLabel>
             {tenantMemberships.map((membership) => (
@@ -258,7 +253,7 @@ function MobileControls() {
                 }}
                 className={cn(
                   "text-[13px]",
-                  activeTenant?.tenant_id === membership.tenant_id && "bg-muted"
+                  activeTenant?.tenant_id === membership.tenant_id && "bg-[#F5F5F5]"
                 )}
               >
                 {membership.tenant_name}
@@ -269,8 +264,8 @@ function MobileControls() {
         
         {currentMode !== "admin" && availableContexts.length > 1 && (
           <>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-[10px] text-muted-foreground uppercase tracking-wide font-normal">
+            <DropdownMenuSeparator className="bg-[#E5E5E5]" />
+            <DropdownMenuLabel className="text-[10px] text-[#6B6B6B] uppercase tracking-wide font-normal">
               Switch Portal
             </DropdownMenuLabel>
             
@@ -280,9 +275,9 @@ function MobileControls() {
                   setActiveContext("publishing");
                   navigate("/app/publishing");
                 }}
-                className={cn("text-[13px]", currentMode === "publishing" && "bg-muted")}
+                className={cn("text-[13px]", currentMode === "publishing" && "bg-[#F5F5F5]")}
               >
-                Client Portal
+                {NAV_LABELS.CLIENT_PORTAL}
               </DropdownMenuItem>
             )}
             {availableContexts.includes("licensing") && (
@@ -291,9 +286,9 @@ function MobileControls() {
                   setActiveContext("licensing");
                   navigate("/app/licensing");
                 }}
-                className={cn("text-[13px]", currentMode === "licensing" && "bg-muted")}
+                className={cn("text-[13px]", currentMode === "licensing" && "bg-[#F5F5F5]")}
               >
-                Licensing
+                {NAV_LABELS.LICENSING}
               </DropdownMenuItem>
             )}
           </>
@@ -321,18 +316,18 @@ export function GlobalHeader() {
   const hasLicensing = availableContexts.includes("licensing");
 
   return (
-    <header className="h-14 border-b border-neutral-200/60 bg-white px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40">
-      {/* Left: Wordmark only */}
+    <header className="h-14 border-b border-[#E5E5E5] bg-white px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40">
+      {/* Left: Wordmark - functional, not expressive */}
       <div className="flex items-center min-w-0">
         <button
           onClick={handleLogoClick}
-          className="text-[15px] font-semibold text-neutral-900 tracking-[-0.01em] hover:text-neutral-600 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/15 focus-visible:ring-offset-2 rounded"
+          className="text-[15px] font-semibold text-[#111] tracking-[-0.01em] hover:text-[#6B6B6B] transition-colors duration-[180ms] focus:outline-none focus-visible:ring-2 focus-visible:ring-black/15 focus-visible:ring-offset-2 rounded"
         >
           Tribes
         </button>
       </div>
 
-      {/* Center: Tenant (desktop) or Mobile Controls */}
+      {/* Center: Tenant selector */}
       <div className="flex-1 flex items-center justify-center">
         {!isMobile ? (
           <TenantSelector />
@@ -341,9 +336,9 @@ export function GlobalHeader() {
         )}
       </div>
 
-      {/* Right: Portal nav links + Account menu */}
+      {/* Right: Portal nav + Account */}
       <div className="flex items-center gap-1">
-        {/* Portal navigation as links - desktop only */}
+        {/* Portal navigation - flat, minimal contrast */}
         {!isMobile && currentMode !== "admin" && (
           <nav className="flex items-center gap-1 mr-3">
             {hasPublishing && (
@@ -357,7 +352,7 @@ export function GlobalHeader() {
                   currentMode === "publishing" ? NAV_BUTTON_ACTIVE : NAV_BUTTON_INACTIVE
                 )}
               >
-                Client Portal
+                {NAV_LABELS.CLIENT_PORTAL}
               </button>
             )}
             {hasLicensing && (
@@ -371,7 +366,7 @@ export function GlobalHeader() {
                   currentMode === "licensing" ? NAV_BUTTON_ACTIVE : NAV_BUTTON_INACTIVE
                 )}
               >
-                Licensing
+                {NAV_LABELS.LICENSING}
               </button>
             )}
           </nav>

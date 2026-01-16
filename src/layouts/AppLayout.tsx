@@ -4,11 +4,19 @@ import { GlobalHeader } from "@/components/app/GlobalHeader";
 import { LicensingNav } from "@/components/app/LicensingNav";
 import { PublishingNav } from "@/components/app/PublishingNav";
 
+/**
+ * APP LAYOUT — INSTITUTIONAL STRUCTURE
+ * 
+ * Layout Rules:
+ * - Flat hierarchy, no elevation
+ * - No shadows, no animated transitions
+ * - Navigation is functional, not expressive
+ */
 export function AppLayout() {
   const { activeContext } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col bg-app-surface">
+    <div className="min-h-screen flex flex-col bg-[#F5F5F7]">
       <GlobalHeader />
       <div className="flex flex-1 overflow-hidden">
         {activeContext === "licensing" && <LicensingNav />}

@@ -453,6 +453,13 @@ export const NAV_BUTTON_INACTIVE = "text-neutral-500 hover:text-neutral-900 hove
 // PERMISSION LABELS — SERIOUS, CONTROLLED
 // ═══════════════════════════════════════════════════════════════════════════
 
+/**
+ * PERMISSION RULES:
+ * - No "You don't have access" language
+ * - Use "Access not authorized." — enforced, not explained
+ * - Permissions are structural, not negotiable
+ * - Restricted areas should simply not appear
+ */
 export const PERMISSION_LABELS = {
   READ: "Read",
   EDIT: "Edit",
@@ -460,12 +467,21 @@ export const PERMISSION_LABELS = {
   ADMIN: "Administer",
   RESTRICTED: "Restricted",
   NONE: "No Access",
+  NOT_AUTHORIZED: "Access not authorized.",
+  PERMISSION_RESTRICTED: "Permission restricted.",
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ACTION MESSAGES — OFFICIAL, NOT CELEBRATORY
 // ═══════════════════════════════════════════════════════════════════════════
 
+/**
+ * EXPORT/ACTION RULES:
+ * - Treated as official system outputs
+ * - No success celebrations
+ * - No confirmation theatrics
+ * - Language: "Generate report", "Export record", "Download file"
+ */
 export const ACTION_MESSAGES = {
   EXPORT_READY: "Export generated",
   FILE_AVAILABLE: "File available",
@@ -474,6 +490,10 @@ export const ACTION_MESSAGES = {
   RECORD_CREATED: "Record created",
   RECORD_UPDATED: "Record updated",
   RECORD_DELETED: "Record removed",
+  // Export actions
+  GENERATE_REPORT: "Generate report",
+  EXPORT_RECORD: "Export record",
+  DOWNLOAD_FILE: "Download file",
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -505,4 +525,161 @@ export const STATE_COPY = {
   // Permission states
   ACCESS_NOT_AUTHORIZED: "Access not authorized.",
   PERMISSION_RESTRICTED: "Permission restricted.",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DASHBOARD STATUS LABELS — OPERATIONAL, NOT PERFORMATIVE
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * DASHBOARD RULES:
+ * - Status views, not summaries
+ * - Show counts, states, alerts
+ * - No charts for storytelling
+ * - No KPIs as motivation
+ * - No friendly language
+ * - Communicate operational state, not performance
+ */
+export const DASHBOARD_LABELS = {
+  // Publishing status
+  UNREGISTERED_WORKS: "Unregistered works",
+  PENDING_DOCUMENTATION: "Pending documentation",
+  PENDING_REGISTRATIONS: "Pending registrations",
+  ACTIVE_WORKS: "Active works",
+  TOTAL_WORKS: "Total works",
+  
+  // Licensing status
+  LICENSING_HOLDS: "Licensing holds",
+  PENDING_REQUESTS: "Pending requests",
+  ACTIVE_LICENSES: "Active licenses",
+  CATALOG_ITEMS: "Catalog items",
+  
+  // Admin status
+  PENDING_APPROVALS: "Pending approvals",
+  ACTIVE_USERS: "Active users",
+  ACTIVE_TENANTS: "Active organizations",
+  SECURITY_ALERTS: "Security alerts",
+  
+  // General
+  REQUIRES_ACTION: "Requires action",
+  AWAITING_REVIEW: "Awaiting review",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NAVIGATION LABELS — FUNCTIONAL, NOT EXPRESSIVE
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * NAVIGATION RULES:
+ * - Functional, not expressive
+ * - No personality, no storytelling
+ * - No "friendly" labels
+ * - Flat hierarchy, clear groupings
+ * - No novelty navigation patterns
+ */
+export const NAV_LABELS = {
+  // Portal modes
+  CLIENT_PORTAL: "Client Portal",
+  LICENSING: "Licensing",
+  ADMINISTRATION: "Administration",
+  
+  // Publishing nav
+  DASHBOARD: "Dashboard",
+  WORKS: "Works",
+  SPLITS: "Splits & Ownership",
+  REGISTRATIONS: "Registrations",
+  STATEMENTS: "Statements",
+  PAYMENTS: "Payments",
+  DOCUMENTS: "Documents",
+  SETTINGS: "Settings",
+  
+  // Licensing nav
+  CATALOG: "Catalog",
+  REQUESTS: "License Requests",
+  AGREEMENTS: "Agreements",
+  REPORTS: "Reports",
+  
+  // Admin nav
+  ACCESS_CONTROL: "Access Control",
+  ORGANIZATIONS: "Organizations",
+  RLS_VERIFICATION: "RLS Verification",
+  AUDIT_COVERAGE: "Audit Coverage",
+  SESSION_INTEGRITY: "Session Integrity",
+  ACCOUNT_SETTINGS: "Account Settings",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NOTIFICATION LABELS — OPERATIONAL ONLY
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * NOTIFICATION RULES:
+ * - Operational relevance only
+ * - Status changes, required actions, system failures
+ * - No encouragement, praise, "You're all set" language
+ * - Behave like system alerts, not UX feedback
+ */
+export const NOTIFICATION_LABELS = {
+  // Allowed notifications
+  STATUS_CHANGED: "Status changed",
+  ACTION_REQUIRED: "Action required",
+  SYSTEM_FAILURE: "System failure",
+  VERIFICATION_PENDING: "Verification pending",
+  APPROVAL_REQUIRED: "Approval required",
+  DOCUMENT_REQUIRED: "Document required",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SEARCH & FILTER LABELS — PROFESSIONAL TOOLS
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * SEARCH RULES:
+ * - Deterministic
+ * - No fuzzy "smart" behavior unless explicitly enabled
+ * - Filters: Explicit, multi-select, persistent
+ * - No suggestions phrased as help
+ * - No conversational search
+ * - Search is a tool, not an assistant
+ */
+export const SEARCH_LABELS = {
+  SEARCH: "Search",
+  SEARCH_PLACEHOLDER: "Search records…",
+  FILTER: "Filter",
+  FILTERS: "Filters",
+  CLEAR_FILTERS: "Clear filters",
+  APPLY_FILTERS: "Apply filters",
+  NO_RESULTS: "No results.",
+  REFINE_SEARCH: "Refine search criteria.",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DATA HIERARCHY LABELS — PRIMARY VS DERIVED
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * DATA HIERARCHY RULES:
+ * - Primary records: Works, Agreements, Ownership, Payments
+ * - Derived views: Summaries, Aggregations, Filters
+ * - Primary records are immutable unless explicitly edited
+ * - Derived views never appear more authoritative than source records
+ * - The system always makes clear what is canonical
+ */
+export const DATA_LABELS = {
+  // Primary record types
+  PRIMARY_RECORD: "Primary record",
+  SOURCE_RECORD: "Source record",
+  CANONICAL: "Canonical",
+  
+  // Derived view types
+  DERIVED_VIEW: "Derived view",
+  SUMMARY: "Summary",
+  AGGREGATION: "Aggregation",
+  FILTERED_VIEW: "Filtered view",
+  
+  // Record metadata
+  RECORD_ID: "Record ID",
+  CREATED: "Created",
+  UPDATED: "Updated",
+  VERSION: "Version",
 } as const;
