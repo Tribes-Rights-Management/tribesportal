@@ -7,22 +7,20 @@ import { SignInHelpDialog } from "./SignInHelpDialog";
 type AuthState = "enter-email" | "check-email";
 
 /**
- * AuthSurface - Institutional-grade identity verification surface
+ * AuthSurface - Institutional access control surface
  * 
- * LOCKED DESIGN STANDARD:
+ * DESIGN STANDARD (AUTHORITATIVE):
  * - Single stateful surface (NO page transitions)
- * - Card remains fixed, only content changes
- * - NO animations, NO fades, NO delight effects
- * - Typography: medium weight, calm authority
- * - Copy: policy statements, NOT marketing tone
- * 
- * Light mode only. Institutional-grade.
+ * - Dark environment, off-white panel
+ * - Typography: calm, factual, unexcited
+ * - Copy: institutional language, NO SaaS cues
+ * - Inputs: administrative, not friendly
+ * - This is access control, not onboarding
  */
 export function AuthSurface() {
   const { signInWithMagicLink } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Restore state from URL params if present
   const initialState: AuthState = searchParams.get("sent") === "1" ? "check-email" : "enter-email";
   const initialEmail = searchParams.get("email") ? decodeURIComponent(searchParams.get("email")!) : "";
   
@@ -32,7 +30,6 @@ export function AuthSurface() {
   const [resendMessage, setResendMessage] = useState<string | null>(null);
   const [helpDialogOpen, setHelpDialogOpen] = useState(false);
 
-  // Clear resend message after 3 seconds
   useEffect(() => {
     if (resendMessage) {
       const timer = setTimeout(() => setResendMessage(null), 3000);
@@ -56,7 +53,6 @@ export function AuthSurface() {
       console.error("Sign-in error:", error);
     }
     
-    // Immediate state change - no animation
     setState("check-email");
     setSearchParams({ sent: "1", email: encodeURIComponent(email.trim()) }, { replace: true });
   };
@@ -84,27 +80,33 @@ export function AuthSurface() {
 
   return (
     <>
-      {/* Heading - Same size/weight across states */}
-      <h1 className="text-[22px] font-medium leading-[1.3] text-[#111] text-center">
+      {/* System identifier - subtle, institutional */}
+      <div className="mb-8 text-center">
+        <span className="text-[11px] font-medium tracking-[0.12em] uppercase text-[#8A8A8A]">
+          Tribes Rights Management System
+        </span>
+      </div>
+
+      {/* Heading - calm, factual, unexcited */}
+      <h1 className="text-[20px] font-medium leading-[1.3] text-[#111] text-center tracking-[-0.01em]">
         {state === "enter-email" ? "Sign in to Tribes" : "Check your email"}
       </h1>
 
-      {/* Subtext - Policy statement, NOT marketing */}
-      <p className="mt-3 text-[14px] leading-[1.5] text-[#6B6B6B] text-center">
+      {/* Supporting text - institutional, not friendly */}
+      <p className="mt-2 text-[14px] leading-[1.5] text-[#6B6B6B] text-center">
         {state === "enter-email"
           ? "Access is granted via secure email verification."
-          : "A secure sign-in link has been sent to:"}
+          : "A secure sign-in link has been issued to:"}
       </p>
 
-      {/* Body - Content changes only, no layout shift */}
+      {/* Body */}
       <div className="mt-6">
         {state === "enter-email" ? (
-          /* Enter Email State */
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label 
                 htmlFor="email" 
-                className="block text-[13px] font-medium text-[#6B6B6B]"
+                className="block text-[12px] font-medium text-[#6B6B6B] tracking-[0.02em]"
               >
                 Email address
               </label>
@@ -119,11 +121,11 @@ export function AuthSurface() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 className={[
-                  "mt-2 w-full h-[46px] rounded-[10px]",
-                  "border border-[#D4D4D4] bg-white",
+                  "mt-2 w-full h-11 rounded-lg",
+                  "border border-[#C4C4C4] bg-white",
                   "px-4 text-[15px] text-[#111]",
                   "placeholder:text-[#9CA3AF]",
-                  "focus:outline-none focus:border-[#999]",
+                  "focus:outline-none focus:border-[#888]",
                 ].join(" ")}
               />
             </div>
@@ -137,10 +139,10 @@ export function AuthSurface() {
             </PrimaryButton>
           </form>
         ) : (
-          /* Check Email State - Same card, same position */
+          /* Check Email State - same panel, same structure */
           <div className="space-y-5">
-            {/* Email display - Static system field, NOT editable */}
-            <div className="w-full rounded-[10px] border border-[#D4D4D4] bg-[#FAFAFA] px-4 py-3">
+            {/* Email display - system confirmation, not form field */}
+            <div className="w-full rounded-lg border border-[#C4C4C4] bg-[#F5F5F3] px-4 py-3">
               <div className="truncate text-[15px] font-medium text-[#111]">
                 {email}
               </div>
@@ -164,11 +166,11 @@ export function AuthSurface() {
                 Resend sign-in link
               </PrimaryButton>
 
-              {/* Secondary action - de-emphasized, no underline */}
+              {/* Secondary action - visually recedes */}
               <button
                 type="button"
                 onClick={handleChangeEmail}
-                className="w-full text-center text-[14px] font-medium text-[#6B6B6B] hover:text-[#111] py-2"
+                className="w-full text-center text-[13px] font-medium text-[#8A8A8A] hover:text-[#6B6B6B] py-2"
               >
                 Use a different email
               </button>
@@ -177,17 +179,17 @@ export function AuthSurface() {
         )}
       </div>
 
-      {/* Policy Notice - Separated, treated as a rule */}
-      <p className="mt-6 text-center text-[13px] leading-[1.5] text-[#9CA3AF]">
+      {/* Policy notice - institutional rule */}
+      <p className="mt-6 text-center text-[12px] leading-[1.5] text-[#9CA3AF]">
         Access is restricted to approved accounts.
       </p>
 
-      {/* Support Link - De-emphasized, procedural */}
-      <p className="mt-3 text-center">
+      {/* Support link - de-emphasized, procedural */}
+      <p className="mt-2 text-center">
         <button 
           type="button"
           onClick={() => setHelpDialogOpen(true)}
-          className="text-[13px] text-[#9CA3AF] hover:text-[#6B6B6B]"
+          className="text-[12px] text-[#9CA3AF] hover:text-[#6B6B6B]"
         >
           Trouble signing in?
         </button>
