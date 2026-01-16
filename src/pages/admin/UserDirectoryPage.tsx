@@ -252,9 +252,9 @@ export default function UserDirectoryPage() {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="text-center py-8 text-muted-foreground">Loading users...</div>
+              <div className="text-center py-8 text-[#6B6B6B] text-[14px]">Loading data</div>
             ) : users.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">No users found</div>
+              <div className="text-center py-8 text-[#6B6B6B] text-[14px]">No records available.</div>
             ) : (
               <Table>
                 <TableHeader>

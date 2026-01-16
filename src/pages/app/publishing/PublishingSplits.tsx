@@ -1,18 +1,19 @@
+import { PageHeader } from "@/components/ui/page-header";
+
+/**
+ * Publishing Splits - Institutional mode
+ */
 export default function PublishingSplits() {
   return (
-    <div className="max-w-6xl">
-      <div className="mb-8">
-        <h1 className="text-[24px] font-medium text-[#0A0A0A] tracking-[-0.02em]">
-          Splits & Ownership
-        </h1>
-        <p className="mt-2 text-[15px] text-[#71717A]">
-          Manage ownership splits and rights allocation.
-        </p>
-      </div>
+    <div className="p-6 max-w-5xl">
+      <PageHeader 
+        title="Splits"
+        description="Ownership splits and rights allocation"
+      />
 
-      <div className="p-12 border border-[#E4E4E7] rounded-lg bg-[#FAFAFA] text-center">
-        <p className="text-[15px] text-[#71717A]">
-          Splits management will be available here.
+      <div className="bg-white border border-[#E8E8E8] rounded-md p-6 text-center">
+        <p className="text-[14px] text-[#6B6B6B]">
+          No records available.
         </p>
       </div>
     </div>
