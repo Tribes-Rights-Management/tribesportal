@@ -299,7 +299,7 @@ export default function DisclosuresPage() {
   }
 
   return (
-    <PlatformLayout maxWidth="wide">
+    <PlatformLayout maxWidth="wide" elevated>
       {/* Header */}
       <div className="mb-8">
         <h1 

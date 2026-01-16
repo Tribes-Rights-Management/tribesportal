@@ -6,11 +6,17 @@ import { cn } from "@/lib/utils";
  * This component is the single source of truth for all authenticated pages.
  * 
  * ENFORCED STANDARDS:
- * - Dark canvas (matches marketing site exactly)
+ * - Dark canvas (matches marketing/public website exactly - #0A0A0B)
+ * - Content rendered on elevated surfaces (cards/panels)
  * - Centered content column (max-width ~960-1040px)
  * - Shared typography scale
  * - Shared spacing tokens
  * - No page-level overrides allowed
+ * 
+ * SURFACE ELEVATION:
+ * - Page background: --platform-canvas (#0A0A0B)
+ * - Content cards: --platform-surface (#111113)
+ * - Nested panels: --platform-surface-2 (#161618)
  * 
  * PROHIBITED OVERRIDES:
  * - Background color
@@ -29,6 +35,8 @@ interface PlatformLayoutProps {
   className?: string;
   /** Padding configuration */
   padding?: "default" | "compact" | "none";
+  /** Whether to wrap content in an elevated card surface */
+  elevated?: boolean;
 }
 
 const MAX_WIDTH_MAP = {
@@ -49,15 +57,30 @@ export function PlatformLayout({
   maxWidth = "narrow",
   className,
   padding = "default",
+  elevated = false,
 }: PlatformLayoutProps) {
   return (
     <div
       className={cn("min-h-full", PADDING_MAP[padding])}
       style={{ backgroundColor: "var(--platform-canvas)" }}
     >
-      <div className={cn(MAX_WIDTH_MAP[maxWidth], "mx-auto", className)}>
-        {children}
-      </div>
+      {elevated ? (
+        <div 
+          className={cn(MAX_WIDTH_MAP[maxWidth], "mx-auto rounded-lg", className)}
+          style={{
+            backgroundColor: "var(--platform-surface)",
+            border: "1px solid var(--platform-border)",
+          }}
+        >
+          <div className="p-6 md:p-8">
+            {children}
+          </div>
+        </div>
+      ) : (
+        <div className={cn(MAX_WIDTH_MAP[maxWidth], "mx-auto", className)}>
+          {children}
+        </div>
+      )}
     </div>
   );
 }

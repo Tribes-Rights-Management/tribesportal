@@ -84,7 +84,15 @@ export default function AdminDashboard() {
       className="min-h-full py-12 md:py-16 px-4 md:px-6"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
-      <div className="max-w-[800px] mx-auto">
+      {/* Main content card - elevated surface above page background */}
+      <div 
+        className="max-w-[860px] mx-auto rounded-lg"
+        style={{
+          backgroundColor: 'var(--platform-surface)',
+          border: '1px solid var(--platform-border)',
+        }}
+      >
+        <div className="p-6 md:p-8 lg:p-10">
         {/* ─────────────────────────────────────────────────────────────────
             HEADER — Sparse, authoritative
         ───────────────────────────────────────────────────────────────── */}
@@ -207,20 +215,21 @@ export default function AdminDashboard() {
           />
         </Section>
 
-        {/* ─────────────────────────────────────────────────────────────────
-            FOOTER — Minimal, institutional
-        ───────────────────────────────────────────────────────────────── */}
-        <footer 
-          className="mt-16 pt-8 text-center"
-          style={{ borderTop: '1px solid rgba(255, 255, 255, 0.04)' }}
-        >
-          <p 
-            className="text-[11px] uppercase tracking-[0.08em]"
-            style={{ color: 'var(--platform-text-muted)', opacity: 0.5 }}
+          {/* ─────────────────────────────────────────────────────────────────
+              FOOTER — Minimal, institutional
+          ───────────────────────────────────────────────────────────────── */}
+          <footer 
+            className="mt-12 pt-6 text-center"
+            style={{ borderTop: '1px solid var(--platform-border)' }}
           >
-            Access and activity are logged
-          </p>
-        </footer>
+            <p 
+              className="text-[11px] uppercase tracking-[0.08em]"
+              style={{ color: 'var(--platform-text-muted)', opacity: 0.5 }}
+            >
+              Access and activity are logged
+            </p>
+          </footer>
+        </div>
       </div>
     </div>
   );
@@ -228,6 +237,7 @@ export default function AdminDashboard() {
 
 /**
  * SECTION — Sparse grouping with small caps label
+ * Content sits on elevated surface (--platform-surface-2)
  */
 function Section({ 
   label, 
@@ -237,18 +247,18 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="mb-10 md:mb-12">
+    <section className="mb-8 md:mb-10">
       <h2 
-        className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.1em] mb-4 md:mb-5"
+        className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.1em] mb-3 md:mb-4"
         style={{ color: 'var(--platform-text-muted)', opacity: 0.7 }}
       >
         {label}
       </h2>
       <div 
-        className="rounded-lg overflow-hidden"
+        className="rounded-md overflow-hidden"
         style={{ 
-          backgroundColor: 'rgba(255, 255, 255, 0.02)',
-          border: '1px solid rgba(255, 255, 255, 0.06)'
+          backgroundColor: 'var(--platform-surface-2)',
+          border: '1px solid var(--platform-border)',
         }}
       >
         {children}
@@ -275,12 +285,10 @@ function MetricRow({
   return (
     <Link 
       to={to} 
-      className="flex items-center justify-between px-4 md:px-5 py-3.5 md:py-4 transition-colors duration-150 group"
+      className="flex items-center justify-between px-4 md:px-5 py-3 md:py-3.5 transition-colors duration-150 group hover:bg-white/[0.02]"
       style={{ 
-        borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+        borderBottom: '1px solid var(--platform-border)',
       }}
-      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)'}
-      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
     >
       <span 
         className="text-[13px] md:text-[14px]"
@@ -292,7 +300,7 @@ function MetricRow({
         <span 
           className="text-[13px] md:text-[14px] font-medium tabular-nums"
           style={{ 
-            color: highlight ? 'rgba(255, 255, 255, 0.9)' : 'var(--platform-text-muted)'
+            color: highlight ? 'var(--platform-text)' : 'var(--platform-text-muted)'
           }}
         >
           {value}
@@ -322,12 +330,10 @@ function NavRow({
   return (
     <Link 
       to={to} 
-      className="flex items-center justify-between px-4 md:px-5 py-3.5 md:py-4 transition-colors duration-150 group"
+      className="flex items-center justify-between px-4 md:px-5 py-3 md:py-3.5 transition-colors duration-150 group hover:bg-white/[0.02]"
       style={{ 
-        borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+        borderBottom: '1px solid var(--platform-border)',
       }}
-      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)'}
-      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
     >
       <div className="min-w-0 flex-1">
         <p 
