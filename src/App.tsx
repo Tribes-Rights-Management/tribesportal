@@ -77,6 +77,12 @@ import RLSAuditPage from "@/pages/admin/RLSAuditPage";
 import AuthAccessReviewPage from "@/pages/admin/AuthAccessReviewPage";
 import DisclosuresPage from "@/pages/admin/DisclosuresPage";
 import CorrelationChainPage from "@/pages/admin/CorrelationChainPage";
+import DataRoomPage from "@/pages/admin/DataRoomPage";
+
+// System Console - Executive Reporting (Platform Executives only)
+import ExecutiveReportingPage from "@/pages/admin/reporting/ExecutiveReportingPage";
+import BoardSummariesPage from "@/pages/admin/reporting/BoardSummariesPage";
+import ComplianceMappingPage from "@/pages/admin/reporting/ComplianceMappingPage";
 
 // System Console Billing pages - FINANCIAL GOVERNANCE (executive only)
 import BillingGovernancePage from "@/pages/admin/billing/BillingGovernancePage";
@@ -232,7 +238,12 @@ const App = () => (
           <Route path="security/auth" element={<AuthAccessReviewPage />} />
           <Route path="security/sessions" element={<AccountSettingsPage />} />
           <Route path="disclosures" element={<DisclosuresPage />} />
+          <Route path="data-room" element={<DataRoomPage />} />
           <Route path="chain" element={<CorrelationChainPage />} />
+          {/* Executive Reporting Routes */}
+          <Route path="reporting" element={<ExecutiveReportingPage />} />
+          <Route path="reporting/summaries" element={<BoardSummariesPage />} />
+          <Route path="reporting/compliance" element={<ComplianceMappingPage />} />
           {/* Financial Governance Routes */}
           <Route path="billing" element={<BillingGovernancePage />} />
           <Route path="billing/revenue" element={<RevenueOverviewPage />} />
