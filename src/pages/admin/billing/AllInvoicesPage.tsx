@@ -11,7 +11,7 @@ import {
   Filter
 } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
-import { EmptyState } from "@/components/ui/institutional-states";
+import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
 import { 
   Table, 
   TableBody, 
@@ -92,7 +92,7 @@ export default function AllInvoicesPage() {
             <TableBody>
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
-                  <EmptyState
+                  <InstitutionalEmptyState
                     title="No invoices"
                     description="Invoices will appear here when generated"
                   />

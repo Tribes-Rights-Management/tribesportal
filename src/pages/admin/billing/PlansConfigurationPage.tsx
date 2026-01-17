@@ -12,7 +12,7 @@ import {
   MoreHorizontal
 } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
-import { EmptyState } from "@/components/ui/institutional-states";
+import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
 
 /**
  * SYSTEM CONSOLE — PLANS & PRICING
@@ -64,7 +64,7 @@ export default function PlansConfigurationPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <EmptyState
+          <InstitutionalEmptyState
             title="No plans configured"
             description="Connect a payment provider to create billing plans"
           />
