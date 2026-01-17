@@ -153,6 +153,199 @@ export type Database = {
           },
         ]
       }
+      contracts: {
+        Row: {
+          contract_number: string
+          correlation_id: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          document_url: string | null
+          effective_date: string | null
+          expiration_date: string | null
+          id: string
+          parent_contract_id: string | null
+          status: Database["public"]["Enums"]["contract_status"]
+          tenant_id: string
+          terminated_at: string | null
+          title: string
+          updated_at: string
+          version: number
+          version_hash: string
+        }
+        Insert: {
+          contract_number: string
+          correlation_id?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          document_url?: string | null
+          effective_date?: string | null
+          expiration_date?: string | null
+          id?: string
+          parent_contract_id?: string | null
+          status?: Database["public"]["Enums"]["contract_status"]
+          tenant_id: string
+          terminated_at?: string | null
+          title: string
+          updated_at?: string
+          version?: number
+          version_hash: string
+        }
+        Update: {
+          contract_number?: string
+          correlation_id?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          document_url?: string | null
+          effective_date?: string | null
+          expiration_date?: string | null
+          id?: string
+          parent_contract_id?: string | null
+          status?: Database["public"]["Enums"]["contract_status"]
+          tenant_id?: string
+          terminated_at?: string | null
+          title?: string
+          updated_at?: string
+          version?: number
+          version_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_parent_contract_id_fkey"
+            columns: ["parent_contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      data_room_access_log: {
+        Row: {
+          access_type: string
+          accessed_at: string
+          accessed_by: string
+          export_id: string
+          id: string
+          ip_address: unknown
+          user_agent: string | null
+        }
+        Insert: {
+          access_type: string
+          accessed_at?: string
+          accessed_by: string
+          export_id: string
+          id?: string
+          ip_address?: unknown
+          user_agent?: string | null
+        }
+        Update: {
+          access_type?: string
+          accessed_at?: string
+          accessed_by?: string
+          export_id?: string
+          id?: string
+          ip_address?: unknown
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_room_access_log_export_id_fkey"
+            columns: ["export_id"]
+            isOneToOne: false
+            referencedRelation: "data_room_exports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      data_room_exports: {
+        Row: {
+          access_expires_at: string | null
+          assigned_auditors: string[] | null
+          completed_at: string | null
+          content_manifest: Json
+          created_at: string
+          description: string | null
+          error_message: string | null
+          export_type: Database["public"]["Enums"]["data_room_export_type"]
+          file_hash: string | null
+          file_size_bytes: number | null
+          file_url: string | null
+          id: string
+          organization_id: string | null
+          period_end: string
+          period_start: string
+          requested_at: string
+          requested_by: string
+          scope_type: string
+          status: Database["public"]["Enums"]["disclosure_export_status"]
+          title: string
+          watermark: string
+        }
+        Insert: {
+          access_expires_at?: string | null
+          assigned_auditors?: string[] | null
+          completed_at?: string | null
+          content_manifest?: Json
+          created_at?: string
+          description?: string | null
+          error_message?: string | null
+          export_type: Database["public"]["Enums"]["data_room_export_type"]
+          file_hash?: string | null
+          file_size_bytes?: number | null
+          file_url?: string | null
+          id?: string
+          organization_id?: string | null
+          period_end: string
+          period_start: string
+          requested_at?: string
+          requested_by: string
+          scope_type: string
+          status?: Database["public"]["Enums"]["disclosure_export_status"]
+          title: string
+          watermark: string
+        }
+        Update: {
+          access_expires_at?: string | null
+          assigned_auditors?: string[] | null
+          completed_at?: string | null
+          content_manifest?: Json
+          created_at?: string
+          description?: string | null
+          error_message?: string | null
+          export_type?: Database["public"]["Enums"]["data_room_export_type"]
+          file_hash?: string | null
+          file_size_bytes?: number | null
+          file_url?: string | null
+          id?: string
+          organization_id?: string | null
+          period_end?: string
+          period_start?: string
+          requested_at?: string
+          requested_by?: string
+          scope_type?: string
+          status?: Database["public"]["Enums"]["disclosure_export_status"]
+          title?: string
+          watermark?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_room_exports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       disclosure_exports: {
         Row: {
           completed_at: string | null
@@ -200,6 +393,134 @@ export type Database = {
           watermark?: string
         }
         Relationships: []
+      }
+      invoice_line_items: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          license_id: string | null
+          quantity: number
+          unit_amount: number
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          license_id?: string | null
+          quantity?: number
+          unit_amount: number
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          license_id?: string | null
+          quantity?: number
+          unit_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_line_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          contract_id: string
+          contract_version_hash: string
+          correlation_id: string | null
+          created_at: string
+          created_by: string
+          currency: string
+          description: string | null
+          due_date: string | null
+          id: string
+          invoice_number: string
+          issue_date: string
+          notes: string | null
+          paid_at: string | null
+          provider_invoice_id: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          subtotal_amount: number
+          tax_amount: number
+          tenant_id: string
+          total_amount: number
+          updated_at: string
+          voided_at: string | null
+        }
+        Insert: {
+          contract_id: string
+          contract_version_hash: string
+          correlation_id?: string | null
+          created_at?: string
+          created_by: string
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number: string
+          issue_date?: string
+          notes?: string | null
+          paid_at?: string | null
+          provider_invoice_id?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal_amount: number
+          tax_amount?: number
+          tenant_id: string
+          total_amount: number
+          updated_at?: string
+          voided_at?: string | null
+        }
+        Update: {
+          contract_id?: string
+          contract_version_hash?: string
+          correlation_id?: string | null
+          created_at?: string
+          created_by?: string
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number?: string
+          issue_date?: string
+          notes?: string | null
+          paid_at?: string | null
+          provider_invoice_id?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal_amount?: number
+          tax_amount?: number
+          tenant_id?: string
+          total_amount?: number
+          updated_at?: string
+          voided_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       licensing_agreements: {
         Row: {
@@ -314,6 +635,78 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount: number
+          correlation_id: string | null
+          created_at: string
+          currency: string
+          failed_at: string | null
+          failure_reason: string | null
+          id: string
+          invoice_id: string
+          payment_method_last4: string | null
+          payment_method_type: string | null
+          processed_at: string | null
+          provider_charge_id: string | null
+          provider_payment_id: string | null
+          status: Database["public"]["Enums"]["payment_status"]
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          correlation_id?: string | null
+          created_at?: string
+          currency?: string
+          failed_at?: string | null
+          failure_reason?: string | null
+          id?: string
+          invoice_id: string
+          payment_method_last4?: string | null
+          payment_method_type?: string | null
+          processed_at?: string | null
+          provider_charge_id?: string | null
+          provider_payment_id?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          correlation_id?: string | null
+          created_at?: string
+          currency?: string
+          failed_at?: string | null
+          failure_reason?: string | null
+          id?: string
+          invoice_id?: string
+          payment_method_last4?: string | null
+          payment_method_type?: string | null
+          processed_at?: string | null
+          provider_charge_id?: string | null
+          provider_payment_id?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       portal_agreements: {
         Row: {
           agreement_title: string
@@ -415,6 +808,145 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      refunds: {
+        Row: {
+          amount: number
+          correlation_id: string | null
+          created_at: string
+          currency: string
+          id: string
+          issued_at: string
+          issued_by: string
+          payment_id: string
+          provider_refund_id: string | null
+          reason: Database["public"]["Enums"]["refund_reason"]
+          reason_description: string | null
+          status: Database["public"]["Enums"]["payment_status"]
+        }
+        Insert: {
+          amount: number
+          correlation_id?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          issued_at?: string
+          issued_by: string
+          payment_id: string
+          provider_refund_id?: string | null
+          reason: Database["public"]["Enums"]["refund_reason"]
+          reason_description?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+        }
+        Update: {
+          amount?: number
+          correlation_id?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          issued_at?: string
+          issued_by?: string
+          payment_id?: string
+          provider_refund_id?: string | null
+          reason?: Database["public"]["Enums"]["refund_reason"]
+          reason_description?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      search_index: {
+        Row: {
+          content_summary: string | null
+          entity_date: string | null
+          entity_id: string
+          entity_status: string | null
+          entity_type: string
+          id: string
+          indexed_at: string
+          search_vector: unknown
+          subtitle: string | null
+          tenant_id: string | null
+          title: string
+        }
+        Insert: {
+          content_summary?: string | null
+          entity_date?: string | null
+          entity_id: string
+          entity_status?: string | null
+          entity_type: string
+          id?: string
+          indexed_at?: string
+          search_vector?: unknown
+          subtitle?: string | null
+          tenant_id?: string | null
+          title: string
+        }
+        Update: {
+          content_summary?: string | null
+          entity_date?: string | null
+          entity_id?: string
+          entity_status?: string | null
+          entity_type?: string
+          id?: string
+          indexed_at?: string
+          search_vector?: unknown
+          subtitle?: string | null
+          tenant_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "search_index_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      search_query_log: {
+        Row: {
+          duration_ms: number | null
+          entity_types_searched: string[]
+          executed_at: string
+          id: string
+          query_length: number
+          result_count: number
+          scope_id: string | null
+          scope_type: string
+          user_id: string
+        }
+        Insert: {
+          duration_ms?: number | null
+          entity_types_searched: string[]
+          executed_at?: string
+          id?: string
+          query_length: number
+          result_count: number
+          scope_id?: string | null
+          scope_type: string
+          user_id: string
+        }
+        Update: {
+          duration_ms?: number | null
+          entity_types_searched?: string[]
+          executed_at?: string
+          id?: string
+          query_length?: number
+          result_count?: number
+          scope_id?: string | null
+          scope_type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       tenant_memberships: {
         Row: {
@@ -556,6 +1088,23 @@ export type Database = {
           tenant_id: string
         }[]
       }
+      get_payment_lineage: {
+        Args: { p_payment_id: string }
+        Returns: {
+          contract_id: string
+          contract_number: string
+          contract_version: number
+          contract_version_hash: string
+          invoice_amount: number
+          invoice_id: string
+          invoice_number: string
+          organization_id: string
+          organization_name: string
+          payment_amount: number
+          payment_id: string
+          payment_status: Database["public"]["Enums"]["payment_status"]
+        }[]
+      }
       get_user_contexts: {
         Args: { _tenant_id: string; _user_id: string }
         Returns: Database["public"]["Enums"]["portal_context"][]
@@ -591,6 +1140,24 @@ export type Database = {
         }
         Returns: string
       }
+      search_entities: {
+        Args: {
+          p_entity_types?: string[]
+          p_limit?: number
+          p_query: string
+          p_scope_type: string
+          p_tenant_id?: string
+        }
+        Returns: {
+          entity_date: string
+          entity_id: string
+          entity_status: string
+          entity_type: string
+          rank: number
+          subtitle: string
+          title: string
+        }[]
+      }
     }
     Enums: {
       access_request_status: "pending" | "processed"
@@ -608,11 +1175,19 @@ export type Database = {
         | "login"
         | "logout"
         | "record_viewed"
+      contract_status: "draft" | "active" | "amended" | "terminated" | "expired"
+      data_room_export_type:
+        | "authority_governance"
+        | "contracts_amendments"
+        | "billing_payments"
+        | "licensing_activity"
+        | "messaging_transcripts"
       disclosure_export_status: "generating" | "completed" | "failed"
       disclosure_export_type:
         | "licensing_activity"
         | "approval_history"
         | "agreement_registry"
+      invoice_status: "draft" | "open" | "paid" | "void" | "uncollectible"
       licensing_request_status:
         | "draft"
         | "submitted"
@@ -626,9 +1201,23 @@ export type Database = {
         | "denied"
         | "revoked"
         | "suspended"
+      payment_status:
+        | "pending"
+        | "processing"
+        | "succeeded"
+        | "failed"
+        | "cancelled"
+        | "refunded"
+        | "partially_refunded"
       platform_role: "platform_admin" | "platform_user" | "external_auditor"
       portal_context: "publishing" | "licensing"
       portal_role: "tenant_admin" | "tenant_user" | "viewer"
+      refund_reason:
+        | "duplicate"
+        | "fraudulent"
+        | "requested_by_customer"
+        | "service_not_provided"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -772,12 +1361,21 @@ export const Constants = {
         "logout",
         "record_viewed",
       ],
+      contract_status: ["draft", "active", "amended", "terminated", "expired"],
+      data_room_export_type: [
+        "authority_governance",
+        "contracts_amendments",
+        "billing_payments",
+        "licensing_activity",
+        "messaging_transcripts",
+      ],
       disclosure_export_status: ["generating", "completed", "failed"],
       disclosure_export_type: [
         "licensing_activity",
         "approval_history",
         "agreement_registry",
       ],
+      invoice_status: ["draft", "open", "paid", "void", "uncollectible"],
       licensing_request_status: [
         "draft",
         "submitted",
@@ -793,9 +1391,25 @@ export const Constants = {
         "revoked",
         "suspended",
       ],
+      payment_status: [
+        "pending",
+        "processing",
+        "succeeded",
+        "failed",
+        "cancelled",
+        "refunded",
+        "partially_refunded",
+      ],
       platform_role: ["platform_admin", "platform_user", "external_auditor"],
       portal_context: ["publishing", "licensing"],
       portal_role: ["tenant_admin", "tenant_user", "viewer"],
+      refund_reason: [
+        "duplicate",
+        "fraudulent",
+        "requested_by_customer",
+        "service_not_provided",
+        "other",
+      ],
     },
   },
 } as const
