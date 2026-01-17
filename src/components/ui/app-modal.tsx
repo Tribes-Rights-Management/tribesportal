@@ -382,3 +382,22 @@ export function AppModalFields({
     </div>
   );
 }
+
+// ============================================================================
+// ALIASES — AppDialog naming for clarity
+// ============================================================================
+
+/**
+ * AppDialog is an alias for AppModal.
+ * Use AppDialog for forms, confirmations, and short structured interactions.
+ * Use AppSheet (from @/components/ui/app-sheet) for long settings/detail panels.
+ */
+export {
+  AppModal as AppDialog,
+  AppModalBody as AppDialogBody,
+  AppModalFooter as AppDialogFooter,
+  AppModalAction as AppDialogAction,
+  AppModalCancel as AppDialogCancel,
+  AppModalField as AppDialogField,
+  AppModalFields as AppDialogFields,
+};
