@@ -60,34 +60,58 @@ export default function CorrelationChainPage() {
     setLoadingRecent(true);
     
     // Get recent licensing requests with correlation IDs
-    const { data: requests, error } = await supabase
+    const { data: requests, error: reqError } = await supabase
       .from('licensing_requests')
       .select('correlation_id, created_at')
       .not('correlation_id', 'is', null)
       .order('created_at', { ascending: false })
       .limit(20);
 
-    if (error) {
-      console.error('Error fetching recent correlations:', error);
-      setLoadingRecent(false);
-      return;
+    // Get recent audit logs with correlation IDs (includes billing events)
+    const { data: auditLogs, error: auditError } = await supabase
+      .from('audit_logs')
+      .select('correlation_id, record_type, created_at, action')
+      .not('correlation_id', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if (reqError) {
+      console.error('Error fetching recent correlations:', reqError);
     }
 
     // Deduplicate and format
     const uniqueCorrelations = new Map<string, CorrelatedRecord>();
     
+    // Add licensing requests
     for (const req of requests || []) {
       if (req.correlation_id && !uniqueCorrelations.has(req.correlation_id)) {
         uniqueCorrelations.set(req.correlation_id, {
           correlation_id: req.correlation_id,
           record_type: 'licensing_request',
           created_at: req.created_at,
-          event_count: 1, // Will be updated when chain is viewed
+          event_count: 1,
         });
       }
     }
 
-    setRecentCorrelations(Array.from(uniqueCorrelations.values()));
+    // Add audit log events (billing, authority changes, etc.)
+    for (const log of auditLogs || []) {
+      if (log.correlation_id && !uniqueCorrelations.has(log.correlation_id)) {
+        uniqueCorrelations.set(log.correlation_id, {
+          correlation_id: log.correlation_id,
+          record_type: log.record_type || log.action || 'audit_event',
+          created_at: log.created_at,
+          event_count: 1,
+        });
+      }
+    }
+
+    // Sort by created_at descending and take top 20
+    const sorted = Array.from(uniqueCorrelations.values())
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 20);
+
+    setRecentCorrelations(sorted);
     setLoadingRecent(false);
   }
 

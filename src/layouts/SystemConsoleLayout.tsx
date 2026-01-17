@@ -1,7 +1,9 @@
-import { useRef } from "react";
-import { Outlet } from "react-router-dom";
+import { useRef, useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import { SystemConsoleHeader } from "@/components/app/SystemConsoleHeader";
 import { useScrollReset } from "@/hooks/useScrollReset";
+import { useScopeTransition } from "@/hooks/useScopeTransition";
+import { useRoleAccess } from "@/hooks/useRoleAccess";
 
 /**
  * SYSTEM CONSOLE LAYOUT — COMPANY-LEVEL GOVERNANCE (CANONICAL)
@@ -36,6 +38,7 @@ import { useScrollReset } from "@/hooks/useScrollReset";
  * - Regulatory disclosures
  * - Cross-workspace reporting
  * - Correlation views
+ * - Financial Governance (billing configuration, not transactions)
  * 
  * ─────────────────────────────────────────────────────────────────────────
  * WHAT SYSTEM CONSOLE MUST NEVER CONTAIN
@@ -50,6 +53,7 @@ import { useScrollReset } from "@/hooks/useScrollReset";
  * - Any organization-scoped views
  * - Any workspace-specific data
  * - Any operational workflows or actions
+ * - Payment submission (governance only, never operations)
  * 
  * ─────────────────────────────────────────────────────────────────────────
  * MOBILE BEHAVIOR
@@ -64,9 +68,19 @@ import { useScrollReset } from "@/hooks/useScrollReset";
  */
 export function SystemConsoleLayout() {
   const mainRef = useRef<HTMLElement>(null);
+  const navigate = useNavigate();
+  const { canAccessScope, validateScopeAccess } = useScopeTransition();
+  const { isPlatformAdmin, isExternalAuditor } = useRoleAccess();
   
   // Enforce scroll reset on route changes (per Navigation Enforcement Spec)
   useScrollReset(mainRef);
+  
+  // Validate scope access on mount - redirect if unauthorized
+  useEffect(() => {
+    if (!canAccessScope && !isPlatformAdmin && !isExternalAuditor) {
+      navigate("/auth/unauthorized", { replace: true });
+    }
+  }, [canAccessScope, isPlatformAdmin, isExternalAuditor, navigate]);
 
   return (
     <div 

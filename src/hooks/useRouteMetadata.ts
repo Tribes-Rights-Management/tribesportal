@@ -203,6 +203,57 @@ export const routeRegistry: Record<string, RouteDefinition> = {
     breadcrumbs: ["System Console", "Correlation Chain"]
   },
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // SYSTEM CONSOLE — FINANCIAL GOVERNANCE (Scope: system)
+  // Access: platform_admin only
+  // ─────────────────────────────────────────────────────────────────────────
+  "/admin/billing": { 
+    scope: "system", 
+    parentPath: "/admin", 
+    label: "Financial Governance",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Financial Governance"],
+    isGovernancePage: true
+  },
+  "/admin/billing/revenue": { 
+    scope: "system", 
+    parentPath: "/admin/billing", 
+    label: "Revenue Overview",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Financial Governance", "Revenue Overview"]
+  },
+  "/admin/billing/plans": { 
+    scope: "system", 
+    parentPath: "/admin/billing", 
+    label: "Plans & Pricing",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Financial Governance", "Plans & Pricing"],
+    isGovernancePage: true
+  },
+  "/admin/billing/invoices": { 
+    scope: "system", 
+    parentPath: "/admin/billing", 
+    label: "Invoice Ledger",
+    requiredRoles: ["admin", "auditor"],
+    breadcrumbs: ["System Console", "Financial Governance", "Invoice Ledger"]
+  },
+  "/admin/billing/providers": { 
+    scope: "system", 
+    parentPath: "/admin/billing", 
+    label: "Payment Providers",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Financial Governance", "Payment Providers"],
+    isGovernancePage: true
+  },
+  "/admin/billing/refunds": { 
+    scope: "system", 
+    parentPath: "/admin/billing", 
+    label: "Refunds",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Financial Governance", "Refunds"],
+    isGovernancePage: true
+  },
+
   // ═══════════════════════════════════════════════════════════════════════════
   // EXTERNAL AUDITOR ROUTES (Scope: system, read-only)
   // Access: external_auditor, platform_admin
@@ -282,6 +333,27 @@ export const routeRegistry: Record<string, RouteDefinition> = {
     requiredPermission: "licensing.view",
     breadcrumbs: ["Licensing", "Agreements", "Agreement Details"]
   },
+  "/licensing/payments": { 
+    scope: "organization", 
+    parentPath: "/licensing", 
+    label: "Payments",
+    requiredPermission: "licensing.view",
+    breadcrumbs: ["Licensing", "Payments"]
+  },
+  "/licensing/payments/fees": { 
+    scope: "organization", 
+    parentPath: "/licensing/payments", 
+    label: "License Fees",
+    requiredPermission: "licensing.view",
+    breadcrumbs: ["Licensing", "Payments", "License Fees"]
+  },
+  "/licensing/payments/receipts": { 
+    scope: "organization", 
+    parentPath: "/licensing/payments", 
+    label: "Receipts",
+    requiredPermission: "licensing.view",
+    breadcrumbs: ["Licensing", "Payments", "Receipts"]
+  },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // TRIBES ADMIN MODULE (Scope: organization)
@@ -314,6 +386,34 @@ export const routeRegistry: Record<string, RouteDefinition> = {
     label: "Documents",
     requiredPermission: "portal.view",
     breadcrumbs: ["Tribes Admin", "Documents"]
+  },
+  "/portal/payments": { 
+    scope: "organization", 
+    parentPath: "/portal", 
+    label: "Payments",
+    requiredPermission: "portal.view",
+    breadcrumbs: ["Tribes Admin", "Payments"]
+  },
+  "/portal/payments/invoices": { 
+    scope: "organization", 
+    parentPath: "/portal/payments", 
+    label: "Invoices",
+    requiredPermission: "portal.view",
+    breadcrumbs: ["Tribes Admin", "Payments", "Invoices"]
+  },
+  "/portal/payments/methods": { 
+    scope: "organization", 
+    parentPath: "/portal/payments", 
+    label: "Payment Methods",
+    requiredPermission: "portal.view",
+    breadcrumbs: ["Tribes Admin", "Payments", "Payment Methods"]
+  },
+  "/portal/payments/history": { 
+    scope: "organization", 
+    parentPath: "/portal/payments", 
+    label: "Payment History",
+    requiredPermission: "portal.view",
+    breadcrumbs: ["Tribes Admin", "Payments", "Payment History"]
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
