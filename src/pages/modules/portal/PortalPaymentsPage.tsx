@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { Link } from "react-router-dom";
-import { EmptyState } from "@/components/ui/institutional-states";
+import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
 
 /**
  * PORTAL PAYMENTS — ORGANIZATION BILLING OPERATIONS
@@ -200,7 +200,7 @@ export default function PortalPaymentsPage() {
           </Link>
         </CardHeader>
         <CardContent>
-          <EmptyState
+          <InstitutionalEmptyState
             title="No invoices"
             description="Invoices will appear here when generated"
           />

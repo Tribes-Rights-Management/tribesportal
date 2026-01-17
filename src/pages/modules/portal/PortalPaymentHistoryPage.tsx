@@ -10,7 +10,7 @@ import {
   X
 } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
-import { EmptyState } from "@/components/ui/institutional-states";
+import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
 import { 
   Table, 
   TableBody, 
@@ -87,7 +87,7 @@ export default function PortalPaymentHistoryPage() {
             <TableBody>
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
-                  <EmptyState
+                  <InstitutionalEmptyState
                     title="No payment history"
                     description="Payments will appear here after processing"
                   />

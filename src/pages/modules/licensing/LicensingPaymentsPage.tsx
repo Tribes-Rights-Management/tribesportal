@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { Link } from "react-router-dom";
-import { EmptyState } from "@/components/ui/institutional-states";
+import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
 
 /**
  * LICENSING PAYMENTS — ORGANIZATION BILLING FOR LICENSES
@@ -152,7 +152,7 @@ export default function LicensingPaymentsPage() {
           </Link>
         </CardHeader>
         <CardContent>
-          <EmptyState
+          <InstitutionalEmptyState
             title="No license fees"
             description="License fees will appear here when applicable"
           />

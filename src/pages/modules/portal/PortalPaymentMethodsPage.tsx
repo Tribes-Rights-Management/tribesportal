@@ -10,7 +10,7 @@ import {
   Star
 } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
-import { EmptyState } from "@/components/ui/institutional-states";
+import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
 
 /**
  * PORTAL — PAYMENT METHODS
@@ -61,7 +61,7 @@ export default function PortalPaymentMethodsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <EmptyState
+          <InstitutionalEmptyState
             title="No payment methods"
             description="Add a card or bank account to pay invoices"
           />
