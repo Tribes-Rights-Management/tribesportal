@@ -68,11 +68,16 @@ const DialogContent = React.forwardRef<
       )}
       style={{
         backgroundColor: '#18181B',
-        border: '1px solid rgba(255,255,255,0.08)',
+        border: '2px solid #ff3b30', // DEBUG: Remove after confirming wiring
         boxShadow: '0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,0,0,0.2)',
       }}
       {...props}
     >
+      {children}
+      {/* DEBUG LABEL: Remove after confirming wiring */}
+      <div className="absolute bottom-2 right-2 text-[10px] font-mono px-2 py-0.5 rounded" style={{ backgroundColor: '#ff3b30', color: 'white' }}>
+        APPDIALOG ACTIVE
+      </div>
       {children}
       {!hideDefaultClose && (
         <DialogPrimitive.Close 
