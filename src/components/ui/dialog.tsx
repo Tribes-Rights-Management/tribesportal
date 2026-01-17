@@ -13,13 +13,13 @@ const DialogPortal = DialogPrimitive.Portal;
 const DialogClose = DialogPrimitive.Close;
 
 /**
- * DIALOG OVERLAY — INSTITUTIONAL STANDARD
+ * DIALOG OVERLAY — INSTITUTIONAL STANDARD (NO GLASS)
  * 
- * Backdrop opacity increased for authoritative dim:
- * - Mobile: 85% opacity (strong dim, background not readable)
- * - Desktop: 80% opacity (slightly lighter but still authoritative)
- * - Minimal blur (institutional, not glassy)
- * - Body scroll locked when open
+ * Flat, opaque backdrop with NO blur:
+ * - Mobile: 92% opacity (background content not readable)
+ * - Desktop: 88% opacity (strong dim, still authoritative)
+ * - NO backdrop-filter, NO blur effects
+ * - Pure opacity-based dimming for institutional authority
  */
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
@@ -28,7 +28,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-black/85 sm:bg-black/80 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/92 sm:bg-black/88 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className,
     )}
     {...props}
@@ -43,14 +43,15 @@ interface DialogContentProps
 }
 
 /**
- * DIALOG CONTENT — INSTITUTIONAL STANDARD
+ * DIALOG CONTENT — INSTITUTIONAL STANDARD (SOLID, NO GLASS)
  * 
  * - Max width: 520px default (forms), configurable via className
  * - Max height: 85vh with internal scroll
- * - Surface: slightly lighter than app background
- * - Border: subtle hairline
- * - Shadow: restrained, no glow
- * - Radius: consistent with card tokens (12px)
+ * - Surface: FULLY OPAQUE, one elevation step lighter than page
+ * - Border: 1px hairline (white at 8% opacity)
+ * - Shadow: tight spread, no glow
+ * - Radius: 12px (consistent with card tokens)
+ * - NO translucency, NO backdrop-filter
  */
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
@@ -61,12 +62,13 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-[520px] max-h-[85vh] translate-x-[-50%] translate-y-[-50%] gap-0 border bg-background overflow-hidden shadow-xl shadow-black/20 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-xl",
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-[520px] max-h-[85vh] translate-x-[-50%] translate-y-[-50%] gap-0 overflow-hidden duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-xl",
         className,
       )}
       style={{
-        backgroundColor: 'var(--platform-surface)',
-        border: '1px solid var(--platform-border)',
+        backgroundColor: '#18181B',
+        border: '1px solid rgba(255,255,255,0.08)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,0,0,0.2)',
       }}
       {...props}
     >

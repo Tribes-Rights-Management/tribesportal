@@ -25,10 +25,11 @@ const DrawerPortal = DrawerPrimitive.Portal;
 const DrawerClose = DrawerPrimitive.Close;
 
 /**
- * DRAWER OVERLAY — INSTITUTIONAL STANDARD
+ * DRAWER OVERLAY — INSTITUTIONAL STANDARD (NO GLASS)
  * 
- * - 85% opacity for strong dim
- * - Minimal blur (institutional, not glassy)
+ * - 92% opacity for strong dim (background not readable)
+ * - NO blur effects, pure opacity-based dimming
+ * - Flat, authoritative backdrop
  */
 const DrawerOverlay = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Overlay>,
@@ -36,19 +37,20 @@ const DrawerOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Overlay 
     ref={ref} 
-    className={cn("fixed inset-0 z-50 bg-black/85 backdrop-blur-[2px]", className)} 
+    className={cn("fixed inset-0 z-50 bg-black/92", className)} 
     {...props} 
   />
 ));
 DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName;
 
 /**
- * DRAWER CONTENT — INSTITUTIONAL STANDARD
+ * DRAWER CONTENT — INSTITUTIONAL STANDARD (SOLID, NO GLASS)
  * 
- * - Max height 90vh
+ * - Max height 90vh with internal scroll
  * - Rounded top corners (12px)
- * - Platform surface color
- * - Hairline border
+ * - FULLY OPAQUE surface (one elevation step up)
+ * - 1px hairline border (white at 8% opacity)
+ * - NO translucency, NO backdrop-filter
  */
 const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
@@ -63,15 +65,16 @@ const DrawerContent = React.forwardRef<
         className,
       )}
       style={{
-        backgroundColor: 'var(--platform-surface)',
-        borderTop: '1px solid var(--platform-border)',
-        borderLeft: '1px solid var(--platform-border)',
-        borderRight: '1px solid var(--platform-border)',
+        backgroundColor: '#18181B',
+        borderTop: '1px solid rgba(255,255,255,0.08)',
+        borderLeft: '1px solid rgba(255,255,255,0.08)',
+        borderRight: '1px solid rgba(255,255,255,0.08)',
+        boxShadow: '0 -4px 24px rgba(0,0,0,0.4)',
       }}
       {...props}
     >
       {/* Drag handle */}
-      <div className="mx-auto mt-3 h-1.5 w-12 rounded-full shrink-0" style={{ backgroundColor: 'var(--platform-border)' }} />
+      <div className="mx-auto mt-3 h-1.5 w-12 rounded-full shrink-0" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }} />
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>

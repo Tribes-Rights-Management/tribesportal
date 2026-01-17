@@ -11,10 +11,11 @@ const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
 const AlertDialogPortal = AlertDialogPrimitive.Portal;
 
 /**
- * ALERT DIALOG OVERLAY — INSTITUTIONAL STANDARD
+ * ALERT DIALOG OVERLAY — INSTITUTIONAL STANDARD (NO GLASS)
  * 
- * - 85% opacity on mobile, 80% on desktop for strong dim
- * - Minimal blur (institutional, not glassy)
+ * - 92% opacity on mobile, 88% on desktop (background not readable)
+ * - NO blur effects, pure opacity-based dimming
+ * - Flat, authoritative backdrop
  */
 const AlertDialogOverlay = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Overlay>,
@@ -22,7 +23,7 @@ const AlertDialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Overlay
     className={cn(
-      "fixed inset-0 z-50 bg-black/85 sm:bg-black/80 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/92 sm:bg-black/88 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className,
     )}
     {...props}
@@ -32,11 +33,12 @@ const AlertDialogOverlay = React.forwardRef<
 AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;
 
 /**
- * ALERT DIALOG CONTENT — INSTITUTIONAL STANDARD
+ * ALERT DIALOG CONTENT — INSTITUTIONAL STANDARD (SOLID, NO GLASS)
  * 
  * - Max width: 520px
- * - Platform surface color
- * - Consistent border and shadow
+ * - FULLY OPAQUE surface (one elevation step up)
+ * - 1px hairline border (white at 8% opacity)
+ * - Tight shadow, no glow
  */
 const AlertDialogContent = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Content>,
@@ -47,12 +49,13 @@ const AlertDialogContent = React.forwardRef<
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-[520px] max-h-[85vh] translate-x-[-50%] translate-y-[-50%] gap-0 overflow-hidden shadow-xl shadow-black/20 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-xl",
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-[520px] max-h-[85vh] translate-x-[-50%] translate-y-[-50%] gap-0 overflow-hidden duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-xl",
         className,
       )}
       style={{
-        backgroundColor: 'var(--platform-surface)',
-        border: '1px solid var(--platform-border)',
+        backgroundColor: '#18181B',
+        border: '1px solid rgba(255,255,255,0.08)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,0,0,0.2)',
       }}
       {...props}
     />
