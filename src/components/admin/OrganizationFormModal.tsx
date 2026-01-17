@@ -1,16 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
-import { X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerClose } from "@/components/ui/drawer";
-import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  AppModal,
+  AppModalBody,
+  AppModalFooter,
+  AppModalAction,
+  AppModalCancel,
+  AppModalField,
+  AppModalFields,
+} from "@/components/ui/app-modal";
 
 /**
- * ORGANIZATION FORM MODAL — INSTITUTIONAL STANDARD
- * 
- * Mobile: Bottom sheet (Drawer) with sticky footer
- * Desktop: Centered modal (Dialog)
+ * ORGANIZATION FORM MODAL — USES UNIFIED APP MODAL SYSTEM
  * 
  * Features:
  * - Real-time slug validation
@@ -45,8 +46,6 @@ export function OrganizationFormModal({
   const [slugTouched, setSlugTouched] = useState(false);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<ValidationState>({ name: null, slug: null });
-  
-  const isMobile = useIsMobile();
 
   // Reset form when modal opens/closes or initial data changes
   useEffect(() => {
@@ -159,57 +158,23 @@ export function OrganizationFormModal({
     }
   };
 
-  const formContent = (
-    <div className="flex flex-col min-h-0 max-h-[90vh] md:max-h-none">
-      {/* Header */}
-      <div 
-        className="flex items-start justify-between gap-4 px-5 pt-5 pb-4 shrink-0"
-        style={{ borderBottom: '1px solid var(--platform-border)' }}
-      >
-        <div className="min-w-0 flex-1">
-          <h2 
-            className="text-[17px] md:text-[16px] font-semibold leading-tight"
-            style={{ color: 'var(--platform-text)' }}
-          >
-            {mode === "edit" ? "Edit organization" : "Add organization"}
-          </h2>
-          <p 
-            className="text-[14px] md:text-[13px] mt-1.5 leading-normal"
-            style={{ color: 'var(--platform-text-secondary)' }}
-          >
-            {mode === "edit" 
-              ? "Update organization details." 
-              : "Create a new organization."}
-          </p>
-        </div>
-        
-        {/* Close button - desktop only (drawer has its own close) */}
-        {!isMobile && (
-          <button
-            onClick={() => onOpenChange(false)}
-            className="h-11 w-11 rounded-lg flex items-center justify-center shrink-0 -mt-1 -mr-1 transition-colors"
-            style={{ color: 'var(--platform-text-muted)' }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-            aria-label="Close"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        )}
-      </div>
-
-      {/* Form Fields - scrollable on mobile */}
-      <div className="flex-1 overflow-y-auto min-h-0 px-5 py-5">
-        <div className="space-y-5">
+  return (
+    <AppModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title={mode === "edit" ? "Edit organization" : "Add organization"}
+      description={mode === "edit" ? "Update organization details." : "Create a new organization."}
+      preventClose={saving}
+      maxWidth="sm"
+    >
+      <AppModalBody>
+        <AppModalFields>
           {/* Name Field */}
-          <div className="space-y-2">
-            <Label 
-              htmlFor="org-name" 
-              className="text-[14px] font-medium"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              Name
-            </Label>
+          <AppModalField
+            label="Name"
+            htmlFor="org-name"
+            error={errors.name}
+          >
             <Input
               id="org-name"
               value={name}
@@ -223,22 +188,15 @@ export function OrganizationFormModal({
                 borderRadius: '8px',
               }}
             />
-            {errors.name && (
-              <p className="text-[13px] text-red-400 mt-1.5">
-                {errors.name}
-              </p>
-            )}
-          </div>
+          </AppModalField>
 
           {/* Slug Field */}
-          <div className="space-y-2">
-            <Label 
-              htmlFor="org-slug" 
-              className="text-[14px] font-medium"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              Slug
-            </Label>
+          <AppModalField
+            label="Slug"
+            htmlFor="org-slug"
+            error={errors.slug}
+            helpText={!errors.slug ? "URL-friendly identifier. Must be unique." : undefined}
+          >
             <Input
               id="org-slug"
               value={slug}
@@ -254,110 +212,24 @@ export function OrganizationFormModal({
                 borderRadius: '8px',
               }}
             />
-            {errors.slug ? (
-              <p className="text-[13px] text-red-400 mt-1.5">
-                {errors.slug}
-              </p>
-            ) : (
-              <p 
-                className="text-[13px] mt-1.5 leading-relaxed"
-                style={{ color: 'var(--platform-text-muted)', opacity: 0.85 }}
-              >
-                URL-friendly identifier. Must be unique.
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
+          </AppModalField>
+        </AppModalFields>
+      </AppModalBody>
 
-      {/* Footer - sticky on mobile */}
-      <div 
-        className="shrink-0 px-5 pt-4 pb-5 md:pb-5 space-y-3"
-        style={{ 
-          borderTop: '1px solid var(--platform-border)',
-          paddingBottom: 'max(20px, env(safe-area-inset-bottom, 20px))',
-        }}
-      >
-        {/* Primary: Create/Update */}
-        <button 
-          onClick={handleSubmit} 
-          disabled={!isValid || saving}
-          className="w-full h-12 md:h-11 rounded-lg text-[15px] md:text-[14px] font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-          style={{ 
-            backgroundColor: isValid ? 'var(--platform-text)' : 'rgba(255,255,255,0.1)',
-            color: isValid ? 'var(--platform-canvas)' : 'var(--platform-text-muted)',
-          }}
+      <AppModalFooter>
+        <AppModalAction
+          onClick={handleSubmit}
+          disabled={!isValid}
+          loading={saving}
+          loadingText={mode === "edit" ? "Updating…" : "Creating…"}
         >
-          {saving ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              {mode === "edit" ? "Updating…" : "Creating…"}
-            </>
-          ) : (
-            mode === "edit" ? "Update" : "Create"
-          )}
-        </button>
-
-        {/* Secondary: Cancel */}
-        <button
-          onClick={() => onOpenChange(false)}
-          disabled={saving}
-          className="w-full h-10 rounded-lg text-[14px] font-medium transition-colors disabled:opacity-40"
-          style={{ color: 'var(--platform-text-secondary)' }}
-          onMouseEnter={(e) => !saving && (e.currentTarget.style.color = 'var(--platform-text)')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--platform-text-secondary)')}
-        >
+          {mode === "edit" ? "Update" : "Create"}
+        </AppModalAction>
+        
+        <AppModalCancel onClick={() => onOpenChange(false)} disabled={saving}>
           Cancel
-        </button>
-      </div>
-    </div>
-  );
-
-  // Mobile: Bottom sheet (Drawer)
-  if (isMobile) {
-    return (
-      <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent 
-          className="max-h-[90vh]"
-          style={{
-            backgroundColor: 'var(--platform-surface)',
-            border: '1px solid var(--platform-border)',
-            borderBottom: 'none',
-          }}
-        >
-          <DrawerClose 
-            className="absolute top-4 right-4 h-11 w-11 rounded-lg flex items-center justify-center z-10"
-            style={{ color: 'var(--platform-text-muted)' }}
-            aria-label="Close"
-          >
-            <X className="h-5 w-5" />
-          </DrawerClose>
-          {formContent}
-        </DrawerContent>
-      </Drawer>
-    );
-  }
-
-  // Desktop: Centered modal (Dialog)
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent 
-        className="sm:max-w-[420px] p-0 gap-0 overflow-hidden"
-        style={{
-          backgroundColor: 'var(--platform-surface)',
-          border: '1px solid var(--platform-border)',
-          borderRadius: '12px',
-        }}
-        // Hide default close button
-        onPointerDownOutside={(e) => {
-          if (saving) e.preventDefault();
-        }}
-        onEscapeKeyDown={(e) => {
-          if (saving) e.preventDefault();
-        }}
-      >
-        {formContent}
-      </DialogContent>
-    </Dialog>
+        </AppModalCancel>
+      </AppModalFooter>
+    </AppModal>
   );
 }
