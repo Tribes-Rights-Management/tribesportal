@@ -209,6 +209,35 @@ export function useDeepLinkValidation(
       }
     }
     
+    // Validate entry intent for governance pages
+    // Governance pages require deliberate entry from valid parent
+    if (route?.isGovernancePage) {
+      // Check if we have explicit entry intent in session
+      const hasIntent = (() => {
+        try {
+          const intent = sessionStorage.getItem("tribes_entry_intent");
+          if (!intent) return false;
+          const { timestamp } = JSON.parse(intent);
+          // Intent expires after 30 seconds
+          return Date.now() - timestamp < 30000;
+        } catch {
+          return false;
+        }
+      })();
+      
+      // For governance pages accessed via deep-link without intent,
+      // we redirect to parent (they must navigate properly)
+      if (!hasIntent && route.entryIntent === "explicit-only") {
+        return {
+          isValid: false,
+          invalidReason: "Governance page requires deliberate entry from parent",
+          redirectPath: route.parentPath ?? getNearestValidParent(pathname),
+          scope,
+          isRegistered,
+        };
+      }
+    }
+    
     // All validations passed
     return {
       isValid: true,
