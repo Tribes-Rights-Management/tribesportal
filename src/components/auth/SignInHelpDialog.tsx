@@ -99,7 +99,7 @@ export function SignInHelpDialog({
       <DialogContent 
         hideDefaultClose
         className="w-[min(400px,calc(100vw-48px))] max-w-[400px] p-0 border-0 bg-transparent shadow-none"
-        overlayClassName="bg-black/85 sm:bg-black/80 backdrop-blur-[2px]"
+        overlayClassName="bg-black/92 sm:bg-black/88"
       >
         <div
           style={{
