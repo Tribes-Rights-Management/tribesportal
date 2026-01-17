@@ -1,7 +1,9 @@
+import { useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { GlobalHeader } from "@/components/app/GlobalHeader";
 import { SideNav } from "@/components/app/SideNav";
 import { WorkspaceContextBar } from "@/components/app/WorkspaceContextBar";
+import { useScrollReset } from "@/hooks/useScrollReset";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -56,6 +58,10 @@ function getNavItemsForPath(pathname: string): NavItem[] {
 export function ModuleLayout() {
   const location = useLocation();
   const navItems = getNavItemsForPath(location.pathname);
+  const mainRef = useRef<HTMLElement>(null);
+  
+  // Enforce scroll reset on route changes (per Navigation Enforcement Spec)
+  useScrollReset(mainRef);
 
   return (
     <div 
@@ -66,7 +72,7 @@ export function ModuleLayout() {
       <WorkspaceContextBar />
       <div className="flex flex-1 overflow-hidden">
         {navItems.length > 0 && <SideNav items={navItems} />}
-        <main className="flex-1 overflow-y-auto">
+        <main ref={mainRef} className="flex-1 overflow-y-auto">
           <Outlet />
         </main>
       </div>

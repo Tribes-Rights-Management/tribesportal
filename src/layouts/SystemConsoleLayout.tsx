@@ -1,5 +1,7 @@
+import { useRef } from "react";
 import { Outlet } from "react-router-dom";
 import { SystemConsoleHeader } from "@/components/app/SystemConsoleHeader";
+import { useScrollReset } from "@/hooks/useScrollReset";
 
 /**
  * SYSTEM CONSOLE LAYOUT — COMPANY-LEVEL GOVERNANCE (CANONICAL)
@@ -61,13 +63,18 @@ import { SystemConsoleHeader } from "@/components/app/SystemConsoleHeader";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 export function SystemConsoleLayout() {
+  const mainRef = useRef<HTMLElement>(null);
+  
+  // Enforce scroll reset on route changes (per Navigation Enforcement Spec)
+  useScrollReset(mainRef);
+
   return (
     <div 
       className="min-h-screen flex flex-col"
       style={{ backgroundColor: 'var(--tribes-bg)' }}
     >
       <SystemConsoleHeader />
-      <main className="flex-1 overflow-y-auto">
+      <main ref={mainRef} className="flex-1 overflow-y-auto">
         <Outlet />
       </main>
     </div>
