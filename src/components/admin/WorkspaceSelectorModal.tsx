@@ -1,19 +1,16 @@
 import { useAuth, TenantMembership } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { ChevronRight, X } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { NAV_LABELS } from "@/styles/tokens";
+import {
+  AppModal,
+  AppModalBody,
+} from "@/components/ui/app-modal";
 
 /**
  * WORKSPACE SELECTOR MODAL — SYSTEM CONSOLE → WORKSPACE ENTRY
+ * 
+ * Uses the unified AppModal system for consistent backdrop and mobile behavior.
  * 
  * ═══════════════════════════════════════════════════════════════════════════
  * CANONICAL ARCHITECTURE ENFORCEMENT
@@ -84,17 +81,18 @@ function WorkspaceRow({
     <button
       onClick={onSelect}
       className={cn(
-        "w-full text-left px-4 py-3.5 border-b border-white/5 last:border-b-0",
+        "w-full text-left px-4 py-3.5",
         "hover:bg-white/[0.03] transition-colors duration-150",
         "focus:outline-none focus-visible:bg-white/[0.05]",
         "flex items-center justify-between gap-3"
       )}
+      style={{ borderBottom: '1px solid var(--platform-border)' }}
     >
       <div className="min-w-0 flex-1">
         {/* Workspace name - single line with ellipsis */}
         <p 
           className="text-[14px] font-medium truncate"
-          style={{ color: 'var(--tribes-text)' }}
+          style={{ color: 'var(--platform-text)' }}
         >
           {membership.tenant_name}
         </p>
@@ -102,7 +100,7 @@ function WorkspaceRow({
         <p 
           className="text-[12px] mt-0.5 line-clamp-2 break-words"
           style={{ 
-            color: 'var(--tribes-text-muted)', 
+            color: 'var(--platform-text-muted)', 
             lineHeight: '1.45',
           }}
         >
@@ -122,7 +120,10 @@ function WorkspaceRow({
         >
           {label}
         </span>
-        <ChevronRight className="h-4 w-4 text-white/30" />
+        <ChevronRight 
+          className="h-4 w-4" 
+          style={{ color: 'var(--platform-text-muted)', opacity: 0.5 }} 
+        />
       </div>
     </button>
   );
@@ -131,7 +132,6 @@ function WorkspaceRow({
 export function WorkspaceSelectorModal({ open, onOpenChange }: WorkspaceSelectorModalProps) {
   const { tenantMemberships, setActiveTenant } = useAuth();
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
 
   const handleSelectWorkspace = (membership: TenantMembership) => {
     // Set the active tenant
@@ -152,93 +152,61 @@ export function WorkspaceSelectorModal({ open, onOpenChange }: WorkspaceSelector
   // No workspaces available
   if (tenantMemberships.length === 0) {
     return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent 
-          hideDefaultClose
-          className={cn(
-            "bg-[#141416] border-white/10 text-white",
-            isMobile 
-              ? "max-w-full w-full h-full max-h-full rounded-none top-0 left-0 translate-x-0 translate-y-0" 
-              : "max-w-md"
-          )}
-        >
-          <DialogHeader>
-            <DialogTitle className="text-[18px] font-medium text-white/90">
-              No Workspaces Available
-            </DialogTitle>
-            <DialogDescription className="text-[13px] text-white/40 mt-1">
-              You do not have access to any operating workspaces.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-8 text-center">
-            <p className="text-[13px] text-white/30">
+      <AppModal
+        open={open}
+        onOpenChange={onOpenChange}
+        title="No Workspaces Available"
+        description="You do not have access to any operating workspaces."
+        maxWidth="sm"
+      >
+        <AppModalBody>
+          <div className="py-4 text-center">
+            <p 
+              className="text-[13px]"
+              style={{ color: 'var(--platform-text-muted)' }}
+            >
               Contact an administrator to request workspace access.
             </p>
           </div>
-          {/* Mobile close button */}
-          {isMobile && (
-            <button
-              onClick={() => onOpenChange(false)}
-              className="absolute top-4 right-4 p-2 rounded text-white/40 hover:text-white/70 hover:bg-white/5"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          )}
-        </DialogContent>
-      </Dialog>
+        </AppModalBody>
+      </AppModal>
     );
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent 
-        hideDefaultClose
-        className={cn(
-          "bg-[#141416] border-white/10 text-white p-0 gap-0",
-          isMobile 
-            ? "max-w-full w-full h-full max-h-full rounded-none top-0 left-0 translate-x-0 translate-y-0 flex flex-col" 
-            : "max-w-md"
-        )}
+    <AppModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Select a Workspace"
+      description="Workspaces are separate operating environments."
+      maxWidth="sm"
+    >
+      {/* Workspace list - no padding wrapper, rows have their own padding */}
+      <div className="overflow-y-auto max-h-[400px] flex-1">
+        {tenantMemberships.map((membership) => (
+          <WorkspaceRow
+            key={membership.tenant_id}
+            membership={membership}
+            onSelect={() => handleSelectWorkspace(membership)}
+          />
+        ))}
+      </div>
+      
+      {/* Footer note */}
+      <div 
+        className="px-5 py-3 shrink-0"
+        style={{ 
+          borderTop: '1px solid var(--platform-border)',
+          backgroundColor: 'rgba(0,0,0,0.2)',
+        }}
       >
-        <DialogHeader className="px-5 py-4 border-b border-white/5 relative">
-          <DialogTitle className="text-[18px] font-medium text-white/90">
-            Select a Workspace
-          </DialogTitle>
-          <DialogDescription className="text-[12px] text-white/40 mt-1">
-            Workspaces are separate operating environments.
-          </DialogDescription>
-          {/* Mobile close button */}
-          {isMobile && (
-            <button
-              onClick={() => onOpenChange(false)}
-              className="absolute top-4 right-4 p-2 rounded text-white/40 hover:text-white/70 hover:bg-white/5"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          )}
-        </DialogHeader>
-        
-        {/* Workspace list */}
-        <div className={cn(
-          "overflow-y-auto",
-          isMobile ? "flex-1" : "max-h-[400px]"
-        )}>
-          {tenantMemberships.map((membership) => (
-            <WorkspaceRow
-              key={membership.tenant_id}
-              membership={membership}
-              onSelect={() => handleSelectWorkspace(membership)}
-            />
-          ))}
-        </div>
-        
-        {/* Footer note */}
-        <div className="px-5 py-3 border-t border-white/5 bg-[#0F0F11]">
-          <p className="text-[11px] text-white/25 text-center">
-            Selecting a workspace changes your data scope globally.
-          </p>
-        </div>
-      </DialogContent>
-    </Dialog>
+        <p 
+          className="text-[11px] text-center"
+          style={{ color: 'var(--platform-text-muted)', opacity: 0.6 }}
+        >
+          Selecting a workspace changes your data scope globally.
+        </p>
+      </div>
+    </AppModal>
   );
 }
