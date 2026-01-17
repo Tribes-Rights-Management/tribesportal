@@ -255,7 +255,7 @@ export function useCreateDataRoomExport() {
         },
       });
 
-      return data as DataRoomExport;
+      return data as unknown as DataRoomExport;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["data-room-exports"] });

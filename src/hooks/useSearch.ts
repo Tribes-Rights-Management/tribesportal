@@ -125,7 +125,7 @@ export function useSearch() {
     getAvailableEntityTypes,
     isPlatformAdmin,
     activeTenantId: activeTenant?.tenant_id,
-    activeTenantName: activeTenant?.tenant?.name,
+    activeTenantName: activeTenant?.tenant_name,
   };
 }
 
