@@ -18,6 +18,15 @@ export type NotificationType = Database["public"]["Enums"]["notification_type"];
 export type NotificationPriority = Database["public"]["Enums"]["notification_priority"];
 export type EscalationStatus = Database["public"]["Enums"]["escalation_status"];
 
+/**
+ * NOTIFICATION INTERFACE
+ * 
+ * RETENTION SEMANTICS:
+ * - acknowledged_at: User has SEEN the notification (does NOT stop escalations)
+ * - resolved_at: The underlying EVENT has been COMPLETED (outcome-driven)
+ * - requires_resolution: If true, notification remains active until action completes
+ * - retention_category: Determines archival rules (critical categories never deleted)
+ */
 export interface Notification {
   id: string;
   recipient_id: string;
@@ -31,8 +40,18 @@ export interface Notification {
   record_id: string | null;
   correlation_id: string | null;
   read_at: string | null;
+  acknowledged_at: string | null;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  resolution_type: string | null;
+  requires_resolution: boolean;
+  retention_category: string;
+  archived_at: string | null;
   created_at: string;
 }
+
+export type ResolutionType = 'approved' | 'rejected' | 'completed' | 'cancelled' | 'expired';
+export type RetentionCategory = 'standard' | 'critical_authority' | 'critical_financial' | 'critical_security';
 
 export interface EscalationRule {
   id: string;
@@ -121,7 +140,20 @@ export function useUnreadNotificationCount() {
 }
 
 /**
- * Mark notification as read
+ * ACKNOWLEDGMENT SEMANTICS
+ * 
+ * "Mark as read" = ACKNOWLEDGMENT ONLY
+ * - User has seen and recognized the notification
+ * - Does NOT imply action has been taken
+ * - Does NOT stop escalation timers
+ * - Escalations continue until RESOLUTION
+ * 
+ * Resolution is OUTCOME-DRIVEN (see useResolveNotification)
+ */
+
+/**
+ * Mark notification as acknowledged (read)
+ * This is NOT resolution - escalations continue
  */
 export function useMarkNotificationRead() {
   const queryClient = useQueryClient();
@@ -130,7 +162,10 @@ export function useMarkNotificationRead() {
     mutationFn: async (notificationId: string) => {
       const { error } = await supabase
         .from("notifications")
-        .update({ read_at: new Date().toISOString() })
+        .update({ 
+          read_at: new Date().toISOString(),
+          acknowledged_at: new Date().toISOString(),
+        })
         .eq("id", notificationId);
 
       if (error) throw error;
@@ -142,7 +177,8 @@ export function useMarkNotificationRead() {
 }
 
 /**
- * Mark all notifications as read
+ * Mark all notifications as acknowledged
+ * Does NOT resolve any notifications
  */
 export function useMarkAllNotificationsRead() {
   const { user } = useAuth();
@@ -154,7 +190,10 @@ export function useMarkAllNotificationsRead() {
 
       const { error } = await supabase
         .from("notifications")
-        .update({ read_at: new Date().toISOString() })
+        .update({ 
+          read_at: new Date().toISOString(),
+          acknowledged_at: new Date().toISOString(),
+        })
         .eq("recipient_id", user.id)
         .is("read_at", null);
 
@@ -163,6 +202,37 @@ export function useMarkAllNotificationsRead() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RESOLUTION (Outcome-Driven Only)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Get count of unresolved notifications requiring action
+ * These cannot be dismissed until the underlying action completes
+ */
+export function useUnresolvedNotificationCount() {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ["notifications", "unresolved-count", user?.id],
+    queryFn: async () => {
+      if (!user) return 0;
+
+      const { count, error } = await supabase
+        .from("notifications")
+        .select("*", { count: "exact", head: true })
+        .eq("recipient_id", user.id)
+        .eq("requires_resolution", true)
+        .is("resolved_at", null);
+
+      if (error) throw error;
+      return count || 0;
+    },
+    enabled: !!user,
+    refetchInterval: 30000,
   });
 }
 
@@ -311,3 +381,47 @@ export const PRIORITY_STYLES: Record<NotificationPriority, { bg: string; text: s
   high: { bg: "bg-amber-500/20", text: "text-amber-600" },
   critical: { bg: "bg-destructive/20", text: "text-destructive" },
 };
+
+/**
+ * RETENTION RULES (Non-Negotiable)
+ * 
+ * Active Notifications:
+ * - Remain visible until Acknowledged AND Resolved (if resolution required)
+ * 
+ * Resolved Notifications:
+ * - Retained and visible (read-only) for 90 days
+ * 
+ * Archived Notifications:
+ * - Moved to archive after 90 days
+ * - Remain queryable for audit purposes
+ * - NEVER deleted
+ * 
+ * Critical Categories (Never Deleted):
+ * - Authority & access changes
+ * - Financial events
+ * - Escalations
+ * - Security incidents
+ */
+export const RETENTION_CATEGORY_LABELS: Record<string, string> = {
+  standard: "Standard Retention",
+  critical_authority: "Authority Record (Never Deleted)",
+  critical_financial: "Financial Record (Never Deleted)",
+  critical_security: "Security Record (Never Deleted)",
+};
+
+/**
+ * Determine if a notification can be dismissed from view
+ * (still retained for audit, just hidden from active list)
+ */
+export function canDismissNotification(notification: Notification): boolean {
+  // Escalated items cannot be dismissed until resolved
+  if (notification.priority === "critical" || notification.priority === "high") {
+    return notification.resolved_at !== null;
+  }
+  // Items requiring resolution cannot be dismissed
+  if (notification.requires_resolution) {
+    return notification.resolved_at !== null;
+  }
+  // Standard notifications can be dismissed after acknowledgment
+  return notification.acknowledged_at !== null;
+}
