@@ -6,6 +6,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ArrowLeft, ChevronDown, ChevronUp, ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MemberDetailsSheet } from "@/components/admin/MemberDetailsSheet";
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];
@@ -34,22 +36,24 @@ interface UserWithProfile {
 }
 
 /**
- * USER DIRECTORY PAGE — ACCESS MANAGEMENT (INSTITUTIONAL STANDARD)
+ * MEMBER DIRECTORY PAGE — ACCESS MANAGEMENT (INSTITUTIONAL STANDARD)
  * 
  * Design Rules:
  * - Dark canvas, flat panels with hairline borders
- * - Table sits within centered content column
- * - No shadows, no cards, no elevation
- * - Plain text status, no badges or pills
- * - Restrained hover states
+ * - Mobile: Vertical card list, no horizontal scrolling
+ * - Desktop: Table within centered content column
+ * - Tap/click row opens member details sheet
  */
 export default function UserDirectoryPage() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const { profile: currentProfile } = useAuth();
   const [users, setUsers] = useState<UserWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [expandedUser, setExpandedUser] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserWithProfile | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -205,36 +209,50 @@ export default function UserDirectoryPage() {
     }
   };
 
+  const formatPlatformRole = (role: PlatformRole): string => {
+    switch (role) {
+      case "platform_admin": return "Admin";
+      case "platform_user": return "User";
+      case "external_auditor": return "Auditor";
+      default: return role;
+    }
+  };
+
   const formatContexts = (contexts: string[]): string => {
     return contexts.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(", ") || "None";
   };
 
+  const handleRowClick = (user: UserWithProfile) => {
+    setSelectedUser(user);
+    setDetailsOpen(true);
+  };
+
   return (
     <div 
-      className="min-h-full py-10 px-6"
+      className="min-h-full py-6 sm:py-10 px-4 sm:px-6"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <div className="max-w-[960px] mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-6 sm:mb-8">
           <Link 
             to="/admin" 
-            className="h-8 w-8 rounded flex items-center justify-center transition-colors"
+            className="h-11 w-11 sm:h-8 sm:w-8 rounded flex items-center justify-center transition-colors shrink-0"
             style={{ color: 'var(--platform-text-secondary)' }}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-5 w-5 sm:h-4 sm:w-4" />
           </Link>
-          <div>
+          <div className="min-w-0">
             <h1 
-              className="text-[28px] font-semibold tracking-[-0.02em]"
+              className="text-[22px] sm:text-[28px] font-semibold tracking-[-0.02em]"
               style={{ color: 'var(--platform-text)' }}
             >
               Member Directory
             </h1>
             <p 
-              className="text-[15px] mt-0.5"
+              className="text-[14px] sm:text-[15px] mt-0.5"
               style={{ color: 'var(--platform-text-secondary)' }}
             >
               {users.length} account(s)
@@ -242,32 +260,97 @@ export default function UserDirectoryPage() {
           </div>
         </div>
 
-        {/* Table Panel */}
-        <div 
-          className="rounded overflow-hidden"
-          style={{ 
-            backgroundColor: 'var(--platform-surface)',
-            border: '1px solid var(--platform-border)'
-          }}
-        >
-          {loading ? (
-            <div 
-              className="py-16 text-center text-[14px]"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              Retrieving records
-            </div>
-          ) : users.length === 0 ? (
-            <div 
-              className="py-16 text-center"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              <p className="text-[14px]">No users.</p>
-              <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text-muted)' }}>
-                Records will appear when users are provisioned.
-              </p>
-            </div>
-          ) : (
+        {/* Content Area */}
+        {loading ? (
+          <div 
+            className="py-16 text-center text-[14px] rounded-lg"
+            style={{ 
+              backgroundColor: 'var(--platform-surface)',
+              border: '1px solid var(--platform-border)',
+              color: 'var(--platform-text-secondary)' 
+            }}
+          >
+            Retrieving records
+          </div>
+        ) : users.length === 0 ? (
+          <div 
+            className="py-16 text-center rounded-lg"
+            style={{ 
+              backgroundColor: 'var(--platform-surface)',
+              border: '1px solid var(--platform-border)',
+              color: 'var(--platform-text-secondary)' 
+            }}
+          >
+            <p className="text-[14px]">No users.</p>
+            <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text-muted)' }}>
+              Records will appear when users are provisioned.
+            </p>
+          </div>
+        ) : isMobile ? (
+          /* Mobile: Vertical Card List */
+          <div className="space-y-2">
+            {users.map((user) => (
+              <button
+                key={user.id}
+                onClick={() => handleRowClick(user)}
+                className="w-full text-left rounded-lg p-4 transition-colors"
+                style={{ 
+                  backgroundColor: 'var(--platform-surface)',
+                  border: '1px solid var(--platform-border)',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--platform-surface)'}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    {/* Primary: Email */}
+                    <div 
+                      className="text-[15px] font-medium break-words"
+                      style={{ color: 'var(--platform-text)' }}
+                    >
+                      {user.email}
+                      {user.user_id === currentProfile?.user_id && (
+                        <span 
+                          className="ml-2 text-[10px] uppercase tracking-wide"
+                          style={{ color: 'var(--platform-text-muted)' }}
+                        >
+                          (you)
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Secondary: Role + Status */}
+                    <div 
+                      className="text-[13px] mt-1 line-clamp-2"
+                      style={{ color: 'var(--platform-text-secondary)' }}
+                    >
+                      {formatPlatformRole(user.platform_role)} · {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                      {user.memberships.length > 0 && (
+                        <span style={{ color: 'var(--platform-text-muted)' }}>
+                          {' '}· {user.memberships.filter(m => m.status === "active").length} org(s)
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Chevron */}
+                  <ChevronRight 
+                    className="h-5 w-5 shrink-0 mt-0.5" 
+                    style={{ color: 'var(--platform-text-muted)' }} 
+                  />
+                </div>
+              </button>
+            ))}
+          </div>
+        ) : (
+          /* Desktop: Table Layout */
+          <div 
+            className="rounded overflow-hidden"
+            style={{ 
+              backgroundColor: 'var(--platform-surface)',
+              border: '1px solid var(--platform-border)'
+            }}
+          >
             <Table>
               <TableHeader>
                 <TableRow>
@@ -283,8 +366,12 @@ export default function UserDirectoryPage() {
               <TableBody>
                 {users.map((user) => (
                   <>
-                    <TableRow key={user.id}>
-                      <TableCell>
+                    <TableRow 
+                      key={user.id}
+                      className="cursor-pointer"
+                      onClick={() => handleRowClick(user)}
+                    >
+                      <TableCell onClick={(e) => e.stopPropagation()}>
                         {user.memberships.length > 0 && (
                           <button
                             className="h-6 w-6 rounded flex items-center justify-center transition-colors"
@@ -312,7 +399,7 @@ export default function UserDirectoryPage() {
                           </span>
                         )}
                       </TableCell>
-                      <TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
                         <Select
                           value={user.platform_role}
                           onValueChange={(value) => updatePlatformRole(user.user_id, user.id, value as PlatformRole)}
@@ -327,7 +414,7 @@ export default function UserDirectoryPage() {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
                         <Select
                           value={user.status}
                           onValueChange={(value) => updateUserStatus(user.user_id, user.id, value as MembershipStatus)}
@@ -361,7 +448,7 @@ export default function UserDirectoryPage() {
                       <TableCell style={{ color: 'var(--platform-text-secondary)' }}>
                         {new Date(user.created_at).toLocaleDateString()}
                       </TableCell>
-                      <TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => navigate(`/admin/users/${user.user_id}/permissions`)}
                           className="flex items-center gap-1 px-2 py-1 text-[12px] rounded transition-colors"
@@ -376,7 +463,7 @@ export default function UserDirectoryPage() {
                     </TableRow>
                     {expandedUser === user.id && user.memberships.length > 0 && (
                       <TableRow style={{ backgroundColor: 'var(--platform-surface-2)' }}>
-                        <TableCell colSpan={6} className="py-3">
+                        <TableCell colSpan={7} className="py-3">
                           <div className="pl-8 space-y-2">
                             <p 
                               className="text-[10px] font-medium uppercase tracking-[0.04em] mb-2"
@@ -438,9 +525,21 @@ export default function UserDirectoryPage() {
                 ))}
               </TableBody>
             </Table>
-          )}
-        </div>
+          </div>
+        )}
       </div>
+
+      {/* Member Details Sheet */}
+      <MemberDetailsSheet
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        user={selectedUser}
+        currentUserId={currentProfile?.user_id}
+        updating={updating}
+        onUpdatePlatformRole={updatePlatformRole}
+        onUpdateUserStatus={updateUserStatus}
+        onUpdateMembershipStatus={updateMembershipStatus}
+      />
     </div>
   );
 }
