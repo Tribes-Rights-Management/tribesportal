@@ -1,7 +1,10 @@
-import { X, ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { AppSheet, AppSheetBody, AppSheetHeader } from "@/components/ui/app-sheet";
+import { useState } from "react";
+import { ChevronRight, ChevronDown } from "lucide-react";
+import { format } from "date-fns";
+import { AppSheet, AppSheetBody } from "@/components/ui/app-sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { AuthorityRecordSheet } from "./AuthorityRecordSheet";
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];
@@ -41,13 +44,18 @@ interface MemberDetailsSheetProps {
 }
 
 /**
- * MEMBER DETAILS SHEET — INSTITUTIONAL STANDARD
+ * MEMBER DETAILS SHEET — INSTITUTIONAL GOVERNANCE VIEW
  * 
- * - Full-height bottom sheet on mobile (90-95vh)
- * - Side panel on desktop
- * - Vertical, scrollable content
- * - Stacked cards for memberships (no tables)
- * - Full-width controls with min 44px height
+ * Structure:
+ * - Section 1: Identity (Email, Account Created, Status pill)
+ * - Section 2: Platform Authority (Role as read-only, immutability explanation)
+ * - Section 3: Organization Memberships (each org as a card)
+ * - Section 4: Governance (collapsed, audit metadata only)
+ * 
+ * Rules:
+ * - No disabled inputs for display-only data
+ * - Status/Role shown as pills, not form controls
+ * - Authority Record is a child sheet, not a page
  */
 export function MemberDetailsSheet({
   open,
@@ -59,7 +67,8 @@ export function MemberDetailsSheet({
   onUpdateUserStatus,
   onUpdateMembershipStatus,
 }: MemberDetailsSheetProps) {
-  const navigate = useNavigate();
+  const [authorityRecordOpen, setAuthorityRecordOpen] = useState(false);
+  const [governanceOpen, setGovernanceOpen] = useState(false);
 
   if (!user) return null;
 
@@ -67,7 +76,7 @@ export function MemberDetailsSheet({
 
   const formatRole = (role: PortalRole): string => {
     switch (role) {
-      case "tenant_admin": return "Admin";
+      case "tenant_admin": return "Administrator";
       case "tenant_user": return "Member";
       case "viewer": return "Viewer";
       default: return role;
@@ -76,9 +85,9 @@ export function MemberDetailsSheet({
 
   const formatPlatformRole = (role: PlatformRole): string => {
     switch (role) {
-      case "platform_admin": return "Administrator";
-      case "platform_user": return "User";
-      case "external_auditor": return "Auditor";
+      case "platform_admin": return "Platform Administrator";
+      case "platform_user": return "Platform User";
+      case "external_auditor": return "External Auditor";
       default: return role;
     }
   };
@@ -91,277 +100,366 @@ export function MemberDetailsSheet({
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
+  const formatDate = (date: string) => {
+    try {
+      return format(new Date(date), "MMM d, yyyy");
+    } catch {
+      return date;
+    }
+  };
+
+  const getStatusColor = (status: MembershipStatus) => {
+    switch (status) {
+      case "active":
+        return { bg: "rgba(34, 197, 94, 0.15)", text: "#4ade80" };
+      case "pending":
+        return { bg: "rgba(234, 179, 8, 0.15)", text: "#facc15" };
+      case "suspended":
+        return { bg: "rgba(249, 115, 22, 0.15)", text: "#fb923c" };
+      case "revoked":
+      case "denied":
+        return { bg: "rgba(239, 68, 68, 0.15)", text: "#f87171" };
+      default:
+        return { bg: "rgba(255,255,255,0.06)", text: "var(--platform-text)" };
+    }
+  };
+
   return (
-    <AppSheet 
-      open={open} 
-      onOpenChange={onOpenChange}
-      title="Member Details"
-      description={user.email}
-      width="lg"
-    >
-      <AppSheetBody className="space-y-6">
-        {/* Email Section */}
-        <div>
-          <label 
-            className="block text-[11px] font-medium uppercase tracking-[0.04em] mb-2"
-            style={{ color: 'var(--platform-text-muted)' }}
-          >
-            Email Address
-          </label>
-          <div 
-            className="text-[15px] break-words"
-            style={{ color: 'var(--platform-text)' }}
-          >
-            {user.email}
-            {isCurrentUser && (
-              <span 
-                className="ml-2 text-[10px] uppercase tracking-wide"
-                style={{ color: 'var(--platform-text-muted)' }}
-              >
-                (you)
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Platform Role */}
-        <div>
-          <label 
-            className="block text-[11px] font-medium uppercase tracking-[0.04em] mb-2"
-            style={{ color: 'var(--platform-text-muted)' }}
-          >
-            Platform Role
-          </label>
-          {isCurrentUser ? (
-            <div>
-              <div 
-                className="inline-flex items-center px-3 py-1.5 rounded-md text-[13px] font-medium"
-                style={{ 
-                  backgroundColor: 'rgba(255,255,255,0.06)',
-                  color: 'var(--platform-text)',
-                }}
-              >
-                {formatPlatformRole(user.platform_role)}
-              </div>
-              <p className="text-[12px] mt-2" style={{ color: 'var(--platform-text-muted)' }}>
-                You cannot change your own role.
-              </p>
-            </div>
-          ) : (
-            <Select
-              value={user.platform_role}
-              onValueChange={(value) => onUpdatePlatformRole(user.user_id, user.id, value as PlatformRole)}
-              disabled={updating === user.id}
+    <>
+      <AppSheet 
+        open={open} 
+        onOpenChange={onOpenChange}
+        title="Member Details"
+        description={user.full_name || user.email}
+        width="lg"
+      >
+        <AppSheetBody className="space-y-8">
+          {/* ═══════════════════════════════════════════════════════════════════
+              SECTION 1: IDENTITY
+              ═══════════════════════════════════════════════════════════════════ */}
+          <section>
+            <h2 
+              className="text-[10px] font-medium uppercase tracking-[0.08em] mb-4"
+              style={{ color: 'var(--platform-text-muted)' }}
             >
-              <SelectTrigger 
-                className="w-full h-11 text-[14px] bg-transparent border-white/10"
-                style={{ color: 'var(--platform-text)' }}
-              >
-                <SelectValue>{formatPlatformRole(user.platform_role)}</SelectValue>
-              </SelectTrigger>
-              <SelectContent className="bg-[#1A1A1B] border-white/10">
-                <SelectItem value="platform_admin" className="text-white/80 focus:bg-white/10 focus:text-white">Administrator</SelectItem>
-                <SelectItem value="platform_user" className="text-white/80 focus:bg-white/10 focus:text-white">User</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        </div>
-
-        {/* Account Status */}
-        <div>
-          <label 
-            className="block text-[11px] font-medium uppercase tracking-[0.04em] mb-2"
-            style={{ color: 'var(--platform-text-muted)' }}
-          >
-            Account Status
-          </label>
-          {isCurrentUser ? (
-            <div>
-              <div 
-                className="inline-flex items-center px-3 py-1.5 rounded-md text-[13px] font-medium"
-                style={{ 
-                  backgroundColor: 'rgba(255,255,255,0.06)',
-                  color: 'var(--platform-text)',
-                }}
-              >
-                {formatStatus(user.status)}
-              </div>
-              <p className="text-[12px] mt-2" style={{ color: 'var(--platform-text-muted)' }}>
-                You cannot change your own access.
-              </p>
-            </div>
-          ) : (
-            <Select
-              value={user.status}
-              onValueChange={(value) => onUpdateUserStatus(user.user_id, user.id, value as MembershipStatus)}
-              disabled={updating === user.id}
-            >
-              <SelectTrigger 
-                className="w-full h-11 text-[14px] bg-transparent border-white/10"
-                style={{ color: 'var(--platform-text)' }}
-              >
-                <SelectValue>{formatStatus(user.status)}</SelectValue>
-              </SelectTrigger>
-              <SelectContent className="bg-[#1A1A1B] border-white/10">
-                <SelectItem value="active" className="text-white/80 focus:bg-white/10 focus:text-white">Active</SelectItem>
-                <SelectItem value="pending" className="text-white/80 focus:bg-white/10 focus:text-white">Pending</SelectItem>
-                <SelectItem value="suspended" className="text-white/80 focus:bg-white/10 focus:text-white">Suspended</SelectItem>
-                <SelectItem value="revoked" className="text-white/80 focus:bg-white/10 focus:text-white">Revoked</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        </div>
-
-        {/* Account Created */}
-        <div>
-          <label 
-            className="block text-[11px] font-medium uppercase tracking-[0.04em] mb-2"
-            style={{ color: 'var(--platform-text-muted)' }}
-          >
-            Account Created
-          </label>
-          <div 
-            className="text-[14px]"
-            style={{ color: 'var(--platform-text-secondary)' }}
-          >
-            {new Date(user.created_at).toLocaleDateString(undefined, {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </div>
-        </div>
-
-        {/* Authority Action */}
-        <div>
-          <button
-            onClick={() => {
-              onOpenChange(false);
-              navigate(`/admin/users/${user.user_id}/permissions`);
-            }}
-            className="w-full h-11 flex items-center justify-between px-4 rounded-lg transition-colors"
-            style={{ 
-              backgroundColor: 'rgba(255,255,255,0.03)',
-              border: '1px solid var(--platform-border)',
-              color: 'var(--platform-text)',
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'}
-          >
-            <span className="text-[14px]">View Authority & Permissions</span>
-            <ChevronRight className="h-4 w-4" style={{ color: 'var(--platform-text-muted)' }} />
-          </button>
-        </div>
-
-        {/* Tenant Memberships */}
-        <div>
-          <label 
-            className="block text-[11px] font-medium uppercase tracking-[0.04em] mb-3"
-            style={{ color: 'var(--platform-text-muted)' }}
-          >
-            Organization Memberships
-          </label>
-          
-          {user.memberships.length === 0 ? (
+              Identity
+            </h2>
             <div 
-              className="py-6 text-center rounded-lg"
+              className="rounded-lg p-5 space-y-4"
               style={{ 
                 backgroundColor: 'rgba(255,255,255,0.02)',
                 border: '1px solid var(--platform-border)',
               }}
             >
-              <p className="text-[13px]" style={{ color: 'var(--platform-text-muted)' }}>
-                No organization memberships
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {user.memberships.map((membership) => (
-                <div
-                  key={membership.id}
-                  className="rounded-lg p-4"
+              {/* Email */}
+              <div className="flex items-start justify-between gap-4">
+                <span 
+                  className="text-[12px] shrink-0"
+                  style={{ color: 'var(--platform-text-muted)' }}
+                >
+                  Email
+                </span>
+                <span 
+                  className="text-[14px] text-right break-all font-mono"
+                  style={{ color: 'var(--platform-text)' }}
+                >
+                  {user.email}
+                  {isCurrentUser && (
+                    <span 
+                      className="ml-2 text-[10px] uppercase tracking-wide font-sans"
+                      style={{ color: 'var(--platform-text-muted)' }}
+                    >
+                      (you)
+                    </span>
+                  )}
+                </span>
+              </div>
+
+              {/* Account Created */}
+              <div className="flex items-center justify-between">
+                <span 
+                  className="text-[12px]"
+                  style={{ color: 'var(--platform-text-muted)' }}
+                >
+                  Account Created
+                </span>
+                <span 
+                  className="text-[13px]"
+                  style={{ color: 'var(--platform-text-secondary)' }}
+                >
+                  {formatDate(user.created_at)}
+                </span>
+              </div>
+
+              {/* Account Status - Always as pill */}
+              <div className="flex items-center justify-between">
+                <span 
+                  className="text-[12px]"
+                  style={{ color: 'var(--platform-text-muted)' }}
+                >
+                  Account Status
+                </span>
+                <div 
+                  className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
                   style={{ 
-                    backgroundColor: 'rgba(255,255,255,0.02)',
-                    border: '1px solid var(--platform-border)',
+                    backgroundColor: getStatusColor(user.status).bg,
+                    color: getStatusColor(user.status).text,
                   }}
                 >
-                  {/* Organization Name */}
-                  <div 
-                    className="text-[15px] font-medium mb-3"
-                    style={{ color: 'var(--platform-text)' }}
+                  {formatStatus(user.status)}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ═══════════════════════════════════════════════════════════════════
+              SECTION 2: PLATFORM AUTHORITY
+              ═══════════════════════════════════════════════════════════════════ */}
+          <section>
+            <h2 
+              className="text-[10px] font-medium uppercase tracking-[0.08em] mb-4"
+              style={{ color: 'var(--platform-text-muted)' }}
+            >
+              Platform Authority
+            </h2>
+            <div 
+              className="rounded-lg p-5 space-y-4"
+              style={{ 
+                backgroundColor: 'rgba(255,255,255,0.02)',
+                border: '1px solid var(--platform-border)',
+              }}
+            >
+              {/* Platform Role - Always read-only display */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span 
+                    className="text-[12px]"
+                    style={{ color: 'var(--platform-text-muted)' }}
                   >
-                    {membership.tenant_name}
-                  </div>
-                  
-                  {/* Details Grid - Stacked vertically */}
-                  <div className="space-y-3">
-                    {/* Role */}
-                    <div className="flex items-center justify-between">
-                      <span 
-                        className="text-[12px]"
-                        style={{ color: 'var(--platform-text-muted)' }}
-                      >
-                        Role
-                      </span>
-                      <span 
-                        className="text-[13px]"
-                        style={{ color: 'var(--platform-text-secondary)' }}
-                      >
-                        {formatRole(membership.role)}
-                      </span>
-                    </div>
-                    
-                    {/* Access Scope */}
-                    <div className="flex items-start justify-between gap-4">
-                      <span 
-                        className="text-[12px] shrink-0"
-                        style={{ color: 'var(--platform-text-muted)' }}
-                      >
-                        Access
-                      </span>
-                      <span 
-                        className="text-[13px] text-right break-words"
-                        style={{ color: 'var(--platform-text-secondary)' }}
-                      >
-                        {formatContexts(membership.allowed_contexts)}
-                      </span>
-                    </div>
-                    
-                    {/* Membership Status with Selector */}
-                    <div className="pt-2" style={{ borderTop: '1px solid var(--platform-border)' }}>
-                      <label 
-                        className="block text-[11px] font-medium uppercase tracking-[0.04em] mb-2"
-                        style={{ color: 'var(--platform-text-muted)' }}
-                      >
-                        Membership Status
-                      </label>
-                      <Select
-                        value={membership.status}
-                        onValueChange={(value) => onUpdateMembershipStatus(membership.id, value as MembershipStatus)}
-                        disabled={updating === membership.id}
-                      >
-                        <SelectTrigger 
-                          className="w-full h-10 text-[13px] bg-transparent border-white/10"
-                          style={{ color: 'var(--platform-text)' }}
-                        >
-                          <SelectValue>{formatStatus(membership.status)}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent className="bg-[#1A1A1B] border-white/10">
-                          <SelectItem value="active" className="text-white/80 focus:bg-white/10 focus:text-white">Active</SelectItem>
-                          <SelectItem value="pending" className="text-white/80 focus:bg-white/10 focus:text-white">Pending</SelectItem>
-                          <SelectItem value="suspended" className="text-white/80 focus:bg-white/10 focus:text-white">Suspended</SelectItem>
-                          <SelectItem value="revoked" className="text-white/80 focus:bg-white/10 focus:text-white">Revoked</SelectItem>
-                          <SelectItem value="denied" className="text-white/80 focus:bg-white/10 focus:text-white">Denied</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    Platform Role
+                  </span>
+                  <div 
+                    className="inline-flex items-center px-3 py-1.5 rounded-md text-[13px] font-medium"
+                    style={{ 
+                      backgroundColor: 'rgba(255,255,255,0.06)',
+                      color: 'var(--platform-text)',
+                    }}
+                  >
+                    {formatPlatformRole(user.platform_role)}
                   </div>
                 </div>
-              ))}
+                <p 
+                  className="text-[12px]"
+                  style={{ color: 'var(--platform-text-muted)' }}
+                >
+                  {isCurrentUser 
+                    ? "You cannot modify your own access."
+                    : "Role determines system-wide authority level."}
+                </p>
+              </div>
+
+              {/* View Authority Record Action */}
+              <button
+                onClick={() => setAuthorityRecordOpen(true)}
+                className="w-full h-11 flex items-center justify-between px-4 rounded-lg transition-colors"
+                style={{ 
+                  backgroundColor: 'rgba(255,255,255,0.03)',
+                  border: '1px solid var(--platform-border)',
+                  color: 'var(--platform-text)',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'}
+              >
+                <span className="text-[14px]">View Authority Record</span>
+                <ChevronRight className="h-4 w-4" style={{ color: 'var(--platform-text-muted)' }} />
+              </button>
             </div>
-          )}
-        </div>
-      </AppSheetBody>
-    </AppSheet>
+          </section>
+
+          {/* ═══════════════════════════════════════════════════════════════════
+              SECTION 3: ORGANIZATION MEMBERSHIPS
+              ═══════════════════════════════════════════════════════════════════ */}
+          <section>
+            <h2 
+              className="text-[10px] font-medium uppercase tracking-[0.08em] mb-4"
+              style={{ color: 'var(--platform-text-muted)' }}
+            >
+              Organization Memberships
+            </h2>
+            
+            {user.memberships.length === 0 ? (
+              <div 
+                className="py-8 text-center rounded-lg"
+                style={{ 
+                  backgroundColor: 'rgba(255,255,255,0.02)',
+                  border: '1px solid var(--platform-border)',
+                }}
+              >
+                <p className="text-[13px]" style={{ color: 'var(--platform-text-muted)' }}>
+                  No organization memberships
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {user.memberships.map((membership) => (
+                  <div
+                    key={membership.id}
+                    className="rounded-lg p-5"
+                    style={{ 
+                      backgroundColor: 'rgba(255,255,255,0.02)',
+                      border: '1px solid var(--platform-border)',
+                    }}
+                  >
+                    {/* Organization Name */}
+                    <div 
+                      className="text-[15px] font-medium mb-4"
+                      style={{ color: 'var(--platform-text)' }}
+                    >
+                      {membership.tenant_name}
+                    </div>
+                    
+                    {/* Stacked Details */}
+                    <div className="space-y-3">
+                      {/* Organization Role - Read-only */}
+                      <div className="flex items-center justify-between">
+                        <span 
+                          className="text-[12px]"
+                          style={{ color: 'var(--platform-text-muted)' }}
+                        >
+                          Organization Role
+                        </span>
+                        <div 
+                          className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
+                          style={{ 
+                            backgroundColor: 'rgba(255,255,255,0.06)',
+                            color: 'var(--platform-text)',
+                          }}
+                        >
+                          {formatRole(membership.role)}
+                        </div>
+                      </div>
+                      
+                      {/* Context Access - Read-only */}
+                      <div className="flex items-start justify-between gap-4">
+                        <span 
+                          className="text-[12px] shrink-0"
+                          style={{ color: 'var(--platform-text-muted)' }}
+                        >
+                          Context Access
+                        </span>
+                        <div className="flex flex-wrap gap-1.5 justify-end">
+                          {membership.allowed_contexts.length === 0 ? (
+                            <span 
+                              className="text-[12px]"
+                              style={{ color: 'var(--platform-text-muted)' }}
+                            >
+                              None
+                            </span>
+                          ) : (
+                            membership.allowed_contexts.map((ctx) => (
+                              <span
+                                key={ctx}
+                                className="inline-flex items-center px-2 py-0.5 rounded text-[11px]"
+                                style={{ 
+                                  backgroundColor: 'rgba(255,255,255,0.04)',
+                                  color: 'var(--platform-text-secondary)',
+                                }}
+                              >
+                                {ctx.charAt(0).toUpperCase() + ctx.slice(1)}
+                              </span>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Membership Status - Read-only pill */}
+                      <div className="flex items-center justify-between">
+                        <span 
+                          className="text-[12px]"
+                          style={{ color: 'var(--platform-text-muted)' }}
+                        >
+                          Membership Status
+                        </span>
+                        <div 
+                          className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
+                          style={{ 
+                            backgroundColor: getStatusColor(membership.status).bg,
+                            color: getStatusColor(membership.status).text,
+                          }}
+                        >
+                          {formatStatus(membership.status)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* ═══════════════════════════════════════════════════════════════════
+              SECTION 4: GOVERNANCE (Collapsed by default)
+              ═══════════════════════════════════════════════════════════════════ */}
+          <Collapsible open={governanceOpen} onOpenChange={setGovernanceOpen}>
+            <CollapsibleTrigger asChild>
+              <button
+                className="w-full flex items-center justify-between py-3"
+                style={{ color: 'var(--platform-text-muted)' }}
+              >
+                <span className="text-[10px] font-medium uppercase tracking-[0.08em]">
+                  Governance
+                </span>
+                {governanceOpen ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div 
+                className="rounded-lg p-5 space-y-3"
+                style={{ 
+                  backgroundColor: 'rgba(255,255,255,0.01)',
+                  border: '1px solid var(--platform-border)',
+                }}
+              >
+                <div className="flex items-center justify-between">
+                  <span 
+                    className="text-[11px]"
+                    style={{ color: 'var(--platform-text-muted)' }}
+                  >
+                    Record Created
+                  </span>
+                  <span 
+                    className="text-[12px] font-mono"
+                    style={{ color: 'var(--platform-text-secondary)' }}
+                  >
+                    {formatDate(user.created_at)}
+                  </span>
+                </div>
+                <div 
+                  className="text-[11px] pt-2"
+                  style={{ 
+                    color: 'var(--platform-text-muted)',
+                    borderTop: '1px solid var(--platform-border)',
+                  }}
+                >
+                  Authority changes are logged and timestamped.
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </AppSheetBody>
+      </AppSheet>
+
+      {/* Child Sheet: Authority Record */}
+      <AuthorityRecordSheet
+        open={authorityRecordOpen}
+        onOpenChange={setAuthorityRecordOpen}
+        user={user}
+        isCurrentUser={isCurrentUser}
+      />
+    </>
   );
 }
