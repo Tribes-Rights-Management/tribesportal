@@ -28,6 +28,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogBody,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Download, FileText, Loader2, Eye, ChevronRight } from "lucide-react";
@@ -592,24 +593,16 @@ export default function DisclosuresPage() {
 
       {/* Export Detail Modal */}
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-        <DialogContent 
-          className="max-w-2xl"
-          style={{ 
-            backgroundColor: 'hsl(var(--platform-bg))',
-            border: '1px solid hsl(var(--platform-border))'
-          }}
-        >
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle 
-              className="text-[16px] font-medium"
-              style={{ color: 'hsl(var(--platform-text))' }}
-            >
+            <DialogTitle>
               Disclosure Export Details
             </DialogTitle>
           </DialogHeader>
 
-          {selectedExport && (
-            <div className="space-y-6 mt-4">
+          <DialogBody>
+            {selectedExport && (
+            <div className="space-y-6">
               {/* Watermark */}
               <div>
                 <Label 
@@ -834,6 +827,7 @@ export default function DisclosuresPage() {
               )}
             </div>
           )}
+          </DialogBody>
         </DialogContent>
       </Dialog>
     </PlatformLayout>
