@@ -24,12 +24,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogBody,
-} from "@/components/ui/dialog";
+  AppModal,
+  AppModalBody,
+} from "@/components/ui/app-modal";
 import { toast } from "sonner";
 import { Download, FileText, Loader2, Eye, ChevronRight } from "lucide-react";
 import { EMPTY_STATES, AUDIT_COPY, MOBILE_COPY } from "@/constants/institutional-copy";
@@ -592,16 +589,14 @@ export default function DisclosuresPage() {
       </div>
 
       {/* Export Detail Modal */}
-      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              Disclosure Export Details
-            </DialogTitle>
-          </DialogHeader>
-
-          <DialogBody>
-            {selectedExport && (
+      <AppModal 
+        open={detailOpen} 
+        onOpenChange={setDetailOpen}
+        title="Disclosure Export Details"
+        maxWidth="lg"
+      >
+        <AppModalBody>
+          {selectedExport && (
             <div className="space-y-6">
               {/* Watermark */}
               <div>
@@ -634,8 +629,8 @@ export default function DisclosuresPage() {
                   {EXPORT_TYPE_LABELS[selectedExport.export_type]}
                 </p>
                 <p 
-                  className="text-[12px] mt-1 line-clamp-2 break-words"
-                  style={{ color: 'hsl(var(--platform-text-muted))', lineHeight: '1.45' }}
+                  className="text-[12px] mt-1 leading-relaxed"
+                  style={{ color: 'hsl(var(--platform-text-muted))' }}
                 >
                   {EXPORT_TYPE_DESCRIPTIONS[selectedExport.export_type]}
                 </p>
@@ -655,7 +650,7 @@ export default function DisclosuresPage() {
                 >
                   Scope Definition
                 </Label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <span 
                       className="text-[11px] uppercase tracking-wide block mb-1"
@@ -707,7 +702,7 @@ export default function DisclosuresPage() {
                 >
                   Generation Record
                 </Label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <span 
                       className="text-[11px] uppercase tracking-wide block mb-1"
@@ -827,9 +822,8 @@ export default function DisclosuresPage() {
               )}
             </div>
           )}
-          </DialogBody>
-        </DialogContent>
-      </Dialog>
+        </AppModalBody>
+      </AppModal>
     </PlatformLayout>
   );
 }

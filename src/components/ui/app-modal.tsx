@@ -24,20 +24,34 @@ import {
 } from "@/components/ui/drawer";
 
 /**
- * APP MODAL — UNIFIED INSTITUTIONAL MODAL SYSTEM
+ * ═══════════════════════════════════════════════════════════════════════════
+ * APP MODAL — UNIFIED INSTITUTIONAL MODAL SYSTEM (LOCKED)
+ * ═══════════════════════════════════════════════════════════════════════════
  * 
  * This is the CANONICAL modal component for the entire application.
- * It automatically renders as:
+ * All modals MUST use this component — no custom modal implementations allowed.
+ * 
+ * RENDERING:
  * - Desktop/Tablet: Centered dialog (max-width 520px default)
  * - Mobile: Bottom sheet (max-height 90vh)
  * 
- * Features:
+ * SURFACE STYLING (NON-NEGOTIABLE):
+ * - Background: Fully opaque #18181B (no glass, no blur, no translucency)
+ * - Border: 1px neutral gray at 8% opacity (subtle plane separation)
+ * - Backdrop: 92% opacity on mobile, 88% on desktop (no blur)
+ * 
+ * FEATURES:
  * - Consistent header/footer patterns
- * - Strong backdrop (85% opacity on mobile, 80% on desktop)
+ * - Strong backdrop (background not readable)
  * - Sticky footer on mobile
  * - Safe-area aware padding
  * - Focus trap and ESC to close
  * - Body scroll lock
+ * 
+ * DEVIATION POLICY:
+ * - Any change to modal styling must be made in this file only
+ * - All modals inherit from this primitive automatically
+ * - Custom modal variants are prohibited
  * 
  * Usage:
  * <AppModal open={open} onOpenChange={setOpen} title="Modal Title">
@@ -47,6 +61,7 @@ import {
  *     <AppModalAction>Confirm</AppModalAction>
  *   </AppModalFooter>
  * </AppModal>
+ * ═══════════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  AppModal,
+  AppModalBody,
+  AppModalFooter,
+  AppModalAction,
+} from "@/components/ui/app-modal";
 import { useToast } from "@/hooks/use-toast";
-import { X, Copy, Check } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 
 interface SignInHelpDialogProps {
   open: boolean;
@@ -18,8 +18,8 @@ interface SignInHelpDialogProps {
 /**
  * SignInHelpDialog — Institutional access assistance modal
  * 
- * DESIGN: Dark theme to match auth surface
- * Minimal, functional, no friendly language
+ * DESIGN: Uses unified AppModal system
+ * Dark theme, minimal, functional, no friendly language
  */
 export function SignInHelpDialog({
   open,
@@ -32,17 +32,6 @@ export function SignInHelpDialog({
   const [copied, setCopied] = useState(false);
 
   const supportEmail = "contact@tribesassets.com";
-
-  const colors = {
-    bg: '#141415',
-    border: 'rgba(255,255,255,0.08)',
-    heading: '#E8E8E6',
-    body: '#8A8A8A',
-    muted: '#5A5A5A',
-    buttonBg: '#E8E8E6',
-    buttonText: '#0A0A0B',
-    buttonHover: '#D0D0CE',
-  };
 
   const handleResendLink = async () => {
     if (!email.trim()) {
@@ -95,137 +84,97 @@ export function SignInHelpDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent 
-        hideDefaultClose
-        className="w-[min(400px,calc(100vw-48px))] max-w-[400px] p-0 border-0 bg-transparent shadow-none"
-        overlayClassName="bg-black/92 sm:bg-black/88"
-      >
-        <div
-          style={{
-            backgroundColor: colors.bg,
-            border: `1px solid ${colors.border}`,
-            borderRadius: '8px',
-            padding: '24px',
-          }}
+    <AppModal
+      open={open}
+      onOpenChange={handleOpenChange}
+      title="Access assistance"
+      maxWidth="sm"
+    >
+      <AppModalBody>
+        {/* Intro */}
+        <p 
+          className="text-[14px] leading-relaxed"
+          style={{ color: 'var(--platform-text-secondary)' }}
         >
-          {/* Header row */}
-          <div className="flex items-center justify-between">
-            <DialogTitle 
-              style={{
-                fontSize: '16px',
-                fontWeight: 500,
-                color: colors.heading,
-                letterSpacing: '-0.01em',
-              }}
+          Tribes uses secure email verification links.
+        </p>
+
+        {/* Troubleshooting list */}
+        <div className="mt-4">
+          <p 
+            className="text-[14px] leading-relaxed mb-2"
+            style={{ color: 'var(--platform-text-secondary)' }}
+          >
+            If verification fails:
+          </p>
+          <ul className="pl-4 space-y-1">
+            <li 
+              className="text-[14px] leading-relaxed list-disc"
+              style={{ color: 'var(--platform-text-secondary)' }}
             >
-              Access assistance
-            </DialogTitle>
-            <button
-              onClick={() => handleOpenChange(false)}
-              className="flex items-center justify-center transition-opacity hover:opacity-70 focus:outline-none"
-              aria-label="Close dialog"
-              type="button"
+              Confirm the email address is correct.
+            </li>
+            <li 
+              className="text-[14px] leading-relaxed list-disc"
+              style={{ color: 'var(--platform-text-secondary)' }}
             >
-              <X 
-                className="h-4 w-4" 
-                strokeWidth={1.5} 
-                style={{ color: colors.muted }}
-              />
-            </button>
-          </div>
-
-          <div style={{ marginTop: '20px' }}>
-            {/* Intro */}
-            <p style={{ fontSize: '14px', lineHeight: 1.5, color: colors.body }}>
-              Tribes uses secure email verification links.
-            </p>
-
-            {/* Troubleshooting list */}
-            <div style={{ marginTop: '16px' }}>
-              <p style={{ fontSize: '14px', lineHeight: 1.5, color: colors.body, marginBottom: '8px' }}>
-                If verification fails:
-              </p>
-              <ul style={{ margin: 0, paddingLeft: '16px' }}>
-                <li style={{ fontSize: '14px', lineHeight: 1.6, color: colors.body, marginBottom: '4px' }}>
-                  Confirm the email address is correct.
-                </li>
-                <li style={{ fontSize: '14px', lineHeight: 1.6, color: colors.body, marginBottom: '4px' }}>
-                  Check spam or junk folders.
-                </li>
-                <li style={{ fontSize: '14px', lineHeight: 1.6, color: colors.body }}>
-                  Links expire and are single-use.
-                </li>
-              </ul>
-            </div>
-
-            {/* Primary action */}
-            <div style={{ marginTop: '24px' }}>
-              <button
-                onClick={handleResendLink}
-                disabled={isResending || !email.trim()}
-                style={{
-                  width: '100%',
-                  height: '44px',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  border: 'none',
-                  cursor: isResending || !email.trim() ? 'not-allowed' : 'pointer',
-                  backgroundColor: isResending || !email.trim() ? 'rgba(255,255,255,0.08)' : colors.buttonBg,
-                  color: isResending || !email.trim() ? colors.muted : colors.buttonText,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'background-color 100ms ease',
-                }}
-                onMouseOver={(e) => {
-                  if (!isResending && email.trim()) {
-                    e.currentTarget.style.backgroundColor = colors.buttonHover;
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (!isResending && email.trim()) {
-                    e.currentTarget.style.backgroundColor = colors.buttonBg;
-                  }
-                }}
-              >
-                {isResending ? "Sending" : "Resend verification link"}
-              </button>
-            </div>
-
-            {/* Support row */}
-            <div 
-              style={{ 
-                marginTop: '16px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px' 
-              }}
+              Check spam or junk folders.
+            </li>
+            <li 
+              className="text-[14px] leading-relaxed list-disc"
+              style={{ color: 'var(--platform-text-secondary)' }}
             >
-              <span style={{ fontSize: '12px', color: colors.muted }}>Support</span>
-              <span style={{ fontSize: '13px', color: colors.body }}>{supportEmail}</span>
-              <button
-                onClick={handleCopyEmail}
-                className="flex items-center justify-center transition-opacity hover:opacity-70 focus:outline-none"
-                aria-label="Copy email address"
-                style={{ marginLeft: '4px' }}
-              >
-                {copied ? (
-                  <Check className="h-3.5 w-3.5" strokeWidth={1.5} style={{ color: '#6B8E6B' }} />
-                ) : (
-                  <Copy className="h-3.5 w-3.5" strokeWidth={1.5} style={{ color: colors.muted }} />
-                )}
-              </button>
-            </div>
-
-            {/* Footer */}
-            <p style={{ marginTop: '12px', fontSize: '12px', lineHeight: 1.5, color: colors.muted }}>
-              Access is restricted to approved accounts.
-            </p>
-          </div>
+              Links expire and are single-use.
+            </li>
+          </ul>
         </div>
-      </DialogContent>
-    </Dialog>
+
+        {/* Support row */}
+        <div className="mt-5 flex items-center gap-2">
+          <span 
+            className="text-[12px]"
+            style={{ color: 'var(--platform-text-muted)' }}
+          >
+            Support
+          </span>
+          <span 
+            className="text-[13px]"
+            style={{ color: 'var(--platform-text-secondary)' }}
+          >
+            {supportEmail}
+          </span>
+          <button
+            onClick={handleCopyEmail}
+            className="flex items-center justify-center transition-opacity hover:opacity-70 focus:outline-none ml-1"
+            aria-label="Copy email address"
+          >
+            {copied ? (
+              <Check className="h-3.5 w-3.5" strokeWidth={1.5} style={{ color: '#6B8E6B' }} />
+            ) : (
+              <Copy className="h-3.5 w-3.5" strokeWidth={1.5} style={{ color: 'var(--platform-text-muted)' }} />
+            )}
+          </button>
+        </div>
+
+        {/* Footer note */}
+        <p 
+          className="mt-3 text-[12px] leading-relaxed"
+          style={{ color: 'var(--platform-text-muted)' }}
+        >
+          Access is restricted to approved accounts.
+        </p>
+      </AppModalBody>
+
+      <AppModalFooter>
+        <AppModalAction
+          onClick={handleResendLink}
+          loading={isResending}
+          loadingText="Sending"
+          disabled={!email.trim()}
+        >
+          Resend verification link
+        </AppModalAction>
+      </AppModalFooter>
+    </AppModal>
   );
 }
