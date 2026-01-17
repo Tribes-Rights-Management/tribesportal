@@ -351,6 +351,93 @@ Inspection (default) → CTA click → Edit mode → Review → Confirm → Even
 
 ---
 
+## Part 5: Enterprise Onboarding Readiness
+
+### Onboarding Posture
+
+Enterprise onboarding signals **authority, clarity, and restraint** — not guidance or persuasion.
+
+### Required Components
+
+#### 1. Workspace Entry (`WorkspaceInitialization`)
+
+On first entry to any workspace:
+
+```tsx
+<WorkspaceInitialization
+  workspaceName="Client Portal"
+  workspaceRole="Organization Admin"
+  scopeDescription="Manage agreements, view statements, and submit payments."
+  onContinue={() => navigateToWorkspace()}
+/>
+```
+
+**Must display**:
+- Explicit scope declaration ("You are entering: Client Portal")
+- Explicit role confirmation ("Your role: Organization Admin")
+- Read-only posture until first deliberate action
+
+#### 2. First-Session Guardrails (`FirstSessionGuardrails`)
+
+For new users:
+
+```tsx
+<FirstSessionGuardrails
+  entryPoints={[
+    { id: "docs", label: "Documents", description: "View agreements", icon: "documents", href: "/portal/documents" },
+    { id: "settings", label: "Configuration", description: "Account settings", icon: "settings", href: "/portal/settings" },
+  ]}
+  onNavigate={(href) => navigate(href)}
+/>
+```
+
+**Rules**:
+- No automatic navigation into actions
+- No forced tours or tooltips
+- Clear, minimal entry points only
+
+#### 3. Authority Transparency
+
+Every authenticated view must communicate:
+
+| Element | Display |
+|---------|---------|
+| What you can do | Visible capabilities list |
+| What you cannot do | Visible restrictions (not hidden) |
+| How to request changes | Contact instruction or CTA |
+
+#### 4. External Partner Onboarding (`ExternalPartnerView`)
+
+For auditors, licensees, and external partners:
+
+```tsx
+<ExternalPartnerView
+  partnerType="auditor"
+  accessLevel="Read-only access to licensing activity"
+  expiresAt="2026-03-15"
+  resources={[...]}
+  onSelectResource={(href) => navigate(href)}
+/>
+```
+
+**Rules**:
+- Minimal, scoped UI
+- Explicit scope labeling
+- No platform discovery
+- No admin affordances
+
+### Prohibitions
+
+| Prohibited | Reason |
+|------------|--------|
+| Gamification | Undermines institutional authority |
+| Onboarding tours | Creates false familiarity |
+| Progressive disclosure | Obscures authority boundaries |
+| Celebratory language | Inappropriate for governance |
+| Auto-navigation | Removes user agency |
+
+---
+
 ## Related Documents
 
 | Document | Purpose |
@@ -359,7 +446,19 @@ Inspection (default) → CTA click → Edit mode → Review → Confirm → Even
 | `NAVIGATION_PRODUCT_INHERITANCE.md` | Navigation scope rules |
 | `AUTHORITY_UX_CANON.md` | UI rendering rules |
 | `GLOBAL_ADMIN_UI_STANDARD.md` | Admin view standards |
+| `OPERATIONAL_SAFETY_CONTINUITY.md` | Notification and escalation rules |
 | `institutional-copy.ts` | Canonical microcopy |
+
+---
+
+## Implementation Files
+
+| File | Purpose |
+|------|---------|
+| `src/components/onboarding/WorkspaceInitialization.tsx` | Workspace entry component |
+| `src/components/onboarding/ExternalPartnerView.tsx` | External partner onboarding |
+| `src/components/onboarding/FirstSessionGuardrails.tsx` | First-session guardrails |
+| `src/constants/institutional-copy.ts` | Onboarding copy constants |
 
 ---
 
@@ -368,3 +467,4 @@ Inspection (default) → CTA click → Edit mode → Review → Confirm → Even
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-01-17 | Initial user journey and UX affordances |
+| 1.1 | 2026-01-17 | Added enterprise onboarding readiness (Part 5) |

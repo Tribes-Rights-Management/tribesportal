@@ -62,6 +62,20 @@ Declare mobile strategy:
 - **Read-only**: Inspection only, no primary actions
 - **Restricted**: Specific features hidden with "Available on desktop" notice
 
+### 6. Notification & Escalation Requirements
+
+All critical events MUST trigger notifications:
+- Use canonical templates from `src/constants/notification-language.ts`
+- Inherit default SLAs from `src/constants/escalation-sla-defaults.ts`
+- Escalations are role-based, never user-specific
+
+### 7. Onboarding Posture
+
+New modules MUST follow enterprise onboarding patterns:
+- Explicit scope declaration on entry
+- No auto-navigation into actions
+- Authority transparency (what user can/cannot do)
+
 ---
 
 ## Inherited Rules (Non-Negotiable)
@@ -104,6 +118,9 @@ Before shipping any new feature:
 - [ ] Audit logging for sensitive actions
 - [ ] Mobile behavior validated
 - [ ] No cross-scope navigation without explicit transition
+- [ ] Notification triggers defined for critical events
+- [ ] Canonical notification language used
+- [ ] Onboarding posture follows enterprise patterns
 
 ---
 
@@ -129,3 +146,6 @@ Any attempt to:
 | `src/hooks/useBillingAuthority.ts` | Financial governance |
 | `docs/BILLING_PAYMENTS_GOVERNANCE.md` | Billing hierarchy spec |
 | `docs/NAVIGATION_MAP_REGISTRY.md` | Navigation rules |
+| `docs/OPERATIONAL_SAFETY_CONTINUITY.md` | Notification, API, and DR spec |
+| `src/constants/escalation-sla-defaults.ts` | Default SLA configurations |
+| `src/constants/notification-language.ts` | Notification language lock |
