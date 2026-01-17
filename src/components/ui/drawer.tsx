@@ -74,7 +74,7 @@ const DrawerContent = React.forwardRef<
       {...props}
     >
       {/* Drag handle */}
-      <div className="mx-auto mt-3 h-1.5 w-12 rounded-full shrink-0" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }} />
+      <div className="mx-auto mt-3 h-1.5 w-12 rounded-full shrink-0" style={{ backgroundColor: 'rgba(255,255,255,0.12)' }} />
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>

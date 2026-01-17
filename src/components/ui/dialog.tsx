@@ -75,7 +75,7 @@ const DialogContent = React.forwardRef<
       {children}
       {!hideDefaultClose && (
         <DialogPrimitive.Close 
-          className="absolute right-3 top-3 h-11 w-11 rounded-lg flex items-center justify-center opacity-60 transition-all hover:opacity-100 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-0 disabled:pointer-events-none"
+          className="absolute right-3 top-3 h-11 w-11 rounded-lg flex items-center justify-center opacity-60 transition-all hover:opacity-100 hover:bg-white/[0.05] focus:outline-none focus-visible:bg-white/[0.08] disabled:pointer-events-none"
           style={{ color: 'var(--platform-text-muted)' }}
         >
           <X className="h-5 w-5" />

@@ -129,7 +129,7 @@ export function AppModal({
       <Drawer open={open} onOpenChange={handleOpenChange}>
         <DrawerContent className={cn("flex flex-col", className)}>
           <DrawerClose 
-            className="absolute top-3 right-3 h-11 w-11 rounded-lg flex items-center justify-center z-10 transition-colors"
+            className="absolute top-3 right-3 h-11 w-11 rounded-lg flex items-center justify-center z-10 transition-colors hover:bg-white/[0.05] focus:outline-none focus-visible:bg-white/[0.08]"
             style={{ color: 'var(--platform-text-muted)' }}
             aria-label="Close"
             disabled={preventClose}
@@ -158,7 +158,7 @@ export function AppModal({
         onEscapeKeyDown={(e) => preventClose && e.preventDefault()}
       >
         <DialogClose 
-          className="absolute top-3 right-3 h-11 w-11 rounded-lg flex items-center justify-center z-10 transition-colors opacity-60 hover:opacity-100 hover:bg-white/5"
+          className="absolute top-3 right-3 h-11 w-11 rounded-lg flex items-center justify-center z-10 transition-colors opacity-60 hover:opacity-100 hover:bg-white/[0.05] focus:outline-none focus-visible:bg-white/[0.08]"
           style={{ color: 'var(--platform-text-muted)' }}
           aria-label="Close"
           disabled={preventClose}
