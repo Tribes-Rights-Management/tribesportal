@@ -1,12 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, Plus, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { OrganizationFormModal } from "@/components/admin/OrganizationFormModal";
 
 interface Tenant {
   id: string;
@@ -30,12 +28,10 @@ interface Tenant {
 export default function TenantsPage() {
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);
-  const [formData, setFormData] = useState({ name: "", slug: "" });
 
-  const fetchTenants = async () => {
+  const fetchTenants = useCallback(async () => {
     setLoading(true);
     
     const { data: tenantsData, error: tenantsError } = await supabase
@@ -71,58 +67,30 @@ export default function TenantsPage() {
 
     setTenants(tenantsWithCounts);
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     fetchTenants();
-  }, []);
-
-  const generateSlug = (name: string): string => {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "")
-      .substring(0, 50);
-  };
-
-  const handleNameChange = (value: string) => {
-    setFormData({
-      name: value,
-      slug: editingTenant ? formData.slug : generateSlug(value),
-    });
-  };
+  }, [fetchTenants]);
 
   const openCreateDialog = () => {
     setEditingTenant(null);
-    setFormData({ name: "", slug: "" });
     setDialogOpen(true);
   };
 
   const openEditDialog = (tenant: Tenant) => {
     setEditingTenant(tenant);
-    setFormData({ name: tenant.name, slug: tenant.slug });
     setDialogOpen(true);
   };
 
-  const saveTenant = async () => {
-    if (!formData.name.trim() || !formData.slug.trim()) {
-      toast({
-        title: "Validation error",
-        description: "Name and slug required",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setSaving(true);
-
+  const handleSubmit = async (data: { name: string; slug: string }) => {
     try {
       if (editingTenant) {
         const { error } = await supabase
           .from("tenants")
           .update({
-            name: formData.name.trim(),
-            slug: formData.slug.trim(),
+            name: data.name,
+            slug: data.slug,
             updated_at: new Date().toISOString(),
           })
           .eq("id", editingTenant.id);
@@ -134,8 +102,8 @@ export default function TenantsPage() {
         const { error } = await supabase
           .from("tenants")
           .insert({
-            name: formData.name.trim(),
-            slug: formData.slug.trim(),
+            name: data.name,
+            slug: data.slug,
           });
 
         if (error) throw error;
@@ -143,7 +111,6 @@ export default function TenantsPage() {
         toast({ title: "Organization created" });
       }
 
-      setDialogOpen(false);
       fetchTenants();
     } catch (error: any) {
       console.error("Save tenant error:", error);
@@ -154,9 +121,8 @@ export default function TenantsPage() {
           : "Unable to save organization",
         variant: "destructive",
       });
+      throw error; // Re-throw so modal knows submission failed
     }
-
-    setSaving(false);
   };
 
   return (
@@ -336,100 +302,14 @@ export default function TenantsPage() {
         </div>
       </div>
 
-      {/* Dialog - moved outside the header for cleaner structure */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent 
-          className="sm:max-w-[400px] mx-4"
-          style={{
-            backgroundColor: 'var(--platform-surface)',
-            border: '1px solid var(--platform-border)',
-            color: 'var(--platform-text)'
-          }}
-        >
-          <DialogHeader>
-            <DialogTitle 
-              className="text-[16px] font-medium"
-              style={{ color: 'var(--platform-text)' }}
-            >
-              {editingTenant ? "Edit organization" : "Add organization"}
-            </DialogTitle>
-            <DialogDescription 
-              className="text-[13px]"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              {editingTenant
-                ? "Update organization details."
-                : "Create a new organization."}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label 
-                htmlFor="name" 
-                className="text-[13px]"
-                style={{ color: 'var(--platform-text-secondary)' }}
-              >
-                Name
-              </Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleNameChange(e.target.value)}
-                placeholder="Acme Publishing"
-                className="h-10 md:h-9 text-[14px] bg-transparent border-white/10 text-white placeholder:text-white/30"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label 
-                htmlFor="slug" 
-                className="text-[13px]"
-                style={{ color: 'var(--platform-text-secondary)' }}
-              >
-                Slug
-              </Label>
-              <Input
-                id="slug"
-                value={formData.slug}
-                onChange={(e) =>
-                  setFormData({ ...formData, slug: e.target.value })
-                }
-                placeholder="acme-publishing"
-                className="h-10 md:h-9 text-[14px] font-mono bg-transparent border-white/10 text-white placeholder:text-white/30"
-              />
-              <p 
-                className="text-[12px]"
-                style={{ color: 'var(--platform-text-muted)' }}
-              >
-                URL-friendly identifier. Must be unique.
-              </p>
-            </div>
-          </div>
-          <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
-            <button
-              onClick={() => setDialogOpen(false)}
-              disabled={saving}
-              className="h-11 md:h-8 px-4 md:px-3 rounded-lg md:rounded text-[14px] md:text-[13px] font-medium transition-colors w-full sm:w-auto order-2 sm:order-1"
-              style={{ 
-                border: '1px solid var(--platform-border)',
-                color: 'var(--platform-text-secondary)'
-              }}
-            >
-              Cancel
-            </button>
-            <button 
-              onClick={saveTenant} 
-              disabled={saving}
-              className="h-11 md:h-8 px-4 md:px-3 rounded-lg md:rounded text-[14px] md:text-[13px] font-medium disabled:opacity-40 transition-colors w-full sm:w-auto order-1 sm:order-2"
-              style={{ 
-                backgroundColor: 'var(--platform-text)',
-                color: 'var(--platform-canvas)'
-              }}
-            >
-              {saving ? "Saving" : editingTenant ? "Update" : "Create"}
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Organization Form Modal */}
+      <OrganizationFormModal
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSubmit={handleSubmit}
+        initialData={editingTenant ? { name: editingTenant.name, slug: editingTenant.slug } : null}
+        mode={editingTenant ? "edit" : "create"}
+      />
     </div>
   );
 }
