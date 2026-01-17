@@ -377,6 +377,39 @@ export const WORKSPACE_LANDING = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
+// ONBOARDING COPY — INSTITUTIONAL (NOT WELCOME FLOW)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export const ONBOARDING_COPY = {
+  // Scope Declaration
+  ENTERING_WORKSPACE: "You are entering",
+  YOUR_ROLE: "Your role",
+  
+  // Authority Transparency
+  AUTHORITY_SUMMARY: "Authority summary",
+  WHAT_YOU_CAN_ACCESS: "What you can access",
+  RESTRICTED_ACTIONS: "Restricted actions",
+  CONTACT_FOR_CHANGES: "For access changes, contact",
+  
+  // Compliance Signals
+  COMPLIANCE_AUTHORITY: "Authority history is visible and immutable",
+  COMPLIANCE_CONTRACTS: "Contracts are versioned and traceable",
+  COMPLIANCE_BILLING: "Billing is tied to governing agreements",
+  
+  // First Session
+  FIRST_SESSION_INTRO: "Select an area to begin. All views are read-only by default.",
+  NEED_ASSISTANCE: "Need assistance? Contact your organization administrator.",
+  
+  // External Partner
+  READ_ONLY_ACCESS: "Read-only access",
+  ACCESS_DETAILS: "Access details",
+  GRANTED_BY: "Granted by",
+  ACCESS_EXPIRES: "Access expires",
+  ACCESS_TYPE: "Access type",
+  AVAILABLE_RESOURCES: "Available resources",
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
 // MOBILE BEHAVIOR COPY — LOCKED
 // ═══════════════════════════════════════════════════════════════════════════
 
