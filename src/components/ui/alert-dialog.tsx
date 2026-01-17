@@ -10,13 +10,19 @@ const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
 
 const AlertDialogPortal = AlertDialogPrimitive.Portal;
 
+/**
+ * ALERT DIALOG OVERLAY — INSTITUTIONAL STANDARD
+ * 
+ * - 85% opacity on mobile, 80% on desktop for strong dim
+ * - Minimal blur (institutional, not glassy)
+ */
 const AlertDialogOverlay = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Overlay
     className={cn(
-      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/85 sm:bg-black/80 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className,
     )}
     {...props}
@@ -25,6 +31,13 @@ const AlertDialogOverlay = React.forwardRef<
 ));
 AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;
 
+/**
+ * ALERT DIALOG CONTENT — INSTITUTIONAL STANDARD
+ * 
+ * - Max width: 520px
+ * - Platform surface color
+ * - Consistent border and shadow
+ */
 const AlertDialogContent = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
@@ -34,60 +47,137 @@ const AlertDialogContent = React.forwardRef<
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-[520px] max-h-[85vh] translate-x-[-50%] translate-y-[-50%] gap-0 overflow-hidden shadow-xl shadow-black/20 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-xl",
         className,
       )}
+      style={{
+        backgroundColor: 'var(--platform-surface)',
+        border: '1px solid var(--platform-border)',
+      }}
       {...props}
     />
   </AlertDialogPortal>
 ));
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
 
+/**
+ * ALERT DIALOG HEADER — INSTITUTIONAL STANDARD
+ * 
+ * - Left-aligned (never center on mobile)
+ * - Consistent padding with border bottom
+ */
 const AlertDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex flex-col space-y-2 text-center sm:text-left", className)} {...props} />
+  <div 
+    className={cn("flex flex-col space-y-1.5 px-5 pt-5 pb-4 text-left", className)} 
+    style={{ borderBottom: '1px solid var(--platform-border)' }}
+    {...props} 
+  />
 );
 AlertDialogHeader.displayName = "AlertDialogHeader";
 
+/**
+ * ALERT DIALOG FOOTER — INSTITUTIONAL STANDARD
+ * 
+ * - Sticky on mobile
+ * - Primary action right-aligned on desktop, full-width on mobile
+ */
 const AlertDialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)} {...props} />
+  <div 
+    className={cn("flex flex-col gap-3 px-5 pt-4 pb-5 sm:flex-row-reverse sm:gap-2", className)} 
+    style={{ 
+      borderTop: '1px solid var(--platform-border)',
+      paddingBottom: 'max(20px, env(safe-area-inset-bottom, 20px))',
+    }}
+    {...props} 
+  />
 );
 AlertDialogFooter.displayName = "AlertDialogFooter";
 
+/**
+ * ALERT DIALOG TITLE — INSTITUTIONAL STANDARD
+ */
 const AlertDialogTitle = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Title ref={ref} className={cn("text-lg font-semibold", className)} {...props} />
+  <AlertDialogPrimitive.Title 
+    ref={ref} 
+    className={cn("text-[17px] sm:text-[16px] font-semibold leading-tight", className)} 
+    style={{ color: 'var(--platform-text)' }}
+    {...props} 
+  />
 ));
 AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName;
 
+/**
+ * ALERT DIALOG DESCRIPTION — INSTITUTIONAL STANDARD
+ */
 const AlertDialogDescription = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Description ref={ref} className={cn("text-sm text-muted-foreground", className)} {...props} />
+  <AlertDialogPrimitive.Description 
+    ref={ref} 
+    className={cn("text-[14px] sm:text-[13px] leading-normal mt-1", className)} 
+    style={{ color: 'var(--platform-text-secondary)' }}
+    {...props} 
+  />
 ));
 AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayName;
 
+/**
+ * ALERT DIALOG ACTION — Primary action button
+ */
 const AlertDialogAction = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Action>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
 >(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Action ref={ref} className={cn(buttonVariants(), className)} {...props} />
+  <AlertDialogPrimitive.Action 
+    ref={ref} 
+    className={cn(
+      "w-full sm:w-auto h-12 sm:h-11 px-5 rounded-lg text-[15px] sm:text-[14px] font-semibold",
+      "flex items-center justify-center transition-all",
+      "disabled:opacity-40 disabled:cursor-not-allowed",
+      className
+    )} 
+    style={{
+      backgroundColor: 'var(--platform-text)',
+      color: 'var(--platform-canvas)',
+    }}
+    {...props} 
+  />
 ));
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName;
 
+/**
+ * ALERT DIALOG CANCEL — Secondary action button
+ */
 const AlertDialogCancel = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel
     ref={ref}
-    className={cn(buttonVariants({ variant: "outline" }), "mt-2 sm:mt-0", className)}
+    className={cn(
+      "w-full sm:w-auto h-10 sm:h-9 px-4 rounded-lg text-[14px] font-medium transition-colors",
+      className
+    )}
+    style={{ color: 'var(--platform-text-secondary)' }}
     {...props}
   />
 ));
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
+
+/**
+ * ALERT DIALOG BODY — Scrollable content area
+ */
+const AlertDialogBody = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div 
+    className={cn("flex-1 overflow-y-auto min-h-0 px-5 py-5", className)} 
+    {...props} 
+  />
+);
+AlertDialogBody.displayName = "AlertDialogBody";
 
 export {
   AlertDialog,
@@ -101,4 +191,5 @@ export {
   AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
+  AlertDialogBody,
 };
