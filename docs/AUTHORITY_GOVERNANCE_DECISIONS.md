@@ -1,30 +1,203 @@
-# Authority Governance Decisions — Locked v1.0
+# Authority & Governance Enforcement — Canonical Rules v1.0
 
-> **Status**: LOCKED (Do Not Modify Without Executive Review)  
-> **Scope**: Foundational governance architecture decisions  
+> **Status**: LOCKED (Platform-Wide Enforcement)  
+> **Scope**: All users, roles, permissions, and access surfaces  
 > **Last Updated**: 2026-01-17
 
 ---
 
 ## Purpose
 
-This document records irreversible architectural decisions for the Tribes authority system. These decisions shape all implementation and cannot be changed without executive review.
+These rules are authoritative and must not be bypassed by UI shortcuts, inline edits, or future feature additions. Any new feature touching users, permissions, roles, or access must inherit these constraints by default.
 
 ---
 
-## Decision 1: Per-Change Approval Model
+## A. Roles and Scopes
 
-### Decision
+| Role | Scope | Description |
+|------|-------|-------------|
+| Platform Executive | System Console | Company-level governance, global oversight |
+| Tribes Admin | Internal Workspace | Operational authority, org membership management |
+| Organization Admin | Organization only | Org-scoped user and role management |
+| Standard Member | Self only | Profile preferences, no authority control |
+
+---
+
+## B. Global Invariants
+
+These rules apply universally:
+
+| Rule | Enforcement |
+|------|-------------|
+| No self-editing of authority | `actor.id !== target.id` required |
+| Authority history is immutable | Database triggers prevent UPDATE/DELETE |
+| All changes generate events | `authority_events` table, append-only |
+| Inspection is default | Read-only until explicit edit intent |
+| Authority flows top-down | Platform → Workspace → Organization |
+| Organizations are sandboxed | No cross-org visibility without platform grant |
+| Editing is rare and deliberate | Single CTA: "Propose Authority Change" |
+
+---
+
+## C. Editing Permissions Matrix
+
+### Platform Executive
+
+| Action | Allowed |
+|--------|---------|
+| Assign platform/system roles | ✓ |
+| Suspend or reactivate accounts | ✓ |
+| Grant cross-organization access | ✓ |
+| Revoke cross-organization access | ✓ |
+| Approve high-risk authority changes | ✓ |
+| View all authority history | ✓ |
+| Export authority records | ✓ |
+
+### Tribes Admin (Internal Workspace)
+
+| Action | Allowed |
+|--------|---------|
+| Manage organization memberships | ✓ |
+| Assign org-scoped roles | ✓ |
+| Handle approvals (if delegated) | ✓ |
+| Assign platform/system roles | ✗ (unless delegated) |
+| View cross-org history | ✗ |
+
+### Organization Admin
+
+| Action | Allowed |
+|--------|---------|
+| Manage users within org | ✓ |
+| Assign roles within org | ✓ |
+| View org authority history | ✓ |
+| Affect platform-level access | ✗ |
+| View other orgs' history | ✗ |
+
+### Standard Member
+
+| Action | Allowed |
+|--------|---------|
+| Edit profile preferences | ✓ |
+| Edit own authority | ✗ |
+| Edit own role | ✗ |
+| Edit own access status | ✗ |
+| View own authority history | ✓ |
+
+---
+
+## D. UI Enforcement Rules
+
+### Default States
+
+| Element | State | Reason |
+|---------|-------|--------|
+| Authority fields | Read-only | Inspection is default |
+| Role assignments | Read-only | Requires explicit intent |
+| Access status | Read-only | Governance decision |
+| Membership status | Read-only | Admin-controlled |
+
+### Prohibited Patterns
+
+| Pattern | Why Prohibited |
+|---------|----------------|
+| Inline toggles for authority | Accidental changes |
+| Dropdown edits for roles | Too casual for governance |
+| Auto-save on authority fields | Silent changes |
+| Bulk authority changes without review | Audit trail gaps |
+
+### Required Patterns
+
+| Pattern | Implementation |
+|---------|----------------|
+| Single explicit CTA | "Propose Authority Change" button |
+| Disabled control microcopy | "Role changes require admin approval" |
+| Confirmation dialog | `AppModal` with diff preview |
+| Audit reason field | Required for all changes |
+
+---
+
+## E. Visibility Rules
+
+| Role | Own History | Org History | Platform History | All Orgs |
+|------|-------------|-------------|------------------|----------|
+| Platform Executive | ✓ | ✓ | ✓ | ✓ |
+| Tribes Admin | ✓ | ✓ | ✗ | ✗ |
+| Organization Admin | ✓ | ✓ | ✗ | ✗ |
+| Standard Member | ✓ | ✗ | ✗ | ✗ |
+
+---
+
+## F. Export Rules
+
+| Rule | Specification |
+|------|---------------|
+| Who can export | Platform Executives only |
+| Export logging | Every export generates authority event |
+| Export format | PDF primary, CSV secondary |
+| Export content | Timeline, actors, scopes, decisions |
+| Prohibited exports | Internal IDs, system notes, cross-org combined data |
+
+---
+
+## G. Authority Hierarchy (Canonical Model)
+
+```
+SYSTEM CONSOLE (Company-Level)
+│
+├── Platform Executive
+│   ├── Global governance
+│   ├── Platform roles
+│   ├── Cross-org authority
+│   └── Audit + exports
+│
+└── Tribes Admin (Internal Workspace)
+    ├── Operational authority
+    ├── Org membership management
+    ├── Org-scoped role assignment
+    └── Approval handling (if delegated)
+
+ORGANIZATION WORKSPACES (Isolated)
+│
+├── Tribes Licensing (Org)
+│   ├── Org Admin
+│   │   ├── Manage users in Licensing
+│   │   ├── Assign Licensing roles
+│   │   └── View org authority history
+│   │
+│   └── Members
+│       └── Licensing access only
+│
+└── Tribes Client Portal (Org)
+    ├── Org Admin
+    │   ├── Manage users in Client Portal
+    │   ├── Assign Client roles
+    │   └── View org authority history
+    │
+    └── Members
+        └── Client access only
+```
+
+---
+
+## H. Key Invariants (Memorize)
+
+1. **Authority flows top-down** — Platform → Workspace → Organization
+2. **Organizations are sandboxed** — No cross-org visibility without explicit grant
+3. **Platform authority ≠ organization authority** — Different scopes, different powers
+4. **History is permanent** — Append-only, no rewrites
+5. **Editing is rare, deliberate, and logged** — Single CTA, audit trail required
+
+---
+
+## I. Locked Governance Decisions
+
+### Decision 1: Per-Change Approval Model
 
 **✅ Use Per-Change Approval for high-risk authority changes**
-
-### What This Means
 
 - Every high-risk authority change is reviewed and approved individually
 - Approval is tied to a specific change, not a general editing session
 - Each action stands on its own in the audit trail
-
-### Example
 
 | Change | Approval Required |
 |--------|-------------------|
@@ -32,33 +205,9 @@ This document records irreversible architectural decisions for the Tribes author
 | Remove Export Rights | Yes (individual) |
 | Add View-only access | No |
 
-### Rationale
-
-- Authority changes are rare but consequential
-- Creates a precise, defensible audit trail
-- Prevents "approval fatigue" from bulk reviews
-- Matches how institutional systems operate (banks, custodians, platforms)
-
-### Rejected Alternative: Per-Session Approval
-
-| Aspect | Why Rejected |
-|--------|--------------|
-| Blurs responsibility | Multiple changes under one approval |
-| Harder audits | Can't trace individual decisions |
-| Unintended overreach | Session scope unclear |
-| Wrong audience | Better for bulk ops, not governance |
-
-**Note**: Per-session approval may be added later for internal ops tooling, but not for authority governance.
-
----
-
-## Decision 2: Event-Based Authority Timeline
-
-### Decision
+### Decision 2: Event-Based Authority Timeline
 
 **✅ Use Event-Based Authority Timeline as the primary history view**
-
-### What This Means
 
 A chronological record of authority **events**, not raw diffs.
 
@@ -69,90 +218,36 @@ Each entry answers:
 - **Why** (reason, if provided)
 - **With what approval** (approver, if applicable)
 
-### Example Entry
-
-```
-Jan 14, 2026 • 10:32 AM UTC
-
-Adam Carpenter proposed adding Org Admin to Jordan Smith
-Reason: "Promoted to lead publishing operations"
-
-Approved by Sarah Lee
-Jan 14, 2026 • 2:15 PM UTC
-```
-
-### Rationale
-
-- Human-readable for executives and auditors
-- Explains intent, not just data changes
-- Matches institutional review processes
-- Becomes the defensible system of record
-
-### Secondary Artifact: State Diffs
-
-State diffs (before/after snapshots) are retained as:
-- Internal reference data
-- Correlation chain evidence
-- Technical audit support
-
-**But never the primary UI.**
-
-| Aspect | Event Timeline | State Diff |
-|--------|---------------|------------|
-| Audience | Executives, auditors | Developers, forensics |
-| Readability | High | Low |
-| Intent visible | Yes | No |
-| Primary display | Yes | No |
-
----
-
-## Decision 3: Governance System Posture
-
-### Decision
+### Decision 3: Governance System Posture
 
 **✅ Treat authority management as a governance system, not SaaS settings**
-
-### What This Means
 
 | Aspect | Governance System ✅ | SaaS Settings ❌ |
 |--------|---------------------|-----------------|
 | Tone | Formal, institutional | Casual, helpful |
 | Changes | Deliberate, reviewed | Instant, reversible |
 | History | Immutable record | Optional logs |
-| Audience | Executives, auditors | End users |
 | Language | "Proposed", "Approved" | "Saved", "Updated" |
 
-### Implementation Impact
+---
 
-- No "Save" buttons (use "Confirm Authority Change")
-- No inline edits (use explicit edit mode)
-- No silent updates (all changes logged with actor)
-- No undo (changes are events, not states)
+## J. Enforcement Checklist
+
+Before shipping any feature that touches authority:
+
+- [ ] Self-editing blocked (`actor.id !== target.id`)
+- [ ] Authority fields are read-only by default
+- [ ] Single "Propose Authority Change" CTA (not inline edits)
+- [ ] Confirmation dialog with diff preview
+- [ ] Audit reason field required
+- [ ] Authority event generated on change
+- [ ] Visibility respects role scope
+- [ ] Export actions logged
+- [ ] Mobile parity with desktop
 
 ---
 
-## Decision Summary
-
-| Decision | Choice | Alternative Rejected |
-|----------|--------|---------------------|
-| Approval model | Per-change | Per-session |
-| History display | Event-based timeline | State diff only |
-| System posture | Governance system | SaaS settings |
-
----
-
-## Enforcement
-
-These decisions are enforced via:
-
-1. **Documentation**: Canonical specs reference these decisions
-2. **Code Review**: PRs must comply or cite exception
-3. **Component Contracts**: UI primitives enforce patterns
-4. **Audit**: Non-compliant implementations flagged
-
----
-
-## Exception Process
+## K. Exception Process
 
 To modify a locked decision:
 
@@ -164,16 +259,24 @@ To modify a locked decision:
 
 ---
 
-## Related Documents
+## L. Related Documents
 
 | Document | Purpose |
 |----------|---------|
-| `AUTHORITY_UX_CANON.md` | UI/UX rules for authority views |
+| `AUTHORITY_UX_CANON.md` | UI rendering rules |
 | `AUTHORITY_VIEW_SPEC.md` | Page layout specifications |
-| `EDIT_AUTHORITY_GOVERNANCE.md` | Edit flow contract |
-| `PERMISSIONS_DIFF_SPEC.md` | Diff display semantics |
 | `AUTHORITY_APPROVAL_MODEL.md` | Dual-control workflow |
+| `AUTHORITY_HISTORY_VISIBILITY.md` | Role-scoped visibility |
+| `AUTHORITY_HISTORY_TIMELINE.md` | Event-based timeline spec |
+| `AUTHORITY_EXPORT_RETENTION.md` | Export and retention rules |
+| `AUTHORITY_DISASTER_RECOVERY.md` | DR guarantees |
+| `AUTHORITY_IMPLEMENTATION_READINESS.md` | Implementation timing |
+| `IMMUTABLE_AUTHORITY_EVENTS.md` | Database immutability |
+| `EDIT_AUTHORITY_GOVERNANCE.md` | Edit flow contract |
 | `HIGH_RISK_AUTHORITY_CHANGES.md` | Risk classification |
+| `PERMISSIONS_DIFF_SPEC.md` | Diff view requirements |
+| `APPROVAL_UI_LANGUAGE.md` | Institutional copy |
+| `REQUIRED_AUTHORITY_EXPORTS.md` | Required export formats |
 
 ---
 
@@ -182,3 +285,4 @@ To modify a locked decision:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-01-17 | Initial locked decisions |
+| 1.1 | 2026-01-17 | Consolidated enforcement rules, hierarchy diagram, complete permissions matrix |
