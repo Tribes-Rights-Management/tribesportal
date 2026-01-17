@@ -226,8 +226,115 @@ All operations in this layer generate audit events:
 
 ---
 
+## Notification Language Lock
+
+### Tone Principles
+
+All notifications MUST be:
+
+- **Neutral** — No emotional language
+- **Precise** — Clear, specific statements
+- **Calm** — No urgency theater
+- **Non-marketing** — No promotional tone
+- **Non-emotional** — No exclamation points
+
+### Canonical Copy
+
+| Category | Example |
+|----------|---------|
+| Informational | "A licensing request has been submitted and is awaiting review." |
+| Action Required | "A licensing request requires your review." |
+| Escalation | "This item has not been addressed within the expected review window and has been escalated." |
+| Executive Visibility | "This event has been escalated for executive awareness." |
+| Financial | "An invoice payment attempt was unsuccessful." |
+| Authority | "A change to user authority has been proposed and requires approval." |
+
+### Prohibited Language
+
+The following terms are **prohibited** in all notifications:
+
+- "Urgent"
+- "ASAP"
+- "Don't forget"
+- Emojis
+- Friendly nudges
+- Marketing language
+- Exclamation points
+
+### Enforcement
+
+- No feature may introduce custom notification copy outside this standard
+- Notification language must remain consistent across in-app and email surfaces
+- Use `validateNotificationLanguage()` from `src/constants/notification-language.ts`
+
+---
+
+## Enterprise Onboarding Posture
+
+### Principles
+
+Onboarding must signal **authority, clarity, and restraint** — not guidance or persuasion.
+
+### Required Elements
+
+#### Workspace Entry
+
+- Explicit scope declaration (e.g., "You are entering: Client Portal")
+- Explicit role confirmation (e.g., "Your role: Organization Admin")
+- Read-only posture until the first deliberate action
+
+#### First-Session Guardrails
+
+- No automatic navigation into actions
+- No forced tours or tooltips
+- Clear, minimal entry points only
+
+#### Authority Transparency
+
+- Visible "What you can do" indicators
+- Visible "What you cannot do" indicators
+- Clear instruction for requesting authority changes
+
+#### Compliance Signals
+
+- Authority history available (read-only)
+- Contracts versioned and traceable
+- Billing actions tied to governing agreements
+
+#### External Partner Onboarding
+
+- Minimal, scoped UI
+- Explicit scope labeling
+- No platform discovery
+- No admin affordances
+
+### Prohibitions
+
+- **No gamification**
+- **No onboarding tours**
+- **No progressive disclosure** unless explicitly requested
+
+---
+
+## Implementation Files
+
+| File | Purpose |
+|------|---------|
+| `src/constants/escalation-sla-defaults.ts` | Default SLA configurations |
+| `src/constants/notification-language.ts` | Notification templates and language lock |
+| `src/hooks/useNotifications.ts` | Notification management hooks |
+| `src/hooks/useApiTokens.ts` | API token management hooks |
+| `src/hooks/useDisasterRecovery.ts` | Recovery event tracking hooks |
+| `src/components/onboarding/WorkspaceInitialization.tsx` | Workspace entry component |
+| `src/components/onboarding/ExternalPartnerView.tsx` | External partner onboarding |
+| `src/components/onboarding/FirstSessionGuardrails.tsx` | First-session guardrails |
+| `supabase/functions/api-gateway/index.ts` | Read-only API gateway |
+
+---
+
 ## Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-01-17 | Initial specification |
+| 1.1 | 2026-01-17 | Added notification language lock and enterprise onboarding posture |
