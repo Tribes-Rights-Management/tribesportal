@@ -3,8 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft, Plus, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
@@ -20,11 +20,12 @@ interface Tenant {
  * TENANTS PAGE — ORGANIZATIONS (INSTITUTIONAL STANDARD)
  * 
  * Design Rules:
+ * - Mobile-first: stacked list rows on mobile, table on desktop
  * - Dark canvas, flat panels with hairline borders
- * - Table sits within centered content column
  * - No shadows, no cards, no elevation
  * - Plain text values, no badges or pills
  * - Restrained hover states
+ * - Title block: back button | centered title | action button
  */
 export default function TenantsPage() {
   const [tenants, setTenants] = useState<Tenant[]>([]);
@@ -160,148 +161,58 @@ export default function TenantsPage() {
 
   return (
     <div 
-      className="min-h-full py-10 px-6"
+      className="min-h-full py-6 md:py-10 px-4 md:px-6"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <div className="max-w-[960px] mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <Link 
-              to="/admin" 
-              className="h-8 w-8 rounded flex items-center justify-center transition-colors"
+        {/* Header - Mobile-first with centered title */}
+        <div className="relative flex items-center justify-between mb-6 md:mb-8 min-h-[56px]">
+          {/* Left: Back button (44px tap target) */}
+          <Link 
+            to="/admin" 
+            className="h-11 w-11 rounded-lg flex items-center justify-center transition-colors shrink-0 -ml-2"
+            style={{ color: 'var(--platform-text-secondary)' }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            aria-label="Back to System Console"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+
+          {/* Center: Title stack (truly centered on mobile) */}
+          <div className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none">
+            <h1 
+              className="text-[20px] md:text-[28px] font-semibold tracking-[-0.02em] whitespace-nowrap"
+              style={{ color: 'var(--platform-text)' }}
+            >
+              Organizations
+            </h1>
+            <p 
+              className="text-[12px] md:text-[14px] mt-0.5"
               style={{ color: 'var(--platform-text-secondary)' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-            <div>
-              <h1 
-                className="text-[28px] font-semibold tracking-[-0.02em]"
-                style={{ color: 'var(--platform-text)' }}
-              >
-                Organizations
-              </h1>
-              <p 
-                className="text-[15px] mt-0.5"
-                style={{ color: 'var(--platform-text-secondary)' }}
-              >
-                {tenants.length} organization(s)
-              </p>
-            </div>
+              {loading ? "Loading..." : `${tenants.length} organization${tenants.length !== 1 ? 's' : ''}`}
+            </p>
           </div>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <button 
-                onClick={openCreateDialog}
-                className="h-8 px-3 rounded text-[13px] font-medium flex items-center gap-1.5 transition-colors"
-                style={{ 
-                  backgroundColor: 'var(--platform-text)',
-                  color: 'var(--platform-canvas)'
-                }}
-              >
-                <Plus className="h-3.5 w-3.5" />
-                Add organization
-              </button>
-            </DialogTrigger>
-            <DialogContent 
-              className="sm:max-w-[400px]"
-              style={{
-                backgroundColor: 'var(--platform-surface)',
-                border: '1px solid var(--platform-border)',
-                color: 'var(--platform-text)'
-              }}
-            >
-              <DialogHeader>
-                <DialogTitle 
-                  className="text-[16px] font-medium"
-                  style={{ color: 'var(--platform-text)' }}
-                >
-                  {editingTenant ? "Edit organization" : "Add organization"}
-                </DialogTitle>
-                <DialogDescription 
-                  className="text-[13px]"
-                  style={{ color: 'var(--platform-text-secondary)' }}
-                >
-                  {editingTenant
-                    ? "Update organization details."
-                    : "Create a new organization."}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label 
-                    htmlFor="name" 
-                    className="text-[13px]"
-                    style={{ color: 'var(--platform-text-secondary)' }}
-                  >
-                    Name
-                  </Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleNameChange(e.target.value)}
-                    placeholder="Acme Publishing"
-                    className="h-9 text-[14px] bg-transparent border-white/10 text-white placeholder:text-white/30"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label 
-                    htmlFor="slug" 
-                    className="text-[13px]"
-                    style={{ color: 'var(--platform-text-secondary)' }}
-                  >
-                    Slug
-                  </Label>
-                  <Input
-                    id="slug"
-                    value={formData.slug}
-                    onChange={(e) =>
-                      setFormData({ ...formData, slug: e.target.value })
-                    }
-                    placeholder="acme-publishing"
-                    className="h-9 text-[14px] font-mono bg-transparent border-white/10 text-white placeholder:text-white/30"
-                  />
-                  <p 
-                    className="text-[12px]"
-                    style={{ color: 'var(--platform-text-muted)' }}
-                  >
-                    URL-friendly identifier. Must be unique.
-                  </p>
-                </div>
-              </div>
-              <DialogFooter>
-                <button
-                  onClick={() => setDialogOpen(false)}
-                  disabled={saving}
-                  className="h-8 px-3 rounded text-[13px] font-medium transition-colors"
-                  style={{ 
-                    border: '1px solid var(--platform-border)',
-                    color: 'var(--platform-text-secondary)'
-                  }}
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={saveTenant} 
-                  disabled={saving}
-                  className="h-8 px-3 rounded text-[13px] font-medium disabled:opacity-40 transition-colors"
-                  style={{ 
-                    backgroundColor: 'var(--platform-text)',
-                    color: 'var(--platform-canvas)'
-                  }}
-                >
-                  {saving ? "Saving" : editingTenant ? "Update" : "Create"}
-                </button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+
+          {/* Right: Add button (icon-only on mobile, text+icon on desktop) */}
+          <button 
+            onClick={openCreateDialog}
+            className="h-11 w-11 md:h-9 md:w-auto md:px-3 rounded-lg md:rounded text-[13px] font-medium flex items-center justify-center gap-1.5 transition-colors shrink-0"
+            style={{ 
+              backgroundColor: 'var(--platform-text)',
+              color: 'var(--platform-canvas)'
+            }}
+            aria-label="Add organization"
+          >
+            <Plus className="h-5 w-5 md:h-3.5 md:w-3.5" />
+            <span className="hidden md:inline">Add organization</span>
+          </button>
         </div>
 
-        {/* Table Panel */}
+        {/* Content Panel */}
         <div 
-          className="rounded overflow-hidden"
+          className="rounded-lg md:rounded overflow-hidden"
           style={{ 
             backgroundColor: 'var(--platform-surface)',
             border: '1px solid var(--platform-border)'
@@ -316,7 +227,7 @@ export default function TenantsPage() {
             </div>
           ) : tenants.length === 0 ? (
             <div 
-              className="py-16 text-center"
+              className="py-16 text-center px-4"
               style={{ color: 'var(--platform-text-secondary)' }}
             >
               <p className="text-[14px]">No organizations.</p>
@@ -325,52 +236,200 @@ export default function TenantsPage() {
               </p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Slug</TableHead>
-                  <TableHead className="text-right">Members</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead className="w-16"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {tenants.map((tenant) => (
-                  <TableRow key={tenant.id}>
-                    <TableCell className="font-medium">
-                      {tenant.name}
-                    </TableCell>
-                    <TableCell 
-                      className="font-mono text-[12px]"
-                      style={{ color: 'var(--platform-text-secondary)' }}
-                    >
-                      {tenant.slug}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {tenant.member_count}
-                    </TableCell>
-                    <TableCell style={{ color: 'var(--platform-text-secondary)' }}>
-                      {new Date(tenant.created_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <button
-                        onClick={() => openEditDialog(tenant)}
-                        className="text-[13px] transition-colors"
-                        style={{ color: 'var(--platform-text-secondary)' }}
-                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--platform-text)'}
-                        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--platform-text-secondary)'}
+            <>
+              {/* Mobile: Stacked list rows */}
+              <div className="block md:hidden">
+                {tenants.map((tenant, index) => (
+                  <button
+                    key={tenant.id}
+                    onClick={() => openEditDialog(tenant)}
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors group hover:bg-white/[0.02]"
+                    style={{ 
+                      borderBottom: index < tenants.length - 1 ? '1px solid var(--platform-border)' : undefined
+                    }}
+                  >
+                    {/* Left: Name + Slug */}
+                    <div className="min-w-0 flex-1">
+                      <p 
+                        className="text-[14px] font-medium truncate"
+                        style={{ color: 'var(--platform-text)' }}
                       >
-                        Edit
-                      </button>
-                    </TableCell>
-                  </TableRow>
+                        {tenant.name}
+                      </p>
+                      <p 
+                        className="text-[12px] font-mono mt-0.5 line-clamp-2 break-all"
+                        style={{ 
+                          color: 'var(--platform-text-muted)', 
+                          opacity: 0.7,
+                          lineHeight: '1.45',
+                        }}
+                      >
+                        {tenant.slug}
+                      </p>
+                    </div>
+
+                    {/* Right: Member count + Chevron */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span 
+                        className="text-[13px] font-medium tabular-nums"
+                        style={{ color: 'var(--platform-text-secondary)' }}
+                      >
+                        {tenant.member_count}
+                      </span>
+                      <ChevronRight 
+                        className="h-4 w-4 shrink-0 opacity-30 group-hover:opacity-50 transition-opacity"
+                        style={{ color: 'var(--platform-text-muted)' }}
+                      />
+                    </div>
+                  </button>
                 ))}
-              </TableBody>
-            </Table>
+              </div>
+
+              {/* Desktop: Table layout */}
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Slug</TableHead>
+                      <TableHead className="text-right">Members</TableHead>
+                      <TableHead>Created</TableHead>
+                      <TableHead className="w-16"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {tenants.map((tenant) => (
+                      <TableRow key={tenant.id}>
+                        <TableCell className="font-medium">
+                          {tenant.name}
+                        </TableCell>
+                        <TableCell 
+                          className="font-mono text-[12px]"
+                          style={{ color: 'var(--platform-text-secondary)' }}
+                        >
+                          {tenant.slug}
+                        </TableCell>
+                        <TableCell className="text-right tabular-nums">
+                          {tenant.member_count}
+                        </TableCell>
+                        <TableCell style={{ color: 'var(--platform-text-secondary)' }}>
+                          {new Date(tenant.created_at).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <button
+                            onClick={() => openEditDialog(tenant)}
+                            className="text-[13px] transition-colors"
+                            style={{ color: 'var(--platform-text-secondary)' }}
+                            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--platform-text)'}
+                            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--platform-text-secondary)'}
+                          >
+                            Edit
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           )}
         </div>
       </div>
+
+      {/* Dialog - moved outside the header for cleaner structure */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent 
+          className="sm:max-w-[400px] mx-4"
+          style={{
+            backgroundColor: 'var(--platform-surface)',
+            border: '1px solid var(--platform-border)',
+            color: 'var(--platform-text)'
+          }}
+        >
+          <DialogHeader>
+            <DialogTitle 
+              className="text-[16px] font-medium"
+              style={{ color: 'var(--platform-text)' }}
+            >
+              {editingTenant ? "Edit organization" : "Add organization"}
+            </DialogTitle>
+            <DialogDescription 
+              className="text-[13px]"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              {editingTenant
+                ? "Update organization details."
+                : "Create a new organization."}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label 
+                htmlFor="name" 
+                className="text-[13px]"
+                style={{ color: 'var(--platform-text-secondary)' }}
+              >
+                Name
+              </Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => handleNameChange(e.target.value)}
+                placeholder="Acme Publishing"
+                className="h-10 md:h-9 text-[14px] bg-transparent border-white/10 text-white placeholder:text-white/30"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label 
+                htmlFor="slug" 
+                className="text-[13px]"
+                style={{ color: 'var(--platform-text-secondary)' }}
+              >
+                Slug
+              </Label>
+              <Input
+                id="slug"
+                value={formData.slug}
+                onChange={(e) =>
+                  setFormData({ ...formData, slug: e.target.value })
+                }
+                placeholder="acme-publishing"
+                className="h-10 md:h-9 text-[14px] font-mono bg-transparent border-white/10 text-white placeholder:text-white/30"
+              />
+              <p 
+                className="text-[12px]"
+                style={{ color: 'var(--platform-text-muted)' }}
+              >
+                URL-friendly identifier. Must be unique.
+              </p>
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
+            <button
+              onClick={() => setDialogOpen(false)}
+              disabled={saving}
+              className="h-11 md:h-8 px-4 md:px-3 rounded-lg md:rounded text-[14px] md:text-[13px] font-medium transition-colors w-full sm:w-auto order-2 sm:order-1"
+              style={{ 
+                border: '1px solid var(--platform-border)',
+                color: 'var(--platform-text-secondary)'
+              }}
+            >
+              Cancel
+            </button>
+            <button 
+              onClick={saveTenant} 
+              disabled={saving}
+              className="h-11 md:h-8 px-4 md:px-3 rounded-lg md:rounded text-[14px] md:text-[13px] font-medium disabled:opacity-40 transition-colors w-full sm:w-auto order-1 sm:order-2"
+              style={{ 
+                backgroundColor: 'var(--platform-text)',
+                color: 'var(--platform-canvas)'
+              }}
+            >
+              {saving ? "Saving" : editingTenant ? "Update" : "Create"}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
