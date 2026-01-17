@@ -45,13 +45,14 @@ interface DialogContentProps
 /**
  * DIALOG CONTENT — INSTITUTIONAL STANDARD (SOLID, NO GLASS)
  * 
+ * VISUAL LOCK (v2.0):
  * - Max width: 520px default (forms), configurable via className
  * - Max height: 85vh with internal scroll
- * - Surface: FULLY OPAQUE, one elevation step lighter than page
+ * - Surface: FULLY OPAQUE #18181B (NO transparency)
  * - Border: 1px hairline (white at 8% opacity)
  * - Shadow: tight spread, no glow
  * - Radius: 12px (consistent with card tokens)
- * - NO translucency, NO backdrop-filter
+ * - NO translucency, NO backdrop-filter, NO glass effects
  */
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
