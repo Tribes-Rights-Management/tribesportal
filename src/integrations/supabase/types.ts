@@ -894,8 +894,10 @@ export type Database = {
           },
         ]
       }
-      notifications: {
+      notification_archive: {
         Row: {
+          acknowledged_at: string | null
+          archived_at: string
           correlation_id: string | null
           created_at: string
           id: string
@@ -907,13 +909,20 @@ export type Database = {
           recipient_id: string
           record_id: string | null
           record_type: string | null
+          requires_resolution: boolean
+          resolution_type: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          retention_category: string
           tenant_id: string | null
           title: string
         }
         Insert: {
+          acknowledged_at?: string | null
+          archived_at?: string
           correlation_id?: string | null
-          created_at?: string
-          id?: string
+          created_at: string
+          id: string
           message: string
           metadata?: Json | null
           notification_type: Database["public"]["Enums"]["notification_type"]
@@ -922,10 +931,17 @@ export type Database = {
           recipient_id: string
           record_id?: string | null
           record_type?: string | null
+          requires_resolution?: boolean
+          resolution_type?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          retention_category?: string
           tenant_id?: string | null
           title: string
         }
         Update: {
+          acknowledged_at?: string | null
+          archived_at?: string
           correlation_id?: string | null
           created_at?: string
           id?: string
@@ -937,6 +953,88 @@ export type Database = {
           recipient_id?: string
           record_id?: string | null
           record_type?: string | null
+          requires_resolution?: boolean
+          resolution_type?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          retention_category?: string
+          tenant_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_archive_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          acknowledged_at: string | null
+          archived_at: string | null
+          correlation_id: string | null
+          created_at: string
+          id: string
+          message: string
+          metadata: Json | null
+          notification_type: Database["public"]["Enums"]["notification_type"]
+          priority: Database["public"]["Enums"]["notification_priority"]
+          read_at: string | null
+          recipient_id: string
+          record_id: string | null
+          record_type: string | null
+          requires_resolution: boolean
+          resolution_type: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          retention_category: string
+          tenant_id: string | null
+          title: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          archived_at?: string | null
+          correlation_id?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          metadata?: Json | null
+          notification_type: Database["public"]["Enums"]["notification_type"]
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          read_at?: string | null
+          recipient_id: string
+          record_id?: string | null
+          record_type?: string | null
+          requires_resolution?: boolean
+          resolution_type?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          retention_category?: string
+          tenant_id?: string | null
+          title: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          archived_at?: string | null
+          correlation_id?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          metadata?: Json | null
+          notification_type?: Database["public"]["Enums"]["notification_type"]
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          read_at?: string | null
+          recipient_id?: string
+          record_id?: string | null
+          record_type?: string | null
+          requires_resolution?: boolean
+          resolution_type?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          retention_category?: string
           tenant_id?: string | null
           title?: string
         }
@@ -1414,6 +1512,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      archive_old_notifications: { Args: never; Returns: number }
       can_access_context: {
         Args: {
           _context: Database["public"]["Enums"]["portal_context"]
@@ -1431,21 +1530,37 @@ export type Database = {
         Returns: boolean
       }
       check_escalations: { Args: never; Returns: number }
-      create_notification: {
-        Args: {
-          _correlation_id?: string
-          _message: string
-          _metadata?: Json
-          _notification_type: Database["public"]["Enums"]["notification_type"]
-          _priority?: Database["public"]["Enums"]["notification_priority"]
-          _recipient_id: string
-          _record_id?: string
-          _record_type?: string
-          _tenant_id?: string
-          _title: string
-        }
-        Returns: string
-      }
+      create_notification:
+        | {
+            Args: {
+              _correlation_id?: string
+              _message: string
+              _metadata?: Json
+              _notification_type: Database["public"]["Enums"]["notification_type"]
+              _priority?: Database["public"]["Enums"]["notification_priority"]
+              _recipient_id: string
+              _record_id?: string
+              _record_type?: string
+              _tenant_id?: string
+              _title: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              _correlation_id?: string
+              _message: string
+              _metadata?: Json
+              _notification_type: Database["public"]["Enums"]["notification_type"]
+              _priority?: Database["public"]["Enums"]["notification_priority"]
+              _recipient_id: string
+              _record_id?: string
+              _record_type?: string
+              _tenant_id?: string
+              _title: string
+            }
+            Returns: string
+          }
       generate_correlation_id: { Args: never; Returns: string }
       get_correlation_chain: {
         Args: { _correlation_id: string }
@@ -1512,6 +1627,14 @@ export type Database = {
           _tenant_id?: string
         }
         Returns: string
+      }
+      resolve_notification: {
+        Args: {
+          _notification_id: string
+          _resolution_type: string
+          _resolved_by?: string
+        }
+        Returns: boolean
       }
       search_entities: {
         Args: {
@@ -1587,6 +1710,12 @@ export type Database = {
         | "revoked"
         | "suspended"
       notification_priority: "low" | "normal" | "high" | "critical"
+      notification_resolution_type:
+        | "approved"
+        | "rejected"
+        | "completed"
+        | "cancelled"
+        | "expired"
       notification_type:
         | "authority_change_proposal"
         | "licensing_request"
@@ -1797,6 +1926,13 @@ export const Constants = {
         "suspended",
       ],
       notification_priority: ["low", "normal", "high", "critical"],
+      notification_resolution_type: [
+        "approved",
+        "rejected",
+        "completed",
+        "cancelled",
+        "expired",
+      ],
       notification_type: [
         "authority_change_proposal",
         "licensing_request",
