@@ -44,6 +44,9 @@ import PublishingSettings from "@/pages/app/publishing/PublishingSettings";
 import LicensingOverview from "@/pages/modules/licensing/LicensingOverview";
 import LicensingRequestsPage from "@/pages/modules/licensing/LicensingRequestsPage";
 import LicensingAgreementsPage from "@/pages/modules/licensing/LicensingAgreementsPage";
+import LicensingPaymentsPage from "@/pages/modules/licensing/LicensingPaymentsPage";
+import LicensingFeesPage from "@/pages/modules/licensing/LicensingFeesPage";
+import LicensingReceiptsPage from "@/pages/modules/licensing/LicensingReceiptsPage";
 
 // First-class module pages - Tribes Admin (/portal) - ORGANIZATION-SCOPED
 // (Renamed from "Client Portal" to "Tribes Admin")
@@ -51,6 +54,10 @@ import PortalOverview from "@/pages/modules/portal/PortalOverview";
 import PortalAgreementsPage from "@/pages/modules/portal/PortalAgreementsPage";
 import PortalStatementsPage from "@/pages/modules/portal/PortalStatementsPage";
 import PortalDocumentsPage from "@/pages/modules/portal/PortalDocumentsPage";
+import PortalPaymentsPage from "@/pages/modules/portal/PortalPaymentsPage";
+import PortalInvoicesPage from "@/pages/modules/portal/PortalInvoicesPage";
+import PortalPaymentMethodsPage from "@/pages/modules/portal/PortalPaymentMethodsPage";
+import PortalPaymentHistoryPage from "@/pages/modules/portal/PortalPaymentHistoryPage";
 
 // App pages - Access states
 import PendingApprovalPage from "@/pages/app/PendingApprovalPage";
@@ -70,6 +77,14 @@ import RLSAuditPage from "@/pages/admin/RLSAuditPage";
 import AuthAccessReviewPage from "@/pages/admin/AuthAccessReviewPage";
 import DisclosuresPage from "@/pages/admin/DisclosuresPage";
 import CorrelationChainPage from "@/pages/admin/CorrelationChainPage";
+
+// System Console Billing pages - FINANCIAL GOVERNANCE (executive only)
+import BillingGovernancePage from "@/pages/admin/billing/BillingGovernancePage";
+import RevenueOverviewPage from "@/pages/admin/billing/RevenueOverviewPage";
+import PlansConfigurationPage from "@/pages/admin/billing/PlansConfigurationPage";
+import AllInvoicesPage from "@/pages/admin/billing/AllInvoicesPage";
+import PaymentProvidersPage from "@/pages/admin/billing/PaymentProvidersPage";
+import RefundsPage from "@/pages/admin/billing/RefundsPage";
 
 // Auditor pages - READ-ONLY external access
 import AuditorLanding from "@/pages/auditor/AuditorLanding";
@@ -143,6 +158,9 @@ const App = () => (
           <Route index element={<LicensingOverview />} />
           <Route path="requests" element={<LicensingRequestsPage />} />
           <Route path="agreements" element={<LicensingAgreementsPage />} />
+          <Route path="payments" element={<LicensingPaymentsPage />} />
+          <Route path="payments/fees" element={<LicensingFeesPage />} />
+          <Route path="payments/receipts" element={<LicensingReceiptsPage />} />
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
@@ -159,6 +177,10 @@ const App = () => (
           <Route path="agreements" element={<PortalAgreementsPage />} />
           <Route path="statements" element={<PortalStatementsPage />} />
           <Route path="documents" element={<PortalDocumentsPage />} />
+          <Route path="payments" element={<PortalPaymentsPage />} />
+          <Route path="payments/invoices" element={<PortalInvoicesPage />} />
+          <Route path="payments/methods" element={<PortalPaymentMethodsPage />} />
+          <Route path="payments/history" element={<PortalPaymentHistoryPage />} />
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
@@ -211,6 +233,13 @@ const App = () => (
           <Route path="security/sessions" element={<AccountSettingsPage />} />
           <Route path="disclosures" element={<DisclosuresPage />} />
           <Route path="chain" element={<CorrelationChainPage />} />
+          {/* Financial Governance Routes */}
+          <Route path="billing" element={<BillingGovernancePage />} />
+          <Route path="billing/revenue" element={<RevenueOverviewPage />} />
+          <Route path="billing/plans" element={<PlansConfigurationPage />} />
+          <Route path="billing/invoices" element={<AllInvoicesPage />} />
+          <Route path="billing/providers" element={<PaymentProvidersPage />} />
+          <Route path="billing/refunds" element={<RefundsPage />} />
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
