@@ -46,11 +46,12 @@ DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName;
 /**
  * DRAWER CONTENT — INSTITUTIONAL STANDARD (SOLID, NO GLASS)
  * 
+ * VISUAL LOCK (v2.0):
  * - Max height 90vh with internal scroll
  * - Rounded top corners (12px)
- * - FULLY OPAQUE surface (one elevation step up)
+ * - FULLY OPAQUE surface #18181B (NO transparency)
  * - 1px hairline border (white at 8% opacity)
- * - NO translucency, NO backdrop-filter
+ * - NO translucency, NO backdrop-filter, NO glass effects
  */
 const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
