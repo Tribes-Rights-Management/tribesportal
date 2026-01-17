@@ -194,7 +194,34 @@ export default function AdminDashboard() {
         </AdminSection>
 
         {/* ─────────────────────────────────────────────────────────────────
-            SECTION 4: SECURITY & INTEGRITY
+            SECTION 4: FINANCIAL GOVERNANCE
+            Purpose: "Is financial configuration controlled and auditable?"
+        ───────────────────────────────────────────────────────────────── */}
+        <AdminSection label="Financial Governance">
+          <AdminListRow
+            to="/admin/billing"
+            title="Billing Overview"
+            description="Plans, pricing, and financial configuration governance"
+          />
+          <AdminListRow
+            to="/admin/billing/revenue"
+            title="Revenue Overview"
+            description="Aggregate revenue metrics across all organizations"
+          />
+          <AdminListRow
+            to="/admin/billing/invoices"
+            title="Invoice Ledger"
+            description="Read-only view of all invoices across organizations"
+          />
+          <AdminListRow
+            to="/admin/billing/refunds"
+            title="Refunds"
+            description="Issue and track refunds for completed transactions"
+          />
+        </AdminSection>
+
+        {/* ─────────────────────────────────────────────────────────────────
+            SECTION 5: SECURITY & INTEGRITY
             Purpose: "Is access controlled and defensible?"
         ───────────────────────────────────────────────────────────────── */}
         <AdminSection label="Security & Integrity">
