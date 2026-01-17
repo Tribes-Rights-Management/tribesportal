@@ -4,9 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import type { Database } from "@/integrations/supabase/types";
 
 type PortalRole = Database["public"]["Enums"]["portal_role"];
@@ -36,22 +37,25 @@ interface ApprovalFormState {
 }
 
 /**
- * APPROVALS PAGE — ACCESS CONTROL (INSTITUTIONAL STANDARD)
+ * APPROVALS PAGE — ACCESS CONTROL (AUTHORITY UX CANON)
  * 
- * Design Rules:
- * - Dark canvas, flat panels with hairline borders
- * - Table sits within centered content column
- * - No shadows, no cards, no elevation
- * - Plain text status, no badges or pills
- * - Restrained hover states
+ * Purpose: Approve/deny pending membership requests
+ * 
+ * Compliance:
+ * - Mobile: Vertical card list, no horizontal scrolling
+ * - Desktop: Table within centered content column
+ * - Editable controls only for form inputs (this is an action page)
+ * - Clear action hierarchy
  */
 export default function ApprovalsPage() {
+  const isMobile = useIsMobile();
   const { profile: currentProfile } = useAuth();
   const [pendingMemberships, setPendingMemberships] = useState<PendingMembership[]>([]);
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState<string | null>(null);
   const [formStates, setFormStates] = useState<Record<string, ApprovalFormState>>({});
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -162,7 +166,7 @@ export default function ApprovalsPage() {
     if (!formState?.tenant_id) {
       toast({
         title: "Validation error",
-        description: "Select a tenant",
+        description: "Select an organization",
         variant: "destructive",
       });
       return;
@@ -242,7 +246,7 @@ export default function ApprovalsPage() {
   };
 
   const availableRoles: { value: PortalRole; label: string }[] = [
-    { value: "tenant_admin", label: "Admin" },
+    { value: "tenant_admin", label: "Administrator" },
     { value: "tenant_user", label: "Member" },
     { value: "viewer", label: "Viewer" },
   ];
@@ -254,30 +258,30 @@ export default function ApprovalsPage() {
 
   return (
     <div 
-      className="min-h-full py-10 px-6"
+      className="min-h-full py-6 sm:py-10 px-4 sm:px-6"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <div className="max-w-[960px] mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-6 sm:mb-8">
           <Link 
             to="/admin" 
-            className="h-8 w-8 rounded flex items-center justify-center transition-colors"
+            className="h-11 w-11 sm:h-8 sm:w-8 rounded flex items-center justify-center transition-colors shrink-0"
             style={{ color: 'var(--platform-text-secondary)' }}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-5 w-5 sm:h-4 sm:w-4" />
           </Link>
           <div>
             <h1 
-              className="text-[28px] font-semibold tracking-[-0.02em]"
+              className="text-[22px] sm:text-[28px] font-semibold tracking-[-0.02em]"
               style={{ color: 'var(--platform-text)' }}
             >
               Access Control
             </h1>
             <p 
-              className="text-[15px] mt-0.5"
+              className="text-[14px] sm:text-[15px] mt-0.5"
               style={{ color: 'var(--platform-text-secondary)' }}
             >
               {pendingMemberships.length === 0 
@@ -287,9 +291,9 @@ export default function ApprovalsPage() {
           </div>
         </div>
 
-        {/* Table Panel */}
+        {/* Content Panel */}
         <div 
-          className="rounded overflow-hidden"
+          className="rounded-lg sm:rounded overflow-hidden"
           style={{ 
             backgroundColor: 'var(--platform-surface)',
             border: '1px solid var(--platform-border)'
@@ -304,7 +308,7 @@ export default function ApprovalsPage() {
             </div>
           ) : pendingMemberships.length === 0 ? (
             <div 
-              className="py-16 text-center"
+              className="py-16 text-center px-4"
               style={{ color: 'var(--platform-text-secondary)' }}
             >
               <p className="text-[14px]">No pending approvals.</p>
@@ -312,7 +316,238 @@ export default function ApprovalsPage() {
                 Records will appear when users request access.
               </p>
             </div>
+          ) : isMobile ? (
+            /* Mobile: Vertical Card List */
+            <div className="divide-y" style={{ borderColor: 'var(--platform-border)' }}>
+              {pendingMemberships.map((membership) => {
+                const formState = formStates[membership.id] || {
+                  tenant_id: "",
+                  role: "tenant_user" as PortalRole,
+                  contexts: [],
+                  default_context: null,
+                };
+                const isExpanded = expandedCard === membership.id;
+                
+                return (
+                  <div key={membership.id} className="p-4">
+                    {/* Card Header */}
+                    <button
+                      onClick={() => setExpandedCard(isExpanded ? null : membership.id)}
+                      className="w-full flex items-start justify-between gap-3 text-left"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div 
+                          className="text-[15px] font-medium break-words"
+                          style={{ color: 'var(--platform-text)' }}
+                        >
+                          {membership.user_email}
+                        </div>
+                        <div 
+                          className="text-[13px] mt-1"
+                          style={{ color: 'var(--platform-text-secondary)' }}
+                        >
+                          Requested {new Date(membership.created_at).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <ChevronRight 
+                        className={`h-5 w-5 shrink-0 mt-0.5 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                        style={{ color: 'var(--platform-text-muted)' }} 
+                      />
+                    </button>
+
+                    {/* Expanded Form */}
+                    {isExpanded && (
+                      <div className="mt-4 space-y-4">
+                        {/* Organization */}
+                        <div>
+                          <label 
+                            className="block text-[11px] font-medium uppercase tracking-[0.04em] mb-2"
+                            style={{ color: 'var(--platform-text-muted)' }}
+                          >
+                            Organization
+                          </label>
+                          <Select
+                            value={formState.tenant_id}
+                            onValueChange={(value) =>
+                              updateFormState(membership.id, { tenant_id: value })
+                            }
+                            disabled={processing === membership.id}
+                          >
+                            <SelectTrigger 
+                              className="w-full h-11 text-[14px] bg-transparent"
+                              style={{ 
+                                borderColor: 'var(--platform-border)',
+                                color: 'var(--platform-text)',
+                              }}
+                            >
+                              <SelectValue placeholder="Select organization" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-[#1A1A1B] border-white/10">
+                              {tenants.map((tenant) => (
+                                <SelectItem 
+                                  key={tenant.id} 
+                                  value={tenant.id}
+                                  className="text-white/80 focus:bg-white/10 focus:text-white"
+                                >
+                                  {tenant.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Role */}
+                        <div>
+                          <label 
+                            className="block text-[11px] font-medium uppercase tracking-[0.04em] mb-2"
+                            style={{ color: 'var(--platform-text-muted)' }}
+                          >
+                            Role
+                          </label>
+                          <Select
+                            value={formState.role}
+                            onValueChange={(value) =>
+                              updateFormState(membership.id, { role: value as PortalRole })
+                            }
+                            disabled={processing === membership.id}
+                          >
+                            <SelectTrigger 
+                              className="w-full h-11 text-[14px] bg-transparent"
+                              style={{ 
+                                borderColor: 'var(--platform-border)',
+                                color: 'var(--platform-text)',
+                              }}
+                            >
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-[#1A1A1B] border-white/10">
+                              {availableRoles.map((role) => (
+                                <SelectItem 
+                                  key={role.value} 
+                                  value={role.value}
+                                  className="text-white/80 focus:bg-white/10 focus:text-white"
+                                >
+                                  {role.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Context Access */}
+                        <div>
+                          <label 
+                            className="block text-[11px] font-medium uppercase tracking-[0.04em] mb-2"
+                            style={{ color: 'var(--platform-text-muted)' }}
+                          >
+                            Context Access
+                          </label>
+                          <div className="space-y-2">
+                            {availableContexts.map((context) => (
+                              <label
+                                key={context.value}
+                                className="flex items-center gap-3 h-11 px-3 rounded-lg cursor-pointer"
+                                style={{ 
+                                  backgroundColor: formState.contexts.includes(context.value) 
+                                    ? 'rgba(255,255,255,0.04)' 
+                                    : 'transparent',
+                                  border: '1px solid var(--platform-border)',
+                                }}
+                              >
+                                <Checkbox
+                                  checked={formState.contexts.includes(context.value)}
+                                  onCheckedChange={() =>
+                                    toggleContext(membership.id, context.value)
+                                  }
+                                  disabled={processing === membership.id}
+                                  className="border-white/20 data-[state=checked]:bg-white/90 data-[state=checked]:border-white/90"
+                                />
+                                <span 
+                                  className="text-[14px]"
+                                  style={{ color: 'var(--platform-text)' }}
+                                >
+                                  {context.label}
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Default Context */}
+                        {formState.contexts.length > 1 && (
+                          <div>
+                            <label 
+                              className="block text-[11px] font-medium uppercase tracking-[0.04em] mb-2"
+                              style={{ color: 'var(--platform-text-muted)' }}
+                            >
+                              Default Context
+                            </label>
+                            <Select
+                              value={formState.default_context || ""}
+                              onValueChange={(value) =>
+                                updateFormState(membership.id, {
+                                  default_context: value as PortalContext,
+                                })
+                              }
+                              disabled={processing === membership.id}
+                            >
+                              <SelectTrigger 
+                                className="w-full h-11 text-[14px] bg-transparent"
+                                style={{ 
+                                  borderColor: 'var(--platform-border)',
+                                  color: 'var(--platform-text)',
+                                }}
+                              >
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-[#1A1A1B] border-white/10">
+                                {formState.contexts.map((ctx) => (
+                                  <SelectItem 
+                                    key={ctx} 
+                                    value={ctx}
+                                    className="text-white/80 focus:bg-white/10 focus:text-white"
+                                  >
+                                    {ctx === "licensing" ? "Licensing" : "Publishing"}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+
+                        {/* Actions */}
+                        <div className="flex gap-3 pt-2">
+                          <button
+                            onClick={() => approveMembership(membership)}
+                            disabled={processing === membership.id || !formState.tenant_id}
+                            className="flex-1 h-11 rounded-lg text-[14px] font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            style={{ 
+                              backgroundColor: 'var(--platform-text)',
+                              color: 'var(--platform-canvas)'
+                            }}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => denyMembership(membership)}
+                            disabled={processing === membership.id}
+                            className="flex-1 h-11 rounded-lg text-[14px] font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            style={{ 
+                              border: '1px solid var(--platform-border)',
+                              color: 'var(--platform-text-secondary)'
+                            }}
+                          >
+                            Deny
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           ) : (
+            /* Desktop: Table Layout */
             <Table>
               <TableHeader>
                 <TableRow>
