@@ -94,6 +94,122 @@ export type Database = {
         }
         Relationships: []
       }
+      api_access_logs: {
+        Row: {
+          accessed_at: string
+          endpoint: string
+          id: string
+          ip_address: unknown
+          method: string
+          response_status: number
+          response_time_ms: number | null
+          scope_type: string
+          tenant_id: string | null
+          token_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          accessed_at?: string
+          endpoint: string
+          id?: string
+          ip_address?: unknown
+          method: string
+          response_status: number
+          response_time_ms?: number | null
+          scope_type: string
+          tenant_id?: string | null
+          token_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          accessed_at?: string
+          endpoint?: string
+          id?: string
+          ip_address?: unknown
+          method?: string
+          response_status?: number
+          response_time_ms?: number | null
+          scope_type?: string
+          tenant_id?: string | null
+          token_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_access_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "api_access_logs_token_id_fkey"
+            columns: ["token_id"]
+            isOneToOne: false
+            referencedRelation: "api_tokens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      api_tokens: {
+        Row: {
+          created_at: string
+          description: string | null
+          expires_at: string
+          granted_by: string
+          granted_to_email: string
+          id: string
+          last_used_at: string | null
+          name: string
+          revoked_at: string | null
+          revoked_by: string | null
+          scope: Database["public"]["Enums"]["api_token_scope"]
+          status: Database["public"]["Enums"]["api_token_status"]
+          tenant_id: string | null
+          token_hash: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          expires_at: string
+          granted_by: string
+          granted_to_email: string
+          id?: string
+          last_used_at?: string | null
+          name: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          scope: Database["public"]["Enums"]["api_token_scope"]
+          status?: Database["public"]["Enums"]["api_token_status"]
+          tenant_id?: string | null
+          token_hash: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          expires_at?: string
+          granted_by?: string
+          granted_to_email?: string
+          id?: string
+          last_used_at?: string | null
+          name?: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          scope?: Database["public"]["Enums"]["api_token_scope"]
+          status?: Database["public"]["Enums"]["api_token_status"]
+          tenant_id?: string | null
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_tokens_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: Database["public"]["Enums"]["audit_action"]
@@ -152,6 +268,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      backup_manifests: {
+        Row: {
+          backup_id: string
+          backup_type: string
+          created_at: string
+          created_by: string
+          file_hash: string
+          file_size_bytes: number
+          id: string
+          record_counts: Json
+          tables_included: string[]
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          backup_id: string
+          backup_type: string
+          created_at?: string
+          created_by: string
+          file_hash: string
+          file_size_bytes: number
+          id?: string
+          record_counts: Json
+          tables_included: string[]
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          backup_id?: string
+          backup_type?: string
+          created_at?: string
+          created_by?: string
+          file_hash?: string
+          file_size_bytes?: number
+          id?: string
+          record_counts?: Json
+          tables_included?: string[]
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
       }
       contracts: {
         Row: {
@@ -394,6 +552,107 @@ export type Database = {
         }
         Relationships: []
       }
+      escalation_events: {
+        Row: {
+          escalated_at: string
+          escalated_to_role: Database["public"]["Enums"]["platform_role"]
+          escalation_rule_id: string
+          id: string
+          notes: string | null
+          notification_id: string
+          original_recipient_id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: Database["public"]["Enums"]["escalation_status"]
+        }
+        Insert: {
+          escalated_at?: string
+          escalated_to_role: Database["public"]["Enums"]["platform_role"]
+          escalation_rule_id: string
+          id?: string
+          notes?: string | null
+          notification_id: string
+          original_recipient_id: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["escalation_status"]
+        }
+        Update: {
+          escalated_at?: string
+          escalated_to_role?: Database["public"]["Enums"]["platform_role"]
+          escalation_rule_id?: string
+          id?: string
+          notes?: string | null
+          notification_id?: string
+          original_recipient_id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["escalation_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escalation_events_escalation_rule_id_fkey"
+            columns: ["escalation_rule_id"]
+            isOneToOne: false
+            referencedRelation: "escalation_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "escalation_events_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      escalation_rules: {
+        Row: {
+          created_at: string
+          created_by: string
+          escalation_target_role: Database["public"]["Enums"]["platform_role"]
+          id: string
+          is_active: boolean
+          notification_type: Database["public"]["Enums"]["notification_type"]
+          priority: Database["public"]["Enums"]["notification_priority"]
+          sla_minutes: number
+          tenant_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          escalation_target_role: Database["public"]["Enums"]["platform_role"]
+          id?: string
+          is_active?: boolean
+          notification_type: Database["public"]["Enums"]["notification_type"]
+          priority: Database["public"]["Enums"]["notification_priority"]
+          sla_minutes?: number
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          escalation_target_role?: Database["public"]["Enums"]["platform_role"]
+          id?: string
+          is_active?: boolean
+          notification_type?: Database["public"]["Enums"]["notification_type"]
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          sla_minutes?: number
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escalation_rules_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_line_items: {
         Row: {
           amount: number
@@ -635,6 +894,62 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          correlation_id: string | null
+          created_at: string
+          id: string
+          message: string
+          metadata: Json | null
+          notification_type: Database["public"]["Enums"]["notification_type"]
+          priority: Database["public"]["Enums"]["notification_priority"]
+          read_at: string | null
+          recipient_id: string
+          record_id: string | null
+          record_type: string | null
+          tenant_id: string | null
+          title: string
+        }
+        Insert: {
+          correlation_id?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          metadata?: Json | null
+          notification_type: Database["public"]["Enums"]["notification_type"]
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          read_at?: string | null
+          recipient_id: string
+          record_id?: string | null
+          record_type?: string | null
+          tenant_id?: string | null
+          title: string
+        }
+        Update: {
+          correlation_id?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          metadata?: Json | null
+          notification_type?: Database["public"]["Enums"]["notification_type"]
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          read_at?: string | null
+          recipient_id?: string
+          record_id?: string | null
+          record_type?: string | null
+          tenant_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -808,6 +1123,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      recovery_events: {
+        Row: {
+          backup_id: string | null
+          completed_at: string | null
+          details: Json | null
+          error_message: string | null
+          event_type: Database["public"]["Enums"]["recovery_event_type"]
+          id: string
+          initiated_by: string
+          restore_point: string | null
+          started_at: string
+          status: string
+          target_tables: string[]
+        }
+        Insert: {
+          backup_id?: string | null
+          completed_at?: string | null
+          details?: Json | null
+          error_message?: string | null
+          event_type: Database["public"]["Enums"]["recovery_event_type"]
+          id?: string
+          initiated_by: string
+          restore_point?: string | null
+          started_at?: string
+          status?: string
+          target_tables: string[]
+        }
+        Update: {
+          backup_id?: string | null
+          completed_at?: string | null
+          details?: Json | null
+          error_message?: string | null
+          event_type?: Database["public"]["Enums"]["recovery_event_type"]
+          id?: string
+          initiated_by?: string
+          restore_point?: string | null
+          started_at?: string
+          status?: string
+          target_tables?: string[]
+        }
+        Relationships: []
       }
       refunds: {
         Row: {
@@ -1073,6 +1430,22 @@ export type Database = {
         Args: { _tenant_id: string }
         Returns: boolean
       }
+      check_escalations: { Args: never; Returns: number }
+      create_notification: {
+        Args: {
+          _correlation_id?: string
+          _message: string
+          _metadata?: Json
+          _notification_type: Database["public"]["Enums"]["notification_type"]
+          _priority?: Database["public"]["Enums"]["notification_priority"]
+          _recipient_id: string
+          _record_id?: string
+          _record_type?: string
+          _tenant_id?: string
+          _title: string
+        }
+        Returns: string
+      }
       generate_correlation_id: { Args: never; Returns: string }
       get_correlation_chain: {
         Args: { _correlation_id: string }
@@ -1158,10 +1531,21 @@ export type Database = {
           title: string
         }[]
       }
+      validate_api_token: {
+        Args: { _endpoint: string; _method: string; _token_hash: string }
+        Returns: {
+          is_valid: boolean
+          scope: Database["public"]["Enums"]["api_token_scope"]
+          tenant_id: string
+          token_id: string
+        }[]
+      }
     }
     Enums: {
       access_request_status: "pending" | "processed"
       agreement_status: "draft" | "active" | "expired" | "terminated"
+      api_token_scope: "platform_read" | "organization_read"
+      api_token_status: "active" | "revoked" | "expired"
       audit_action:
         | "record_created"
         | "record_updated"
@@ -1187,6 +1571,7 @@ export type Database = {
         | "licensing_activity"
         | "approval_history"
         | "agreement_registry"
+      escalation_status: "pending" | "escalated" | "resolved" | "expired"
       invoice_status: "draft" | "open" | "paid" | "void" | "uncollectible"
       licensing_request_status:
         | "draft"
@@ -1201,6 +1586,16 @@ export type Database = {
         | "denied"
         | "revoked"
         | "suspended"
+      notification_priority: "low" | "normal" | "high" | "critical"
+      notification_type:
+        | "authority_change_proposal"
+        | "licensing_request"
+        | "payment_failure"
+        | "refund_initiated"
+        | "approval_timeout"
+        | "security_event"
+        | "export_completed"
+        | "membership_change"
       payment_status:
         | "pending"
         | "processing"
@@ -1212,6 +1607,13 @@ export type Database = {
       platform_role: "platform_admin" | "platform_user" | "external_auditor"
       portal_context: "publishing" | "licensing"
       portal_role: "tenant_admin" | "tenant_user" | "viewer"
+      recovery_event_type:
+        | "backup_created"
+        | "backup_verified"
+        | "restore_initiated"
+        | "restore_completed"
+        | "restore_failed"
+        | "integrity_check"
       refund_reason:
         | "duplicate"
         | "fraudulent"
@@ -1347,6 +1749,8 @@ export const Constants = {
     Enums: {
       access_request_status: ["pending", "processed"],
       agreement_status: ["draft", "active", "expired", "terminated"],
+      api_token_scope: ["platform_read", "organization_read"],
+      api_token_status: ["active", "revoked", "expired"],
       audit_action: [
         "record_created",
         "record_updated",
@@ -1375,6 +1779,7 @@ export const Constants = {
         "approval_history",
         "agreement_registry",
       ],
+      escalation_status: ["pending", "escalated", "resolved", "expired"],
       invoice_status: ["draft", "open", "paid", "void", "uncollectible"],
       licensing_request_status: [
         "draft",
@@ -1391,6 +1796,17 @@ export const Constants = {
         "revoked",
         "suspended",
       ],
+      notification_priority: ["low", "normal", "high", "critical"],
+      notification_type: [
+        "authority_change_proposal",
+        "licensing_request",
+        "payment_failure",
+        "refund_initiated",
+        "approval_timeout",
+        "security_event",
+        "export_completed",
+        "membership_change",
+      ],
       payment_status: [
         "pending",
         "processing",
@@ -1403,6 +1819,14 @@ export const Constants = {
       platform_role: ["platform_admin", "platform_user", "external_auditor"],
       portal_context: ["publishing", "licensing"],
       portal_role: ["tenant_admin", "tenant_user", "viewer"],
+      recovery_event_type: [
+        "backup_created",
+        "backup_verified",
+        "restore_initiated",
+        "restore_completed",
+        "restore_failed",
+        "integrity_check",
+      ],
       refund_reason: [
         "duplicate",
         "fraudulent",
