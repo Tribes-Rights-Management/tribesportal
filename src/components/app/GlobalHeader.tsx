@@ -19,6 +19,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { NAV_LABELS, ICON_SIZE, ICON_STROKE, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } from "@/styles/tokens";
+import { NotificationCenter } from "./NotificationCenter";
 
 /**
  * GLOBAL HEADER — ORGANIZATION WORKSPACE NAVIGATION
@@ -500,11 +501,14 @@ export function GlobalHeader() {
                 color: 'var(--tribes-text)',
               }}
             >
-              {NAV_LABELS.BRAND_WORDMARK}
+            {NAV_LABELS.BRAND_WORDMARK}
             </button>
 
-            {/* Right: Avatar (32px, perfectly circular) */}
-            <AccountMenu />
+            {/* Right: Notifications + Avatar */}
+            <div className="flex items-center gap-2">
+              <NotificationCenter />
+              <AccountMenu />
+            </div>
           </div>
 
           {/* Row 2: Context label + Mobile controls */}
@@ -628,6 +632,7 @@ export function GlobalHeader() {
           </nav>
         )}
         
+        <NotificationCenter />
         <AccountMenu />
       </div>
     </header>
