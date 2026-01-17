@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowLeft, ChevronDown, ChevronUp, ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -36,13 +35,16 @@ interface UserWithProfile {
 }
 
 /**
- * MEMBER DIRECTORY PAGE — ACCESS MANAGEMENT (INSTITUTIONAL STANDARD)
+ * MEMBER DIRECTORY PAGE — ACCESS MANAGEMENT (AUTHORITY UX CANON)
  * 
- * Design Rules:
- * - Dark canvas, flat panels with hairline borders
+ * Purpose: Directory listing for user discovery
+ * 
+ * Compliance:
+ * - No disabled inputs for display data
+ * - Status shown as pills, not form controls
  * - Mobile: Vertical card list, no horizontal scrolling
- * - Desktop: Table within centered content column
- * - Tap/click row opens member details sheet
+ * - Desktop: Table with read-only display, "Authority" action for editing
+ * - Row click opens Member Details sheet
  */
 export default function UserDirectoryPage() {
   const navigate = useNavigate();
@@ -119,6 +121,7 @@ export default function UserDirectoryPage() {
     fetchUsers();
   }, []);
 
+  // These update functions are passed to MemberDetailsSheet for when edit mode is available
   const updatePlatformRole = async (userId: string, userProfileId: string, newRole: PlatformRole) => {
     if (userId === currentProfile?.user_id) {
       toast({
@@ -222,6 +225,26 @@ export default function UserDirectoryPage() {
     return contexts.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(", ") || "None";
   };
 
+  const formatStatus = (status: MembershipStatus): string => {
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
+
+  const getStatusColor = (status: MembershipStatus) => {
+    switch (status) {
+      case "active":
+        return { bg: "rgba(34, 197, 94, 0.15)", text: "#4ade80" };
+      case "pending":
+        return { bg: "rgba(234, 179, 8, 0.15)", text: "#facc15" };
+      case "suspended":
+        return { bg: "rgba(249, 115, 22, 0.15)", text: "#fb923c" };
+      case "revoked":
+      case "denied":
+        return { bg: "rgba(239, 68, 68, 0.15)", text: "#f87171" };
+      default:
+        return { bg: "rgba(255,255,255,0.06)", text: "var(--platform-text)" };
+    }
+  };
+
   const handleRowClick = (user: UserWithProfile) => {
     setSelectedUser(user);
     setDetailsOpen(true);
@@ -319,15 +342,32 @@ export default function UserDirectoryPage() {
                       )}
                     </div>
                     
-                    {/* Secondary: Role + Status */}
-                    <div 
-                      className="text-[13px] mt-1 line-clamp-2"
-                      style={{ color: 'var(--platform-text-secondary)' }}
-                    >
-                      {formatPlatformRole(user.platform_role)} · {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                      {user.memberships.length > 0 && (
-                        <span style={{ color: 'var(--platform-text-muted)' }}>
-                          {' '}· {user.memberships.filter(m => m.status === "active").length} org(s)
+                    {/* Secondary: Role + Status as pills */}
+                    <div className="flex flex-wrap items-center gap-2 mt-2">
+                      <span 
+                        className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium"
+                        style={{ 
+                          backgroundColor: 'rgba(255,255,255,0.06)',
+                          color: 'var(--platform-text-secondary)',
+                        }}
+                      >
+                        {formatPlatformRole(user.platform_role)}
+                      </span>
+                      <span 
+                        className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium"
+                        style={{ 
+                          backgroundColor: getStatusColor(user.status).bg,
+                          color: getStatusColor(user.status).text,
+                        }}
+                      >
+                        {formatStatus(user.status)}
+                      </span>
+                      {user.memberships.filter(m => m.status === "active").length > 0 && (
+                        <span 
+                          className="text-[11px]"
+                          style={{ color: 'var(--platform-text-muted)' }}
+                        >
+                          {user.memberships.filter(m => m.status === "active").length} org(s)
                         </span>
                       )}
                     </div>
@@ -343,7 +383,7 @@ export default function UserDirectoryPage() {
             ))}
           </div>
         ) : (
-          /* Desktop: Table Layout */
+          /* Desktop: Table Layout with Read-Only Display */
           <div 
             className="rounded overflow-hidden"
             style={{ 
@@ -399,37 +439,29 @@ export default function UserDirectoryPage() {
                           </span>
                         )}
                       </TableCell>
-                      <TableCell onClick={(e) => e.stopPropagation()}>
-                        <Select
-                          value={user.platform_role}
-                          onValueChange={(value) => updatePlatformRole(user.user_id, user.id, value as PlatformRole)}
-                          disabled={updating === user.id || user.user_id === currentProfile?.user_id}
+                      {/* Platform Role - READ-ONLY PILL (no Select control) */}
+                      <TableCell>
+                        <span 
+                          className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
+                          style={{ 
+                            backgroundColor: 'rgba(255,255,255,0.06)',
+                            color: 'var(--platform-text)',
+                          }}
                         >
-                          <SelectTrigger className="w-28 h-8 text-[13px] bg-transparent border-white/10 text-white/90">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-[#1A1A1B] border-white/10">
-                            <SelectItem value="platform_admin" className="text-white/80 focus:bg-white/10 focus:text-white">Admin</SelectItem>
-                            <SelectItem value="platform_user" className="text-white/80 focus:bg-white/10 focus:text-white">User</SelectItem>
-                          </SelectContent>
-                        </Select>
+                          {formatPlatformRole(user.platform_role)}
+                        </span>
                       </TableCell>
-                      <TableCell onClick={(e) => e.stopPropagation()}>
-                        <Select
-                          value={user.status}
-                          onValueChange={(value) => updateUserStatus(user.user_id, user.id, value as MembershipStatus)}
-                          disabled={updating === user.id || user.user_id === currentProfile?.user_id}
+                      {/* Status - READ-ONLY PILL (no Select control) */}
+                      <TableCell>
+                        <span 
+                          className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
+                          style={{ 
+                            backgroundColor: getStatusColor(user.status).bg,
+                            color: getStatusColor(user.status).text,
+                          }}
                         >
-                          <SelectTrigger className="w-28 h-8 text-[13px] bg-transparent border-white/10 text-white/90">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-[#1A1A1B] border-white/10">
-                            <SelectItem value="active" className="text-white/80 focus:bg-white/10 focus:text-white">Active</SelectItem>
-                            <SelectItem value="pending" className="text-white/80 focus:bg-white/10 focus:text-white">Pending</SelectItem>
-                            <SelectItem value="suspended" className="text-white/80 focus:bg-white/10 focus:text-white">Suspended</SelectItem>
-                            <SelectItem value="revoked" className="text-white/80 focus:bg-white/10 focus:text-white">Revoked</SelectItem>
-                          </SelectContent>
-                        </Select>
+                          {formatStatus(user.status)}
+                        </span>
                       </TableCell>
                       <TableCell className="text-[13px]">
                         {user.memberships.length === 0 ? (
@@ -462,14 +494,14 @@ export default function UserDirectoryPage() {
                       </TableCell>
                     </TableRow>
                     {expandedUser === user.id && user.memberships.length > 0 && (
-                      <TableRow style={{ backgroundColor: 'var(--platform-surface-2)' }}>
+                      <TableRow style={{ backgroundColor: 'rgba(255,255,255,0.01)' }}>
                         <TableCell colSpan={7} className="py-3">
                           <div className="pl-8 space-y-2">
                             <p 
                               className="text-[10px] font-medium uppercase tracking-[0.04em] mb-2"
                               style={{ color: 'var(--platform-text-muted)' }}
                             >
-                              Tenant Memberships
+                              Organization Memberships
                             </p>
                             {user.memberships.map((membership) => (
                               <div
@@ -480,41 +512,40 @@ export default function UserDirectoryPage() {
                                   border: '1px solid var(--platform-border)'
                                 }}
                               >
-                                <div className="flex items-center gap-4 text-[13px]">
+                                <div className="flex items-center gap-3 text-[13px]">
                                   <span 
                                     className="font-medium"
                                     style={{ color: 'var(--platform-text)' }}
                                   >
                                     {membership.tenant_name}
                                   </span>
-                                  <span style={{ color: 'var(--platform-text-secondary)' }}>
-                                    {membership.status}
+                                  {/* Status - READ-ONLY PILL */}
+                                  <span 
+                                    className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium"
+                                    style={{ 
+                                      backgroundColor: getStatusColor(membership.status).bg,
+                                      color: getStatusColor(membership.status).text,
+                                    }}
+                                  >
+                                    {formatStatus(membership.status)}
                                   </span>
-                                  <span style={{ color: 'var(--platform-text-muted)' }}>
+                                  {/* Role - READ-ONLY PILL */}
+                                  <span 
+                                    className="inline-flex items-center px-2 py-0.5 rounded text-[11px]"
+                                    style={{ 
+                                      backgroundColor: 'rgba(255,255,255,0.04)',
+                                      color: 'var(--platform-text-secondary)',
+                                    }}
+                                  >
                                     {formatRole(membership.role)}
                                   </span>
-                                  <span style={{ color: 'var(--platform-text-muted)' }}>
-                                    ({formatContexts(membership.allowed_contexts)})
+                                  <span 
+                                    className="text-[11px]"
+                                    style={{ color: 'var(--platform-text-muted)' }}
+                                  >
+                                    {formatContexts(membership.allowed_contexts)}
                                   </span>
                                 </div>
-                                <Select
-                                  value={membership.status}
-                                  onValueChange={(value) =>
-                                    updateMembershipStatus(membership.id, value as MembershipStatus)
-                                  }
-                                  disabled={updating === membership.id}
-                                >
-                                  <SelectTrigger className="w-28 h-7 text-[12px] bg-transparent border-white/10 text-white/90">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent className="bg-[#1A1A1B] border-white/10">
-                                    <SelectItem value="active" className="text-white/80 focus:bg-white/10 focus:text-white">Active</SelectItem>
-                                    <SelectItem value="pending" className="text-white/80 focus:bg-white/10 focus:text-white">Pending</SelectItem>
-                                    <SelectItem value="suspended" className="text-white/80 focus:bg-white/10 focus:text-white">Suspended</SelectItem>
-                                    <SelectItem value="revoked" className="text-white/80 focus:bg-white/10 focus:text-white">Revoked</SelectItem>
-                                    <SelectItem value="denied" className="text-white/80 focus:bg-white/10 focus:text-white">Denied</SelectItem>
-                                  </SelectContent>
-                                </Select>
                               </div>
                             ))}
                           </div>
