@@ -132,26 +132,38 @@ export function MemberDetailsSheet({
           >
             Platform Role
           </label>
-          <Select
-            value={user.platform_role}
-            onValueChange={(value) => onUpdatePlatformRole(user.user_id, user.id, value as PlatformRole)}
-            disabled={updating === user.id || isCurrentUser}
-          >
-            <SelectTrigger 
-              className="w-full h-11 text-[14px] bg-transparent border-white/10"
-              style={{ color: 'var(--platform-text)' }}
+          {isCurrentUser ? (
+            <div>
+              <div 
+                className="inline-flex items-center px-3 py-1.5 rounded-md text-[13px] font-medium"
+                style={{ 
+                  backgroundColor: 'rgba(255,255,255,0.06)',
+                  color: 'var(--platform-text)',
+                }}
+              >
+                {formatPlatformRole(user.platform_role)}
+              </div>
+              <p className="text-[12px] mt-2" style={{ color: 'var(--platform-text-muted)' }}>
+                You cannot change your own role.
+              </p>
+            </div>
+          ) : (
+            <Select
+              value={user.platform_role}
+              onValueChange={(value) => onUpdatePlatformRole(user.user_id, user.id, value as PlatformRole)}
+              disabled={updating === user.id}
             >
-              <SelectValue>{formatPlatformRole(user.platform_role)}</SelectValue>
-            </SelectTrigger>
-            <SelectContent className="bg-[#1A1A1B] border-white/10">
-              <SelectItem value="platform_admin" className="text-white/80 focus:bg-white/10 focus:text-white">Administrator</SelectItem>
-              <SelectItem value="platform_user" className="text-white/80 focus:bg-white/10 focus:text-white">User</SelectItem>
-            </SelectContent>
-          </Select>
-          {isCurrentUser && (
-            <p className="text-[12px] mt-1.5" style={{ color: 'var(--platform-text-muted)' }}>
-              Cannot modify own role
-            </p>
+              <SelectTrigger 
+                className="w-full h-11 text-[14px] bg-transparent border-white/10"
+                style={{ color: 'var(--platform-text)' }}
+              >
+                <SelectValue>{formatPlatformRole(user.platform_role)}</SelectValue>
+              </SelectTrigger>
+              <SelectContent className="bg-[#1A1A1B] border-white/10">
+                <SelectItem value="platform_admin" className="text-white/80 focus:bg-white/10 focus:text-white">Administrator</SelectItem>
+                <SelectItem value="platform_user" className="text-white/80 focus:bg-white/10 focus:text-white">User</SelectItem>
+              </SelectContent>
+            </Select>
           )}
         </div>
 
@@ -163,28 +175,40 @@ export function MemberDetailsSheet({
           >
             Account Status
           </label>
-          <Select
-            value={user.status}
-            onValueChange={(value) => onUpdateUserStatus(user.user_id, user.id, value as MembershipStatus)}
-            disabled={updating === user.id || isCurrentUser}
-          >
-            <SelectTrigger 
-              className="w-full h-11 text-[14px] bg-transparent border-white/10"
-              style={{ color: 'var(--platform-text)' }}
+          {isCurrentUser ? (
+            <div>
+              <div 
+                className="inline-flex items-center px-3 py-1.5 rounded-md text-[13px] font-medium"
+                style={{ 
+                  backgroundColor: 'rgba(255,255,255,0.06)',
+                  color: 'var(--platform-text)',
+                }}
+              >
+                {formatStatus(user.status)}
+              </div>
+              <p className="text-[12px] mt-2" style={{ color: 'var(--platform-text-muted)' }}>
+                You cannot change your own access.
+              </p>
+            </div>
+          ) : (
+            <Select
+              value={user.status}
+              onValueChange={(value) => onUpdateUserStatus(user.user_id, user.id, value as MembershipStatus)}
+              disabled={updating === user.id}
             >
-              <SelectValue>{formatStatus(user.status)}</SelectValue>
-            </SelectTrigger>
-            <SelectContent className="bg-[#1A1A1B] border-white/10">
-              <SelectItem value="active" className="text-white/80 focus:bg-white/10 focus:text-white">Active</SelectItem>
-              <SelectItem value="pending" className="text-white/80 focus:bg-white/10 focus:text-white">Pending</SelectItem>
-              <SelectItem value="suspended" className="text-white/80 focus:bg-white/10 focus:text-white">Suspended</SelectItem>
-              <SelectItem value="revoked" className="text-white/80 focus:bg-white/10 focus:text-white">Revoked</SelectItem>
-            </SelectContent>
-          </Select>
-          {isCurrentUser && (
-            <p className="text-[12px] mt-1.5" style={{ color: 'var(--platform-text-muted)' }}>
-              Cannot modify own status
-            </p>
+              <SelectTrigger 
+                className="w-full h-11 text-[14px] bg-transparent border-white/10"
+                style={{ color: 'var(--platform-text)' }}
+              >
+                <SelectValue>{formatStatus(user.status)}</SelectValue>
+              </SelectTrigger>
+              <SelectContent className="bg-[#1A1A1B] border-white/10">
+                <SelectItem value="active" className="text-white/80 focus:bg-white/10 focus:text-white">Active</SelectItem>
+                <SelectItem value="pending" className="text-white/80 focus:bg-white/10 focus:text-white">Pending</SelectItem>
+                <SelectItem value="suspended" className="text-white/80 focus:bg-white/10 focus:text-white">Suspended</SelectItem>
+                <SelectItem value="revoked" className="text-white/80 focus:bg-white/10 focus:text-white">Revoked</SelectItem>
+              </SelectContent>
+            </Select>
           )}
         </div>
 
