@@ -22,6 +22,13 @@ import { useCallback, useMemo } from "react";
 // Route ownership and parent declarations
 export type RouteScope = "system" | "organization" | "user" | "auth" | "public";
 
+/** Entry intent type - how the route should be accessed */
+export type EntryIntent = 
+  | "navigation"      // Standard navigation CTA (link, button)
+  | "deep-link"       // Direct URL access allowed
+  | "explicit-only"   // Requires explicit CTA with intent tracking
+  | "redirect";       // Only accessible via system redirect
+
 export interface RouteDefinition {
   scope: RouteScope;
   parentPath: string | null;
@@ -32,6 +39,10 @@ export interface RouteDefinition {
   requiredPermission?: string;
   /** Breadcrumb chain for UI rendering */
   breadcrumbs?: string[];
+  /** How this route should be accessed */
+  entryIntent?: EntryIntent;
+  /** Whether this is a governance/authority page requiring deliberate entry */
+  isGovernancePage?: boolean;
 }
 
 /**
