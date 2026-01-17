@@ -11,6 +11,7 @@ import {
   FolderOpen,
   FileCheck,
   Receipt,
+  CreditCard,
 } from "lucide-react";
 import type { NavItem } from "@/components/app/SideNav";
 
@@ -35,6 +36,7 @@ const licensingNavItems: NavItem[] = [
   { to: "/licensing", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/licensing/requests", label: "Requests", icon: FileText },
   { to: "/licensing/agreements", label: "Agreements", icon: Scale },
+  { to: "/licensing/payments", label: "Payments", icon: CreditCard },
 ];
 
 // Tribes Admin module navigation (renamed from "Client Portal")
@@ -43,6 +45,7 @@ const portalNavItems: NavItem[] = [
   { to: "/portal/agreements", label: "Agreements", icon: FileCheck },
   { to: "/portal/statements", label: "Statements", icon: Receipt },
   { to: "/portal/documents", label: "Documents", icon: FolderOpen },
+  { to: "/portal/payments", label: "Payments", icon: CreditCard },
 ];
 
 function getNavItemsForPath(pathname: string): NavItem[] {

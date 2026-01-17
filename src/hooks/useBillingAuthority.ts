@@ -110,7 +110,7 @@ export function useBillingAuthority(): BillingAuthorityResult {
   return useMemo(() => {
     // Determine current scope based on active tenant
     const currentScope: BillingScope | null = activeTenant ? "organization" : 
-      isPlatformAdmin ? "system" : null;
+      isPlatformAdmin || isExternalAuditor ? "system" : null;
 
     // Role-based permission resolution
     const isPlatformExec = isPlatformAdmin;
@@ -121,27 +121,29 @@ export function useBillingAuthority(): BillingAuthorityResult {
     // ─────────────────────────────────────────────────────────────────────────
     // SYSTEM CONSOLE PERMISSIONS (Platform Scope — Governance Only)
     // These actions GOVERN money but never MOVE money
+    // External auditors get READ-ONLY access to ledgers
     // ─────────────────────────────────────────────────────────────────────────
-    const canConfigurePricing = isPlatformExec;
-    const canConnectProvider = isPlatformExec;
-    const canViewRevenue = isPlatformExec;
-    const canViewAllInvoices = isPlatformExec; // Read-only, scoped visibility
-    const canIssueRefunds = isPlatformExec;
-    const canExportFinancial = isPlatformExec;
+    const canConfigurePricing = isPlatformExec && !isReadOnlyMode;
+    const canConnectProvider = isPlatformExec && !isReadOnlyMode;
+    const canViewRevenue = isPlatformExec || isExternalAuditor; // Auditors can view
+    const canViewAllInvoices = isPlatformExec || isExternalAuditor; // Auditors can view
+    const canIssueRefunds = isPlatformExec && !isReadOnlyMode; // Never for auditors
+    const canExportFinancial = isPlatformExec && !isReadOnlyMode; // Auditors cannot export
 
     // ─────────────────────────────────────────────────────────────────────────
     // ORGANIZATION PERMISSIONS (Org Scope — Operations)
     // These actions MOVE money within org boundary
+    // External auditors CANNOT access organization billing operations
     // ─────────────────────────────────────────────────────────────────────────
-    const canViewOrgInvoices = isOrgAdmin || isOrgMember;
-    const canPayInvoices = isOrgAdmin || isOrgMember;
-    const canManagePaymentMethods = isOrgAdmin; // Only admins can update payment methods
-    const canViewHistory = isOrgAdmin || isOrgMember;
-    const canDownloadReceipts = isOrgAdmin || isOrgMember;
+    const canViewOrgInvoices = (isOrgAdmin || isOrgMember) && !isExternalAuditor;
+    const canPayInvoices = (isOrgAdmin || isOrgMember) && !isExternalAuditor;
+    const canManagePaymentMethods = isOrgAdmin && !isExternalAuditor;
+    const canViewHistory = (isOrgAdmin || isOrgMember) && !isExternalAuditor;
+    const canDownloadReceipts = (isOrgAdmin || isOrgMember) && !isExternalAuditor;
 
     // Scope access
-    const canAccessSystemBilling = isPlatformExec;
-    const canAccessOrgBilling = isOrgAdmin || isOrgMember;
+    const canAccessSystemBilling = isPlatformExec || isExternalAuditor;
+    const canAccessOrgBilling = (isOrgAdmin || isOrgMember) && !isExternalAuditor;
 
     // Permission check function
     const hasPermission = (permission: BillingPermission): boolean => {

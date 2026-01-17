@@ -53,7 +53,13 @@ import { EMPTY_STATES, AUDIT_COPY, MOBILE_COPY } from "@/constants/institutional
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-type ExportType = 'licensing_activity' | 'approval_history' | 'agreement_registry';
+type ExportType = 
+  | 'licensing_activity' 
+  | 'approval_history' 
+  | 'agreement_registry'
+  | 'billing_payments'
+  | 'refund_history'
+  | 'access_audit';
 
 interface DisclosureExport {
   id: string;
@@ -79,12 +85,18 @@ const EXPORT_TYPE_LABELS: Record<ExportType, string> = {
   licensing_activity: 'Licensing Activity Pack',
   approval_history: 'Approval History Pack',
   agreement_registry: 'Agreement Registry Pack',
+  billing_payments: 'Billing & Payments Ledger',
+  refund_history: 'Refund History Pack',
+  access_audit: 'Access Audit Pack',
 };
 
 const EXPORT_TYPE_DESCRIPTIONS: Record<ExportType, string> = {
   licensing_activity: 'Licensing requests, approvals, and agreements within the specified date range.',
   approval_history: 'All approval and rejection events with actor attribution from immutable audit logs.',
   agreement_registry: 'Complete catalog of active, expired, and terminated agreements.',
+  billing_payments: 'Complete billing ledger including invoices, payments, and payment methods across all organizations.',
+  refund_history: 'Chronological record of all refunds with actor, amount, reason, and transaction reference.',
+  access_audit: 'Record access and download events including actor, timestamp, and record identifiers.',
 };
 
 export default function DisclosuresPage() {
