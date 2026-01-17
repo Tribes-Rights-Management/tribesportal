@@ -54,16 +54,36 @@ interface CategoryConfig {
   types: NotificationType[];
 }
 
+/**
+ * GOVERNANCE CATEGORY MAPPING
+ * 
+ * Only governed, actionable, or awareness-critical events belong here.
+ * 
+ * INCLUDED:
+ * - Approvals Required (authority changes, licensing approvals, refund approvals)
+ * - Licensing Activity (requests submitted, status changes)
+ * - Billing & Payments (failed payments, invoices, refunds)
+ * - Authority & Access (role changes, access granted/revoked)
+ * - System & Security (escalations, security events, platform incidents)
+ * 
+ * EXCLUDED (must never appear):
+ * - Marketing messages
+ * - Product announcements
+ * - Tips, hints, tours
+ * - "Nice to know" updates
+ * - Chat-style messages
+ * - Status confirmations requiring no action
+ */
 const CATEGORIES: Record<GovernanceCategory, CategoryConfig> = {
   approvals: {
     label: "Approvals Required",
     icon: Check,
-    types: ["approval_timeout"],
+    types: ["authority_change_proposal", "approval_timeout"],
   },
   licensing: {
     label: "Licensing Activity",
     icon: FileText,
-    types: ["licensing_request", "export_completed"],
+    types: ["licensing_request"],
   },
   billing: {
     label: "Billing & Payments",
@@ -73,14 +93,55 @@ const CATEGORIES: Record<GovernanceCategory, CategoryConfig> = {
   authority: {
     label: "Authority & Access",
     icon: Users,
-    types: ["authority_change_proposal", "membership_change"],
+    types: ["membership_change"],
   },
   security: {
     label: "System & Security",
     icon: Shield,
-    types: ["security_event"],
+    types: ["security_event", "export_completed"],
   },
 };
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INSTITUTIONAL EMPTY STATE
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Empty states communicate confidence, not absence.
+ * 
+ * PRINCIPLES:
+ * - Calm, neutral, declarative
+ * - No encouragement language
+ * - No "you're all caught up!" cheeriness
+ * - No gamified phrasing
+ * 
+ * Institutional systems never celebrate the absence of work.
+ * They simply state status.
+ */
+function InstitutionalEmptyState() {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 text-center">
+      <h3 
+        className="text-[14px] font-medium mb-2"
+        style={{ color: 'var(--tribes-text-secondary)' }}
+      >
+        No pending items
+      </h3>
+      <p 
+        className="text-[12px] max-w-[240px] leading-relaxed"
+        style={{ color: 'var(--tribes-text-muted)' }}
+      >
+        There are no approvals, escalations, or system notices requiring your attention.
+      </p>
+      <p 
+        className="text-[10px] mt-4"
+        style={{ color: 'var(--tribes-text-muted)', opacity: 0.7 }}
+      >
+        This view updates automatically as governed events occur.
+      </p>
+    </div>
+  );
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CATEGORY HELPERS
@@ -348,14 +409,7 @@ function NotificationPanelContent({
           </div>
         </ScrollArea>
       ) : (
-        <div className="flex-1 flex items-center justify-center px-4 py-8">
-          <p 
-            className="text-[13px] text-center"
-            style={{ color: 'var(--tribes-text-muted)' }}
-          >
-            No notifications
-          </p>
-        </div>
+        <InstitutionalEmptyState />
       )}
 
       {/* Footer */}
