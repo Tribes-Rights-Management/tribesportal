@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Monitor, Clock, KeyRound, ShieldCheck, Timer } from "lucide-react";
 import { useUserPreferences, INACTIVITY_TIMEOUT_OPTIONS } from "@/hooks/useUserPreferences";
-import { PreferenceSelectModal } from "@/components/settings/PreferenceSelectModal";
+import { EditSelectSheet } from "@/components/edit";
 import {
   SettingsRow,
   SettingsSectionCard,
@@ -27,7 +27,7 @@ export default function AccountSecurityPage() {
     getInactivityTimeoutLabel,
   } = useUserPreferences();
 
-  const [showTimeoutModal, setShowTimeoutModal] = useState(false);
+  const [showTimeoutSheet, setShowTimeoutSheet] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
   const handleSignOutAll = async () => {
@@ -91,7 +91,7 @@ export default function AccountSecurityPage() {
             label="Auto-logout after inactivity"
             value={getInactivityTimeoutLabel(preferences.inactivity_timeout_minutes)}
             variant="select"
-            onSelect={() => setShowTimeoutModal(true)}
+            onSelect={() => setShowTimeoutSheet(true)}
             locked={isTimeoutLocked}
             lockReason="Enforced by workspace policy"
             helperText={!isTimeoutLocked ? "For security, sessions expire after inactivity" : undefined}
@@ -151,12 +151,13 @@ export default function AccountSecurityPage() {
           Contact your administrator for policy changes.
         </SettingsFooterNotice>
 
-        {/* Inactivity Timeout Selection Modal */}
-        <PreferenceSelectModal
-          open={showTimeoutModal}
-          onOpenChange={setShowTimeoutModal}
+        {/* Inactivity Timeout Selection Sheet */}
+        <EditSelectSheet
+          open={showTimeoutSheet}
+          onOpenChange={setShowTimeoutSheet}
+          parentLabel="Security"
           title="Auto-logout timeout"
-          description="For security, your session will expire after this period of inactivity"
+          helperText="For security, your session will expire after this period of inactivity"
           options={INACTIVITY_TIMEOUT_OPTIONS}
           value={preferences.inactivity_timeout_minutes}
           onChange={handleTimeoutChange}

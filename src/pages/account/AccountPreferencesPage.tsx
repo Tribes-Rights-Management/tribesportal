@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Bell, Globe, Calendar, Clock } from "lucide-react";
 import { useUserPreferences, TIMEZONE_OPTIONS, DATE_FORMAT_OPTIONS, TIME_FORMAT_OPTIONS } from "@/hooks/useUserPreferences";
-import { PreferenceSelectModal } from "@/components/settings/PreferenceSelectModal";
+import { EditSelectSheet } from "@/components/edit";
 import {
   SettingsRow,
   SettingsSectionCard,
@@ -107,36 +107,39 @@ export default function AccountPreferencesPage() {
           Some preferences may be enforced by workspace policies.
         </SettingsFooterNotice>
 
-        {/* Timezone Selection Modal */}
-        <PreferenceSelectModal
+        {/* Timezone Selection Sheet */}
+        <EditSelectSheet
           open={activeModal === "timezone"}
           onOpenChange={(open) => !open && setActiveModal(null)}
-          title="Select time zone"
-          description="Choose your preferred time zone for date and time display"
+          parentLabel="Preferences"
+          title="Time zone"
+          helperText="Choose your preferred time zone for date and time display"
           options={TIMEZONE_OPTIONS}
           value={preferences.timezone}
           onChange={handleTimezoneChange}
           disabled={isLocked("timezone")}
         />
 
-        {/* Date Format Selection Modal */}
-        <PreferenceSelectModal
+        {/* Date Format Selection Sheet */}
+        <EditSelectSheet
           open={activeModal === "dateFormat"}
           onOpenChange={(open) => !open && setActiveModal(null)}
-          title="Select date format"
-          description="Choose how dates are displayed throughout the app"
+          parentLabel="Preferences"
+          title="Date format"
+          helperText="Choose how dates are displayed throughout the app"
           options={DATE_FORMAT_OPTIONS}
           value={preferences.date_format}
           onChange={handleDateFormatChange}
           disabled={isLocked("date_format")}
         />
 
-        {/* Time Format Selection Modal */}
-        <PreferenceSelectModal
+        {/* Time Format Selection Sheet */}
+        <EditSelectSheet
           open={activeModal === "timeFormat"}
           onOpenChange={(open) => !open && setActiveModal(null)}
-          title="Select time format"
-          description="Choose 12-hour or 24-hour time display"
+          parentLabel="Preferences"
+          title="Time format"
+          helperText="Choose 12-hour or 24-hour time display"
           options={TIME_FORMAT_OPTIONS}
           value={preferences.time_format}
           onChange={handleTimeFormatChange}
