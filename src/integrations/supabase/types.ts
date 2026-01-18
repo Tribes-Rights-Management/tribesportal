@@ -1478,8 +1478,16 @@ export type Database = {
           display_name: string | null
           id: string
           inactivity_timeout_minutes: number
+          notify_email_product_updates: boolean
+          notify_email_security_alerts: boolean
+          notify_email_team_changes: boolean
+          notify_email_workspace_invites: boolean
+          security_idle_timeout_enabled: boolean
+          security_reauth_for_sensitive: boolean
           time_format: string
           timezone: string
+          ui_compact_density: boolean
+          ui_reduced_motion: boolean
           updated_at: string
           user_id: string
         }
@@ -1489,8 +1497,16 @@ export type Database = {
           display_name?: string | null
           id?: string
           inactivity_timeout_minutes?: number
+          notify_email_product_updates?: boolean
+          notify_email_security_alerts?: boolean
+          notify_email_team_changes?: boolean
+          notify_email_workspace_invites?: boolean
+          security_idle_timeout_enabled?: boolean
+          security_reauth_for_sensitive?: boolean
           time_format?: string
           timezone?: string
+          ui_compact_density?: boolean
+          ui_reduced_motion?: boolean
           updated_at?: string
           user_id: string
         }
@@ -1500,8 +1516,16 @@ export type Database = {
           display_name?: string | null
           id?: string
           inactivity_timeout_minutes?: number
+          notify_email_product_updates?: boolean
+          notify_email_security_alerts?: boolean
+          notify_email_team_changes?: boolean
+          notify_email_workspace_invites?: boolean
+          security_idle_timeout_enabled?: boolean
+          security_reauth_for_sensitive?: boolean
           time_format?: string
           timezone?: string
+          ui_compact_density?: boolean
+          ui_reduced_motion?: boolean
           updated_at?: string
           user_id?: string
         }
