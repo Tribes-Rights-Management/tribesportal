@@ -6,15 +6,18 @@ import { CopyButton } from "@/components/ui/copy-button";
 
 /**
  * SETTINGS ROW — Universal Settings Row Component
- * 
+ *
  * Variants:
  * - readonly: label + single-line value + optional helper text
  * - editable: label + value + CTA like "Edit" / "Change"
  * - select: label + current selection + chevron (opens picker/modal)
  * - copyable: label + single-line value + copy icon
- * 
+ *
  * Identifiers (emails, IDs) never wrap - enforced via truncation.
  * Mobile: single-column stacked layout with full-width values.
+ *
+ * NOTE: Safe-area padding is handled by PageContainer in the parent layout.
+ * This component provides internal card padding only.
  */
 
 export type SettingsRowVariant = "readonly" | "editable" | "select" | "copyable";
@@ -83,9 +86,9 @@ export function SettingsRow({
   };
 
   return (
-    <div 
+    <div
       className={cn(
-        // Internal card padding only - safe-area handled by SettingsPageContainer
+        // Internal card padding only
         "px-4 py-4",
         "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
         "w-full max-w-full min-w-0 overflow-x-clip",
@@ -93,8 +96,8 @@ export function SettingsRow({
         isCopyRow && "cursor-pointer hover:bg-white/[0.02] transition-colors",
         className
       )}
-      style={{ 
-        borderBottom: '1px solid var(--platform-border)',
+      style={{
+        borderBottom: "1px solid var(--platform-border)",
       }}
       onClick={isInteractive ? handleRowActivate : undefined}
       role={isInteractive ? "button" : undefined}
@@ -110,16 +113,16 @@ export function SettingsRow({
       {/* Left side: Icon + Label */}
       <div className="flex items-center gap-3 shrink-0 min-w-0">
         {Icon && (
-          <div 
+          <div
             className="h-8 w-8 rounded flex items-center justify-center shrink-0"
-            style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+            style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
           >
-            <Icon className="h-4 w-4" style={{ color: 'var(--platform-text-secondary)' }} />
+            <Icon className="h-4 w-4" style={{ color: "var(--platform-text-secondary)" }} />
           </div>
         )}
-        <span 
+        <span
           className="text-[13px] font-medium truncate"
-          style={{ color: 'var(--platform-text)' }}
+          style={{ color: "var(--platform-text)" }}
         >
           {label}
         </span>
@@ -129,26 +132,26 @@ export function SettingsRow({
       <div className="flex items-center gap-2 min-w-0 sm:justify-end w-full sm:w-auto">
         {/* Value container */}
         <div className="min-w-0 flex-1 sm:flex-initial sm:text-right">
-          <span 
+          <span
             className="text-[13px] block truncate"
-            style={{ 
-              color: locked ? 'var(--platform-text-muted)' : 'var(--platform-text-secondary)',
-              overflowWrap: 'anywhere',
-              wordBreak: 'break-word',
+            style={{
+              color: locked ? "var(--platform-text-muted)" : "var(--platform-text-secondary)",
+              overflowWrap: "anywhere",
+              wordBreak: "break-word",
             }}
             title={hasValue ? value : undefined}
           >
             {displayValue}
           </span>
-          
+
           {/* Helper text */}
           {effectiveHelperText && (
-            <span 
+            <span
               className="text-[11px] block mt-0.5 line-clamp-2"
-              style={{ 
-                color: 'var(--platform-text-muted)',
-                overflowWrap: 'anywhere',
-                wordBreak: 'break-word',
+              style={{
+                color: "var(--platform-text-muted)",
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
               }}
             >
               {effectiveHelperText}
@@ -158,11 +161,7 @@ export function SettingsRow({
 
         {/* Copyable: Copy button (canonical) */}
         {variant === "copyable" && hasValue && (
-          <CopyButton
-            value={value!}
-            size="sm"
-            label={`Copy ${label}`}
-          />
+          <CopyButton value={value!} size="sm" label={`Copy ${label}`} />
         )}
 
         {/* Editable: CTA button */}
@@ -174,7 +173,7 @@ export function SettingsRow({
               onCta();
             }}
             className="shrink-0 text-[13px] font-medium px-3 py-2 rounded transition-colors hover:bg-white/[0.06] min-h-[44px]"
-            style={{ color: 'var(--platform-text)' }}
+            style={{ color: "var(--platform-text)" }}
           >
             {ctaLabel}
           </button>
@@ -182,10 +181,7 @@ export function SettingsRow({
 
         {/* Select: Chevron */}
         {variant === "select" && !locked && (
-          <ChevronRight 
-            className="h-4 w-4 shrink-0" 
-            style={{ color: 'var(--platform-text-muted)' }} 
-          />
+          <ChevronRight className="h-4 w-4 shrink-0" style={{ color: "var(--platform-text-muted)" }} />
         )}
       </div>
     </div>
@@ -194,6 +190,9 @@ export function SettingsRow({
 
 /**
  * Settings Section Card — Container for SettingsRow items
+ *
+ * NOTE: Safe-area padding is handled by PageContainer in the parent layout.
+ * This component provides internal card padding only.
  */
 interface SettingsSectionCardProps {
   /** Section title */
@@ -213,33 +212,30 @@ export function SettingsSectionCard({
   className,
 }: SettingsSectionCardProps) {
   return (
-    <div 
+    <div
       className={cn("rounded-lg overflow-hidden w-full max-w-full", className)}
-      style={{ 
-        backgroundColor: 'var(--platform-surface)',
-        border: '1px solid var(--platform-border)'
+      style={{
+        backgroundColor: "var(--platform-surface)",
+        border: "1px solid var(--platform-border)",
       }}
     >
-      {/* Header - internal card padding only, safe-area handled by container */}
-      <div 
+      {/* Header - internal card padding only */}
+      <div
         className="px-4 py-4"
-        style={{ 
-          borderBottom: '1px solid var(--platform-border)',
+        style={{
+          borderBottom: "1px solid var(--platform-border)",
         }}
       >
-        <h2 
-          className="text-[15px] font-medium"
-          style={{ color: 'var(--platform-text)' }}
-        >
+        <h2 className="text-[15px] font-medium" style={{ color: "var(--platform-text)" }}>
           {title}
         </h2>
         {description && (
-          <p 
+          <p
             className="text-[13px] mt-0.5 line-clamp-2"
-            style={{ 
-              color: 'var(--platform-text-secondary)',
-              overflowWrap: 'anywhere',
-              wordBreak: 'break-word',
+            style={{
+              color: "var(--platform-text-secondary)",
+              overflowWrap: "anywhere",
+              wordBreak: "break-word",
             }}
           >
             {description}
@@ -248,34 +244,38 @@ export function SettingsSectionCard({
       </div>
 
       {/* Content */}
-      <div className="w-full max-w-full min-w-0">
-        {children}
-      </div>
+      <div className="w-full max-w-full min-w-0">{children}</div>
     </div>
   );
 }
 
 /**
- * Settings Page Header — Consistent page header for settings pages
+ * @deprecated Use PageShell from @/components/ui/page-shell instead.
+ * This component is preserved for backward compatibility but should not be used.
+ * The H1 is now owned by AccountLayout (or other parent layouts) via PageShell.
  */
 interface SettingsPageHeaderProps {
   title: string;
   description?: string;
 }
 
+/** @deprecated */
 export function SettingsPageHeader({ title, description }: SettingsPageHeaderProps) {
+  console.warn(
+    "SettingsPageHeader is deprecated. Use PageShell from @/components/ui/page-shell instead."
+  );
   return (
     <div className="mb-6 md:mb-10">
-      <h1 
+      <h1
         className="text-[22px] md:text-[28px] font-semibold tracking-[-0.02em]"
-        style={{ color: 'var(--platform-text)' }}
+        style={{ color: "var(--platform-text)" }}
       >
         {title}
       </h1>
       {description && (
-        <p 
+        <p
           className="text-[14px] md:text-[15px] mt-0.5"
-          style={{ color: 'var(--platform-text-secondary)' }}
+          style={{ color: "var(--platform-text-secondary)" }}
         >
           {description}
         </p>
@@ -293,9 +293,9 @@ interface SettingsFooterNoticeProps {
 
 export function SettingsFooterNotice({ children }: SettingsFooterNoticeProps) {
   return (
-    <p 
+    <p
       className="mt-4 md:mt-6 text-[12px] md:text-[13px]"
-      style={{ color: 'var(--platform-text-muted)' }}
+      style={{ color: "var(--platform-text-muted)" }}
     >
       {children}
     </p>

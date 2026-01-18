@@ -1,138 +1,122 @@
+/**
+ * @deprecated — LEGACY SETTINGS LAYOUT PRIMITIVES
+ *
+ * These components are DEPRECATED and should NOT be used.
+ * The layout contract is now enforced by:
+ * - PageShell (src/components/ui/page-shell.tsx) — owns H1 + subtitle
+ * - PageContainer (src/components/ui/page-container.tsx) — owns padding + max-width
+ *
+ * For /account routes, AccountLayout is the single layout authority.
+ * Subpages render content sections only (no containers, no headers).
+ *
+ * If you see imports from this file, refactor them to use PageShell + PageContainer.
+ */
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * SETTINGS PAGE CONTAINER — Canonical Layout for Settings Pages
- * 
- * This component ensures ALL settings pages use identical padding, 
- * max-width, and overflow rules. No per-page custom padding allowed.
- * 
- * Features:
- * - Safe-area aware horizontal padding
- * - Consistent content column max-width (720px for premium tight feel)
- * - Overflow protection
- * - Vertical spacing tokens
+ * @deprecated Use PageContainer with variant="settings" instead.
  */
-
 interface SettingsPageContainerProps {
   children: React.ReactNode;
   className?: string;
 }
 
+/** @deprecated */
 export function SettingsPageContainer({
   children,
   className,
 }: SettingsPageContainerProps) {
+  console.warn(
+    "SettingsPageContainer is deprecated. Use PageContainer with variant='settings' instead."
+  );
   return (
     <div
       className={cn(
-        // Full width with overflow protection
         "w-full max-w-full min-w-0 overflow-x-clip",
-        // Vertical spacing - consistent across all settings pages
         "py-6 md:py-10",
         className
       )}
       style={{
-        backgroundColor: 'var(--platform-canvas)',
-        // Safe-area aware horizontal padding - single source of truth
-        paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
-        paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
+        backgroundColor: "var(--platform-canvas)",
+        paddingLeft: "max(16px, env(safe-area-inset-left, 16px))",
+        paddingRight: "max(16px, env(safe-area-inset-right, 16px))",
       }}
     >
-      {/* Content column - tight max-width for premium settings feel */}
-      <div className="max-w-[720px] w-full min-w-0">
-        {children}
-      </div>
+      <div className="max-w-[720px] w-full min-w-0">{children}</div>
     </div>
   );
 }
 
 /**
- * SETTINGS SECTION CARD V2 — Updated to NOT apply its own padding
- * 
- * The parent SettingsPageContainer handles safe-area padding.
- * Cards are full-width within the content column.
+ * @deprecated Use SettingsSectionCard from @/components/ui/settings-row instead.
  */
 interface SettingsSectionCardV2Props {
-  /** Section title */
   title: string;
-  /** Section description */
   description?: string;
-  /** Card content */
   children: React.ReactNode;
-  /** Additional className */
   className?: string;
 }
 
+/** @deprecated */
 export function SettingsSectionCardV2({
   title,
   description,
   children,
   className,
 }: SettingsSectionCardV2Props) {
+  console.warn(
+    "SettingsSectionCardV2 is deprecated. Use SettingsSectionCard from @/components/ui/settings-row instead."
+  );
   return (
     <div
       className={cn("rounded-lg overflow-hidden w-full", className)}
       style={{
-        backgroundColor: 'var(--platform-surface)',
-        border: '1px solid var(--platform-border)',
+        backgroundColor: "var(--platform-surface)",
+        border: "1px solid var(--platform-border)",
       }}
     >
-      {/* Header - uses internal card padding only */}
       <div
         className="px-4 py-4"
-        style={{ borderBottom: '1px solid var(--platform-border)' }}
+        style={{ borderBottom: "1px solid var(--platform-border)" }}
       >
-        <h2
-          className="text-[15px] font-medium"
-          style={{ color: 'var(--platform-text)' }}
-        >
+        <h2 className="text-[15px] font-medium" style={{ color: "var(--platform-text)" }}>
           {title}
         </h2>
         {description && (
           <p
             className="text-[13px] mt-0.5 line-clamp-2"
             style={{
-              color: 'var(--platform-text-secondary)',
-              overflowWrap: 'anywhere',
-              wordBreak: 'break-word',
+              color: "var(--platform-text-secondary)",
+              overflowWrap: "anywhere",
+              wordBreak: "break-word",
             }}
           >
             {description}
           </p>
         )}
       </div>
-
-      {/* Content */}
-      <div className="w-full min-w-0">
-        {children}
-      </div>
+      <div className="w-full min-w-0">{children}</div>
     </div>
   );
 }
 
 /**
- * SETTINGS ROW V2 — Updated to NOT apply safe-area padding (handled by container)
+ * @deprecated Use SettingsRow from @/components/ui/settings-row instead.
  */
 interface SettingsRowV2Props {
-  /** Row label */
   label: string;
-  /** Row value */
   value: React.ReactNode;
-  /** Optional left icon */
   icon?: React.ElementType;
-  /** Optional action element (button, link, etc.) */
   action?: React.ReactNode;
-  /** Helper text below value */
   helperText?: string;
-  /** Whether this is the last row (no border) */
   isLast?: boolean;
-  /** Custom className */
   className?: string;
-  /** Click handler for the row */
   onClick?: () => void;
 }
 
+/** @deprecated */
 export function SettingsRowV2({
   label,
   value,
@@ -143,6 +127,9 @@ export function SettingsRowV2({
   className,
   onClick,
 }: SettingsRowV2Props) {
+  console.warn(
+    "SettingsRowV2 is deprecated. Use SettingsRow from @/components/ui/settings-row instead."
+  );
   const isClickable = !!onClick;
 
   return (
@@ -155,7 +142,7 @@ export function SettingsRowV2({
         className
       )}
       style={{
-        borderBottom: isLast ? 'none' : '1px solid var(--platform-border)',
+        borderBottom: isLast ? "none" : "1px solid var(--platform-border)",
       }}
       onClick={onClick}
       role={isClickable ? "button" : undefined}
@@ -167,40 +154,31 @@ export function SettingsRowV2({
         }
       }}
     >
-      {/* Left side: Icon + Label */}
       <div className="flex items-center gap-3 shrink-0 min-w-0">
         {Icon && (
           <div
             className="h-8 w-8 rounded flex items-center justify-center shrink-0"
-            style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+            style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
           >
-            <Icon className="h-4 w-4" style={{ color: 'var(--platform-text-secondary)' }} />
+            <Icon className="h-4 w-4" style={{ color: "var(--platform-text-secondary)" }} />
           </div>
         )}
-        <span
-          className="text-[13px] font-medium"
-          style={{ color: 'var(--platform-text)' }}
-        >
+        <span className="text-[13px] font-medium" style={{ color: "var(--platform-text)" }}>
           {label}
         </span>
       </div>
-
-      {/* Right side: Value + Action */}
       <div className="flex items-center gap-2 min-w-0 sm:justify-end w-full sm:w-auto">
         <div className="min-w-0 flex-1 sm:flex-initial sm:text-right">
-          <span
-            className="text-[13px] block truncate"
-            style={{ color: 'var(--platform-text-secondary)' }}
-          >
+          <span className="text-[13px] block truncate" style={{ color: "var(--platform-text-secondary)" }}>
             {value}
           </span>
           {helperText && (
             <span
               className="text-[11px] block mt-0.5 line-clamp-2"
               style={{
-                color: 'var(--platform-text-muted)',
-                overflowWrap: 'anywhere',
-                wordBreak: 'break-word',
+                color: "var(--platform-text-muted)",
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
               }}
             >
               {helperText}
