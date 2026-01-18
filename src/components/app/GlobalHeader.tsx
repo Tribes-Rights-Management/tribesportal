@@ -469,7 +469,7 @@ export function GlobalHeader() {
   if (isMobile) {
     return (
       <header 
-        className="shrink-0 sticky top-0 z-40"
+        className="shrink-0 sticky top-0 z-40 w-full max-w-full overflow-x-clip"
         style={{ 
           backgroundColor: 'var(--tribes-header-bg)',
           borderBottom: '1px solid var(--tribes-border)',
@@ -477,24 +477,26 @@ export function GlobalHeader() {
       >
         {/* Mobile Grid Layout: 2 rows */}
         <div 
-          className="grid gap-0"
+          className="grid gap-0 w-full max-w-full"
           style={{
             gridTemplateRows: 'auto auto',
           }}
         >
           {/* Row 1: Wordmark + Avatar */}
           <div 
-            className="flex items-center justify-between px-4"
+            className="flex items-center justify-between w-full"
             style={{ 
               minHeight: '48px',
               paddingTop: '12px',
               paddingBottom: '8px',
+              paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
+              paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
             }}
           >
             {/* Left: Wordmark */}
             <button
               onClick={handleLogoClick}
-              className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
+              className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase shrink-0"
               style={{
                 fontSize: '11px',
                 letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
@@ -505,7 +507,7 @@ export function GlobalHeader() {
             </button>
 
             {/* Right: Notifications + Avatar */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <NotificationCenter />
               <AccountMenu />
             </div>
@@ -513,18 +515,20 @@ export function GlobalHeader() {
 
           {/* Row 2: Context label + Mobile controls */}
           <div 
-            className="flex items-center justify-between px-4"
+            className="flex items-center justify-between w-full"
             style={{ 
               minHeight: '44px',
               paddingTop: '4px',
               paddingBottom: '12px',
+              paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
+              paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
             }}
           >
             {/* Left: Context label */}
             <div className="flex items-center gap-2 min-w-0 flex-1 mr-3">
               {hasActiveWorkspace && contextLabel && (
                 <span 
-                  className="text-[11px] font-medium uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis"
+                  className="text-[11px] font-medium uppercase tracking-wider truncate"
                   style={{ color: 'var(--tribes-text-muted)' }}
                 >
                   {contextLabel}
@@ -532,7 +536,7 @@ export function GlobalHeader() {
               )}
               {!hasActiveWorkspace && (
                 <span 
-                  className="text-[11px] font-medium uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis"
+                  className="text-[11px] font-medium uppercase tracking-wider truncate"
                   style={{ color: 'var(--tribes-text-muted)' }}
                 >
                   Select Workspace
@@ -551,10 +555,12 @@ export function GlobalHeader() {
   // Desktop: Single-row layout
   return (
     <header 
-      className="h-14 border-b px-6 flex items-center shrink-0 sticky top-0 z-40"
+      className="h-14 border-b flex items-center shrink-0 sticky top-0 z-40 w-full max-w-full overflow-x-clip"
       style={{ 
         backgroundColor: 'var(--tribes-header-bg)',
         borderColor: 'var(--tribes-border)',
+        paddingLeft: 'max(24px, env(safe-area-inset-left, 24px))',
+        paddingRight: 'max(24px, env(safe-area-inset-right, 24px))',
       }}
     >
       {/* Left: Wordmark + Context indicator */}

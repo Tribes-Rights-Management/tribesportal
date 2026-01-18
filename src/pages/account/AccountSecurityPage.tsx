@@ -49,10 +49,14 @@ export default function AccountSecurityPage() {
 
   return (
     <div 
-      className="py-6 md:py-10 px-4 md:px-6"
-      style={{ backgroundColor: 'var(--platform-canvas)' }}
+      className="py-6 md:py-10 w-full max-w-full min-w-0 overflow-x-clip"
+      style={{ 
+        backgroundColor: 'var(--platform-canvas)',
+        paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
+        paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
+      }}
     >
-      <div className="max-w-[800px]">
+      <div className="max-w-[800px] w-full min-w-0">
         <SettingsPageHeader 
           title="Security"
           description="Authentication and session management"

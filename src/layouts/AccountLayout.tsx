@@ -82,11 +82,19 @@ function DesktopNav() {
 function MobileSettingsIndex() {
   return (
     <div 
-      className="flex flex-col min-h-screen"
+      className="flex flex-col min-h-screen w-full max-w-full overflow-x-clip"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <GlobalHeader />
-      <main className="flex-1 px-4 py-6">
+      <main 
+        className="flex-1 w-full max-w-full overflow-x-clip"
+        style={{
+          paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
+          paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
+          paddingTop: '24px',
+          paddingBottom: '24px',
+        }}
+      >
         <h1 
           className="text-[24px] font-semibold tracking-[-0.02em] mb-6"
           style={{ color: 'var(--platform-text)' }}
@@ -94,7 +102,7 @@ function MobileSettingsIndex() {
           Account Settings
         </h1>
         <div 
-          className="rounded-lg overflow-hidden"
+          className="rounded-lg overflow-hidden w-full max-w-full"
           style={{ 
             backgroundColor: 'var(--platform-surface)',
             border: '1px solid var(--platform-border)'
@@ -104,7 +112,7 @@ function MobileSettingsIndex() {
             <NavLink
               key={item.to}
               to={item.to}
-              className="flex items-center gap-3 px-4 py-4 transition-colors active:bg-white/[0.03]"
+              className="flex items-center gap-3 px-4 py-4 transition-colors active:bg-white/[0.03] w-full min-w-0"
               style={{ 
                 borderBottom: index < accountNavItems.length - 1 
                   ? '1px solid var(--platform-border)' 
@@ -122,14 +130,18 @@ function MobileSettingsIndex() {
               </div>
               <div className="flex-1 min-w-0">
                 <p 
-                  className="text-[15px] font-medium"
+                  className="text-[15px] font-medium truncate"
                   style={{ color: 'var(--platform-text)' }}
                 >
                   {item.label}
                 </p>
                 <p 
-                  className="text-[13px] mt-0.5 line-clamp-1"
-                  style={{ color: 'var(--platform-text-secondary)' }}
+                  className="text-[13px] mt-0.5 line-clamp-2"
+                  style={{ 
+                    color: 'var(--platform-text-secondary)',
+                    overflowWrap: 'anywhere',
+                    wordBreak: 'break-word',
+                  }}
                 >
                   {item.description}
                 </p>
@@ -155,15 +167,17 @@ function MobileDetailWrapper({ children }: { children: React.ReactNode }) {
   
   return (
     <div 
-      className="flex flex-col min-h-screen"
+      className="flex flex-col min-h-screen w-full max-w-full overflow-x-clip"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <GlobalHeader />
       <div 
-        className="px-4 py-3"
+        className="py-3 w-full max-w-full"
         style={{ 
           backgroundColor: 'var(--platform-surface)',
-          borderBottom: '1px solid var(--platform-border)'
+          borderBottom: '1px solid var(--platform-border)',
+          paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
+          paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
         }}
       >
         <Link 
@@ -175,7 +189,10 @@ function MobileDetailWrapper({ children }: { children: React.ReactNode }) {
           <span>Settings</span>
         </Link>
       </div>
-      <main ref={contentRef} className="flex-1 overflow-y-auto">
+      <main 
+        ref={contentRef} 
+        className="flex-1 overflow-y-auto w-full max-w-full overflow-x-clip"
+      >
         {children}
       </main>
     </div>
@@ -237,17 +254,23 @@ export default function AccountLayout() {
 
   return (
     <div 
-      className="min-h-screen flex flex-col"
+      className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <GlobalHeader />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden w-full max-w-full">
         <DesktopNav />
         <main 
           ref={contentRef}
-          className="flex-1 overflow-y-auto"
+          className="flex-1 overflow-y-auto overflow-x-clip min-w-0"
         >
-          <div className="max-w-[960px]">
+          <div 
+            className="max-w-[960px] w-full min-w-0"
+            style={{
+              paddingLeft: 'max(24px, env(safe-area-inset-left, 24px))',
+              paddingRight: 'max(24px, env(safe-area-inset-right, 24px))',
+            }}
+          >
             <Outlet />
           </div>
         </main>

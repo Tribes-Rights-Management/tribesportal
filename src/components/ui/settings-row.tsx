@@ -78,12 +78,17 @@ export function SettingsRow({
   return (
     <div 
       className={cn(
-        "px-4 py-4 sm:px-6",
+        "py-4",
         "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
+        "w-full max-w-full min-w-0 overflow-x-clip",
         variant === "select" && !locked && "cursor-pointer hover:bg-white/[0.02] transition-colors",
         className
       )}
-      style={{ borderBottom: '1px solid var(--platform-border)' }}
+      style={{ 
+        borderBottom: '1px solid var(--platform-border)',
+        paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
+        paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
+      }}
       onClick={variant === "select" && !locked ? onSelect : undefined}
       role={variant === "select" && !locked ? "button" : undefined}
       tabIndex={variant === "select" && !locked ? 0 : undefined}
@@ -95,7 +100,7 @@ export function SettingsRow({
       }}
     >
       {/* Left side: Icon + Label */}
-      <div className="flex items-center gap-3 shrink-0">
+      <div className="flex items-center gap-3 shrink-0 min-w-0">
         {Icon && (
           <div 
             className="h-8 w-8 rounded flex items-center justify-center shrink-0"
@@ -105,7 +110,7 @@ export function SettingsRow({
           </div>
         )}
         <span 
-          className="text-[13px] font-medium"
+          className="text-[13px] font-medium truncate"
           style={{ color: 'var(--platform-text)' }}
         >
           {label}
@@ -113,14 +118,15 @@ export function SettingsRow({
       </div>
 
       {/* Right side: Value + Actions */}
-      <div className="flex items-center gap-2 min-w-0 sm:justify-end">
+      <div className="flex items-center gap-2 min-w-0 sm:justify-end w-full sm:w-auto">
         {/* Value container */}
         <div className="min-w-0 flex-1 sm:flex-initial sm:text-right">
           <span 
-            className="text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis"
+            className="text-[13px] block truncate"
             style={{ 
               color: locked ? 'var(--platform-text-muted)' : 'var(--platform-text-secondary)',
-              maxWidth: '100%',
+              overflowWrap: 'anywhere',
+              wordBreak: 'break-word',
             }}
             title={hasValue ? value : undefined}
           >
@@ -131,7 +137,11 @@ export function SettingsRow({
           {effectiveHelperText && (
             <span 
               className="text-[11px] block mt-0.5 line-clamp-2"
-              style={{ color: 'var(--platform-text-muted)' }}
+              style={{ 
+                color: 'var(--platform-text-muted)',
+                overflowWrap: 'anywhere',
+                wordBreak: 'break-word',
+              }}
             >
               {effectiveHelperText}
             </span>
@@ -207,7 +217,7 @@ export function SettingsSectionCard({
 }: SettingsSectionCardProps) {
   return (
     <div 
-      className={cn("rounded-lg overflow-hidden", className)}
+      className={cn("rounded-lg overflow-hidden w-full max-w-full", className)}
       style={{ 
         backgroundColor: 'var(--platform-surface)',
         border: '1px solid var(--platform-border)'
@@ -215,8 +225,12 @@ export function SettingsSectionCard({
     >
       {/* Header */}
       <div 
-        className="px-4 py-4 sm:px-6"
-        style={{ borderBottom: '1px solid var(--platform-border)' }}
+        className="py-4"
+        style={{ 
+          borderBottom: '1px solid var(--platform-border)',
+          paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
+          paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
+        }}
       >
         <h2 
           className="text-[15px] font-medium"
@@ -227,7 +241,11 @@ export function SettingsSectionCard({
         {description && (
           <p 
             className="text-[13px] mt-0.5 line-clamp-2"
-            style={{ color: 'var(--platform-text-secondary)' }}
+            style={{ 
+              color: 'var(--platform-text-secondary)',
+              overflowWrap: 'anywhere',
+              wordBreak: 'break-word',
+            }}
           >
             {description}
           </p>
@@ -235,7 +253,7 @@ export function SettingsSectionCard({
       </div>
 
       {/* Content */}
-      <div>
+      <div className="w-full max-w-full min-w-0">
         {children}
       </div>
     </div>
