@@ -86,9 +86,10 @@ export function PanelContent({ children, className }: PanelContentProps) {
 }
 
 /**
- * INSTITUTIONAL DATA ROW — DARK CANVAS
+ * INSTITUTIONAL DATA ROW — DARK CANVAS (MOBILE-FIRST)
  * 
  * For displaying key-value pairs in record views.
+ * Stacked on mobile, side-by-side on desktop.
  * Flat, dense, audit-ready presentation.
  */
 interface DataRowProps {
@@ -99,9 +100,17 @@ interface DataRowProps {
 
 export function DataRow({ label, value, className }: DataRowProps) {
   return (
-    <div className={cn("flex items-start gap-4 py-2", className)}>
+    <div 
+      className={cn(
+        // Mobile: stacked layout
+        "flex flex-col gap-1 py-2.5 px-0",
+        // Desktop (sm+): side-by-side
+        "sm:flex-row sm:items-start sm:gap-4",
+        className
+      )}
+    >
       <dt 
-        className="w-32 shrink-0 text-[13px]"
+        className="text-[13px] shrink-0 sm:w-32 sm:text-[12px]"
         style={{ color: 'var(--platform-text-secondary)' }}
       >
         {label}

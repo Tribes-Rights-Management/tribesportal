@@ -2,9 +2,9 @@ import { useState } from "react";
 import { ChevronRight, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { AppSheet, AppSheetBody } from "@/components/ui/app-sheet";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AuthorityRecordSheet } from "./AuthorityRecordSheet";
+import { DetailRow, DetailRowGroup } from "@/components/ui/detail-row";
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];
@@ -92,10 +92,6 @@ export function MemberDetailsSheet({
     }
   };
 
-  const formatContexts = (contexts: string[]): string => {
-    return contexts.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(", ") || "None";
-  };
-
   const formatStatus = (status: MembershipStatus): string => {
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
@@ -108,19 +104,16 @@ export function MemberDetailsSheet({
     }
   };
 
-  const getStatusColor = (status: MembershipStatus) => {
+  const getStatusColorKey = (status: MembershipStatus): "active" | "pending" | "suspended" | "revoked" | "denied" | "default" => {
     switch (status) {
       case "active":
-        return { bg: "rgba(34, 197, 94, 0.15)", text: "#4ade80" };
       case "pending":
-        return { bg: "rgba(234, 179, 8, 0.15)", text: "#facc15" };
       case "suspended":
-        return { bg: "rgba(249, 115, 22, 0.15)", text: "#fb923c" };
       case "revoked":
       case "denied":
-        return { bg: "rgba(239, 68, 68, 0.15)", text: "#f87171" };
+        return status;
       default:
-        return { bg: "rgba(255,255,255,0.06)", text: "var(--platform-text)" };
+        return "default";
     }
   };
 
@@ -145,70 +138,37 @@ export function MemberDetailsSheet({
               Identity
             </h2>
             <div 
-              className="rounded-lg p-5 space-y-4"
+              className="rounded-lg overflow-hidden"
               style={{ 
                 backgroundColor: 'rgba(255,255,255,0.02)',
                 border: '1px solid var(--platform-border)',
               }}
             >
-              {/* Email */}
-              <div className="flex items-start justify-between gap-4">
-                <span 
-                  className="text-[12px] shrink-0"
-                  style={{ color: 'var(--platform-text-muted)' }}
-                >
-                  Email
-                </span>
-                <span 
-                  className="text-[14px] text-right break-all font-mono"
-                  style={{ color: 'var(--platform-text)' }}
-                >
-                  {user.email}
-                  {isCurrentUser && (
+              <DetailRowGroup>
+                <DetailRow 
+                  label="Email"
+                  value={user.email}
+                  copyable
+                  append={isCurrentUser && (
                     <span 
-                      className="ml-2 text-[10px] uppercase tracking-wide font-sans"
+                      className="ml-2 text-[10px] uppercase tracking-wide"
                       style={{ color: 'var(--platform-text-muted)' }}
                     >
                       (you)
                     </span>
                   )}
-                </span>
-              </div>
-
-              {/* Account Created */}
-              <div className="flex items-center justify-between">
-                <span 
-                  className="text-[12px]"
-                  style={{ color: 'var(--platform-text-muted)' }}
-                >
-                  Account Created
-                </span>
-                <span 
-                  className="text-[13px]"
-                  style={{ color: 'var(--platform-text-secondary)' }}
-                >
-                  {formatDate(user.created_at)}
-                </span>
-              </div>
-
-              {/* Account Status - Always as pill */}
-              <div className="flex items-center justify-between">
-                <span 
-                  className="text-[12px]"
-                  style={{ color: 'var(--platform-text-muted)' }}
-                >
-                  Account Status
-                </span>
-                <div 
-                  className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
-                  style={{ 
-                    backgroundColor: getStatusColor(user.status).bg,
-                    color: getStatusColor(user.status).text,
-                  }}
-                >
-                  {formatStatus(user.status)}
-                </div>
-              </div>
+                />
+                <DetailRow 
+                  label="Account Created"
+                  value={formatDate(user.created_at)}
+                />
+                <DetailRow 
+                  label="Account Status"
+                  value={formatStatus(user.status)}
+                  variant="status"
+                  statusColor={getStatusColorKey(user.status)}
+                />
+              </DetailRowGroup>
             </div>
           </section>
 
@@ -223,56 +183,40 @@ export function MemberDetailsSheet({
               Platform Authority
             </h2>
             <div 
-              className="rounded-lg p-5 space-y-4"
+              className="rounded-lg overflow-hidden"
               style={{ 
                 backgroundColor: 'rgba(255,255,255,0.02)',
                 border: '1px solid var(--platform-border)',
               }}
             >
-              {/* Platform Role - Always read-only display */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span 
-                    className="text-[12px]"
-                    style={{ color: 'var(--platform-text-muted)' }}
-                  >
-                    Platform Role
-                  </span>
-                  <div 
-                    className="inline-flex items-center px-3 py-1.5 rounded-md text-[13px] font-medium"
-                    style={{ 
-                      backgroundColor: 'rgba(255,255,255,0.06)',
-                      color: 'var(--platform-text)',
-                    }}
-                  >
-                    {formatPlatformRole(user.platform_role)}
-                  </div>
-                </div>
-                <p 
-                  className="text-[12px]"
-                  style={{ color: 'var(--platform-text-muted)' }}
-                >
-                  {isCurrentUser 
+              <DetailRowGroup>
+                <DetailRow 
+                  label="Platform Role"
+                  value={formatPlatformRole(user.platform_role)}
+                  variant="role"
+                  helpText={isCurrentUser 
                     ? "You cannot modify your own access."
                     : "Role determines system-wide authority level."}
-                </p>
-              </div>
+                />
+              </DetailRowGroup>
 
               {/* View Authority Record Action */}
-              <button
-                onClick={() => setAuthorityRecordOpen(true)}
-                className="w-full h-11 flex items-center justify-between px-4 rounded-lg transition-colors"
-                style={{ 
-                  backgroundColor: 'rgba(255,255,255,0.03)',
-                  border: '1px solid var(--platform-border)',
-                  color: 'var(--platform-text)',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'}
-              >
-                <span className="text-[14px]">View Authority Record</span>
-                <ChevronRight className="h-4 w-4" style={{ color: 'var(--platform-text-muted)' }} />
-              </button>
+              <div className="px-4 py-3 sm:px-6">
+                <button
+                  onClick={() => setAuthorityRecordOpen(true)}
+                  className="w-full h-11 flex items-center justify-between px-4 rounded-lg transition-colors"
+                  style={{ 
+                    backgroundColor: 'rgba(255,255,255,0.03)',
+                    border: '1px solid var(--platform-border)',
+                    color: 'var(--platform-text)',
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'}
+                >
+                  <span className="text-[14px]">View Authority Record</span>
+                  <ChevronRight className="h-4 w-4" style={{ color: 'var(--platform-text-muted)' }} />
+                </button>
+              </div>
             </div>
           </section>
 
@@ -304,93 +248,47 @@ export function MemberDetailsSheet({
                 {user.memberships.map((membership) => (
                   <div
                     key={membership.id}
-                    className="rounded-lg p-5"
+                    className="rounded-lg overflow-hidden"
                     style={{ 
                       backgroundColor: 'rgba(255,255,255,0.02)',
                       border: '1px solid var(--platform-border)',
                     }}
                   >
-                    {/* Organization Name */}
+                    {/* Organization Name Header */}
                     <div 
-                      className="text-[15px] font-medium mb-4"
-                      style={{ color: 'var(--platform-text)' }}
+                      className="px-4 py-3 sm:px-6"
+                      style={{ borderBottom: '1px solid var(--platform-border)' }}
                     >
-                      {membership.tenant_name}
+                      <span 
+                        className="text-[15px] font-medium"
+                        style={{ color: 'var(--platform-text)' }}
+                      >
+                        {membership.tenant_name}
+                      </span>
                     </div>
                     
                     {/* Stacked Details */}
-                    <div className="space-y-3">
-                      {/* Organization Role - Read-only */}
-                      <div className="flex items-center justify-between">
-                        <span 
-                          className="text-[12px]"
-                          style={{ color: 'var(--platform-text-muted)' }}
-                        >
-                          Organization Role
-                        </span>
-                        <div 
-                          className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
-                          style={{ 
-                            backgroundColor: 'rgba(255,255,255,0.06)',
-                            color: 'var(--platform-text)',
-                          }}
-                        >
-                          {formatRole(membership.role)}
-                        </div>
-                      </div>
-                      
-                      {/* Context Access - Read-only */}
-                      <div className="flex items-start justify-between gap-4">
-                        <span 
-                          className="text-[12px] shrink-0"
-                          style={{ color: 'var(--platform-text-muted)' }}
-                        >
-                          Context Access
-                        </span>
-                        <div className="flex flex-wrap gap-1.5 justify-end">
-                          {membership.allowed_contexts.length === 0 ? (
-                            <span 
-                              className="text-[12px]"
-                              style={{ color: 'var(--platform-text-muted)' }}
-                            >
-                              None
-                            </span>
-                          ) : (
-                            membership.allowed_contexts.map((ctx) => (
-                              <span
-                                key={ctx}
-                                className="inline-flex items-center px-2 py-0.5 rounded text-[11px]"
-                                style={{ 
-                                  backgroundColor: 'rgba(255,255,255,0.04)',
-                                  color: 'var(--platform-text-secondary)',
-                                }}
-                              >
-                                {ctx.charAt(0).toUpperCase() + ctx.slice(1)}
-                              </span>
-                            ))
-                          )}
-                        </div>
-                      </div>
-                      
-                      {/* Membership Status - Read-only pill */}
-                      <div className="flex items-center justify-between">
-                        <span 
-                          className="text-[12px]"
-                          style={{ color: 'var(--platform-text-muted)' }}
-                        >
-                          Membership Status
-                        </span>
-                        <div 
-                          className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
-                          style={{ 
-                            backgroundColor: getStatusColor(membership.status).bg,
-                            color: getStatusColor(membership.status).text,
-                          }}
-                        >
-                          {formatStatus(membership.status)}
-                        </div>
-                      </div>
-                    </div>
+                    <DetailRowGroup>
+                      <DetailRow 
+                        label="Organization Role"
+                        value={formatRole(membership.role)}
+                        variant="role"
+                      />
+                      <DetailRow 
+                        label="Context Access"
+                        value={membership.allowed_contexts.length === 0 
+                          ? "None"
+                          : membership.allowed_contexts.map(ctx => 
+                              ctx.charAt(0).toUpperCase() + ctx.slice(1)
+                            ).join(", ")}
+                      />
+                      <DetailRow 
+                        label="Membership Status"
+                        value={formatStatus(membership.status)}
+                        variant="status"
+                        statusColor={getStatusColorKey(membership.status)}
+                      />
+                    </DetailRowGroup>
                   </div>
                 ))}
               </div>
@@ -418,42 +316,48 @@ export function MemberDetailsSheet({
             </CollapsibleTrigger>
             <CollapsibleContent>
               <div 
-                className="rounded-lg p-5 space-y-3"
+                className="rounded-lg overflow-hidden"
                 style={{ 
                   backgroundColor: 'rgba(255,255,255,0.01)',
                   border: '1px solid var(--platform-border)',
                 }}
               >
-                <div className="flex items-center justify-between">
-                  <span 
-                    className="text-[11px]"
-                    style={{ color: 'var(--platform-text-muted)' }}
-                  >
-                    Record Created
-                  </span>
-                  <span 
-                    className="text-[12px] font-mono"
-                    style={{ color: 'var(--platform-text-secondary)' }}
-                  >
-                    {formatDate(user.created_at)}
-                  </span>
-                </div>
+                <DetailRowGroup>
+                  <DetailRow 
+                    label="Record Created"
+                    value={formatDate(user.created_at)}
+                  />
+                </DetailRowGroup>
                 <div 
-                  className="text-[11px] pt-2"
+                  className="px-4 py-3 sm:px-6 text-[11px]"
                   style={{ 
                     color: 'var(--platform-text-muted)',
                     borderTop: '1px solid var(--platform-border)',
                   }}
                 >
-                  Authority changes are logged and timestamped.
+                  Authority changes are logged and timestamped. Changes require appropriate permissions.
                 </div>
               </div>
             </CollapsibleContent>
           </Collapsible>
+
+          {/* Self-view notice */}
+          {isCurrentUser && (
+            <div 
+              className="p-4 rounded-lg text-[12px]"
+              style={{ 
+                backgroundColor: 'rgba(255,255,255,0.02)',
+                border: '1px solid var(--platform-border)',
+                color: 'var(--platform-text-muted)',
+              }}
+            >
+              You are viewing your own record. Some modifications require another administrator.
+            </div>
+          )}
         </AppSheetBody>
       </AppSheet>
 
-      {/* Child Sheet: Authority Record */}
+      {/* Authority Record Child Sheet */}
       <AuthorityRecordSheet
         open={authorityRecordOpen}
         onOpenChange={setAuthorityRecordOpen}
