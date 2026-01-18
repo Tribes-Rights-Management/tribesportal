@@ -2,22 +2,14 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Play, Check, X, AlertTriangle, Shield, Database, Lock, Globe, FileCheck } from "lucide-react";
-import { Link } from "react-router-dom";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageShell, ContentPanel } from "@/components/ui/page-shell";
+import { Panel, PanelHeader, PanelTitle, PanelContent } from "@/components/ui/panel";
+import { Play, Check, X, AlertTriangle, Shield, Database, Lock, Globe, FileCheck } from "lucide-react";
 
 // Code-defined RLS coverage expectations for existing tables
 const RLS_COVERAGE = [
-  // Core tables
   { table: "tenants", template: "A", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: false }, notes: "Platform admin + member read" },
   { table: "tenant_memberships", template: "A", requiresTenantId: true, expectedPolicies: { select: true, insert: true, update: true, delete: true }, notes: "User own + admin" },
   { table: "user_profiles", template: "-", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: false }, notes: "User own + admin" },
@@ -35,11 +27,11 @@ type CheckResult = {
 
 function getTemplateBadge(template: string) {
   const colors: Record<string, string> = {
-    "A": "bg-red-100 text-red-800 border-red-200",
-    "L": "bg-blue-100 text-blue-800 border-blue-200",
-    "P": "bg-purple-100 text-purple-800 border-purple-200",
-    "S": "bg-green-100 text-green-800 border-green-200",
-    "-": "bg-gray-100 text-gray-800 border-gray-200",
+    "A": "bg-red-500/20 text-red-400 border-red-500/30",
+    "L": "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    "P": "bg-purple-500/20 text-purple-400 border-purple-500/30",
+    "S": "bg-green-500/20 text-green-400 border-green-500/30",
+    "-": "bg-white/10 text-white/60 border-white/20",
   };
   const labels: Record<string, string> = {
     "A": "Access Control",
@@ -57,36 +49,178 @@ function getTemplateBadge(template: string) {
 
 function PolicyIndicator({ expected }: { expected: boolean }) {
   return expected ? (
-    <Check className="h-3.5 w-3.5 text-green-600" />
+    <Check className="h-3.5 w-3.5 text-green-400" />
   ) : (
-    <span className="text-[10px] text-[#A1A1AA]">—</span>
+    <span className="text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>—</span>
   );
 }
 
 function CheckStatusBadge({ status }: { status: CheckResult["status"] }) {
   if (status === "pass") {
-    return <Badge className="bg-green-100 text-green-800 border-green-200 text-[10px]"><Check className="h-3 w-3 mr-1" />Pass</Badge>;
+    return (
+      <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-[10px]">
+        <Check className="h-3 w-3 mr-1" />Pass
+      </Badge>
+    );
   }
   if (status === "fail") {
-    return <Badge className="bg-red-100 text-red-800 border-red-200 text-[10px]"><X className="h-3 w-3 mr-1" />Fail</Badge>;
+    return (
+      <Badge className="bg-red-500/20 text-red-400 border-red-500/30 text-[10px]">
+        <X className="h-3 w-3 mr-1" />Fail
+      </Badge>
+    );
   }
   if (status === "warning") {
-    return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 text-[10px]"><AlertTriangle className="h-3 w-3 mr-1" />Warning</Badge>;
+    return (
+      <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 text-[10px]">
+        <AlertTriangle className="h-3 w-3 mr-1" />Warning
+      </Badge>
+    );
   }
-  return <Badge variant="outline" className="text-[10px]">Pending</Badge>;
+  return (
+    <Badge variant="outline" className="text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>
+      Pending
+    </Badge>
+  );
 }
 
 function CategoryIcon({ category }: { category: CheckResult["category"] }) {
+  const iconClass = "h-3.5 w-3.5";
   switch (category) {
     case "tenant":
-      return <Database className="h-3.5 w-3.5 text-blue-600" />;
+      return <Database className={`${iconClass} text-blue-400`} />;
     case "auth":
-      return <Lock className="h-3.5 w-3.5 text-purple-600" />;
+      return <Lock className={`${iconClass} text-purple-400`} />;
     case "storage":
-      return <FileCheck className="h-3.5 w-3.5 text-green-600" />;
+      return <FileCheck className={`${iconClass} text-green-400`} />;
     case "data":
-      return <Globe className="h-3.5 w-3.5 text-orange-600" />;
+      return <Globe className={`${iconClass} text-orange-400`} />;
   }
+}
+
+/**
+ * Mobile-friendly table row for RLS coverage
+ */
+function RLSCoverageRow({ row }: { row: typeof RLS_COVERAGE[0] }) {
+  return (
+    <div 
+      className="px-4 py-3"
+      style={{ borderBottom: '1px solid var(--platform-border)' }}
+    >
+      {/* Mobile: stacked layout */}
+      <div className="sm:hidden space-y-2">
+        <div className="flex items-center justify-between">
+          <code 
+            className="text-[12px] font-mono"
+            style={{ color: 'var(--platform-text)' }}
+          >
+            {row.table}
+          </code>
+          {getTemplateBadge(row.template)}
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1">
+            <span className="text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>tenant_id:</span>
+            {row.requiresTenantId ? (
+              <Check className="h-3 w-3 text-blue-400" />
+            ) : (
+              <span className="text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>—</span>
+            )}
+          </div>
+          <div className="flex items-center gap-2 text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>
+            <span className="flex items-center gap-0.5">S<PolicyIndicator expected={row.expectedPolicies.select} /></span>
+            <span className="flex items-center gap-0.5">I<PolicyIndicator expected={row.expectedPolicies.insert} /></span>
+            <span className="flex items-center gap-0.5">U<PolicyIndicator expected={row.expectedPolicies.update} /></span>
+            <span className="flex items-center gap-0.5">D<PolicyIndicator expected={row.expectedPolicies.delete} /></span>
+          </div>
+        </div>
+        <p className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>{row.notes}</p>
+      </div>
+
+      {/* Desktop: table-like grid */}
+      <div className="hidden sm:grid sm:grid-cols-[1fr_100px_80px_repeat(4,50px)_1fr] sm:items-center sm:gap-2">
+        <code 
+          className="text-[12px] font-mono"
+          style={{ color: 'var(--platform-text)' }}
+        >
+          {row.table}
+        </code>
+        <div>{getTemplateBadge(row.template)}</div>
+        <div className="text-center">
+          {row.requiresTenantId ? (
+            <Check className="h-3.5 w-3.5 text-blue-400 mx-auto" />
+          ) : (
+            <span className="text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>—</span>
+          )}
+        </div>
+        <div className="text-center"><PolicyIndicator expected={row.expectedPolicies.select} /></div>
+        <div className="text-center"><PolicyIndicator expected={row.expectedPolicies.insert} /></div>
+        <div className="text-center"><PolicyIndicator expected={row.expectedPolicies.update} /></div>
+        <div className="text-center"><PolicyIndicator expected={row.expectedPolicies.delete} /></div>
+        <span className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>{row.notes}</span>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Mobile-friendly row for security checks
+ */
+function SecurityCheckRow({ check }: { check: CheckResult }) {
+  return (
+    <div 
+      className="px-4 py-3"
+      style={{ borderBottom: '1px solid var(--platform-border)' }}
+    >
+      {/* Mobile: stacked layout */}
+      <div className="sm:hidden space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CategoryIcon category={check.category} />
+            <span className="text-[13px] font-medium" style={{ color: 'var(--platform-text)' }}>
+              {check.name}
+            </span>
+          </div>
+          <CheckStatusBadge status={check.status} />
+        </div>
+        <p className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>
+          {check.description}
+        </p>
+        {check.details && (
+          <p 
+            className="text-[11px] break-words"
+            style={{ color: 'var(--platform-text-secondary)', lineHeight: '1.45' }}
+          >
+            {check.details}
+          </p>
+        )}
+      </div>
+
+      {/* Desktop: table-like grid */}
+      <div className="hidden sm:grid sm:grid-cols-[32px_200px_100px_1fr] sm:items-center sm:gap-3">
+        <div className="text-center">
+          <CategoryIcon category={check.category} />
+        </div>
+        <div>
+          <p className="text-[12px] font-medium" style={{ color: 'var(--platform-text)' }}>
+            {check.name}
+          </p>
+          <p className="text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>
+            {check.description}
+          </p>
+        </div>
+        <div>
+          <CheckStatusBadge status={check.status} />
+        </div>
+        <p 
+          className="text-[11px] line-clamp-2 break-words min-w-0"
+          style={{ color: 'var(--platform-text-secondary)', lineHeight: '1.45' }}
+        >
+          {check.details || "—"}
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export default function SecurityVerificationPage() {
@@ -132,9 +266,8 @@ export default function SecurityVerificationPage() {
       });
     }
 
-    // Check 2: Tenant isolation - try to read tenants user shouldn't have access to
+    // Check 2: Tenant isolation
     try {
-      // Get user's tenant IDs first
       const { data: userMemberships } = await supabase
         .from("tenant_memberships")
         .select("tenant_id")
@@ -143,7 +276,6 @@ export default function SecurityVerificationPage() {
       
       const userTenantIds = userMemberships?.map(m => m.tenant_id) ?? [];
       
-      // Try to read all tenants
       const { data: allTenants } = await supabase
         .from("tenants")
         .select("id");
@@ -171,9 +303,8 @@ export default function SecurityVerificationPage() {
       });
     }
 
-    // Check 3: Approval gate - verify data visibility requires active status
+    // Check 3: Approval gate
     try {
-      // Count rows in tenant_memberships for current user
       const { count } = await supabase
         .from("tenant_memberships")
         .select("id", { count: "exact", head: true })
@@ -225,140 +356,91 @@ export default function SecurityVerificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] p-6">
-      <div className="max-w-[1200px] mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild className="text-[#71717A]">
-              <Link to="/admin">
-                <ArrowLeft className="h-4 w-4 mr-1" />
-                Back
-              </Link>
-            </Button>
+    <PageContainer>
+      <PageShell
+        title="Security Verification"
+        subtitle="Validate RLS enforcement and security posture"
+        backTo="/admin"
+        backLabel="System Console"
+      >
+        <Button 
+          onClick={runChecks} 
+          disabled={isRunning || !user}
+          size="sm"
+          className="h-9 px-4 text-[13px]"
+        >
+          <Play className="h-3.5 w-3.5 mr-1.5" />
+          {isRunning ? "Running..." : "Run Checks"}
+        </Button>
+      </PageShell>
+
+      <div className="space-y-6">
+        {/* RLS Coverage Panel */}
+        <Panel>
+          <PanelHeader>
+            <PanelTitle>RLS Coverage Audit</PanelTitle>
+            <p className="text-[12px] mt-0.5" style={{ color: 'var(--platform-text-muted)' }}>
+              Expected RLS policies for tenant-scoped and platform tables
+            </p>
+          </PanelHeader>
+          
+          {/* Desktop table header */}
+          <div 
+            className="hidden sm:grid sm:grid-cols-[1fr_100px_80px_repeat(4,50px)_1fr] sm:gap-2 px-4 py-2"
+            style={{ 
+              backgroundColor: 'var(--platform-surface-elevated)',
+              borderBottom: '1px solid var(--platform-border)'
+            }}
+          >
+            <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--platform-text-muted)' }}>Table</span>
+            <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--platform-text-muted)' }}>Template</span>
+            <span className="text-[10px] font-medium uppercase text-center" style={{ color: 'var(--platform-text-muted)' }}>tenant_id</span>
+            <span className="text-[10px] font-medium uppercase text-center" style={{ color: 'var(--platform-text-muted)' }}>SEL</span>
+            <span className="text-[10px] font-medium uppercase text-center" style={{ color: 'var(--platform-text-muted)' }}>INS</span>
+            <span className="text-[10px] font-medium uppercase text-center" style={{ color: 'var(--platform-text-muted)' }}>UPD</span>
+            <span className="text-[10px] font-medium uppercase text-center" style={{ color: 'var(--platform-text-muted)' }}>DEL</span>
+            <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--platform-text-muted)' }}>Notes</span>
+          </div>
+          
+          <div>
+            {RLS_COVERAGE.map((row) => (
+              <RLSCoverageRow key={row.table} row={row} />
+            ))}
+          </div>
+        </Panel>
+
+        {/* Security Checks Panel */}
+        <Panel>
+          <PanelHeader className="flex items-center justify-between">
             <div>
-              <h1 className="text-[20px] font-medium text-[#0A0A0A] tracking-[-0.02em] flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Security Verification
-              </h1>
-              <p className="text-[13px] text-[#71717A]">
-                Validate RLS enforcement and security posture using current session
+              <PanelTitle>Live Security Checks</PanelTitle>
+              <p className="text-[12px] mt-0.5" style={{ color: 'var(--platform-text-muted)' }}>
+                Real-time validation against your current session
               </p>
             </div>
+          </PanelHeader>
+          
+          {/* Desktop table header */}
+          <div 
+            className="hidden sm:grid sm:grid-cols-[32px_200px_100px_1fr] sm:gap-3 px-4 py-2"
+            style={{ 
+              backgroundColor: 'var(--platform-surface-elevated)',
+              borderBottom: '1px solid var(--platform-border)'
+            }}
+          >
+            <span></span>
+            <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--platform-text-muted)' }}>Check</span>
+            <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--platform-text-muted)' }}>Status</span>
+            <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--platform-text-muted)' }}>Details</span>
           </div>
-        </div>
-
-        {/* RLS Coverage Table */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-[15px] font-medium">RLS Coverage Audit</CardTitle>
-            <CardDescription className="text-[12px]">
-              Expected RLS policies for all tenant-scoped and platform tables
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="border border-[#E4E4E7] rounded-lg overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-[#F4F4F5]">
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Table</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Template</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase text-center">tenant_id</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase text-center">SELECT</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase text-center">INSERT</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase text-center">UPDATE</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase text-center">DELETE</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Notes</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {RLS_COVERAGE.map((row) => (
-                    <TableRow key={row.table}>
-                      <TableCell className="text-[12px] font-mono text-[#0A0A0A]">{row.table}</TableCell>
-                      <TableCell>{getTemplateBadge(row.template)}</TableCell>
-                      <TableCell className="text-center">
-                        {row.requiresTenantId ? (
-                          <Check className="h-3.5 w-3.5 text-blue-600 mx-auto" />
-                        ) : (
-                          <span className="text-[10px] text-[#A1A1AA]">—</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center"><PolicyIndicator expected={row.expectedPolicies.select} /></TableCell>
-                      <TableCell className="text-center"><PolicyIndicator expected={row.expectedPolicies.insert} /></TableCell>
-                      <TableCell className="text-center"><PolicyIndicator expected={row.expectedPolicies.update} /></TableCell>
-                      <TableCell className="text-center"><PolicyIndicator expected={row.expectedPolicies.delete} /></TableCell>
-                      <TableCell className="text-[11px] text-[#71717A]">{row.notes}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Security Checks */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-[15px] font-medium">Live Security Checks</CardTitle>
-                <CardDescription className="text-[12px]">
-                  Run real-time validation against your current session
-                </CardDescription>
-              </div>
-              <Button 
-                onClick={runChecks} 
-                disabled={isRunning || !user}
-                size="sm"
-                className="h-8 px-3 text-[12px]"
-              >
-                <Play className="h-3.5 w-3.5 mr-1.5" />
-                {isRunning ? "Running..." : "Run Checks"}
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="border border-[#E4E4E7] rounded-lg overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-[#F4F4F5]">
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase w-8"></TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Check</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Status</TableHead>
-                    <TableHead className="text-[11px] font-medium text-[#71717A] uppercase">Details</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {checks.map((check) => (
-                    <TableRow key={check.name}>
-                      <TableCell className="text-center">
-                        <CategoryIcon category={check.category} />
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <p className="text-[12px] font-medium text-[#0A0A0A]">{check.name}</p>
-                          <p className="text-[10px] text-[#71717A]">{check.description}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <CheckStatusBadge status={check.status} />
-                      </TableCell>
-                      <TableCell 
-                        className="text-[11px] max-w-[300px]"
-                        style={{ color: 'var(--tribes-text-muted)' }}
-                      >
-                        <span className="line-clamp-2 break-words" style={{ lineHeight: '1.45' }}>
-                          {check.details || "—"}
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+          
+          <div>
+            {checks.map((check) => (
+              <SecurityCheckRow key={check.name} check={check} />
+            ))}
+          </div>
+        </Panel>
       </div>
-    </div>
+    </PageContainer>
   );
 }
