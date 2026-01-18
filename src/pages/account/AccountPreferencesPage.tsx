@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Bell, Globe, Calendar, Clock } from "lucide-react";
-import { useUserPreferences, TIMEZONE_OPTIONS, DATE_FORMAT_OPTIONS, TIME_FORMAT_OPTIONS } from "@/hooks/useUserPreferences";
+import {
+  useUserPreferences,
+  TIMEZONE_OPTIONS,
+  DATE_FORMAT_OPTIONS,
+  TIME_FORMAT_OPTIONS,
+} from "@/hooks/useUserPreferences";
 import { EditSelectSheet } from "@/components/edit";
-import { PageContainer } from "@/components/ui/page-container";
-import { PageShell } from "@/components/ui/page-shell";
 import {
   SettingsRow,
   SettingsSectionCard,
@@ -12,28 +15,25 @@ import {
 
 /**
  * ACCOUNT PREFERENCES PAGE
- * 
+ *
  * Route: /account/preferences
- * 
- * User-editable preferences:
- * - Notifications
- * - Regional settings (timezone, date format, time format)
- * 
- * Uses SettingsPageContainer for consistent padding across all settings pages.
+ *
+ * NOTE: Layout/headers/padding are owned by AccountLayout.
+ * This page renders content sections only.
  */
 
 type ModalType = "timezone" | "dateFormat" | "timeFormat" | null;
 
 export default function AccountPreferencesPage() {
-  const { 
-    preferences, 
-    updatePreferences, 
+  const {
+    preferences,
+    updatePreferences,
     isLocked,
     getTimezoneLabel,
     getDateFormatLabel,
     getTimeFormatLabel,
   } = useUserPreferences();
-  
+
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   const handleTimezoneChange = async (value: string | number) => {
@@ -49,12 +49,7 @@ export default function AccountPreferencesPage() {
   };
 
   return (
-    <PageContainer maxWidth="narrow">
-      <PageShell 
-        title="Preferences"
-        subtitle="Operational settings and display options"
-      />
-
+    <>
       {/* Notifications */}
       <SettingsSectionCard
         title="Notifications"
@@ -72,10 +67,7 @@ export default function AccountPreferencesPage() {
       </SettingsSectionCard>
 
       {/* Regional Settings */}
-      <SettingsSectionCard
-        title="Regional"
-        description="Time and date display preferences"
-      >
+      <SettingsSectionCard title="Regional" description="Time and date display preferences">
         <SettingsRow
           icon={Globe}
           label="Time zone"
@@ -102,9 +94,7 @@ export default function AccountPreferencesPage() {
         />
       </SettingsSectionCard>
 
-      <SettingsFooterNotice>
-        Some preferences may be enforced by workspace policies.
-      </SettingsFooterNotice>
+      <SettingsFooterNotice>Some preferences may be enforced by workspace policies.</SettingsFooterNotice>
 
       {/* Timezone Selection Sheet */}
       <EditSelectSheet
@@ -144,6 +134,6 @@ export default function AccountPreferencesPage() {
         onChange={handleTimeFormatChange}
         disabled={isLocked("time_format")}
       />
-    </PageContainer>
+    </>
   );
 }
