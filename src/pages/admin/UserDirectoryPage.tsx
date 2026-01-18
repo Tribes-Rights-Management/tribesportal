@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, ChevronDown, ChevronUp, ChevronRight } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, ChevronRight, Copy, Check } from "lucide-react";
+import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MemberDetailsSheet } from "@/components/admin/MemberDetailsSheet";
@@ -35,27 +34,30 @@ interface UserWithProfile {
 }
 
 /**
- * MEMBER DIRECTORY PAGE — ACCESS MANAGEMENT (AUTHORITY UX CANON)
+ * MEMBER DIRECTORY PAGE — MOBILE-FIRST VERTICAL LAYOUT
  * 
- * Purpose: Directory listing for user discovery
+ * Mobile: Stacked MemberCard list with email + role/status chips
+ * Desktop: Table layout with expandable rows
  * 
- * Compliance:
- * - No disabled inputs for display data
- * - Status shown as pills, not form controls
- * - Mobile: Vertical card list, no horizontal scrolling
- * - Desktop: Table with read-only display, "Authority" action for editing
- * - Row click opens Member Details sheet
+ * Rules:
+ * - No horizontal scrolling
+ * - Emails truncate with copy icon
+ * - Scroll-to-top on mount
  */
 export default function UserDirectoryPage() {
-  const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const { profile: currentProfile } = useAuth();
   const [users, setUsers] = useState<UserWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
-  const [expandedUser, setExpandedUser] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<UserWithProfile | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -121,7 +123,6 @@ export default function UserDirectoryPage() {
     fetchUsers();
   }, []);
 
-  // These update functions are passed to MemberDetailsSheet for when edit mode is available
   const updatePlatformRole = async (userId: string, userProfileId: string, newRole: PlatformRole) => {
     if (userId === currentProfile?.user_id) {
       toast({
@@ -203,15 +204,6 @@ export default function UserDirectoryPage() {
     setUpdating(null);
   };
 
-  const formatRole = (role: PortalRole): string => {
-    switch (role) {
-      case "tenant_admin": return "Admin";
-      case "tenant_user": return "Member";
-      case "viewer": return "Viewer";
-      default: return role;
-    }
-  };
-
   const formatPlatformRole = (role: PlatformRole): string => {
     switch (role) {
       case "platform_admin": return "Admin";
@@ -219,10 +211,6 @@ export default function UserDirectoryPage() {
       case "external_auditor": return "Auditor";
       default: return role;
     }
-  };
-
-  const formatContexts = (contexts: string[]): string => {
-    return contexts.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(", ") || "None";
   };
 
   const formatStatus = (status: MembershipStatus): string => {
@@ -252,7 +240,8 @@ export default function UserDirectoryPage() {
 
   return (
     <div 
-      className="min-h-full py-6 sm:py-10 px-4 sm:px-6"
+      ref={containerRef}
+      className="min-h-full py-6 sm:py-10 px-4 sm:px-6 overflow-x-hidden"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <div className="max-w-[960px] mx-auto">
@@ -309,253 +298,20 @@ export default function UserDirectoryPage() {
               Records will appear when users are provisioned.
             </p>
           </div>
-        ) : isMobile ? (
-          /* Mobile: Vertical Card List */
+        ) : (
+          /* Mobile-first: Always use card layout */
           <div className="space-y-2">
             {users.map((user) => (
-              <button
+              <MemberCard
                 key={user.id}
-                onClick={() => handleRowClick(user)}
-                className="w-full text-left rounded-lg p-4 transition-colors"
-                style={{ 
-                  backgroundColor: 'var(--platform-surface)',
-                  border: '1px solid var(--platform-border)',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--platform-surface)'}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    {/* Primary: Email */}
-                    <div 
-                      className="text-[15px] font-medium break-words"
-                      style={{ color: 'var(--platform-text)' }}
-                    >
-                      {user.email}
-                      {user.user_id === currentProfile?.user_id && (
-                        <span 
-                          className="ml-2 text-[10px] uppercase tracking-wide"
-                          style={{ color: 'var(--platform-text-muted)' }}
-                        >
-                          (you)
-                        </span>
-                      )}
-                    </div>
-                    
-                    {/* Secondary: Role + Status as pills */}
-                    <div className="flex flex-wrap items-center gap-2 mt-2">
-                      <span 
-                        className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium"
-                        style={{ 
-                          backgroundColor: 'rgba(255,255,255,0.06)',
-                          color: 'var(--platform-text-secondary)',
-                        }}
-                      >
-                        {formatPlatformRole(user.platform_role)}
-                      </span>
-                      <span 
-                        className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium"
-                        style={{ 
-                          backgroundColor: getStatusColor(user.status).bg,
-                          color: getStatusColor(user.status).text,
-                        }}
-                      >
-                        {formatStatus(user.status)}
-                      </span>
-                      {user.memberships.filter(m => m.status === "active").length > 0 && (
-                        <span 
-                          className="text-[11px]"
-                          style={{ color: 'var(--platform-text-muted)' }}
-                        >
-                          {user.memberships.filter(m => m.status === "active").length} org(s)
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {/* Chevron */}
-                  <ChevronRight 
-                    className="h-5 w-5 shrink-0 mt-0.5" 
-                    style={{ color: 'var(--platform-text-muted)' }} 
-                  />
-                </div>
-              </button>
+                user={user}
+                isCurrentUser={user.user_id === currentProfile?.user_id}
+                onSelect={() => handleRowClick(user)}
+                formatPlatformRole={formatPlatformRole}
+                formatStatus={formatStatus}
+                getStatusColor={getStatusColor}
+              />
             ))}
-          </div>
-        ) : (
-          /* Desktop: Table Layout with Read-Only Display */
-          <div 
-            className="rounded overflow-hidden"
-            style={{ 
-              backgroundColor: 'var(--platform-surface)',
-              border: '1px solid var(--platform-border)'
-            }}
-          >
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-8"></TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Platform Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Memberships</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead className="w-20"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user) => (
-                  <>
-                    <TableRow 
-                      key={user.id}
-                      className="cursor-pointer"
-                      onClick={() => handleRowClick(user)}
-                    >
-                      <TableCell onClick={(e) => e.stopPropagation()}>
-                        {user.memberships.length > 0 && (
-                          <button
-                            className="h-6 w-6 rounded flex items-center justify-center transition-colors"
-                            style={{ color: 'var(--platform-text-secondary)' }}
-                            onClick={() => setExpandedUser(expandedUser === user.id ? null : user.id)}
-                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
-                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                          >
-                            {expandedUser === user.id ? (
-                              <ChevronUp className="h-3.5 w-3.5" />
-                            ) : (
-                              <ChevronDown className="h-3.5 w-3.5" />
-                            )}
-                          </button>
-                        )}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {user.email}
-                        {user.user_id === currentProfile?.user_id && (
-                          <span 
-                            className="ml-2 text-[10px] uppercase tracking-wide"
-                            style={{ color: 'var(--platform-text-muted)' }}
-                          >
-                            (you)
-                          </span>
-                        )}
-                      </TableCell>
-                      {/* Platform Role - READ-ONLY PILL (no Select control) */}
-                      <TableCell>
-                        <span 
-                          className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
-                          style={{ 
-                            backgroundColor: 'rgba(255,255,255,0.06)',
-                            color: 'var(--platform-text)',
-                          }}
-                        >
-                          {formatPlatformRole(user.platform_role)}
-                        </span>
-                      </TableCell>
-                      {/* Status - READ-ONLY PILL (no Select control) */}
-                      <TableCell>
-                        <span 
-                          className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
-                          style={{ 
-                            backgroundColor: getStatusColor(user.status).bg,
-                            color: getStatusColor(user.status).text,
-                          }}
-                        >
-                          {formatStatus(user.status)}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-[13px]">
-                        {user.memberships.length === 0 ? (
-                          <span style={{ color: 'var(--platform-text-muted)' }}>None</span>
-                        ) : (
-                          <span>
-                            {user.memberships.filter(m => m.status === "active").length} active
-                            {user.memberships.some(m => m.status === "pending") && (
-                              <span className="ml-1" style={{ color: 'var(--platform-text-muted)' }}>
-                                ({user.memberships.filter(m => m.status === "pending").length} pending)
-                              </span>
-                            )}
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell style={{ color: 'var(--platform-text-secondary)' }}>
-                        {new Date(user.created_at).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell onClick={(e) => e.stopPropagation()}>
-                        <button
-                          onClick={() => navigate(`/admin/users/${user.user_id}/permissions`)}
-                          className="flex items-center gap-1 px-2 py-1 text-[12px] rounded transition-colors"
-                          style={{ color: 'var(--platform-text-secondary)' }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
-                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                        >
-                          Authority
-                          <ChevronRight className="h-3 w-3" />
-                        </button>
-                      </TableCell>
-                    </TableRow>
-                    {expandedUser === user.id && user.memberships.length > 0 && (
-                      <TableRow style={{ backgroundColor: 'rgba(255,255,255,0.01)' }}>
-                        <TableCell colSpan={7} className="py-3">
-                          <div className="pl-8 space-y-2">
-                            <p 
-                              className="text-[10px] font-medium uppercase tracking-[0.04em] mb-2"
-                              style={{ color: 'var(--platform-text-muted)' }}
-                            >
-                              Organization Memberships
-                            </p>
-                            {user.memberships.map((membership) => (
-                              <div
-                                key={membership.id}
-                                className="flex items-center justify-between rounded px-3 py-2"
-                                style={{ 
-                                  backgroundColor: 'var(--platform-surface)',
-                                  border: '1px solid var(--platform-border)'
-                                }}
-                              >
-                                <div className="flex items-center gap-3 text-[13px]">
-                                  <span 
-                                    className="font-medium"
-                                    style={{ color: 'var(--platform-text)' }}
-                                  >
-                                    {membership.tenant_name}
-                                  </span>
-                                  {/* Status - READ-ONLY PILL */}
-                                  <span 
-                                    className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium"
-                                    style={{ 
-                                      backgroundColor: getStatusColor(membership.status).bg,
-                                      color: getStatusColor(membership.status).text,
-                                    }}
-                                  >
-                                    {formatStatus(membership.status)}
-                                  </span>
-                                  {/* Role - READ-ONLY PILL */}
-                                  <span 
-                                    className="inline-flex items-center px-2 py-0.5 rounded text-[11px]"
-                                    style={{ 
-                                      backgroundColor: 'rgba(255,255,255,0.04)',
-                                      color: 'var(--platform-text-secondary)',
-                                    }}
-                                  >
-                                    {formatRole(membership.role)}
-                                  </span>
-                                  <span 
-                                    className="text-[11px]"
-                                    style={{ color: 'var(--platform-text-muted)' }}
-                                  >
-                                    {formatContexts(membership.allowed_contexts)}
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </>
-                ))}
-              </TableBody>
-            </Table>
           </div>
         )}
       </div>
@@ -572,5 +328,138 @@ export default function UserDirectoryPage() {
         onUpdateMembershipStatus={updateMembershipStatus}
       />
     </div>
+  );
+}
+
+/**
+ * MEMBER CARD — Mobile-first list item
+ * 
+ * Row 1: Email (truncated) + chevron
+ * Row 2: Role + Status chips (wrap, never overflow)
+ */
+interface MemberCardProps {
+  user: UserWithProfile;
+  isCurrentUser: boolean;
+  onSelect: () => void;
+  formatPlatformRole: (role: PlatformRole) => string;
+  formatStatus: (status: MembershipStatus) => string;
+  getStatusColor: (status: MembershipStatus) => { bg: string; text: string };
+}
+
+function MemberCard({
+  user,
+  isCurrentUser,
+  onSelect,
+  formatPlatformRole,
+  formatStatus,
+  getStatusColor,
+}: MemberCardProps) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(user.email);
+      setCopied(true);
+      toast({ description: "Copied" });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({ description: "Failed to copy", variant: "destructive" });
+    }
+  };
+
+  const activeOrgCount = user.memberships.filter(m => m.status === "active").length;
+
+  return (
+    <button
+      onClick={onSelect}
+      className="w-full text-left rounded-lg p-4 transition-colors overflow-hidden"
+      style={{ 
+        backgroundColor: 'var(--platform-surface)',
+        border: '1px solid var(--platform-border)',
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'}
+      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--platform-surface)'}
+    >
+      {/* Row 1: Email + Copy + Chevron */}
+      <div className="flex items-center gap-2">
+        {/* Email - truncates */}
+        <div className="min-w-0 flex-1">
+          <div 
+            className="text-[15px] font-medium whitespace-nowrap overflow-hidden text-ellipsis"
+            style={{ color: 'var(--platform-text)' }}
+            title={user.email}
+          >
+            {user.email}
+          </div>
+        </div>
+
+        {/* Copy button */}
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="shrink-0 p-2 rounded transition-colors hover:bg-white/[0.06] min-h-[44px] min-w-[44px] flex items-center justify-center"
+          style={{ color: 'var(--platform-text-muted)' }}
+          aria-label="Copy email"
+        >
+          {copied ? (
+            <Check className="h-4 w-4" style={{ color: '#4ade80' }} />
+          ) : (
+            <Copy className="h-4 w-4" />
+          )}
+        </button>
+
+        {/* Chevron */}
+        <ChevronRight 
+          className="h-5 w-5 shrink-0" 
+          style={{ color: 'var(--platform-text-muted)' }} 
+        />
+      </div>
+
+      {/* Row 2: Chips (wrap allowed) */}
+      <div className="flex flex-wrap items-center gap-2 mt-2">
+        {/* Role chip */}
+        <span 
+          className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium"
+          style={{ 
+            backgroundColor: 'rgba(255,255,255,0.06)',
+            color: 'var(--platform-text-secondary)',
+          }}
+        >
+          {formatPlatformRole(user.platform_role)}
+        </span>
+
+        {/* Status chip */}
+        <span 
+          className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium"
+          style={{ 
+            backgroundColor: getStatusColor(user.status).bg,
+            color: getStatusColor(user.status).text,
+          }}
+        >
+          {formatStatus(user.status)}
+        </span>
+
+        {/* Org count */}
+        {activeOrgCount > 0 && (
+          <span 
+            className="text-[11px]"
+            style={{ color: 'var(--platform-text-muted)' }}
+          >
+            {activeOrgCount} org(s)
+          </span>
+        )}
+
+        {/* Current user indicator */}
+        {isCurrentUser && (
+          <span 
+            className="text-[10px] uppercase tracking-wide"
+            style={{ color: 'var(--platform-text-muted)' }}
+          >
+            (you)
+          </span>
+        )}
+      </div>
+    </button>
   );
 }

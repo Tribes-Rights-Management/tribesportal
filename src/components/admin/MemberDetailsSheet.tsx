@@ -1,10 +1,14 @@
-import { useState } from "react";
-import { ChevronRight, ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChevronRight, ChevronDown, Copy, Check } from "lucide-react";
 import { format } from "date-fns";
 import { AppSheet, AppSheetBody } from "@/components/ui/app-sheet";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AuthorityRecordSheet } from "./AuthorityRecordSheet";
-import { DetailRow, DetailRowGroup } from "@/components/ui/detail-row";
+import { toast } from "@/hooks/use-toast";
+import {
+  SettingsRow,
+  SettingsSectionCard,
+} from "@/components/ui/settings-row";
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];
@@ -44,18 +48,16 @@ interface MemberDetailsSheetProps {
 }
 
 /**
- * MEMBER DETAILS SHEET — INSTITUTIONAL GOVERNANCE VIEW
+ * MEMBER DETAILS SHEET — MOBILE-FIRST VERTICAL LAYOUT
  * 
- * Structure:
- * - Section 1: Identity (Email, Account Created, Status pill)
- * - Section 2: Platform Authority (Role as read-only, immutability explanation)
- * - Section 3: Organization Memberships (each org as a card)
- * - Section 4: Governance (collapsed, audit metadata only)
+ * Uses SettingsRow/SettingsSectionCard for consistent patterns.
+ * No grey bars, no horizontal scrolling.
  * 
- * Rules:
- * - No disabled inputs for display-only data
- * - Status/Role shown as pills, not form controls
- * - Authority Record is a child sheet, not a page
+ * Sections:
+ * 1. Identity (email with copy, account created, status pill)
+ * 2. Platform Authority (role as read-only pill)
+ * 3. Organization Memberships (stacked cards)
+ * 4. Governance (collapsed audit metadata)
  */
 export function MemberDetailsSheet({
   open,
@@ -69,10 +71,33 @@ export function MemberDetailsSheet({
 }: MemberDetailsSheetProps) {
   const [authorityRecordOpen, setAuthorityRecordOpen] = useState(false);
   const [governanceOpen, setGovernanceOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Scroll to top when sheet opens
+  useEffect(() => {
+    if (open) {
+      // Small delay to ensure sheet is rendered
+      setTimeout(() => {
+        const sheetBody = document.querySelector('[data-sheet-body]');
+        if (sheetBody) sheetBody.scrollTop = 0;
+      }, 50);
+    }
+  }, [open]);
 
   if (!user) return null;
 
   const isCurrentUser = user.user_id === currentUserId;
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(user.email);
+      setCopied(true);
+      toast({ description: "Copied" });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({ description: "Failed to copy", variant: "destructive" });
+    }
+  };
 
   const formatRole = (role: PortalRole): string => {
     switch (role) {
@@ -104,16 +129,19 @@ export function MemberDetailsSheet({
     }
   };
 
-  const getStatusColorKey = (status: MembershipStatus): "active" | "pending" | "suspended" | "revoked" | "denied" | "default" => {
+  const getStatusColorStyle = (status: MembershipStatus) => {
     switch (status) {
       case "active":
+        return { bg: "rgba(34, 197, 94, 0.15)", text: "#4ade80" };
       case "pending":
+        return { bg: "rgba(234, 179, 8, 0.15)", text: "#facc15" };
       case "suspended":
+        return { bg: "rgba(249, 115, 22, 0.15)", text: "#fb923c" };
       case "revoked":
       case "denied":
-        return status;
+        return { bg: "rgba(239, 68, 68, 0.15)", text: "#f87171" };
       default:
-        return "default";
+        return { bg: "rgba(255,255,255,0.06)", text: "var(--platform-text)" };
     }
   };
 
@@ -126,30 +154,33 @@ export function MemberDetailsSheet({
         description={user.full_name || user.email}
         width="lg"
       >
-        <AppSheetBody className="space-y-8">
+        <AppSheetBody className="space-y-6 overflow-x-hidden" data-sheet-body>
           {/* ═══════════════════════════════════════════════════════════════════
               SECTION 1: IDENTITY
               ═══════════════════════════════════════════════════════════════════ */}
-          <section>
-            <h2 
-              className="text-[10px] font-medium uppercase tracking-[0.08em] mb-4"
-              style={{ color: 'var(--platform-text-muted)' }}
-            >
-              Identity
-            </h2>
+          <SettingsSectionCard
+            title="Identity"
+            description="Account identification and status"
+          >
+            {/* Email with copy - custom row for truncation */}
             <div 
-              className="rounded-lg overflow-hidden"
-              style={{ 
-                backgroundColor: 'rgba(255,255,255,0.02)',
-                border: '1px solid var(--platform-border)',
-              }}
+              className="px-4 py-4 sm:px-6 flex items-center justify-between gap-2"
+              style={{ borderBottom: '1px solid var(--platform-border)' }}
             >
-              <DetailRowGroup>
-                <DetailRow 
-                  label="Email"
-                  value={user.email}
-                  copyable
-                  append={isCurrentUser && (
+              <div className="min-w-0 flex-1">
+                <span 
+                  className="text-[12px] block mb-1"
+                  style={{ color: 'var(--platform-text-muted)' }}
+                >
+                  Email
+                </span>
+                <span 
+                  className="text-[14px] block whitespace-nowrap overflow-hidden text-ellipsis"
+                  style={{ color: 'var(--platform-text)' }}
+                  title={user.email}
+                >
+                  {user.email}
+                  {isCurrentUser && (
                     <span 
                       className="ml-2 text-[10px] uppercase tracking-wide"
                       style={{ color: 'var(--platform-text-muted)' }}
@@ -157,75 +188,99 @@ export function MemberDetailsSheet({
                       (you)
                     </span>
                   )}
-                />
-                <DetailRow 
-                  label="Account Created"
-                  value={formatDate(user.created_at)}
-                />
-                <DetailRow 
-                  label="Account Status"
-                  value={formatStatus(user.status)}
-                  variant="status"
-                  statusColor={getStatusColorKey(user.status)}
-                />
-              </DetailRowGroup>
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                className="shrink-0 p-2 rounded transition-colors hover:bg-white/[0.06] min-h-[44px] min-w-[44px] flex items-center justify-center"
+                style={{ color: 'var(--platform-text-muted)' }}
+                aria-label="Copy email"
+              >
+                {copied ? (
+                  <Check className="h-4 w-4" style={{ color: '#4ade80' }} />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </button>
             </div>
-          </section>
+
+            {/* Account Created */}
+            <SettingsRow
+              label="Account Created"
+              value={formatDate(user.created_at)}
+              variant="readonly"
+            />
+
+            {/* Account Status - pill display */}
+            <div 
+              className="px-4 py-4 sm:px-6 flex items-center justify-between gap-2"
+              style={{ borderBottom: '1px solid var(--platform-border)' }}
+            >
+              <span 
+                className="text-[13px]"
+                style={{ color: 'var(--platform-text-secondary)' }}
+              >
+                Account Status
+              </span>
+              <span 
+                className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
+                style={{ 
+                  backgroundColor: getStatusColorStyle(user.status).bg,
+                  color: getStatusColorStyle(user.status).text,
+                }}
+              >
+                {formatStatus(user.status)}
+              </span>
+            </div>
+          </SettingsSectionCard>
 
           {/* ═══════════════════════════════════════════════════════════════════
               SECTION 2: PLATFORM AUTHORITY
               ═══════════════════════════════════════════════════════════════════ */}
-          <section>
-            <h2 
-              className="text-[10px] font-medium uppercase tracking-[0.08em] mb-4"
-              style={{ color: 'var(--platform-text-muted)' }}
-            >
-              Platform Authority
-            </h2>
+          <SettingsSectionCard
+            title="Platform Authority"
+            description={isCurrentUser 
+              ? "You cannot modify your own access" 
+              : "Role determines system-wide authority level"}
+          >
+            {/* Platform Role - pill display */}
             <div 
-              className="rounded-lg overflow-hidden"
-              style={{ 
-                backgroundColor: 'rgba(255,255,255,0.02)',
-                border: '1px solid var(--platform-border)',
-              }}
+              className="px-4 py-4 sm:px-6 flex items-center justify-between gap-2"
+              style={{ borderBottom: '1px solid var(--platform-border)' }}
             >
-              <DetailRowGroup>
-                <DetailRow 
-                  label="Platform Role"
-                  value={formatPlatformRole(user.platform_role)}
-                  variant="role"
-                  helpText={isCurrentUser 
-                    ? "You cannot modify your own access."
-                    : "Role determines system-wide authority level."}
-                />
-              </DetailRowGroup>
-
-              {/* View Authority Record Action */}
-              <div className="px-4 py-3 sm:px-6">
-                <button
-                  onClick={() => setAuthorityRecordOpen(true)}
-                  className="w-full h-11 flex items-center justify-between px-4 rounded-lg transition-colors"
-                  style={{ 
-                    backgroundColor: 'rgba(255,255,255,0.03)',
-                    border: '1px solid var(--platform-border)',
-                    color: 'var(--platform-text)',
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'}
-                >
-                  <span className="text-[14px]">View Authority Record</span>
-                  <ChevronRight className="h-4 w-4" style={{ color: 'var(--platform-text-muted)' }} />
-                </button>
-              </div>
+              <span 
+                className="text-[13px]"
+                style={{ color: 'var(--platform-text-secondary)' }}
+              >
+                Platform Role
+              </span>
+              <span 
+                className="inline-flex items-center px-3 py-1.5 rounded-md text-[13px] font-medium"
+                style={{ 
+                  backgroundColor: 'rgba(255,255,255,0.06)',
+                  color: 'var(--platform-text)',
+                }}
+              >
+                {formatPlatformRole(user.platform_role)}
+              </span>
             </div>
-          </section>
+
+            {/* View Authority Record */}
+            <SettingsRow
+              label="Authority & Permissions"
+              value="View record"
+              variant="select"
+              onSelect={() => setAuthorityRecordOpen(true)}
+            />
+          </SettingsSectionCard>
 
           {/* ═══════════════════════════════════════════════════════════════════
               SECTION 3: ORGANIZATION MEMBERSHIPS
               ═══════════════════════════════════════════════════════════════════ */}
           <section>
             <h2 
-              className="text-[10px] font-medium uppercase tracking-[0.08em] mb-4"
+              className="text-[10px] font-medium uppercase tracking-[0.08em] mb-3"
               style={{ color: 'var(--platform-text-muted)' }}
             >
               Organization Memberships
@@ -235,7 +290,7 @@ export function MemberDetailsSheet({
               <div 
                 className="py-8 text-center rounded-lg"
                 style={{ 
-                  backgroundColor: 'rgba(255,255,255,0.02)',
+                  backgroundColor: 'var(--platform-surface)',
                   border: '1px solid var(--platform-border)',
                 }}
               >
@@ -246,50 +301,68 @@ export function MemberDetailsSheet({
             ) : (
               <div className="space-y-3">
                 {user.memberships.map((membership) => (
-                  <div
+                  <SettingsSectionCard
                     key={membership.id}
-                    className="rounded-lg overflow-hidden"
-                    style={{ 
-                      backgroundColor: 'rgba(255,255,255,0.02)',
-                      border: '1px solid var(--platform-border)',
-                    }}
+                    title={membership.tenant_name}
+                    description={formatRole(membership.role)}
                   >
-                    {/* Organization Name Header */}
+                    {/* Context Access */}
                     <div 
                       className="px-4 py-3 sm:px-6"
                       style={{ borderBottom: '1px solid var(--platform-border)' }}
                     >
                       <span 
-                        className="text-[15px] font-medium"
-                        style={{ color: 'var(--platform-text)' }}
+                        className="text-[11px] font-medium uppercase tracking-[0.04em] block mb-2"
+                        style={{ color: 'var(--platform-text-muted)' }}
                       >
-                        {membership.tenant_name}
+                        Context Access
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {membership.allowed_contexts.length === 0 ? (
+                          <span 
+                            className="text-[12px]"
+                            style={{ color: 'var(--platform-text-muted)' }}
+                          >
+                            None
+                          </span>
+                        ) : (
+                          membership.allowed_contexts.map((ctx) => (
+                            <span
+                              key={ctx}
+                              className="inline-flex items-center px-2 py-0.5 rounded text-[11px]"
+                              style={{ 
+                                backgroundColor: 'rgba(255,255,255,0.06)',
+                                color: 'var(--platform-text-secondary)',
+                              }}
+                            >
+                              {ctx.charAt(0).toUpperCase() + ctx.slice(1)}
+                            </span>
+                          ))
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Membership Status */}
+                    <div 
+                      className="px-4 py-3 sm:px-6 flex items-center justify-between gap-2"
+                    >
+                      <span 
+                        className="text-[12px]"
+                        style={{ color: 'var(--platform-text-muted)' }}
+                      >
+                        Status
+                      </span>
+                      <span 
+                        className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium"
+                        style={{ 
+                          backgroundColor: getStatusColorStyle(membership.status).bg,
+                          color: getStatusColorStyle(membership.status).text,
+                        }}
+                      >
+                        {formatStatus(membership.status)}
                       </span>
                     </div>
-                    
-                    {/* Stacked Details */}
-                    <DetailRowGroup>
-                      <DetailRow 
-                        label="Organization Role"
-                        value={formatRole(membership.role)}
-                        variant="role"
-                      />
-                      <DetailRow 
-                        label="Context Access"
-                        value={membership.allowed_contexts.length === 0 
-                          ? "None"
-                          : membership.allowed_contexts.map(ctx => 
-                              ctx.charAt(0).toUpperCase() + ctx.slice(1)
-                            ).join(", ")}
-                      />
-                      <DetailRow 
-                        label="Membership Status"
-                        value={formatStatus(membership.status)}
-                        variant="status"
-                        statusColor={getStatusColorKey(membership.status)}
-                      />
-                    </DetailRowGroup>
-                  </div>
+                  </SettingsSectionCard>
                 ))}
               </div>
             )}
@@ -301,7 +374,7 @@ export function MemberDetailsSheet({
           <Collapsible open={governanceOpen} onOpenChange={setGovernanceOpen}>
             <CollapsibleTrigger asChild>
               <button
-                className="w-full flex items-center justify-between py-3"
+                className="w-full flex items-center justify-between py-3 min-h-[44px]"
                 style={{ color: 'var(--platform-text-muted)' }}
               >
                 <span className="text-[10px] font-medium uppercase tracking-[0.08em]">
@@ -315,29 +388,16 @@ export function MemberDetailsSheet({
               </button>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div 
-                className="rounded-lg overflow-hidden"
-                style={{ 
-                  backgroundColor: 'rgba(255,255,255,0.01)',
-                  border: '1px solid var(--platform-border)',
-                }}
+              <SettingsSectionCard
+                title="Audit Metadata"
+                description="Authority changes are logged and timestamped"
               >
-                <DetailRowGroup>
-                  <DetailRow 
-                    label="Record Created"
-                    value={formatDate(user.created_at)}
-                  />
-                </DetailRowGroup>
-                <div 
-                  className="px-4 py-3 sm:px-6 text-[11px]"
-                  style={{ 
-                    color: 'var(--platform-text-muted)',
-                    borderTop: '1px solid var(--platform-border)',
-                  }}
-                >
-                  Authority changes are logged and timestamped. Changes require appropriate permissions.
-                </div>
-              </div>
+                <SettingsRow
+                  label="Record Created"
+                  value={formatDate(user.created_at)}
+                  variant="readonly"
+                />
+              </SettingsSectionCard>
             </CollapsibleContent>
           </Collapsible>
 
