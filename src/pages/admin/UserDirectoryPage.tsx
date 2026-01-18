@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, ChevronRight, Copy, Check } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { MemberDetailsSheet } from "@/components/admin/MemberDetailsSheet";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageShell, ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
+import { CopyButton } from "@/components/ui/copy-button";
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];
@@ -34,30 +35,23 @@ interface UserWithProfile {
 }
 
 /**
- * MEMBER DIRECTORY PAGE — MOBILE-FIRST VERTICAL LAYOUT
+ * MEMBER DIRECTORY PAGE
  * 
+ * Uses PageContainer + PageShell for consistent layout.
  * Mobile: Stacked MemberCard list with email + role/status chips
- * Desktop: Table layout with expandable rows
  * 
  * Rules:
- * - No horizontal scrolling
- * - Emails truncate with copy icon
- * - Scroll-to-top on mount
+ * - No horizontal scrolling (enforced by PageContainer)
+ * - Emails truncate with CopyButton
+ * - Scroll-to-top on mount (handled by PageContainer)
  */
 export default function UserDirectoryPage() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
   const { profile: currentProfile } = useAuth();
   const [users, setUsers] = useState<UserWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<UserWithProfile | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
-
-  // Scroll to top on mount
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -239,68 +233,25 @@ export default function UserDirectoryPage() {
   };
 
   return (
-    <div 
-      ref={containerRef}
-      className="min-h-full py-6 sm:py-10 px-4 sm:px-6 overflow-x-hidden"
-      style={{ backgroundColor: 'var(--platform-canvas)' }}
-    >
-      <div className="max-w-[960px] mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6 sm:mb-8">
-          <Link 
-            to="/admin" 
-            className="h-11 w-11 sm:h-8 sm:w-8 rounded flex items-center justify-center transition-colors shrink-0"
-            style={{ color: 'var(--platform-text-secondary)' }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-          >
-            <ArrowLeft className="h-5 w-5 sm:h-4 sm:w-4" />
-          </Link>
-          <div className="min-w-0">
-            <h1 
-              className="text-[22px] sm:text-[28px] font-semibold tracking-[-0.02em]"
-              style={{ color: 'var(--platform-text)' }}
-            >
-              Member Directory
-            </h1>
-            <p 
-              className="text-[14px] sm:text-[15px] mt-0.5"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              {users.length} account(s)
-            </p>
-          </div>
-        </div>
+    <PageContainer>
+      <PageShell
+        title="Member Directory"
+        subtitle={`${users.length} account(s)`}
+        backTo="/admin"
+        backLabel="System Console"
+      />
 
-        {/* Content Area */}
+      {/* Content Area */}
+      <ContentPanel>
         {loading ? (
-          <div 
-            className="py-16 text-center text-[14px] rounded-lg"
-            style={{ 
-              backgroundColor: 'var(--platform-surface)',
-              border: '1px solid var(--platform-border)',
-              color: 'var(--platform-text-secondary)' 
-            }}
-          >
-            Retrieving records
-          </div>
+          <LoadingState />
         ) : users.length === 0 ? (
-          <div 
-            className="py-16 text-center rounded-lg"
-            style={{ 
-              backgroundColor: 'var(--platform-surface)',
-              border: '1px solid var(--platform-border)',
-              color: 'var(--platform-text-secondary)' 
-            }}
-          >
-            <p className="text-[14px]">No users.</p>
-            <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text-muted)' }}>
-              Records will appear when users are provisioned.
-            </p>
-          </div>
+          <EmptyState
+            title="No users."
+            description="Records will appear when users are provisioned."
+          />
         ) : (
-          /* Mobile-first: Always use card layout */
-          <div className="space-y-2">
+          <div className="divide-y" style={{ borderColor: 'var(--platform-border)' }}>
             {users.map((user) => (
               <MemberCard
                 key={user.id}
@@ -314,7 +265,7 @@ export default function UserDirectoryPage() {
             ))}
           </div>
         )}
-      </div>
+      </ContentPanel>
 
       {/* Member Details Sheet */}
       <MemberDetailsSheet
@@ -327,14 +278,14 @@ export default function UserDirectoryPage() {
         onUpdateUserStatus={updateUserStatus}
         onUpdateMembershipStatus={updateMembershipStatus}
       />
-    </div>
+    </PageContainer>
   );
 }
 
 /**
  * MEMBER CARD — Mobile-first list item
  * 
- * Row 1: Email (truncated) + chevron
+ * Row 1: Email (truncated) + copy button + chevron
  * Row 2: Role + Status chips (wrap, never overflow)
  */
 interface MemberCardProps {
@@ -354,39 +305,21 @@ function MemberCard({
   formatStatus,
   getStatusColor,
 }: MemberCardProps) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    try {
-      await navigator.clipboard.writeText(user.email);
-      setCopied(true);
-      toast({ description: "Copied" });
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast({ description: "Failed to copy", variant: "destructive" });
-    }
-  };
-
   const activeOrgCount = user.memberships.filter(m => m.status === "active").length;
 
   return (
     <button
       onClick={onSelect}
-      className="w-full text-left rounded-lg p-4 transition-colors overflow-hidden"
-      style={{ 
-        backgroundColor: 'var(--platform-surface)',
-        border: '1px solid var(--platform-border)',
-      }}
-      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'}
-      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--platform-surface)'}
+      className="w-full text-left p-4 transition-colors overflow-hidden"
+      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
+      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
     >
       {/* Row 1: Email + Copy + Chevron */}
       <div className="flex items-center gap-2">
         {/* Email - truncates */}
         <div className="min-w-0 flex-1">
           <div 
-            className="text-[15px] font-medium whitespace-nowrap overflow-hidden text-ellipsis"
+            className="text-[15px] font-medium truncate"
             style={{ color: 'var(--platform-text)' }}
             title={user.email}
           >
@@ -394,20 +327,8 @@ function MemberCard({
           </div>
         </div>
 
-        {/* Copy button */}
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="shrink-0 p-2 rounded transition-colors hover:bg-white/[0.06] min-h-[44px] min-w-[44px] flex items-center justify-center"
-          style={{ color: 'var(--platform-text-muted)' }}
-          aria-label="Copy email"
-        >
-          {copied ? (
-            <Check className="h-4 w-4" style={{ color: '#4ade80' }} />
-          ) : (
-            <Copy className="h-4 w-4" />
-          )}
-        </button>
+        {/* Copy button - uses shared component */}
+        <CopyButton value={user.email} size="md" label="Copy email" />
 
         {/* Chevron */}
         <ChevronRight 

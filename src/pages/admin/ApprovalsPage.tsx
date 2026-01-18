@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageShell, ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
 import type { Database } from "@/integrations/supabase/types";
 
 type PortalRole = Database["public"]["Enums"]["portal_role"];
@@ -257,48 +258,16 @@ export default function ApprovalsPage() {
   ];
 
   return (
-    <div 
-      className="min-h-full py-6 sm:py-10 px-4 sm:px-6"
-      style={{ backgroundColor: 'var(--platform-canvas)' }}
-    >
-      <div className="max-w-[960px] mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6 sm:mb-8">
-          <Link 
-            to="/admin" 
-            className="h-11 w-11 sm:h-8 sm:w-8 rounded flex items-center justify-center transition-colors shrink-0"
-            style={{ color: 'var(--platform-text-secondary)' }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-          >
-            <ArrowLeft className="h-5 w-5 sm:h-4 sm:w-4" />
-          </Link>
-          <div>
-            <h1 
-              className="text-[22px] sm:text-[28px] font-semibold tracking-[-0.02em]"
-              style={{ color: 'var(--platform-text)' }}
-            >
-              Access Control
-            </h1>
-            <p 
-              className="text-[14px] sm:text-[15px] mt-0.5"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              {pendingMemberships.length === 0 
-                ? "No pending requests" 
-                : `${pendingMemberships.length} pending`}
-            </p>
-          </div>
-        </div>
+    <PageContainer>
+      <PageShell
+        title="Access Control"
+        subtitle={pendingMemberships.length === 0 ? "No pending requests" : `${pendingMemberships.length} pending`}
+        backTo="/admin"
+        backLabel="System Console"
+      />
 
-        {/* Content Panel */}
-        <div 
-          className="rounded-lg sm:rounded overflow-hidden"
-          style={{ 
-            backgroundColor: 'var(--platform-surface)',
-            border: '1px solid var(--platform-border)'
-          }}
-        >
+      {/* Content Panel */}
+      <ContentPanel>
           {loading ? (
             <div 
               className="py-16 text-center text-[14px]"
@@ -703,9 +672,8 @@ export default function ApprovalsPage() {
                 })}
               </TableBody>
             </Table>
-          )}
-        </div>
-      </div>
-    </div>
+        )}
+      </ContentPanel>
+    </PageContainer>
   );
 }
