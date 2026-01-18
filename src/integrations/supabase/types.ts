@@ -1471,6 +1471,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_preferences: {
+        Row: {
+          created_at: string
+          date_format: string
+          display_name: string | null
+          id: string
+          inactivity_timeout_minutes: number
+          time_format: string
+          timezone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date_format?: string
+          display_name?: string | null
+          id?: string
+          inactivity_timeout_minutes?: number
+          time_format?: string
+          timezone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date_format?: string
+          display_name?: string | null
+          id?: string
+          inactivity_timeout_minutes?: number
+          time_format?: string
+          timezone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_profiles: {
         Row: {
           avatar_url: string | null

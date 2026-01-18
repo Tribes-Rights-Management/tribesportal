@@ -1,115 +1,51 @@
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Monitor, Clock, KeyRound, ShieldCheck } from "lucide-react";
+import { Monitor, Clock, KeyRound, ShieldCheck, Timer } from "lucide-react";
+import { useUserPreferences, INACTIVITY_TIMEOUT_OPTIONS } from "@/hooks/useUserPreferences";
+import { PreferenceSelectModal } from "@/components/settings/PreferenceSelectModal";
+import {
+  SettingsRow,
+  SettingsSectionCard,
+  SettingsPageHeader,
+  SettingsFooterNotice,
+} from "@/components/ui/settings-row";
 
 /**
  * ACCOUNT SECURITY PAGE
  * 
  * Route: /account/security
  * 
- * Authentication and session management.
- * Session list, sign out controls, security status.
+ * Authentication, session management, and security settings.
  */
-
-function SectionPanel({ 
-  children, 
-  className = "" 
-}: { 
-  children: React.ReactNode; 
-  className?: string;
-}) {
-  return (
-    <div 
-      className={`rounded overflow-hidden ${className}`}
-      style={{ 
-        backgroundColor: 'var(--platform-surface)',
-        border: '1px solid var(--platform-border)'
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function SectionHeader({ title, description }: { title: string; description: string }) {
-  return (
-    <div 
-      className="px-6 py-4"
-      style={{ borderBottom: '1px solid var(--platform-border)' }}
-    >
-      <h2 
-        className="text-[15px] font-medium"
-        style={{ color: 'var(--platform-text)' }}
-      >
-        {title}
-      </h2>
-      <p 
-        className="text-[13px] mt-0.5"
-        style={{ color: 'var(--platform-text-secondary)' }}
-      >
-        {description}
-      </p>
-    </div>
-  );
-}
-
-function SecurityRow({ 
-  icon: Icon, 
-  title, 
-  description,
-  status
-}: { 
-  icon: React.ElementType;
-  title: string;
-  description: string;
-  status?: string;
-}) {
-  return (
-    <div 
-      className="px-6 py-4 flex items-start gap-3"
-      style={{ borderBottom: '1px solid var(--platform-border)' }}
-    >
-      <div 
-        className="h-8 w-8 rounded flex items-center justify-center shrink-0 mt-0.5"
-        style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
-      >
-        <Icon className="h-4 w-4" style={{ color: 'var(--platform-text-secondary)' }} />
-      </div>
-      <div className="flex-1">
-        <p 
-          className="text-[13px] font-medium"
-          style={{ color: 'var(--platform-text)' }}
-        >
-          {title}
-        </p>
-        <p 
-          className="text-[13px] mt-0.5"
-          style={{ color: 'var(--platform-text-secondary)' }}
-        >
-          {description}
-        </p>
-      </div>
-      {status && (
-        <span 
-          className="text-[12px] px-2 py-1 rounded shrink-0"
-          style={{ 
-            backgroundColor: 'rgba(255,255,255,0.05)',
-            color: 'var(--platform-text-muted)'
-          }}
-        >
-          {status}
-        </span>
-      )}
-    </div>
-  );
-}
 
 export default function AccountSecurityPage() {
   const { signOut } = useAuth();
+  const { 
+    preferences, 
+    updatePreferences, 
+    isLocked,
+    getInactivityTimeoutLabel,
+  } = useUserPreferences();
+
+  const [showTimeoutModal, setShowTimeoutModal] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
   const handleSignOutAll = async () => {
-    await signOut();
-    window.location.href = "/auth/sign-in";
+    setSigningOut(true);
+    try {
+      await signOut();
+      window.location.href = "/auth/sign-in";
+    } catch (error) {
+      setSigningOut(false);
+    }
   };
+
+  const handleTimeoutChange = async (value: string | number) => {
+    await updatePreferences({ inactivity_timeout_minutes: value as number });
+  };
+
+  // Check if workspace policy enforces a stricter timeout
+  const isTimeoutLocked = isLocked("inactivity_timeout_minutes");
 
   return (
     <div 
@@ -117,102 +53,115 @@ export default function AccountSecurityPage() {
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <div className="max-w-[800px]">
-        {/* Header */}
-        <div className="mb-6 md:mb-10">
-          <h1 
-            className="text-[22px] md:text-[28px] font-semibold tracking-[-0.02em]"
-            style={{ color: 'var(--platform-text)' }}
-          >
-            Security
-          </h1>
-          <p 
-            className="text-[14px] md:text-[15px] mt-0.5"
-            style={{ color: 'var(--platform-text-secondary)' }}
-          >
-            Authentication and session management
-          </p>
-        </div>
+        <SettingsPageHeader 
+          title="Security"
+          description="Authentication and session management"
+        />
 
         {/* Authentication Method */}
-        <SectionPanel className="mb-4 md:mb-6">
-          <SectionHeader 
-            title="Authentication" 
-            description="How you sign in to the platform"
-          />
-          <SecurityRow 
+        <SettingsSectionCard
+          title="Authentication"
+          description="How you sign in to the platform"
+          className="mb-4 md:mb-6"
+        >
+          <SettingsRow
             icon={KeyRound}
-            title="Magic Link"
-            description="Authentication is performed via secure email verification."
-            status="Active"
+            label="Magic Link"
+            value="Active"
+            variant="readonly"
+            helperText="Authentication via secure email verification"
           />
-          <SecurityRow 
+          <SettingsRow
             icon={ShieldCheck}
-            title="Two-Factor Authentication"
-            description="Additional security layer for account access."
-            status="Not configured"
+            label="Two-Factor Authentication"
+            value="Not configured"
+            variant="readonly"
+            helperText="Additional security layer for account access"
           />
-        </SectionPanel>
+        </SettingsSectionCard>
 
-        {/* Active Sessions */}
-        <SectionPanel className="mb-4 md:mb-6">
-          <SectionHeader 
-            title="Sessions" 
-            description="Active sessions across devices"
+        {/* Session Settings */}
+        <SettingsSectionCard
+          title="Session"
+          description="Session behavior and timeout settings"
+          className="mb-4 md:mb-6"
+        >
+          <SettingsRow
+            icon={Timer}
+            label="Auto-logout after inactivity"
+            value={getInactivityTimeoutLabel(preferences.inactivity_timeout_minutes)}
+            variant="select"
+            onSelect={() => setShowTimeoutModal(true)}
+            locked={isTimeoutLocked}
+            lockReason="Enforced by workspace policy"
+            helperText={!isTimeoutLocked ? "For security, sessions expire after inactivity" : undefined}
           />
-          <SecurityRow 
+          <SettingsRow
             icon={Monitor}
-            title="Current session"
-            description="This device is currently active."
-            status="Active"
+            label="Current session"
+            value="Active"
+            variant="readonly"
+            helperText="This device is currently active"
           />
-          <SecurityRow 
+          <SettingsRow
             icon={Clock}
-            title="Session status"
-            description="Your session will remain active until you sign out."
+            label="Session status"
+            value="Your session will remain active until you sign out"
+            variant="readonly"
           />
-        </SectionPanel>
+        </SettingsSectionCard>
 
         {/* Session Actions */}
-        <SectionPanel>
-          <SectionHeader 
-            title="Session Actions" 
-            description="Manage your active sessions"
-          />
+        <SettingsSectionCard
+          title="Session Actions"
+          description="Manage your active sessions"
+        >
           <div className="px-4 md:px-6 py-4">
             <button
               onClick={handleSignOutAll}
-              className="text-[13px] font-medium px-4 py-2.5 rounded transition-colors min-h-[44px]"
+              disabled={signingOut}
+              className="text-[13px] font-medium px-4 py-2.5 rounded transition-colors min-h-[44px] disabled:opacity-50"
               style={{ 
                 backgroundColor: 'rgba(255,255,255,0.05)',
                 color: 'var(--platform-text)',
                 border: '1px solid var(--platform-border)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)';
+                if (!signingOut) {
+                  e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)';
+                }
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)';
               }}
             >
-              Sign out all sessions
+              {signingOut ? "Signing out..." : "Sign out all sessions"}
             </button>
             <p 
-              className="text-[12px] mt-3"
+              className="text-[12px] mt-3 line-clamp-2"
               style={{ color: 'var(--platform-text-muted)' }}
             >
               This will sign you out from all devices and require re-authentication.
             </p>
           </div>
-        </SectionPanel>
+        </SettingsSectionCard>
 
-        {/* Footer notice */}
-        <p 
-          className="mt-4 md:mt-6 text-[12px] md:text-[13px]"
-          style={{ color: 'var(--platform-text-muted)' }}
-        >
-          Security settings are managed at the platform level. 
+        <SettingsFooterNotice>
+          Security settings may be governed by workspace policies. 
           Contact your administrator for policy changes.
-        </p>
+        </SettingsFooterNotice>
+
+        {/* Inactivity Timeout Selection Modal */}
+        <PreferenceSelectModal
+          open={showTimeoutModal}
+          onOpenChange={setShowTimeoutModal}
+          title="Auto-logout timeout"
+          description="For security, your session will expire after this period of inactivity"
+          options={INACTIVITY_TIMEOUT_OPTIONS}
+          value={preferences.inactivity_timeout_minutes}
+          onChange={handleTimeoutChange}
+          disabled={isTimeoutLocked}
+        />
       </div>
     </div>
   );
