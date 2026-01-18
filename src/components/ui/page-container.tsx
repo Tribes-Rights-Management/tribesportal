@@ -1,21 +1,34 @@
 import * as React from "react";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 /**
- * CANONICAL PAGE CONTAINER — OVERFLOW-PROOF LAYOUT PRIMITIVE
+ * ═══════════════════════════════════════════════════════════════════════════
+ * PAGE CONTAINER — CANONICAL OVERFLOW-PROOF LAYOUT PRIMITIVE (LOCKED)
+ * ═══════════════════════════════════════════════════════════════════════════
  * 
  * All page content MUST be wrapped in this container to prevent horizontal overflow.
+ * This is the global standard for page layout.
  * 
- * Features:
+ * FEATURES:
  * - Width clamped to 100% (never 100vw)
- * - Safe-area-aware padding
+ * - Safe-area-aware padding (mobile Safari)
  * - Optional max-width constraints
  * - Flex-child overflow protection (min-w-0)
+ * - Automatic scroll-to-top on route changes
+ * 
+ * RULES:
+ * - Never use 100vw inside this container
+ * - All children must use min-w-0 for flex layouts with text
+ * - Pages must NOT define their own outer horizontal padding
  * 
  * Usage:
  * <PageContainer>
+ *   <PageShell title="..." />
  *   <YourPageContent />
  * </PageContainer>
+ * ═══════════════════════════════════════════════════════════════════════════
  */
 
 interface PageContainerProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -25,8 +38,8 @@ interface PageContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   padding?: "default" | "compact" | "none";
   /** Whether to apply safe area insets */
   safeArea?: boolean;
-  /** Additional wrapper for scroll reset */
-  scrollRef?: React.RefObject<HTMLDivElement>;
+  /** Disable automatic scroll-to-top on route change */
+  disableScrollReset?: boolean;
 }
 
 const maxWidthMap = {
@@ -41,15 +54,33 @@ export function PageContainer({
   maxWidth = "wide",
   padding = "default",
   safeArea = true,
-  scrollRef,
+  disableScrollReset = false,
   className,
   style,
   ...props
 }: PageContainerProps) {
+  const { pathname } = useLocation();
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  // Scroll to top on route change
+  useEffect(() => {
+    if (disableScrollReset) return;
+    
+    // Use requestAnimationFrame to ensure DOM is ready
+    requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      // Also scroll the container if it's the scroll parent
+      if (containerRef.current) {
+        containerRef.current.scrollTop = 0;
+      }
+    });
+  }, [pathname, disableScrollReset]);
+
   const paddingStyles = React.useMemo(() => {
     if (padding === "none") return {};
     
     const base = padding === "compact" ? "12px" : "16px";
+    const tablet = padding === "compact" ? "16px" : "24px";
     
     if (safeArea) {
       return {
@@ -66,27 +97,26 @@ export function PageContainer({
 
   return (
     <div
-      ref={scrollRef}
+      ref={containerRef}
       className={cn(
         // Core overflow protection
-        "w-full max-w-full",
+        "w-full max-w-full overflow-x-clip",
         // Flex child protection
         "min-w-0",
+        // Vertical padding
+        "py-6 sm:py-10",
         className
       )}
       style={{
+        backgroundColor: 'var(--platform-canvas)',
         ...paddingStyles,
         ...style,
       }}
       {...props}
     >
       <div
-        className="w-full min-w-0"
-        style={{
-          maxWidth: maxWidthMap[maxWidth],
-          marginLeft: "auto",
-          marginRight: "auto",
-        }}
+        className="w-full min-w-0 mx-auto"
+        style={{ maxWidth: maxWidthMap[maxWidth] }}
       >
         {children}
       </div>
