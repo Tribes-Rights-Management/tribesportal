@@ -1540,6 +1540,7 @@ export type Database = {
           id: string
           platform_role: Database["public"]["Enums"]["platform_role"]
           status: Database["public"]["Enums"]["membership_status"]
+          ui_density_mode: Database["public"]["Enums"]["ui_density_mode"]
           updated_at: string
           user_id: string
         }
@@ -1551,6 +1552,7 @@ export type Database = {
           id?: string
           platform_role?: Database["public"]["Enums"]["platform_role"]
           status?: Database["public"]["Enums"]["membership_status"]
+          ui_density_mode?: Database["public"]["Enums"]["ui_density_mode"]
           updated_at?: string
           user_id: string
         }
@@ -1562,6 +1564,7 @@ export type Database = {
           id?: string
           platform_role?: Database["public"]["Enums"]["platform_role"]
           status?: Database["public"]["Enums"]["membership_status"]
+          ui_density_mode?: Database["public"]["Enums"]["ui_density_mode"]
           updated_at?: string
           user_id?: string
         }
@@ -1809,6 +1812,7 @@ export type Database = {
         | "requested_by_customer"
         | "service_not_provided"
         | "other"
+      ui_density_mode: "comfortable" | "compact"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2030,6 +2034,7 @@ export const Constants = {
         "service_not_provided",
         "other",
       ],
+      ui_density_mode: ["comfortable", "compact"],
     },
   },
 } as const

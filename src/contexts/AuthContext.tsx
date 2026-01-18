@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, ReactNode, useCallback 
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { applyDensity, type DensityMode } from "@/lib/density";
+import { toast } from "@/hooks/use-toast";
 
 // Types from database enums
 export type PlatformRole = Database["public"]["Enums"]["platform_role"];
@@ -28,6 +30,7 @@ export interface UserProfile {
   platform_role: PlatformRole;
   status: MembershipStatus;
   created_at: string;
+  ui_density_mode: DensityMode;
 }
 
 // Access state determines which page/route to show
@@ -60,6 +63,7 @@ interface AuthContextType {
   setActiveContext: (context: PortalContext) => void;
   canAccessContext: (context: PortalContext) => boolean;
   hasPortalRole: (role: PortalRole) => boolean;
+  setDensityMode: (mode: DensityMode) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -172,9 +176,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const [profileResult, allMembershipsResult, activeMembershipsResult] = await Promise.all([
         supabase
           .from("user_profiles")
-          .select("id, user_id, email, full_name, platform_role, status, created_at")
+          .select("id, user_id, email, full_name, platform_role, status, created_at, ui_density_mode")
           .eq("user_id", userId)
-          .maybeSingle(),
+          .maybeSingle() as any,
         // Fetch ALL memberships (any status) for access state resolution
         supabase
           .from("tenant_memberships")
@@ -211,6 +215,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      const densityMode = (profileResult.data.ui_density_mode ?? "comfortable") as DensityMode;
+      
       const userProfile: UserProfile = {
         id: profileResult.data.id,
         user_id: profileResult.data.user_id,
@@ -219,8 +225,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         platform_role: profileResult.data.platform_role,
         status: profileResult.data.status,
         created_at: profileResult.data.created_at,
+        ui_density_mode: densityMode,
       };
       setProfile(userProfile);
+      
+      // Apply density from user profile
+      applyDensity(densityMode);
 
       // Process helper function
       const processMemberships = (data: any[]): TenantMembership[] => {
@@ -332,6 +342,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return activeTenant?.role === role;
   }, [activeTenant]);
 
+  const setDensityMode = useCallback(async (mode: DensityMode) => {
+    if (!user?.id) return;
+
+    // Apply instantly for responsive UI
+    applyDensity(mode);
+
+    // Persist to DB
+    const { error } = await supabase
+      .from("user_profiles")
+      .update({ ui_density_mode: mode } as any)
+      .eq("user_id", user.id);
+
+    if (error) {
+      // Revert to comfortable on failure (institutional safe default)
+      applyDensity("comfortable");
+      toast({ description: "Could not save preference", variant: "destructive" });
+      return;
+    }
+
+    // Update local profile state so UI stays consistent
+    setProfile((p) => (p ? { ...p, ui_density_mode: mode } : p));
+  }, [user]);
+
   const signInWithMagicLink = async (email: string) => {
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -380,6 +413,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setActiveContext,
       canAccessContext,
       hasPortalRole,
+      setDensityMode,
     }}>
       {children}
     </AuthContext.Provider>
