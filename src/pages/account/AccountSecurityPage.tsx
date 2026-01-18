@@ -3,8 +3,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Monitor, Clock, KeyRound, ShieldCheck, Timer } from "lucide-react";
 import { useUserPreferences, INACTIVITY_TIMEOUT_OPTIONS } from "@/hooks/useUserPreferences";
 import { EditSelectSheet } from "@/components/edit";
-import { PageContainer } from "@/components/ui/page-container";
-import { PageShell } from "@/components/ui/page-shell";
 import {
   SettingsRow,
   SettingsSectionCard,
@@ -13,19 +11,18 @@ import {
 
 /**
  * ACCOUNT SECURITY PAGE
- * 
+ *
  * Route: /account/security
- * 
- * Authentication, session management, and security settings.
- * 
- * Uses SettingsPageContainer for consistent padding across all settings pages.
+ *
+ * NOTE: Layout/headers/padding are owned by AccountLayout.
+ * This page renders content sections only.
  */
 
 export default function AccountSecurityPage() {
   const { signOut } = useAuth();
-  const { 
-    preferences, 
-    updatePreferences, 
+  const {
+    preferences,
+    updatePreferences,
     isLocked,
     getInactivityTimeoutLabel,
   } = useUserPreferences();
@@ -51,12 +48,7 @@ export default function AccountSecurityPage() {
   const isTimeoutLocked = isLocked("inactivity_timeout_minutes");
 
   return (
-    <PageContainer maxWidth="narrow">
-      <PageShell 
-        title="Security"
-        subtitle="Authentication and session management"
-      />
-
+    <>
       {/* Authentication Method */}
       <SettingsSectionCard
         title="Authentication"
@@ -120,25 +112,25 @@ export default function AccountSecurityPage() {
             onClick={handleSignOutAll}
             disabled={signingOut}
             className="text-[13px] font-medium px-4 py-2.5 rounded transition-colors min-h-[44px] disabled:opacity-50"
-            style={{ 
-              backgroundColor: 'rgba(255,255,255,0.05)',
-              color: 'var(--platform-text)',
-              border: '1px solid var(--platform-border)'
+            style={{
+              backgroundColor: "rgba(255,255,255,0.05)",
+              color: "var(--platform-text)",
+              border: "1px solid var(--platform-border)",
             }}
             onMouseEnter={(e) => {
               if (!signingOut) {
-                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)';
+                e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.08)";
               }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)';
+              e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)";
             }}
           >
             {signingOut ? "Signing out..." : "Sign out all sessions"}
           </button>
-          <p 
+          <p
             className="text-[12px] mt-3 line-clamp-2"
-            style={{ color: 'var(--platform-text-muted)' }}
+            style={{ color: "var(--platform-text-muted)" }}
           >
             This will sign you out from all devices and require re-authentication.
           </p>
@@ -146,7 +138,7 @@ export default function AccountSecurityPage() {
       </SettingsSectionCard>
 
       <SettingsFooterNotice>
-        Security settings may be governed by workspace policies. 
+        Security settings may be governed by workspace policies.
         Contact your administrator for policy changes.
       </SettingsFooterNotice>
 
@@ -162,6 +154,6 @@ export default function AccountSecurityPage() {
         onChange={handleTimeoutChange}
         disabled={isTimeoutLocked}
       />
-    </PageContainer>
+    </>
   );
 }
