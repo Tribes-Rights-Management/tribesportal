@@ -87,14 +87,21 @@ function MobileSettingsIndex() {
     >
       <GlobalHeader />
       <main 
-        className="flex-1 w-full max-w-full overflow-x-clip"
+        className="flex-1 w-full max-w-full overflow-x-clip py-6"
         style={{
+          // Match SettingsPageContainer padding for alignment
           paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
           paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
-          paddingTop: '24px',
-          paddingBottom: '24px',
         }}
       >
+        {/* Content column - same max-width as SettingsPageContainer */}
+        <div className="max-w-[720px] w-full min-w-0">
+          <h1 
+            className="text-[24px] font-semibold tracking-[-0.02em] mb-6"
+            style={{ color: 'var(--platform-text)' }}
+          >
+            Account Settings
+          </h1>
         <h1 
           className="text-[24px] font-semibold tracking-[-0.02em] mb-6"
           style={{ color: 'var(--platform-text)' }}
@@ -152,6 +159,7 @@ function MobileSettingsIndex() {
               />
             </NavLink>
           ))}
+        </div>
         </div>
       </main>
     </div>
@@ -264,13 +272,8 @@ export default function AccountLayout() {
           ref={contentRef}
           className="flex-1 overflow-y-auto overflow-x-clip min-w-0"
         >
-          <div 
-            className="max-w-[960px] w-full min-w-0"
-            style={{
-              paddingLeft: 'max(24px, env(safe-area-inset-left, 24px))',
-              paddingRight: 'max(24px, env(safe-area-inset-right, 24px))',
-            }}
-          >
+          {/* Content renders inside SettingsPageContainer which handles its own padding */}
+          <div className="w-full min-w-0">
             <Outlet />
           </div>
         </main>

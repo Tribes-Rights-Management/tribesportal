@@ -105,14 +105,16 @@ export default function AccountSettingsPage() {
 
   return (
     <div 
-      className="min-h-full py-10 w-full max-w-full min-w-0 overflow-x-clip"
+      className="min-h-full py-6 md:py-10 w-full max-w-full min-w-0 overflow-x-clip"
       style={{ 
         backgroundColor: 'var(--platform-canvas)',
-        paddingLeft: 'max(24px, env(safe-area-inset-left, 24px))',
-        paddingRight: 'max(24px, env(safe-area-inset-right, 24px))',
+        // Consistent safe-area padding with Settings pages
+        paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
+        paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
       }}
     >
-      <div className="max-w-[800px] mx-auto w-full min-w-0">
+      {/* Match SettingsPageContainer max-width for alignment */}
+      <div className="max-w-[720px] w-full min-w-0">
         {/* Header */}
         <div className="flex items-center gap-3 mb-10">
           <Link 

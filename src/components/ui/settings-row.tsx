@@ -78,7 +78,8 @@ export function SettingsRow({
   return (
     <div 
       className={cn(
-        "py-4",
+        // Internal card padding only - safe-area handled by SettingsPageContainer
+        "px-4 py-4",
         "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
         "w-full max-w-full min-w-0 overflow-x-clip",
         variant === "select" && !locked && "cursor-pointer hover:bg-white/[0.02] transition-colors",
@@ -86,8 +87,6 @@ export function SettingsRow({
       )}
       style={{ 
         borderBottom: '1px solid var(--platform-border)',
-        paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
-        paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
       }}
       onClick={variant === "select" && !locked ? onSelect : undefined}
       role={variant === "select" && !locked ? "button" : undefined}
@@ -223,13 +222,11 @@ export function SettingsSectionCard({
         border: '1px solid var(--platform-border)'
       }}
     >
-      {/* Header */}
+      {/* Header - internal card padding only, safe-area handled by container */}
       <div 
-        className="py-4"
+        className="px-4 py-4"
         style={{ 
           borderBottom: '1px solid var(--platform-border)',
-          paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
-          paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
         }}
       >
         <h2 

@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Monitor, Clock, KeyRound, ShieldCheck, Timer } from "lucide-react";
 import { useUserPreferences, INACTIVITY_TIMEOUT_OPTIONS } from "@/hooks/useUserPreferences";
 import { EditSelectSheet } from "@/components/edit";
+import { SettingsPageContainer } from "@/components/ui/settings-page-container";
 import {
   SettingsRow,
   SettingsSectionCard,
@@ -16,6 +17,8 @@ import {
  * Route: /account/security
  * 
  * Authentication, session management, and security settings.
+ * 
+ * Uses SettingsPageContainer for consistent padding across all settings pages.
  */
 
 export default function AccountSecurityPage() {
@@ -48,126 +51,117 @@ export default function AccountSecurityPage() {
   const isTimeoutLocked = isLocked("inactivity_timeout_minutes");
 
   return (
-    <div 
-      className="py-6 md:py-10 w-full max-w-full min-w-0 overflow-x-clip"
-      style={{ 
-        backgroundColor: 'var(--platform-canvas)',
-        paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
-        paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
-      }}
-    >
-      <div className="max-w-[800px] w-full min-w-0">
-        <SettingsPageHeader 
-          title="Security"
-          description="Authentication and session management"
+    <SettingsPageContainer>
+      <SettingsPageHeader 
+        title="Security"
+        description="Authentication and session management"
+      />
+
+      {/* Authentication Method */}
+      <SettingsSectionCard
+        title="Authentication"
+        description="How you sign in to the platform"
+        className="mb-4 md:mb-6"
+      >
+        <SettingsRow
+          icon={KeyRound}
+          label="Magic Link"
+          value="Active"
+          variant="readonly"
+          helperText="Authentication via secure email verification"
         />
-
-        {/* Authentication Method */}
-        <SettingsSectionCard
-          title="Authentication"
-          description="How you sign in to the platform"
-          className="mb-4 md:mb-6"
-        >
-          <SettingsRow
-            icon={KeyRound}
-            label="Magic Link"
-            value="Active"
-            variant="readonly"
-            helperText="Authentication via secure email verification"
-          />
-          <SettingsRow
-            icon={ShieldCheck}
-            label="Two-Factor Authentication"
-            value="Not configured"
-            variant="readonly"
-            helperText="Additional security layer for account access"
-          />
-        </SettingsSectionCard>
-
-        {/* Session Settings */}
-        <SettingsSectionCard
-          title="Session"
-          description="Session behavior and timeout settings"
-          className="mb-4 md:mb-6"
-        >
-          <SettingsRow
-            icon={Timer}
-            label="Auto-logout after inactivity"
-            value={getInactivityTimeoutLabel(preferences.inactivity_timeout_minutes)}
-            variant="select"
-            onSelect={() => setShowTimeoutSheet(true)}
-            locked={isTimeoutLocked}
-            lockReason="Enforced by workspace policy"
-            helperText={!isTimeoutLocked ? "For security, sessions expire after inactivity" : undefined}
-          />
-          <SettingsRow
-            icon={Monitor}
-            label="Current session"
-            value="Active"
-            variant="readonly"
-            helperText="This device is currently active"
-          />
-          <SettingsRow
-            icon={Clock}
-            label="Session status"
-            value="Your session will remain active until you sign out"
-            variant="readonly"
-          />
-        </SettingsSectionCard>
-
-        {/* Session Actions */}
-        <SettingsSectionCard
-          title="Session Actions"
-          description="Manage your active sessions"
-        >
-          <div className="px-4 md:px-6 py-4">
-            <button
-              onClick={handleSignOutAll}
-              disabled={signingOut}
-              className="text-[13px] font-medium px-4 py-2.5 rounded transition-colors min-h-[44px] disabled:opacity-50"
-              style={{ 
-                backgroundColor: 'rgba(255,255,255,0.05)',
-                color: 'var(--platform-text)',
-                border: '1px solid var(--platform-border)'
-              }}
-              onMouseEnter={(e) => {
-                if (!signingOut) {
-                  e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)';
-              }}
-            >
-              {signingOut ? "Signing out..." : "Sign out all sessions"}
-            </button>
-            <p 
-              className="text-[12px] mt-3 line-clamp-2"
-              style={{ color: 'var(--platform-text-muted)' }}
-            >
-              This will sign you out from all devices and require re-authentication.
-            </p>
-          </div>
-        </SettingsSectionCard>
-
-        <SettingsFooterNotice>
-          Security settings may be governed by workspace policies. 
-          Contact your administrator for policy changes.
-        </SettingsFooterNotice>
-
-        {/* Inactivity Timeout Selection Sheet */}
-        <EditSelectSheet
-          open={showTimeoutSheet}
-          onOpenChange={setShowTimeoutSheet}
-          parentLabel="Security"
-          title="Auto-logout timeout"
-          helperText="For security, your session will expire after this period of inactivity"
-          options={INACTIVITY_TIMEOUT_OPTIONS}
-          value={preferences.inactivity_timeout_minutes}
-          onChange={handleTimeoutChange}
-          disabled={isTimeoutLocked}
+        <SettingsRow
+          icon={ShieldCheck}
+          label="Two-Factor Authentication"
+          value="Not configured"
+          variant="readonly"
+          helperText="Additional security layer for account access"
         />
-      </div>
-    </div>
+      </SettingsSectionCard>
+
+      {/* Session Settings */}
+      <SettingsSectionCard
+        title="Session"
+        description="Session behavior and timeout settings"
+        className="mb-4 md:mb-6"
+      >
+        <SettingsRow
+          icon={Timer}
+          label="Auto-logout after inactivity"
+          value={getInactivityTimeoutLabel(preferences.inactivity_timeout_minutes)}
+          variant="select"
+          onSelect={() => setShowTimeoutSheet(true)}
+          locked={isTimeoutLocked}
+          lockReason="Enforced by workspace policy"
+          helperText={!isTimeoutLocked ? "For security, sessions expire after inactivity" : undefined}
+        />
+        <SettingsRow
+          icon={Monitor}
+          label="Current session"
+          value="Active"
+          variant="readonly"
+          helperText="This device is currently active"
+        />
+        <SettingsRow
+          icon={Clock}
+          label="Session status"
+          value="Your session will remain active until you sign out"
+          variant="readonly"
+        />
+      </SettingsSectionCard>
+
+      {/* Session Actions */}
+      <SettingsSectionCard
+        title="Session Actions"
+        description="Manage your active sessions"
+      >
+        <div className="px-4 py-4">
+          <button
+            onClick={handleSignOutAll}
+            disabled={signingOut}
+            className="text-[13px] font-medium px-4 py-2.5 rounded transition-colors min-h-[44px] disabled:opacity-50"
+            style={{ 
+              backgroundColor: 'rgba(255,255,255,0.05)',
+              color: 'var(--platform-text)',
+              border: '1px solid var(--platform-border)'
+            }}
+            onMouseEnter={(e) => {
+              if (!signingOut) {
+                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)';
+            }}
+          >
+            {signingOut ? "Signing out..." : "Sign out all sessions"}
+          </button>
+          <p 
+            className="text-[12px] mt-3 line-clamp-2"
+            style={{ color: 'var(--platform-text-muted)' }}
+          >
+            This will sign you out from all devices and require re-authentication.
+          </p>
+        </div>
+      </SettingsSectionCard>
+
+      <SettingsFooterNotice>
+        Security settings may be governed by workspace policies. 
+        Contact your administrator for policy changes.
+      </SettingsFooterNotice>
+
+      {/* Inactivity Timeout Selection Sheet */}
+      <EditSelectSheet
+        open={showTimeoutSheet}
+        onOpenChange={setShowTimeoutSheet}
+        parentLabel="Security"
+        title="Auto-logout timeout"
+        helperText="For security, your session will expire after this period of inactivity"
+        options={INACTIVITY_TIMEOUT_OPTIONS}
+        value={preferences.inactivity_timeout_minutes}
+        onChange={handleTimeoutChange}
+        disabled={isTimeoutLocked}
+      />
+    </SettingsPageContainer>
   );
 }
