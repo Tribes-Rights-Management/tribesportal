@@ -97,24 +97,21 @@ function MobileSettingsIndex() {
         {/* Content column - same max-width as SettingsPageContainer */}
         <div className="max-w-[720px] w-full min-w-0">
           <h1 
-            className="text-[24px] font-semibold tracking-[-0.02em] mb-6"
-            style={{ color: 'var(--platform-text)' }}
+            className="text-[18px] sm:text-[20px] font-medium leading-[1.2] sm:leading-[1.25] mb-6"
+            style={{ 
+              color: 'var(--platform-text)',
+              letterSpacing: '-0.01em',
+            }}
           >
             Account Settings
           </h1>
-        <h1 
-          className="text-[24px] font-semibold tracking-[-0.02em] mb-6"
-          style={{ color: 'var(--platform-text)' }}
-        >
-          Account Settings
-        </h1>
-        <div 
-          className="rounded-lg overflow-hidden w-full max-w-full"
-          style={{ 
-            backgroundColor: 'var(--platform-surface)',
-            border: '1px solid var(--platform-border)'
-          }}
-        >
+          <div 
+            className="rounded-lg overflow-hidden w-full max-w-full"
+            style={{ 
+              backgroundColor: 'var(--platform-surface)',
+              border: '1px solid var(--platform-border)'
+            }}
+          >
           {accountNavItems.map((item, index) => (
             <NavLink
               key={item.to}
