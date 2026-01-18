@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { CopyButton } from "@/components/ui/copy-button";
+import { Switch } from "@/components/ui/switch";
 
 /**
  * SETTINGS ROW — Universal Settings Row Component
@@ -12,6 +13,7 @@ import { CopyButton } from "@/components/ui/copy-button";
  * - editable: label + value + CTA like "Edit" / "Change"
  * - select: label + current selection + chevron (opens picker/modal)
  * - copyable: label + single-line value + copy icon
+ * - toggle: label + description + iOS-style switch
  *
  * Identifiers (emails, IDs) never wrap - enforced via truncation.
  * Mobile: single-column stacked layout with full-width values.
@@ -20,18 +22,18 @@ import { CopyButton } from "@/components/ui/copy-button";
  * This component provides internal card padding only.
  */
 
-export type SettingsRowVariant = "readonly" | "editable" | "select" | "copyable";
+export type SettingsRowVariant = "readonly" | "editable" | "select" | "copyable" | "toggle";
 
 interface SettingsRowProps {
   /** Row label */
   label: string;
-  /** Row value */
-  value: string | null | undefined;
+  /** Row value (for readonly/editable/select/copyable) */
+  value?: string | null | undefined;
   /** Visual variant */
   variant?: SettingsRowVariant;
   /** Icon to display (optional) */
   icon?: React.ElementType;
-  /** Helper text displayed below value */
+  /** Helper text displayed below label (for toggle) or below value (for others) */
   helperText?: string;
   /** CTA button text for editable variant */
   ctaLabel?: string;
@@ -39,6 +41,10 @@ interface SettingsRowProps {
   onCta?: () => void;
   /** Click handler for select variant */
   onSelect?: () => void;
+  /** Toggle state (for toggle variant) */
+  checked?: boolean;
+  /** Toggle change handler (for toggle variant) */
+  onCheckedChange?: (checked: boolean) => void;
   /** Whether the row is disabled/locked by policy */
   locked?: boolean;
   /** Lock reason displayed as helper text when locked */
@@ -56,6 +62,8 @@ export function SettingsRow({
   ctaLabel = "Edit",
   onCta,
   onSelect,
+  checked,
+  onCheckedChange,
   locked = false,
   lockReason = "Enforced by workspace policy",
   className,
@@ -78,12 +86,66 @@ export function SettingsRow({
 
   const isSelectRow = variant === "select" && !locked && !!onSelect;
   const isCopyRow = variant === "copyable" && hasValue;
+  const isToggleRow = variant === "toggle";
   const isInteractive = isSelectRow || isCopyRow;
 
   const handleRowActivate = () => {
     if (isSelectRow) return onSelect?.();
     if (isCopyRow) return handleCopy();
   };
+
+  // Toggle variant has its own layout
+  if (isToggleRow) {
+    return (
+      <div
+        className={cn(
+          "px-4 py-4",
+          "flex items-center justify-between gap-4",
+          "w-full max-w-full min-w-0 overflow-x-clip",
+          className
+        )}
+        style={{
+          borderBottom: "1px solid var(--platform-border)",
+        }}
+      >
+        {/* Left side: Icon + Label + Helper */}
+        <div className="flex items-start gap-3 min-w-0 flex-1">
+          {Icon && (
+            <div
+              className="h-8 w-8 rounded flex items-center justify-center shrink-0 mt-0.5"
+              style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+            >
+              <Icon className="h-4 w-4" style={{ color: "var(--platform-text-secondary)" }} />
+            </div>
+          )}
+          <div className="min-w-0 flex-1">
+            <span
+              className="text-[13px] font-medium block"
+              style={{ color: locked ? "var(--platform-text-muted)" : "var(--platform-text)" }}
+            >
+              {label}
+            </span>
+            {effectiveHelperText && (
+              <span
+                className="text-[12px] block mt-0.5"
+                style={{ color: "var(--platform-text-muted)" }}
+              >
+                {effectiveHelperText}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Right side: Switch */}
+        <Switch
+          checked={checked ?? false}
+          onCheckedChange={onCheckedChange}
+          disabled={locked}
+          aria-label={label}
+        />
+      </div>
+    );
+  }
 
   return (
     <div

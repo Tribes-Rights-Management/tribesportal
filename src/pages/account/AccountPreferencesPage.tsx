@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Bell, Globe, Calendar, Clock } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Bell, Globe, Calendar, Clock, Maximize2 } from "lucide-react";
 import {
   useUserPreferences,
   TIMEZONE_OPTIONS,
@@ -23,6 +23,29 @@ import {
  */
 
 type ModalType = "timezone" | "dateFormat" | "timeFormat" | null;
+type DensityMode = "comfortable" | "compact";
+
+const DENSITY_KEY = "tribes:density";
+
+function useDensity() {
+  const [density, setDensityState] = useState<DensityMode>(() => {
+    const stored = localStorage.getItem(DENSITY_KEY);
+    return stored === "compact" ? "compact" : "comfortable";
+  });
+
+  const setDensity = useCallback((newDensity: DensityMode) => {
+    localStorage.setItem(DENSITY_KEY, newDensity);
+    document.documentElement.dataset.density = newDensity;
+    setDensityState(newDensity);
+  }, []);
+
+  // Sync on mount (in case it differs)
+  useEffect(() => {
+    document.documentElement.dataset.density = density;
+  }, [density]);
+
+  return { density, setDensity, isCompact: density === "compact" };
+}
 
 export default function AccountPreferencesPage() {
   const {
@@ -34,6 +57,7 @@ export default function AccountPreferencesPage() {
     getTimeFormatLabel,
   } = useUserPreferences();
 
+  const { isCompact, setDensity } = useDensity();
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   const handleTimezoneChange = async (value: string | number) => {
@@ -48,8 +72,28 @@ export default function AccountPreferencesPage() {
     await updatePreferences({ time_format: value as "12h" | "24h" });
   };
 
+  const handleCompactDensityChange = (checked: boolean) => {
+    setDensity(checked ? "compact" : "comfortable");
+  };
+
   return (
     <>
+      {/* Display */}
+      <SettingsSectionCard
+        title="Display"
+        description="Interface appearance"
+        className="mb-4 md:mb-6"
+      >
+        <SettingsRow
+          icon={Maximize2}
+          label="Compact density"
+          helperText="Tighter spacing across lists and tables"
+          variant="toggle"
+          checked={isCompact}
+          onCheckedChange={handleCompactDensityChange}
+        />
+      </SettingsSectionCard>
+
       {/* Notifications */}
       <SettingsSectionCard
         title="Notifications"

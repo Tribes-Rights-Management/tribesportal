@@ -1389,3 +1389,93 @@ body {
     line-height: 1.45;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   COMPACT DENSITY MODE — Stripe/Mercury-grade density toggle
+   
+   Triggered by: document.documentElement.dataset.density = "compact"
+   Stored in: localStorage["tribes:density"]
+   
+   Reduces spacing across panels, rows, and tables while maintaining:
+   - Minimum 44px touch targets on mobile
+   - Font sizes >= 16px for inputs (iOS zoom prevention)
+   - Readable text hierarchy
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+html[data-density="compact"] {
+  /* Override spacing tokens for tighter density */
+  --space-2: 6px;
+  --space-3: 10px;
+  --space-4: 14px;
+  --space-5: 18px;
+  --space-6: 24px;
+}
+
+/* Compact: Panel/Card padding reduction */
+html[data-density="compact"] .px-4.py-4 {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+html[data-density="compact"] .px-4.py-3 {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* Compact: Settings section cards */
+html[data-density="compact"] [class*="SettingsSectionCard"] > div:first-child {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+/* Compact: Table cells - tighter vertical padding */
+html[data-density="compact"] td,
+html[data-density="compact"] th {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* Compact: List/grid gaps */
+html[data-density="compact"] .gap-4 {
+  gap: 12px;
+}
+
+html[data-density="compact"] .gap-6 {
+  gap: 16px;
+}
+
+/* Compact: Page container vertical padding */
+html[data-density="compact"] .py-6 {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+html[data-density="compact"] .py-10 {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+/* Compact: Margin adjustments */
+html[data-density="compact"] .mb-6 {
+  margin-bottom: 16px;
+}
+
+html[data-density="compact"] .mb-4 {
+  margin-bottom: 12px;
+}
+
+/* Compact: Section spacing */
+html[data-density="compact"] .space-y-6 > * + * {
+  margin-top: 16px;
+}
+
+html[data-density="compact"] .space-y-4 > * + * {
+  margin-top: 12px;
+}
+
+/* IMPORTANT: Preserve minimum touch targets and input font sizes */
+html[data-density="compact"] input,
+html[data-density="compact"] textarea,
+html[data-density="compact"] select {
+  font-size: 16px !important; /* Prevent iOS zoom */
+}
