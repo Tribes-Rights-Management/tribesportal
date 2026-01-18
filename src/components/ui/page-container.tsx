@@ -43,9 +43,13 @@ interface PageContainerProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const maxWidthMap = {
-  narrow: "640px",
-  medium: "800px",
-  wide: "960px",
+  // Settings / tight column
+  narrow: "720px",
+  // Default reading width
+  medium: "960px",
+  // Canonical app max width
+  wide: "1120px",
+  // Full bleed (still width: 100%, never 100vw)
   full: "100%",
 } as const;
 
@@ -78,17 +82,20 @@ export function PageContainer({
 
   const paddingStyles = React.useMemo(() => {
     if (padding === "none") return {};
-    
-    const base = padding === "compact" ? "12px" : "16px";
-    const tablet = padding === "compact" ? "16px" : "24px";
-    
+
+    // Runtime layout contract:
+    // - Mobile: 16px
+    // - Tablet/Desktop: 24px
+    // Defined via CSS var in index.css (single source of truth).
+    const base = padding === "compact" ? "12px" : "var(--page-pad-x, 16px)";
+
     if (safeArea) {
       return {
         paddingLeft: `max(${base}, env(safe-area-inset-left, ${base}))`,
         paddingRight: `max(${base}, env(safe-area-inset-right, ${base}))`,
       };
     }
-    
+
     return {
       paddingLeft: base,
       paddingRight: base,

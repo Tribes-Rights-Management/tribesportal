@@ -3,11 +3,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Monitor, Clock, KeyRound, ShieldCheck, Timer } from "lucide-react";
 import { useUserPreferences, INACTIVITY_TIMEOUT_OPTIONS } from "@/hooks/useUserPreferences";
 import { EditSelectSheet } from "@/components/edit";
-import { SettingsPageContainer } from "@/components/ui/settings-page-container";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageShell } from "@/components/ui/page-shell";
 import {
   SettingsRow,
   SettingsSectionCard,
-  SettingsPageHeader,
   SettingsFooterNotice,
 } from "@/components/ui/settings-row";
 
@@ -51,10 +51,10 @@ export default function AccountSecurityPage() {
   const isTimeoutLocked = isLocked("inactivity_timeout_minutes");
 
   return (
-    <SettingsPageContainer>
-      <SettingsPageHeader 
+    <PageContainer maxWidth="narrow">
+      <PageShell 
         title="Security"
-        description="Authentication and session management"
+        subtitle="Authentication and session management"
       />
 
       {/* Authentication Method */}
@@ -162,6 +162,6 @@ export default function AccountSecurityPage() {
         onChange={handleTimeoutChange}
         disabled={isTimeoutLocked}
       />
-    </SettingsPageContainer>
+    </PageContainer>
   );
 }

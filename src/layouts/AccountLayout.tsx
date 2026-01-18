@@ -6,6 +6,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { User, Shield, Sliders, ChevronRight, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRef } from "react";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageShell } from "@/components/ui/page-shell";
 
 /**
  * ACCOUNT SETTINGS LAYOUT — INSTITUTIONAL GOVERNANCE SURFACE
@@ -86,25 +88,13 @@ function MobileSettingsIndex() {
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <GlobalHeader />
-      <main 
-        className="flex-1 w-full max-w-full overflow-x-clip py-6"
-        style={{
-          // Match SettingsPageContainer padding for alignment
-          paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
-          paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
-        }}
-      >
-        {/* Content column - same max-width as SettingsPageContainer */}
-        <div className="max-w-[720px] w-full min-w-0">
-          <h1 
-            className="text-[18px] sm:text-[20px] font-medium leading-[1.2] sm:leading-[1.25] mb-6"
-            style={{ 
-              color: 'var(--platform-text)',
-              letterSpacing: '-0.01em',
-            }}
-          >
-            Account Settings
-          </h1>
+      <main className="flex-1 w-full max-w-full overflow-x-clip">
+        <PageContainer maxWidth="narrow" padding="default" safeArea>
+          <PageShell
+            title="Account Settings"
+            subtitle="Profile, security, and preferences"
+          />
+
           <div 
             className="rounded-lg overflow-hidden w-full max-w-full"
             style={{ 
@@ -112,52 +102,52 @@ function MobileSettingsIndex() {
               border: '1px solid var(--platform-border)'
             }}
           >
-          {accountNavItems.map((item, index) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className="flex items-center gap-3 px-4 py-4 transition-colors active:bg-white/[0.03] w-full min-w-0"
-              style={{ 
-                borderBottom: index < accountNavItems.length - 1 
-                  ? '1px solid var(--platform-border)' 
-                  : 'none'
-              }}
-            >
-              <div 
-                className="h-10 w-10 rounded-lg flex items-center justify-center shrink-0"
-                style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+            {accountNavItems.map((item, index) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className="flex items-center gap-3 px-4 py-4 transition-colors active:bg-white/[0.03] w-full min-w-0"
+                style={{ 
+                  borderBottom: index < accountNavItems.length - 1 
+                    ? '1px solid var(--platform-border)' 
+                    : 'none'
+                }}
               >
-                <item.icon 
-                  className="h-5 w-5" 
-                  style={{ color: 'var(--platform-text-secondary)' }} 
+                <div 
+                  className="h-10 w-10 rounded-lg flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+                >
+                  <item.icon 
+                    className="h-5 w-5" 
+                    style={{ color: 'var(--platform-text-secondary)' }} 
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p 
+                    className="text-[15px] font-medium truncate"
+                    style={{ color: 'var(--platform-text)' }}
+                  >
+                    {item.label}
+                  </p>
+                  <p 
+                    className="text-[13px] mt-0.5 line-clamp-2"
+                    style={{ 
+                      color: 'var(--platform-text-secondary)',
+                      overflowWrap: 'anywhere',
+                      wordBreak: 'break-word',
+                    }}
+                  >
+                    {item.description}
+                  </p>
+                </div>
+                <ChevronRight 
+                  className="h-5 w-5 shrink-0" 
+                  style={{ color: 'var(--platform-text-muted)' }} 
                 />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p 
-                  className="text-[15px] font-medium truncate"
-                  style={{ color: 'var(--platform-text)' }}
-                >
-                  {item.label}
-                </p>
-                <p 
-                  className="text-[13px] mt-0.5 line-clamp-2"
-                  style={{ 
-                    color: 'var(--platform-text-secondary)',
-                    overflowWrap: 'anywhere',
-                    wordBreak: 'break-word',
-                  }}
-                >
-                  {item.description}
-                </p>
-              </div>
-              <ChevronRight 
-                className="h-5 w-5 shrink-0" 
-                style={{ color: 'var(--platform-text-muted)' }} 
-              />
-            </NavLink>
-          ))}
-        </div>
-        </div>
+              </NavLink>
+            ))}
+          </div>
+        </PageContainer>
       </main>
     </div>
   );
@@ -181,8 +171,8 @@ function MobileDetailWrapper({ children }: { children: React.ReactNode }) {
         style={{ 
           backgroundColor: 'var(--platform-surface)',
           borderBottom: '1px solid var(--platform-border)',
-          paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
-          paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
+          paddingLeft: 'max(var(--page-pad-x, 16px), env(safe-area-inset-left, var(--page-pad-x, 16px)))',
+          paddingRight: 'max(var(--page-pad-x, 16px), env(safe-area-inset-right, var(--page-pad-x, 16px)))',
         }}
       >
         <Link 
