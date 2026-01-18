@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Bell, Globe, Calendar, Clock } from "lucide-react";
 import { useUserPreferences, TIMEZONE_OPTIONS, DATE_FORMAT_OPTIONS, TIME_FORMAT_OPTIONS } from "@/hooks/useUserPreferences";
 import { EditSelectSheet } from "@/components/edit";
-import { SettingsPageContainer } from "@/components/ui/settings-page-container";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageShell } from "@/components/ui/page-shell";
 import {
   SettingsRow,
   SettingsSectionCard,
-  SettingsPageHeader,
   SettingsFooterNotice,
 } from "@/components/ui/settings-row";
 
@@ -49,10 +49,10 @@ export default function AccountPreferencesPage() {
   };
 
   return (
-    <SettingsPageContainer>
-      <SettingsPageHeader 
+    <PageContainer maxWidth="narrow">
+      <PageShell 
         title="Preferences"
-        description="Operational settings and display options"
+        subtitle="Operational settings and display options"
       />
 
       {/* Notifications */}
@@ -144,6 +144,6 @@ export default function AccountPreferencesPage() {
         onChange={handleTimeFormatChange}
         disabled={isLocked("time_format")}
       />
-    </SettingsPageContainer>
+    </PageContainer>
   );
 }

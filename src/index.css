@@ -64,6 +64,14 @@ body {
   --space-10: 88px;
   --space-11: 120px;
   --space-12: 160px;
+
+  /* ─────────────────────────────────────────────────────────────────────────────
+     CANONICAL APP PAGE PADDING — Runtime layout contract
+     Mobile: 16px (px-4)
+     Tablet/Desktop: 24px (px-6)
+     Used by PageContainer + header bars via CSS var + safe-area max().
+     ───────────────────────────────────────────────────────────────────────────── */
+  --page-pad-x: 16px;
   
   /* Footer-specific tokens — Institutional grade, balanced zones */
   --footer-pt-mobile: 72px;    /* Locked: equal top/bottom */
@@ -111,11 +119,13 @@ body {
   --step-list-top: var(--space-4);   /* 24px above step list */
 }
 
+
 /* Tablet breakpoint (768px+) */
 @media (min-width: 768px) {
   :root {
     --gutter: var(--space-5);          /* 32px */
     --section-padding-y: var(--space-10); /* 120px */
+    --page-pad-x: 24px;
   }
 }
 

@@ -1,7 +1,8 @@
 import * as React from "react";
-import { Copy, Check, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { CopyButton } from "@/components/ui/copy-button";
 
 /**
  * SETTINGS ROW — Universal Settings Row Component
@@ -56,24 +57,30 @@ export function SettingsRow({
   lockReason = "Enforced by workspace policy",
   className,
 }: SettingsRowProps) {
-  const [copied, setCopied] = React.useState(false);
   const displayValue = value || "—";
   const hasValue = value !== null && value !== undefined && value !== "";
 
   const handleCopy = async () => {
     if (!hasValue) return;
-    
+
     try {
       await navigator.clipboard.writeText(value!);
-      setCopied(true);
       toast({ description: "Copied" });
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
+    } catch {
       toast({ description: "Failed to copy", variant: "destructive" });
     }
   };
 
   const effectiveHelperText = locked ? lockReason : helperText;
+
+  const isSelectRow = variant === "select" && !locked && !!onSelect;
+  const isCopyRow = variant === "copyable" && hasValue;
+  const isInteractive = isSelectRow || isCopyRow;
+
+  const handleRowActivate = () => {
+    if (isSelectRow) return onSelect?.();
+    if (isCopyRow) return handleCopy();
+  };
 
   return (
     <div 
@@ -82,19 +89,21 @@ export function SettingsRow({
         "px-4 py-4",
         "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
         "w-full max-w-full min-w-0 overflow-x-clip",
-        variant === "select" && !locked && "cursor-pointer hover:bg-white/[0.02] transition-colors",
+        isSelectRow && "cursor-pointer hover:bg-white/[0.02] transition-colors",
+        isCopyRow && "cursor-pointer hover:bg-white/[0.02] transition-colors",
         className
       )}
       style={{ 
         borderBottom: '1px solid var(--platform-border)',
       }}
-      onClick={variant === "select" && !locked ? onSelect : undefined}
-      role={variant === "select" && !locked ? "button" : undefined}
-      tabIndex={variant === "select" && !locked ? 0 : undefined}
+      onClick={isInteractive ? handleRowActivate : undefined}
+      role={isInteractive ? "button" : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
       onKeyDown={(e) => {
-        if (variant === "select" && !locked && (e.key === "Enter" || e.key === " ")) {
+        if (!isInteractive) return;
+        if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onSelect?.();
+          handleRowActivate();
         }
       }}
     >
@@ -147,24 +156,13 @@ export function SettingsRow({
           )}
         </div>
 
-        {/* Copyable: Copy button */}
+        {/* Copyable: Copy button (canonical) */}
         {variant === "copyable" && hasValue && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCopy();
-            }}
-            className="shrink-0 p-2 rounded transition-colors hover:bg-white/[0.06] min-h-[44px] min-w-[44px] flex items-center justify-center"
-            style={{ color: 'var(--platform-text-muted)' }}
-            aria-label="Copy to clipboard"
-          >
-            {copied ? (
-              <Check className="h-4 w-4" style={{ color: '#4ade80' }} />
-            ) : (
-              <Copy className="h-4 w-4" />
-            )}
-          </button>
+          <CopyButton
+            value={value!}
+            size="sm"
+            label={`Copy ${label}`}
+          />
         )}
 
         {/* Editable: CTA button */}

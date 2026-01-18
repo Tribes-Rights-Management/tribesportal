@@ -3,11 +3,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { User, Mail, Shield, Building2 } from "lucide-react";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { DisplayNameEditSheet } from "@/components/settings/DisplayNameEditSheet";
-import { SettingsPageContainer } from "@/components/ui/settings-page-container";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageShell } from "@/components/ui/page-shell";
 import {
   SettingsRow,
   SettingsSectionCard,
-  SettingsPageHeader,
   SettingsFooterNotice,
 } from "@/components/ui/settings-row";
 
@@ -43,10 +43,10 @@ export default function AccountProfilePage() {
   };
 
   return (
-    <SettingsPageContainer>
-      <SettingsPageHeader 
+    <PageContainer maxWidth="narrow">
+      <PageShell 
         title="Profile"
-        description="Identity and display preferences"
+        subtitle="Identity and display preferences"
       />
 
       {/* Section 1: Account Identity (Governed) */}
@@ -109,6 +109,6 @@ export default function AccountProfilePage() {
         onSave={handleSaveDisplayName}
         saving={saving}
       />
-    </SettingsPageContainer>
+    </PageContainer>
   );
 }
