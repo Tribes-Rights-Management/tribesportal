@@ -3,8 +3,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { User, Mail, Shield, Building2 } from "lucide-react";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { DisplayNameEditSheet } from "@/components/settings/DisplayNameEditSheet";
-import { PageContainer } from "@/components/ui/page-container";
-import { PageShell } from "@/components/ui/page-shell";
 import {
   SettingsRow,
   SettingsSectionCard,
@@ -13,14 +11,11 @@ import {
 
 /**
  * ACCOUNT PROFILE PAGE
- * 
+ *
  * Route: /account/profile
- * 
- * Split into:
- * 1) Account Identity (Governed) — Read-only
- * 2) Display Preferences (User-editable)
- * 
- * Uses SettingsPageContainer for consistent padding across all settings pages.
+ *
+ * NOTE: Layout/headers/padding are owned by AccountLayout.
+ * This page renders content sections only.
  */
 
 export default function AccountProfilePage() {
@@ -29,11 +24,12 @@ export default function AccountProfilePage() {
   const [showDisplayNameSheet, setShowDisplayNameSheet] = useState(false);
 
   // Derive role display
-  const roleDisplay = profile?.platform_role === 'platform_admin' 
-    ? 'Platform Administrator' 
-    : profile?.platform_role === 'external_auditor'
-    ? 'External Auditor'
-    : 'User';
+  const roleDisplay =
+    profile?.platform_role === "platform_admin"
+      ? "Platform Administrator"
+      : profile?.platform_role === "external_auditor"
+        ? "External Auditor"
+        : "User";
 
   // Display name (preference) or fallback to profile full_name
   const displayName = preferences.display_name || profile?.full_name || "";
@@ -43,12 +39,7 @@ export default function AccountProfilePage() {
   };
 
   return (
-    <PageContainer maxWidth="narrow">
-      <PageShell 
-        title="Profile"
-        subtitle="Identity and display preferences"
-      />
-
+    <>
       {/* Section 1: Account Identity (Governed) */}
       <SettingsSectionCard
         title="Account Identity"
@@ -97,8 +88,8 @@ export default function AccountProfilePage() {
       </SettingsSectionCard>
 
       <SettingsFooterNotice>
-        Account identity is governed by workspace policies. 
-        Contact your administrator for access-related changes.
+        Account identity is governed by workspace policies. Contact your administrator for
+        access-related changes.
       </SettingsFooterNotice>
 
       {/* Display Name Edit Sheet */}
@@ -109,6 +100,6 @@ export default function AccountProfilePage() {
         onSave={handleSaveDisplayName}
         saving={saving}
       />
-    </PageContainer>
+    </>
   );
 }
