@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { ChevronRight, ChevronDown, Copy, Check } from "lucide-react";
+import { ChevronRight, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { AppSheet, AppSheetBody } from "@/components/ui/app-sheet";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AuthorityRecordSheet } from "./AuthorityRecordSheet";
-import { toast } from "@/hooks/use-toast";
+import { CopyButton } from "@/components/ui/copy-button";
 import {
   SettingsRow,
   SettingsSectionCard,
@@ -71,7 +71,6 @@ export function MemberDetailsSheet({
 }: MemberDetailsSheetProps) {
   const [authorityRecordOpen, setAuthorityRecordOpen] = useState(false);
   const [governanceOpen, setGovernanceOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   // Scroll to top when sheet opens
   useEffect(() => {
@@ -87,17 +86,6 @@ export function MemberDetailsSheet({
   if (!user) return null;
 
   const isCurrentUser = user.user_id === currentUserId;
-
-  const handleCopyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(user.email);
-      setCopied(true);
-      toast({ description: "Copied" });
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast({ description: "Failed to copy", variant: "destructive" });
-    }
-  };
 
   const formatRole = (role: PortalRole): string => {
     switch (role) {
@@ -162,7 +150,7 @@ export function MemberDetailsSheet({
             title="Identity"
             description="Account identification and status"
           >
-            {/* Email with copy - custom row for truncation */}
+            {/* Email with copy - uses canonical CopyButton */}
             <div 
               className="px-4 py-4 sm:px-6 flex items-center justify-between gap-2"
               style={{ borderBottom: '1px solid var(--platform-border)' }}
@@ -190,19 +178,7 @@ export function MemberDetailsSheet({
                   )}
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={handleCopyEmail}
-                className="shrink-0 p-2 rounded transition-colors hover:bg-white/[0.06] min-h-[44px] min-w-[44px] flex items-center justify-center"
-                style={{ color: 'var(--platform-text-muted)' }}
-                aria-label="Copy email"
-              >
-                {copied ? (
-                  <Check className="h-4 w-4" style={{ color: '#4ade80' }} />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </button>
+              <CopyButton value={user.email} size="md" label="Copy email address" />
             </div>
 
             {/* Account Created */}
