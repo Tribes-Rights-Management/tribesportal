@@ -11,8 +11,8 @@ import { cn } from "@/lib/utils";
  * 
  * STYLING (NON-NEGOTIABLE):
  * - Background: Dark surface (--edit-input-bg)
- * - Border: 1px solid rgba(255,255,255,0.14) — subtle but visible
- * - Border on focus: 1px solid rgba(255,255,255,0.28) + focus ring
+ * - Border: 1px solid rgba(255,255,255,0.20) — VISIBLE on dark background
+ * - Border on focus: 1px solid rgba(255,255,255,0.35) + focus ring
  * - Corner radius: 10px (Apple-like, slightly rounded)
  * - Height: 48px (comfortable tap target)
  * - Placeholder: muted (rgba(255,255,255,0.35))
@@ -67,13 +67,13 @@ export const EditField = React.forwardRef<HTMLInputElement, EditFieldProps>(
             color: 'var(--edit-input-text, var(--platform-text))',
             border: hasError 
               ? '1px solid var(--edit-input-error-border, hsl(0 62% 50%))' 
-              : '1px solid var(--edit-input-border, rgba(255,255,255,0.14))',
+              : '1px solid var(--edit-input-border, rgba(255,255,255,0.20))',
             opacity: locked ? 'var(--edit-input-disabled-opacity, 0.5)' : 1,
           }}
           onFocus={(e) => {
             if (!locked && !hasError) {
-              e.target.style.borderColor = 'var(--edit-input-border-focus, rgba(255,255,255,0.28))';
-              e.target.style.boxShadow = '0 0 0 3px rgba(255,255,255,0.06)';
+              e.target.style.borderColor = 'var(--edit-input-border-focus, rgba(255,255,255,0.35))';
+              e.target.style.boxShadow = '0 0 0 3px rgba(255,255,255,0.08)';
             }
             props.onFocus?.(e);
           }}
@@ -81,7 +81,7 @@ export const EditField = React.forwardRef<HTMLInputElement, EditFieldProps>(
             if (!locked) {
               e.target.style.borderColor = hasError 
                 ? 'var(--edit-input-error-border, hsl(0 62% 50%))' 
-                : 'var(--edit-input-border, rgba(255,255,255,0.14))';
+                : 'var(--edit-input-border, rgba(255,255,255,0.20))';
               e.target.style.boxShadow = 'none';
             }
             props.onBlur?.(e);

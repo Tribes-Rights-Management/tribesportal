@@ -11,9 +11,9 @@ import { toast } from "@/hooks/use-toast";
  * Consistent, quiet copy button for values like emails, IDs, etc.
  * Stripe/Mercury-grade styling: small icon, low contrast until hover.
  * 
- * SIZING:
- * - Icon: 14px (h-3.5 w-3.5)
- * - Tap target: 44px mobile, 32px desktop (accessible)
+ * SIZING (Stripe/Mercury scale):
+ * - Icon: 12px (h-3 w-3) — subtle, professional
+ * - Tap target: 32px mobile, 28px desktop (accessible but quiet)
  * 
  * BEHAVIOR:
  * - Shows checkmark on success (2s)
@@ -64,12 +64,14 @@ export function CopyButton({
     }
   };
 
+  // Stripe/Mercury-grade sizing: subtle, professional
   const sizeClasses = {
-    sm: "h-8 w-8 sm:h-7 sm:w-7",
-    md: "h-11 w-11 sm:h-9 sm:w-9",
+    sm: "h-7 w-7 sm:h-6 sm:w-6",
+    md: "h-9 w-9 sm:h-8 sm:w-8",
   };
 
-  const iconSize = size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4";
+  // Icon size: 12px for sm, 14px for md
+  const iconSize = size === "sm" ? "h-3 w-3" : "h-3.5 w-3.5";
 
   return (
     <button
