@@ -243,12 +243,12 @@ body {
        ───────────────────────────────────────────────────────────────────────────── */
     --edit-input-height: 48px;
     --edit-input-padding: 0 16px;
-    --edit-input-font-size: 15px;
+    --edit-input-font-size: 16px;                             /* CRITICAL: 16px prevents iOS Safari zoom */
     --edit-input-radius: 10px;
-    --edit-input-bg: var(--tribes-surface);
+    --edit-input-bg: rgba(255, 255, 255, 0.04);               /* Subtle surface lift */
     --edit-input-text: var(--tribes-fg);
-    --edit-input-border: rgba(255, 255, 255, 0.20);           /* Visible on dark */
-    --edit-input-border-focus: rgba(255, 255, 255, 0.35);     /* Stronger on focus */
+    --edit-input-border: rgba(255, 255, 255, 0.18);           /* Visible light-gray border */
+    --edit-input-border-focus: rgba(255, 255, 255, 0.28);     /* Slightly stronger on focus */
     --edit-input-error-border: hsl(0 62% 50%);
     --edit-input-placeholder: rgba(255, 255, 255, 0.35);
     --edit-input-disabled-opacity: 0.5;
