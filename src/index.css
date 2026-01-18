@@ -237,6 +237,23 @@ body {
     --auth-button-disabled-text: var(--tribes-fg-muted);
 
     /* ─────────────────────────────────────────────────────────────────────────────
+       EDIT FLOW INPUT TOKENS (LOCKED — INSTITUTIONAL STANDARD)
+       Apple-grade input styling for all edit surfaces.
+       Border MUST be visible on dark backgrounds.
+       ───────────────────────────────────────────────────────────────────────────── */
+    --edit-input-height: 48px;
+    --edit-input-padding: 0 16px;
+    --edit-input-font-size: 15px;
+    --edit-input-radius: 10px;
+    --edit-input-bg: var(--tribes-surface);
+    --edit-input-text: var(--tribes-fg);
+    --edit-input-border: rgba(255, 255, 255, 0.20);           /* Visible on dark */
+    --edit-input-border-focus: rgba(255, 255, 255, 0.35);     /* Stronger on focus */
+    --edit-input-error-border: hsl(0 62% 50%);
+    --edit-input-placeholder: rgba(255, 255, 255, 0.35);
+    --edit-input-disabled-opacity: 0.5;
+
+    /* ─────────────────────────────────────────────────────────────────────────────
        INSTITUTIONAL DARK THEME (Shadcn HSL tokens mapped to website palette)
        EXACT MATCH: #0B0F14 canvas, #F2F4F7 primary, #AAB1BA secondary, #6E7681 muted
        ───────────────────────────────────────────────────────────────────────────── */
