@@ -42,7 +42,7 @@ export function DisplayNameEditSheet({
       setInputValue(value);
       setError(null);
       // Auto-focus after sheet animation
-      setTimeout(() => inputRef.current?.focus(), 150);
+      setTimeout(() => inputRef.current?.focus(), 200);
     }
   }, [open, value]);
 

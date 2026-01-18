@@ -255,12 +255,30 @@ html, body {
     /* Institutional radius scale - sharp, not playful */
     --radius: 6px;
     --radius-lg: 8px;
-    --radius-input: 6px;
+    --radius-input: 10px;
     --radius-button: 6px;
 
     /* Institutional component heights */
     --button-height: 40px;
-    --input-height: 40px;
+    --input-height: 48px;
+
+    /* ─────────────────────────────────────────────────────────────────────────────
+       CANONICAL INPUT STYLING — APPLE-GRADE (LOCKED)
+       
+       All inputs across the app must use these tokens for consistency.
+       Visible borders on dark backgrounds. Focus states clearly indicated.
+       ───────────────────────────────────────────────────────────────────────────── */
+    --edit-input-bg: var(--platform-canvas);
+    --edit-input-border: rgba(255, 255, 255, 0.14);
+    --edit-input-border-focus: rgba(255, 255, 255, 0.28);
+    --edit-input-text: var(--platform-text);
+    --edit-input-placeholder: rgba(255, 255, 255, 0.35);
+    --edit-input-height: 48px;
+    --edit-input-radius: 10px;
+    --edit-input-padding: 0 16px;
+    --edit-input-font-size: 15px;
+    --edit-input-error-border: hsl(0 62% 50%);
+    --edit-input-disabled-opacity: 0.5;
 
     /* Tribes consent checkbox tokens (LOCKED) */
     --tribes-checkbox-border: 0 0% 100% / 0.15;

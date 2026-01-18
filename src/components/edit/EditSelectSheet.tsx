@@ -113,10 +113,13 @@ export function EditSelectSheet({
         />
       }
     >
-      {/* Options list */}
+      {/* Options list with Apple-like styling */}
       <div 
-        className="rounded-md overflow-hidden"
-        style={{ border: '1px solid rgba(255,255,255,0.14)' }}
+        className="rounded-xl overflow-hidden"
+        style={{ 
+          border: '1px solid var(--edit-input-border, rgba(255,255,255,0.14))',
+          backgroundColor: 'rgba(255,255,255,0.02)',
+        }}
       >
         {options.map((option, index) => {
           const isSelected = option.value === selectedValue;
@@ -130,18 +133,17 @@ export function EditSelectSheet({
               disabled={disabled}
               className={cn(
                 "w-full px-4 py-4 flex items-center justify-between gap-4",
-                "text-left transition-colors",
-                "hover:bg-white/[0.03] focus:bg-white/[0.03]",
+                "text-left transition-colors min-h-[52px]",
+                "hover:bg-white/[0.04] focus:bg-white/[0.04]",
                 "focus:outline-none",
                 disabled && "opacity-50 cursor-not-allowed"
               )}
               style={{ 
                 borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.08)',
-                backgroundColor: isSelected ? 'rgba(255,255,255,0.03)' : 'transparent',
               }}
             >
               <span 
-                className="text-[14px]"
+                className="text-[15px]"
                 style={{ 
                   color: isSelected ? 'var(--platform-text)' : 'var(--platform-text-secondary)' 
                 }}
@@ -150,7 +152,7 @@ export function EditSelectSheet({
               </span>
               {isSelected && (
                 <Check 
-                  className="h-4 w-4 shrink-0" 
+                  className="h-5 w-5 shrink-0" 
                   style={{ color: '#4ade80' }} 
                 />
               )}
