@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { User, Mail, Shield, Building2 } from "lucide-react";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
-import { DisplayNameEditModal } from "@/components/settings/DisplayNameEditModal";
+import { DisplayNameEditSheet } from "@/components/settings/DisplayNameEditSheet";
 import {
   SettingsRow,
   SettingsSectionCard,
@@ -23,7 +23,7 @@ import {
 export default function AccountProfilePage() {
   const { profile, activeTenant } = useAuth();
   const { preferences, updatePreferences, saving } = useUserPreferences();
-  const [showDisplayNameModal, setShowDisplayNameModal] = useState(false);
+  const [showDisplayNameSheet, setShowDisplayNameSheet] = useState(false);
 
   // Derive role display
   const roleDisplay = profile?.platform_role === 'platform_admin' 
@@ -92,7 +92,7 @@ export default function AccountProfilePage() {
             value={displayName}
             variant="editable"
             ctaLabel="Edit"
-            onCta={() => setShowDisplayNameModal(true)}
+            onCta={() => setShowDisplayNameSheet(true)}
             helperText="How your name appears to others"
           />
         </SettingsSectionCard>
@@ -102,10 +102,10 @@ export default function AccountProfilePage() {
           Contact your administrator for access-related changes.
         </SettingsFooterNotice>
 
-        {/* Display Name Edit Modal */}
-        <DisplayNameEditModal
-          open={showDisplayNameModal}
-          onOpenChange={setShowDisplayNameModal}
+        {/* Display Name Edit Sheet */}
+        <DisplayNameEditSheet
+          open={showDisplayNameSheet}
+          onOpenChange={setShowDisplayNameSheet}
           value={displayName}
           onSave={handleSaveDisplayName}
           saving={saving}
