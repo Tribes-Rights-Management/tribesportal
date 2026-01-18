@@ -25,11 +25,14 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
   return (
     <div 
-      className="fixed inset-0 flex items-center justify-center px-6"
+      className="fixed inset-0 flex items-center justify-center overflow-x-clip"
       style={{ 
         // Derives from canonical tribes-theme.css tokens (LOCKED)
         backgroundColor: 'var(--tribes-bg)',
         background: 'var(--auth-canvas-gradient)',
+        // Safe area aware padding
+        paddingLeft: 'max(24px, env(safe-area-inset-left, 24px))',
+        paddingRight: 'max(24px, env(safe-area-inset-right, 24px))',
       }}
     >
       {/* 

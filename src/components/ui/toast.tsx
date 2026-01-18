@@ -14,9 +14,15 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      // Use left-0 right-0 instead of w-full to prevent overflow on iOS Safari
+      "fixed top-0 left-0 right-0 z-[100] flex max-h-screen flex-col-reverse p-4 sm:bottom-0 sm:left-auto sm:right-0 sm:top-auto sm:flex-col sm:w-auto md:max-w-[420px]",
       className,
     )}
+    style={{
+      // Safe area aware padding
+      paddingLeft: 'max(16px, env(safe-area-inset-left, 16px))',
+      paddingRight: 'max(16px, env(safe-area-inset-right, 16px))',
+    }}
     {...props}
   />
 ));
