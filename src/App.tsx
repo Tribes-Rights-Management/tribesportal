@@ -101,7 +101,7 @@ import AuditorAccessLogPage from "@/pages/auditor/AuditorAccessLogPage";
 import AuditorChainPage from "@/pages/auditor/AuditorChainPage";
 
 // Account pages
-import AccountPage from "@/pages/account/AccountPage";
+import AccountLayout from "@/layouts/AccountLayout";
 import AccountProfilePage from "@/pages/account/AccountProfilePage";
 import AccountSecurityPage from "@/pages/account/AccountSecurityPage";
 import AccountPreferencesPage from "@/pages/account/AccountPreferencesPage";
@@ -270,7 +270,8 @@ const App = () => (
             ACCOUNT SETTINGS HUB (/account)
             Available to all authenticated users
         ═══════════════════════════════════════════════════════════════════════ */}
-        <Route path="/account" element={<AccountPage />}>
+        <Route path="/account" element={<AccountLayout />}>
+          <Route index element={null} />
           <Route path="profile" element={<AccountProfilePage />} />
           <Route path="security" element={<AccountSecurityPage />} />
           <Route path="preferences" element={<AccountPreferencesPage />} />

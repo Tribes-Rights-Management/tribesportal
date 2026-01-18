@@ -101,20 +101,20 @@ export default function AccountProfilePage() {
 
   return (
     <div 
-      className="py-10 px-6"
+      className="py-6 md:py-10 px-4 md:px-6"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
-      <div className="max-w-[800px] mx-auto">
+      <div className="max-w-[800px]">
         {/* Header */}
-        <div className="mb-10">
+        <div className="mb-6 md:mb-10">
           <h1 
-            className="text-[28px] font-semibold tracking-[-0.02em]"
+            className="text-[22px] md:text-[28px] font-semibold tracking-[-0.02em]"
             style={{ color: 'var(--platform-text)' }}
           >
             Profile
           </h1>
           <p 
-            className="text-[15px] mt-0.5"
+            className="text-[14px] md:text-[15px] mt-0.5"
             style={{ color: 'var(--platform-text-secondary)' }}
           >
             Identity and workspace association
@@ -137,7 +137,7 @@ export default function AccountProfilePage() {
 
         {/* Footer notice */}
         <p 
-          className="mt-6 text-[13px]"
+          className="mt-4 md:mt-6 text-[12px] md:text-[13px]"
           style={{ color: 'var(--platform-text-muted)' }}
         >
           Profile information is governed by workspace policies. 
