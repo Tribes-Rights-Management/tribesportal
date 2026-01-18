@@ -84,11 +84,14 @@ export function SystemConsoleLayout() {
 
   return (
     <div 
-      className="min-h-screen flex flex-col"
+      className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
       style={{ backgroundColor: 'var(--tribes-bg)' }}
     >
       <SystemConsoleHeader />
-      <main ref={mainRef} className="flex-1 overflow-y-auto">
+      <main 
+        ref={mainRef} 
+        className="flex-1 overflow-y-auto overflow-x-clip w-full max-w-full min-w-0"
+      >
         <Outlet />
       </main>
     </div>

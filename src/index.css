@@ -7,12 +7,30 @@
 /* ═══════════════════════════════════════════════════════════════════════════════
    GLOBAL OVERFLOW SAFEGUARD — MOBILE-FIRST (LOCKED)
    
-   Prevents horizontal scrolling on all surfaces. Any component that overflows
-   horizontally must use overflow-x: hidden explicitly.
+   Prevents horizontal scrolling on all surfaces. 
+   CRITICAL: Never use 100vw (causes overflow with scrollbars/safe-area).
+   Always use 100% + overflow-x: clip for bulletproof containment.
    ═══════════════════════════════════════════════════════════════════════════════ */
-html, body {
-  overflow-x: hidden;
-  max-width: 100vw;
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  min-height: 100dvh;
+}
+
+/* App root container overflow clamp */
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  min-height: 100dvh;
 }
 
 
