@@ -17,11 +17,11 @@ import { GlobalHeader } from "@/components/app/GlobalHeader";
 export function AdminLayout() {
   return (
     <div 
-      className="min-h-screen flex flex-col"
+      className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <GlobalHeader />
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto overflow-x-clip min-w-0 w-full max-w-full">
         <Outlet />
       </main>
     </div>

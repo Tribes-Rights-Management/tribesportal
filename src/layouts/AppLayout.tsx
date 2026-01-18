@@ -32,16 +32,16 @@ export function AppLayout() {
 
   return (
     <div 
-      className="min-h-screen flex flex-col"
+      className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
       style={{ backgroundColor: 'var(--tribes-bg-page)' }}
     >
       <GlobalHeader />
       <WorkspaceContextBar />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden w-full max-w-full">
         {activeContext === "licensing" && <LicensingNav />}
         {activeContext === "publishing" && <PublishingNav />}
-        <main ref={mainRef} className="flex-1 overflow-y-auto flex flex-col">
-          <div className="flex-1">
+        <main ref={mainRef} className="flex-1 overflow-y-auto overflow-x-clip flex flex-col min-w-0 w-full max-w-full">
+          <div className="flex-1 min-w-0 w-full max-w-full">
             <Outlet />
           </div>
           <AppFooter />

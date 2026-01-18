@@ -68,14 +68,14 @@ export function ModuleLayout() {
 
   return (
     <div 
-      className="min-h-screen flex flex-col"
+      className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
       style={{ backgroundColor: 'var(--tribes-bg-page)' }}
     >
       <GlobalHeader />
       <WorkspaceContextBar />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden w-full max-w-full">
         {navItems.length > 0 && <SideNav items={navItems} />}
-        <main ref={mainRef} className="flex-1 overflow-y-auto">
+        <main ref={mainRef} className="flex-1 overflow-y-auto overflow-x-clip min-w-0 w-full max-w-full">
           <Outlet />
         </main>
       </div>
