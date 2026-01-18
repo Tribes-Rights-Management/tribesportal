@@ -7,14 +7,15 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * Standard label + input styling + helper + validation for the Edit Flow.
+ * Uses canonical CSS variables from index.css for consistency.
  * 
  * STYLING (NON-NEGOTIABLE):
- * - Background: Dark surface (--platform-canvas)
+ * - Background: Dark surface (--edit-input-bg)
  * - Border: 1px solid rgba(255,255,255,0.14) — subtle but visible
- * - Border on focus: 1px solid rgba(255,255,255,0.28)
- * - Corner radius: 6px (institutional, not playful)
+ * - Border on focus: 1px solid rgba(255,255,255,0.28) + focus ring
+ * - Corner radius: 10px (Apple-like, slightly rounded)
  * - Height: 48px (comfortable tap target)
- * - Placeholder: muted, never bright
+ * - Placeholder: muted (rgba(255,255,255,0.35))
  * - Error state: red border + inline error message
  * ═══════════════════════════════════════════════════════════════════════════
  */
@@ -49,32 +50,39 @@ export const EditField = React.forwardRef<HTMLInputElement, EditFieldProps>(
           </label>
         )}
 
-        {/* Input field with canonical styling */}
+        {/* Input field with canonical Apple-like styling */}
         <input
           ref={ref}
           disabled={locked}
           className={cn(
-            "w-full h-12 px-4 text-[15px] rounded-md transition-all duration-200",
-            "placeholder:text-[rgba(255,255,255,0.35)]",
-            "focus:outline-none",
-            locked && "opacity-50 cursor-not-allowed"
+            "w-full transition-all duration-200 outline-none",
+            locked && "cursor-not-allowed"
           )}
           style={{
-            backgroundColor: 'var(--platform-canvas)',
-            color: 'var(--platform-text)',
+            height: 'var(--edit-input-height, 48px)',
+            padding: 'var(--edit-input-padding, 0 16px)',
+            fontSize: 'var(--edit-input-font-size, 15px)',
+            borderRadius: 'var(--edit-input-radius, 10px)',
+            backgroundColor: 'var(--edit-input-bg, var(--platform-canvas))',
+            color: 'var(--edit-input-text, var(--platform-text))',
             border: hasError 
-              ? '1px solid hsl(0 62% 50%)' 
-              : '1px solid rgba(255,255,255,0.14)',
+              ? '1px solid var(--edit-input-error-border, hsl(0 62% 50%))' 
+              : '1px solid var(--edit-input-border, rgba(255,255,255,0.14))',
+            opacity: locked ? 'var(--edit-input-disabled-opacity, 0.5)' : 1,
           }}
           onFocus={(e) => {
-            if (!locked) {
-              e.target.style.borderColor = 'rgba(255,255,255,0.28)';
+            if (!locked && !hasError) {
+              e.target.style.borderColor = 'var(--edit-input-border-focus, rgba(255,255,255,0.28))';
+              e.target.style.boxShadow = '0 0 0 3px rgba(255,255,255,0.06)';
             }
             props.onFocus?.(e);
           }}
           onBlur={(e) => {
-            if (!locked && !hasError) {
-              e.target.style.borderColor = 'rgba(255,255,255,0.14)';
+            if (!locked) {
+              e.target.style.borderColor = hasError 
+                ? 'var(--edit-input-error-border, hsl(0 62% 50%))' 
+                : 'var(--edit-input-border, rgba(255,255,255,0.14))';
+              e.target.style.boxShadow = 'none';
             }
             props.onBlur?.(e);
           }}
@@ -82,6 +90,13 @@ export const EditField = React.forwardRef<HTMLInputElement, EditFieldProps>(
           aria-describedby={hasError ? "edit-field-error" : displayHelper ? "edit-field-helper" : undefined}
           {...props}
         />
+
+        {/* Placeholder styling via CSS */}
+        <style>{`
+          input::placeholder {
+            color: var(--edit-input-placeholder, rgba(255,255,255,0.35));
+          }
+        `}</style>
 
         {/* Error message */}
         {hasError && (

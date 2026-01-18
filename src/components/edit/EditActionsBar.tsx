@@ -17,6 +17,10 @@ import { cn } from "@/lib/utils";
  * - Save disabled unless canSave is true
  * - Save shows loading state when saving
  * - Keyboard-safe: accounts for iOS Safari bottom safe area
+ * 
+ * STYLING:
+ * - Apple-like rounded buttons
+ * - Clear visual distinction between primary and secondary
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -51,31 +55,34 @@ export function EditActionsBar({
         paddingBottom: 'max(20px, env(safe-area-inset-bottom, 20px))',
       }}
     >
-      {/* Cancel button */}
+      {/* Cancel button - secondary styling */}
       <button
         type="button"
         onClick={onCancel}
         disabled={saving}
         className={cn(
-          "flex-1 text-[14px] font-medium py-3.5 rounded-md",
-          "transition-colors hover:bg-white/[0.06] disabled:opacity-50"
+          "flex-1 text-[15px] font-medium py-3.5 rounded-xl",
+          "transition-all duration-200 disabled:opacity-50",
+          "hover:bg-white/[0.08] active:scale-[0.98]"
         )}
         style={{ 
           color: 'var(--platform-text-secondary)',
-          backgroundColor: 'rgba(255,255,255,0.03)',
+          backgroundColor: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(255,255,255,0.08)',
         }}
       >
         {cancelLabel}
       </button>
 
-      {/* Save button */}
+      {/* Save button - primary styling */}
       <button
         type="button"
         onClick={onSave}
         disabled={!canSave || saving}
         className={cn(
-          "flex-1 text-[14px] font-medium py-3.5 rounded-md",
-          "transition-colors disabled:opacity-40"
+          "flex-1 text-[15px] font-semibold py-3.5 rounded-xl",
+          "transition-all duration-200",
+          canSave && !saving ? "active:scale-[0.98]" : "opacity-40"
         )}
         style={{ 
           backgroundColor: 'var(--platform-text)',

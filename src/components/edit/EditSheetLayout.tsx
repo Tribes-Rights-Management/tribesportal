@@ -2,16 +2,6 @@ import * as React from "react";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import {
-  Sheet,
-  SheetContent,
-  SheetPortal,
-  SheetOverlay,
-} from "@/components/ui/sheet";
-import {
-  Drawer,
-  DrawerContent,
-} from "@/components/ui/drawer";
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -23,7 +13,7 @@ import {
  * 
  * RENDERING:
  * - Desktop: Full-height side panel (right edge, 400px width)
- * - Mobile: Full-height bottom sheet (100dvh with safe-area)
+ * - Mobile: Full-height overlay (100dvh with safe-area)
  * 
  * STRUCTURE:
  * - Top: Back arrow + parent context label
@@ -32,7 +22,7 @@ import {
  * 
  * STYLING (NON-NEGOTIABLE):
  * - Background: Fully opaque (no glass, no blur, no translucency)
- * - Borders: 1px solid rgba(255,255,255,0.14) on all inputs
+ * - Inputs: Use canonical --edit-input-* tokens
  * - Backdrop: 100% opacity to completely obscure background
  * ═══════════════════════════════════════════════════════════════════════════
  */
@@ -84,15 +74,36 @@ export function EditSheetLayout({
     }
   }, [open]);
 
-  const handleOpenChange = (newOpen: boolean) => {
-    if (preventClose && !newOpen) return;
-    onOpenChange(newOpen);
-  };
+  // Lock body scroll when open
+  React.useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }
+  }, [open]);
 
   const handleBack = () => {
     if (preventClose) return;
     onOpenChange(false);
   };
+
+  // Handle escape key
+  React.useEffect(() => {
+    if (!open) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !preventClose) {
+        onOpenChange(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, preventClose, onOpenChange]);
+
+  if (!open) return null;
 
   // Shared content structure
   const sheetContent = (
@@ -106,7 +117,7 @@ export function EditSheetLayout({
           type="button"
           onClick={handleBack}
           disabled={preventClose}
-          className="h-10 w-10 -ml-2 flex items-center justify-center rounded-lg transition-colors hover:bg-white/[0.05] disabled:opacity-50"
+          className="h-11 w-11 -ml-2 flex items-center justify-center rounded-xl transition-colors hover:bg-white/[0.05] disabled:opacity-50"
           style={{ color: 'var(--platform-text-secondary)' }}
           aria-label={`Back to ${parentLabel}`}
         >
@@ -127,7 +138,7 @@ export function EditSheetLayout({
       >
         {/* Title */}
         <h2 
-          className="text-[20px] font-semibold mb-2"
+          className="text-[22px] font-semibold mb-2"
           style={{ color: 'var(--platform-text)' }}
         >
           {title}
@@ -136,7 +147,7 @@ export function EditSheetLayout({
         {/* Helper text */}
         {helperText && (
           <p 
-            className="text-[13px] mb-6"
+            className="text-[14px] mb-6 leading-relaxed"
             style={{ color: 'var(--platform-text-secondary)' }}
           >
             {helperText}
@@ -152,49 +163,35 @@ export function EditSheetLayout({
     </div>
   );
 
-  // Mobile: Full-height drawer
-  if (isMobile) {
-    return (
-      <Drawer open={open} onOpenChange={handleOpenChange}>
-        <DrawerContent 
-          className="h-[100dvh] flex flex-col"
-          style={{ 
-            backgroundColor: 'var(--platform-canvas)',
-          }}
-        >
-          {sheetContent}
-        </DrawerContent>
-      </Drawer>
-    );
-  }
-
-  // Desktop: Side panel
   return (
-    <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetPortal>
-        {/* Fully opaque overlay */}
-        <SheetOverlay 
-          className="fixed inset-0 z-50"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.95)' }}
-        />
-        <SheetContent 
-          side="right"
-          className={cn(
-            "w-[400px] max-w-full flex flex-col h-full p-0",
-            "data-[state=open]:animate-in data-[state=closed]:animate-out",
-            "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-            "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right"
-          )}
-          style={{ 
-            backgroundColor: 'var(--platform-canvas)',
-            borderLeft: '1px solid var(--platform-border)',
-          }}
-          onPointerDownOutside={(e) => preventClose && e.preventDefault()}
-          onEscapeKeyDown={(e) => preventClose && e.preventDefault()}
-        >
-          {sheetContent}
-        </SheetContent>
-      </SheetPortal>
-    </Sheet>
+    <>
+      {/* Backdrop - fully opaque */}
+      <div 
+        className="fixed inset-0 z-50"
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.96)' }}
+        onClick={() => !preventClose && onOpenChange(false)}
+        aria-hidden="true"
+      />
+      
+      {/* Sheet content */}
+      <div
+        className={cn(
+          "fixed z-50 flex flex-col",
+          "animate-in duration-200",
+          isMobile 
+            ? "inset-0 slide-in-from-bottom-4" 
+            : "right-0 top-0 bottom-0 w-[420px] max-w-full slide-in-from-right-4"
+        )}
+        style={{ 
+          backgroundColor: 'var(--platform-canvas)',
+          borderLeft: isMobile ? 'none' : '1px solid var(--platform-border)',
+        }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="edit-sheet-title"
+      >
+        {sheetContent}
+      </div>
+    </>
   );
 }
