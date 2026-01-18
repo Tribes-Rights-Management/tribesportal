@@ -108,9 +108,18 @@ export function EditSheetLayout({
   // Shared content structure
   const sheetContent = (
     <div className="flex flex-col h-full">
+      {/* Drag handle affordance (mobile-grade polish) */}
+      <div className="flex justify-center pt-3 pb-1 shrink-0">
+        <div 
+          className="w-10 h-1 rounded-full"
+          style={{ backgroundColor: 'rgba(255, 255, 255, 0.18)' }}
+          aria-hidden="true"
+        />
+      </div>
+
       {/* Header with back button */}
       <div 
-        className="flex items-center gap-3 px-5 pt-5 pb-4 shrink-0"
+        className="flex items-center gap-3 px-5 pt-2 pb-4 shrink-0"
         style={{ borderBottom: '1px solid var(--platform-border)' }}
       >
         <button

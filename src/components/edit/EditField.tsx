@@ -10,11 +10,12 @@ import { cn } from "@/lib/utils";
  * Uses canonical CSS variables from index.css for consistency.
  * 
  * STYLING (NON-NEGOTIABLE):
- * - Background: Dark surface (--edit-input-bg)
- * - Border: 1px solid rgba(255,255,255,0.20) — VISIBLE on dark background
- * - Border on focus: 1px solid rgba(255,255,255,0.35) + focus ring
+ * - Background: rgba(255,255,255,0.04) — subtle surface lift
+ * - Border: 1px solid rgba(255,255,255,0.18) — visible light-gray
+ * - Border on focus: 1px solid rgba(255,255,255,0.28) — slightly stronger
  * - Corner radius: 10px (Apple-like, slightly rounded)
  * - Height: 48px (comfortable tap target)
+ * - Font size: 16px (CRITICAL: prevents iOS Safari zoom)
  * - Placeholder: muted (rgba(255,255,255,0.35))
  * - Error state: red border + inline error message
  * ═══════════════════════════════════════════════════════════════════════════
@@ -61,19 +62,19 @@ export const EditField = React.forwardRef<HTMLInputElement, EditFieldProps>(
           style={{
             height: 'var(--edit-input-height, 48px)',
             padding: 'var(--edit-input-padding, 0 16px)',
-            fontSize: 'var(--edit-input-font-size, 15px)',
+            fontSize: 'var(--edit-input-font-size, 16px)', // 16px prevents iOS zoom
             borderRadius: 'var(--edit-input-radius, 10px)',
-            backgroundColor: 'var(--edit-input-bg, var(--platform-canvas))',
+            backgroundColor: 'var(--edit-input-bg, rgba(255,255,255,0.04))',
             color: 'var(--edit-input-text, var(--platform-text))',
             border: hasError 
               ? '1px solid var(--edit-input-error-border, hsl(0 62% 50%))' 
-              : '1px solid var(--edit-input-border, rgba(255,255,255,0.20))',
+              : '1px solid var(--edit-input-border, rgba(255,255,255,0.18))',
             opacity: locked ? 'var(--edit-input-disabled-opacity, 0.5)' : 1,
           }}
           onFocus={(e) => {
             if (!locked && !hasError) {
-              e.target.style.borderColor = 'var(--edit-input-border-focus, rgba(255,255,255,0.35))';
-              e.target.style.boxShadow = '0 0 0 3px rgba(255,255,255,0.08)';
+              e.target.style.borderColor = 'var(--edit-input-border-focus, rgba(255,255,255,0.28))';
+              e.target.style.boxShadow = '0 0 0 3px rgba(255,255,255,0.06)';
             }
             props.onFocus?.(e);
           }}
@@ -81,7 +82,7 @@ export const EditField = React.forwardRef<HTMLInputElement, EditFieldProps>(
             if (!locked) {
               e.target.style.borderColor = hasError 
                 ? 'var(--edit-input-error-border, hsl(0 62% 50%))' 
-                : 'var(--edit-input-border, rgba(255,255,255,0.20))';
+                : 'var(--edit-input-border, rgba(255,255,255,0.18))';
               e.target.style.boxShadow = 'none';
             }
             props.onBlur?.(e);
