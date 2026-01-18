@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { PageHeader } from "@/components/ui/page-header";
-import { Panel, PanelHeader, PanelTitle, PanelContent, DataList, DataRow } from "@/components/ui/panel";
+import { Panel, PanelHeader, PanelTitle, PanelContent } from "@/components/ui/panel";
+import { DetailRow, DetailRowGroup } from "@/components/ui/detail-row";
 
 /**
  * PUBLISHING SETTINGS — INSTITUTIONAL MODE
@@ -10,7 +11,7 @@ export default function PublishingSettings() {
 
   return (
     <div 
-      className="p-6"
+      className="p-4 sm:p-6"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       <div className="max-w-[640px]">
@@ -24,12 +25,17 @@ export default function PublishingSettings() {
             <PanelHeader>
               <PanelTitle>Account</PanelTitle>
             </PanelHeader>
-            <PanelContent>
-              <DataList>
-                <DataRow label="Email" value={profile?.email || "—"} />
-                <DataRow label="Organization" value={activeTenant?.tenant_name || "—"} />
-              </DataList>
-            </PanelContent>
+            <DetailRowGroup>
+              <DetailRow 
+                label="Email" 
+                value={profile?.email} 
+                copyable 
+              />
+              <DetailRow 
+                label="Organization" 
+                value={activeTenant?.tenant_name} 
+              />
+            </DetailRowGroup>
           </Panel>
 
           <Panel>

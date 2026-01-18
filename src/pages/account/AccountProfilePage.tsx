@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { DetailRow, DetailRowGroup } from "@/components/ui/detail-row";
 
 /**
  * ACCOUNT PROFILE PAGE
@@ -32,7 +33,7 @@ function SectionPanel({
 function SectionHeader({ title, description }: { title: string; description: string }) {
   return (
     <div 
-      className="px-6 py-4"
+      className="px-4 py-4 sm:px-6"
       style={{ borderBottom: '1px solid var(--platform-border)' }}
     >
       <h2 
@@ -47,46 +48,6 @@ function SectionHeader({ title, description }: { title: string; description: str
       >
         {description}
       </p>
-    </div>
-  );
-}
-
-function DataRow({ 
-  label, 
-  value, 
-  managed = false 
-}: { 
-  label: string; 
-  value: string | null | undefined; 
-  managed?: boolean;
-}) {
-  return (
-    <div 
-      className="px-6 py-3 flex items-start justify-between gap-4"
-      style={{ borderBottom: '1px solid var(--platform-border)' }}
-    >
-      <dt 
-        className="text-[13px] shrink-0"
-        style={{ color: 'var(--platform-text-secondary)' }}
-      >
-        {label}
-      </dt>
-      <dd className="text-right min-w-0 flex-1">
-        <span 
-          className="text-[13px] break-words"
-          style={{ color: 'var(--platform-text)', lineHeight: '1.45' }}
-        >
-          {value || "—"}
-        </span>
-        {managed && (
-          <span 
-            className="block text-[11px] mt-0.5"
-            style={{ color: 'var(--platform-text-muted)', lineHeight: '1.45' }}
-          >
-            Managed by workspace policy
-          </span>
-        )}
-      </dd>
     </div>
   );
 }
@@ -127,12 +88,29 @@ export default function AccountProfilePage() {
             title="Profile Information" 
             description="Your identity and access details"
           />
-          <dl>
-            <DataRow label="Full name" value={profile?.full_name} />
-            <DataRow label="Email address" value={profile?.email} managed />
-            <DataRow label="Role" value={roleDisplay} managed />
-            <DataRow label="Workspace" value={activeTenant?.tenant_name} managed />
-          </dl>
+          <DetailRowGroup>
+            <DetailRow 
+              label="Full name" 
+              value={profile?.full_name} 
+            />
+            <DetailRow 
+              label="Email address" 
+              value={profile?.email} 
+              copyable
+              helpText="Managed by workspace policy"
+            />
+            <DetailRow 
+              label="Role" 
+              value={roleDisplay} 
+              variant="role"
+              helpText="Managed by workspace policy"
+            />
+            <DetailRow 
+              label="Workspace" 
+              value={activeTenant?.tenant_name} 
+              helpText="Managed by workspace policy"
+            />
+          </DetailRowGroup>
         </SectionPanel>
 
         {/* Footer notice */}

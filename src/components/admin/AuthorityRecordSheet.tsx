@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
-import { AppSheet, AppSheetBody, AppSheetHeader } from "@/components/ui/app-sheet";
+import { AppSheet, AppSheetBody } from "@/components/ui/app-sheet";
+import { DetailRow, DetailRowGroup } from "@/components/ui/detail-row";
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];
@@ -135,26 +136,23 @@ export function AuthorityRecordSheet({
             USER IDENTITY SUMMARY
             ═══════════════════════════════════════════════════════════════════ */}
         <div 
-          className="rounded-lg p-5"
+          className="rounded-lg overflow-hidden"
           style={{ 
             backgroundColor: 'rgba(255,255,255,0.02)',
             border: '1px solid var(--platform-border)',
           }}
         >
-          <div className="space-y-2">
-            <div 
-              className="text-[15px] font-medium"
-              style={{ color: 'var(--platform-text)' }}
-            >
-              {user.full_name || user.email}
-            </div>
-            <div 
-              className="text-[13px] font-mono"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              {user.email}
-            </div>
-          </div>
+          <DetailRowGroup>
+            <DetailRow 
+              label="Name"
+              value={user.full_name || user.email}
+            />
+            <DetailRow 
+              label="Email"
+              value={user.email}
+              copyable
+            />
+          </DetailRowGroup>
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════
@@ -168,35 +166,24 @@ export function AuthorityRecordSheet({
             Platform-Level Capabilities
           </h2>
           <div 
-            className="rounded-lg p-5"
+            className="rounded-lg overflow-hidden"
             style={{ 
               backgroundColor: 'rgba(255,255,255,0.02)',
               border: '1px solid var(--platform-border)',
             }}
           >
-            {/* Role Header */}
-            <div className="flex items-center justify-between mb-4">
-              <span 
-                className="text-[12px]"
-                style={{ color: 'var(--platform-text-muted)' }}
-              >
-                Assigned Role
-              </span>
-              <div 
-                className="inline-flex items-center px-3 py-1.5 rounded-md text-[13px] font-medium"
-                style={{ 
-                  backgroundColor: 'rgba(255,255,255,0.06)',
-                  color: 'var(--platform-text)',
-                }}
-              >
-                {formatPlatformRole(user.platform_role)}
-              </div>
-            </div>
+            <DetailRowGroup>
+              <DetailRow 
+                label="Assigned Role"
+                value={formatPlatformRole(user.platform_role)}
+                variant="role"
+              />
+            </DetailRowGroup>
 
             {/* Capabilities as Labels */}
-            <div className="space-y-2">
+            <div className="px-4 py-4 sm:px-6" style={{ borderTop: '1px solid var(--platform-border)' }}>
               <span 
-                className="text-[11px] font-medium uppercase tracking-[0.04em]"
+                className="text-[11px] font-medium uppercase tracking-[0.04em] block mb-3"
                 style={{ color: 'var(--platform-text-muted)' }}
               >
                 Granted Rights
@@ -258,14 +245,17 @@ export function AuthorityRecordSheet({
                 return (
                   <div
                     key={membership.id}
-                    className="rounded-lg p-5"
+                    className="rounded-lg overflow-hidden"
                     style={{ 
                       backgroundColor: 'rgba(255,255,255,0.02)',
                       border: '1px solid var(--platform-border)',
                     }}
                   >
                     {/* Organization Header */}
-                    <div className="mb-4">
+                    <div 
+                      className="px-4 py-3 sm:px-6"
+                      style={{ borderBottom: '1px solid var(--platform-border)' }}
+                    >
                       <div 
                         className="text-[15px] font-medium"
                         style={{ color: 'var(--platform-text)' }}
@@ -281,14 +271,17 @@ export function AuthorityRecordSheet({
                     </div>
 
                     {/* Context Access */}
-                    <div className="mb-4 pb-4" style={{ borderBottom: '1px solid var(--platform-border)' }}>
+                    <div 
+                      className="px-4 py-4 sm:px-6" 
+                      style={{ borderBottom: '1px solid var(--platform-border)' }}
+                    >
                       <span 
-                        className="text-[11px] font-medium uppercase tracking-[0.04em]"
+                        className="text-[11px] font-medium uppercase tracking-[0.04em] block mb-2"
                         style={{ color: 'var(--platform-text-muted)' }}
                       >
                         Context Scope
                       </span>
-                      <div className="flex flex-wrap gap-1.5 mt-2">
+                      <div className="flex flex-wrap gap-1.5">
                         {membership.allowed_contexts.length === 0 ? (
                           <span 
                             className="text-[12px]"
@@ -314,9 +307,9 @@ export function AuthorityRecordSheet({
                     </div>
 
                     {/* Capabilities as Labels */}
-                    <div className="space-y-2">
+                    <div className="px-4 py-4 sm:px-6">
                       <span 
-                        className="text-[11px] font-medium uppercase tracking-[0.04em]"
+                        className="text-[11px] font-medium uppercase tracking-[0.04em] block mb-3"
                         style={{ color: 'var(--platform-text-muted)' }}
                       >
                         Granted Rights
@@ -363,36 +356,26 @@ export function AuthorityRecordSheet({
             Audit Metadata
           </h2>
           <div 
-            className="rounded-lg p-5"
+            className="rounded-lg overflow-hidden"
             style={{ 
               backgroundColor: 'rgba(255,255,255,0.01)',
               border: '1px solid var(--platform-border)',
             }}
           >
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span 
-                  className="text-[11px]"
-                  style={{ color: 'var(--platform-text-muted)' }}
-                >
-                  Record Created
-                </span>
-                <span 
-                  className="text-[12px] font-mono"
-                  style={{ color: 'var(--platform-text-secondary)' }}
-                >
-                  {formatDate(user.created_at)}
-                </span>
-              </div>
-              <div 
-                className="text-[11px] pt-3"
-                style={{ 
-                  color: 'var(--platform-text-muted)',
-                  borderTop: '1px solid var(--platform-border)',
-                }}
-              >
-                Authority changes are logged and timestamped. Changes are effective immediately upon confirmation.
-              </div>
+            <DetailRowGroup>
+              <DetailRow 
+                label="Record Created"
+                value={formatDate(user.created_at)}
+              />
+            </DetailRowGroup>
+            <div 
+              className="px-4 py-3 sm:px-6 text-[11px]"
+              style={{ 
+                color: 'var(--platform-text-muted)',
+                borderTop: '1px solid var(--platform-border)',
+              }}
+            >
+              Authority changes are logged and timestamped. Changes are effective immediately upon confirmation.
             </div>
           </div>
         </section>
