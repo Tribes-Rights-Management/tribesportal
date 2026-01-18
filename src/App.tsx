@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate } from "react-router-dom";
 import RoleProtectedRoute from "@/components/RoleProtectedRoute";
+import { SessionGuard } from "@/components/session";
 import { AppProtectedRoute } from "@/components/app/AppProtectedRoute";
 import { AppLayout } from "@/layouts/AppLayout";
 import { SystemConsoleLayout } from "@/layouts/SystemConsoleLayout";
@@ -133,6 +134,8 @@ const App = () => (
       />
       <Toaster />
       <Sonner />
+      {/* Session timeout guard - manages inactivity logout, warning modal, cross-tab sync */}
+      <SessionGuard>
       <Routes>
         {/* Root redirect */}
         <Route path="/" element={<RootRedirect />} />
@@ -279,6 +282,7 @@ const App = () => (
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      </SessionGuard>
     </TooltipProvider>
   </QueryClientProvider>
 );
