@@ -1,12 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { PageContainer } from "@/components/ui/page-container";
-import { PageShell, ContentPanel } from "@/components/ui/page-shell";
 import { Panel, PanelHeader, PanelTitle, PanelContent } from "@/components/ui/panel";
-import { Play, Check, X, AlertTriangle, Shield, Database, Lock, Globe, FileCheck } from "lucide-react";
+import { 
+  Play, Check, X, AlertTriangle, Shield, Database, Lock, Globe, 
+  FileCheck, Loader2, ChevronRight, Clock 
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { formatDistanceToNow, format } from "date-fns";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 // Code-defined RLS coverage expectations for existing tables
 const RLS_COVERAGE = [
@@ -16,99 +25,315 @@ const RLS_COVERAGE = [
   { table: "access_requests", template: "-", requiresTenantId: false, expectedPolicies: { select: true, insert: true, update: true, delete: false }, notes: "User own + admin" },
 ];
 
+type CheckStatus = "pending" | "running" | "pass" | "fail" | "warning";
+
 type CheckResult = {
+  id: string;
   name: string;
   description: string;
-  status: "pending" | "pass" | "fail" | "warning";
+  status: CheckStatus;
   details: string;
   rowCount?: number;
   category: "tenant" | "auth" | "storage" | "data";
+  resource?: string;
+  severity?: "high" | "medium" | "low";
+  remediation?: string;
 };
 
-function getTemplateBadge(template: string) {
-  const colors: Record<string, string> = {
-    "A": "bg-red-500/20 text-red-400 border-red-500/30",
-    "L": "bg-blue-500/20 text-blue-400 border-blue-500/30",
-    "P": "bg-purple-500/20 text-purple-400 border-purple-500/30",
-    "S": "bg-green-500/20 text-green-400 border-green-500/30",
-    "-": "bg-white/10 text-white/60 border-white/20",
+type Exception = {
+  id: string;
+  name: string;
+  resource: string;
+  severity: "high" | "medium" | "low";
+  scope: "tenant" | "platform";
+  details: string;
+  expected: string;
+  observed: string;
+  remediation?: string;
+};
+
+// ============ STATUS PILL COMPONENT ============
+function StatusPill({ status }: { status: CheckStatus }) {
+  const baseStyles = "inline-flex items-center justify-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded min-w-[72px]";
+  
+  switch (status) {
+    case "pending":
+      return (
+        <span 
+          className={baseStyles}
+          style={{ 
+            backgroundColor: 'rgba(255,255,255,0.06)',
+            color: 'var(--platform-text-muted)',
+            border: '1px solid rgba(255,255,255,0.08)'
+          }}
+        >
+          Pending
+        </span>
+      );
+    case "running":
+      return (
+        <span 
+          className={baseStyles}
+          style={{ 
+            backgroundColor: 'rgba(59,130,246,0.15)',
+            color: '#60a5fa',
+            border: '1px solid rgba(59,130,246,0.25)'
+          }}
+        >
+          <Loader2 className="h-3 w-3 animate-spin" />
+          Running
+        </span>
+      );
+    case "pass":
+      return (
+        <span 
+          className={baseStyles}
+          style={{ 
+            backgroundColor: 'rgba(34,197,94,0.12)',
+            color: '#4ade80',
+            border: '1px solid rgba(34,197,94,0.2)'
+          }}
+        >
+          <Check className="h-3 w-3" />
+          Pass
+        </span>
+      );
+    case "fail":
+      return (
+        <span 
+          className={baseStyles}
+          style={{ 
+            backgroundColor: 'rgba(239,68,68,0.12)',
+            color: '#f87171',
+            border: '1px solid rgba(239,68,68,0.2)'
+          }}
+        >
+          <X className="h-3 w-3" />
+          Fail
+        </span>
+      );
+    case "warning":
+      return (
+        <span 
+          className={baseStyles}
+          style={{ 
+            backgroundColor: 'rgba(234,179,8,0.12)',
+            color: '#facc15',
+            border: '1px solid rgba(234,179,8,0.2)'
+          }}
+        >
+          <AlertTriangle className="h-3 w-3" />
+          Warn
+        </span>
+      );
+  }
+}
+
+// ============ SEVERITY CHIP ============
+function SeverityChip({ severity }: { severity: "high" | "medium" | "low" }) {
+  const styles = {
+    high: { bg: 'rgba(239,68,68,0.12)', color: '#f87171', border: 'rgba(239,68,68,0.2)' },
+    medium: { bg: 'rgba(234,179,8,0.12)', color: '#facc15', border: 'rgba(234,179,8,0.2)' },
+    low: { bg: 'rgba(59,130,246,0.12)', color: '#60a5fa', border: 'rgba(59,130,246,0.2)' },
   };
-  const labels: Record<string, string> = {
-    "A": "Access Control",
-    "L": "Licensing",
-    "P": "Publishing",
-    "S": "Shared",
-    "-": "Platform",
-  };
+  const s = styles[severity];
   return (
-    <Badge variant="outline" className={`text-[10px] font-normal ${colors[template]}`}>
-      {labels[template]}
-    </Badge>
+    <span 
+      className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide rounded"
+      style={{ backgroundColor: s.bg, color: s.color, border: `1px solid ${s.border}` }}
+    >
+      {severity}
+    </span>
   );
 }
 
-function PolicyIndicator({ expected }: { expected: boolean }) {
-  return expected ? (
-    <Check className="h-3.5 w-3.5 text-green-400" />
-  ) : (
-    <span className="text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>—</span>
-  );
-}
-
-function CheckStatusBadge({ status }: { status: CheckResult["status"] }) {
-  if (status === "pass") {
-    return (
-      <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-[10px]">
-        <Check className="h-3 w-3 mr-1" />Pass
-      </Badge>
-    );
-  }
-  if (status === "fail") {
-    return (
-      <Badge className="bg-red-500/20 text-red-400 border-red-500/30 text-[10px]">
-        <X className="h-3 w-3 mr-1" />Fail
-      </Badge>
-    );
-  }
-  if (status === "warning") {
-    return (
-      <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 text-[10px]">
-        <AlertTriangle className="h-3 w-3 mr-1" />Warning
-      </Badge>
-    );
-  }
+// ============ SCOPE CHIP ============
+function ScopeChip({ scope }: { scope: "tenant" | "platform" }) {
   return (
-    <Badge variant="outline" className="text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>
-      Pending
-    </Badge>
+    <span 
+      className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide rounded"
+      style={{ 
+        backgroundColor: 'rgba(255,255,255,0.06)',
+        color: 'var(--platform-text-secondary)',
+        border: '1px solid rgba(255,255,255,0.1)'
+      }}
+    >
+      {scope}
+    </span>
   );
 }
 
+// ============ CATEGORY ICON ============
 function CategoryIcon({ category }: { category: CheckResult["category"] }) {
-  const iconClass = "h-3.5 w-3.5";
+  const iconClass = "h-4 w-4";
+  const iconStyle = { color: 'var(--platform-text-muted)' };
   switch (category) {
     case "tenant":
-      return <Database className={`${iconClass} text-blue-400`} />;
+      return <Database className={iconClass} style={iconStyle} />;
     case "auth":
-      return <Lock className={`${iconClass} text-purple-400`} />;
+      return <Lock className={iconClass} style={iconStyle} />;
     case "storage":
-      return <FileCheck className={`${iconClass} text-green-400`} />;
+      return <FileCheck className={iconClass} style={iconStyle} />;
     case "data":
-      return <Globe className={`${iconClass} text-orange-400`} />;
+      return <Globe className={iconClass} style={iconStyle} />;
   }
 }
 
-/**
- * Mobile-friendly table row for RLS coverage
- */
-function RLSCoverageRow({ row }: { row: typeof RLS_COVERAGE[0] }) {
+// ============ PRIMARY BUTTON ============
+function PrimaryButton({ 
+  onClick, 
+  disabled, 
+  loading, 
+  children 
+}: { 
+  onClick: () => void; 
+  disabled?: boolean; 
+  loading?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="inline-flex items-center justify-center gap-2 h-11 px-5 text-[14px] font-semibold rounded-xl transition-all duration-150"
+      style={{
+        backgroundColor: disabled ? 'rgba(255,255,255,0.08)' : 'var(--platform-text)',
+        color: disabled ? 'var(--platform-text-muted)' : 'var(--platform-bg)',
+        border: disabled ? '1px solid rgba(255,255,255,0.1)' : 'none',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled && !loading ? 0.6 : 1,
+      }}
+    >
+      {loading ? (
+        <>
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Running…
+        </>
+      ) : (
+        children
+      )}
+    </button>
+  );
+}
+
+// ============ SECURITY CHECK ROW ============
+function SecurityCheckRow({ check }: { check: CheckResult }) {
   return (
     <div 
-      className="px-4 py-3"
-      style={{ borderBottom: '1px solid var(--platform-border)' }}
+      className="px-4 py-2.5 flex items-start gap-3"
+      style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+    >
+      {/* Icon */}
+      <div className="flex-shrink-0 mt-0.5">
+        <CategoryIcon category={check.category} />
+      </div>
+      
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-3">
+          <span 
+            className="text-[13px] font-medium truncate"
+            style={{ color: 'var(--platform-text)' }}
+          >
+            {check.name}
+          </span>
+          <div className="flex-shrink-0">
+            <StatusPill status={check.status} />
+          </div>
+        </div>
+        <p 
+          className="text-[12px] mt-0.5 line-clamp-1"
+          style={{ color: 'var(--platform-text-muted)' }}
+        >
+          {check.description}
+        </p>
+        {check.details && check.status !== "pending" && check.status !== "running" && (
+          <p 
+            className="text-[11px] mt-1 line-clamp-1"
+            style={{ color: 'var(--platform-text-secondary)' }}
+          >
+            {check.details}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============ EXCEPTION ROW ============
+function ExceptionRow({ 
+  exception, 
+  onViewDetails 
+}: { 
+  exception: Exception;
+  onViewDetails: () => void;
+}) {
+  return (
+    <div 
+      className="px-4 py-3 flex items-center gap-3"
+      style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+    >
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span 
+            className="text-[13px] font-medium"
+            style={{ color: 'var(--platform-text)' }}
+          >
+            {exception.name}
+          </span>
+          <code 
+            className="text-[11px] font-mono px-1.5 py-0.5 rounded"
+            style={{ 
+              backgroundColor: 'rgba(255,255,255,0.06)',
+              color: 'var(--platform-text-secondary)'
+            }}
+          >
+            {exception.resource}
+          </code>
+        </div>
+        <div className="flex items-center gap-2 mt-1.5">
+          <SeverityChip severity={exception.severity} />
+          <ScopeChip scope={exception.scope} />
+        </div>
+      </div>
+      <button
+        onClick={onViewDetails}
+        className="flex items-center gap-1 text-[12px] font-medium px-2 py-1 rounded transition-colors"
+        style={{ 
+          color: 'var(--platform-text-secondary)',
+          backgroundColor: 'transparent'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'transparent';
+        }}
+      >
+        Details
+        <ChevronRight className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
+
+// ============ RLS COVERAGE ROW ============
+function RLSCoverageRow({ row }: { row: typeof RLS_COVERAGE[0] }) {
+  const PolicyIndicator = ({ expected }: { expected: boolean }) => (
+    expected ? (
+      <Check className="h-3 w-3" style={{ color: '#4ade80' }} />
+    ) : (
+      <span style={{ color: 'var(--platform-text-muted)' }}>—</span>
+    )
+  );
+
+  return (
+    <div 
+      className="px-4 py-2.5"
+      style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Mobile: stacked layout */}
-      <div className="sm:hidden space-y-2">
+      <div className="sm:hidden space-y-1.5">
         <div className="flex items-center justify-between">
           <code 
             className="text-[12px] font-mono"
@@ -116,42 +341,37 @@ function RLSCoverageRow({ row }: { row: typeof RLS_COVERAGE[0] }) {
           >
             {row.table}
           </code>
-          {getTemplateBadge(row.template)}
+          <span 
+            className="text-[10px] px-1.5 py-0.5 rounded"
+            style={{ 
+              backgroundColor: 'rgba(255,255,255,0.06)',
+              color: 'var(--platform-text-secondary)'
+            }}
+          >
+            {row.template === "-" ? "Platform" : row.template}
+          </span>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1">
-            <span className="text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>tenant_id:</span>
-            {row.requiresTenantId ? (
-              <Check className="h-3 w-3 text-blue-400" />
-            ) : (
-              <span className="text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>—</span>
-            )}
-          </div>
-          <div className="flex items-center gap-2 text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>
-            <span className="flex items-center gap-0.5">S<PolicyIndicator expected={row.expectedPolicies.select} /></span>
-            <span className="flex items-center gap-0.5">I<PolicyIndicator expected={row.expectedPolicies.insert} /></span>
-            <span className="flex items-center gap-0.5">U<PolicyIndicator expected={row.expectedPolicies.update} /></span>
-            <span className="flex items-center gap-0.5">D<PolicyIndicator expected={row.expectedPolicies.delete} /></span>
-          </div>
+        <div className="flex items-center gap-3 text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>
+          <span className="flex items-center gap-1">S<PolicyIndicator expected={row.expectedPolicies.select} /></span>
+          <span className="flex items-center gap-1">I<PolicyIndicator expected={row.expectedPolicies.insert} /></span>
+          <span className="flex items-center gap-1">U<PolicyIndicator expected={row.expectedPolicies.update} /></span>
+          <span className="flex items-center gap-1">D<PolicyIndicator expected={row.expectedPolicies.delete} /></span>
         </div>
-        <p className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>{row.notes}</p>
       </div>
 
-      {/* Desktop: table-like grid */}
-      <div className="hidden sm:grid sm:grid-cols-[1fr_100px_80px_repeat(4,50px)_1fr] sm:items-center sm:gap-2">
-        <code 
-          className="text-[12px] font-mono"
-          style={{ color: 'var(--platform-text)' }}
-        >
+      {/* Desktop: grid layout */}
+      <div className="hidden sm:grid sm:grid-cols-[1fr_80px_60px_40px_40px_40px_40px_1fr] sm:items-center sm:gap-2">
+        <code className="text-[12px] font-mono" style={{ color: 'var(--platform-text)' }}>
           {row.table}
         </code>
-        <div>{getTemplateBadge(row.template)}</div>
+        <span 
+          className="text-[10px] px-1.5 py-0.5 rounded text-center"
+          style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: 'var(--platform-text-secondary)' }}
+        >
+          {row.template === "-" ? "Platform" : row.template}
+        </span>
         <div className="text-center">
-          {row.requiresTenantId ? (
-            <Check className="h-3.5 w-3.5 text-blue-400 mx-auto" />
-          ) : (
-            <span className="text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>—</span>
-          )}
+          {row.requiresTenantId ? <Check className="h-3 w-3 mx-auto" style={{ color: '#60a5fa' }} /> : <span style={{ color: 'var(--platform-text-muted)' }}>—</span>}
         </div>
         <div className="text-center"><PolicyIndicator expected={row.expectedPolicies.select} /></div>
         <div className="text-center"><PolicyIndicator expected={row.expectedPolicies.insert} /></div>
@@ -163,83 +383,162 @@ function RLSCoverageRow({ row }: { row: typeof RLS_COVERAGE[0] }) {
   );
 }
 
-/**
- * Mobile-friendly row for security checks
- */
-function SecurityCheckRow({ check }: { check: CheckResult }) {
+// ============ EXCEPTION DETAIL MODAL ============
+function ExceptionDetailModal({
+  exception,
+  open,
+  onClose
+}: {
+  exception: Exception | null;
+  open: boolean;
+  onClose: () => void;
+}) {
+  if (!exception) return null;
+  
   return (
-    <div 
-      className="px-4 py-3"
-      style={{ borderBottom: '1px solid var(--platform-border)' }}
-    >
-      {/* Mobile: stacked layout */}
-      <div className="sm:hidden space-y-2">
-        <div className="flex items-center justify-between">
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent 
+        className="max-w-lg"
+        style={{ 
+          backgroundColor: 'var(--platform-surface)',
+          border: '1px solid rgba(255,255,255,0.1)'
+        }}
+      >
+        <DialogHeader>
+          <DialogTitle style={{ color: 'var(--platform-text)' }}>
+            {exception.name}
+          </DialogTitle>
+          <DialogDescription style={{ color: 'var(--platform-text-muted)' }}>
+            Exception details for {exception.resource}
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="space-y-4 mt-4">
           <div className="flex items-center gap-2">
-            <CategoryIcon category={check.category} />
-            <span className="text-[13px] font-medium" style={{ color: 'var(--platform-text)' }}>
-              {check.name}
-            </span>
+            <SeverityChip severity={exception.severity} />
+            <ScopeChip scope={exception.scope} />
           </div>
-          <CheckStatusBadge status={check.status} />
+          
+          <div className="space-y-3">
+            <div>
+              <label className="text-[11px] uppercase tracking-wide font-medium" style={{ color: 'var(--platform-text-muted)' }}>
+                What Failed
+              </label>
+              <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text)' }}>
+                {exception.details}
+              </p>
+            </div>
+            
+            <div>
+              <label className="text-[11px] uppercase tracking-wide font-medium" style={{ color: 'var(--platform-text-muted)' }}>
+                Expected
+              </label>
+              <p className="text-[13px] mt-1 font-mono text-[12px] p-2 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: 'var(--platform-text-secondary)' }}>
+                {exception.expected}
+              </p>
+            </div>
+            
+            <div>
+              <label className="text-[11px] uppercase tracking-wide font-medium" style={{ color: 'var(--platform-text-muted)' }}>
+                Observed
+              </label>
+              <p className="text-[13px] mt-1 font-mono text-[12px] p-2 rounded" style={{ backgroundColor: 'rgba(239,68,68,0.08)', color: '#f87171' }}>
+                {exception.observed}
+              </p>
+            </div>
+            
+            <div>
+              <label className="text-[11px] uppercase tracking-wide font-medium" style={{ color: 'var(--platform-text-muted)' }}>
+                Remediation
+              </label>
+              <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text-secondary)' }}>
+                {exception.remediation || "Remediation guidance coming soon"}
+              </p>
+            </div>
+          </div>
         </div>
-        <p className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>
-          {check.description}
-        </p>
-        {check.details && (
-          <p 
-            className="text-[11px] break-words"
-            style={{ color: 'var(--platform-text-secondary)', lineHeight: '1.45' }}
-          >
-            {check.details}
-          </p>
-        )}
-      </div>
-
-      {/* Desktop: table-like grid */}
-      <div className="hidden sm:grid sm:grid-cols-[32px_200px_100px_1fr] sm:items-center sm:gap-3">
-        <div className="text-center">
-          <CategoryIcon category={check.category} />
-        </div>
-        <div>
-          <p className="text-[12px] font-medium" style={{ color: 'var(--platform-text)' }}>
-            {check.name}
-          </p>
-          <p className="text-[10px]" style={{ color: 'var(--platform-text-muted)' }}>
-            {check.description}
-          </p>
-        </div>
-        <div>
-          <CheckStatusBadge status={check.status} />
-        </div>
-        <p 
-          className="text-[11px] line-clamp-2 break-words min-w-0"
-          style={{ color: 'var(--platform-text-secondary)', lineHeight: '1.45' }}
-        >
-          {check.details || "—"}
-        </p>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
+// ============ MAIN PAGE COMPONENT ============
 export default function SecurityVerificationPage() {
   const { user } = useAuth();
-  const [checks, setChecks] = useState<CheckResult[]>([
-    { name: "Active Memberships", description: "Count user's active tenant memberships", status: "pending", details: "", category: "tenant" },
-    { name: "Tenant Isolation", description: "Verify no cross-tenant data leakage", status: "pending", details: "", category: "tenant" },
-    { name: "Approval Gate", description: "Verify pending users see zero data", status: "pending", details: "", category: "auth" },
-    { name: "Auth Redirect Config", description: "Verify session and redirect configuration", status: "pending", details: "", category: "auth" },
-  ]);
+  const { toast } = useToast();
+  const [lastRunAt, setLastRunAt] = useState<Date | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [selectedExceptionId, setSelectedExceptionId] = useState<string | null>(null);
+  
+  const [checks, setChecks] = useState<CheckResult[]>([
+    { id: "memberships", name: "Active Memberships", description: "Count user's active tenant memberships", status: "pending", details: "", category: "tenant", resource: "tenant_memberships" },
+    { id: "isolation", name: "Tenant Isolation", description: "Verify no cross-tenant data leakage", status: "pending", details: "", category: "tenant", resource: "tenants" },
+    { id: "approval", name: "Approval Gate", description: "Verify pending users see zero data", status: "pending", details: "", category: "auth", resource: "tenant_memberships" },
+    { id: "auth", name: "Auth Redirect Config", description: "Verify session and redirect configuration", status: "pending", details: "", category: "auth", resource: "auth.session" },
+  ]);
+  
+  const [exceptions, setExceptions] = useState<Exception[]>([]);
+
+  // Derive exceptions from failed/warning checks
+  useEffect(() => {
+    const newExceptions: Exception[] = checks
+      .filter(c => c.status === "fail" || c.status === "warning")
+      .map(c => ({
+        id: c.id,
+        name: c.name,
+        resource: c.resource || "unknown",
+        severity: c.status === "fail" ? "high" as const : "medium" as const,
+        scope: c.category === "tenant" ? "tenant" as const : "platform" as const,
+        details: c.details,
+        expected: c.status === "fail" ? "Check should pass" : "Optimal configuration expected",
+        observed: c.details,
+        remediation: c.remediation,
+      }));
+    setExceptions(newExceptions);
+  }, [checks]);
 
   const runChecks = async () => {
     if (!user) return;
     setIsRunning(true);
+    
+    toast({
+      title: "Security checks started",
+      description: "Validating RLS enforcement and security posture…",
+    });
+
+    // Set all to running
+    setChecks(prev => prev.map(c => ({ ...c, status: "running" as CheckStatus, details: "" })));
+
     const results: CheckResult[] = [];
 
-    // Check 1: Active memberships count
-    try {
+    // Simulate sequential check execution for visual feedback
+    const runCheck = async (
+      id: string,
+      name: string,
+      description: string,
+      category: CheckResult["category"],
+      resource: string,
+      executor: () => Promise<{ status: CheckStatus; details: string; rowCount?: number; remediation?: string }>
+    ) => {
+      try {
+        const result = await executor();
+        return { id, name, description, category, resource, ...result };
+      } catch (err) {
+        return {
+          id,
+          name,
+          description,
+          category,
+          resource,
+          status: "fail" as CheckStatus,
+          details: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
+          remediation: "Check console logs for detailed error information",
+        };
+      }
+    };
+
+    // Check 1: Active memberships
+    const check1 = await runCheck("memberships", "Active Memberships", "Count user's active tenant memberships", "tenant", "tenant_memberships", async () => {
       const { data: memberships, error } = await supabase
         .from("tenant_memberships")
         .select("id, tenant_id, status")
@@ -248,26 +547,18 @@ export default function SecurityVerificationPage() {
       
       if (error) throw error;
       
-      results.push({
-        name: "Active Memberships",
-        description: "Count user's active tenant memberships",
+      return {
         status: memberships && memberships.length > 0 ? "pass" : "warning",
         details: `Found ${memberships?.length ?? 0} active membership(s)`,
         rowCount: memberships?.length ?? 0,
-        category: "tenant",
-      });
-    } catch (err) {
-      results.push({
-        name: "Active Memberships",
-        description: "Count user's active tenant memberships",
-        status: "fail",
-        details: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-        category: "tenant",
-      });
-    }
+        remediation: memberships?.length === 0 ? "User has no active memberships. Request access or contact an administrator." : undefined,
+      };
+    });
+    results.push(check1);
+    setChecks(prev => prev.map(c => c.id === check1.id ? check1 : c));
 
     // Check 2: Tenant isolation
-    try {
+    const check2 = await runCheck("isolation", "Tenant Isolation", "Verify no cross-tenant data leakage", "tenant", "tenants", async () => {
       const { data: userMemberships } = await supabase
         .from("tenant_memberships")
         .select("tenant_id")
@@ -283,164 +574,255 @@ export default function SecurityVerificationPage() {
       const accessibleTenantIds = allTenants?.map(t => t.id) ?? [];
       const unexpectedAccess = accessibleTenantIds.filter(id => !userTenantIds.includes(id));
       
-      results.push({
-        name: "Tenant Isolation",
-        description: "Verify no cross-tenant data leakage",
+      return {
         status: unexpectedAccess.length === 0 ? "pass" : "fail",
         details: unexpectedAccess.length === 0 
           ? `Correctly limited to ${accessibleTenantIds.length} tenant(s)`
-          : `WARNING: Can access ${unexpectedAccess.length} unauthorized tenant(s)`,
+          : `Can access ${unexpectedAccess.length} unauthorized tenant(s)`,
         rowCount: accessibleTenantIds.length,
-        category: "tenant",
-      });
-    } catch (err) {
-      results.push({
-        name: "Tenant Isolation",
-        description: "Verify no cross-tenant data leakage",
-        status: "fail",
-        details: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-        category: "tenant",
-      });
-    }
+        remediation: unexpectedAccess.length > 0 ? "Review RLS policies on tenants table. Ensure tenant_id scoping is enforced." : undefined,
+      };
+    });
+    results.push(check2);
+    setChecks(prev => prev.map(c => c.id === check2.id ? check2 : c));
 
     // Check 3: Approval gate
-    try {
+    const check3 = await runCheck("approval", "Approval Gate", "Verify pending users see zero data", "auth", "tenant_memberships", async () => {
       const { count } = await supabase
         .from("tenant_memberships")
         .select("id", { count: "exact", head: true })
         .eq("user_id", user.id);
       
-      results.push({
-        name: "Approval Gate",
-        description: "Verify pending users see zero data",
+      return {
         status: "pass",
         details: `RLS active. User can see ${count ?? 0} of their own membership(s).`,
         rowCount: count ?? 0,
-        category: "auth",
-      });
-    } catch (err) {
-      results.push({
-        name: "Approval Gate",
-        description: "Verify pending users see zero data",
-        status: "fail",
-        details: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-        category: "auth",
-      });
-    }
+      };
+    });
+    results.push(check3);
+    setChecks(prev => prev.map(c => c.id === check3.id ? check3 : c));
 
-    // Check 4: Auth redirect configuration
-    try {
+    // Check 4: Auth redirect config
+    const check4 = await runCheck("auth", "Auth Redirect Config", "Verify session and redirect configuration", "auth", "auth.session", async () => {
       const session = await supabase.auth.getSession();
       const hasSession = !!session.data.session;
-      const origin = window.location.origin;
       
-      results.push({
-        name: "Auth Redirect Config",
-        description: "Verify session and redirect configuration",
+      return {
         status: hasSession ? "pass" : "warning",
-        details: `Session active: ${hasSession}. Origin: ${origin}. Callback: /auth/callback`,
-        category: "auth",
+        details: `Session active: ${hasSession}. Callback configured.`,
+        remediation: !hasSession ? "No active session detected. User may need to re-authenticate." : undefined,
+      };
+    });
+    results.push(check4);
+    setChecks(prev => prev.map(c => c.id === check4.id ? check4 : c));
+
+    setLastRunAt(new Date());
+    setIsRunning(false);
+
+    const failCount = results.filter(r => r.status === "fail" || r.status === "warning").length;
+    if (failCount > 0) {
+      toast({
+        title: "Checks completed — review exceptions",
+        description: `${failCount} check(s) require attention`,
+        variant: "destructive",
       });
-    } catch (err) {
-      results.push({
-        name: "Auth Redirect Config",
-        description: "Verify session and redirect configuration",
-        status: "fail",
-        details: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-        category: "auth",
+    } else {
+      toast({
+        title: "Security checks completed",
+        description: "All checks passed successfully",
       });
     }
-
-    setChecks(results);
-    setIsRunning(false);
   };
+
+  const selectedException = exceptions.find(e => e.id === selectedExceptionId) || null;
 
   return (
     <PageContainer>
-      <PageShell
-        title="Security Verification"
-        subtitle="Validate RLS enforcement and security posture"
-        backTo="/admin"
-        backLabel="System Console"
+      {/* ========== COMMAND BAR ========== */}
+      <div 
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 pb-6"
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
       >
-        <Button 
-          onClick={runChecks} 
-          disabled={isRunning || !user}
-          size="sm"
-          className="h-9 px-4 text-[13px]"
-        >
-          <Play className="h-3.5 w-3.5 mr-1.5" />
-          {isRunning ? "Running..." : "Run Checks"}
-        </Button>
-      </PageShell>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5 flex-shrink-0" style={{ color: 'var(--platform-text-muted)' }} />
+            <h1 className="text-[20px] font-semibold" style={{ color: 'var(--platform-text)' }}>
+              Security Verification
+            </h1>
+          </div>
+          <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text-muted)' }}>
+            Validate RLS enforcement and platform security posture
+          </p>
+        </div>
+        
+        <div className="flex flex-col items-start sm:items-end gap-1.5">
+          <PrimaryButton
+            onClick={runChecks}
+            disabled={isRunning || !user}
+            loading={isRunning}
+          >
+            <Play className="h-4 w-4" />
+            Run checks
+          </PrimaryButton>
+          
+          <span className="text-[11px] flex items-center gap-1" style={{ color: 'var(--platform-text-muted)' }}>
+            <Clock className="h-3 w-3" />
+            {lastRunAt ? (
+              <>
+                Last run: {formatDistanceToNow(lastRunAt, { addSuffix: true })} • {format(lastRunAt, "yyyy-MM-dd HH:mm")}
+              </>
+            ) : (
+              "Last run: Never"
+            )}
+          </span>
+        </div>
+      </div>
 
-      <div className="space-y-6">
-        {/* RLS Coverage Panel */}
-        <Panel>
-          <PanelHeader>
-            <PanelTitle>RLS Coverage Audit</PanelTitle>
+      <div className="space-y-5">
+        {/* ========== OPEN EXCEPTIONS PANEL ========== */}
+        <div 
+          className="rounded-lg overflow-hidden"
+          style={{ 
+            backgroundColor: 'var(--platform-surface)',
+            border: '1px solid rgba(255,255,255,0.08)'
+          }}
+        >
+          <div 
+            className="px-4 py-3 flex items-center justify-between"
+            style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-[14px] font-medium" style={{ color: 'var(--platform-text)' }}>
+                Open exceptions
+              </span>
+              <span 
+                className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[11px] font-semibold rounded"
+                style={{ 
+                  backgroundColor: exceptions.length > 0 ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.08)',
+                  color: exceptions.length > 0 ? '#f87171' : 'var(--platform-text-muted)'
+                }}
+              >
+                {exceptions.length}
+              </span>
+            </div>
+            
+            {lastRunAt && (
+              <button
+                className="text-[12px] font-medium px-2 py-1 rounded transition-colors"
+                style={{ color: 'var(--platform-text-secondary)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                View latest run
+              </button>
+            )}
+          </div>
+          
+          {exceptions.length === 0 ? (
+            <div className="px-4 py-6">
+              <p className="text-[13px] font-medium" style={{ color: 'var(--platform-text)' }}>
+                No open exceptions
+              </p>
+              <p className="text-[12px] mt-0.5" style={{ color: 'var(--platform-text-muted)' }}>
+                All expected policies and tenant scoping checks are currently passing.
+              </p>
+            </div>
+          ) : (
+            <div>
+              {exceptions.map(exception => (
+                <ExceptionRow 
+                  key={exception.id} 
+                  exception={exception}
+                  onViewDetails={() => setSelectedExceptionId(exception.id)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ========== LIVE SECURITY CHECKS PANEL ========== */}
+        <div 
+          className="rounded-lg overflow-hidden"
+          style={{ 
+            backgroundColor: 'var(--platform-surface)',
+            border: '1px solid rgba(255,255,255,0.08)'
+          }}
+        >
+          <div 
+            className="px-4 py-3"
+            style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+          >
+            <span className="text-[14px] font-medium" style={{ color: 'var(--platform-text)' }}>
+              Live Security Checks
+            </span>
+            <p className="text-[12px] mt-0.5" style={{ color: 'var(--platform-text-muted)' }}>
+              Real-time validation against your current session
+            </p>
+          </div>
+          
+          <div>
+            {checks.map(check => (
+              <SecurityCheckRow key={check.id} check={check} />
+            ))}
+          </div>
+        </div>
+
+        {/* ========== RLS COVERAGE PANEL ========== */}
+        <div 
+          className="rounded-lg overflow-hidden"
+          style={{ 
+            backgroundColor: 'var(--platform-surface)',
+            border: '1px solid rgba(255,255,255,0.08)'
+          }}
+        >
+          <div 
+            className="px-4 py-3"
+            style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+          >
+            <span className="text-[14px] font-medium" style={{ color: 'var(--platform-text)' }}>
+              RLS Coverage Audit
+            </span>
             <p className="text-[12px] mt-0.5" style={{ color: 'var(--platform-text-muted)' }}>
               Expected RLS policies for tenant-scoped and platform tables
             </p>
-          </PanelHeader>
+          </div>
           
-          {/* Desktop table header */}
+          {/* Desktop header */}
           <div 
-            className="hidden sm:grid sm:grid-cols-[1fr_100px_80px_repeat(4,50px)_1fr] sm:gap-2 px-4 py-2"
+            className="hidden sm:grid sm:grid-cols-[1fr_80px_60px_40px_40px_40px_40px_1fr] sm:gap-2 px-4 py-2"
             style={{ 
-              backgroundColor: 'var(--platform-surface-elevated)',
-              borderBottom: '1px solid var(--platform-border)'
+              backgroundColor: 'rgba(255,255,255,0.02)',
+              borderBottom: '1px solid rgba(255,255,255,0.06)'
             }}
           >
-            <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--platform-text-muted)' }}>Table</span>
-            <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--platform-text-muted)' }}>Template</span>
-            <span className="text-[10px] font-medium uppercase text-center" style={{ color: 'var(--platform-text-muted)' }}>tenant_id</span>
-            <span className="text-[10px] font-medium uppercase text-center" style={{ color: 'var(--platform-text-muted)' }}>SEL</span>
-            <span className="text-[10px] font-medium uppercase text-center" style={{ color: 'var(--platform-text-muted)' }}>INS</span>
-            <span className="text-[10px] font-medium uppercase text-center" style={{ color: 'var(--platform-text-muted)' }}>UPD</span>
-            <span className="text-[10px] font-medium uppercase text-center" style={{ color: 'var(--platform-text-muted)' }}>DEL</span>
-            <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--platform-text-muted)' }}>Notes</span>
+            <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: 'var(--platform-text-muted)' }}>Table</span>
+            <span className="text-[10px] font-medium uppercase tracking-wide text-center" style={{ color: 'var(--platform-text-muted)' }}>Template</span>
+            <span className="text-[10px] font-medium uppercase tracking-wide text-center" style={{ color: 'var(--platform-text-muted)' }}>Tenant</span>
+            <span className="text-[10px] font-medium uppercase tracking-wide text-center" style={{ color: 'var(--platform-text-muted)' }}>S</span>
+            <span className="text-[10px] font-medium uppercase tracking-wide text-center" style={{ color: 'var(--platform-text-muted)' }}>I</span>
+            <span className="text-[10px] font-medium uppercase tracking-wide text-center" style={{ color: 'var(--platform-text-muted)' }}>U</span>
+            <span className="text-[10px] font-medium uppercase tracking-wide text-center" style={{ color: 'var(--platform-text-muted)' }}>D</span>
+            <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: 'var(--platform-text-muted)' }}>Notes</span>
           </div>
           
           <div>
-            {RLS_COVERAGE.map((row) => (
+            {RLS_COVERAGE.map(row => (
               <RLSCoverageRow key={row.table} row={row} />
             ))}
           </div>
-        </Panel>
-
-        {/* Security Checks Panel */}
-        <Panel>
-          <PanelHeader className="flex items-center justify-between">
-            <div>
-              <PanelTitle>Live Security Checks</PanelTitle>
-              <p className="text-[12px] mt-0.5" style={{ color: 'var(--platform-text-muted)' }}>
-                Real-time validation against your current session
-              </p>
-            </div>
-          </PanelHeader>
-          
-          {/* Desktop table header */}
-          <div 
-            className="hidden sm:grid sm:grid-cols-[32px_200px_100px_1fr] sm:gap-3 px-4 py-2"
-            style={{ 
-              backgroundColor: 'var(--platform-surface-elevated)',
-              borderBottom: '1px solid var(--platform-border)'
-            }}
-          >
-            <span></span>
-            <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--platform-text-muted)' }}>Check</span>
-            <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--platform-text-muted)' }}>Status</span>
-            <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--platform-text-muted)' }}>Details</span>
-          </div>
-          
-          <div>
-            {checks.map((check) => (
-              <SecurityCheckRow key={check.name} check={check} />
-            ))}
-          </div>
-        </Panel>
+        </div>
       </div>
+
+      {/* Exception Detail Modal */}
+      <ExceptionDetailModal 
+        exception={selectedException}
+        open={!!selectedExceptionId}
+        onClose={() => setSelectedExceptionId(null)}
+      />
     </PageContainer>
   );
 }
