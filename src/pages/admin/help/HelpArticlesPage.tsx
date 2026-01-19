@@ -1,9 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, ArrowUpDown, ArrowUp, ArrowDown, MoreHorizontal, Archive, Eye, Pencil } from "lucide-react";
+import { Plus, Search, ArrowUpDown, ArrowUp, ArrowDown, MoreHorizontal, Archive, Eye, Pencil, FolderOpen } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleStatus, HelpVisibility } from "@/hooks/useHelpManagement";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -37,6 +36,7 @@ import {
 import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
 import { PageShell } from "@/components/ui/page-shell";
 import { PageContainer } from "@/components/ui/page-container";
+import { SectionHeader } from "@/components/ui/page-header";
 
 /**
  * HELP ARTICLES PAGE — SYSTEM CONSOLE (INSTITUTIONAL TABLE-BASED)
@@ -103,6 +103,61 @@ function getStatusBadge(status: HelpArticleStatus) {
         <p className="text-xs">{STATUS_TOOLTIPS[status]}</p>
       </TooltipContent>
     </Tooltip>
+  );
+}
+
+/** Institutional button component for admin surfaces */
+function InstitutionalButton({ 
+  children, 
+  onClick, 
+  variant = "primary",
+  size = "default",
+  disabled = false,
+  className = ""
+}: { 
+  children: React.ReactNode; 
+  onClick?: () => void;
+  variant?: "primary" | "secondary" | "ghost";
+  size?: "default" | "sm" | "icon";
+  disabled?: boolean;
+  className?: string;
+}) {
+  const baseStyles = "inline-flex items-center justify-center gap-1.5 font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 disabled:opacity-50 disabled:cursor-not-allowed";
+  
+  const sizeStyles = {
+    default: "h-9 px-4 text-[13px] rounded-md",
+    sm: "h-8 px-3 text-[12px] rounded-md",
+    icon: "h-8 w-8 rounded-md",
+  };
+  
+  const variantStyles = {
+    primary: {
+      backgroundColor: 'var(--platform-text)',
+      color: 'var(--platform-canvas)',
+      border: 'none',
+    },
+    secondary: {
+      backgroundColor: 'var(--platform-surface-2)',
+      borderColor: 'var(--platform-border)',
+      color: 'var(--platform-text)',
+      border: '1px solid var(--platform-border)',
+    },
+    ghost: {
+      backgroundColor: 'transparent',
+      color: 'var(--platform-text-secondary)',
+      border: 'none',
+    },
+  };
+  
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`${baseStyles} ${sizeStyles[size]} ${className}`}
+      style={variantStyles[variant]}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -207,215 +262,279 @@ export default function HelpArticlesPage() {
   return (
     <PageContainer maxWidth="wide">
       <PageShell
-        title="Help articles"
-        subtitle="Create and maintain public documentation for Tribes users."
+        title="Help management"
+        subtitle="Manage public Help articles and categories"
         backTo="/admin"
-      >
-        <Button onClick={() => navigate("/admin/help/articles/new")} size="sm">
-          <Plus className="h-4 w-4 mr-1.5" />
-          New article
-        </Button>
-      </PageShell>
+      />
 
-      {/* Filters Row */}
-      <div className="flex flex-col md:flex-row gap-3 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search title or slug..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-full md:w-[160px]">
-            <SelectValue placeholder="All categories" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All categories</SelectItem>
-            {categories.map((cat) => (
-              <SelectItem key={cat.id} value={cat.id}>
-                {cat.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
-          <SelectTrigger className="w-full md:w-[140px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {STATUS_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={visibilityFilter} onValueChange={(v) => setVisibilityFilter(v as any)}>
-          <SelectTrigger className="w-full md:w-[140px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {VISIBILITY_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Content */}
-      {articlesLoading ? (
-        <InstitutionalLoadingState message="Loading articles" />
-      ) : (
+      {/* Categories Section */}
+      <section className="mb-8">
+        <SectionHeader title="Categories" description="Organize Help Center content">
+          <InstitutionalButton 
+            variant="secondary" 
+            size="sm"
+            onClick={() => navigate("/admin/help/categories")}
+          >
+            <FolderOpen className="h-3.5 w-3.5" />
+            Manage categories
+          </InstitutionalButton>
+        </SectionHeader>
+        
         <div 
-          className="rounded-md overflow-hidden"
-          style={{ 
+          className="rounded-md p-4"
+          style={{
             backgroundColor: 'var(--platform-surface-2)',
             border: '1px solid var(--platform-border)',
           }}
         >
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="min-w-[200px]">
-                  <button 
-                    onClick={() => handleSort("title")}
-                    className="flex items-center hover:opacity-80 transition-opacity"
-                  >
-                    Title
-                    {getSortIcon("title")}
-                  </button>
-                </TableHead>
-                <TableHead className="hidden md:table-cell">Category</TableHead>
-                <TableHead status>Status</TableHead>
-                <TableHead className="hidden lg:table-cell">
-                  <button 
-                    onClick={() => handleSort("updated_at")}
-                    className="flex items-center hover:opacity-80 transition-opacity"
-                  >
-                    Updated
-                    {getSortIcon("updated_at")}
-                  </button>
-                </TableHead>
-                <TableHead className="w-[50px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedArticles.length === 0 ? (
-                <TableEmptyRow 
-                  colSpan={5}
-                  title={hasFilters ? "No results" : "No articles yet"}
-                  description={hasFilters 
-                    ? "No articles match your search." 
-                    : "Create your first Help article to get started."}
-                />
-              ) : (
-                paginatedArticles.map((article) => (
-                  <TableRow 
-                    key={article.id} 
-                    clickable
-                    onClick={() => navigate(`/admin/help/articles/${article.id}`)}
-                  >
-                    <TableCell>
-                      <div className="min-w-0">
-                        <p className="truncate font-medium">{article.title || "Untitled"}</p>
-                        <p 
-                          className="text-[11px] truncate mt-0.5"
-                          style={{ color: 'var(--platform-text-muted)', opacity: 0.7 }}
-                        >
-                          /{article.slug}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell muted className="hidden md:table-cell">
-                      {article.category?.name || "—"}
-                    </TableCell>
-                    <TableCell status>
-                      {getStatusBadge(article.status)}
-                    </TableCell>
-                    <TableCell muted className="hidden lg:table-cell">
-                      {format(new Date(article.updated_at), "MMM d, yyyy")}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/admin/help/articles/${article.id}`);
-                          }}>
-                            <Pencil className="h-4 w-4 mr-2" />
-                            Edit
-                          </DropdownMenuItem>
-                          {article.status === "published" && (
-                            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-                              <Eye className="h-4 w-4 mr-2" />
-                              View published
-                            </DropdownMenuItem>
-                          )}
-                          {article.status !== "archived" && (
-                            <>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleArchive(article);
-                                }}
-                                className="text-destructive focus:text-destructive"
-                              >
-                                <Archive className="h-4 w-4 mr-2" />
-                                Archive
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      )}
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 px-1">
           <p 
-            className="text-[12px]"
-            style={{ color: 'var(--platform-text-muted)' }}
+            className="text-[13px]"
+            style={{ color: 'var(--platform-text-secondary)' }}
           >
-            Showing {((currentPage - 1) * PAGE_SIZE) + 1}–{Math.min(currentPage * PAGE_SIZE, sortedArticles.length)} of {sortedArticles.length}
+            {categories.length} {categories.length === 1 ? 'category' : 'categories'} configured
           </p>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
-          </div>
         </div>
-      )}
+      </section>
+
+      {/* Articles Section */}
+      <section>
+        <SectionHeader title="Articles" description="Create and maintain public documentation">
+          <InstitutionalButton onClick={() => navigate("/admin/help/articles/new")}>
+            <Plus className="h-3.5 w-3.5" />
+            New article
+          </InstitutionalButton>
+        </SectionHeader>
+
+        {/* Filters Row */}
+        <div className="flex flex-col md:flex-row gap-3 mb-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: 'var(--platform-text-muted)' }} />
+            <Input
+              placeholder="Search title or slug..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+              style={{
+                backgroundColor: 'var(--platform-surface-2)',
+                borderColor: 'var(--platform-border)',
+                color: 'var(--platform-text)',
+              }}
+            />
+          </div>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger 
+              className="w-full md:w-[160px]"
+              style={{
+                backgroundColor: 'var(--platform-surface-2)',
+                borderColor: 'var(--platform-border)',
+                color: 'var(--platform-text)',
+              }}
+            >
+              <SelectValue placeholder="All categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All categories</SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
+            <SelectTrigger 
+              className="w-full md:w-[140px]"
+              style={{
+                backgroundColor: 'var(--platform-surface-2)',
+                borderColor: 'var(--platform-border)',
+                color: 'var(--platform-text)',
+              }}
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {STATUS_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={visibilityFilter} onValueChange={(v) => setVisibilityFilter(v as any)}>
+            <SelectTrigger 
+              className="w-full md:w-[140px]"
+              style={{
+                backgroundColor: 'var(--platform-surface-2)',
+                borderColor: 'var(--platform-border)',
+                color: 'var(--platform-text)',
+              }}
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {VISIBILITY_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Content */}
+        {articlesLoading ? (
+          <InstitutionalLoadingState message="Loading articles" />
+        ) : (
+          <div 
+            className="rounded-md overflow-hidden"
+            style={{ 
+              backgroundColor: 'var(--platform-surface-2)',
+              border: '1px solid var(--platform-border)',
+            }}
+          >
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[200px]">
+                    <button 
+                      onClick={() => handleSort("title")}
+                      className="flex items-center hover:opacity-80 transition-opacity"
+                      style={{ color: 'var(--platform-text-muted)' }}
+                    >
+                      Title
+                      {getSortIcon("title")}
+                    </button>
+                  </TableHead>
+                  <TableHead className="hidden md:table-cell">Category</TableHead>
+                  <TableHead status>Status</TableHead>
+                  <TableHead className="hidden lg:table-cell">
+                    <button 
+                      onClick={() => handleSort("updated_at")}
+                      className="flex items-center hover:opacity-80 transition-opacity"
+                      style={{ color: 'var(--platform-text-muted)' }}
+                    >
+                      Updated
+                      {getSortIcon("updated_at")}
+                    </button>
+                  </TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginatedArticles.length === 0 ? (
+                  <TableEmptyRow 
+                    colSpan={5}
+                    title={hasFilters ? "No results" : "No articles yet"}
+                    description={hasFilters 
+                      ? "No articles match your search." 
+                      : "Create your first Help article to get started."}
+                  />
+                ) : (
+                  paginatedArticles.map((article) => (
+                    <TableRow 
+                      key={article.id} 
+                      clickable
+                      onClick={() => navigate(`/admin/help/articles/${article.id}`)}
+                    >
+                      <TableCell>
+                        <div className="min-w-0">
+                          <p className="truncate font-medium" style={{ color: 'var(--platform-text)' }}>
+                            {article.title || "Untitled"}
+                          </p>
+                          <p 
+                            className="text-[11px] truncate mt-0.5"
+                            style={{ color: 'var(--platform-text-muted)', opacity: 0.7 }}
+                          >
+                            /{article.slug}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell muted className="hidden md:table-cell">
+                        {article.category?.name || "—"}
+                      </TableCell>
+                      <TableCell status>
+                        {getStatusBadge(article.status)}
+                      </TableCell>
+                      <TableCell muted className="hidden lg:table-cell">
+                        {format(new Date(article.updated_at), "MMM d, yyyy")}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                            <InstitutionalButton variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </InstitutionalButton>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/admin/help/articles/${article.id}`);
+                            }}>
+                              <Pencil className="h-4 w-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                            {article.status === "published" && (
+                              <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                                <Eye className="h-4 w-4 mr-2" />
+                                View published
+                              </DropdownMenuItem>
+                            )}
+                            {article.status !== "archived" && (
+                              <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleArchive(article);
+                                  }}
+                                  className="text-destructive focus:text-destructive"
+                                >
+                                  <Archive className="h-4 w-4 mr-2" />
+                                  Archive
+                                </DropdownMenuItem>
+                              </>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between mt-4 px-1">
+            <p 
+              className="text-[12px]"
+              style={{ color: 'var(--platform-text-muted)' }}
+            >
+              Showing {((currentPage - 1) * PAGE_SIZE) + 1}–{Math.min(currentPage * PAGE_SIZE, sortedArticles.length)} of {sortedArticles.length}
+            </p>
+            <div className="flex items-center gap-2">
+              <InstitutionalButton
+                variant="secondary"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </InstitutionalButton>
+              <InstitutionalButton
+                variant="secondary"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </InstitutionalButton>
+            </div>
+          </div>
+        )}
+      </section>
     </PageContainer>
   );
 }
