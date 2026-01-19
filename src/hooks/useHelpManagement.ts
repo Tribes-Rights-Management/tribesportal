@@ -8,6 +8,8 @@ import { toast } from "@/hooks/use-toast";
  * 
  * Company-scoped hook for managing Help articles and categories.
  * Uses platform_user_capabilities.can_manage_help or platform_admin for access.
+ * 
+ * Institutional tone: authoritative, neutral, calm.
  */
 
 export type HelpArticleStatus = "draft" | "published" | "archived";
@@ -195,7 +197,11 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error fetching articles:", error);
-      toast({ description: "Failed to load articles", variant: "destructive" });
+      toast({ 
+        title: "Unable to load articles",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
     } else {
       setArticles((data as HelpArticle[]) || []);
     }
@@ -224,11 +230,18 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error creating article:", error);
-      toast({ description: "Failed to create article", variant: "destructive" });
+      toast({ 
+        title: "Unable to save changes",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
       return null;
     }
 
-    toast({ description: "Article created" });
+    toast({ 
+      title: "Draft saved",
+      description: "Your changes were saved." 
+    });
     return data as HelpArticle;
   }, [user?.id]);
 
@@ -246,11 +259,18 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error updating article:", error);
-      toast({ description: "Failed to save changes", variant: "destructive" });
+      toast({ 
+        title: "Unable to save changes",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
       return null;
     }
 
-    toast({ description: "Changes saved" });
+    toast({ 
+      title: "Draft saved",
+      description: "Your changes were saved." 
+    });
     return data as HelpArticle;
   }, [user?.id]);
 
@@ -263,11 +283,18 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error deleting article:", error);
-      toast({ description: "Failed to delete article", variant: "destructive" });
+      toast({ 
+        title: "Unable to delete",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
       return false;
     }
 
-    toast({ description: "Article deleted" });
+    toast({ 
+      title: "Article deleted",
+      description: "This article has been removed." 
+    });
     return true;
   }, []);
 
@@ -284,11 +311,18 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error publishing article:", error);
-      toast({ description: "Failed to publish", variant: "destructive" });
+      toast({ 
+        title: "Unable to publish",
+        description: "Your changes were not published. Please try again.", 
+        variant: "destructive" 
+      });
       return false;
     }
 
-    toast({ description: "Article published" });
+    toast({ 
+      title: "Article published",
+      description: "This article is now live." 
+    });
     return true;
   }, [user?.id]);
 
@@ -304,11 +338,18 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error archiving article:", error);
-      toast({ description: "Failed to archive", variant: "destructive" });
+      toast({ 
+        title: "Unable to archive",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
       return false;
     }
 
-    toast({ description: "Article archived" });
+    toast({ 
+      title: "Article archived",
+      description: "This article has been archived." 
+    });
     return true;
   }, [user?.id]);
 
@@ -323,7 +364,11 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error fetching categories:", error);
-      toast({ description: "Failed to load categories", variant: "destructive" });
+      toast({ 
+        title: "Unable to load categories",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
     } else {
       setCategories((data as HelpCategory[]) || []);
     }
@@ -347,11 +392,18 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error creating category:", error);
-      toast({ description: "Failed to create category", variant: "destructive" });
+      toast({ 
+        title: "Unable to save changes",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
       return null;
     }
 
-    toast({ description: "Category created" });
+    toast({ 
+      title: "Category created",
+      description: "Your changes were saved." 
+    });
     return data as HelpCategory;
   }, [user?.id]);
 
@@ -369,11 +421,18 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error updating category:", error);
-      toast({ description: "Failed to save changes", variant: "destructive" });
+      toast({ 
+        title: "Unable to save changes",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
       return null;
     }
 
-    toast({ description: "Changes saved" });
+    toast({ 
+      title: "Changes saved",
+      description: "Your changes were saved." 
+    });
     return data as HelpCategory;
   }, [user?.id]);
 
@@ -386,11 +445,18 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error deleting category:", error);
-      toast({ description: "Failed to delete category", variant: "destructive" });
+      toast({ 
+        title: "Unable to delete category",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
       return false;
     }
 
-    toast({ description: "Category deleted" });
+    toast({ 
+      title: "Category deleted",
+      description: "This category has been removed." 
+    });
     return true;
   }, []);
 

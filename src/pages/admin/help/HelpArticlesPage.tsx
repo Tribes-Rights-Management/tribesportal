@@ -13,8 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { InstitutionalLoadingState, InstitutionalEmptyState } from "@/components/ui/institutional-states";
+import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 /**
  * HELP ARTICLES PAGE — SYSTEM CONSOLE
@@ -36,25 +41,73 @@ const VISIBILITY_OPTIONS: { value: HelpVisibility | "all"; label: string }[] = [
   { value: "internal", label: "Internal" },
 ];
 
+const STATUS_TOOLTIPS: Record<HelpArticleStatus, string> = {
+  draft: "Not visible to users",
+  published: "Visible on help.tribesrightsmanagement.com",
+  archived: "Retained for recordkeeping",
+};
+
 function getStatusBadge(status: HelpArticleStatus) {
   switch (status) {
     case "published":
       return (
-        <Badge variant="outline" className="text-[10px] border-green-500/30 text-green-400">
-          Published
-        </Badge>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Badge 
+              variant="outline" 
+              className="text-[10px] cursor-default"
+              style={{ 
+                borderColor: 'rgba(74, 222, 128, 0.3)',
+                color: 'rgb(74, 222, 128)',
+              }}
+            >
+              Published
+            </Badge>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-xs">{STATUS_TOOLTIPS.published}</p>
+          </TooltipContent>
+        </Tooltip>
       );
     case "draft":
       return (
-        <Badge variant="outline" className="text-[10px] border-yellow-500/30 text-yellow-400">
-          Draft
-        </Badge>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Badge 
+              variant="outline" 
+              className="text-[10px] cursor-default"
+              style={{ 
+                borderColor: 'rgba(250, 204, 21, 0.3)',
+                color: 'rgb(250, 204, 21)',
+              }}
+            >
+              Draft
+            </Badge>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-xs">{STATUS_TOOLTIPS.draft}</p>
+          </TooltipContent>
+        </Tooltip>
       );
     case "archived":
       return (
-        <Badge variant="outline" className="text-[10px] border-gray-500/30 text-gray-400">
-          Archived
-        </Badge>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Badge 
+              variant="outline" 
+              className="text-[10px] cursor-default"
+              style={{ 
+                borderColor: 'rgba(156, 163, 175, 0.3)',
+                color: 'rgb(156, 163, 175)',
+              }}
+            >
+              Archived
+            </Badge>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-xs">{STATUS_TOOLTIPS.archived}</p>
+          </TooltipContent>
+        </Tooltip>
       );
   }
 }
@@ -91,6 +144,8 @@ export default function HelpArticlesPage() {
     fetchArticles(filters as any);
   }, [search, statusFilter, visibilityFilter, categoryFilter, fetchArticles]);
 
+  const hasFilters = search || statusFilter !== "all" || visibilityFilter !== "all" || categoryFilter !== "all";
+
   return (
     <div 
       className="min-h-full py-8 md:py-12 px-4 md:px-6"
@@ -112,13 +167,13 @@ export default function HelpArticlesPage() {
                   className="text-[20px] md:text-[24px] font-medium tracking-[-0.01em]"
                   style={{ color: 'var(--platform-text)' }}
                 >
-                  Articles
+                  Help articles
                 </h1>
                 <p 
                   className="text-[13px] mt-1"
                   style={{ color: 'var(--platform-text-muted)' }}
                 >
-                  Manage Help Center content
+                  Create and maintain public documentation for Tribes users.
                 </p>
               </div>
               <Button
@@ -186,12 +241,31 @@ export default function HelpArticlesPage() {
           {articlesLoading ? (
             <InstitutionalLoadingState message="Loading articles" />
           ) : articles.length === 0 ? (
-            <InstitutionalEmptyState
-              title="No articles"
-              description={search || statusFilter !== "all" || visibilityFilter !== "all" || categoryFilter !== "all" 
-                ? "No articles match your filters." 
-                : "Create your first article to get started."}
-            />
+            <div className="py-12 text-center">
+              <p 
+                className="text-[14px] font-medium mb-1"
+                style={{ color: 'var(--platform-text)' }}
+              >
+                {hasFilters ? "No results" : "No articles yet"}
+              </p>
+              <p 
+                className="text-[13px]"
+                style={{ color: 'var(--platform-text-muted)' }}
+              >
+                {hasFilters 
+                  ? "No articles match your search." 
+                  : "Create your first Help article to get started."}
+              </p>
+              {!hasFilters && (
+                <Button
+                  onClick={() => navigate("/admin/help/articles/new")}
+                  size="sm"
+                  className="mt-4"
+                >
+                  New article
+                </Button>
+              )}
+            </div>
           ) : (
             <div 
               className="rounded-md overflow-hidden"
