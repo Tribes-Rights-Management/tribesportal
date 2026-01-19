@@ -9,6 +9,9 @@ import { cn } from "@/lib/utils";
  * INSTITUTIONAL STYLING RULES (LOCKED)
  * ═══════════════════════════════════════════════════════════════════════════
  * 
+ * This component extends the App UI Kit standards for System Console contexts.
+ * Uses console-scope CSS variables which may override app-level tokens.
+ * 
  * - Height: 44px (md) / 36px (sm) / 28px (xs)
  * - Radius: 12px (not rounded-full, not pill)
  * - Primary: Dark elevated surface, NOT white
@@ -16,8 +19,8 @@ import { cn } from "@/lib/utils";
  * - Stable width during loading states
  * 
  * USAGE:
- * - Import from @/components/console instead of @/components/ui
- * - All /admin routes must use this component
+ * - Import from @/components/console for /admin routes
+ * - Import from @/components/app-ui for all other routes
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -56,11 +59,11 @@ export const ConsoleButton = React.forwardRef<HTMLButtonElement, ConsoleButtonPr
   ) => {
     const isDisabled = disabled || loading;
 
-    // Size-based classes
+    // Size-based classes - uses global control tokens
     const sizeClasses = {
-      xs: "h-[var(--console-control-height-xs)] px-2.5 text-[11px] gap-1",
-      sm: "h-[var(--console-control-height-sm)] px-3.5 text-[13px] gap-1.5",
-      md: "h-[var(--console-control-height)] px-5 text-[14px] gap-2",
+      xs: "h-[var(--control-height-xs)] px-2.5 text-[11px] gap-1",
+      sm: "h-[var(--control-height-sm)] px-3.5 text-[13px] gap-1.5",
+      md: "h-[var(--control-height-md)] px-5 text-[14px] gap-2",
     };
 
     // Intent-based inline styles (using CSS variables from .console-scope)
@@ -105,7 +108,7 @@ export const ConsoleButton = React.forwardRef<HTMLButtonElement, ConsoleButtonPr
           "inline-flex items-center justify-center font-medium transition-colors duration-150",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
           "focus-visible:ring-white/20 focus-visible:ring-offset-[var(--console-bg)]",
-          "rounded-[var(--console-control-radius)]",
+          "rounded-[var(--control-radius)]",
           "whitespace-nowrap select-none",
           // Size
           sizeClasses[size],
