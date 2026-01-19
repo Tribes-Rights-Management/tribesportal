@@ -3,12 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { PageContainer } from "@/components/ui/page-container";
-import { Panel, PanelHeader, PanelTitle, PanelContent } from "@/components/ui/panel";
-import { PrimaryButton } from "@/components/ui/PrimaryButton";
-import { StatusChip } from "@/components/system/StatusChip";
+import { 
+  ConsoleButton,
+  ConsoleChip,
+  ConsoleCard,
+  ConsoleCardHeader,
+  ConsoleCardBody,
+  ConsoleSectionHeader,
+} from "@/components/console";
 import { 
   ShieldCheck, Check, X, AlertTriangle, Shield, Database, Lock, Globe, 
-  FileCheck, ChevronRight, Clock, ChevronLeft 
+  FileCheck, ChevronRight, Clock, ChevronLeft
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow, format } from "date-fns";
@@ -55,24 +60,11 @@ type Exception = {
   remediation?: string;
 };
 
-// StatusChip imported from shared component
+// ConsoleChip imported from @/components/console
 
-// ============ SEVERITY CHIP ============
-function SeverityChip({ severity }: { severity: "high" | "medium" | "low" }) {
-  const styles = {
-    high: { bg: 'rgba(239,68,68,0.12)', color: '#f87171', border: 'rgba(239,68,68,0.2)' },
-    medium: { bg: 'rgba(234,179,8,0.12)', color: '#facc15', border: 'rgba(234,179,8,0.2)' },
-    low: { bg: 'rgba(59,130,246,0.12)', color: '#60a5fa', border: 'rgba(59,130,246,0.2)' },
-  };
-  const s = styles[severity];
-  return (
-    <span 
-      className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide rounded"
-      style={{ backgroundColor: s.bg, color: s.color, border: `1px solid ${s.border}` }}
-    >
-      {severity}
-    </span>
-  );
+// ============ SEVERITY CHIP (using ConsoleChip) ============
+function SeverityChipWrapper({ severity }: { severity: "high" | "medium" | "low" }) {
+  return <ConsoleChip severity={severity} />;
 }
 
 // ============ SCOPE CHIP ============
@@ -131,7 +123,7 @@ function SecurityCheckRow({ check }: { check: CheckResult }) {
             {check.name}
           </span>
           <div className="flex-shrink-0">
-            <StatusChip status={check.status} />
+            <ConsoleChip status={check.status} />
           </div>
         </div>
         <p 
@@ -185,7 +177,7 @@ function ExceptionRow({
           </code>
         </div>
         <div className="flex items-center gap-2 mt-1.5">
-          <SeverityChip severity={exception.severity} />
+          <SeverityChipWrapper severity={exception.severity} />
           <ScopeChip scope={exception.scope} />
         </div>
       </div>
@@ -308,7 +300,7 @@ function ExceptionDetailModal({
         
         <div className="space-y-4 mt-4">
           <div className="flex items-center gap-2">
-            <SeverityChip severity={exception.severity} />
+            <SeverityChipWrapper severity={exception.severity} />
             <ScopeChip scope={exception.scope} />
           </div>
           
@@ -579,16 +571,17 @@ export default function SecurityVerificationPage() {
         </div>
         
         <div className="flex flex-col items-start sm:items-end gap-1.5">
-          <PrimaryButton
+          <ConsoleButton
+            intent="primary"
             onClick={runChecks}
             disabled={isRunning || !user}
             loading={isRunning}
             loadingText="Running…"
             minWidth="130px"
+            icon={<ShieldCheck className="h-4 w-4" />}
           >
-            <ShieldCheck className="h-[16px] w-[16px]" />
             Run checks
-          </PrimaryButton>
+          </ConsoleButton>
           
           <span className="text-[11px] flex items-center gap-1" style={{ color: 'var(--platform-text-muted)' }}>
             <Clock className="h-3 w-3" />
