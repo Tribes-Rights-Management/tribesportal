@@ -1,16 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, ArrowUpDown, ArrowUp, ArrowDown, MoreHorizontal, Archive, Eye, Pencil, FolderOpen } from "lucide-react";
+import { Plus, Search, ArrowUpDown, ArrowUp, ArrowDown, MoreHorizontal, Archive, Eye, Pencil } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleStatus, HelpVisibility } from "@/hooks/useHelpManagement";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -27,7 +19,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -36,7 +27,6 @@ import {
 import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
 import { PageShell } from "@/components/ui/page-shell";
 import { PageContainer } from "@/components/ui/page-container";
-import { SectionHeader } from "@/components/ui/page-header";
 
 /**
  * HELP ARTICLES PAGE — SYSTEM CONSOLE (INSTITUTIONAL TABLE-BASED)
@@ -77,10 +67,23 @@ type SortField = "title" | "updated_at";
 type SortOrder = "asc" | "desc";
 
 function getStatusBadge(status: HelpArticleStatus) {
-  const styles: Record<HelpArticleStatus, { borderColor: string; color: string }> = {
-    published: { borderColor: 'rgba(74, 222, 128, 0.3)', color: 'rgb(74, 222, 128)' },
-    draft: { borderColor: 'rgba(250, 204, 21, 0.3)', color: 'rgb(250, 204, 21)' },
-    archived: { borderColor: 'rgba(156, 163, 175, 0.3)', color: 'rgb(156, 163, 175)' },
+  // Muted, restrained colors - institutional grade
+  const styles: Record<HelpArticleStatus, { bg: string; text: string; border: string }> = {
+    published: { 
+      bg: 'rgba(74, 222, 128, 0.08)', 
+      text: 'rgba(74, 222, 128, 0.85)', 
+      border: 'rgba(74, 222, 128, 0.2)' 
+    },
+    draft: { 
+      bg: 'rgba(250, 204, 21, 0.06)', 
+      text: 'rgba(250, 204, 21, 0.75)', 
+      border: 'rgba(250, 204, 21, 0.15)' 
+    },
+    archived: { 
+      bg: 'rgba(156, 163, 175, 0.06)', 
+      text: 'rgba(156, 163, 175, 0.7)', 
+      border: 'rgba(156, 163, 175, 0.15)' 
+    },
   };
   const labels: Record<HelpArticleStatus, string> = {
     published: "Published",
@@ -91,13 +94,16 @@ function getStatusBadge(status: HelpArticleStatus) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Badge 
-          variant="outline" 
-          className="text-[10px] cursor-default"
-          style={styles[status]}
+        <span 
+          className="inline-flex items-center px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide rounded cursor-default"
+          style={{
+            backgroundColor: styles[status].bg,
+            color: styles[status].text,
+            border: `1px solid ${styles[status].border}`,
+          }}
         >
           {labels[status]}
-        </Badge>
+        </span>
       </TooltipTrigger>
       <TooltipContent>
         <p className="text-xs">{STATUS_TOOLTIPS[status]}</p>
@@ -117,17 +123,18 @@ function InstitutionalButton({
 }: { 
   children: React.ReactNode; 
   onClick?: () => void;
-  variant?: "primary" | "secondary" | "ghost";
-  size?: "default" | "sm" | "icon";
+  variant?: "primary" | "secondary" | "ghost" | "tertiary";
+  size?: "default" | "sm" | "xs" | "icon";
   disabled?: boolean;
   className?: string;
 }) {
-  const baseStyles = "inline-flex items-center justify-center gap-1.5 font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 disabled:opacity-50 disabled:cursor-not-allowed";
+  const baseStyles = "inline-flex items-center justify-center gap-1.5 font-medium transition-colors duration-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/20 disabled:opacity-40 disabled:cursor-not-allowed";
   
   const sizeStyles = {
-    default: "h-9 px-4 text-[13px] rounded-md",
-    sm: "h-8 px-3 text-[12px] rounded-md",
-    icon: "h-8 w-8 rounded-md",
+    default: "h-8 px-3.5 text-[13px] rounded",
+    sm: "h-7 px-3 text-[12px] rounded",
+    xs: "h-6 px-2 text-[11px] rounded",
+    icon: "h-7 w-7 rounded",
   };
   
   const variantStyles = {
@@ -137,10 +144,14 @@ function InstitutionalButton({
       border: 'none',
     },
     secondary: {
-      backgroundColor: 'var(--platform-surface-2)',
-      borderColor: 'var(--platform-border)',
-      color: 'var(--platform-text)',
+      backgroundColor: 'transparent',
+      color: 'var(--platform-text-secondary)',
       border: '1px solid var(--platform-border)',
+    },
+    tertiary: {
+      backgroundColor: 'transparent',
+      color: 'var(--platform-text-muted)',
+      border: '1px solid rgba(255,255,255,0.08)',
     },
     ghost: {
       backgroundColor: 'transparent',
@@ -267,168 +278,182 @@ export default function HelpArticlesPage() {
         backTo="/admin"
       />
 
-      {/* Categories Section */}
-      <section className="mb-8">
-        <SectionHeader title="Categories" description="Organize Help Center content">
-          <InstitutionalButton 
-            variant="secondary" 
-            size="sm"
-            onClick={() => navigate("/admin/help/categories")}
-          >
-            <FolderOpen className="h-3.5 w-3.5" />
-            Manage categories
-          </InstitutionalButton>
-        </SectionHeader>
-        
+      {/* Categories Config Block — compact, low visual weight */}
+      <section className="mb-6">
         <div 
-          className="rounded-md p-4"
+          className="flex items-center justify-between py-2.5 px-3 rounded"
           style={{
-            backgroundColor: 'var(--platform-surface-2)',
+            backgroundColor: 'transparent',
             border: '1px solid var(--platform-border)',
           }}
         >
           <p 
-            className="text-[13px]"
-            style={{ color: 'var(--platform-text-secondary)' }}
+            className="text-[12px]"
+            style={{ color: 'var(--platform-text-muted)' }}
           >
-            {categories.length} {categories.length === 1 ? 'category' : 'categories'} configured
+            {categories.length === 0 
+              ? "No categories configured yet." 
+              : `${categories.length} ${categories.length === 1 ? 'category' : 'categories'} configured`
+            }
           </p>
+          <InstitutionalButton 
+            variant="tertiary" 
+            size="xs"
+            onClick={() => navigate("/admin/help/categories")}
+          >
+            Manage
+          </InstitutionalButton>
         </div>
       </section>
 
       {/* Articles Section */}
       <section>
-        <SectionHeader title="Articles" description="Create and maintain public documentation">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 
+              className="text-[15px] font-medium"
+              style={{ color: 'var(--platform-text)' }}
+            >
+              Articles
+            </h2>
+            <p 
+              className="text-[12px] mt-0.5"
+              style={{ color: 'var(--platform-text-muted)' }}
+            >
+              {sortedArticles.length} {sortedArticles.length === 1 ? 'article' : 'articles'}
+            </p>
+          </div>
           <InstitutionalButton onClick={() => navigate("/admin/help/articles/new")}>
             <Plus className="h-3.5 w-3.5" />
             New article
           </InstitutionalButton>
-        </SectionHeader>
+        </div>
 
-        {/* Filters Row */}
-        <div className="flex flex-col md:flex-row gap-3 mb-4">
+        {/* Filters Row — institutional density, uniform height */}
+        <div className="flex flex-col md:flex-row gap-2 mb-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: 'var(--platform-text-muted)' }} />
-            <Input
+            <Search 
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5" 
+              style={{ color: 'var(--platform-text-muted)' }} 
+            />
+            <input
+              type="text"
               placeholder="Search title or slug..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
+              className="h-8 w-full pl-8 pr-3 text-[13px] rounded transition-colors duration-100 focus:outline-none"
               style={{
                 backgroundColor: 'var(--platform-surface-2)',
-                borderColor: 'var(--platform-border)',
+                border: '1px solid var(--platform-border)',
                 color: 'var(--platform-text)',
               }}
             />
           </div>
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger 
-              className="w-full md:w-[160px]"
-              style={{
-                backgroundColor: 'var(--platform-surface-2)',
-                borderColor: 'var(--platform-border)',
-                color: 'var(--platform-text)',
-              }}
-            >
-              <SelectValue placeholder="All categories" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All categories</SelectItem>
-              {categories.map((cat) => (
-                <SelectItem key={cat.id} value={cat.id}>
-                  {cat.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
-            <SelectTrigger 
-              className="w-full md:w-[140px]"
-              style={{
-                backgroundColor: 'var(--platform-surface-2)',
-                borderColor: 'var(--platform-border)',
-                color: 'var(--platform-text)',
-              }}
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {STATUS_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={visibilityFilter} onValueChange={(v) => setVisibilityFilter(v as any)}>
-            <SelectTrigger 
-              className="w-full md:w-[140px]"
-              style={{
-                backgroundColor: 'var(--platform-surface-2)',
-                borderColor: 'var(--platform-border)',
-                color: 'var(--platform-text)',
-              }}
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {VISIBILITY_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="h-8 px-2.5 text-[12px] rounded appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
+            style={{
+              backgroundColor: 'var(--platform-surface-2)',
+              border: '1px solid var(--platform-border)',
+              color: 'var(--platform-text-secondary)',
+              minWidth: '140px',
+            }}
+          >
+            <option value="all">All categories</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
+            ))}
+          </select>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+            className="h-8 px-2.5 text-[12px] rounded appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
+            style={{
+              backgroundColor: 'var(--platform-surface-2)',
+              border: '1px solid var(--platform-border)',
+              color: 'var(--platform-text-secondary)',
+              minWidth: '120px',
+            }}
+          >
+            {STATUS_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+          <select
+            value={visibilityFilter}
+            onChange={(e) => setVisibilityFilter(e.target.value as any)}
+            className="h-8 px-2.5 text-[12px] rounded appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
+            style={{
+              backgroundColor: 'var(--platform-surface-2)',
+              border: '1px solid var(--platform-border)',
+              color: 'var(--platform-text-secondary)',
+              minWidth: '120px',
+            }}
+          >
+            {VISIBILITY_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
         </div>
 
-        {/* Content */}
+        {/* Table Container — stronger border, clear separation */}
         {articlesLoading ? (
           <InstitutionalLoadingState message="Loading articles" />
         ) : (
           <div 
-            className="rounded-md overflow-hidden"
+            className="rounded overflow-hidden"
             style={{ 
-              backgroundColor: 'var(--platform-surface-2)',
-              border: '1px solid var(--platform-border)',
+              backgroundColor: 'var(--platform-surface)',
+              border: '1px solid rgba(255,255,255,0.1)',
             }}
           >
-            <Table>
+            <Table density="compact">
               <TableHeader>
-                <TableRow>
+                <TableRow 
+                  style={{ backgroundColor: 'rgba(255,255,255,0.02)' }}
+                >
                   <TableHead className="min-w-[200px]">
                     <button 
                       onClick={() => handleSort("title")}
-                      className="flex items-center hover:opacity-80 transition-opacity"
-                      style={{ color: 'var(--platform-text-muted)' }}
+                      className="flex items-center hover:opacity-80 transition-opacity text-[11px] font-medium uppercase tracking-wider"
+                      style={{ color: 'var(--platform-text-secondary)' }}
                     >
                       Title
                       {getSortIcon("title")}
                     </button>
                   </TableHead>
-                  <TableHead className="hidden md:table-cell">Category</TableHead>
-                  <TableHead status>Status</TableHead>
+                  <TableHead className="hidden md:table-cell text-[11px] font-medium uppercase tracking-wider">
+                    Category
+                  </TableHead>
+                  <TableHead status className="text-[11px] font-medium uppercase tracking-wider">
+                    Status
+                  </TableHead>
                   <TableHead className="hidden lg:table-cell">
                     <button 
                       onClick={() => handleSort("updated_at")}
-                      className="flex items-center hover:opacity-80 transition-opacity"
-                      style={{ color: 'var(--platform-text-muted)' }}
+                      className="flex items-center hover:opacity-80 transition-opacity text-[11px] font-medium uppercase tracking-wider"
+                      style={{ color: 'var(--platform-text-secondary)' }}
                     >
                       Updated
                       {getSortIcon("updated_at")}
                     </button>
                   </TableHead>
-                  <TableHead className="w-[50px]"></TableHead>
+                  <TableHead className="w-[44px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedArticles.length === 0 ? (
-                  <TableEmptyRow 
-                    colSpan={5}
-                    title={hasFilters ? "No results" : "No articles yet"}
-                    description={hasFilters 
-                      ? "No articles match your search." 
-                      : "Create your first Help article to get started."}
-                  />
+                  <tr>
+                    <td colSpan={5} className="px-5 py-8">
+                      <p 
+                        className="text-[13px]"
+                        style={{ color: 'var(--platform-text-secondary)' }}
+                      >
+                        {hasFilters ? "No articles match your search." : "No articles yet."}
+                      </p>
+                    </td>
+                  </tr>
                 ) : (
                   paginatedArticles.map((article) => (
                     <TableRow 
@@ -462,34 +487,52 @@ export default function HelpArticlesPage() {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                             <InstitutionalButton variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
+                              <MoreHorizontal className="h-3.5 w-3.5" />
                             </InstitutionalButton>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/admin/help/articles/${article.id}`);
-                            }}>
-                              <Pencil className="h-4 w-4 mr-2" />
+                          <DropdownMenuContent 
+                            align="end"
+                            className="min-w-[140px]"
+                            style={{
+                              backgroundColor: '#1a1d21',
+                              border: '1px solid rgba(255,255,255,0.1)',
+                            }}
+                          >
+                            <DropdownMenuItem 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/admin/help/articles/${article.id}`);
+                              }}
+                              className="text-[13px] focus:bg-white/5"
+                              style={{ color: 'var(--platform-text-secondary)' }}
+                            >
+                              <Pencil className="h-3.5 w-3.5 mr-2" />
                               Edit
                             </DropdownMenuItem>
                             {article.status === "published" && (
-                              <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-                                <Eye className="h-4 w-4 mr-2" />
+                              <DropdownMenuItem 
+                                onClick={(e) => e.stopPropagation()}
+                                className="text-[13px] focus:bg-white/5"
+                                style={{ color: 'var(--platform-text-secondary)' }}
+                              >
+                                <Eye className="h-3.5 w-3.5 mr-2" />
                                 View published
                               </DropdownMenuItem>
                             )}
                             {article.status !== "archived" && (
                               <>
-                                <DropdownMenuSeparator />
+                                <DropdownMenuSeparator 
+                                  style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
+                                />
                                 <DropdownMenuItem 
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleArchive(article);
                                   }}
-                                  className="text-destructive focus:text-destructive"
+                                  className="text-[13px] focus:bg-white/5"
+                                  style={{ color: 'rgb(239, 68, 68)' }}
                                 >
-                                  <Archive className="h-4 w-4 mr-2" />
+                                  <Archive className="h-3.5 w-3.5 mr-2" />
                                   Archive
                                 </DropdownMenuItem>
                               </>
@@ -507,25 +550,25 @@ export default function HelpArticlesPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-4 px-1">
+          <div className="flex items-center justify-between mt-3">
             <p 
-              className="text-[12px]"
+              className="text-[11px]"
               style={{ color: 'var(--platform-text-muted)' }}
             >
-              Showing {((currentPage - 1) * PAGE_SIZE) + 1}–{Math.min(currentPage * PAGE_SIZE, sortedArticles.length)} of {sortedArticles.length}
+              {((currentPage - 1) * PAGE_SIZE) + 1}–{Math.min(currentPage * PAGE_SIZE, sortedArticles.length)} of {sortedArticles.length}
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <InstitutionalButton
-                variant="secondary"
-                size="sm"
+                variant="tertiary"
+                size="xs"
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
               >
                 Previous
               </InstitutionalButton>
               <InstitutionalButton
-                variant="secondary"
-                size="sm"
+                variant="tertiary"
+                size="xs"
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
               >
