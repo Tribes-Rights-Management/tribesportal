@@ -31,6 +31,7 @@ export interface UserProfile {
   status: MembershipStatus;
   created_at: string;
   ui_density_mode: DensityMode;
+  can_manage_help: boolean;
 }
 
 // Access state determines which page/route to show
@@ -176,7 +177,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const [profileResult, allMembershipsResult, activeMembershipsResult] = await Promise.all([
         supabase
           .from("user_profiles")
-          .select("id, user_id, email, full_name, platform_role, status, created_at, ui_density_mode")
+          .select("id, user_id, email, full_name, platform_role, status, created_at, ui_density_mode, can_manage_help")
           .eq("user_id", userId)
           .maybeSingle() as any,
         // Fetch ALL memberships (any status) for access state resolution
@@ -226,6 +227,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         status: profileResult.data.status,
         created_at: profileResult.data.created_at,
         ui_density_mode: densityMode,
+        can_manage_help: profileResult.data.can_manage_help ?? false,
       };
       setProfile(userProfile);
       
