@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { PageContainer } from "@/components/ui/page-container";
 import { Panel, PanelHeader, PanelTitle, PanelContent } from "@/components/ui/panel";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { BackButton } from "@/components/ui/back-button";
 import { 
   Play, Check, X, AlertTriangle, Shield, Database, Lock, Globe, 
   FileCheck, Loader2, ChevronRight, Clock 
@@ -179,42 +182,7 @@ function CategoryIcon({ category }: { category: CheckResult["category"] }) {
   }
 }
 
-// ============ PRIMARY BUTTON ============
-function PrimaryButton({ 
-  onClick, 
-  disabled, 
-  loading, 
-  children 
-}: { 
-  onClick: () => void; 
-  disabled?: boolean; 
-  loading?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className="inline-flex items-center justify-center gap-2 h-11 px-5 text-[14px] font-semibold rounded-xl transition-all duration-150"
-      style={{
-        backgroundColor: disabled ? 'rgba(255,255,255,0.08)' : 'var(--platform-text)',
-        color: disabled ? 'var(--platform-text-muted)' : 'var(--platform-bg)',
-        border: disabled ? '1px solid rgba(255,255,255,0.1)' : 'none',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled && !loading ? 0.6 : 1,
-      }}
-    >
-      {loading ? (
-        <>
-          <Loader2 className="h-4 w-4 animate-spin" />
-          Running…
-        </>
-      ) : (
-        children
-      )}
-    </button>
-  );
-}
+// PrimaryButton now imported from @/components/ui/PrimaryButton
 
 // ============ SECURITY CHECK ROW ============
 function SecurityCheckRow({ check }: { check: CheckResult }) {
@@ -644,13 +612,16 @@ export default function SecurityVerificationPage() {
         style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
       >
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 flex-shrink-0" style={{ color: 'var(--platform-text-muted)' }} />
-            <h1 className="text-[20px] font-semibold" style={{ color: 'var(--platform-text)' }}>
-              Security Verification
-            </h1>
+          <div className="flex items-center gap-3 mb-1">
+            <BackButton />
+            <div className="flex items-center gap-2">
+              <Shield className="h-5 w-5 flex-shrink-0" style={{ color: 'var(--platform-text-muted)' }} />
+              <h1 className="text-[20px] font-semibold" style={{ color: 'var(--platform-text)' }}>
+                Security Verification
+              </h1>
+            </div>
           </div>
-          <p className="text-[13px] mt-1" style={{ color: 'var(--platform-text-muted)' }}>
+          <p className="text-[13px] mt-1 ml-10" style={{ color: 'var(--platform-text-muted)' }}>
             Validate RLS enforcement and platform security posture
           </p>
         </div>
