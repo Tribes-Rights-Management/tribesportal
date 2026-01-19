@@ -355,6 +355,113 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
+   SYSTEM CONSOLE SCOPE — INSTITUTIONAL CONTROL PLANE (LOCKED)
+   
+   This scope provides console-specific tokens that enforce institutional styling
+   for all /admin routes. Console components inherit these tokens automatically.
+   
+   ENFORCEMENT:
+   - No bright white fills on primary buttons
+   - Dark, restrained surfaces throughout
+   - Subtle borders, high-contrast text
+   - Consistent 44px control height, 12px radius
+   ═══════════════════════════════════════════════════════════════════════════════ */
+.console-scope {
+  /* ─────────────────────────────────────────────────────────────────────────────
+     FOUNDATIONAL SURFACES
+     ───────────────────────────────────────────────────────────────────────────── */
+  --console-bg: hsl(214 28% 6%);
+  --console-fg: hsl(213 18% 96%);
+  --console-fg-secondary: hsl(213 12% 70%);
+  --console-fg-muted: hsl(213 10% 50%);
+  
+  /* Card/panel surfaces with slight elevation */
+  --console-card-bg: hsl(214 20% 8%);
+  --console-card-fg: hsl(213 18% 96%);
+  --console-card-border: hsla(0, 0%, 100%, 0.08);
+  
+  /* Elevated surface (modals, dropdowns) */
+  --console-elevated-bg: hsl(214 18% 10%);
+  --console-elevated-border: hsla(0, 0%, 100%, 0.12);
+  
+  /* ─────────────────────────────────────────────────────────────────────────────
+     CONTROL GEOMETRY — LOCKED
+     ───────────────────────────────────────────────────────────────────────────── */
+  --console-control-height: 44px;
+  --console-control-height-sm: 36px;
+  --console-control-height-xs: 28px;
+  --console-control-radius: 12px;
+  --console-control-radius-sm: 8px;
+  --console-chip-radius: 9999px;
+  
+  /* ─────────────────────────────────────────────────────────────────────────────
+     PRIMARY BUTTON — INSTITUTIONAL (NOT WHITE PILL)
+     Dark elevated surface with subtle border
+     ───────────────────────────────────────────────────────────────────────────── */
+  --console-primary-bg: hsl(220 6% 15%);
+  --console-primary-bg-hover: hsl(220 6% 18%);
+  --console-primary-bg-disabled: hsl(220 6% 12%);
+  --console-primary-fg: hsl(213 18% 92%);
+  --console-primary-fg-disabled: hsl(213 10% 40%);
+  --console-primary-border: hsla(0, 0%, 100%, 0.10);
+  --console-primary-border-hover: hsla(0, 0%, 100%, 0.14);
+  
+  /* ─────────────────────────────────────────────────────────────────────────────
+     SECONDARY/GHOST BUTTON
+     ───────────────────────────────────────────────────────────────────────────── */
+  --console-secondary-bg: transparent;
+  --console-secondary-bg-hover: hsla(0, 0%, 100%, 0.04);
+  --console-secondary-fg: hsl(213 12% 70%);
+  --console-secondary-border: hsla(0, 0%, 100%, 0.08);
+  
+  /* ─────────────────────────────────────────────────────────────────────────────
+     DANGER/DESTRUCTIVE
+     ───────────────────────────────────────────────────────────────────────────── */
+  --console-danger-bg: hsla(0, 72%, 51%, 0.12);
+  --console-danger-bg-hover: hsla(0, 72%, 51%, 0.18);
+  --console-danger-fg: hsl(0 84% 68%);
+  --console-danger-border: hsla(0, 72%, 51%, 0.25);
+  
+  /* ─────────────────────────────────────────────────────────────────────────────
+     STATUS CHIPS — Restrained fills, clear text
+     ───────────────────────────────────────────────────────────────────────────── */
+  --console-chip-pending-bg: hsla(0, 0%, 100%, 0.04);
+  --console-chip-pending-border: hsla(0, 0%, 100%, 0.08);
+  --console-chip-pending-fg: hsla(0, 0%, 100%, 0.50);
+  
+  --console-chip-running-bg: hsla(217, 91%, 60%, 0.08);
+  --console-chip-running-border: hsla(217, 91%, 60%, 0.18);
+  --console-chip-running-fg: hsl(213 93% 68%);
+  
+  --console-chip-pass-bg: hsla(142, 71%, 45%, 0.08);
+  --console-chip-pass-border: hsla(142, 71%, 45%, 0.15);
+  --console-chip-pass-fg: hsl(142 69% 58%);
+  
+  --console-chip-warning-bg: hsla(48, 96%, 53%, 0.08);
+  --console-chip-warning-border: hsla(48, 96%, 53%, 0.15);
+  --console-chip-warning-fg: hsl(48 96% 53%);
+  
+  --console-chip-fail-bg: hsla(0, 72%, 51%, 0.08);
+  --console-chip-fail-border: hsla(0, 72%, 51%, 0.15);
+  --console-chip-fail-fg: hsl(0 91% 71%);
+  
+  /* ─────────────────────────────────────────────────────────────────────────────
+     SEVERITY CHIPS
+     ───────────────────────────────────────────────────────────────────────────── */
+  --console-severity-high-bg: hsla(0, 72%, 51%, 0.12);
+  --console-severity-high-border: hsla(0, 72%, 51%, 0.20);
+  --console-severity-high-fg: hsl(0 91% 71%);
+  
+  --console-severity-medium-bg: hsla(48, 96%, 53%, 0.12);
+  --console-severity-medium-border: hsla(48, 96%, 53%, 0.20);
+  --console-severity-medium-fg: hsl(48 96% 53%);
+  
+  --console-severity-low-bg: hsla(217, 91%, 60%, 0.12);
+  --console-severity-low-border: hsla(217, 91%, 60%, 0.20);
+  --console-severity-low-fg: hsl(213 93% 68%);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
    GLOBAL TYPOGRAPHY SCALE — LOCKED
 
    This typography system is authoritative and must not drift.
