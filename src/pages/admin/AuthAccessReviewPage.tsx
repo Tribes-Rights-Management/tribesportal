@@ -5,9 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageContainer } from "@/components/ui/page-container";
 import { Panel, PanelHeader, PanelTitle, PanelContent } from "@/components/ui/panel";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { StatusChip } from "@/components/system/StatusChip";
 import { 
   ShieldCheck, Check, X, AlertTriangle, Shield, Database, Lock, Globe, 
-  FileCheck, Loader2, ChevronRight, Clock, ChevronLeft 
+  FileCheck, ChevronRight, Clock, ChevronLeft 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow, format } from "date-fns";
@@ -54,82 +55,7 @@ type Exception = {
   remediation?: string;
 };
 
-// ============ STATUS PILL COMPONENT ============
-function StatusPill({ status }: { status: CheckStatus }) {
-  const baseStyles = "inline-flex items-center justify-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded min-w-[72px]";
-  
-  switch (status) {
-    case "pending":
-      return (
-        <span 
-          className={baseStyles}
-          style={{ 
-            backgroundColor: 'rgba(255,255,255,0.06)',
-            color: 'var(--platform-text-muted)',
-            border: '1px solid rgba(255,255,255,0.08)'
-          }}
-        >
-          Pending
-        </span>
-      );
-    case "running":
-      return (
-        <span 
-          className={baseStyles}
-          style={{ 
-            backgroundColor: 'rgba(59,130,246,0.15)',
-            color: '#60a5fa',
-            border: '1px solid rgba(59,130,246,0.25)'
-          }}
-        >
-          <Loader2 className="h-3 w-3 animate-spin" />
-          Running
-        </span>
-      );
-    case "pass":
-      return (
-        <span 
-          className={baseStyles}
-          style={{ 
-            backgroundColor: 'rgba(34,197,94,0.12)',
-            color: '#4ade80',
-            border: '1px solid rgba(34,197,94,0.2)'
-          }}
-        >
-          <Check className="h-3 w-3" />
-          Pass
-        </span>
-      );
-    case "fail":
-      return (
-        <span 
-          className={baseStyles}
-          style={{ 
-            backgroundColor: 'rgba(239,68,68,0.12)',
-            color: '#f87171',
-            border: '1px solid rgba(239,68,68,0.2)'
-          }}
-        >
-          <X className="h-3 w-3" />
-          Fail
-        </span>
-      );
-    case "warning":
-      return (
-        <span 
-          className={baseStyles}
-          style={{ 
-            backgroundColor: 'rgba(234,179,8,0.12)',
-            color: '#facc15',
-            border: '1px solid rgba(234,179,8,0.2)'
-          }}
-        >
-          <AlertTriangle className="h-3 w-3" />
-          Warn
-        </span>
-      );
-  }
-}
+// StatusChip imported from shared component
 
 // ============ SEVERITY CHIP ============
 function SeverityChip({ severity }: { severity: "high" | "medium" | "low" }) {
@@ -205,7 +131,7 @@ function SecurityCheckRow({ check }: { check: CheckResult }) {
             {check.name}
           </span>
           <div className="flex-shrink-0">
-            <StatusPill status={check.status} />
+            <StatusChip status={check.status} />
           </div>
         </div>
         <p 
