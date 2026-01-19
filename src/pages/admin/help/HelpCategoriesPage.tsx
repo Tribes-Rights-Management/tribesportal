@@ -1,9 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
-import { Plus, Pencil, Trash2, ArrowLeft } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useHelpManagement, HelpCategory } from "@/hooks/useHelpManagement";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
@@ -30,12 +29,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TableEmptyRow,
 } from "@/components/ui/table";
 import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
 import { PageShell } from "@/components/ui/page-shell";
 import { PageContainer } from "@/components/ui/page-container";
-import { SectionHeader } from "@/components/ui/page-header";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -72,18 +69,19 @@ function InstitutionalButton({
 }: { 
   children: React.ReactNode; 
   onClick?: () => void;
-  variant?: "primary" | "secondary" | "ghost" | "destructive";
-  size?: "default" | "sm" | "icon";
+  variant?: "primary" | "secondary" | "ghost" | "destructive" | "tertiary";
+  size?: "default" | "sm" | "xs" | "icon";
   disabled?: boolean;
   className?: string;
   type?: "button" | "submit";
 }) {
-  const baseStyles = "inline-flex items-center justify-center gap-1.5 font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 disabled:opacity-50 disabled:cursor-not-allowed";
+  const baseStyles = "inline-flex items-center justify-center gap-1.5 font-medium transition-colors duration-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/20 disabled:opacity-40 disabled:cursor-not-allowed";
   
   const sizeStyles = {
-    default: "h-9 px-4 text-[13px] rounded-md",
-    sm: "h-8 px-3 text-[12px] rounded-md",
-    icon: "h-8 w-8 rounded-md",
+    default: "h-8 px-3.5 text-[13px] rounded",
+    sm: "h-7 px-3 text-[12px] rounded",
+    xs: "h-6 px-2 text-[11px] rounded",
+    icon: "h-7 w-7 rounded",
   };
   
   const variantStyles = {
@@ -93,10 +91,14 @@ function InstitutionalButton({
       border: 'none',
     },
     secondary: {
-      backgroundColor: 'var(--platform-surface-2)',
-      borderColor: 'var(--platform-border)',
-      color: 'var(--platform-text)',
+      backgroundColor: 'transparent',
+      color: 'var(--platform-text-secondary)',
       border: '1px solid var(--platform-border)',
+    },
+    tertiary: {
+      backgroundColor: 'transparent',
+      color: 'var(--platform-text-muted)',
+      border: '1px solid rgba(255,255,255,0.08)',
     },
     ghost: {
       backgroundColor: 'transparent',
@@ -105,7 +107,7 @@ function InstitutionalButton({
     },
     destructive: {
       backgroundColor: 'transparent',
-      color: 'hsl(0 62% 55%)',
+      color: 'rgb(239, 68, 68)',
       border: 'none',
     },
   };
@@ -281,91 +283,108 @@ export default function HelpCategoriesPage() {
   return (
     <PageContainer variant="settings">
       <PageShell
-        title="Help management"
-        subtitle="Manage categories for organizing Help articles"
+        title="Categories"
+        subtitle={`${categories.length} ${categories.length === 1 ? 'category' : 'categories'}`}
         backTo="/admin/help/articles"
       />
 
-      {/* Categories Section */}
-      <section>
-        <SectionHeader title="Categories" description="Define how articles are organized">
-          <InstitutionalButton onClick={handleCreate}>
-            <Plus className="h-3.5 w-3.5" />
-            New category
-          </InstitutionalButton>
-        </SectionHeader>
+      {/* Header with CTA */}
+      <div className="flex items-center justify-between mb-4">
+        <p 
+          className="text-[13px]"
+          style={{ color: 'var(--platform-text-secondary)' }}
+        >
+          Define how Help articles are organized
+        </p>
+        <InstitutionalButton onClick={handleCreate}>
+          <Plus className="h-3.5 w-3.5" />
+          New category
+        </InstitutionalButton>
+      </div>
 
-        {/* Content */}
-        {isLoading ? (
-          <InstitutionalLoadingState message="Loading categories" />
-        ) : (
-          <div 
-            className="rounded-md overflow-hidden"
-            style={{ 
-              backgroundColor: 'var(--platform-surface-2)',
-              border: '1px solid var(--platform-border)',
-            }}
-          >
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="min-w-[180px]">Name</TableHead>
-                  <TableHead className="hidden sm:table-cell">Slug</TableHead>
-                  <TableHead numeric className="hidden md:table-cell">Articles</TableHead>
-                  <TableHead className="hidden lg:table-cell">Updated</TableHead>
-                  <TableHead className="w-[100px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {categoriesWithCounts.length === 0 ? (
-                  <TableEmptyRow 
-                    colSpan={5}
-                    title="No categories"
-                    description="Create your first category to organize articles."
-                  />
-                ) : (
-                  categoriesWithCounts.map((cat) => (
-                    <TableRow key={cat.id}>
-                      <TableCell>
-                        <span className="font-medium" style={{ color: 'var(--platform-text)' }}>
-                          {cat.name}
-                        </span>
-                      </TableCell>
-                      <TableCell muted className="hidden sm:table-cell">
-                        /{cat.slug}
-                      </TableCell>
-                      <TableCell numeric className="hidden md:table-cell">
-                        {cat.article_count}
-                      </TableCell>
-                      <TableCell muted className="hidden lg:table-cell">
-                        {format(new Date(cat.updated_at), "MMM d, yyyy")}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center justify-end gap-1">
-                          <InstitutionalButton
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEdit(cat)}
-                          >
-                            <Pencil className="h-3.5 w-3.5" />
-                          </InstitutionalButton>
-                          <InstitutionalButton
-                            variant="destructive"
-                            size="icon"
-                            onClick={() => handleDeleteClick(cat)}
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </InstitutionalButton>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </section>
+      {/* Content */}
+      {isLoading ? (
+        <InstitutionalLoadingState message="Loading categories" />
+      ) : (
+        <div 
+          className="rounded overflow-hidden"
+          style={{ 
+            backgroundColor: 'var(--platform-surface)',
+            border: '1px solid rgba(255,255,255,0.1)',
+          }}
+        >
+          <Table density="compact">
+            <TableHeader>
+              <TableRow style={{ backgroundColor: 'rgba(255,255,255,0.02)' }}>
+                <TableHead className="min-w-[180px] text-[11px] font-medium uppercase tracking-wider">
+                  Name
+                </TableHead>
+                <TableHead className="hidden sm:table-cell text-[11px] font-medium uppercase tracking-wider">
+                  Slug
+                </TableHead>
+                <TableHead numeric className="hidden md:table-cell text-[11px] font-medium uppercase tracking-wider">
+                  Articles
+                </TableHead>
+                <TableHead className="hidden lg:table-cell text-[11px] font-medium uppercase tracking-wider">
+                  Updated
+                </TableHead>
+                <TableHead className="w-[80px]"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {categoriesWithCounts.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-5 py-8">
+                    <p 
+                      className="text-[13px]"
+                      style={{ color: 'var(--platform-text-secondary)' }}
+                    >
+                      No categories configured yet.
+                    </p>
+                  </td>
+                </tr>
+              ) : (
+                categoriesWithCounts.map((cat) => (
+                  <TableRow key={cat.id}>
+                    <TableCell>
+                      <span className="font-medium text-[13px]" style={{ color: 'var(--platform-text)' }}>
+                        {cat.name}
+                      </span>
+                    </TableCell>
+                    <TableCell muted className="hidden sm:table-cell text-[12px]">
+                      /{cat.slug}
+                    </TableCell>
+                    <TableCell numeric className="hidden md:table-cell text-[12px]">
+                      {cat.article_count}
+                    </TableCell>
+                    <TableCell muted className="hidden lg:table-cell text-[12px]">
+                      {format(new Date(cat.updated_at), "MMM d, yyyy")}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-0.5">
+                        <InstitutionalButton
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEdit(cat)}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </InstitutionalButton>
+                        <InstitutionalButton
+                          variant="destructive"
+                          size="icon"
+                          onClick={() => handleDeleteClick(cat)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </InstitutionalButton>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       {/* Create/Edit Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
@@ -389,14 +408,15 @@ export default function HelpCategoriesPage() {
               <Label htmlFor="cat-name" style={{ color: 'var(--platform-text-secondary)' }}>
                 Name
               </Label>
-              <Input
+              <input
                 id="cat-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Category name"
+                className="h-8 w-full px-3 text-[13px] rounded transition-colors duration-100 focus:outline-none"
                 style={{
                   backgroundColor: 'var(--platform-surface-2)',
-                  borderColor: 'var(--platform-border)',
+                  border: '1px solid var(--platform-border)',
                   color: 'var(--platform-text)',
                 }}
               />
@@ -405,7 +425,7 @@ export default function HelpCategoriesPage() {
               <Label htmlFor="cat-slug" style={{ color: 'var(--platform-text-secondary)' }}>
                 Slug
               </Label>
-              <Input
+              <input
                 id="cat-slug"
                 value={slug}
                 onChange={(e) => {
@@ -413,9 +433,10 @@ export default function HelpCategoriesPage() {
                   setSlugManual(true);
                 }}
                 placeholder="category-slug"
+                className="h-8 w-full px-3 text-[13px] rounded transition-colors duration-100 focus:outline-none"
                 style={{
                   backgroundColor: 'var(--platform-surface-2)',
-                  borderColor: 'var(--platform-border)',
+                  border: '1px solid var(--platform-border)',
                   color: 'var(--platform-text)',
                 }}
               />
@@ -424,14 +445,15 @@ export default function HelpCategoriesPage() {
               <Label htmlFor="cat-order" style={{ color: 'var(--platform-text-secondary)' }}>
                 Sort order
               </Label>
-              <Input
+              <input
                 id="cat-order"
                 type="number"
                 value={sortOrder}
                 onChange={(e) => setSortOrder(parseInt(e.target.value) || 100)}
+                className="h-8 w-full px-3 text-[13px] rounded transition-colors duration-100 focus:outline-none"
                 style={{
                   backgroundColor: 'var(--platform-surface-2)',
-                  borderColor: 'var(--platform-border)',
+                  border: '1px solid var(--platform-border)',
                   color: 'var(--platform-text)',
                 }}
               />
