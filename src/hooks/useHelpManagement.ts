@@ -31,6 +31,22 @@ export interface HelpCategory {
   updated_by: string | null;
 }
 
+/**
+ * HELP ARTICLE VERSION
+ * 
+ * Immutable version record. All edits create new versions.
+ * 
+ * APPROVAL FIELDS (DORMANT):
+ * - requires_approval, approved_at, approved_by, approval_notes
+ * - These fields exist for future approval workflow
+ * - NOT ENFORCED — publishing proceeds immediately regardless
+ * - Do not activate without explicit instruction
+ * 
+ * AUTHORITY MODEL (when activated):
+ * - Platform Executives are approvers
+ * - Tribes Admins are authors
+ * - No cross-org approvals
+ */
 export interface HelpArticleVersion {
   id: string;
   article_id: string;
@@ -43,6 +59,11 @@ export interface HelpArticleVersion {
   status: HelpArticleStatus;
   created_at: string;
   created_by: string | null;
+  // DORMANT: Approval metadata — NOT ENFORCED
+  requires_approval: boolean;
+  approved_at: string | null;
+  approved_by: string | null;
+  approval_notes: string | null;
 }
 
 export interface HelpArticle {

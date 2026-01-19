@@ -849,12 +849,16 @@ export type Database = {
       }
       help_article_versions: {
         Row: {
+          approval_notes: string | null
+          approved_at: string | null
+          approved_by: string | null
           article_id: string
           body_md: string
           category_id: string | null
           created_at: string
           created_by: string | null
           id: string
+          requires_approval: boolean
           status: Database["public"]["Enums"]["help_article_status"]
           summary: string | null
           tags: string[]
@@ -862,12 +866,16 @@ export type Database = {
           visibility: Database["public"]["Enums"]["help_visibility"]
         }
         Insert: {
+          approval_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           article_id: string
           body_md: string
           category_id?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
+          requires_approval?: boolean
           status?: Database["public"]["Enums"]["help_article_status"]
           summary?: string | null
           tags?: string[]
@@ -875,12 +883,16 @@ export type Database = {
           visibility?: Database["public"]["Enums"]["help_visibility"]
         }
         Update: {
+          approval_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           article_id?: string
           body_md?: string
           category_id?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
+          requires_approval?: boolean
           status?: Database["public"]["Enums"]["help_article_status"]
           summary?: string | null
           tags?: string[]
