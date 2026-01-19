@@ -54,6 +54,7 @@ export type Permission =
   | "platform:view_governance"
   | "platform:view_disclosures"
   | "platform:cross_workspace_read"
+  | "platform:manage_help"     // Help backend access (capability-based)
   
   // ═══════════════════════════════════════════════════════════════════════════
   // EXTERNAL AUDITOR PERMISSIONS (read-only)
@@ -139,6 +140,16 @@ export const MODULES = {
     navLabel: "Auditor Access",
     requiredPermission: "auditor:view_logs" as Permission,
   },
+  
+  // ─────────────────────────────────────────────────────────────────────────
+  // HELP BACKEND (company-scoped internal tool)
+  // ─────────────────────────────────────────────────────────────────────────
+  help: {
+    routePrefix: "/help-admin",
+    permissionNamespace: "platform",
+    navLabel: "Help Backend",
+    requiredPermission: "platform:manage_help" as Permission,
+  },
 } as const;
 
 interface RoleAccessResult {
@@ -158,6 +169,7 @@ interface RoleAccessResult {
   canAccessContext: (context: PortalContext) => boolean;
   canAccessAdmin: boolean;
   canAccessAuditor: boolean;
+  canAccessHelp: boolean;      // Help backend (capability-based)
   
   // Module access (new first-class modules)
   canAccessLicensing: boolean;
@@ -237,6 +249,15 @@ export function useRoleAccess(): RoleAccessResult {
         case "platform:view_audit_logs":
         case "platform:manage_security":
           return false; // DEFAULT DENY for non-admins
+        
+        // ═══════════════════════════════════════════════════════════════════════
+        // HELP BACKEND PERMISSION — capability-based
+        // Requires platform_user role + can_manage_help capability
+        // ═══════════════════════════════════════════════════════════════════════
+        case "platform:manage_help":
+          // This is checked via useHelpAccess hook for real-time capability check
+          // Here we only allow if user has internal role (not external_auditor)
+          return profile?.platform_role === 'platform_user' && (profile as any)?.can_manage_help === true;
 
         // ═══════════════════════════════════════════════════════════════════════
         // EXTERNAL AUDITOR PERMISSIONS — read-only
@@ -339,6 +360,9 @@ export function useRoleAccess(): RoleAccessResult {
     // First-class module access
     const canAccessLicensing = hasPermission("licensing.view");
     const canAccessPortal = hasPermission("portal.view");
+    
+    // Help backend access (capability-based, company-scoped)
+    const canAccessHelp = hasPermission("platform:manage_help");
 
     // Surface visibility: if no permission, surface is NOT rendered
     // No disabled buttons, no placeholders
@@ -393,6 +417,7 @@ export function useRoleAccess(): RoleAccessResult {
       canAccessContext,
       canAccessAdmin,
       canAccessAuditor,
+      canAccessHelp,
       canAccessLicensing,
       canAccessPortal,
       shouldRenderSurface,

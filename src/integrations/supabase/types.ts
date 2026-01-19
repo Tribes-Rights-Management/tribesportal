@@ -210,6 +210,59 @@ export type Database = {
           },
         ]
       }
+      articles: {
+        Row: {
+          body: string
+          category_id: string | null
+          created_at: string | null
+          helpful_count: number | null
+          id: string
+          meta_description: string | null
+          not_helpful_count: number | null
+          published: boolean | null
+          slug: string
+          title: string
+          updated_at: string | null
+          view_count: number | null
+        }
+        Insert: {
+          body: string
+          category_id?: string | null
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string
+          meta_description?: string | null
+          not_helpful_count?: number | null
+          published?: boolean | null
+          slug: string
+          title: string
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          body?: string
+          category_id?: string | null
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string
+          meta_description?: string | null
+          not_helpful_count?: number | null
+          published?: boolean | null
+          slug?: string
+          title?: string
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "articles_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: Database["public"]["Enums"]["audit_action"]
@@ -310,6 +363,100 @@ export type Database = {
           verified_by?: string | null
         }
         Relationships: []
+      }
+      categories: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          icon: string | null
+          id: string
+          name: string
+          parent_id: string | null
+          slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+          slug: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+          slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          session_id?: string
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          article_references: Json | null
+          content: string
+          conversation_id: string | null
+          created_at: string | null
+          id: string
+          role: string
+        }
+        Insert: {
+          article_references?: Json | null
+          content: string
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          role: string
+        }
+        Update: {
+          article_references?: Json | null
+          content?: string
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "chat_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contracts: {
         Row: {
@@ -894,6 +1041,54 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          message: string
+          name: string
+          referrer_url: string | null
+          responded_at: string | null
+          response_body: string | null
+          search_query: string | null
+          searched_articles: Json | null
+          status: string | null
+          subject: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          message: string
+          name: string
+          referrer_url?: string | null
+          responded_at?: string | null
+          response_body?: string | null
+          search_query?: string | null
+          searched_articles?: Json | null
+          status?: string | null
+          subject?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          referrer_url?: string | null
+          responded_at?: string | null
+          response_body?: string | null
+          search_query?: string | null
+          searched_articles?: Json | null
+          status?: string | null
+          subject?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       notification_archive: {
         Row: {
           acknowledged_at: string | null
@@ -1403,6 +1598,44 @@ export type Database = {
         }
         Relationships: []
       }
+      searches: {
+        Row: {
+          article_clicked_id: string | null
+          converted_to_message: boolean | null
+          created_at: string | null
+          id: string
+          query: string
+          results_count: number | null
+          session_id: string | null
+        }
+        Insert: {
+          article_clicked_id?: string | null
+          converted_to_message?: boolean | null
+          created_at?: string | null
+          id?: string
+          query: string
+          results_count?: number | null
+          session_id?: string | null
+        }
+        Update: {
+          article_clicked_id?: string | null
+          converted_to_message?: boolean | null
+          created_at?: string | null
+          id?: string
+          query?: string
+          results_count?: number | null
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "searches_article_clicked_id_fkey"
+            columns: ["article_clicked_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_memberships: {
         Row: {
           allowed_contexts: Database["public"]["Enums"]["portal_context"][]
@@ -1566,6 +1799,7 @@ export type Database = {
       user_profiles: {
         Row: {
           avatar_url: string | null
+          can_manage_help: boolean
           created_at: string
           email: string
           full_name: string | null
@@ -1578,6 +1812,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          can_manage_help?: boolean
           created_at?: string
           email: string
           full_name?: string | null
@@ -1590,6 +1825,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          can_manage_help?: boolean
           created_at?: string
           email?: string
           full_name?: string | null
@@ -1599,6 +1835,33 @@ export type Database = {
           ui_density_mode?: Database["public"]["Enums"]["ui_density_mode"]
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      widget_settings: {
+        Row: {
+          chat_enabled: boolean | null
+          created_at: string | null
+          id: string
+          primary_color: string | null
+          updated_at: string | null
+          welcome_message: string | null
+        }
+        Insert: {
+          chat_enabled?: boolean | null
+          created_at?: string | null
+          id?: string
+          primary_color?: string | null
+          updated_at?: string | null
+          welcome_message?: string | null
+        }
+        Update: {
+          chat_enabled?: boolean | null
+          created_at?: string | null
+          id?: string
+          primary_color?: string | null
+          updated_at?: string | null
+          welcome_message?: string | null
         }
         Relationships: []
       }
@@ -1624,6 +1887,7 @@ export type Database = {
         Args: { _tenant_id: string }
         Returns: boolean
       }
+      can_manage_help_content: { Args: { _user_id: string }; Returns: boolean }
       check_escalations: { Args: never; Returns: number }
       create_notification:
         | {

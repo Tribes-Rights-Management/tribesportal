@@ -81,6 +81,11 @@ import DisclosuresPage from "@/pages/admin/DisclosuresPage";
 import CorrelationChainPage from "@/pages/admin/CorrelationChainPage";
 import DataRoomPage from "@/pages/admin/DataRoomPage";
 
+// Help Admin - COMPANY-SCOPED INTERNAL TOOL
+import { HelpAdminLayout } from "@/layouts/HelpAdminLayout";
+import { HelpProtectedRoute } from "@/components/help/HelpProtectedRoute";
+import HelpAdminDashboard from "@/pages/help-admin/HelpAdminDashboard";
+
 // System Console - Executive Reporting (Platform Executives only)
 import ExecutiveReportingPage from "@/pages/admin/reporting/ExecutiveReportingPage";
 import BoardSummariesPage from "@/pages/admin/reporting/BoardSummariesPage";
@@ -268,6 +273,15 @@ const App = () => (
         <Route path="/auditor/licensing" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorLicensingPage /></RoleProtectedRoute>} />
         <Route path="/auditor/access" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorAccessLogPage /></RoleProtectedRoute>} />
         <Route path="/auditor/chain" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorChainPage /></RoleProtectedRoute>} />
+
+        {/* ═══════════════════════════════════════════════════════════════════════
+            HELP ADMIN (/help-admin) — COMPANY-SCOPED INTERNAL TOOL
+            Permission: platform_admin OR (platform_user + can_manage_help)
+            NOT accessible to external auditors, licensing, or portal users
+        ═══════════════════════════════════════════════════════════════════════ */}
+        <Route path="/help-admin" element={<HelpProtectedRoute><HelpAdminLayout /></HelpProtectedRoute>}>
+          <Route index element={<HelpAdminDashboard />} />
+        </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
             ACCOUNT SETTINGS HUB (/account)
