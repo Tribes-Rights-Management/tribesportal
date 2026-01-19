@@ -104,7 +104,7 @@ export function AdminListRow({
   );
 
   const baseClassName = cn(
-    "flex items-center justify-between gap-3 px-4 md:px-5 py-3 md:py-3.5",
+    "flex items-center justify-between gap-3 px-4 md:px-5 row-density",
     "transition-colors duration-150 group hover:bg-white/[0.02]",
     className
   );

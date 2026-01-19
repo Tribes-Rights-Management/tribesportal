@@ -5,6 +5,7 @@ import {
   TIMEZONE_OPTIONS,
   DATE_FORMAT_OPTIONS,
   TIME_FORMAT_OPTIONS,
+  UI_DENSITY_OPTIONS,
 } from "@/hooks/useUserPreferences";
 import { EditSelectSheet } from "@/components/edit";
 import {
@@ -12,8 +13,6 @@ import {
   SettingsSectionCard,
   SettingsFooterNotice,
 } from "@/components/ui/settings-row";
-import { useAuth } from "@/contexts/AuthContext";
-import type { DensityMode } from "@/lib/density";
 
 /**
  * ACCOUNT PREFERENCES PAGE
@@ -24,7 +23,7 @@ import type { DensityMode } from "@/lib/density";
  * This page renders content sections only.
  */
 
-type ModalType = "timezone" | "dateFormat" | "timeFormat" | null;
+type ModalType = "timezone" | "dateFormat" | "timeFormat" | "uiDensity" | null;
 
 export default function AccountPreferencesPage() {
   const {
@@ -34,10 +33,9 @@ export default function AccountPreferencesPage() {
     getTimezoneLabel,
     getDateFormatLabel,
     getTimeFormatLabel,
+    getUiDensityLabel,
   } = useUserPreferences();
 
-  const { profile, setDensityMode } = useAuth();
-  const isCompact = profile?.ui_density_mode === "compact";
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   const handleTimezoneChange = async (value: string | number) => {
@@ -52,9 +50,8 @@ export default function AccountPreferencesPage() {
     await updatePreferences({ time_format: value as "12h" | "24h" });
   };
 
-  const handleCompactDensityChange = (checked: boolean) => {
-    const mode: DensityMode = checked ? "compact" : "comfortable";
-    setDensityMode(mode);
+  const handleUiDensityChange = async (value: string | number) => {
+    await updatePreferences({ ui_density_mode: value as "comfortable" | "compact" });
   };
 
   return (
@@ -67,11 +64,11 @@ export default function AccountPreferencesPage() {
       >
         <SettingsRow
           icon={SlidersHorizontal}
-          label="Compact density"
-          helperText="Tighter spacing in settings and admin surfaces"
-          variant="toggle"
-          checked={isCompact}
-          onCheckedChange={handleCompactDensityChange}
+          label="Information density"
+          value={getUiDensityLabel(preferences.ui_density_mode)}
+          variant="select"
+          onSelect={() => setActiveModal("uiDensity")}
+          locked={isLocked("ui_density_mode")}
         />
       </SettingsSectionCard>
 
@@ -120,6 +117,19 @@ export default function AccountPreferencesPage() {
       </SettingsSectionCard>
 
       <SettingsFooterNotice>Some preferences may be enforced by workspace policies.</SettingsFooterNotice>
+
+      {/* UI Density Selection Sheet */}
+      <EditSelectSheet
+        open={activeModal === "uiDensity"}
+        onOpenChange={(open) => !open && setActiveModal(null)}
+        parentLabel="Preferences"
+        title="Information density"
+        helperText="Choose how much content fits on screen"
+        options={UI_DENSITY_OPTIONS}
+        value={preferences.ui_density_mode}
+        onChange={handleUiDensityChange}
+        disabled={isLocked("ui_density_mode")}
+      />
 
       {/* Timezone Selection Sheet */}
       <EditSelectSheet

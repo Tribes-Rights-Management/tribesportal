@@ -1447,6 +1447,35 @@ export type Database = {
           },
         ]
       }
+      tenant_ui_policies: {
+        Row: {
+          tenant_id: string
+          ui_density_policy: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          tenant_id: string
+          ui_density_policy?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          tenant_id?: string
+          ui_density_policy?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_ui_policies_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenants: {
         Row: {
           created_at: string
@@ -1487,6 +1516,7 @@ export type Database = {
           time_format: string
           timezone: string
           ui_compact_density: boolean
+          ui_density_mode: string
           ui_reduced_motion: boolean
           updated_at: string
           user_id: string
@@ -1506,6 +1536,7 @@ export type Database = {
           time_format?: string
           timezone?: string
           ui_compact_density?: boolean
+          ui_density_mode?: string
           ui_reduced_motion?: boolean
           updated_at?: string
           user_id: string
@@ -1525,6 +1556,7 @@ export type Database = {
           time_format?: string
           timezone?: string
           ui_compact_density?: boolean
+          ui_density_mode?: string
           ui_reduced_motion?: boolean
           updated_at?: string
           user_id?: string

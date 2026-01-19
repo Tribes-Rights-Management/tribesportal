@@ -15,6 +15,7 @@ import { toast } from "@/hooks/use-toast";
  * - date_format: Date display format preference
  * - time_format: 12-hour or 24-hour time format
  * - inactivity_timeout_minutes: User-preferred session timeout
+ * - ui_density_mode: Visual density preference (comfortable/compact)
  */
 
 export interface UserPreferences {
@@ -23,6 +24,7 @@ export interface UserPreferences {
   date_format: "iso8601" | "us" | "eu";
   time_format: "12h" | "24h";
   inactivity_timeout_minutes: number;
+  ui_density_mode: "comfortable" | "compact";
 }
 
 const DEFAULT_PREFERENCES: UserPreferences = {
@@ -31,6 +33,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   date_format: "iso8601",
   time_format: "24h",
   inactivity_timeout_minutes: 30,
+  ui_density_mode: "comfortable",
 };
 
 const STORAGE_KEY = "tribes_user_preferences";
@@ -74,14 +77,25 @@ export const TIMEZONE_OPTIONS = [
   { value: "Australia/Sydney", label: "Sydney (AEST/AEDT)" },
 ] as const;
 
+// UI Density options
+export const UI_DENSITY_OPTIONS = [
+  { value: "comfortable", label: "Comfortable" },
+  { value: "compact", label: "Compact (more rows on screen)" },
+] as const;
+
 export function useUserPreferences() {
   const { user, profile } = useAuth();
   const [preferences, setPreferences] = useState<UserPreferences>(DEFAULT_PREFERENCES);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Workspace policy overrides (would come from tenant settings)
-  const [policyOverrides, setPolicyOverrides] = useState<Partial<UserPreferences>>({});
+  // Workspace policy overrides (comes from tenant settings via AppUiBoot)
+  const [policyOverrides, setPolicyOverridesState] = useState<Partial<UserPreferences>>({});
+
+  // Stable setter for policy overrides
+  const setPolicyOverrides = useCallback((overrides: Partial<UserPreferences>) => {
+    setPolicyOverridesState(overrides);
+  }, []);
 
   // Load preferences from database
   useEffect(() => {
@@ -114,6 +128,7 @@ export function useUserPreferences() {
             date_format: data.date_format as "iso8601" | "us" | "eu",
             time_format: data.time_format as "12h" | "24h",
             inactivity_timeout_minutes: data.inactivity_timeout_minutes,
+            ui_density_mode: (data.ui_density_mode ?? "comfortable") as "comfortable" | "compact",
           });
         } else {
           // No preferences found, use defaults (possibly with display_name from profile)
@@ -155,6 +170,7 @@ export function useUserPreferences() {
           date_format: newPreferences.date_format,
           time_format: newPreferences.time_format,
           inactivity_timeout_minutes: newPreferences.inactivity_timeout_minutes,
+          ui_density_mode: newPreferences.ui_density_mode,
         }, { onConflict: 'user_id' });
 
       if (error) {
@@ -249,23 +265,41 @@ export function useUserPreferences() {
     return option?.label || `${value} minutes`;
   }, []);
 
+  const getUiDensityLabel = useCallback((value: string): string => {
+    const option = UI_DENSITY_OPTIONS.find(opt => opt.value === value);
+    return option?.label || value;
+  }, []);
+
+  // Return preferences with policy overrides applied
+  const effectivePreferences: UserPreferences = {
+    display_name: getEffective("display_name"),
+    timezone: getEffective("timezone"),
+    date_format: getEffective("date_format"),
+    time_format: getEffective("time_format"),
+    inactivity_timeout_minutes: getEffective("inactivity_timeout_minutes"),
+    ui_density_mode: getEffective("ui_density_mode"),
+  };
+
   return {
-    preferences,
+    preferences: effectivePreferences,
     loading,
     saving,
     updatePreferences,
     getEffective,
     isLocked,
+    setPolicyOverrides,
     formatDate,
     formatTime,
     getTimezoneLabel,
     getDateFormatLabel,
     getTimeFormatLabel,
     getInactivityTimeoutLabel,
+    getUiDensityLabel,
     // Options for selectors
     DATE_FORMAT_OPTIONS,
     TIME_FORMAT_OPTIONS,
     TIMEZONE_OPTIONS,
     INACTIVITY_TIMEOUT_OPTIONS,
+    UI_DENSITY_OPTIONS,
   };
 }
