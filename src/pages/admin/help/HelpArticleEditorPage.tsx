@@ -2,7 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, Globe, Lock, Eye, Archive, History, Trash2, RotateCcw } from "lucide-react";
 import { format } from "date-fns";
-import { useHelpManagement, HelpArticle, HelpArticleRevision, HelpCategory } from "@/hooks/useHelpManagement";
+import { 
+  useHelpManagement, 
+  HelpArticle, 
+  HelpArticleVersion, 
+  HelpCategory 
+} from "@/hooks/useHelpManagement";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,13 +33,19 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
 /**
  * HELP ARTICLE EDITOR — SYSTEM CONSOLE
  * 
- * Create/Edit article with Markdown body, revision history, and publish controls.
+ * Create/Edit article with Markdown body, immutable version history, and publish controls.
+ * 
+ * APPEND-ONLY VERSIONING:
+ * - All edits create new versions (never overwrites)
+ * - Editors always operate on a draft version
+ * - Publishing sets published_version_id to selected version
+ * - Versions are permanently readable to admins
+ * 
  * Institutional tone: authoritative, neutral, calm.
  */
 
@@ -56,18 +67,20 @@ export default function HelpArticleEditorPage() {
     categories,
     fetchCategories,
     createArticle,
-    updateArticle,
-    deleteArticle,
-    publishArticle,
+    createVersion,
+    publishVersion,
     archiveArticle,
-    fetchRevisions,
+    restoreArticle,
+    fetchArticleWithVersion,
+    fetchVersions,
+    deleteArticle,
   } = useHelpManagement();
 
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [article, setArticle] = useState<HelpArticle | null>(null);
-  const [revisions, setRevisions] = useState<HelpArticleRevision[]>([]);
-  const [revisionsLoading, setRevisionsLoading] = useState(false);
+  const [versions, setVersions] = useState<HelpArticleVersion[]>([]);
+  const [versionsLoading, setVersionsLoading] = useState(false);
 
   // Confirmation dialogs
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
@@ -94,13 +107,9 @@ export default function HelpArticleEditorPage() {
       if (isNew) return;
       
       setLoading(true);
-      const { data, error } = await supabase
-        .from("help_articles")
-        .select("*")
-        .eq("id", id)
-        .single();
+      const art = await fetchArticleWithVersion(id!);
 
-      if (error || !data) {
+      if (!art) {
         toast({ 
           title: "Unable to load article",
           description: "Please try again.", 
@@ -110,20 +119,19 @@ export default function HelpArticleEditorPage() {
         return;
       }
 
-      const art = data as HelpArticle;
       setArticle(art);
-      setTitle(art.title);
+      setTitle(art.title || "");
       setSlug(art.slug);
       setSlugManual(true);
       setSummary(art.summary || "");
-      setBodyMd(art.body_md);
+      setBodyMd(art.body_md || "");
       setCategoryId(art.category_id || "none");
-      setVisibility(art.visibility);
+      setVisibility(art.visibility || "public");
       setLoading(false);
     }
 
     loadArticle();
-  }, [id, isNew, navigate]);
+  }, [id, isNew, navigate, fetchArticleWithVersion]);
 
   // Auto-generate slug from title
   useEffect(() => {
@@ -132,16 +140,16 @@ export default function HelpArticleEditorPage() {
     }
   }, [title, slugManual]);
 
-  // Load revisions
-  const loadRevisions = useCallback(async () => {
+  // Load versions
+  const loadVersions = useCallback(async () => {
     if (!article?.id) return;
-    setRevisionsLoading(true);
-    const revs = await fetchRevisions(article.id);
-    setRevisions(revs);
-    setRevisionsLoading(false);
-  }, [article?.id, fetchRevisions]);
+    setVersionsLoading(true);
+    const vers = await fetchVersions(article.id);
+    setVersions(vers);
+    setVersionsLoading(false);
+  }, [article?.id, fetchVersions]);
 
-  // Save handler (Save draft)
+  // Save handler - creates a new version (never overwrites)
   const handleSave = async () => {
     if (!title.trim() || !slug.trim() || !bodyMd.trim()) {
       toast({ 
@@ -167,29 +175,40 @@ export default function HelpArticleEditorPage() {
         navigate(`/admin/help/articles/${result.id}`);
       }
     } else if (article) {
-      const result = await updateArticle(article.id, {
+      // Create new version (append-only)
+      const versionId = await createVersion(article.id, {
         title: title.trim(),
-        slug: slug.trim(),
         summary: summary.trim() || undefined,
         body_md: bodyMd,
         category_id: categoryId !== "none" ? categoryId : null,
         visibility,
       });
-      if (result) {
-        setArticle(result);
+      
+      if (versionId) {
+        // Refresh article data
+        const updatedArticle = await fetchArticleWithVersion(article.id);
+        if (updatedArticle) {
+          setArticle(updatedArticle);
+        }
       }
     }
 
     setSaving(false);
   };
 
-  // Publish handler
+  // Publish handler - publishes current version
   const handlePublish = async () => {
-    if (!article) return;
+    if (!article?.current_version_id) return;
+    
     setSaving(true);
-    const success = await publishArticle(article.id);
+    const success = await publishVersion(article.id, article.current_version_id);
     if (success) {
-      setArticle({ ...article, status: "published", published_at: new Date().toISOString() });
+      setArticle({ 
+        ...article, 
+        status: "published", 
+        published_at: new Date().toISOString(),
+        published_version_id: article.current_version_id,
+      });
     }
     setSaving(false);
     setPublishDialogOpen(false);
@@ -211,13 +230,9 @@ export default function HelpArticleEditorPage() {
   const handleRestore = async () => {
     if (!article) return;
     setSaving(true);
-    const result = await updateArticle(article.id, { status: "draft" });
-    if (result) {
+    const success = await restoreArticle(article.id);
+    if (success) {
       setArticle({ ...article, status: "draft" });
-      toast({
-        title: "Article restored",
-        description: "This article is visible again.",
-      });
     }
     setSaving(false);
     setRestoreDialogOpen(false);
@@ -230,6 +245,11 @@ export default function HelpArticleEditorPage() {
     if (success) {
       navigate("/admin/help/articles");
     }
+  };
+
+  // Get version author name (placeholder - would need user lookup)
+  const getVersionAuthor = (version: HelpArticleVersion) => {
+    return version.created_by ? "Staff" : "System";
   };
 
   if (loading) {
@@ -245,6 +265,7 @@ export default function HelpArticleEditorPage() {
 
   const isPublished = article?.status === "published";
   const isArchived = article?.status === "archived";
+  const versionCount = versions.length;
 
   return (
     <div 
@@ -285,53 +306,72 @@ export default function HelpArticleEditorPage() {
                   >
                     {article.status.charAt(0).toUpperCase() + article.status.slice(1)}
                   </Badge>
-                  <span className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>
-                    v{article.version}
-                  </span>
+                  {article.current_version_id && (
+                    <span className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>
+                      Version {versionCount || 1}
+                    </span>
+                  )}
                 </div>
               )}
             </div>
             
             <div className="flex items-center gap-2">
-              {/* Revisions drawer */}
+              {/* Versions drawer */}
               {article && (
                 <Sheet>
                   <SheetTrigger asChild>
-                    <Button variant="outline" size="sm" onClick={loadRevisions}>
+                    <Button variant="outline" size="sm" onClick={loadVersions}>
                       <History className="h-4 w-4 mr-1.5" />
-                      Revisions
+                      Versions
                     </Button>
                   </SheetTrigger>
                   <SheetContent>
                     <SheetHeader>
-                      <SheetTitle>Revision history</SheetTitle>
+                      <SheetTitle>Version history</SheetTitle>
                     </SheetHeader>
-                    <div className="mt-6">
-                      {revisionsLoading ? (
+                    <p className="text-[12px] mt-2 mb-4" style={{ color: 'var(--platform-text-muted)' }}>
+                      All versions are immutable and retained permanently.
+                    </p>
+                    <div className="mt-4">
+                      {versionsLoading ? (
                         <InstitutionalLoadingState message="Loading" />
-                      ) : revisions.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">No revisions yet</p>
+                      ) : versions.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">No versions yet</p>
                       ) : (
                         <div className="space-y-3">
-                          {revisions.map((rev) => (
+                          {versions.map((ver, index) => (
                             <div 
-                              key={rev.id}
+                              key={ver.id}
                               className="p-3 rounded-md"
                               style={{ 
                                 backgroundColor: 'var(--platform-surface-2)',
-                                border: '1px solid var(--platform-border)',
+                                border: ver.id === article.published_version_id 
+                                  ? '1px solid var(--green-500, #22c55e)' 
+                                  : '1px solid var(--platform-border)',
                               }}
                             >
                               <div className="flex items-center justify-between mb-1">
                                 <span className="text-[13px] font-medium">
-                                  Version {rev.version}
+                                  Version {versions.length - index}
                                 </span>
-                                <Badge variant="outline" className="text-[10px]">
-                                  {rev.status}
-                                </Badge>
+                                <div className="flex items-center gap-1.5">
+                                  {ver.id === article.current_version_id && (
+                                    <Badge variant="outline" className="text-[9px]">
+                                      Current
+                                    </Badge>
+                                  )}
+                                  {ver.id === article.published_version_id && (
+                                    <Badge variant="outline" className="text-[9px] border-green-500/30 text-green-400">
+                                      Published
+                                    </Badge>
+                                  )}
+                                </div>
                               </div>
-                              <p className="text-[12px] text-muted-foreground">
-                                {format(new Date(rev.created_at), "MMM d, yyyy 'at' h:mm a")}
+                              <p className="text-[12px] font-medium mb-1 line-clamp-1">
+                                {ver.title}
+                              </p>
+                              <p className="text-[11px] text-muted-foreground">
+                                {format(new Date(ver.created_at), "MMM d, yyyy 'at' h:mm a")}
                               </p>
                             </div>
                           ))}
@@ -546,7 +586,7 @@ export default function HelpArticleEditorPage() {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleSave}>
+                      <AlertDialogAction onClick={handlePublish}>
                         Update
                       </AlertDialogAction>
                     </AlertDialogFooter>
@@ -618,7 +658,7 @@ export default function HelpArticleEditorPage() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete article</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will permanently delete "{article.title}" and all its revisions. This cannot be undone.
+                      This will permanently delete "{article.title}" and all its versions. This cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -633,13 +673,31 @@ export default function HelpArticleEditorPage() {
           </div>
         )}
 
-        {/* Footer meta */}
-        {article?.updated_at && (
+        {/* Footer meta - shows version info */}
+        {article && versions.length > 0 && (
+          <p 
+            className="mt-6 text-[11px] text-center"
+            style={{ color: 'var(--platform-text-muted)' }}
+          >
+            Last updated by {getVersionAuthor(versions[0])} on {format(new Date(versions[0].created_at), "MMMM d, yyyy 'at' h:mm a")}
+          </p>
+        )}
+        {article && versions.length === 0 && article.updated_at && (
           <p 
             className="mt-6 text-[11px] text-center"
             style={{ color: 'var(--platform-text-muted)' }}
           >
             Last updated on {format(new Date(article.updated_at), "MMMM d, yyyy 'at' h:mm a")}
+          </p>
+        )}
+
+        {/* Note about immutability */}
+        {article && (
+          <p 
+            className="mt-2 text-[10px] text-center"
+            style={{ color: 'var(--platform-text-muted)', opacity: 0.7 }}
+          >
+            Changes are logged and take effect immediately.
           </p>
         )}
       </div>

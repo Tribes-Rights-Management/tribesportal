@@ -847,14 +847,73 @@ export type Database = {
           },
         ]
       }
+      help_article_versions: {
+        Row: {
+          article_id: string
+          body_md: string
+          category_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          status: Database["public"]["Enums"]["help_article_status"]
+          summary: string | null
+          tags: string[]
+          title: string
+          visibility: Database["public"]["Enums"]["help_visibility"]
+        }
+        Insert: {
+          article_id: string
+          body_md: string
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["help_article_status"]
+          summary?: string | null
+          tags?: string[]
+          title: string
+          visibility?: Database["public"]["Enums"]["help_visibility"]
+        }
+        Update: {
+          article_id?: string
+          body_md?: string
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["help_article_status"]
+          summary?: string | null
+          tags?: string[]
+          title?: string
+          visibility?: Database["public"]["Enums"]["help_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_help_article_versions_article"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "help_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_article_versions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "help_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       help_articles: {
         Row: {
           body_md: string
           category_id: string | null
           created_at: string
           created_by: string | null
+          current_version_id: string | null
           id: string
           published_at: string | null
+          published_version_id: string | null
           slug: string
           status: Database["public"]["Enums"]["help_article_status"]
           summary: string | null
@@ -870,8 +929,10 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           created_by?: string | null
+          current_version_id?: string | null
           id?: string
           published_at?: string | null
+          published_version_id?: string | null
           slug: string
           status?: Database["public"]["Enums"]["help_article_status"]
           summary?: string | null
@@ -887,8 +948,10 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           created_by?: string | null
+          current_version_id?: string | null
           id?: string
           published_at?: string | null
+          published_version_id?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["help_article_status"]
           summary?: string | null
@@ -900,6 +963,20 @@ export type Database = {
           visibility?: Database["public"]["Enums"]["help_visibility"]
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_help_articles_current_version"
+            columns: ["current_version_id"]
+            isOneToOne: false
+            referencedRelation: "help_article_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_help_articles_published_version"
+            columns: ["published_version_id"]
+            isOneToOne: false
+            referencedRelation: "help_article_versions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "help_articles_category_id_fkey"
             columns: ["category_id"]
@@ -2039,6 +2116,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      archive_help_article: { Args: { _article_id: string }; Returns: boolean }
       archive_old_notifications: { Args: never; Returns: number }
       can_access_context: {
         Args: {
@@ -2059,6 +2137,19 @@ export type Database = {
       can_manage_help: { Args: { _user_id: string }; Returns: boolean }
       can_manage_help_content: { Args: { _user_id: string }; Returns: boolean }
       check_escalations: { Args: never; Returns: number }
+      create_help_article_version: {
+        Args: {
+          _article_id: string
+          _body_md: string
+          _category_id: string
+          _status?: Database["public"]["Enums"]["help_article_status"]
+          _summary: string
+          _tags: string[]
+          _title: string
+          _visibility: Database["public"]["Enums"]["help_visibility"]
+        }
+        Returns: string
+      }
       create_notification:
         | {
             Args: {
@@ -2103,6 +2194,28 @@ export type Database = {
           record_id: string
           record_type: string
           tenant_id: string
+        }[]
+      }
+      get_help_article_with_version: {
+        Args: { _article_id: string }
+        Returns: {
+          body_md: string
+          category_id: string
+          created_at: string
+          current_version_id: string
+          id: string
+          published_at: string
+          published_version_id: string
+          slug: string
+          status: Database["public"]["Enums"]["help_article_status"]
+          summary: string
+          tags: string[]
+          title: string
+          updated_at: string
+          updated_by: string
+          version_created_at: string
+          version_created_by: string
+          visibility: Database["public"]["Enums"]["help_visibility"]
         }[]
       }
       get_payment_lineage: {
@@ -2156,6 +2269,10 @@ export type Database = {
           _tenant_id?: string
         }
         Returns: string
+      }
+      publish_help_article_version: {
+        Args: { _article_id: string; _version_id: string }
+        Returns: boolean
       }
       resolve_notification: {
         Args: {
