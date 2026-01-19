@@ -226,6 +226,38 @@ export default function AdminDashboard() {
         </AdminSection>
 
         {/* ─────────────────────────────────────────────────────────────────
+            SECTION: HELP CENTER MANAGEMENT
+            Purpose: "How do we manage customer support content?"
+        ───────────────────────────────────────────────────────────────── */}
+        <AdminSection label="Help Center Management">
+          <AdminListRow
+            to="/admin/help-center"
+            title="Overview"
+            description="Help center metrics, recent messages, and popular searches"
+          />
+          <AdminListRow
+            to="/admin/help-center/articles"
+            title="Articles"
+            description="Create and manage help articles with full-text search and analytics"
+          />
+          <AdminListRow
+            to="/admin/help-center/categories"
+            title="Categories"
+            description="Organize articles into searchable categories and subcategories"
+          />
+          <AdminListRow
+            to="/admin/help-center/messages"
+            title="Messages"
+            description="View and respond to support messages from help center visitors"
+          />
+          <AdminListRow
+            to="/admin/help-center/analytics"
+            title="Analytics"
+            description="Search analytics, article performance, and visitor insights"
+          />
+        </AdminSection>
+
+        {/* ─────────────────────────────────────────────────────────────────
             SECTION 5: SECURITY & INTEGRITY
             Purpose: "Is access controlled and defensible?"
         ───────────────────────────────────────────────────────────────── */}
