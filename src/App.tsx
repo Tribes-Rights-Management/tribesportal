@@ -81,17 +81,20 @@ import DisclosuresPage from "@/pages/admin/DisclosuresPage";
 import CorrelationChainPage from "@/pages/admin/CorrelationChainPage";
 import DataRoomPage from "@/pages/admin/DataRoomPage";
 
-// Help Admin - COMPANY-SCOPED INTERNAL TOOL
-import { HelpAdminLayout } from "@/layouts/HelpAdminLayout";
+// Help Protected Route — gates access to Help Workstation
 import { HelpProtectedRoute } from "@/components/help/HelpProtectedRoute";
-import HelpAdminDashboard from "@/pages/help-admin/HelpAdminDashboard";
 
-// Help Management in System Console
-import { HelpProtectedRoute as SystemHelpProtectedRoute } from "@/components/admin/HelpProtectedRoute";
-import HelpArticlesPage from "@/pages/admin/help/HelpArticlesPage";
-import HelpArticleEditorPage from "@/pages/admin/help/HelpArticleEditorPage";
-import HelpCategoriesPage from "@/pages/admin/help/HelpCategoriesPage";
-import HelpAccessPage from "@/pages/admin/help/HelpAccessPage";
+// Help Workstation — FIRST-CLASS WORKSTATION (company-scoped)
+import { HelpWorkstationLayout } from "@/layouts/HelpWorkstationLayout";
+import {
+  HelpOverviewPage,
+  HelpArticlesListPage,
+  HelpArticleEditorPage as HelpWorkstationArticleEditorPage,
+  HelpCategoriesPage as HelpWorkstationCategoriesPage,
+  HelpMessagesPage,
+  HelpAnalyticsPage,
+  HelpSettingsPage,
+} from "@/pages/help-workstation";
 
 // System Console - Executive Reporting (Platform Executives only)
 import ExecutiveReportingPage from "@/pages/admin/reporting/ExecutiveReportingPage";
@@ -269,12 +272,6 @@ const App = () => (
           <Route path="billing/invoices" element={<AllInvoicesPage />} />
           <Route path="billing/providers" element={<PaymentProvidersPage />} />
           <Route path="billing/refunds" element={<RefundsPage />} />
-          {/* Help Management Routes — company-scoped */}
-          <Route path="help/articles" element={<SystemHelpProtectedRoute><HelpArticlesPage /></SystemHelpProtectedRoute>} />
-          <Route path="help/articles/:id" element={<SystemHelpProtectedRoute><HelpArticleEditorPage /></SystemHelpProtectedRoute>} />
-          <Route path="help/categories" element={<SystemHelpProtectedRoute><HelpCategoriesPage /></SystemHelpProtectedRoute>} />
-          {/* Help Access — Platform Admin only (not just can_manage_help) */}
-          <Route path="help/access" element={<HelpAccessPage />} />
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
@@ -288,12 +285,19 @@ const App = () => (
         <Route path="/auditor/chain" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorChainPage /></RoleProtectedRoute>} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
-            HELP ADMIN (/help-admin) — COMPANY-SCOPED INTERNAL TOOL
+            HELP WORKSTATION (/help-workstation) — FIRST-CLASS WORKSTATION
             Permission: platform_admin OR (platform_user + can_manage_help)
             NOT accessible to external auditors, licensing, or portal users
+            Has its own layout, sidebar nav, and full management capabilities
         ═══════════════════════════════════════════════════════════════════════ */}
-        <Route path="/help-admin" element={<HelpProtectedRoute><HelpAdminLayout /></HelpProtectedRoute>}>
-          <Route index element={<HelpAdminDashboard />} />
+        <Route path="/help-workstation" element={<HelpProtectedRoute><HelpWorkstationLayout /></HelpProtectedRoute>}>
+          <Route index element={<HelpOverviewPage />} />
+          <Route path="articles" element={<HelpArticlesListPage />} />
+          <Route path="articles/:id" element={<HelpWorkstationArticleEditorPage />} />
+          <Route path="categories" element={<HelpWorkstationCategoriesPage />} />
+          <Route path="messages" element={<HelpMessagesPage />} />
+          <Route path="analytics" element={<HelpAnalyticsPage />} />
+          <Route path="settings" element={<HelpSettingsPage />} />
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
