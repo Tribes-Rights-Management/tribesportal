@@ -2,12 +2,13 @@ import React from "react";
 import { Loader2 } from "lucide-react";
 
 /**
- * PrimaryButton - Institutional command button (Dark Theme)
+ * PrimaryButton - Institutional command button (System Console)
  * 
  * DESIGN STANDARD (AUTHORITATIVE):
- * - Background: light surface on dark (#E8E8E6 enabled), muted (#3A3A3C disabled)
- * - Text: dark (#111 enabled), muted (#6B6B6B disabled)
- * - Height: 48px (default), 44px (md)
+ * - Background: elevated dark surface (#252528 enabled), muted (#1E1E20 disabled)
+ * - Border: subtle 1px (rgba(255,255,255,0.10))
+ * - Text: high-contrast (#E8E8E6 enabled), muted (#6B6B6B disabled)
+ * - Height: 44px
  * - Radius: 12px - institutional
  * - Padding: generous horizontal
  * - NO gradient, NO glow, NO animation except spinner
@@ -41,16 +42,18 @@ export function PrimaryButton({
         "h-11 rounded-xl",
         "inline-flex items-center justify-center gap-2",
         "px-5",
-        "text-[14px] font-semibold tracking-[-0.01em]",
+        "text-[14px] font-medium tracking-[-0.01em]",
         isDisabled 
-          ? "bg-[#3A3A3C] cursor-not-allowed" 
-          : "bg-[#E8E8E6] hover:bg-[#DCDCDA] active:bg-[#D0D0CE]",
-        "transition-colors duration-100",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8E8E6]/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1C1C1F]",
+          ? "cursor-not-allowed" 
+          : "hover:brightness-110 active:brightness-95",
+        "transition-all duration-100",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1C1C1F]",
         className,
       ].join(" ")}
       style={{ 
-        color: isDisabled ? '#6B6B6B' : '#111111',
+        backgroundColor: isDisabled ? '#1E1E20' : '#252528',
+        border: `1px solid ${isDisabled ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.10)'}`,
+        color: isDisabled ? '#6B6B6B' : '#E8E8E6',
         minWidth: minWidth,
       }}
     >
