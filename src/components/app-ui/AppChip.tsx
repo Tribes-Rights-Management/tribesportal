@@ -3,14 +3,11 @@ import { Loader2, Check, X, AlertTriangle, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * CONSOLE CHIP — SYSTEM CONSOLE COMPONENT KIT
+ * APP CHIP — GLOBAL UI KIT (SINGLE SOURCE OF TRUTH)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
  * NON-INTERACTIVE STATUS INDICATOR (LOCKED)
  * ═══════════════════════════════════════════════════════════════════════════
- * 
- * This component extends the App UI Kit standards for System Console contexts.
- * Uses console-scope CSS variables for console-specific styling.
  * 
  * - NOT a button — renders as span/div
  * - No hover/active states, no pointer cursor
@@ -18,22 +15,27 @@ import { cn } from "@/lib/utils";
  * - Restrained fills, clear text
  * - Fixed minimum width for alignment
  * 
- * USAGE:
- * - For status indicators in security checks, audit rows, etc.
- * - Import from @/components/console for /admin routes
+ * ENFORCEMENT:
+ * - Import from @/components/app-ui
+ * - For status indicators, audit rows, etc.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
 export type ChipStatus = "pending" | "running" | "pass" | "warning" | "fail";
 export type ChipSeverity = "high" | "medium" | "low";
+export type ChipVariant = "default" | "outline" | "subtle";
 
-interface ConsoleChipProps {
+interface AppChipProps {
   /** Status variant for security/audit checks */
   status?: ChipStatus;
   /** Severity variant for exceptions */
   severity?: ChipSeverity;
+  /** Visual variant */
+  variant?: ChipVariant;
   /** Optional custom label (overrides default status/severity label) */
   label?: string;
+  /** Show icon */
+  showIcon?: boolean;
   /** Additional class names */
   className?: string;
 }
@@ -71,22 +73,21 @@ const statusConfig: Record<
 };
 
 // Severity configuration
-const severityConfig: Record<
-  ChipSeverity,
-  { label: string; cssVar: string }
-> = {
-  high: { label: "High", cssVar: "high" },
-  medium: { label: "Medium", cssVar: "medium" },
-  low: { label: "Low", cssVar: "low" },
+const severityConfig: Record<ChipSeverity, { label: string; cssVar: string }> = {
+  high: { label: "High", cssVar: "fail" },
+  medium: { label: "Medium", cssVar: "warning" },
+  low: { label: "Low", cssVar: "running" },
 };
 
-export function ConsoleChip({
+export function AppChip({
   status,
   severity,
+  variant = "default",
   label,
+  showIcon = true,
   className,
-}: ConsoleChipProps) {
-  // Determine which variant to use
+}: AppChipProps) {
+  // Status chip
   if (status) {
     const config = statusConfig[status];
     return (
@@ -99,19 +100,20 @@ export function ConsoleChip({
           className
         )}
         style={{
-          backgroundColor: `var(--console-chip-${config.cssVar}-bg)`,
-          border: `1px solid var(--console-chip-${config.cssVar}-border)`,
-          color: `var(--console-chip-${config.cssVar}-fg)`,
+          backgroundColor: `hsl(var(--app-chip-${config.cssVar}-bg))`,
+          border: `1px solid hsl(var(--app-chip-${config.cssVar}-border))`,
+          color: `hsl(var(--app-chip-${config.cssVar}-fg))`,
         }}
         role="status"
         aria-label={`Status: ${label || config.label}`}
       >
-        {config.icon}
+        {showIcon && config.icon}
         <span>{label || config.label}</span>
       </span>
     );
   }
 
+  // Severity chip
   if (severity) {
     const config = severityConfig[severity];
     return (
@@ -124,9 +126,9 @@ export function ConsoleChip({
           className
         )}
         style={{
-          backgroundColor: `var(--console-severity-${config.cssVar}-bg)`,
-          border: `1px solid var(--console-severity-${config.cssVar}-border)`,
-          color: `var(--console-severity-${config.cssVar}-fg)`,
+          backgroundColor: `hsl(var(--app-chip-${config.cssVar}-bg))`,
+          border: `1px solid hsl(var(--app-chip-${config.cssVar}-border))`,
+          color: `hsl(var(--app-chip-${config.cssVar}-fg))`,
         }}
         role="status"
         aria-label={`Severity: ${label || config.label}`}
@@ -147,9 +149,9 @@ export function ConsoleChip({
         className
       )}
       style={{
-        backgroundColor: "var(--console-chip-pending-bg)",
-        border: "1px solid var(--console-chip-pending-border)",
-        color: "var(--console-chip-pending-fg)",
+        backgroundColor: "hsl(var(--app-chip-pending-bg))",
+        border: "1px solid hsl(var(--app-chip-pending-border))",
+        color: "hsl(var(--app-chip-pending-fg))",
       }}
     >
       {label || "—"}
