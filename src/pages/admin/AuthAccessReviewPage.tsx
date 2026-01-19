@@ -5,10 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageContainer } from "@/components/ui/page-container";
 import { Panel, PanelHeader, PanelTitle, PanelContent } from "@/components/ui/panel";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
-import { BackButton } from "@/components/ui/back-button";
 import { 
   Play, Check, X, AlertTriangle, Shield, Database, Lock, Globe, 
-  FileCheck, Loader2, ChevronRight, Clock 
+  FileCheck, Loader2, ChevronRight, Clock, ChevronLeft 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow, format } from "date-fns";
@@ -432,11 +431,20 @@ function ExceptionDetailModal({
 
 // ============ MAIN PAGE COMPONENT ============
 export default function SecurityVerificationPage() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const [lastRunAt, setLastRunAt] = useState<Date | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [selectedExceptionId, setSelectedExceptionId] = useState<string | null>(null);
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/admin");
+    }
+  };
   
   const [checks, setChecks] = useState<CheckResult[]>([
     { id: "memberships", name: "Active Memberships", description: "Count user's active tenant memberships", status: "pending", details: "", category: "tenant", resource: "tenant_memberships" },
@@ -613,7 +621,25 @@ export default function SecurityVerificationPage() {
       >
         <div className="min-w-0">
           <div className="flex items-center gap-3 mb-1">
-            <BackButton />
+            {/* Back Button */}
+            <button
+              type="button"
+              onClick={handleBack}
+              className="inline-flex items-center justify-center h-11 w-11 rounded-xl transition-colors"
+              style={{
+                backgroundColor: 'transparent',
+                color: 'var(--platform-text-secondary)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+              aria-label="Back"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 flex-shrink-0" style={{ color: 'var(--platform-text-muted)' }} />
               <h1 className="text-[20px] font-semibold" style={{ color: 'var(--platform-text)' }}>
@@ -621,7 +647,7 @@ export default function SecurityVerificationPage() {
               </h1>
             </div>
           </div>
-          <p className="text-[13px] mt-1 ml-10" style={{ color: 'var(--platform-text-muted)' }}>
+          <p className="text-[13px] mt-1 ml-14" style={{ color: 'var(--platform-text-muted)' }}>
             Validate RLS enforcement and platform security posture
           </p>
         </div>
@@ -631,6 +657,8 @@ export default function SecurityVerificationPage() {
             onClick={runChecks}
             disabled={isRunning || !user}
             loading={isRunning}
+            loadingText="Running…"
+            minWidth="130px"
           >
             <Play className="h-4 w-4" />
             Run checks
