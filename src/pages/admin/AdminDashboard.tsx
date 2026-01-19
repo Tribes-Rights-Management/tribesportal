@@ -153,9 +153,9 @@ export default function AdminDashboard() {
             value={loading ? "—" : metrics.openExceptions === 0 ? "None" : metrics.openExceptions.toString()}
           />
           <AdminListRow
-            to="/admin/help/articles"
-            title="Help management"
-            description="Manage public Help articles and categories"
+            to="/help-workstation"
+            title="Help Workstation"
+            description="Manage public Help articles, categories, and messages"
           />
         </AdminSection>
 

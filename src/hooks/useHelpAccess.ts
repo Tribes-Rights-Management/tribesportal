@@ -49,9 +49,8 @@ export function useHelpAccess(): HelpAccessResult {
         return;
       }
 
-      // Check the can_manage_help capability via RPC or direct query
-      // Using RPC function for security definer access
-      const { data, error } = await supabase.rpc('can_manage_help_content', {
+      // Check the can_manage_help capability via RPC (uses newer function)
+      const { data, error } = await supabase.rpc('can_manage_help', {
         _user_id: user.id
       });
 

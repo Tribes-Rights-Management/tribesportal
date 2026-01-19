@@ -142,12 +142,12 @@ export const MODULES = {
   },
   
   // ─────────────────────────────────────────────────────────────────────────
-  // HELP BACKEND (company-scoped internal tool)
+  // HELP WORKSTATION (company-scoped internal tool)
   // ─────────────────────────────────────────────────────────────────────────
   help: {
-    routePrefix: "/help-admin",
+    routePrefix: "/help-workstation",
     permissionNamespace: "platform",
-    navLabel: "Help Backend",
+    navLabel: "Help Workstation",
     requiredPermission: "platform:manage_help" as Permission,
   },
 } as const;
