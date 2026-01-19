@@ -6,7 +6,7 @@ import { PageContainer } from "@/components/ui/page-container";
 import { Panel, PanelHeader, PanelTitle, PanelContent } from "@/components/ui/panel";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { 
-  Play, Check, X, AlertTriangle, Shield, Database, Lock, Globe, 
+  ShieldCheck, Check, X, AlertTriangle, Shield, Database, Lock, Globe, 
   FileCheck, Loader2, ChevronRight, Clock, ChevronLeft 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -660,7 +660,7 @@ export default function SecurityVerificationPage() {
             loadingText="Running…"
             minWidth="130px"
           >
-            <Play className="h-4 w-4" />
+            <ShieldCheck className="h-[16px] w-[16px]" />
             Run checks
           </PrimaryButton>
           
