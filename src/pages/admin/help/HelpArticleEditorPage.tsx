@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Save, Globe, Lock, Eye, Archive, History, Trash2 } from "lucide-react";
+import { ArrowLeft, Save, Globe, Lock, Eye, Archive, History, Trash2, RotateCcw } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleRevision, HelpCategory } from "@/hooks/useHelpManagement";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ import { toast } from "@/hooks/use-toast";
  * HELP ARTICLE EDITOR — SYSTEM CONSOLE
  * 
  * Create/Edit article with Markdown body, revision history, and publish controls.
+ * Institutional tone: authoritative, neutral, calm.
  */
 
 function slugify(text: string): string {
@@ -68,6 +69,11 @@ export default function HelpArticleEditorPage() {
   const [revisions, setRevisions] = useState<HelpArticleRevision[]>([]);
   const [revisionsLoading, setRevisionsLoading] = useState(false);
 
+  // Confirmation dialogs
+  const [publishDialogOpen, setPublishDialogOpen] = useState(false);
+  const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
+  const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
+
   // Form state
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -95,7 +101,11 @@ export default function HelpArticleEditorPage() {
         .single();
 
       if (error || !data) {
-        toast({ description: "Article not found", variant: "destructive" });
+        toast({ 
+          title: "Unable to load article",
+          description: "Please try again.", 
+          variant: "destructive" 
+        });
         navigate("/admin/help/articles");
         return;
       }
@@ -131,10 +141,14 @@ export default function HelpArticleEditorPage() {
     setRevisionsLoading(false);
   }, [article?.id, fetchRevisions]);
 
-  // Save handler
+  // Save handler (Save draft)
   const handleSave = async () => {
     if (!title.trim() || !slug.trim() || !bodyMd.trim()) {
-      toast({ description: "Title, slug, and body are required", variant: "destructive" });
+      toast({ 
+        title: "Required fields missing",
+        description: "Title, slug, and content are required.", 
+        variant: "destructive" 
+      });
       return;
     }
 
@@ -178,6 +192,7 @@ export default function HelpArticleEditorPage() {
       setArticle({ ...article, status: "published", published_at: new Date().toISOString() });
     }
     setSaving(false);
+    setPublishDialogOpen(false);
   };
 
   // Archive handler
@@ -189,6 +204,23 @@ export default function HelpArticleEditorPage() {
       setArticle({ ...article, status: "archived" });
     }
     setSaving(false);
+    setArchiveDialogOpen(false);
+  };
+
+  // Restore handler (from archived to draft)
+  const handleRestore = async () => {
+    if (!article) return;
+    setSaving(true);
+    const result = await updateArticle(article.id, { status: "draft" });
+    if (result) {
+      setArticle({ ...article, status: "draft" });
+      toast({
+        title: "Article restored",
+        description: "This article is visible again.",
+      });
+    }
+    setSaving(false);
+    setRestoreDialogOpen(false);
   };
 
   // Delete handler
@@ -211,6 +243,9 @@ export default function HelpArticleEditorPage() {
     );
   }
 
+  const isPublished = article?.status === "published";
+  const isArchived = article?.status === "archived";
+
   return (
     <div 
       className="min-h-full py-6 md:py-10 px-4 md:px-6"
@@ -225,7 +260,7 @@ export default function HelpArticleEditorPage() {
             style={{ color: 'var(--platform-text-muted)' }}
           >
             <ArrowLeft className="h-4 w-4" />
-            Articles
+            Help articles
           </button>
           
           <div className="flex items-start justify-between gap-4">
@@ -248,7 +283,7 @@ export default function HelpArticleEditorPage() {
                         : "border-gray-500/30 text-gray-400"
                     }`}
                   >
-                    {article.status}
+                    {article.status.charAt(0).toUpperCase() + article.status.slice(1)}
                   </Badge>
                   <span className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>
                     v{article.version}
@@ -308,12 +343,21 @@ export default function HelpArticleEditorPage() {
               )}
               
               <Button 
+                variant="outline"
+                onClick={() => navigate("/admin/help/articles")} 
+                disabled={saving}
+                size="sm"
+              >
+                Cancel
+              </Button>
+              
+              <Button 
                 onClick={handleSave} 
                 disabled={saving}
                 size="sm"
               >
                 <Save className="h-4 w-4 mr-1.5" />
-                Save
+                Save draft
               </Button>
             </div>
           </div>
@@ -334,8 +378,12 @@ export default function HelpArticleEditorPage() {
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Article title"
+              placeholder="Short, descriptive headline"
+              style={{ fontSize: '16px' }}
             />
+            <p className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>
+              Displayed as the article headline.
+            </p>
           </div>
 
           {/* Slug */}
@@ -349,8 +397,9 @@ export default function HelpArticleEditorPage() {
                 setSlugManual(true);
               }}
               placeholder="article-slug"
+              style={{ fontSize: '16px' }}
             />
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>
               URL path: /help/{slug || "..."}
             </p>
           </div>
@@ -361,7 +410,7 @@ export default function HelpArticleEditorPage() {
               <Label>Category</Label>
               <Select value={categoryId} onValueChange={setCategoryId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Uncategorized</SelectItem>
@@ -372,6 +421,9 @@ export default function HelpArticleEditorPage() {
                   ))}
                 </SelectContent>
               </Select>
+              <p className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>
+                Used to organize articles in Help.
+              </p>
             </div>
             <div className="space-y-2">
               <Label>Visibility</Label>
@@ -394,6 +446,9 @@ export default function HelpArticleEditorPage() {
                   </SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>
+                Public articles are accessible to all users.
+              </p>
             </div>
           </div>
 
@@ -404,22 +459,30 @@ export default function HelpArticleEditorPage() {
               id="summary"
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
-              placeholder="Brief description for search results"
+              placeholder="Brief overview of the article"
               rows={2}
+              style={{ fontSize: '16px' }}
             />
+            <p className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>
+              Appears in search results and previews.
+            </p>
           </div>
 
           {/* Body */}
           <div className="space-y-2">
-            <Label htmlFor="body">Body (Markdown)</Label>
+            <Label htmlFor="body">Content</Label>
             <Textarea
               id="body"
               value={bodyMd}
               onChange={(e) => setBodyMd(e.target.value)}
-              placeholder="Write your article content in Markdown..."
+              placeholder="Main article content"
               rows={16}
-              className="font-mono text-[13px]"
+              className="font-mono"
+              style={{ fontSize: '14px' }}
             />
+            <p className="text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>
+              Use clear language. Avoid internal terminology.
+            </p>
           </div>
         </div>
 
@@ -439,28 +502,111 @@ export default function HelpArticleEditorPage() {
               Article actions
             </h3>
             <div className="flex flex-wrap gap-3">
-              {article.status !== "published" && (
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handlePublish}
-                  disabled={saving}
-                >
-                  <Eye className="h-4 w-4 mr-1.5" />
-                  Publish
-                </Button>
+              {/* Publish */}
+              {!isPublished && !isArchived && (
+                <AlertDialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen}>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="sm" disabled={saving}>
+                      <Eye className="h-4 w-4 mr-1.5" />
+                      Publish
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Publish article</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This article will become publicly visible immediately.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handlePublish}>
+                        Publish
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
-              {article.status !== "archived" && (
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleArchive}
-                  disabled={saving}
-                >
-                  <Archive className="h-4 w-4 mr-1.5" />
-                  Archive
-                </Button>
+
+              {/* Update (for already published articles) */}
+              {isPublished && (
+                <AlertDialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen}>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="sm" disabled={saving}>
+                      <Eye className="h-4 w-4 mr-1.5" />
+                      Update
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Update published article</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Your changes will be visible immediately.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleSave}>
+                        Update
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
+
+              {/* Archive */}
+              {!isArchived && (
+                <AlertDialog open={archiveDialogOpen} onOpenChange={setArchiveDialogOpen}>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="sm" disabled={saving}>
+                      <Archive className="h-4 w-4 mr-1.5" />
+                      Archive
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Archive article</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This article will be removed from public view but retained for recordkeeping.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleArchive}>
+                        Archive
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+
+              {/* Restore (for archived articles) */}
+              {isArchived && (
+                <AlertDialog open={restoreDialogOpen} onOpenChange={setRestoreDialogOpen}>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="sm" disabled={saving}>
+                      <RotateCcw className="h-4 w-4 mr-1.5" />
+                      Restore
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Restore article</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This article will become visible again.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleRestore}>
+                        Restore
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+
+              {/* Delete */}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive" size="sm">
@@ -470,7 +616,7 @@ export default function HelpArticleEditorPage() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete article?</AlertDialogTitle>
+                    <AlertDialogTitle>Delete article</AlertDialogTitle>
                     <AlertDialogDescription>
                       This will permanently delete "{article.title}" and all its revisions. This cannot be undone.
                     </AlertDialogDescription>
@@ -485,6 +631,16 @@ export default function HelpArticleEditorPage() {
               </AlertDialog>
             </div>
           </div>
+        )}
+
+        {/* Footer meta */}
+        {article?.updated_at && (
+          <p 
+            className="mt-6 text-[11px] text-center"
+            style={{ color: 'var(--platform-text-muted)' }}
+          >
+            Last updated on {format(new Date(article.updated_at), "MMMM d, yyyy 'at' h:mm a")}
+          </p>
         )}
       </div>
     </div>
