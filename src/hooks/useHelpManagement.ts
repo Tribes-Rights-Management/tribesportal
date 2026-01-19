@@ -9,6 +9,11 @@ import { toast } from "@/hooks/use-toast";
  * Company-scoped hook for managing Help articles and categories.
  * Uses platform_user_capabilities.can_manage_help or platform_admin for access.
  * 
+ * APPEND-ONLY VERSIONING:
+ * - All edits create new versions
+ * - No in-place updates to content
+ * - Versions are immutable and auditable
+ * 
  * Institutional tone: authoritative, neutral, calm.
  */
 
@@ -26,26 +31,43 @@ export interface HelpCategory {
   updated_by: string | null;
 }
 
-export interface HelpArticle {
+export interface HelpArticleVersion {
   id: string;
-  slug: string;
+  article_id: string;
   title: string;
   summary: string | null;
   body_md: string;
   category_id: string | null;
+  visibility: HelpVisibility;
   tags: string[];
   status: HelpArticleStatus;
-  visibility: HelpVisibility;
-  version: number;
-  published_at: string | null;
   created_at: string;
   created_by: string | null;
-  updated_at: string;
-  updated_by: string | null;
-  // Joined category
-  category?: HelpCategory;
 }
 
+export interface HelpArticle {
+  id: string;
+  slug: string;
+  status: HelpArticleStatus;
+  current_version_id: string | null;
+  published_version_id: string | null;
+  created_at: string;
+  published_at: string | null;
+  updated_at: string;
+  updated_by: string | null;
+  // Current version data (joined/loaded separately)
+  title?: string;
+  summary?: string | null;
+  body_md?: string;
+  category_id?: string | null;
+  visibility?: HelpVisibility;
+  tags?: string[];
+  version?: HelpArticleVersion;
+  // Joined category
+  category?: Pick<HelpCategory, 'id' | 'name' | 'slug'>;
+}
+
+// Legacy revision interface for backward compatibility
 export interface HelpArticleRevision {
   id: string;
   article_id: string;
@@ -68,11 +90,12 @@ interface UseHelpManagementResult {
   articles: HelpArticle[];
   articlesLoading: boolean;
   fetchArticles: (filters?: ArticleFilters) => Promise<void>;
+  fetchArticleWithVersion: (id: string) => Promise<HelpArticle | null>;
   createArticle: (article: CreateArticleInput) => Promise<HelpArticle | null>;
-  updateArticle: (id: string, updates: UpdateArticleInput) => Promise<HelpArticle | null>;
-  deleteArticle: (id: string) => Promise<boolean>;
-  publishArticle: (id: string) => Promise<boolean>;
+  createVersion: (articleId: string, content: CreateVersionInput) => Promise<string | null>;
+  publishVersion: (articleId: string, versionId: string) => Promise<boolean>;
   archiveArticle: (id: string) => Promise<boolean>;
+  restoreArticle: (id: string) => Promise<boolean>;
   
   // Categories
   categories: HelpCategory[];
@@ -82,7 +105,13 @@ interface UseHelpManagementResult {
   updateCategory: (id: string, updates: UpdateCategoryInput) => Promise<HelpCategory | null>;
   deleteCategory: (id: string) => Promise<boolean>;
   
-  // Revisions
+  // Versions
+  fetchVersions: (articleId: string) => Promise<HelpArticleVersion[]>;
+  
+  // Legacy (deprecated)
+  updateArticle: (id: string, updates: UpdateArticleInput) => Promise<HelpArticle | null>;
+  deleteArticle: (id: string) => Promise<boolean>;
+  publishArticle: (id: string) => Promise<boolean>;
   fetchRevisions: (articleId: string) => Promise<HelpArticleRevision[]>;
 }
 
@@ -101,6 +130,15 @@ interface CreateArticleInput {
   category_id?: string;
   tags?: string[];
   visibility?: HelpVisibility;
+}
+
+interface CreateVersionInput {
+  title: string;
+  summary?: string;
+  body_md: string;
+  category_id?: string | null;
+  visibility?: HelpVisibility;
+  tags?: string[];
 }
 
 interface UpdateArticleInput {
@@ -171,146 +209,308 @@ export function useHelpManagement(): UseHelpManagementResult {
     checkAccess();
   }, [user?.id, isPlatformAdmin]);
 
-  // Fetch articles
+  // Fetch articles with current version data
   const fetchArticles = useCallback(async (filters?: ArticleFilters) => {
     setArticlesLoading(true);
     
+    // First fetch articles
     let query = supabase
       .from("help_articles")
-      .select("*, category:help_categories(id, name, slug)")
+      .select(`
+        id,
+        slug,
+        status,
+        current_version_id,
+        published_version_id,
+        created_at,
+        published_at,
+        updated_at,
+        updated_by,
+        category:help_categories(id, name, slug)
+      `)
       .order("updated_at", { ascending: false });
 
     if (filters?.status) {
       query = query.eq("status", filters.status);
     }
-    if (filters?.visibility) {
-      query = query.eq("visibility", filters.visibility);
-    }
-    if (filters?.category_id) {
-      query = query.eq("category_id", filters.category_id);
-    }
-    if (filters?.search) {
-      query = query.or(`title.ilike.%${filters.search}%,slug.ilike.%${filters.search}%`);
-    }
 
-    const { data, error } = await query;
+    const { data: articlesData, error: articlesError } = await query;
 
-    if (error) {
-      console.error("Error fetching articles:", error);
+    if (articlesError) {
+      console.error("Error fetching articles:", articlesError);
       toast({ 
         title: "Unable to load articles",
         description: "Please try again.", 
         variant: "destructive" 
       });
-    } else {
-      setArticles((data as HelpArticle[]) || []);
+      setArticlesLoading(false);
+      return;
     }
 
+    // Fetch current versions for all articles
+    const versionIds = articlesData
+      ?.map(a => a.current_version_id)
+      .filter(Boolean) as string[] || [];
+
+    let versionsMap: Record<string, HelpArticleVersion> = {};
+    
+    if (versionIds.length > 0) {
+      const { data: versionsData, error: versionsError } = await supabase
+        .from("help_article_versions")
+        .select("*")
+        .in("id", versionIds);
+
+      if (!versionsError && versionsData) {
+        versionsMap = versionsData.reduce((acc, v) => {
+          acc[v.id] = v as HelpArticleVersion;
+          return acc;
+        }, {} as Record<string, HelpArticleVersion>);
+      }
+    }
+
+    // Merge articles with version data
+    const mergedArticles: HelpArticle[] = (articlesData || []).map(a => {
+      const version = a.current_version_id ? versionsMap[a.current_version_id] : null;
+      return {
+        id: a.id,
+        slug: a.slug,
+        status: a.status,
+        current_version_id: a.current_version_id,
+        published_version_id: a.published_version_id,
+        created_at: a.created_at,
+        published_at: a.published_at,
+        updated_at: a.updated_at,
+        updated_by: a.updated_by,
+        title: version?.title,
+        summary: version?.summary,
+        body_md: version?.body_md,
+        category_id: version?.category_id,
+        visibility: version?.visibility,
+        tags: version?.tags,
+        category: a.category as Pick<HelpCategory, 'id' | 'name' | 'slug'> | undefined,
+      };
+    });
+
+    // Apply filters on merged data
+    let filteredArticles = mergedArticles;
+    if (filters?.visibility) {
+      filteredArticles = filteredArticles.filter(a => a.visibility === filters.visibility);
+    }
+    if (filters?.category_id) {
+      filteredArticles = filteredArticles.filter(a => a.category_id === filters.category_id);
+    }
+    if (filters?.search) {
+      const searchLower = filters.search.toLowerCase();
+      filteredArticles = filteredArticles.filter(a => 
+        a.title?.toLowerCase().includes(searchLower) || 
+        a.slug.toLowerCase().includes(searchLower)
+      );
+    }
+
+    setArticles(filteredArticles);
     setArticlesLoading(false);
   }, []);
 
-  // Create article
-  const createArticle = useCallback(async (input: CreateArticleInput): Promise<HelpArticle | null> => {
-    const { data, error } = await supabase
-      .from("help_articles")
-      .insert({
-        title: input.title,
-        slug: input.slug,
-        summary: input.summary || null,
-        body_md: input.body_md,
-        category_id: input.category_id || null,
-        tags: input.tags || [],
-        visibility: input.visibility || "public",
-        status: "draft",
-        created_by: user?.id,
-        updated_by: user?.id,
-      })
-      .select()
-      .single();
+  // Fetch single article with current version data
+  const fetchArticleWithVersion = useCallback(async (id: string): Promise<HelpArticle | null> => {
+    // Try to use the RPC function first
+    const { data, error } = await supabase.rpc("get_help_article_with_version", {
+      _article_id: id,
+    });
 
     if (error) {
-      console.error("Error creating article:", error);
-      toast({ 
-        title: "Unable to save changes",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
+      console.error("Error fetching article with version:", error);
+      
+      // Fallback: manual join
+      const { data: articleData, error: articleError } = await supabase
+        .from("help_articles")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (articleError || !articleData) {
+        toast({ 
+          title: "Unable to load article",
+          description: "Please try again.", 
+          variant: "destructive" 
+        });
+        return null;
+      }
+
+      // Fetch current version
+      let version: HelpArticleVersion | null = null;
+      if (articleData.current_version_id) {
+        const { data: versionData } = await supabase
+          .from("help_article_versions")
+          .select("*")
+          .eq("id", articleData.current_version_id)
+          .single();
+        version = versionData as HelpArticleVersion;
+      }
+
+      return {
+        id: articleData.id,
+        slug: articleData.slug,
+        status: articleData.status,
+        current_version_id: articleData.current_version_id,
+        published_version_id: articleData.published_version_id,
+        created_at: articleData.created_at,
+        published_at: articleData.published_at,
+        updated_at: articleData.updated_at,
+        updated_by: articleData.updated_by,
+        title: version?.title,
+        summary: version?.summary,
+        body_md: version?.body_md,
+        category_id: version?.category_id,
+        visibility: version?.visibility,
+        tags: version?.tags,
+        version,
+      };
+    }
+
+    if (!data || data.length === 0) {
       return null;
     }
 
-    toast({ 
-      title: "Draft saved",
-      description: "Your changes were saved." 
-    });
-    return data as HelpArticle;
-  }, [user?.id]);
-
-  // Update article
-  const updateArticle = useCallback(async (id: string, updates: UpdateArticleInput): Promise<HelpArticle | null> => {
-    const { data, error } = await supabase
-      .from("help_articles")
-      .update({
-        ...updates,
-        updated_by: user?.id,
-      })
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error updating article:", error);
-      toast({ 
-        title: "Unable to save changes",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
-      return null;
-    }
-
-    toast({ 
-      title: "Draft saved",
-      description: "Your changes were saved." 
-    });
-    return data as HelpArticle;
-  }, [user?.id]);
-
-  // Delete article
-  const deleteArticle = useCallback(async (id: string): Promise<boolean> => {
-    const { error } = await supabase
-      .from("help_articles")
-      .delete()
-      .eq("id", id);
-
-    if (error) {
-      console.error("Error deleting article:", error);
-      toast({ 
-        title: "Unable to delete",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
-      return false;
-    }
-
-    toast({ 
-      title: "Article deleted",
-      description: "This article has been removed." 
-    });
-    return true;
+    const row = data[0];
+    return {
+      id: row.id,
+      slug: row.slug,
+      status: row.status,
+      current_version_id: row.current_version_id,
+      published_version_id: row.published_version_id,
+      created_at: row.created_at,
+      published_at: row.published_at,
+      updated_at: row.updated_at,
+      updated_by: row.updated_by,
+      title: row.title,
+      summary: row.summary,
+      body_md: row.body_md,
+      category_id: row.category_id,
+      visibility: row.visibility,
+      tags: row.tags,
+    };
   }, []);
 
-  // Publish article
-  const publishArticle = useCallback(async (id: string): Promise<boolean> => {
-    const { error } = await supabase
+  // Create new article with initial version
+  const createArticle = useCallback(async (input: CreateArticleInput): Promise<HelpArticle | null> => {
+    // First create the article shell
+    const { data: articleData, error: articleError } = await supabase
       .from("help_articles")
-      .update({
-        status: "published",
-        published_at: new Date().toISOString(),
+      .insert({
+        slug: input.slug,
+        status: "draft" as const,
+        created_by: user?.id,
         updated_by: user?.id,
+        // Legacy fields still in table until fully migrated
+        title: input.title,
+        body_md: input.body_md,
+        summary: input.summary || null,
+        category_id: input.category_id || null,
+        visibility: input.visibility || "public",
+        tags: input.tags || [],
       })
-      .eq("id", id);
+      .select()
+      .single();
+
+    if (articleError) {
+      console.error("Error creating article:", articleError);
+      toast({ 
+        title: "Unable to save changes",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
+      return null;
+    }
+
+    // Create initial version using RPC
+    const { data: versionId, error: versionError } = await supabase.rpc("create_help_article_version", {
+      _article_id: articleData.id,
+      _title: input.title,
+      _summary: input.summary || null,
+      _body_md: input.body_md,
+      _category_id: input.category_id || null,
+      _visibility: input.visibility || "public",
+      _tags: input.tags || [],
+      _status: "draft",
+    });
+
+    if (versionError) {
+      console.error("Error creating version:", versionError);
+      // Rollback: delete the article
+      await supabase.from("help_articles").delete().eq("id", articleData.id);
+      toast({ 
+        title: "Unable to save changes",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
+      return null;
+    }
+
+    toast({ 
+      title: "Draft saved",
+      description: "Your changes were saved." 
+    });
+
+    return {
+      id: articleData.id,
+      slug: articleData.slug,
+      status: "draft",
+      current_version_id: versionId,
+      published_version_id: null,
+      created_at: articleData.created_at,
+      published_at: null,
+      updated_at: articleData.updated_at,
+      updated_by: articleData.updated_by,
+      title: input.title,
+      summary: input.summary,
+      body_md: input.body_md,
+      category_id: input.category_id,
+      visibility: input.visibility || "public",
+      tags: input.tags || [],
+    };
+  }, [user?.id]);
+
+  // Create new version (append-only)
+  const createVersion = useCallback(async (articleId: string, content: CreateVersionInput): Promise<string | null> => {
+    const { data: versionId, error } = await supabase.rpc("create_help_article_version", {
+      _article_id: articleId,
+      _title: content.title,
+      _summary: content.summary || null,
+      _body_md: content.body_md,
+      _category_id: content.category_id || null,
+      _visibility: content.visibility || "public",
+      _tags: content.tags || [],
+      _status: "draft",
+    });
 
     if (error) {
-      console.error("Error publishing article:", error);
+      console.error("Error creating version:", error);
+      toast({ 
+        title: "Unable to save changes",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
+      return null;
+    }
+
+    toast({ 
+      title: "Draft saved",
+      description: "Your changes were saved." 
+    });
+
+    return versionId;
+  }, []);
+
+  // Publish a specific version
+  const publishVersion = useCallback(async (articleId: string, versionId: string): Promise<boolean> => {
+    const { error } = await supabase.rpc("publish_help_article_version", {
+      _article_id: articleId,
+      _version_id: versionId,
+    });
+
+    if (error) {
+      console.error("Error publishing version:", error);
       toast({ 
         title: "Unable to publish",
         description: "Your changes were not published. Please try again.", 
@@ -324,17 +524,13 @@ export function useHelpManagement(): UseHelpManagementResult {
       description: "This article is now live." 
     });
     return true;
-  }, [user?.id]);
+  }, []);
 
-  // Archive article
+  // Archive article (not versions)
   const archiveArticle = useCallback(async (id: string): Promise<boolean> => {
-    const { error } = await supabase
-      .from("help_articles")
-      .update({
-        status: "archived",
-        updated_by: user?.id,
-      })
-      .eq("id", id);
+    const { error } = await supabase.rpc("archive_help_article", {
+      _article_id: id,
+    });
 
     if (error) {
       console.error("Error archiving article:", error);
@@ -351,7 +547,50 @@ export function useHelpManagement(): UseHelpManagementResult {
       description: "This article has been archived." 
     });
     return true;
+  }, []);
+
+  // Restore article from archived
+  const restoreArticle = useCallback(async (id: string): Promise<boolean> => {
+    const { error } = await supabase
+      .from("help_articles")
+      .update({
+        status: "draft",
+        updated_by: user?.id,
+      })
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error restoring article:", error);
+      toast({ 
+        title: "Unable to restore",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
+      return false;
+    }
+
+    toast({ 
+      title: "Article restored",
+      description: "This article is visible again." 
+    });
+    return true;
   }, [user?.id]);
+
+  // Fetch all versions for an article
+  const fetchVersions = useCallback(async (articleId: string): Promise<HelpArticleVersion[]> => {
+    const { data, error } = await supabase
+      .from("help_article_versions")
+      .select("*")
+      .eq("article_id", articleId)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching versions:", error);
+      return [];
+    }
+
+    return (data as HelpArticleVersion[]) || [];
+  }, []);
 
   // Fetch categories
   const fetchCategories = useCallback(async () => {
@@ -460,21 +699,90 @@ export function useHelpManagement(): UseHelpManagementResult {
     return true;
   }, []);
 
-  // Fetch revisions for an article
-  const fetchRevisions = useCallback(async (articleId: string): Promise<HelpArticleRevision[]> => {
-    const { data, error } = await supabase
-      .from("help_article_revisions")
-      .select("*")
-      .eq("article_id", articleId)
-      .order("version", { ascending: false });
+  // ============ LEGACY METHODS (deprecated, for backward compatibility) ============
 
-    if (error) {
-      console.error("Error fetching revisions:", error);
-      return [];
+  // Legacy: Update article (now creates a version)
+  const updateArticle = useCallback(async (id: string, updates: UpdateArticleInput): Promise<HelpArticle | null> => {
+    // Create a new version instead of updating in place
+    const versionId = await createVersion(id, {
+      title: updates.title || "",
+      summary: updates.summary,
+      body_md: updates.body_md || "",
+      category_id: updates.category_id,
+      visibility: updates.visibility,
+      tags: updates.tags,
+    });
+
+    if (!versionId) {
+      return null;
     }
 
-    return (data as HelpArticleRevision[]) || [];
+    // Fetch updated article
+    return fetchArticleWithVersion(id);
+  }, [createVersion, fetchArticleWithVersion]);
+
+  // Legacy: Delete article
+  const deleteArticle = useCallback(async (id: string): Promise<boolean> => {
+    const { error } = await supabase
+      .from("help_articles")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error deleting article:", error);
+      toast({ 
+        title: "Unable to delete",
+        description: "Please try again.", 
+        variant: "destructive" 
+      });
+      return false;
+    }
+
+    toast({ 
+      title: "Article deleted",
+      description: "This article has been removed." 
+    });
+    return true;
   }, []);
+
+  // Legacy: Publish article (publishes current version)
+  const publishArticle = useCallback(async (id: string): Promise<boolean> => {
+    // Fetch current version ID
+    const { data: article } = await supabase
+      .from("help_articles")
+      .select("current_version_id")
+      .eq("id", id)
+      .single();
+
+    if (!article?.current_version_id) {
+      toast({ 
+        title: "Unable to publish",
+        description: "No version to publish.", 
+        variant: "destructive" 
+      });
+      return false;
+    }
+
+    return publishVersion(id, article.current_version_id);
+  }, [publishVersion]);
+
+  // Legacy: Fetch revisions (now fetches versions)
+  const fetchRevisions = useCallback(async (articleId: string): Promise<HelpArticleRevision[]> => {
+    const versions = await fetchVersions(articleId);
+    // Map to legacy format
+    return versions.map((v, index) => ({
+      id: v.id,
+      article_id: v.article_id,
+      version: versions.length - index,
+      title: v.title,
+      summary: v.summary,
+      body_md: v.body_md,
+      status: v.status,
+      visibility: v.visibility,
+      actor_user_id: v.created_by,
+      created_at: v.created_at,
+    }));
+  }, [fetchVersions]);
 
   return {
     canManageHelp,
@@ -482,17 +790,23 @@ export function useHelpManagement(): UseHelpManagementResult {
     articles,
     articlesLoading,
     fetchArticles,
+    fetchArticleWithVersion,
     createArticle,
-    updateArticle,
-    deleteArticle,
-    publishArticle,
+    createVersion,
+    publishVersion,
     archiveArticle,
+    restoreArticle,
     categories,
     categoriesLoading,
     fetchCategories,
     createCategory,
     updateCategory,
     deleteCategory,
+    fetchVersions,
+    // Legacy
+    updateArticle,
+    deleteArticle,
+    publishArticle,
     fetchRevisions,
   };
 }
