@@ -257,6 +257,11 @@ export default function AdminDashboard() {
             title="Categories"
             description="Organize articles into categories"
           />
+          <AdminListRow
+            to="/admin/help/access"
+            title="Help Access"
+            description="Grant or revoke permission to manage Help content"
+          />
         </AdminSection>
 
           {/* ─────────────────────────────────────────────────────────────────

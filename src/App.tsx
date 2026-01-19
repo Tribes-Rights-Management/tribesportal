@@ -91,6 +91,7 @@ import { HelpProtectedRoute as SystemHelpProtectedRoute } from "@/components/adm
 import HelpArticlesPage from "@/pages/admin/help/HelpArticlesPage";
 import HelpArticleEditorPage from "@/pages/admin/help/HelpArticleEditorPage";
 import HelpCategoriesPage from "@/pages/admin/help/HelpCategoriesPage";
+import HelpAccessPage from "@/pages/admin/help/HelpAccessPage";
 
 // System Console - Executive Reporting (Platform Executives only)
 import ExecutiveReportingPage from "@/pages/admin/reporting/ExecutiveReportingPage";
@@ -272,6 +273,8 @@ const App = () => (
           <Route path="help/articles" element={<SystemHelpProtectedRoute><HelpArticlesPage /></SystemHelpProtectedRoute>} />
           <Route path="help/articles/:id" element={<SystemHelpProtectedRoute><HelpArticleEditorPage /></SystemHelpProtectedRoute>} />
           <Route path="help/categories" element={<SystemHelpProtectedRoute><HelpCategoriesPage /></SystemHelpProtectedRoute>} />
+          {/* Help Access — Platform Admin only (not just can_manage_help) */}
+          <Route path="help/access" element={<HelpAccessPage />} />
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
