@@ -66,26 +66,34 @@ export function GrantHelpAccessModal({
       open={open}
       onOpenChange={onOpenChange}
       title="Grant Help access"
-      description="Select a user to allow them to manage Help content."
+      description="Select a user to allow them to manage Help content. This applies immediately."
     >
       <div className="space-y-4">
         {/* Search */}
-        <div className="relative">
-          <Search 
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" 
+        <div>
+          <div className="relative">
+            <Search 
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" 
+              style={{ color: 'var(--platform-text-muted)' }}
+            />
+            <Input
+              placeholder="Search by name or email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+              style={{ 
+                backgroundColor: 'var(--platform-surface)',
+                borderColor: 'var(--platform-border)',
+                color: 'var(--platform-text)',
+              }}
+            />
+          </div>
+          <p 
+            className="text-[12px] mt-1.5"
             style={{ color: 'var(--platform-text-muted)' }}
-          />
-          <Input
-            placeholder="Search users..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-            style={{ 
-              backgroundColor: 'var(--platform-surface)',
-              borderColor: 'var(--platform-border)',
-              color: 'var(--platform-text)',
-            }}
-          />
+          >
+            Search by name or email.
+          </p>
         </div>
 
         {/* User list */}

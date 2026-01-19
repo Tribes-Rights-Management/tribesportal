@@ -48,7 +48,11 @@ export default function HelpAccessPage() {
 
     if (profilesError) {
       console.error("Error fetching profiles:", profilesError);
-      toast({ description: "Failed to load users", variant: "destructive" });
+      toast({ 
+        title: "Action failed",
+        description: "Your change could not be saved. Please try again.", 
+        variant: "destructive" 
+      });
       setLoading(false);
       return;
     }
@@ -97,11 +101,18 @@ export default function HelpAccessPage() {
 
     if (error) {
       console.error("Grant access error:", error);
-      toast({ description: "Failed to grant access", variant: "destructive" });
+      toast({ 
+        title: "Action failed",
+        description: "Your change could not be saved. Please try again.", 
+        variant: "destructive" 
+      });
       return false;
     }
 
-    toast({ description: "Help access granted." });
+    toast({ 
+      title: "Help access granted",
+      description: "This user can now manage Help content." 
+    });
     fetchUsers();
     return true;
   };
@@ -118,11 +129,18 @@ export default function HelpAccessPage() {
 
     if (error) {
       console.error("Revoke access error:", error);
-      toast({ description: "Failed to revoke access", variant: "destructive" });
+      toast({ 
+        title: "Action failed",
+        description: "Your change could not be saved. Please try again.", 
+        variant: "destructive" 
+      });
       return false;
     }
 
-    toast({ description: "Help access revoked." });
+    toast({ 
+      title: "Help access revoked",
+      description: "This user can no longer manage Help content." 
+    });
     setRevokeTarget(null);
     fetchUsers();
     return true;
@@ -150,17 +168,33 @@ export default function HelpAccessPage() {
       >
         <div className="text-center max-w-md">
           <h2 
-            className="text-[18px] font-medium mb-2"
+            className="text-[18px] font-medium mb-3"
             style={{ color: 'var(--platform-text)' }}
           >
             Access restricted
           </h2>
           <p 
-            className="text-[13px]"
+            className="text-[14px] mb-2"
+            style={{ color: 'var(--platform-text-secondary)' }}
+          >
+            You do not have permission to manage Help access.
+          </p>
+          <p 
+            className="text-[13px] mb-6"
             style={{ color: 'var(--platform-text-muted)' }}
           >
-            Only platform administrators can manage Help access permissions.
+            This page is available to Platform Administrators only. If you believe you need access, contact your administrator or email contact@tribesassets.com.
           </p>
+          <Button
+            variant="outline"
+            onClick={() => window.location.href = '/admin'}
+            style={{
+              borderColor: 'var(--platform-border)',
+              color: 'var(--platform-text)',
+            }}
+          >
+            Back to System Console
+          </Button>
         </div>
       </div>
     );
@@ -211,11 +245,69 @@ export default function HelpAccessPage() {
       <ContentPanel>
         {loading ? (
           <LoadingState />
+        ) : users.length === 0 ? (
+          <div className="p-8 text-center">
+            <p 
+              className="text-[14px] font-medium mb-1"
+              style={{ color: 'var(--platform-text)' }}
+            >
+              No users found
+            </p>
+            <p 
+              className="text-[13px] mb-1"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              We couldn't load any user records to display here.
+            </p>
+            <p 
+              className="text-[12px]"
+              style={{ color: 'var(--platform-text-muted)' }}
+            >
+              If this persists, confirm your user directory source is configured and accessible for administrators.
+            </p>
+          </div>
+        ) : searchQuery && filteredUsers.length === 0 ? (
+          <div className="p-8 text-center">
+            <p 
+              className="text-[14px] font-medium mb-1"
+              style={{ color: 'var(--platform-text)' }}
+            >
+              No matches
+            </p>
+            <p 
+              className="text-[13px] mb-1"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              No users match your search.
+            </p>
+            <p 
+              className="text-[12px]"
+              style={{ color: 'var(--platform-text-muted)' }}
+            >
+              Try a different name or email.
+            </p>
+          </div>
         ) : usersWithAccess.length === 0 ? (
-          <EmptyState
-            title="No users with Help access"
-            description="Grant access to allow team members to manage Help content."
-          />
+          <div className="p-8 text-center">
+            <p 
+              className="text-[14px] font-medium mb-1"
+              style={{ color: 'var(--platform-text)' }}
+            >
+              No Help managers yet
+            </p>
+            <p 
+              className="text-[13px] mb-1"
+              style={{ color: 'var(--platform-text-secondary)' }}
+            >
+              No users currently have Help management access.
+            </p>
+            <p 
+              className="text-[12px]"
+              style={{ color: 'var(--platform-text-muted)' }}
+            >
+              Grant access to a staff user to enable Help content management.
+            </p>
+          </div>
         ) : (
           <div className="divide-y" style={{ borderColor: 'var(--platform-border)' }}>
             {usersWithAccess.map((user) => (
