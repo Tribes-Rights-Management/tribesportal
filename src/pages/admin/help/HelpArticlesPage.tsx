@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Plus, Search, Filter } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { Plus, Search, ArrowUpDown, ArrowUp, ArrowDown, MoreHorizontal, Archive, Eye, Pencil } from "lucide-react";
 import { format } from "date-fns";
-import { useHelpManagement, HelpArticleStatus, HelpVisibility } from "@/hooks/useHelpManagement";
-import { AdminSection, AdminListRow } from "@/components/admin/AdminListRow";
-import { Input } from "@/components/ui/input";
+import { useHelpManagement, HelpArticle, HelpArticleStatus, HelpVisibility } from "@/hooks/useHelpManagement";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -13,19 +12,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableEmptyRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
+import { PageShell } from "@/components/ui/page-shell";
+import { PageContainer } from "@/components/ui/page-container";
 
 /**
- * HELP ARTICLES PAGE — SYSTEM CONSOLE
+ * HELP ARTICLES PAGE — SYSTEM CONSOLE (INSTITUTIONAL TABLE-BASED)
  * 
  * Company-scoped article management for Help backend.
  * Access requires can_manage_help capability or platform_admin.
+ * 
+ * Features:
+ * - Table-based layout for many articles
+ * - Search, filter by status/category/visibility
+ * - Sortable columns (title, updated)
+ * - Client-side pagination
+ * - Kebab menu per row
  */
 
 const STATUS_OPTIONS: { value: HelpArticleStatus | "all"; label: string }[] = [
@@ -47,69 +71,39 @@ const STATUS_TOOLTIPS: Record<HelpArticleStatus, string> = {
   archived: "Retained for recordkeeping",
 };
 
+const PAGE_SIZE = 20;
+
+type SortField = "title" | "updated_at";
+type SortOrder = "asc" | "desc";
+
 function getStatusBadge(status: HelpArticleStatus) {
-  switch (status) {
-    case "published":
-      return (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Badge 
-              variant="outline" 
-              className="text-[10px] cursor-default"
-              style={{ 
-                borderColor: 'rgba(74, 222, 128, 0.3)',
-                color: 'rgb(74, 222, 128)',
-              }}
-            >
-              Published
-            </Badge>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p className="text-xs">{STATUS_TOOLTIPS.published}</p>
-          </TooltipContent>
-        </Tooltip>
-      );
-    case "draft":
-      return (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Badge 
-              variant="outline" 
-              className="text-[10px] cursor-default"
-              style={{ 
-                borderColor: 'rgba(250, 204, 21, 0.3)',
-                color: 'rgb(250, 204, 21)',
-              }}
-            >
-              Draft
-            </Badge>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p className="text-xs">{STATUS_TOOLTIPS.draft}</p>
-          </TooltipContent>
-        </Tooltip>
-      );
-    case "archived":
-      return (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Badge 
-              variant="outline" 
-              className="text-[10px] cursor-default"
-              style={{ 
-                borderColor: 'rgba(156, 163, 175, 0.3)',
-                color: 'rgb(156, 163, 175)',
-              }}
-            >
-              Archived
-            </Badge>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p className="text-xs">{STATUS_TOOLTIPS.archived}</p>
-          </TooltipContent>
-        </Tooltip>
-      );
-  }
+  const styles: Record<HelpArticleStatus, { borderColor: string; color: string }> = {
+    published: { borderColor: 'rgba(74, 222, 128, 0.3)', color: 'rgb(74, 222, 128)' },
+    draft: { borderColor: 'rgba(250, 204, 21, 0.3)', color: 'rgb(250, 204, 21)' },
+    archived: { borderColor: 'rgba(156, 163, 175, 0.3)', color: 'rgb(156, 163, 175)' },
+  };
+  const labels: Record<HelpArticleStatus, string> = {
+    published: "Published",
+    draft: "Draft",
+    archived: "Archived",
+  };
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Badge 
+          variant="outline" 
+          className="text-[10px] cursor-default"
+          style={styles[status]}
+        >
+          {labels[status]}
+        </Badge>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p className="text-xs">{STATUS_TOOLTIPS[status]}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
 }
 
 export default function HelpArticlesPage() {
@@ -118,14 +112,23 @@ export default function HelpArticlesPage() {
     articles,
     articlesLoading,
     fetchArticles,
+    archiveArticle,
     categories,
     fetchCategories,
   } = useHelpManagement();
 
+  // Filters
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<HelpArticleStatus | "all">("all");
   const [visibilityFilter, setVisibilityFilter] = useState<HelpVisibility | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+
+  // Sorting
+  const [sortField, setSortField] = useState<SortField>("updated_at");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Load data on mount
   useEffect(() => {
@@ -133,7 +136,7 @@ export default function HelpArticlesPage() {
     fetchCategories();
   }, [fetchArticles, fetchCategories]);
 
-  // Apply filters
+  // Apply filters from UI to fetch
   useEffect(() => {
     const filters: Record<string, unknown> = {};
     if (statusFilter !== "all") filters.status = statusFilter;
@@ -142,161 +145,277 @@ export default function HelpArticlesPage() {
     if (search.trim()) filters.search = search.trim();
     
     fetchArticles(filters as any);
+    setCurrentPage(1);
   }, [search, statusFilter, visibilityFilter, categoryFilter, fetchArticles]);
+
+  // Sorted and paginated data
+  const sortedArticles = useMemo(() => {
+    const sorted = [...articles].sort((a, b) => {
+      let aVal: string | undefined;
+      let bVal: string | undefined;
+      
+      if (sortField === "title") {
+        aVal = a.title?.toLowerCase();
+        bVal = b.title?.toLowerCase();
+      } else {
+        aVal = a.updated_at;
+        bVal = b.updated_at;
+      }
+      
+      if (!aVal && !bVal) return 0;
+      if (!aVal) return sortOrder === "asc" ? -1 : 1;
+      if (!bVal) return sortOrder === "asc" ? 1 : -1;
+      
+      if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
+      if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+    return sorted;
+  }, [articles, sortField, sortOrder]);
+
+  const totalPages = Math.ceil(sortedArticles.length / PAGE_SIZE);
+  const paginatedArticles = sortedArticles.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortOrder(prev => prev === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-3.5 w-3.5 ml-1.5 opacity-40" />;
+    }
+    return sortOrder === "asc" 
+      ? <ArrowUp className="h-3.5 w-3.5 ml-1.5" /> 
+      : <ArrowDown className="h-3.5 w-3.5 ml-1.5" />;
+  };
+
+  const handleArchive = async (article: HelpArticle) => {
+    await archiveArticle(article.id);
+    fetchArticles();
+  };
 
   const hasFilters = search || statusFilter !== "all" || visibilityFilter !== "all" || categoryFilter !== "all";
 
   return (
-    <div 
-      className="min-h-full py-8 md:py-12 px-4 md:px-6"
-      style={{ backgroundColor: 'var(--platform-canvas)' }}
-    >
-      <div 
-        className="max-w-[960px] mx-auto rounded-lg"
-        style={{
-          backgroundColor: 'var(--platform-surface)',
-          border: '1px solid var(--platform-border)',
-        }}
+    <PageContainer maxWidth="wide">
+      <PageShell
+        title="Help articles"
+        subtitle="Create and maintain public documentation for Tribes users."
+        backTo="/admin"
       >
-        <div className="p-6 md:p-8">
-          {/* Header */}
-          <header className="mb-8">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h1 
-                  className="text-[20px] md:text-[24px] font-medium tracking-[-0.01em]"
-                  style={{ color: 'var(--platform-text)' }}
-                >
-                  Help articles
-                </h1>
-                <p 
-                  className="text-[13px] mt-1"
-                  style={{ color: 'var(--platform-text-muted)' }}
-                >
-                  Create and maintain public documentation for Tribes users.
-                </p>
-              </div>
-              <Button
-                onClick={() => navigate("/admin/help/articles/new")}
-                size="sm"
-                className="shrink-0"
-              >
-                <Plus className="h-4 w-4 mr-1.5" />
-                New article
-              </Button>
-            </div>
-          </header>
+        <Button onClick={() => navigate("/admin/help/articles/new")} size="sm">
+          <Plus className="h-4 w-4 mr-1.5" />
+          New article
+        </Button>
+      </PageShell>
 
-          {/* Filters */}
-          <div className="flex flex-col md:flex-row gap-3 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search title or slug..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
-              <SelectTrigger className="w-full md:w-[140px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {STATUS_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={visibilityFilter} onValueChange={(v) => setVisibilityFilter(v as any)}>
-              <SelectTrigger className="w-full md:w-[140px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {VISIBILITY_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full md:w-[160px]">
-                <SelectValue placeholder="All categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All categories</SelectItem>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Content */}
-          {articlesLoading ? (
-            <InstitutionalLoadingState message="Loading articles" />
-          ) : articles.length === 0 ? (
-            <div className="py-12 text-center">
-              <p 
-                className="text-[14px] font-medium mb-1"
-                style={{ color: 'var(--platform-text)' }}
-              >
-                {hasFilters ? "No results" : "No articles yet"}
-              </p>
-              <p 
-                className="text-[13px]"
-                style={{ color: 'var(--platform-text-muted)' }}
-              >
-                {hasFilters 
-                  ? "No articles match your search." 
-                  : "Create your first Help article to get started."}
-              </p>
-              {!hasFilters && (
-                <Button
-                  onClick={() => navigate("/admin/help/articles/new")}
-                  size="sm"
-                  className="mt-4"
-                >
-                  New article
-                </Button>
-              )}
-            </div>
-          ) : (
-            <div 
-              className="rounded-md overflow-hidden"
-              style={{ 
-                backgroundColor: 'var(--platform-surface-2)',
-                border: '1px solid var(--platform-border)',
-              }}
-            >
-              {articles.map((article) => (
-                <AdminListRow
-                  key={article.id}
-                  to={`/admin/help/articles/${article.id}`}
-                  title={article.title}
-                  description={article.category?.name || "Uncategorized"}
-                  trailing={
-                    <div className="flex items-center gap-2">
-                      {getStatusBadge(article.status)}
-                      <span 
-                        className="text-[11px] tabular-nums hidden md:inline"
-                        style={{ color: 'var(--platform-text-muted)' }}
-                      >
-                        {format(new Date(article.updated_at), "MMM d, yyyy")}
-                      </span>
-                    </div>
-                  }
-                />
-              ))}
-            </div>
-          )}
+      {/* Filters Row */}
+      <div className="flex flex-col md:flex-row gap-3 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search title or slug..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
         </div>
+        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+          <SelectTrigger className="w-full md:w-[160px]">
+            <SelectValue placeholder="All categories" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All categories</SelectItem>
+            {categories.map((cat) => (
+              <SelectItem key={cat.id} value={cat.id}>
+                {cat.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
+          <SelectTrigger className="w-full md:w-[140px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {STATUS_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={visibilityFilter} onValueChange={(v) => setVisibilityFilter(v as any)}>
+          <SelectTrigger className="w-full md:w-[140px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {VISIBILITY_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-    </div>
+
+      {/* Content */}
+      {articlesLoading ? (
+        <InstitutionalLoadingState message="Loading articles" />
+      ) : (
+        <div 
+          className="rounded-md overflow-hidden"
+          style={{ 
+            backgroundColor: 'var(--platform-surface-2)',
+            border: '1px solid var(--platform-border)',
+          }}
+        >
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="min-w-[200px]">
+                  <button 
+                    onClick={() => handleSort("title")}
+                    className="flex items-center hover:opacity-80 transition-opacity"
+                  >
+                    Title
+                    {getSortIcon("title")}
+                  </button>
+                </TableHead>
+                <TableHead className="hidden md:table-cell">Category</TableHead>
+                <TableHead status>Status</TableHead>
+                <TableHead className="hidden lg:table-cell">
+                  <button 
+                    onClick={() => handleSort("updated_at")}
+                    className="flex items-center hover:opacity-80 transition-opacity"
+                  >
+                    Updated
+                    {getSortIcon("updated_at")}
+                  </button>
+                </TableHead>
+                <TableHead className="w-[50px]"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedArticles.length === 0 ? (
+                <TableEmptyRow 
+                  colSpan={5}
+                  title={hasFilters ? "No results" : "No articles yet"}
+                  description={hasFilters 
+                    ? "No articles match your search." 
+                    : "Create your first Help article to get started."}
+                />
+              ) : (
+                paginatedArticles.map((article) => (
+                  <TableRow 
+                    key={article.id} 
+                    clickable
+                    onClick={() => navigate(`/admin/help/articles/${article.id}`)}
+                  >
+                    <TableCell>
+                      <div className="min-w-0">
+                        <p className="truncate font-medium">{article.title || "Untitled"}</p>
+                        <p 
+                          className="text-[11px] truncate mt-0.5"
+                          style={{ color: 'var(--platform-text-muted)', opacity: 0.7 }}
+                        >
+                          /{article.slug}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell muted className="hidden md:table-cell">
+                      {article.category?.name || "—"}
+                    </TableCell>
+                    <TableCell status>
+                      {getStatusBadge(article.status)}
+                    </TableCell>
+                    <TableCell muted className="hidden lg:table-cell">
+                      {format(new Date(article.updated_at), "MMM d, yyyy")}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/admin/help/articles/${article.id}`);
+                          }}>
+                            <Pencil className="h-4 w-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          {article.status === "published" && (
+                            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                              <Eye className="h-4 w-4 mr-2" />
+                              View published
+                            </DropdownMenuItem>
+                          )}
+                          {article.status !== "archived" && (
+                            <>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleArchive(article);
+                                }}
+                                className="text-destructive focus:text-destructive"
+                              >
+                                <Archive className="h-4 w-4 mr-2" />
+                                Archive
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4 px-1">
+          <p 
+            className="text-[12px]"
+            style={{ color: 'var(--platform-text-muted)' }}
+          >
+            Showing {((currentPage - 1) * PAGE_SIZE) + 1}–{Math.min(currentPage * PAGE_SIZE, sortedArticles.length)} of {sortedArticles.length}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
+    </PageContainer>
   );
 }
