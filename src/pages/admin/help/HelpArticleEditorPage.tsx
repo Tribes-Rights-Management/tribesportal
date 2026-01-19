@@ -46,8 +46,22 @@ import { toast } from "@/hooks/use-toast";
  * - Publishing sets published_version_id to selected version
  * - Versions are permanently readable to admins
  * 
+ * APPROVAL WORKFLOW (DORMANT):
+ * - Infrastructure exists but is NOT ENFORCED
+ * - requires_approval, approved_at, approved_by fields present but ignored
+ * - Publishing proceeds immediately regardless of approval status
+ * - Do not activate without explicit instruction
+ * 
+ * AUTHORITY MODEL (when activated):
+ * - Platform Executives are approvers
+ * - Tribes Admins are authors
+ * - No cross-org approvals
+ * 
  * Institutional tone: authoritative, neutral, calm.
  */
+
+// DORMANT: Feature flag for approval workflow — DO NOT ENABLE without explicit instruction
+const APPROVAL_WORKFLOW_ENABLED = false;
 
 function slugify(text: string): string {
   return text
@@ -355,6 +369,17 @@ export default function HelpArticleEditorPage() {
                                   Version {versions.length - index}
                                 </span>
                                 <div className="flex items-center gap-1.5">
+                                  {/* DORMANT: Approval badge — hidden unless APPROVAL_WORKFLOW_ENABLED */}
+                                  {APPROVAL_WORKFLOW_ENABLED && ver.requires_approval && !ver.approved_at && (
+                                    <Badge variant="outline" className="text-[9px] border-orange-500/30 text-orange-400">
+                                      Approval required
+                                    </Badge>
+                                  )}
+                                  {APPROVAL_WORKFLOW_ENABLED && ver.approved_at && (
+                                    <Badge variant="outline" className="text-[9px] border-blue-500/30 text-blue-400">
+                                      Approved
+                                    </Badge>
+                                  )}
                                   {ver.id === article.current_version_id && (
                                     <Badge variant="outline" className="text-[9px]">
                                       Current
