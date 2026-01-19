@@ -152,6 +152,11 @@ export default function AdminDashboard() {
             label="Open exceptions"
             value={loading ? "—" : metrics.openExceptions === 0 ? "None" : metrics.openExceptions.toString()}
           />
+          <AdminListRow
+            to="/admin/help/articles"
+            title="Help management"
+            description="Manage public Help articles and categories"
+          />
         </AdminSection>
 
         {/* ─────────────────────────────────────────────────────────────────
@@ -239,28 +244,6 @@ export default function AdminDashboard() {
             to="/admin/rls-audit"
             title="Security Events"
             description="RLS verification and access controls with real-time monitoring"
-          />
-        </AdminSection>
-
-        {/* ─────────────────────────────────────────────────────────────────
-            SECTION 6: HELP MANAGEMENT
-            Purpose: "Content management for Help Center"
-        ───────────────────────────────────────────────────────────────── */}
-        <AdminSection label="Help Management">
-          <AdminListRow
-            to="/admin/help/articles"
-            title="Articles"
-            description="Create and manage Help Center articles"
-          />
-          <AdminListRow
-            to="/admin/help/categories"
-            title="Categories"
-            description="Organize articles into categories"
-          />
-          <AdminListRow
-            to="/admin/help/access"
-            title="Help Access"
-            description="Grant or revoke permission to manage Help content"
           />
         </AdminSection>
 
