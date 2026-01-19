@@ -99,7 +99,7 @@ export function SettingsRow({
     return (
       <div
         className={cn(
-          "px-4 py-4",
+          "px-4 row-density",
           "flex items-center justify-between gap-4",
           "w-full max-w-full min-w-0 overflow-x-clip",
           className
@@ -151,7 +151,7 @@ export function SettingsRow({
     <div
       className={cn(
         // Internal card padding only
-        "px-4 py-4",
+        "px-4 row-density",
         "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
         "w-full max-w-full min-w-0 overflow-x-clip",
         isSelectRow && "cursor-pointer hover:bg-white/[0.02] transition-colors",

@@ -679,7 +679,7 @@ body {
     @apply h-px bg-border/50;
   }
 
-  /* Row density */
+  /* Row density - static classes */
   .row-comfortable {
     @apply py-4; /* ~16px vertical = 56px total */
   }
@@ -687,6 +687,47 @@ body {
   .row-compact {
     @apply py-2.5; /* ~10px vertical = 44px total */
   }
+
+  /* Global row density selector - auto-switches based on html[data-ui-density] */
+  .row-density {
+    @apply py-4; /* Default: comfortable */
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   UI DENSITY SYSTEM — GLOBAL COMPACT MODE OVERRIDES
+   
+   Activated via html[data-ui-density="compact"]
+   Applied by AppUiBoot component based on user preference or workspace policy.
+   ═══════════════════════════════════════════════════════════════════════════════ */
+html[data-ui-density="compact"] {
+  /* Row density override - tighter rows for compact mode */
+  .row-density {
+    @apply py-2.5; /* ~10px vertical = 44px total (minimum tap target) */
+  }
+
+  /* Panels and cards: reduce internal padding slightly */
+  .settings-section-card,
+  [data-panel],
+  .panel {
+    /* Reduce section header padding */
+  }
+
+  /* Table cells: reduce vertical padding */
+  td, th {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  /* CRITICAL: Preserve 16px input font size to prevent iOS zoom */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+@layer components {
 
   /* ═══════════════════════════════════════════════════════════════════════════
      GLOBAL INTERACTION STATE SYSTEM — LOCKED
@@ -1390,92 +1431,4 @@ body {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════════
-   COMPACT DENSITY MODE — Stripe/Mercury-grade density toggle
-   
-   Triggered by: document.documentElement.dataset.density = "compact"
-   Stored in: localStorage["tribes:density"]
-   
-   Reduces spacing across panels, rows, and tables while maintaining:
-   - Minimum 44px touch targets on mobile
-   - Font sizes >= 16px for inputs (iOS zoom prevention)
-   - Readable text hierarchy
-   ═══════════════════════════════════════════════════════════════════════════════ */
-
-html[data-density="compact"] {
-  /* Override spacing tokens for tighter density */
-  --space-2: 6px;
-  --space-3: 10px;
-  --space-4: 14px;
-  --space-5: 18px;
-  --space-6: 24px;
-}
-
-/* Compact: Panel/Card padding reduction */
-html[data-density="compact"] .px-4.py-4 {
-  padding-top: 12px;
-  padding-bottom: 12px;
-}
-
-html[data-density="compact"] .px-4.py-3 {
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-/* Compact: Settings section cards */
-html[data-density="compact"] [class*="SettingsSectionCard"] > div:first-child {
-  padding-top: 12px;
-  padding-bottom: 12px;
-}
-
-/* Compact: Table cells - tighter vertical padding */
-html[data-density="compact"] td,
-html[data-density="compact"] th {
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-
-/* Compact: List/grid gaps */
-html[data-density="compact"] .gap-4 {
-  gap: 12px;
-}
-
-html[data-density="compact"] .gap-6 {
-  gap: 16px;
-}
-
-/* Compact: Page container vertical padding */
-html[data-density="compact"] .py-6 {
-  padding-top: 16px;
-  padding-bottom: 16px;
-}
-
-html[data-density="compact"] .py-10 {
-  padding-top: 24px;
-  padding-bottom: 24px;
-}
-
-/* Compact: Margin adjustments */
-html[data-density="compact"] .mb-6 {
-  margin-bottom: 16px;
-}
-
-html[data-density="compact"] .mb-4 {
-  margin-bottom: 12px;
-}
-
-/* Compact: Section spacing */
-html[data-density="compact"] .space-y-6 > * + * {
-  margin-top: 16px;
-}
-
-html[data-density="compact"] .space-y-4 > * + * {
-  margin-top: 12px;
-}
-
-/* IMPORTANT: Preserve minimum touch targets and input font sizes */
-html[data-density="compact"] input,
-html[data-density="compact"] textarea,
-html[data-density="compact"] select {
-  font-size: 16px !important; /* Prevent iOS zoom */
-}
+/* Legacy compact density section removed - see html[data-ui-density="compact"] in @layer components above */

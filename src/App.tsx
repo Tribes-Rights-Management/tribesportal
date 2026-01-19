@@ -11,6 +11,7 @@ import { SystemConsoleLayout } from "@/layouts/SystemConsoleLayout";
 import { ModuleLayout } from "@/layouts/ModuleLayout";
 import { ModuleProtectedRoute } from "@/components/modules/ModuleProtectedRoute";
 import { AppIndexRedirect } from "@/components/app/AppIndexRedirect";
+import AppUiBoot from "@/components/AppUiBoot";
 
 // Auth pages
 import SignInPage from "@/pages/auth/SignInPage";
@@ -134,6 +135,8 @@ const App = () => (
       />
       <Toaster />
       <Sonner />
+      {/* Global UI boot - applies density preference and workspace policy overrides */}
+      <AppUiBoot />
       {/* Session timeout guard - manages inactivity logout, warning modal, cross-tab sync */}
       <SessionGuard>
       <Routes>
