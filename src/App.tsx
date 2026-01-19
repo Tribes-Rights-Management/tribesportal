@@ -86,6 +86,12 @@ import { HelpAdminLayout } from "@/layouts/HelpAdminLayout";
 import { HelpProtectedRoute } from "@/components/help/HelpProtectedRoute";
 import HelpAdminDashboard from "@/pages/help-admin/HelpAdminDashboard";
 
+// Help Management in System Console
+import { HelpProtectedRoute as SystemHelpProtectedRoute } from "@/components/admin/HelpProtectedRoute";
+import HelpArticlesPage from "@/pages/admin/help/HelpArticlesPage";
+import HelpArticleEditorPage from "@/pages/admin/help/HelpArticleEditorPage";
+import HelpCategoriesPage from "@/pages/admin/help/HelpCategoriesPage";
+
 // System Console - Executive Reporting (Platform Executives only)
 import ExecutiveReportingPage from "@/pages/admin/reporting/ExecutiveReportingPage";
 import BoardSummariesPage from "@/pages/admin/reporting/BoardSummariesPage";
@@ -262,6 +268,10 @@ const App = () => (
           <Route path="billing/invoices" element={<AllInvoicesPage />} />
           <Route path="billing/providers" element={<PaymentProvidersPage />} />
           <Route path="billing/refunds" element={<RefundsPage />} />
+          {/* Help Management Routes — company-scoped */}
+          <Route path="help/articles" element={<SystemHelpProtectedRoute><HelpArticlesPage /></SystemHelpProtectedRoute>} />
+          <Route path="help/articles/:id" element={<SystemHelpProtectedRoute><HelpArticleEditorPage /></SystemHelpProtectedRoute>} />
+          <Route path="help/categories" element={<SystemHelpProtectedRoute><HelpCategoriesPage /></SystemHelpProtectedRoute>} />
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════

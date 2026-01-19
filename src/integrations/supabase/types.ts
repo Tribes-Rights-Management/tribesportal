@@ -800,6 +800,148 @@ export type Database = {
           },
         ]
       }
+      help_article_revisions: {
+        Row: {
+          actor_user_id: string | null
+          article_id: string
+          body_md: string
+          created_at: string
+          id: string
+          status: Database["public"]["Enums"]["help_article_status"]
+          summary: string | null
+          title: string
+          version: number
+          visibility: Database["public"]["Enums"]["help_visibility"]
+        }
+        Insert: {
+          actor_user_id?: string | null
+          article_id: string
+          body_md: string
+          created_at?: string
+          id?: string
+          status: Database["public"]["Enums"]["help_article_status"]
+          summary?: string | null
+          title: string
+          version: number
+          visibility: Database["public"]["Enums"]["help_visibility"]
+        }
+        Update: {
+          actor_user_id?: string | null
+          article_id?: string
+          body_md?: string
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["help_article_status"]
+          summary?: string | null
+          title?: string
+          version?: number
+          visibility?: Database["public"]["Enums"]["help_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_article_revisions_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "help_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_articles: {
+        Row: {
+          body_md: string
+          category_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          published_at: string | null
+          slug: string
+          status: Database["public"]["Enums"]["help_article_status"]
+          summary: string | null
+          tags: string[]
+          title: string
+          updated_at: string
+          updated_by: string | null
+          version: number
+          visibility: Database["public"]["Enums"]["help_visibility"]
+        }
+        Insert: {
+          body_md: string
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          published_at?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["help_article_status"]
+          summary?: string | null
+          tags?: string[]
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+          version?: number
+          visibility?: Database["public"]["Enums"]["help_visibility"]
+        }
+        Update: {
+          body_md?: string
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          published_at?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["help_article_status"]
+          summary?: string | null
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+          version?: number
+          visibility?: Database["public"]["Enums"]["help_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_articles_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "help_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_categories: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       invoice_line_items: {
         Row: {
           amount: number
@@ -1314,6 +1456,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      platform_user_capabilities: {
+        Row: {
+          can_manage_help: boolean
+          created_at: string
+          created_by: string | null
+          updated_at: string
+          updated_by: string | null
+          user_id: string
+        }
+        Insert: {
+          can_manage_help?: boolean
+          created_at?: string
+          created_by?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          user_id: string
+        }
+        Update: {
+          can_manage_help?: boolean
+          created_at?: string
+          created_by?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       portal_agreements: {
         Row: {
@@ -1887,6 +2056,7 @@ export type Database = {
         Args: { _tenant_id: string }
         Returns: boolean
       }
+      can_manage_help: { Args: { _user_id: string }; Returns: boolean }
       can_manage_help_content: { Args: { _user_id: string }; Returns: boolean }
       check_escalations: { Args: never; Returns: number }
       create_notification:
@@ -2054,6 +2224,8 @@ export type Database = {
         | "approval_history"
         | "agreement_registry"
       escalation_status: "pending" | "escalated" | "resolved" | "expired"
+      help_article_status: "draft" | "published" | "archived"
+      help_visibility: "public" | "internal"
       invoice_status: "draft" | "open" | "paid" | "void" | "uncollectible"
       licensing_request_status:
         | "draft"
@@ -2269,6 +2441,8 @@ export const Constants = {
         "agreement_registry",
       ],
       escalation_status: ["pending", "escalated", "resolved", "expired"],
+      help_article_status: ["draft", "published", "archived"],
+      help_visibility: ["public", "internal"],
       invoice_status: ["draft", "open", "paid", "void", "uncollectible"],
       licensing_request_status: [
         "draft",

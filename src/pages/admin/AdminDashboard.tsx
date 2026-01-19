@@ -242,6 +242,23 @@ export default function AdminDashboard() {
           />
         </AdminSection>
 
+        {/* ─────────────────────────────────────────────────────────────────
+            SECTION 6: HELP MANAGEMENT
+            Purpose: "Content management for Help Center"
+        ───────────────────────────────────────────────────────────────── */}
+        <AdminSection label="Help Management">
+          <AdminListRow
+            to="/admin/help/articles"
+            title="Articles"
+            description="Create and manage Help Center articles"
+          />
+          <AdminListRow
+            to="/admin/help/categories"
+            title="Categories"
+            description="Organize articles into categories"
+          />
+        </AdminSection>
+
           {/* ─────────────────────────────────────────────────────────────────
               FOOTER — Minimal, institutional
           ───────────────────────────────────────────────────────────────── */}
