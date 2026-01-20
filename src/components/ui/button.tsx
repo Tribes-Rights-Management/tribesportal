@@ -5,29 +5,32 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  // Base: marketing site alignment - institutional button system
-  // Transition: 180-220ms with cubic-bezier(0.2, 0.8, 0.2, 1)
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-[17px] font-semibold transition-all duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/12 focus-visible:ring-offset-2 disabled:opacity-45 disabled:cursor-not-allowed disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  // Base: Institutional button system - border-based, monochromatic
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        // Primary: marketing site alignment - #0B0F14 bg, white text
-        default: "bg-foreground text-white hover:opacity-90",
-        destructive: "bg-destructive text-destructive-foreground hover:opacity-90",
-        outline: "border border-[rgba(0,0,0,0.10)] bg-white text-foreground hover:bg-[#fafafa]",
-        secondary: "bg-[#f5f5f5] text-foreground hover:bg-[#ebebeb]",
-        ghost: "hover:bg-[#f5f5f5] text-foreground",
-        link: "text-foreground underline-offset-4 hover:underline",
+        // Primary: White border on transparent - main actions
+        default: "bg-transparent border border-white text-white font-medium tracking-[0.01em] hover:bg-white/[0.08] active:bg-white/[0.12]",
+        // Destructive: Red border on transparent
+        destructive: "bg-transparent border border-[#DC2626] text-[#DC2626] font-medium hover:bg-[rgba(220,38,38,0.1)]",
+        // Outline/Secondary: Gray border, muted text
+        outline: "bg-transparent border border-[#303030] text-[#AAAAAA] hover:border-[#505050] hover:text-white",
+        secondary: "bg-transparent border border-[#303030] text-[#AAAAAA] hover:border-[#505050] hover:text-white",
+        // Ghost: Invisible until hover
+        ghost: "bg-transparent border border-transparent text-[#AAAAAA] hover:bg-white/[0.04] hover:text-white",
+        // Link/Text: No border, underline on hover
+        link: "bg-transparent text-[#AAAAAA] hover:text-white hover:underline underline-offset-4",
       },
       size: {
-        // Marketing site alignment: 56px height, 16px radius
-        default: "h-14 px-8 rounded-[16px]",
-        sm: "h-12 px-6 rounded-[12px] text-base",
-        lg: "h-16 px-10 rounded-[16px]",
-        icon: "h-12 w-12 rounded-[12px]",
-        // INTERNAL FORM BUTTON SIZES (for operational portal forms)
-        "internal": "h-10 px-5 rounded-[10px] text-[15px] font-medium",
-        "internal-sm": "h-9 px-4 rounded-[8px] text-[14px] font-medium",
+        // Institutional sizing: 6px radius, proportional padding
+        default: "h-11 px-5 rounded-[6px] text-[14px]",
+        sm: "h-9 px-4 rounded-[6px] text-[13px]",
+        lg: "h-[52px] px-6 rounded-[6px] text-[15px]",
+        icon: "h-11 w-11 rounded-[6px]",
+        // Internal form button sizes
+        "internal": "h-10 px-5 rounded-[6px] text-[14px] font-medium",
+        "internal-sm": "h-9 px-4 rounded-[6px] text-[13px] font-medium",
       },
     },
     defaultVariants: {
