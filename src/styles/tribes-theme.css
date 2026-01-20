@@ -34,8 +34,8 @@
   /* Page background: YouTube Studio main bg */
   --tribes-bg: #181818;
   
-  /* Header background: elevated surface */
-  --tribes-header-bg: #212121;
+  /* Header background: pure black for brand consistency with marketing site */
+  --tribes-header-bg: #000000;
   
   /* ═══════════════════════════════════════════════════════════════════════════
      TEXT HIERARCHY — High contrast for readability
