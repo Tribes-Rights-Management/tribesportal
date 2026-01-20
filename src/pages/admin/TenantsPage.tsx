@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { Plus, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { OrganizationFormModal } from "@/components/admin/OrganizationFormModal";
@@ -132,18 +133,16 @@ export default function TenantsPage() {
         backLabel="System Console"
       >
         {/* Add button */}
-        <button 
+        <Button 
+          variant="default"
+          size="sm"
           onClick={openCreateDialog}
-          className="h-11 w-11 sm:h-9 sm:w-auto sm:px-3 rounded-lg sm:rounded text-[13px] font-medium flex items-center justify-center gap-1.5 transition-colors shrink-0"
-          style={{ 
-            backgroundColor: 'var(--platform-text)',
-            color: 'var(--platform-canvas)'
-          }}
+          className="shrink-0"
           aria-label="Add organization"
         >
-          <Plus className="h-5 w-5 sm:h-3.5 sm:w-3.5" />
+          <Plus className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Add organization</span>
-        </button>
+        </Button>
       </PageShell>
 
       <ContentPanel>
