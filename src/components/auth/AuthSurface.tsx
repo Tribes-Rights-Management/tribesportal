@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { SignInHelpDialog } from "./SignInHelpDialog";
+import { Button } from "@/components/ui/button";
 
 type AuthState = "enter-email" | "check-email";
 
@@ -94,11 +95,6 @@ export function AuthSurface() {
     inputBorder: 'var(--auth-input-border)',
     inputBorderFocus: 'var(--auth-input-border-focus)',
     inputText: 'var(--auth-input-text)',
-    buttonBg: 'var(--auth-button-bg)',
-    buttonText: 'var(--auth-button-text)',
-    buttonHover: 'var(--auth-button-hover)',
-    buttonDisabledBg: 'var(--auth-button-disabled-bg)',
-    buttonDisabledText: 'var(--auth-button-disabled-text)',
   };
 
   // Input styles — dark canvas, visible border
@@ -114,23 +110,6 @@ export function AuthSurface() {
     outline: 'none',
     transition: 'border-color 150ms ease',
   };
-
-  // Button styles — solid, institutional
-  const buttonStyles = (disabled: boolean): React.CSSProperties => ({
-    width: '100%',
-    height: '48px',
-    borderRadius: '6px',
-    fontSize: '15px',
-    fontWeight: 500,
-    border: 'none',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    backgroundColor: disabled ? colors.buttonDisabledBg : colors.buttonBg,
-    color: disabled ? colors.buttonDisabledText : colors.buttonText,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'background-color 100ms ease, opacity 100ms ease',
-  });
 
   return (
     <>
@@ -214,24 +193,15 @@ export function AuthSurface() {
               />
             </div>
 
-            {/* Primary action */}
-            <button
+            {/* Primary action - using Button component */}
+            <Button
               type="submit"
               disabled={!email.trim() || isSubmitting}
-              style={{ ...buttonStyles(!email.trim() || isSubmitting), marginTop: '20px' }}
-              onMouseOver={(e) => {
-                if (email.trim() && !isSubmitting) {
-                  e.currentTarget.style.backgroundColor = colors.buttonHover;
-                }
-              }}
-              onMouseOut={(e) => {
-                if (email.trim() && !isSubmitting) {
-                  e.currentTarget.style.backgroundColor = colors.buttonBg;
-                }
-              }}
+              className="w-full mt-5"
+              size="lg"
             >
               {isSubmitting ? "Processing" : "Send verification link"}
-            </button>
+            </Button>
           </form>
         ) : (
           /* Verification state — same surface, content changes only */
@@ -286,51 +256,26 @@ export function AuthSurface() {
 
             {/* Actions */}
             <div style={{ marginTop: '24px' }}>
-              {/* Primary: Resend */}
-              <button
+              {/* Primary: Resend - using Button component */}
+              <Button
                 type="button"
                 onClick={handleResend}
                 disabled={isSubmitting || !email.trim()}
-                style={buttonStyles(isSubmitting || !email.trim())}
-                onMouseOver={(e) => {
-                  if (email.trim() && !isSubmitting) {
-                    e.currentTarget.style.backgroundColor = colors.buttonHover;
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (email.trim() && !isSubmitting) {
-                    e.currentTarget.style.backgroundColor = colors.buttonBg;
-                  }
-                }}
+                className="w-full"
+                size="lg"
               >
                 {isSubmitting ? "Processing" : "Resend verification link"}
-              </button>
+              </Button>
 
-              {/* Secondary: Change email — text link, muted */}
-              <button
+              {/* Secondary: Change email — using Button link variant */}
+              <Button
                 type="button"
+                variant="link"
                 onClick={handleChangeEmail}
-                style={{
-                  width: '100%',
-                  marginTop: '12px',
-                  padding: '8px 0',
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '13px',
-                  color: colors.muted,
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'color 100ms ease',
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.color = colors.body;
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.color = colors.muted;
-                }}
+                className="w-full mt-3 justify-start text-[#505050] hover:text-[#707070]"
               >
                 Use a different email
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -348,30 +293,16 @@ export function AuthSurface() {
         Access is restricted to approved accounts.
       </p>
 
-      {/* Support link — minimal emphasis */}
+      {/* Support link — using Button link variant */}
       <p style={{ marginTop: '8px' }}>
-        <button 
+        <Button 
           type="button"
+          variant="link"
           onClick={() => setHelpDialogOpen(true)}
-          style={{
-            background: 'none',
-            border: 'none',
-            fontSize: '12px',
-            color: colors.muted,
-            cursor: 'pointer',
-            textDecoration: 'none',
-            padding: 0,
-            transition: 'color 100ms ease',
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.color = colors.body;
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.color = colors.muted;
-          }}
+          className="p-0 h-auto text-[12px] text-[#505050] hover:text-[#707070]"
         >
           Access assistance
-        </button>
+        </Button>
       </p>
 
       <SignInHelpDialog

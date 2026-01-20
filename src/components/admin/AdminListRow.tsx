@@ -18,6 +18,9 @@ import { cn } from "@/lib/utils";
  *    - Right-side space reserved for chevrons/icons (no overlap)
  *    - Row height expands naturally for 2-line descriptions
  * 
+ * NOTE: Uses native elements for list row semantics, not Button component.
+ * The Button component is for actions, not navigation list items.
+ * 
  * USAGE:
  * <AdminListRow
  *   to="/admin/some-page"
@@ -113,15 +116,25 @@ export function AdminListRow({
     borderBottom: '1px solid var(--platform-border)',
   };
 
+  // For onClick handlers, we use a div with role="button" for accessibility
+  // This maintains list row semantics while being keyboard accessible
   if (onClick) {
     return (
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         onClick={onClick}
-        className={cn(baseClassName, "w-full text-left")}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onClick();
+          }
+        }}
+        className={cn(baseClassName, "w-full text-left cursor-pointer")}
         style={baseStyle}
       >
         {content}
-      </button>
+      </div>
     );
   }
 
