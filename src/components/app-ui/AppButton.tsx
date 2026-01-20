@@ -3,22 +3,29 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * APP BUTTON — GLOBAL UI KIT (SINGLE SOURCE OF TRUTH)
+ * APP BUTTON — INSTITUTIONAL BUTTON SYSTEM (SINGLE SOURCE OF TRUTH)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
- * INSTITUTIONAL STYLING RULES (LOCKED)
+ * INSTITUTIONAL STYLING — BORDER-BASED, MONOCHROMATIC, SOPHISTICATED
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * - Height: 44px (md) / 36px (sm) / 28px (xs) / 52px (lg)
- * - Radius: 12px (not rounded-full, not pill)
- * - Primary: Dark elevated surface, NOT white
- * - No opacity-based disabled states on entire element
- * - Stable width during loading states
+ * DESIGN PHILOSOPHY:
+ * - Institutional, not consumer
+ * - Understated, not attention-seeking
+ * - Monochromatic, not colorful
+ * - Sparse, not dense
+ * - Think: Financial terminal, not SaaS dashboard
+ * 
+ * VARIANTS:
+ * - Primary: White border, transparent bg - main actions
+ * - Secondary: Gray border, transparent bg - less important
+ * - Tertiary: No border, text only with underline on hover
+ * - Ghost: Invisible until hover
+ * - Danger: Red border, transparent bg
  * 
  * ENFORCEMENT:
  * - All pages must import AppButton from @/components/app-ui
  * - Do NOT import Button from @/components/ui/button directly
- * - Do NOT use className overrides for bg/text/radius
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -63,74 +70,80 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
   ) => {
     const isDisabled = disabled || loading;
 
-    // Size-based classes
+    // Size-based classes - institutional padding and radius
     const sizeClasses = {
-      xs: "h-[var(--control-height-xs)] px-2.5 text-[11px] gap-1 rounded-[var(--control-radius-sm)]",
-      sm: "h-[var(--control-height-sm)] px-3.5 text-[13px] gap-1.5 rounded-[var(--control-radius-sm)]",
-      md: "h-[var(--control-height-md)] px-5 text-[14px] gap-2 rounded-[var(--control-radius)]",
-      lg: "h-[var(--control-height-lg)] px-6 text-[15px] gap-2.5 rounded-[var(--control-radius)]",
+      xs: "h-[28px] px-3 text-[12px] gap-1 rounded-[var(--control-radius-sm)]",
+      sm: "h-[36px] px-4 text-[13px] gap-1.5 rounded-[var(--control-radius)]",
+      md: "h-[44px] px-5 text-[14px] gap-2 rounded-[var(--control-radius)]",
+      lg: "h-[52px] px-6 text-[15px] gap-2.5 rounded-[var(--control-radius)]",
     };
 
-    // Intent-based styles using CSS variables from :root
+    // Intent-based styles - border-focused institutional design
     const getIntentStyles = (): React.CSSProperties => {
+      const baseTransition = "all 150ms ease";
+      
       switch (intent) {
         case "primary":
           return {
-            backgroundColor: isDisabled
-              ? "hsl(var(--app-btn-primary-bg-disabled))"
-              : "hsl(var(--app-btn-primary-bg))",
-            color: isDisabled
-              ? "hsl(var(--app-btn-primary-fg-disabled))"
-              : "hsl(var(--app-btn-primary-fg))",
-            border: `1px solid hsl(var(--app-btn-primary-border))`,
+            backgroundColor: "transparent",
+            color: isDisabled ? "rgba(255,255,255,0.4)" : "#FFFFFF",
+            border: isDisabled ? "1px solid rgba(255,255,255,0.3)" : "1px solid #FFFFFF",
+            fontWeight: 500,
+            letterSpacing: "0.01em",
+            transition: baseTransition,
           };
         case "secondary":
+          return {
+            backgroundColor: "transparent",
+            color: isDisabled ? "rgba(170,170,170,0.5)" : "#AAAAAA",
+            border: isDisabled ? "1px solid rgba(48,48,48,0.5)" : "1px solid #303030",
+            fontWeight: 400,
+            transition: baseTransition,
+          };
         case "tertiary":
           return {
-            backgroundColor: isDisabled
-              ? "transparent"
-              : "hsl(var(--app-btn-secondary-bg))",
-            color: isDisabled
-              ? "hsl(var(--muted-foreground))"
-              : "hsl(var(--app-btn-secondary-fg))",
-            border: `1px solid hsl(var(--app-btn-secondary-border))`,
+            backgroundColor: "transparent",
+            color: isDisabled ? "rgba(170,170,170,0.5)" : "#AAAAAA",
+            border: "none",
+            fontWeight: 400,
+            transition: baseTransition,
+            padding: size === "xs" ? "0" : undefined,
           };
         case "ghost":
           return {
             backgroundColor: "transparent",
-            color: isDisabled
-              ? "hsl(var(--muted-foreground))"
-              : "hsl(var(--app-btn-ghost-fg))",
+            color: isDisabled ? "rgba(170,170,170,0.5)" : "#AAAAAA",
             border: "1px solid transparent",
+            fontWeight: 400,
+            transition: baseTransition,
           };
         case "danger":
           return {
-            backgroundColor: isDisabled
-              ? "transparent"
-              : "hsl(var(--app-btn-danger-bg))",
-            color: isDisabled
-              ? "hsl(var(--muted-foreground))"
-              : "hsl(var(--app-btn-danger-fg))",
-            border: `1px solid hsl(var(--app-btn-danger-border))`,
+            backgroundColor: "transparent",
+            color: isDisabled ? "rgba(220,38,38,0.5)" : "#DC2626",
+            border: isDisabled ? "1px solid rgba(220,38,38,0.3)" : "1px solid #DC2626",
+            fontWeight: 500,
+            transition: baseTransition,
           };
         default:
           return {};
       }
     };
 
-    // Hover class based on intent
+    // Hover classes - subtle background shifts
     const getHoverClass = () => {
       if (isDisabled) return "";
       switch (intent) {
         case "primary":
-          return "hover:bg-[hsl(var(--app-btn-primary-bg-hover))] hover:border-[hsl(var(--app-btn-primary-border-hover))]";
+          return "hover:bg-white/[0.08] active:bg-white/[0.12]";
         case "secondary":
+          return "hover:border-[#505050] hover:text-white";
         case "tertiary":
-          return "hover:bg-[hsl(var(--app-btn-secondary-bg-hover))]";
+          return "hover:text-white hover:underline hover:underline-offset-4";
         case "ghost":
-          return "hover:bg-[hsl(var(--app-btn-ghost-bg-hover))]";
+          return "hover:bg-white/[0.04] hover:text-white";
         case "danger":
-          return "hover:bg-[hsl(var(--app-btn-danger-bg-hover))]";
+          return "hover:bg-[rgba(220,38,38,0.1)]";
         default:
           return "";
       }
@@ -141,16 +154,18 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
         ref={ref}
         className={cn(
           // Base styles
-          "inline-flex items-center justify-center font-medium transition-colors duration-150",
+          "inline-flex items-center justify-center transition-all duration-150",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
           "focus-visible:ring-white/20 focus-visible:ring-offset-background",
           "whitespace-nowrap select-none",
           // Size
-          sizeClasses[size],
+          intent !== "tertiary" && sizeClasses[size],
+          // Tertiary has minimal padding
+          intent === "tertiary" && "px-0 py-1 text-[14px]",
           // Hover
           getHoverClass(),
           // Disabled state
-          isDisabled && "cursor-not-allowed",
+          isDisabled && "cursor-not-allowed opacity-40",
           // Full width
           fullWidth && "w-full",
           className

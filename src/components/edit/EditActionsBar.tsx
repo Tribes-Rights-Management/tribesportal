@@ -55,38 +55,41 @@ export function EditActionsBar({
         paddingBottom: 'max(20px, env(safe-area-inset-bottom, 20px))',
       }}
     >
-      {/* Cancel button - secondary styling */}
+      {/* Cancel button - secondary institutional styling */}
       <button
         type="button"
         onClick={onCancel}
         disabled={saving}
         className={cn(
-          "flex-1 text-[15px] font-medium py-3.5 rounded-xl",
-          "transition-all duration-200 disabled:opacity-50",
-          "hover:bg-white/[0.08] active:scale-[0.98]"
+          "flex-1 text-[14px] font-normal py-3.5 rounded-[6px]",
+          "transition-all duration-150",
+          "hover:border-[#505050] hover:text-white",
+          saving && "opacity-40 cursor-not-allowed"
         )}
         style={{ 
-          color: 'var(--platform-text-secondary)',
-          backgroundColor: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.08)',
+          color: '#AAAAAA',
+          backgroundColor: 'transparent',
+          border: '1px solid #303030',
         }}
       >
         {cancelLabel}
       </button>
 
-      {/* Save button - primary styling */}
+      {/* Save button - primary institutional styling */}
       <button
         type="button"
         onClick={onSave}
         disabled={!canSave || saving}
         className={cn(
-          "flex-1 text-[15px] font-semibold py-3.5 rounded-xl",
-          "transition-all duration-200",
-          canSave && !saving ? "active:scale-[0.98]" : "opacity-40"
+          "flex-1 text-[14px] font-medium py-3.5 rounded-[6px]",
+          "transition-all duration-150 tracking-[0.01em]",
+          canSave && !saving && "hover:bg-white/[0.08] active:bg-white/[0.12]",
+          (!canSave || saving) && "opacity-40 cursor-not-allowed"
         )}
         style={{ 
-          backgroundColor: 'var(--platform-text)',
-          color: 'var(--platform-canvas)',
+          backgroundColor: 'transparent',
+          color: '#FFFFFF',
+          border: '1px solid #FFFFFF',
         }}
       >
         {saving ? "Saving..." : saveLabel}

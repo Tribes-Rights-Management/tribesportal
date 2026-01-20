@@ -3,20 +3,20 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * CONSOLE BUTTON — SYSTEM CONSOLE COMPONENT KIT
+ * CONSOLE BUTTON — SYSTEM CONSOLE INSTITUTIONAL BUTTON
  * 
  * ═══════════════════════════════════════════════════════════════════════════
- * INSTITUTIONAL STYLING RULES (LOCKED)
+ * INSTITUTIONAL STYLING — BORDER-BASED, MONOCHROMATIC, SOPHISTICATED
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * This component extends the App UI Kit standards for System Console contexts.
- * Uses console-scope CSS variables which may override app-level tokens.
+ * Extends the App UI Kit institutional button standards for System Console.
+ * Uses border-focused design: transparent backgrounds with visible borders.
  * 
- * - Height: 44px (md) / 36px (sm) / 28px (xs)
- * - Radius: 12px (not rounded-full, not pill)
- * - Primary: Dark elevated surface, NOT white
- * - No opacity-based disabled states on entire element
- * - Stable width during loading states
+ * DESIGN PHILOSOPHY:
+ * - Institutional, not consumer
+ * - Understated, not attention-seeking
+ * - Monochromatic, not colorful
+ * - Think: Financial terminal, not SaaS dashboard
  * 
  * USAGE:
  * - Import from @/components/console for /admin routes
@@ -59,45 +59,71 @@ export const ConsoleButton = React.forwardRef<HTMLButtonElement, ConsoleButtonPr
   ) => {
     const isDisabled = disabled || loading;
 
-    // Size-based classes - uses global control tokens
+    // Size-based classes - institutional padding
     const sizeClasses = {
-      xs: "h-[var(--control-height-xs)] px-2.5 text-[11px] gap-1",
-      sm: "h-[var(--control-height-sm)] px-3.5 text-[13px] gap-1.5",
-      md: "h-[var(--control-height-md)] px-5 text-[14px] gap-2",
+      xs: "h-[28px] px-3 text-[12px] gap-1",
+      sm: "h-[36px] px-4 text-[13px] gap-1.5",
+      md: "h-[44px] px-5 text-[14px] gap-2",
     };
 
-    // Intent-based inline styles (using CSS variables from .console-scope)
-    const intentStyles: Record<string, React.CSSProperties> = {
-      primary: {
-        backgroundColor: isDisabled
-          ? "var(--console-primary-bg-disabled)"
-          : "var(--console-primary-bg)",
-        color: isDisabled
-          ? "var(--console-primary-fg-disabled)"
-          : "var(--console-primary-fg)",
-        border: `1px solid ${isDisabled ? "var(--console-primary-border)" : "var(--console-primary-border)"}`,
-      },
-      secondary: {
-        backgroundColor: "var(--console-secondary-bg)",
-        color: isDisabled
-          ? "var(--console-fg-muted)"
-          : "var(--console-secondary-fg)",
-        border: "1px solid var(--console-secondary-border)",
-      },
-      ghost: {
-        backgroundColor: "transparent",
-        color: isDisabled
-          ? "var(--console-fg-muted)"
-          : "var(--console-secondary-fg)",
-        border: "1px solid transparent",
-      },
-      danger: {
-        backgroundColor: "var(--console-danger-bg)",
-        color: isDisabled
-          ? "var(--console-fg-muted)"
-          : "var(--console-danger-fg)",
-        border: "1px solid var(--console-danger-border)",
-      },
+    // Intent-based inline styles - border-focused institutional design
+    const getIntentStyles = (): React.CSSProperties => {
+      const baseTransition = "all 150ms ease";
+      
+      switch (intent) {
+        case "primary":
+          return {
+            backgroundColor: "transparent",
+            color: isDisabled ? "rgba(255,255,255,0.4)" : "#FFFFFF",
+            border: isDisabled ? "1px solid rgba(255,255,255,0.3)" : "1px solid #FFFFFF",
+            fontWeight: 500,
+            letterSpacing: "0.01em",
+            transition: baseTransition,
+          };
+        case "secondary":
+          return {
+            backgroundColor: "transparent",
+            color: isDisabled ? "rgba(170,170,170,0.5)" : "#AAAAAA",
+            border: isDisabled ? "1px solid rgba(48,48,48,0.5)" : "1px solid #303030",
+            fontWeight: 400,
+            transition: baseTransition,
+          };
+        case "ghost":
+          return {
+            backgroundColor: "transparent",
+            color: isDisabled ? "rgba(170,170,170,0.5)" : "#AAAAAA",
+            border: "1px solid transparent",
+            fontWeight: 400,
+            transition: baseTransition,
+          };
+        case "danger":
+          return {
+            backgroundColor: "transparent",
+            color: isDisabled ? "rgba(220,38,38,0.5)" : "#DC2626",
+            border: isDisabled ? "1px solid rgba(220,38,38,0.3)" : "1px solid #DC2626",
+            fontWeight: 500,
+            transition: baseTransition,
+          };
+        default:
+          return {};
+      }
+    };
+
+    // Hover classes - subtle effects
+    const getHoverClass = () => {
+      if (isDisabled) return "";
+      switch (intent) {
+        case "primary":
+          return "hover:bg-white/[0.08] active:bg-white/[0.12]";
+        case "secondary":
+          return "hover:border-[#505050] hover:text-white";
+        case "ghost":
+          return "hover:bg-white/[0.04] hover:text-white";
+        case "danger":
+          return "hover:bg-[rgba(220,38,38,0.1)]";
+        default:
+          return "";
+      }
     };
 
     return (
@@ -105,24 +131,21 @@ export const ConsoleButton = React.forwardRef<HTMLButtonElement, ConsoleButtonPr
         ref={ref}
         className={cn(
           // Base styles
-          "inline-flex items-center justify-center font-medium transition-colors duration-150",
+          "inline-flex items-center justify-center transition-all duration-150",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
           "focus-visible:ring-white/20 focus-visible:ring-offset-[var(--console-bg)]",
           "rounded-[var(--control-radius)]",
           "whitespace-nowrap select-none",
           // Size
           sizeClasses[size],
+          // Hover
+          getHoverClass(),
           // Disabled state
-          isDisabled && "cursor-not-allowed",
-          // Hover (only for non-disabled)
-          !isDisabled && intent === "primary" && "hover:bg-[var(--console-primary-bg-hover)]",
-          !isDisabled && intent === "secondary" && "hover:bg-[var(--console-secondary-bg-hover)]",
-          !isDisabled && intent === "ghost" && "hover:bg-[var(--console-secondary-bg-hover)]",
-          !isDisabled && intent === "danger" && "hover:bg-[var(--console-danger-bg-hover)]",
+          isDisabled && "cursor-not-allowed opacity-40",
           className
         )}
         style={{
-          ...intentStyles[intent],
+          ...getIntentStyles(),
           minWidth: minWidth || undefined,
           ...style,
         }}

@@ -317,36 +317,49 @@ body {
     --control-height-sm: 36px;
     --control-height-md: 44px;
     --control-height-lg: 52px;
-    --control-radius: 12px;
-    --control-radius-sm: 8px;
+    --control-radius: 6px;
+    --control-radius-sm: 6px;
     --surface-radius: 16px;
     --surface-radius-sm: 12px;
 
     /* ─────────────────────────────────────────────────────────────────────────────
-       APP BUTTON TOKENS — INSTITUTIONAL PRIMARY (YouTube Studio-inspired)
-       Primary buttons use a dark elevated surface, NOT white pill.
+       INSTITUTIONAL BUTTON TOKENS — BORDER-BASED, MONOCHROMATIC
+       Subtle, sophisticated, governance-focused. No filled backgrounds.
+       Think: Financial terminal, not SaaS dashboard.
        ───────────────────────────────────────────────────────────────────────────── */
-    --app-btn-primary-bg: 0 0% 18%;
-    --app-btn-primary-bg-hover: 0 0% 22%;
-    --app-btn-primary-bg-disabled: 0 0% 15%;
+    
+    /* PRIMARY: White border on transparent - main actions */
+    --app-btn-primary-bg: transparent;
+    --app-btn-primary-bg-hover: 0 0% 100% / 0.08;
+    --app-btn-primary-bg-active: 0 0% 100% / 0.12;
+    --app-btn-primary-bg-disabled: transparent;
     --app-btn-primary-fg: 0 0% 100%;
-    --app-btn-primary-fg-disabled: 0 0% 44%;
-    --app-btn-primary-border: 0 0% 25%;
-    --app-btn-primary-border-hover: 0 0% 29%;
+    --app-btn-primary-fg-disabled: 0 0% 100% / 0.4;
+    --app-btn-primary-border: 0 0% 100%;
+    --app-btn-primary-border-hover: 0 0% 100%;
 
-    --app-btn-secondary-bg: 0 0% 16%;
-    --app-btn-secondary-bg-hover: 0 0% 20%;
+    /* SECONDARY: Dark gray border - less important actions */
+    --app-btn-secondary-bg: transparent;
+    --app-btn-secondary-bg-hover: 0 0% 100% / 0.04;
     --app-btn-secondary-fg: 0 0% 67%;
+    --app-btn-secondary-fg-hover: 0 0% 100%;
     --app-btn-secondary-border: 0 0% 19%;
+    --app-btn-secondary-border-hover: 0 0% 31%;
 
+    /* TERTIARY/TEXT: No border, text only - inline actions */
+    --app-btn-tertiary-fg: 0 0% 67%;
+    --app-btn-tertiary-fg-hover: 0 0% 100%;
+
+    /* GHOST: Invisible until hover */
     --app-btn-ghost-bg: transparent;
-    --app-btn-ghost-bg-hover: 0 0% 16%;
+    --app-btn-ghost-bg-hover: 0 0% 100% / 0.04;
     --app-btn-ghost-fg: 0 0% 67%;
 
-    --app-btn-danger-bg: 0 72% 51% / 0.12;
-    --app-btn-danger-bg-hover: 0 72% 51% / 0.18;
-    --app-btn-danger-fg: 0 84% 68%;
-    --app-btn-danger-border: 0 72% 51% / 0.25;
+    /* DANGER: Red border - destructive actions */
+    --app-btn-danger-bg: transparent;
+    --app-btn-danger-bg-hover: 0 72% 51% / 0.1;
+    --app-btn-danger-fg: 0 84% 60%;
+    --app-btn-danger-border: 0 84% 60%;
 
     /* ─────────────────────────────────────────────────────────────────────────────
        APP CHIP TOKENS — STATUS INDICATORS (YouTube Studio soft dark)
