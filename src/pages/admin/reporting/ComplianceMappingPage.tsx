@@ -19,6 +19,7 @@ import { useState } from "react";
 import { Shield, Check, Minus, ExternalLink, FileText, Database, Clock, AlertTriangle } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -357,32 +358,24 @@ export default function ComplianceMappingPage() {
         <TabsContent value="matrix">
           {/* Domain Filter */}
           <div className="flex items-center gap-2 mb-4 flex-wrap">
-            <button
+            <Button
+              variant={selectedDomain === "all" ? "outline" : "ghost"}
+              size="sm"
               onClick={() => setSelectedDomain("all")}
-              className={cn(
-                "text-[11px] px-3 py-1.5 rounded-full border transition-colors",
-                selectedDomain === "all" 
-                  ? "bg-white/10 border-white/20" 
-                  : "border-transparent hover:bg-white/5"
-              )}
-              style={{ color: 'var(--tribes-text-secondary)' }}
+              className="h-7 px-3 text-[11px] rounded-full"
             >
               All Domains
-            </button>
+            </Button>
             {domains.map((domain) => (
-              <button
+              <Button
                 key={domain}
+                variant={selectedDomain === domain ? "outline" : "ghost"}
+                size="sm"
                 onClick={() => setSelectedDomain(domain)}
-                className={cn(
-                  "text-[11px] px-3 py-1.5 rounded-full border transition-colors",
-                  selectedDomain === domain 
-                    ? "bg-white/10 border-white/20" 
-                    : "border-transparent hover:bg-white/5"
-                )}
-                style={{ color: 'var(--tribes-text-secondary)' }}
+                className="h-7 px-3 text-[11px] rounded-full"
               >
                 {domain}
-              </button>
+              </Button>
             ))}
           </div>
 

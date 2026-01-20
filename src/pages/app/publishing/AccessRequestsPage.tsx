@@ -273,45 +273,42 @@ export default function AccessRequestsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
-                      <button
+                      <Button
+                        variant={(selectedContexts[request.id] ?? ["publishing"]).includes("publishing") ? "default" : "outline"}
+                        size="sm"
                         onClick={() => handleContextToggle(request.id, "publishing")}
-                        className={`px-2 py-1 text-[10px] rounded border transition-colors ${
-                          (selectedContexts[request.id] ?? ["publishing"]).includes("publishing")
-                            ? "bg-[#0A0A0A] text-white border-[#0A0A0A]"
-                            : "bg-white text-[#71717A] border-[#E4E4E7] hover:border-[#A1A1AA]"
-                        }`}
+                        className="h-7 px-2 text-[10px]"
                       >
                         Publishing
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        variant={(selectedContexts[request.id] ?? ["publishing"]).includes("licensing") ? "default" : "outline"}
+                        size="sm"
                         onClick={() => handleContextToggle(request.id, "licensing")}
-                        className={`px-2 py-1 text-[10px] rounded border transition-colors ${
-                          (selectedContexts[request.id] ?? ["publishing"]).includes("licensing")
-                            ? "bg-[#0A0A0A] text-white border-[#0A0A0A]"
-                            : "bg-white text-[#71717A] border-[#E4E4E7] hover:border-[#A1A1AA]"
-                        }`}
+                        className="h-7 px-2 text-[10px]"
                       >
                         Licensing
-                      </button>
+                      </Button>
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Button
                         size="sm"
-                        variant="outline"
+                        variant="destructive"
                         onClick={() => handleDeny(request.id)}
                         disabled={denyMutation.isPending}
-                        className="h-8 px-3 text-[12px] text-[#71717A] border-[#E4E4E7] hover:bg-[#FEF2F2] hover:text-[#DC2626] hover:border-[#FECACA]"
+                        className="h-8 px-3 text-[12px]"
                       >
                         <X className="h-3.5 w-3.5 mr-1" />
                         Deny
                       </Button>
                       <Button
                         size="sm"
+                        variant="default"
                         onClick={() => handleApprove(request.id)}
                         disabled={approveMutation.isPending}
-                        className="h-8 px-3 text-[12px] bg-[#0A0A0A] hover:bg-[#262626]"
+                        className="h-8 px-3 text-[12px]"
                       >
                         <Check className="h-3.5 w-3.5 mr-1" />
                         Approve

@@ -442,9 +442,10 @@ export default function DisclosuresPage() {
 
             <div className="flex items-end">
               <Button
+                variant="default"
                 onClick={handleGenerateExport}
                 disabled={generating}
-                className="w-full bg-white text-black hover:bg-gray-100"
+                className="w-full"
               >
                 {generating ? (
                   <>

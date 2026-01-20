@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { SYSTEM_COPY } from "@/styles/tokens";
+import { Button } from "@/components/ui/button";
 
 /**
  * NoAccessPage - System boundary for accounts with no access record
@@ -39,21 +40,28 @@ export default function NoAccessPage() {
 
       {/* Actions */}
       <div className="mt-10 space-y-3">
-        <a
-          href="https://tribesassets.com/request-access"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block w-full h-[48px] rounded-[6px] bg-[#E5E5E3] text-[#0A0A0B] text-[14px] font-medium text-center leading-[48px] hover:bg-[#D5D5D3] transition-colors duration-75"
+        <Button
+          variant="default"
+          size="lg"
+          className="w-full h-[48px]"
+          asChild
         >
-          Request access
-        </a>
+          <a
+            href="https://tribesassets.com/request-access"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Request access
+          </a>
+        </Button>
 
-        <button
+        <Button
+          variant="link"
           onClick={signOut}
-          className="w-full text-center text-[13px] text-[#505050] hover:text-[#707070] py-2 transition-colors duration-75"
+          className="w-full text-[13px]"
         >
           Sign out
-        </button>
+        </Button>
       </div>
 
       {/* Contact */}
