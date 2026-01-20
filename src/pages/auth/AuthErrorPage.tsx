@@ -8,10 +8,11 @@ import { AuthLayout } from "@/layouts/AuthLayout";
  * Same surface as AuthSurface - no visual mode switch
  */
 export default function AuthErrorPage() {
+  // Use CSS variables for YouTube Studio-inspired soft dark
   const colors = {
-    heading: '#E8E8E6',
-    body: '#8A8A8A',
-    muted: '#5A5A5A',
+    heading: 'var(--auth-heading)',
+    body: 'var(--auth-body)',
+    muted: 'var(--auth-muted)',
   };
 
   return (

@@ -27,8 +27,8 @@ export function AuthLayout({ children }: AuthLayoutProps) {
     <div 
       className="fixed inset-0 flex items-center justify-center overflow-x-clip"
       style={{ 
-        // Derives from canonical tribes-theme.css tokens (LOCKED)
-        backgroundColor: 'var(--tribes-bg)',
+        // YouTube Studio-inspired soft dark - uses auth tokens from index.css
+        backgroundColor: 'var(--auth-canvas-bg)',
         background: 'var(--auth-canvas-gradient)',
         // Safe area aware padding
         paddingLeft: 'max(24px, env(safe-area-inset-left, 24px))',
@@ -42,7 +42,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       <div 
         className="w-full"
         style={{ 
-          maxWidth: '380px',
+          maxWidth: 'var(--auth-content-width)',
           // Anchor slightly above center
           marginBottom: '5vh',
         }}
