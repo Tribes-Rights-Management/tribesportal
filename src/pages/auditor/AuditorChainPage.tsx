@@ -187,8 +187,8 @@ export default function AuditorChainPage() {
             />
           </div>
           <Button
+            variant="default"
             onClick={handleSearch}
-            className="bg-white text-black hover:bg-gray-100"
           >
             <Search className="h-4 w-4 mr-2" />
             Search

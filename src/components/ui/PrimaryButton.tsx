@@ -1,15 +1,16 @@
 import React from "react";
 import { Loader2 } from "lucide-react";
+import { Button, ButtonProps } from "./button";
+import { cn } from "@/lib/utils";
 
 /**
  * PRIMARY BUTTON — INSTITUTIONAL DESIGN (LOCKED)
  * 
- * Border-based, monochromatic, sophisticated.
- * White border on transparent background.
- * Think: Financial terminal, not SaaS dashboard.
+ * Wrapper around the unified Button component.
+ * Uses variant="default" which is border-based and monochromatic.
  */
 
-type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+type Props = Omit<ButtonProps, 'variant'> & {
   loading?: boolean;
   loadingText?: string;
   minWidth?: string;
@@ -22,27 +23,16 @@ export function PrimaryButton({
   minWidth,
   children,
   disabled,
+  style,
   ...rest
 }: Props) {
   const isDisabled = disabled || loading;
 
   return (
-    <button
-      className={`
-        inline-flex items-center justify-center gap-2
-        h-11 px-5 text-[14px] font-medium tracking-[0.01em]
-        rounded-[6px] whitespace-nowrap select-none
-        transition-all duration-150
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2
-        ${isDisabled ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08] active:bg-white/[0.12]"}
-        ${className}
-      `}
-      style={{
-        backgroundColor: "transparent",
-        border: "1px solid #FFFFFF",
-        color: "#FFFFFF",
-        minWidth,
-      }}
+    <Button
+      variant="default"
+      className={cn(className)}
+      style={{ minWidth, ...style }}
       disabled={isDisabled}
       aria-busy={loading}
       {...rest}
@@ -55,6 +45,6 @@ export function PrimaryButton({
       ) : (
         children
       )}
-    </button>
+    </Button>
   );
 }

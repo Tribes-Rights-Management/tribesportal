@@ -2,6 +2,7 @@ import * as React from "react";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -122,16 +123,17 @@ export function EditSheetLayout({
         className="flex items-center gap-3 px-5 pt-2 pb-4 shrink-0"
         style={{ borderBottom: '1px solid var(--platform-border)' }}
       >
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           type="button"
           onClick={handleBack}
           disabled={preventClose}
-          className="h-11 w-11 -ml-2 flex items-center justify-center rounded-xl transition-colors hover:bg-white/[0.05] disabled:opacity-50"
-          style={{ color: 'var(--platform-text-secondary)' }}
+          className="h-11 w-11 -ml-2 rounded-xl"
           aria-label={`Back to ${parentLabel}`}
         >
           <ArrowLeft className="h-5 w-5" />
-        </button>
+        </Button>
         <span 
           className="text-[15px] font-medium"
           style={{ color: 'var(--platform-text-secondary)' }}
