@@ -1,106 +1,106 @@
 /**
  * ═══════════════════════════════════════════════════════════════════════════════
- * TRIBES CANONICAL THEME — LOCKED (SINGLE SOURCE OF TRUTH)
+ * TRIBES CANONICAL THEME — YouTube Studio-inspired Soft Dark Mode
  * ═══════════════════════════════════════════════════════════════════════════════
  * 
  * This file defines the AUTHORITATIVE color system for the Tribes application.
- * All values are cloned from the website repo: tribes_website-main/src/lib/theme.ts
+ * Warmer, more readable, better contrast than pure black.
  * 
- * WEBSITE SOURCE VALUES (EXACT):
- * - BG (page): #0B0F14
- * - Surface: rgba(255,255,255,0.03)
- * - Border: rgba(255,255,255,0.08)
- * - Text primary: #F2F4F7
- * - Text secondary: #AAB1BA
- * - Text muted: #6E7681
+ * PALETTE (YouTube Studio-inspired):
+ * - BG (page): #181818
+ * - Surface: #212121
+ * - Elevated: #282828
+ * - Border: #303030
+ * - Text primary: #FFFFFF
+ * - Text secondary: #AAAAAA
+ * - Text muted: #717171
  * 
  * ENFORCEMENT:
  * - No component may hardcode colors outside these tokens
  * - All backgrounds must derive from --tribes-bg or --tribes-surface
  * - All text must derive from --tribes-text / --tribes-text-secondary / --tribes-text-muted
- * - No new "near-black" values may be introduced
+ * - No super-dark values (#0A0A0A, #0B0F14, etc.) may be introduced
  * 
- * This file is IMMUTABLE and must not be modified without design system approval.
+ * This file is the single source of truth for the Tribes color system.
  * ═══════════════════════════════════════════════════════════════════════════════
  */
 
 :root {
   /* ═══════════════════════════════════════════════════════════════════════════
-     GLOBAL FOUNDATION — EXACT MATCH with website theme.ts (LOCKED)
-     Source: tribes_website-main/src/lib/theme.ts
+     GLOBAL FOUNDATION — YouTube Studio-inspired Soft Dark Mode
+     Warmer, more readable, better contrast than pure black
      ═══════════════════════════════════════════════════════════════════════════ */
   
-  /* Page background: website BG (EXACT) */
-  --tribes-bg: #0B0F14;
+  /* Page background: YouTube Studio main bg */
+  --tribes-bg: #181818;
   
-  /* Header background: slightly elevated from page */
-  --tribes-header-bg: #111214;
+  /* Header background: elevated surface */
+  --tribes-header-bg: #212121;
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     TEXT HIERARCHY — EXACT MATCH with website theme.ts (LOCKED)
-     Source: Text primary, Text secondary, Text muted from theme.ts
+     TEXT HIERARCHY — High contrast for readability
      ═══════════════════════════════════════════════════════════════════════════ */
   
-  /* Primary text: website Text primary #F2F4F7 */
-  --tribes-fg: #F2F4F7;
-  --tribes-text: #F2F4F7;
+  /* Primary text: pure white for maximum contrast */
+  --tribes-fg: #FFFFFF;
+  --tribes-text: #FFFFFF;
   
-  /* Secondary text: website Text secondary #AAB1BA */
-  --tribes-fg-secondary: #AAB1BA;
-  --tribes-text-secondary: #AAB1BA;
+  /* Secondary text: lighter gray, more readable */
+  --tribes-fg-secondary: #AAAAAA;
+  --tribes-text-secondary: #AAAAAA;
   
-  /* Muted text: website Text muted #6E7681 */
-  --tribes-fg-muted: #6E7681;
-  --tribes-text-muted: #6E7681;
+  /* Muted text: YouTube's muted text */
+  --tribes-fg-muted: #717171;
+  --tribes-text-muted: #717171;
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     SURFACE SYSTEM — Website-matched values (LOCKED)
+     SURFACE SYSTEM — Elevated surfaces with subtle differentiation
      ═══════════════════════════════════════════════════════════════════════════ */
   
-  /* Card/panel surface: website Surface rgba(255,255,255,0.03) */
-  --tribes-card: rgba(255, 255, 255, 0.03);
-  --tribes-surface: rgba(255, 255, 255, 0.03);
+  /* Card/panel surface: YouTube elevated surface */
+  --tribes-card: #212121;
+  --tribes-surface: #212121;
   
-  /* Card border: website Border rgba(255,255,255,0.08) */
-  --tribes-card-border: rgba(255, 255, 255, 0.08);
+  /* Card border: visible but subtle */
+  --tribes-card-border: #303030;
   
-  /* Table surface: identical to card */
-  --tribes-surface-table: rgba(255, 255, 255, 0.03);
+  /* Table surface: slightly darker than cards */
+  --tribes-surface-table: #1E1E1E;
   
-  /* Elevated surface: secondary elevation for nested content */
-  --tribes-surface-elevated: rgba(255, 255, 255, 0.05);
+  /* Elevated surface: for nested content */
+  --tribes-surface-elevated: #282828;
   
-  /* Nested surface: tertiary elevation for deeply nested content */
-  --tribes-surface-nested: rgba(255, 255, 255, 0.07);
+  /* Nested surface: tertiary elevation */
+  --tribes-surface-nested: #2D2D2D;
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     BORDERS & DIVIDERS — Website-matched (LOCKED)
+     BORDERS & DIVIDERS — Visible but subtle
      ═══════════════════════════════════════════════════════════════════════════ */
   
-  /* Hairline borders: website Border rgba(255,255,255,0.08) */
-  --tribes-border: rgba(255, 255, 255, 0.08);
+  /* Hairline borders */
+  --tribes-border: #303030;
   
-  /* Divider: slightly stronger for visual separation */
-  --tribes-divider: rgba(255, 255, 255, 0.10);
+  /* Divider: same as border for consistency */
+  --tribes-divider: #303030;
   
   /* Strong borders: emphasized separation */
-  --tribes-border-strong: rgba(255, 255, 255, 0.12);
+  --tribes-border-strong: #404040;
   
-  /* Soft shadow: restrained, institutional (no glow) */
-  --tribes-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  /* Soft shadow: subtle depth */
+  --tribes-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     INTERACTIVE STATES — Focus, hover, active (LOCKED)
+     INTERACTIVE STATES — Clear hover/focus feedback
      ═══════════════════════════════════════════════════════════════════════════ */
   
-  /* Focus ring: subtle, institutional */
-  --tribes-focus-ring: rgba(255, 255, 255, 0.35);
+  /* Focus ring: visible for accessibility */
+  --tribes-focus-ring: rgba(255, 255, 255, 0.4);
   
-  /* Hover state: subtle surface highlight */
-  --tribes-hover: rgba(255, 255, 255, 0.05);
+  /* Hover state: subtle but noticeable */
+  --tribes-hover: #282828;
   
   /* Active state: pressed feedback */
-  --tribes-active: rgba(255, 255, 255, 0.08);
+  --tribes-active: #303030;
 }
 
 /* iOS underlay rule - ensures underlay uses exact background */
