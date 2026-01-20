@@ -212,32 +212,32 @@ body {
     --platform-accent: var(--tribes-fg);
 
     /* ─────────────────────────────────────────────────────────────────────────────
-       AUTH GATEWAY TOKENS (LOCKED — CANONICAL)
-       Dark canvas institutional access boundary. Derives from tribes-theme.css.
+       AUTH GATEWAY TOKENS — YouTube Studio Soft Dark
+       Dark canvas institutional access boundary.
        ───────────────────────────────────────────────────────────────────────────── */
-    --auth-canvas-bg: var(--tribes-bg);
-    --auth-canvas-gradient: linear-gradient(180deg, var(--tribes-bg) 0%, #101418 100%);
+    --auth-canvas-bg: #181818;
+    --auth-canvas-gradient: linear-gradient(180deg, #181818 0%, #1E1E1E 100%);
     --auth-content-width: 380px;
     --auth-input-height: 48px;
     --auth-button-height: 48px;
     --auth-border-radius: 6px;
     --auth-font-scale: 15px;
-    --auth-heading: var(--tribes-fg);
-    --auth-body: var(--tribes-fg-secondary);
-    --auth-muted: var(--tribes-fg-muted);
-    --auth-label: var(--tribes-fg-muted);
-    --auth-input-bg: var(--tribes-surface);
-    --auth-input-border: var(--tribes-border-strong);
-    --auth-input-border-focus: rgba(255,255,255,0.24);
-    --auth-input-text: var(--tribes-fg);
-    --auth-button-bg: var(--tribes-fg);
-    --auth-button-text: var(--tribes-bg);
+    --auth-heading: #FFFFFF;
+    --auth-body: #AAAAAA;
+    --auth-muted: #717171;
+    --auth-label: #717171;
+    --auth-input-bg: #212121;
+    --auth-input-border: #404040;
+    --auth-input-border-focus: #606060;
+    --auth-input-text: #FFFFFF;
+    --auth-button-bg: #FFFFFF;
+    --auth-button-text: #181818;
     --auth-button-hover: #E8E8E8;
-    --auth-button-disabled-bg: var(--tribes-surface-elevated);
-    --auth-button-disabled-text: var(--tribes-fg-muted);
+    --auth-button-disabled-bg: #282828;
+    --auth-button-disabled-text: #717171;
 
     /* ─────────────────────────────────────────────────────────────────────────────
-       EDIT FLOW INPUT TOKENS (LOCKED — INSTITUTIONAL STANDARD)
+       EDIT FLOW INPUT TOKENS — YouTube Studio Soft Dark
        Apple-grade input styling for all edit surfaces.
        Border MUST be visible on dark backgrounds.
        ───────────────────────────────────────────────────────────────────────────── */
@@ -245,57 +245,58 @@ body {
     --edit-input-padding: 0 16px;
     --edit-input-font-size: 16px;                             /* CRITICAL: 16px prevents iOS Safari zoom */
     --edit-input-radius: 10px;
-    --edit-input-bg: rgba(255, 255, 255, 0.04);               /* Subtle surface lift */
-    --edit-input-text: var(--tribes-fg);
-    --edit-input-border: rgba(255, 255, 255, 0.18);           /* Visible light-gray border */
-    --edit-input-border-focus: rgba(255, 255, 255, 0.28);     /* Slightly stronger on focus */
+    --edit-input-bg: #212121;                                 /* Elevated surface */
+    --edit-input-text: #FFFFFF;
+    --edit-input-border: #404040;                             /* Visible border */
+    --edit-input-border-focus: #606060;                       /* Stronger on focus */
     --edit-input-error-border: hsl(0 62% 50%);
-    --edit-input-placeholder: rgba(255, 255, 255, 0.35);
+    --edit-input-placeholder: #717171;
     --edit-input-disabled-opacity: 0.5;
 
     /* ─────────────────────────────────────────────────────────────────────────────
-       INSTITUTIONAL DARK THEME (Shadcn HSL tokens mapped to website palette)
-       EXACT MATCH: #0B0F14 canvas, #F2F4F7 primary, #AAB1BA secondary, #6E7681 muted
+       INSTITUTIONAL DARK THEME — YouTube Studio-inspired Soft Dark Mode
+       Warmer, more readable, better contrast than pure black
+       #181818 canvas, #212121 surface, #303030 borders
        ───────────────────────────────────────────────────────────────────────────── */
     
-    /* Background & Surface - Dark institutional canvas (HSL of #0B0F14 ≈ 214 28% 6%) */
-    --background: 214 28% 6%;
-    /* Foreground - HSL of #F2F4F7 ≈ 213 18% 96% */
-    --foreground: 213 18% 96%;
+    /* Background & Surface - Soft dark canvas (HSL of #181818 ≈ 0 0% 9%) */
+    --background: 0 0% 9%;
+    /* Foreground - Pure white for maximum contrast */
+    --foreground: 0 0% 100%;
 
-    /* Card surface (slight elevation) */
-    --card: 214 20% 8%;
-    --card-foreground: 213 18% 96%;
+    /* Card surface - Elevated (HSL of #212121 ≈ 0 0% 13%) */
+    --card: 0 0% 13%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 214 20% 8%;
-    --popover-foreground: 213 18% 96%;
+    --popover: 0 0% 13%;
+    --popover-foreground: 0 0% 100%;
 
     /* Primary - Light accent on dark */
-    --primary: 213 18% 96%;
-    --primary-foreground: 214 28% 6%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 9%;
 
     /* Secondary - Subtle surface */
-    --secondary: 214 20% 10%;
-    --secondary-foreground: 213 18% 96%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 100%;
 
     /* Muted: dark surface with readable subdued text 
-       --muted-foreground uses #AAB1BA (HSL ≈ 213 12% 70%) */
-    --muted: 214 15% 12%;
-    --muted-foreground: 213 12% 70%;
+       --muted-foreground uses #AAAAAA (HSL ≈ 0 0% 67%) */
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 67%;
 
     /* Accent */
-    --accent: 214 20% 12%;
-    --accent-foreground: 213 18% 96%;
+    --accent: 0 0% 16%;
+    --accent-foreground: 0 0% 100%;
 
     /* Destructive */
     --destructive: 0 62% 55%;
-    --destructive-foreground: 213 18% 96%;
+    --destructive-foreground: 0 0% 100%;
 
-    /* Borders: subtle white opacity */
-    --border-hsl: 0 0% 100% / 0.08;
-    --input-border: 0 0% 100% / 0.12;
-    --input: 0 0% 100% / 0.08;
-    --ring-hsl: 0 0% 100% / 0.20;
+    /* Borders: visible but subtle (HSL of #303030 ≈ 0 0% 19%) */
+    --border-hsl: 0 0% 19%;
+    --input-border: 0 0% 22%;
+    --input: 0 0% 19%;
+    --ring-hsl: 0 0% 100% / 0.25%;
 
     /* Institutional radius scale - sharp, not playful */
     --radius: 6px;
@@ -322,25 +323,25 @@ body {
     --surface-radius-sm: 12px;
 
     /* ─────────────────────────────────────────────────────────────────────────────
-       APP BUTTON TOKENS — INSTITUTIONAL PRIMARY (LOCKED)
+       APP BUTTON TOKENS — INSTITUTIONAL PRIMARY (YouTube Studio-inspired)
        Primary buttons use a dark elevated surface, NOT white pill.
        ───────────────────────────────────────────────────────────────────────────── */
-    --app-btn-primary-bg: 220 6% 15%;
-    --app-btn-primary-bg-hover: 220 6% 18%;
-    --app-btn-primary-bg-disabled: 220 6% 12%;
-    --app-btn-primary-fg: 213 18% 92%;
-    --app-btn-primary-fg-disabled: 213 10% 40%;
-    --app-btn-primary-border: 0 0% 100% / 0.10;
-    --app-btn-primary-border-hover: 0 0% 100% / 0.14;
+    --app-btn-primary-bg: 0 0% 18%;
+    --app-btn-primary-bg-hover: 0 0% 22%;
+    --app-btn-primary-bg-disabled: 0 0% 15%;
+    --app-btn-primary-fg: 0 0% 100%;
+    --app-btn-primary-fg-disabled: 0 0% 44%;
+    --app-btn-primary-border: 0 0% 25%;
+    --app-btn-primary-border-hover: 0 0% 29%;
 
-    --app-btn-secondary-bg: 0 0% 100% / 0.04;
-    --app-btn-secondary-bg-hover: 0 0% 100% / 0.08;
-    --app-btn-secondary-fg: 213 12% 70%;
-    --app-btn-secondary-border: 0 0% 100% / 0.08;
+    --app-btn-secondary-bg: 0 0% 16%;
+    --app-btn-secondary-bg-hover: 0 0% 20%;
+    --app-btn-secondary-fg: 0 0% 67%;
+    --app-btn-secondary-border: 0 0% 19%;
 
     --app-btn-ghost-bg: transparent;
-    --app-btn-ghost-bg-hover: 0 0% 100% / 0.04;
-    --app-btn-ghost-fg: 213 12% 70%;
+    --app-btn-ghost-bg-hover: 0 0% 16%;
+    --app-btn-ghost-fg: 0 0% 67%;
 
     --app-btn-danger-bg: 0 72% 51% / 0.12;
     --app-btn-danger-bg-hover: 0 72% 51% / 0.18;
@@ -348,40 +349,40 @@ body {
     --app-btn-danger-border: 0 72% 51% / 0.25;
 
     /* ─────────────────────────────────────────────────────────────────────────────
-       APP CHIP TOKENS — STATUS INDICATORS (LOCKED)
+       APP CHIP TOKENS — STATUS INDICATORS (YouTube Studio soft dark)
        Non-interactive chips for status display across the application.
        ───────────────────────────────────────────────────────────────────────────── */
-    --app-chip-pending-bg: 0 0% 100% / 0.04;
-    --app-chip-pending-border: 0 0% 100% / 0.08;
-    --app-chip-pending-fg: 0 0% 100% / 0.50;
+    --app-chip-pending-bg: 0 0% 16%;
+    --app-chip-pending-border: 0 0% 25%;
+    --app-chip-pending-fg: 0 0% 55%;
     
-    --app-chip-running-bg: 217 91% 60% / 0.08;
-    --app-chip-running-border: 217 91% 60% / 0.18;
+    --app-chip-running-bg: 217 91% 60% / 0.12;
+    --app-chip-running-border: 217 91% 60% / 0.25;
     --app-chip-running-fg: 213 93% 68%;
     
-    --app-chip-pass-bg: 142 71% 45% / 0.08;
-    --app-chip-pass-border: 142 71% 45% / 0.15;
+    --app-chip-pass-bg: 142 71% 45% / 0.12;
+    --app-chip-pass-border: 142 71% 45% / 0.22;
     --app-chip-pass-fg: 142 69% 58%;
     
-    --app-chip-warning-bg: 48 96% 53% / 0.08;
-    --app-chip-warning-border: 48 96% 53% / 0.15;
+    --app-chip-warning-bg: 48 96% 53% / 0.12;
+    --app-chip-warning-border: 48 96% 53% / 0.22;
     --app-chip-warning-fg: 48 96% 53%;
     
-    --app-chip-fail-bg: 0 72% 51% / 0.08;
-    --app-chip-fail-border: 0 72% 51% / 0.15;
+    --app-chip-fail-bg: 0 72% 51% / 0.12;
+    --app-chip-fail-border: 0 72% 51% / 0.22;
     --app-chip-fail-fg: 0 91% 71%;
 
     /* ─────────────────────────────────────────────────────────────────────────────
-       CANONICAL INPUT STYLING — APPLE-GRADE (LOCKED)
+       CANONICAL INPUT STYLING — APPLE-GRADE (YouTube Studio soft dark)
        
        All inputs across the app must use these tokens for consistency.
        Visible borders on dark backgrounds. Focus states clearly indicated.
        ───────────────────────────────────────────────────────────────────────────── */
-    --edit-input-bg: var(--platform-canvas);
-    --edit-input-border: rgba(255, 255, 255, 0.14);
-    --edit-input-border-focus: rgba(255, 255, 255, 0.28);
-    --edit-input-text: var(--platform-text);
-    --edit-input-placeholder: rgba(255, 255, 255, 0.35);
+    --edit-input-bg: #181818;
+    --edit-input-border: #404040;
+    --edit-input-border-focus: #606060;
+    --edit-input-text: #FFFFFF;
+    --edit-input-placeholder: #717171;
     --edit-input-height: 48px;
     --edit-input-radius: 10px;
     --edit-input-padding: 0 16px;
@@ -395,26 +396,26 @@ body {
     --tribes-checkbox-check: 0 0% 100%;
     --tribes-checkbox-focus: 0 0% 100% / 0.15;
 
-    /* App surface - dark canvas (matches website #0B0F14) */
-    --app-surface: 214 28% 6%;
+    /* App surface - soft dark canvas */
+    --app-surface: 0 0% 9%;
     
-    /* Sidebar - dark institutional (aligned with website) */
-    --sidebar-background: 214 20% 7%;
-    --sidebar-foreground: 213 12% 70%;
-    --sidebar-primary: 213 18% 96%;
-    --sidebar-primary-foreground: 214 28% 6%;
-    --sidebar-accent: 214 20% 10%;
-    --sidebar-accent-foreground: 213 18% 96%;
-    --sidebar-border: 0 0% 100% / 0.08;
-    --sidebar-ring: 0 0% 100% / 0.20;
+    /* Sidebar - soft dark institutional */
+    --sidebar-background: 0 0% 11%;
+    --sidebar-foreground: 0 0% 67%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 0 0% 9%;
+    --sidebar-accent: 0 0% 16%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 19%;
+    --sidebar-ring: 0 0% 100% / 0.25;
 
     /* Semantic */
     --success: 142 71% 45%;
-    --success-foreground: 213 18% 96%;
+    --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 9%;
     --info: 199 89% 48%;
-    --info-foreground: 213 18% 96%;
+    --info-foreground: 0 0% 100%;
   }
 }
 
@@ -432,21 +433,21 @@ body {
    ═══════════════════════════════════════════════════════════════════════════════ */
 .console-scope {
   /* ─────────────────────────────────────────────────────────────────────────────
-     FOUNDATIONAL SURFACES
+     FOUNDATIONAL SURFACES — YouTube Studio Soft Dark
      ───────────────────────────────────────────────────────────────────────────── */
-  --console-bg: hsl(214 28% 6%);
-  --console-fg: hsl(213 18% 96%);
-  --console-fg-secondary: hsl(213 12% 70%);
-  --console-fg-muted: hsl(213 10% 50%);
+  --console-bg: #181818;
+  --console-fg: #FFFFFF;
+  --console-fg-secondary: #AAAAAA;
+  --console-fg-muted: #717171;
   
   /* Card/panel surfaces with slight elevation */
-  --console-card-bg: hsl(214 20% 8%);
-  --console-card-fg: hsl(213 18% 96%);
-  --console-card-border: hsla(0, 0%, 100%, 0.08);
+  --console-card-bg: #212121;
+  --console-card-fg: #FFFFFF;
+  --console-card-border: #303030;
   
   /* Elevated surface (modals, dropdowns) */
-  --console-elevated-bg: hsl(214 18% 10%);
-  --console-elevated-border: hsla(0, 0%, 100%, 0.12);
+  --console-elevated-bg: #282828;
+  --console-elevated-border: #404040;
   
   /* ─────────────────────────────────────────────────────────────────────────────
      CONTROL GEOMETRY — LOCKED
@@ -462,66 +463,66 @@ body {
      PRIMARY BUTTON — INSTITUTIONAL (NOT WHITE PILL)
      Dark elevated surface with subtle border
      ───────────────────────────────────────────────────────────────────────────── */
-  --console-primary-bg: hsl(220 6% 15%);
-  --console-primary-bg-hover: hsl(220 6% 18%);
-  --console-primary-bg-disabled: hsl(220 6% 12%);
-  --console-primary-fg: hsl(213 18% 92%);
-  --console-primary-fg-disabled: hsl(213 10% 40%);
-  --console-primary-border: hsla(0, 0%, 100%, 0.10);
-  --console-primary-border-hover: hsla(0, 0%, 100%, 0.14);
+  --console-primary-bg: #2D2D2D;
+  --console-primary-bg-hover: #383838;
+  --console-primary-bg-disabled: #252525;
+  --console-primary-fg: #FFFFFF;
+  --console-primary-fg-disabled: #717171;
+  --console-primary-border: #404040;
+  --console-primary-border-hover: #4A4A4A;
   
   /* ─────────────────────────────────────────────────────────────────────────────
      SECONDARY/GHOST BUTTON
      ───────────────────────────────────────────────────────────────────────────── */
   --console-secondary-bg: transparent;
-  --console-secondary-bg-hover: hsla(0, 0%, 100%, 0.04);
-  --console-secondary-fg: hsl(213 12% 70%);
-  --console-secondary-border: hsla(0, 0%, 100%, 0.08);
+  --console-secondary-bg-hover: #282828;
+  --console-secondary-fg: #AAAAAA;
+  --console-secondary-border: #303030;
   
   /* ─────────────────────────────────────────────────────────────────────────────
      DANGER/DESTRUCTIVE
      ───────────────────────────────────────────────────────────────────────────── */
-  --console-danger-bg: hsla(0, 72%, 51%, 0.12);
-  --console-danger-bg-hover: hsla(0, 72%, 51%, 0.18);
+  --console-danger-bg: hsla(0, 72%, 51%, 0.15);
+  --console-danger-bg-hover: hsla(0, 72%, 51%, 0.22);
   --console-danger-fg: hsl(0 84% 68%);
-  --console-danger-border: hsla(0, 72%, 51%, 0.25);
+  --console-danger-border: hsla(0, 72%, 51%, 0.30);
   
   /* ─────────────────────────────────────────────────────────────────────────────
-     STATUS CHIPS — Restrained fills, clear text
+     STATUS CHIPS — Soft dark, visible fills
      ───────────────────────────────────────────────────────────────────────────── */
-  --console-chip-pending-bg: hsla(0, 0%, 100%, 0.04);
-  --console-chip-pending-border: hsla(0, 0%, 100%, 0.08);
-  --console-chip-pending-fg: hsla(0, 0%, 100%, 0.50);
+  --console-chip-pending-bg: #282828;
+  --console-chip-pending-border: #404040;
+  --console-chip-pending-fg: #717171;
   
-  --console-chip-running-bg: hsla(217, 91%, 60%, 0.08);
-  --console-chip-running-border: hsla(217, 91%, 60%, 0.18);
+  --console-chip-running-bg: hsla(217, 91%, 60%, 0.12);
+  --console-chip-running-border: hsla(217, 91%, 60%, 0.25);
   --console-chip-running-fg: hsl(213 93% 68%);
   
-  --console-chip-pass-bg: hsla(142, 71%, 45%, 0.08);
-  --console-chip-pass-border: hsla(142, 71%, 45%, 0.15);
+  --console-chip-pass-bg: hsla(142, 71%, 45%, 0.12);
+  --console-chip-pass-border: hsla(142, 71%, 45%, 0.22);
   --console-chip-pass-fg: hsl(142 69% 58%);
   
-  --console-chip-warning-bg: hsla(48, 96%, 53%, 0.08);
-  --console-chip-warning-border: hsla(48, 96%, 53%, 0.15);
+  --console-chip-warning-bg: hsla(48, 96%, 53%, 0.12);
+  --console-chip-warning-border: hsla(48, 96%, 53%, 0.22);
   --console-chip-warning-fg: hsl(48 96% 53%);
   
-  --console-chip-fail-bg: hsla(0, 72%, 51%, 0.08);
-  --console-chip-fail-border: hsla(0, 72%, 51%, 0.15);
+  --console-chip-fail-bg: hsla(0, 72%, 51%, 0.12);
+  --console-chip-fail-border: hsla(0, 72%, 51%, 0.22);
   --console-chip-fail-fg: hsl(0 91% 71%);
   
   /* ─────────────────────────────────────────────────────────────────────────────
      SEVERITY CHIPS
      ───────────────────────────────────────────────────────────────────────────── */
-  --console-severity-high-bg: hsla(0, 72%, 51%, 0.12);
-  --console-severity-high-border: hsla(0, 72%, 51%, 0.20);
+  --console-severity-high-bg: hsla(0, 72%, 51%, 0.15);
+  --console-severity-high-border: hsla(0, 72%, 51%, 0.25);
   --console-severity-high-fg: hsl(0 91% 71%);
   
-  --console-severity-medium-bg: hsla(48, 96%, 53%, 0.12);
-  --console-severity-medium-border: hsla(48, 96%, 53%, 0.20);
+  --console-severity-medium-bg: hsla(48, 96%, 53%, 0.15);
+  --console-severity-medium-border: hsla(48, 96%, 53%, 0.25);
   --console-severity-medium-fg: hsl(48 96% 53%);
   
-  --console-severity-low-bg: hsla(217, 91%, 60%, 0.12);
-  --console-severity-low-border: hsla(217, 91%, 60%, 0.20);
+  --console-severity-low-bg: hsla(217, 91%, 60%, 0.15);
+  --console-severity-low-border: hsla(217, 91%, 60%, 0.25);
   --console-severity-low-fg: hsl(213 93% 68%);
 }
 

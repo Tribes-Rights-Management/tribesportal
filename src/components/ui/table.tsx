@@ -104,15 +104,15 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
     <tr
       ref={ref}
       className={cn(
-        // Horizontal divider only, subtle hover tint
+        // Horizontal divider only, subtle hover tint (YouTube Studio soft dark)
         // NO shadows, NO motion, NO lift
         "border-b",
-        "hover:bg-white/[0.02]",
-        "data-[state=selected]:bg-white/[0.04]",
+        "hover:bg-[#282828]",
+        "data-[state=selected]:bg-[#303030]",
         clickable && "cursor-pointer",
         className
       )}
-      style={{ borderColor: 'var(--platform-border)' }}
+      style={{ borderColor: '#303030' }}
       {...props}
     />
   ),
