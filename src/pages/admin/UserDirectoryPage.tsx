@@ -7,7 +7,7 @@ import { PageContainer } from "@/components/ui/page-container";
 import { PageShell, ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];
@@ -43,7 +43,11 @@ interface UserWithProfile {
  * - Centered modal for member details (not side panel)
  * - Typography-driven hierarchy
  * - Sparse, authoritative visual language
+ * - Thin icons (strokeWidth=1.5) for refined look
  */
+
+// Institutional icon stroke width - thinner = more refined
+const ICON_STROKE = 1.5;
 export default function UserDirectoryPage() {
   const { profile: currentProfile } = useAuth();
   const [users, setUsers] = useState<UserWithProfile[]>([]);
@@ -211,38 +215,38 @@ export default function UserDirectoryPage() {
                         onClick={() => handleRowClick(user)}
                         className="group"
                       >
-                        <TableCell>
+                        <TableCell className="py-6">
                           <div className="flex items-center gap-2">
                             <span 
-                              className="text-[14px] font-medium truncate"
+                              className="text-[15px] font-medium truncate"
                               style={{ color: 'var(--platform-text)' }}
                             >
                               {user.email}
                             </span>
                             {isCurrentUser(user) && (
                               <span 
-                                className="text-[10px] uppercase tracking-wider font-medium"
-                                style={{ color: 'var(--platform-text-muted)' }}
+                                className="text-[12px] uppercase tracking-wider font-medium"
+                                style={{ color: '#8F8F8F' }}
                               >
                                 (YOU)
                               </span>
                             )}
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-6">
                           <span 
-                            className="inline-flex items-center px-2 py-1 rounded text-[12px] font-medium"
+                            className="inline-flex items-center px-3 py-1.5 rounded text-[12px] font-medium"
                             style={{ 
-                              backgroundColor: 'rgba(255,255,255,0.06)',
-                              color: 'var(--platform-text-secondary)',
+                              backgroundColor: '#404040',
+                              color: '#E5E5E5',
                             }}
                           >
                             {formatPlatformRole(user.platform_role)}
                           </span>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-6">
                           <span 
-                            className="inline-flex items-center px-2 py-1 rounded text-[12px] font-medium"
+                            className="inline-flex items-center px-3 py-1.5 rounded text-[12px] font-medium"
                             style={{ 
                               backgroundColor: statusStyle.bg,
                               color: statusStyle.text,
@@ -251,15 +255,16 @@ export default function UserDirectoryPage() {
                             {formatStatus(user.status)}
                           </span>
                         </TableCell>
-                        <TableCell>
-                          <span style={{ color: 'var(--platform-text-muted)' }}>
+                        <TableCell className="py-6">
+                          <span className="text-[14px]" style={{ color: '#8F8F8F' }}>
                             {activeOrgCount > 0 ? `${activeOrgCount} org${activeOrgCount > 1 ? 's' : ''}` : '—'}
                           </span>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-6">
                           <ChevronRight 
                             className="h-4 w-4 opacity-40 group-hover:opacity-70 transition-opacity" 
-                            style={{ color: 'var(--platform-text)' }}
+                            strokeWidth={ICON_STROKE}
+                            style={{ color: '#6B6B6B' }}
                           />
                         </TableCell>
                       </TableRow>
@@ -293,7 +298,8 @@ export default function UserDirectoryPage() {
                       </span>
                       <ChevronRight 
                         className="h-5 w-5 shrink-0" 
-                        style={{ color: 'var(--platform-text-muted)' }} 
+                        strokeWidth={ICON_STROKE}
+                        style={{ color: '#6B6B6B' }} 
                       />
                     </div>
                     
@@ -354,18 +360,19 @@ export default function UserDirectoryPage() {
               <DialogHeader className="px-6 pt-6 pb-4 border-b" style={{ borderColor: 'var(--platform-border)' }}>
                 <div className="flex items-start justify-between">
                   <div>
-                    <DialogTitle className="text-[18px] font-semibold" style={{ color: 'var(--platform-text)' }}>
+                    <DialogTitle className="text-[18px] font-medium" style={{ color: 'var(--platform-text)' }}>
                       Member Details
                     </DialogTitle>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
+                  <button
                     onClick={() => setModalOpen(false)}
-                    className="h-9 w-9 -mr-2 -mt-1"
+                    className="p-2 rounded-lg transition-colors hover:bg-white/[0.06]"
+                    style={{ color: '#AAAAAA' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
                   >
-                    <X className="h-5 w-5" />
-                  </Button>
+                    <X className="h-4 w-4" strokeWidth={ICON_STROKE} />
+                  </button>
                 </div>
                 {/* Email prominently displayed */}
                 <div className="flex items-center gap-3 mt-3">
@@ -377,10 +384,13 @@ export default function UserDirectoryPage() {
                   </span>
                   <button
                     onClick={() => handleCopyEmail(selectedUser.email)}
-                    className="p-1.5 rounded hover:bg-white/[0.06] transition-colors"
+                    className="p-1.5 rounded transition-colors"
+                    style={{ color: '#6B6B6B' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#AAAAAA'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#6B6B6B'}
                     title="Copy email"
                   >
-                    <Copy className="h-3.5 w-3.5" style={{ color: 'var(--platform-text-muted)' }} />
+                    <Copy className="h-3.5 w-3.5" strokeWidth={ICON_STROKE} />
                   </button>
                 </div>
               </DialogHeader>
@@ -407,9 +417,12 @@ export default function UserDirectoryPage() {
                         </span>
                         <button
                           onClick={() => handleCopyEmail(selectedUser.email)}
-                          className="p-1 rounded hover:bg-white/[0.06] transition-colors"
+                          className="p-1 rounded transition-colors"
+                          style={{ color: '#6B6B6B' }}
+                          onMouseEnter={(e) => e.currentTarget.style.color = '#AAAAAA'}
+                          onMouseLeave={(e) => e.currentTarget.style.color = '#6B6B6B'}
                         >
-                          <Copy className="h-3 w-3" style={{ color: 'var(--platform-text-muted)' }} />
+                          <Copy className="h-3 w-3" strokeWidth={ICON_STROKE} />
                         </button>
                       </div>
                     </div>
@@ -449,11 +462,18 @@ export default function UserDirectoryPage() {
                   
                   {isCurrentUser(selectedUser) && (
                     <div 
-                      className="flex items-center gap-2 mb-4 px-3 py-2.5 rounded-lg"
-                      style={{ backgroundColor: 'rgba(251, 191, 36, 0.1)' }}
+                      className="flex items-start gap-3 px-4 py-3 rounded-r mb-4"
+                      style={{ 
+                        backgroundColor: '#3F2F1F',
+                        borderLeft: '2px solid #D97706'
+                      }}
                     >
-                      <AlertCircle className="h-4 w-4 shrink-0" style={{ color: '#fbbf24' }} />
-                      <span className="text-[13px]" style={{ color: '#fbbf24' }}>
+                      <AlertCircle 
+                        className="h-4 w-4 shrink-0 mt-0.5" 
+                        strokeWidth={ICON_STROKE}
+                        style={{ color: '#D97706' }} 
+                      />
+                      <span className="text-[13px]" style={{ color: '#E5B17A' }}>
                         You cannot modify your own access
                       </span>
                     </div>
