@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { SYSTEM_COPY } from "@/styles/tokens";
+import { Button } from "@/components/ui/button";
 
 /**
  * PendingApprovalPage - System boundary for pending approval
@@ -43,14 +44,15 @@ export default function PendingApprovalPage() {
         <span className="text-[12px] font-medium text-[#707070]">Pending authorization</span>
       </div>
 
-      {/* Action */}
+      {/* Action - using Button component */}
       <div className="mt-10">
-        <button
+        <Button
           onClick={signOut}
-          className="w-full h-[48px] rounded-[6px] border border-[#3A3A3A] text-[14px] font-medium text-[#707070] hover:text-[#909090] hover:border-[#4A4A4A] transition-colors duration-75"
+          variant="outline"
+          className="w-full h-[48px]"
         >
           Sign out
-        </button>
+        </Button>
       </div>
 
       {/* Contact */}

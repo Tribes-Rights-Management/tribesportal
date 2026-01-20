@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { ICON_BUTTON_CLASSES, ICON_SIZE, ICON_STROKE } from "@/styles/tokens";
+import { Button } from "@/components/ui/button";
+import { ICON_SIZE, ICON_STROKE } from "@/styles/tokens";
 
 interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** The icon component to render (from lucide-react) */
@@ -17,11 +18,11 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
  * IconButton - Premium Apple-grade icon button
  * 
  * Features:
+ * - Uses Button component with icon size variant
  * - 36x36px hit target
  * - 18px icon with 1.5 strokeWidth
- * - Subtle hover state (bg-black/5)
+ * - Subtle hover state
  * - Focus-visible only ring (no click rings)
- * - Light mode only
  */
 export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
   (
@@ -35,13 +36,15 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
     ref
   ) => {
     return (
-      <button
+      <Button
         ref={ref}
-        className={cn(ICON_BUTTON_CLASSES, className)}
+        variant="ghost"
+        size="icon"
+        className={cn("h-9 w-9", className)}
         {...props}
       >
         <Icon size={iconSize} strokeWidth={strokeWidth} />
-      </button>
+      </Button>
     );
   }
 );

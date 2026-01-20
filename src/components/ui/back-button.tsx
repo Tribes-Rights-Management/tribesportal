@@ -1,7 +1,8 @@
-import { useRouteMetadata, RouteScope } from "@/hooks/useRouteMetadata";
+import { useRouteMetadata } from "@/hooks/useRouteMetadata";
 import { useScopeTransition, getScopeTransitionLabel } from "@/hooks/useScopeTransition";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 /**
  * SCOPE-SAFE BACK BUTTON
@@ -40,14 +41,14 @@ export function BackButton({ showLabel = false, className, label }: BackButtonPr
   const displayLabel = label ?? parentLabel;
   
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       onClick={navigateToParent}
       className={cn(
-        "inline-flex items-center gap-2",
+        "h-auto p-0 gap-2",
         "text-[13px] text-muted-foreground",
-        "hover:text-foreground",
-        "transition-colors",
+        "hover:text-foreground hover:bg-transparent",
         className
       )}
       aria-label={displayLabel ? `Back to ${displayLabel}` : "Back"}
@@ -56,7 +57,7 @@ export function BackButton({ showLabel = false, className, label }: BackButtonPr
       {showLabel && displayLabel && (
         <span>{displayLabel}</span>
       )}
-    </button>
+    </Button>
   );
 }
 
@@ -104,30 +105,29 @@ export function ScopeTransitionButton({
   
   const displayLabel = label ?? getScopeTransitionLabel(currentScope, targetScope);
   
-  const baseStyles = "inline-flex items-center gap-2 transition-colors";
-  
-  const variantStyles = {
-    default: cn(
-      "px-4 py-2 rounded-lg",
-      "bg-card border border-border",
-      "text-[13px] text-foreground",
-      "hover:bg-muted"
-    ),
-    subtle: cn(
-      "text-[13px] text-muted-foreground",
-      "hover:text-foreground"
-    ),
-    inline: cn(
-      "text-[13px] text-muted-foreground",
-      "hover:text-foreground underline-offset-4 hover:underline"
-    ),
+  // Map custom variants to Button variants
+  const getButtonVariant = () => {
+    switch (variant) {
+      case "subtle":
+        return "ghost";
+      case "inline":
+        return "link";
+      default:
+        return "outline";
+    }
   };
   
   return (
-    <button
+    <Button
       type="button"
+      variant={getButtonVariant()}
       onClick={handleTransition}
-      className={cn(baseStyles, variantStyles[variant], className)}
+      className={cn(
+        variant === "default" && "px-4 py-2",
+        variant === "subtle" && "text-[13px] text-muted-foreground hover:text-foreground",
+        variant === "inline" && "text-[13px] text-muted-foreground hover:text-foreground underline-offset-4",
+        className
+      )}
       aria-label={displayLabel}
     >
       {variant === "default" && targetScope === "system" && (
@@ -137,7 +137,7 @@ export function ScopeTransitionButton({
       {variant === "default" && targetScope === "organization" && (
         <ArrowUpRight className="h-4 w-4" />
       )}
-    </button>
+    </Button>
   );
 }
 
@@ -167,18 +167,20 @@ export function ReturnToScopeRoot({ label, className }: ReturnToScopeRootProps) 
   const displayLabel = label ?? `Return to ${currentScope === "system" ? "Console" : "Overview"}`;
   
   return (
-    <a
-      href={scopeRootPath}
+    <Button
+      variant="ghost"
+      asChild
       className={cn(
-        "inline-flex items-center gap-2",
+        "h-auto p-0 gap-2",
         "text-[13px] text-muted-foreground",
-        "hover:text-foreground",
-        "transition-colors",
+        "hover:text-foreground hover:bg-transparent",
         className
       )}
     >
-      <ArrowLeft className="h-4 w-4" />
-      <span>{displayLabel}</span>
-    </a>
+      <a href={scopeRootPath}>
+        <ArrowLeft className="h-4 w-4" />
+        <span>{displayLabel}</span>
+      </a>
+    </Button>
   );
 }
