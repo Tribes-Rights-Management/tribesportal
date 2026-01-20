@@ -46,8 +46,6 @@ interface UserWithProfile {
  * - Thin icons (strokeWidth=1.5) for refined look
  */
 
-// Institutional icon stroke width - thinner = more refined
-const ICON_STROKE = 1.5;
 export default function UserDirectoryPage() {
   const { profile: currentProfile } = useAuth();
   const [users, setUsers] = useState<UserWithProfile[]>([]);
@@ -263,7 +261,7 @@ export default function UserDirectoryPage() {
                         <TableCell className="py-6">
                           <ChevronRight 
                             className="h-4 w-4 opacity-40 group-hover:opacity-70 transition-opacity" 
-                            strokeWidth={ICON_STROKE}
+                             strokeWidth={1.5}
                             style={{ color: '#6B6B6B' }}
                           />
                         </TableCell>
@@ -298,7 +296,7 @@ export default function UserDirectoryPage() {
                       </span>
                       <ChevronRight 
                         className="h-5 w-5 shrink-0" 
-                        strokeWidth={ICON_STROKE}
+                         strokeWidth={1.5}
                         style={{ color: '#6B6B6B' }} 
                       />
                     </div>
@@ -371,7 +369,7 @@ export default function UserDirectoryPage() {
                     onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
                     onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
                   >
-                    <X className="h-4 w-4" strokeWidth={ICON_STROKE} />
+                    <X className="h-4 w-4" strokeWidth={1.5} />
                   </button>
                 </div>
                 {/* Email prominently displayed */}
@@ -390,7 +388,7 @@ export default function UserDirectoryPage() {
                     onMouseLeave={(e) => e.currentTarget.style.color = '#6B6B6B'}
                     title="Copy email"
                   >
-                    <Copy className="h-3.5 w-3.5" strokeWidth={ICON_STROKE} />
+                    <Copy className="h-3.5 w-3.5" strokeWidth={1.5} />
                   </button>
                 </div>
               </DialogHeader>
@@ -422,7 +420,7 @@ export default function UserDirectoryPage() {
                           onMouseEnter={(e) => e.currentTarget.style.color = '#AAAAAA'}
                           onMouseLeave={(e) => e.currentTarget.style.color = '#6B6B6B'}
                         >
-                          <Copy className="h-3 w-3" strokeWidth={ICON_STROKE} />
+                          <Copy className="h-3 w-3" strokeWidth={1.5} />
                         </button>
                       </div>
                     </div>
@@ -470,7 +468,7 @@ export default function UserDirectoryPage() {
                     >
                       <AlertCircle 
                         className="h-4 w-4 shrink-0 mt-0.5" 
-                        strokeWidth={ICON_STROKE}
+                        strokeWidth={1.5}
                         style={{ color: '#D97706' }} 
                       />
                       <span className="text-[13px]" style={{ color: '#E5B17A' }}>
