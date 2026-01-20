@@ -11,6 +11,9 @@ import {
   SESSION_START_KEY,
   SESSION_AUDIT_EVENTS,
   LOGOUT_REASONS,
+  AUTH_GRACE_PERIOD_SECONDS,
+  AUTH_CALLBACK_ROUTES,
+  AUTH_GRACE_KEY,
   getSessionPolicy,
   type SessionPolicy,
 } from '@/constants/session-timeout';
@@ -88,6 +91,73 @@ export function useSessionTimeout(): UseSessionTimeoutResult {
   const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
 
   const isAuthenticated = !!user && !!profile;
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // AUTH CALLBACK & GRACE PERIOD DETECTION
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Check if we're currently in an auth callback flow.
+   * Session timeout checks should be disabled during these flows.
+   */
+  const isInAuthFlow = useCallback(() => {
+    const currentPath = location.pathname;
+    
+    // Check if on auth callback routes
+    if (AUTH_CALLBACK_ROUTES.some(route => currentPath.startsWith(route))) {
+      return true;
+    }
+    
+    // Check for auth tokens in URL (magic link processing)
+    const hasAuthHash = window.location.hash.includes('access_token') ||
+                        window.location.hash.includes('refresh_token') ||
+                        window.location.hash.includes('type=');
+    const hasAuthQuery = window.location.search.includes('code=') ||
+                         window.location.search.includes('token=');
+    
+    if (hasAuthHash || hasAuthQuery) {
+      return true;
+    }
+    
+    return false;
+  }, [location.pathname]);
+
+  /**
+   * Check if we're still within the post-login grace period.
+   * Returns true if session monitoring should be suspended.
+   */
+  const isInGracePeriod = useCallback(() => {
+    const graceStart = localStorage.getItem(AUTH_GRACE_KEY);
+    if (!graceStart) return false;
+    
+    const graceStartTime = parseInt(graceStart, 10);
+    const elapsed = (Date.now() - graceStartTime) / 1000;
+    
+    return elapsed < AUTH_GRACE_PERIOD_SECONDS;
+  }, []);
+
+  /**
+   * Start the grace period after successful authentication.
+   */
+  const startGracePeriod = useCallback(() => {
+    localStorage.setItem(AUTH_GRACE_KEY, Date.now().toString());
+  }, []);
+
+  /**
+   * Clear the grace period marker.
+   */
+  const clearGracePeriod = useCallback(() => {
+    localStorage.removeItem(AUTH_GRACE_KEY);
+  }, []);
+
+  /**
+   * Combined check: should session timeout monitoring be active?
+   */
+  const shouldMonitorSession = useCallback(() => {
+    if (isInAuthFlow()) return false;
+    if (isInGracePeriod()) return false;
+    return true;
+  }, [isInAuthFlow, isInGracePeriod]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // AUDIT LOGGING
@@ -372,6 +442,21 @@ export function useSessionTimeout(): UseSessionTimeoutResult {
 
   useEffect(() => {
     if (!isAuthenticated || !currentPolicy) return;
+    
+    // Don't start monitoring during auth flow or grace period
+    if (!shouldMonitorSession()) {
+      // Check again after grace period ends
+      const checkInterval = setInterval(() => {
+        if (shouldMonitorSession()) {
+          clearGracePeriod();
+          clearInterval(checkInterval);
+          // Force re-render to start monitoring
+          setCurrentPolicy({ ...currentPolicy });
+        }
+      }, 1000);
+      
+      return () => clearInterval(checkInterval);
+    }
 
     const handleActivity = () => {
       // Skip if warning is showing (user must click Stay signed in)
@@ -416,7 +501,7 @@ export function useSessionTimeout(): UseSessionTimeoutResult {
       if (absoluteTimerRef.current) clearTimeout(absoluteTimerRef.current);
       if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
     };
-  }, [isAuthenticated, currentPolicy, showWarning, resetIdleTimer, setupAbsoluteTimer]);
+  }, [isAuthenticated, currentPolicy, showWarning, resetIdleTimer, setupAbsoluteTimer, shouldMonitorSession, clearGracePeriod]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // POLICY RESOLUTION (scope-aware, role-aware)
@@ -428,9 +513,14 @@ export function useSessionTimeout(): UseSessionTimeoutResult {
       return;
     }
 
+    // Start grace period when user becomes authenticated
+    if (!localStorage.getItem(AUTH_GRACE_KEY)) {
+      startGracePeriod();
+    }
+
     const policy = getSessionPolicy(isExternalAuditor, scope);
     setCurrentPolicy(policy);
-  }, [isAuthenticated, isExternalAuditor, scope]);
+  }, [isAuthenticated, isExternalAuditor, scope, startGracePeriod]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // ROUTE CHANGE = ACTIVITY (if user-initiated)

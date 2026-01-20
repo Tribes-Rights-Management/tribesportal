@@ -1,5 +1,7 @@
+import { useLocation } from 'react-router-dom';
 import { useSessionTimeout } from '@/hooks/useSessionTimeout';
 import { SessionExpiryModal } from './SessionExpiryModal';
+import { AUTH_CALLBACK_ROUTES } from '@/constants/session-timeout';
 
 /**
  * SESSION GUARD — ROOT-LEVEL SESSION TIMEOUT ENFORCEMENT
@@ -25,6 +27,13 @@ import { SessionExpiryModal } from './SessionExpiryModal';
  * - External Auditor: 15 min idle, 8 hour absolute (overrides scope)
  * 
  * Warning modal appears 2 minutes before idle logout.
+ * 
+ * ═══════════════════════════════════════════════════════════════════════════
+ * AUTH CALLBACK PROTECTION:
+ * ═══════════════════════════════════════════════════════════════════════════
+ * 
+ * Session timeout checks are disabled during auth callback flows to prevent
+ * premature session expiry during magic link authentication.
  */
 
 interface SessionGuardProps {
@@ -32,6 +41,7 @@ interface SessionGuardProps {
 }
 
 export function SessionGuard({ children }: SessionGuardProps) {
+  const location = useLocation();
   const {
     showWarning,
     secondsRemaining,
@@ -40,12 +50,20 @@ export function SessionGuard({ children }: SessionGuardProps) {
     signOutNow,
   } = useSessionTimeout();
 
+  // Check if we're in an auth callback flow
+  const isInAuthFlow = AUTH_CALLBACK_ROUTES.some(route => 
+    location.pathname.startsWith(route)
+  ) || 
+  window.location.hash.includes('access_token') ||
+  window.location.hash.includes('refresh_token') ||
+  window.location.search.includes('code=');
+
   return (
     <>
       {children}
       
-      {/* Only render modal if session is active */}
-      {isSessionActive && (
+      {/* Only render modal if session is active AND not in auth flow */}
+      {isSessionActive && !isInAuthFlow && (
         <SessionExpiryModal
           open={showWarning}
           secondsRemaining={secondsRemaining}

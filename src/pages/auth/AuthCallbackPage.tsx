@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { AUTH_GRACE_KEY } from "@/constants/session-timeout";
 
 export default function AuthCallbackPage() {
   const navigate = useNavigate();
@@ -70,6 +71,15 @@ export default function AuthCallbackPage() {
           }
           return;
         }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // SUCCESSFUL AUTHENTICATION - START GRACE PERIOD
+        // ═══════════════════════════════════════════════════════════════════════
+        // 
+        // Set the grace period marker BEFORE navigating away.
+        // This prevents session timeout checks from triggering immediately
+        // after the user is redirected to the app.
+        localStorage.setItem(AUTH_GRACE_KEY, Date.now().toString());
 
         // Session established - let RootRedirect handle state resolution
         navigate("/", { replace: true });
