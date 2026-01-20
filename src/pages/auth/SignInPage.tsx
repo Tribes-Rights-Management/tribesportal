@@ -30,7 +30,7 @@ export default function SignInPage() {
   if (loading) {
     return (
       <AuthLayout>
-        <p style={{ fontSize: '14px', color: '#8A8A8A' }}>
+        <p style={{ fontSize: '14px', color: 'var(--auth-body)' }}>
           Verifying access
         </p>
       </AuthLayout>
@@ -57,9 +57,9 @@ export default function SignInPage() {
         <div 
           className="mb-6 py-3 px-4 rounded-lg text-[14px]"
           style={{ 
-            backgroundColor: 'rgba(255, 255, 255, 0.03)',
-            color: 'var(--platform-text-secondary)',
-            border: '1px solid rgba(255, 255, 255, 0.06)'
+            backgroundColor: 'var(--auth-input-bg)',
+            color: 'var(--auth-body)',
+            border: '1px solid var(--auth-input-border)'
           }}
         >
           {logoutMessage}

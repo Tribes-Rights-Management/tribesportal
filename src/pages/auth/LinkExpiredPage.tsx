@@ -8,13 +8,14 @@ import { AuthLayout } from "@/layouts/AuthLayout";
  * Same surface as AuthSurface - no visual mode switch
  */
 export default function LinkExpiredPage() {
+  // Use CSS variables for YouTube Studio-inspired soft dark
   const colors = {
-    heading: '#E8E8E6',
-    body: '#8A8A8A',
-    muted: '#5A5A5A',
-    buttonBg: '#E8E8E6',
-    buttonText: '#0A0A0B',
-    buttonHover: '#D0D0CE',
+    heading: 'var(--auth-heading)',
+    body: 'var(--auth-body)',
+    muted: 'var(--auth-muted)',
+    buttonBg: 'var(--auth-button-bg)',
+    buttonText: 'var(--auth-button-text)',
+    buttonHover: 'var(--auth-button-hover)',
   };
 
   return (

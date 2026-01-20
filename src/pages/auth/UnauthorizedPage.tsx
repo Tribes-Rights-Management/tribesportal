@@ -15,16 +15,17 @@ export default function UnauthorizedPage() {
   const [isChecking, setIsChecking] = useState(false);
   const [hasChecked, setHasChecked] = useState(false);
 
+  // Use CSS variables for YouTube Studio-inspired soft dark
   const colors = {
-    heading: '#E8E8E6',
-    body: '#8A8A8A',
-    muted: '#5A5A5A',
-    label: '#6A6A6A',
-    buttonBg: '#E8E8E6',
-    buttonText: '#0A0A0B',
-    buttonHover: '#D0D0CE',
-    buttonDisabledBg: 'rgba(255,255,255,0.08)',
-    buttonDisabledText: '#5A5A5A',
+    heading: 'var(--auth-heading)',
+    body: 'var(--auth-body)',
+    muted: 'var(--auth-muted)',
+    label: 'var(--auth-label)',
+    buttonBg: 'var(--auth-button-bg)',
+    buttonText: 'var(--auth-button-text)',
+    buttonHover: 'var(--auth-button-hover)',
+    buttonDisabledBg: 'var(--auth-button-disabled-bg)',
+    buttonDisabledText: 'var(--auth-button-disabled-text)',
   };
 
   const handleCheckAgain = async () => {

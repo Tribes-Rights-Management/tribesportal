@@ -84,32 +84,32 @@ export function AuthSurface() {
     setSearchParams({}, { replace: true });
   };
 
-  // Color tokens for dark canvas
+  // Color tokens derived from CSS variables (YouTube Studio-inspired soft dark)
   const colors = {
-    heading: '#E8E8E6',
-    body: '#8A8A8A',
-    muted: '#5A5A5A',
-    label: '#6A6A6A',
-    inputBg: 'rgba(255,255,255,0.04)',
-    inputBorder: 'rgba(255,255,255,0.12)',
-    inputBorderFocus: 'rgba(255,255,255,0.24)',
-    inputText: '#E8E8E6',
-    buttonBg: '#E8E8E6',
-    buttonText: '#0A0A0B',
-    buttonHover: '#D0D0CE',
-    buttonDisabledBg: 'rgba(255,255,255,0.08)',
-    buttonDisabledText: '#5A5A5A',
+    heading: 'var(--auth-heading)',
+    body: 'var(--auth-body)',
+    muted: 'var(--auth-muted)',
+    label: 'var(--auth-label)',
+    inputBg: 'var(--auth-input-bg)',
+    inputBorder: 'var(--auth-input-border)',
+    inputBorderFocus: 'var(--auth-input-border-focus)',
+    inputText: 'var(--auth-input-text)',
+    buttonBg: 'var(--auth-button-bg)',
+    buttonText: 'var(--auth-button-text)',
+    buttonHover: 'var(--auth-button-hover)',
+    buttonDisabledBg: 'var(--auth-button-disabled-bg)',
+    buttonDisabledText: 'var(--auth-button-disabled-text)',
   };
 
-  // Input styles — dark canvas, subtle border
+  // Input styles — dark canvas, visible border
   const inputStyles: React.CSSProperties = {
     width: '100%',
-    height: '48px',
-    borderRadius: '6px',
+    height: 'var(--auth-input-height)',
+    borderRadius: 'var(--auth-border-radius)',
     border: `1px solid ${colors.inputBorder}`,
     backgroundColor: colors.inputBg,
     padding: '0 14px',
-    fontSize: '15px',
+    fontSize: 'var(--auth-font-scale)',
     color: colors.inputText,
     outline: 'none',
     transition: 'border-color 150ms ease',
