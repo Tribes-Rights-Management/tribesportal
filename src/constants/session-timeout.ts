@@ -50,6 +50,19 @@ export const ABSOLUTE_SESSION_HOURS = {
 export const WARNING_THRESHOLD_MINUTES = 2;
 
 // ═══════════════════════════════════════════════════════════════════════════
+// AUTH GRACE PERIOD
+// ═══════════════════════════════════════════════════════════════════════════
+
+/** Grace period after login before session timeout monitoring begins (seconds) */
+export const AUTH_GRACE_PERIOD_SECONDS = 60;
+
+/** Routes that are considered auth callback flows (session checks disabled) */
+export const AUTH_CALLBACK_ROUTES = ['/auth/callback', '/auth/sign-in'] as const;
+
+/** localStorage key for auth grace period start time */
+export const AUTH_GRACE_KEY = 'tribes-auth-grace-start';
+
+// ═══════════════════════════════════════════════════════════════════════════
 // CROSS-TAB SYNC
 // ═══════════════════════════════════════════════════════════════════════════
 
