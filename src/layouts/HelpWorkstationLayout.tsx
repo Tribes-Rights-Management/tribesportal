@@ -43,6 +43,7 @@ const NAV_ITEMS: NavItem[] = [
   { path: "/help-workstation", label: "Overview", exact: true },
   { path: "/help-workstation/articles", label: "Articles" },
   { path: "/help-workstation/categories", label: "Categories" },
+  { path: "/help-workstation/tags", label: "Tags" },
   { path: "/help-workstation/messages", label: "Messages" },
   { path: "/help-workstation/analytics", label: "Analytics" },
   { path: "/help-workstation/settings", label: "Settings", dividerBefore: true },
