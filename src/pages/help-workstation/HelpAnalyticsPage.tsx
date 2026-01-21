@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { AlertCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, RefreshCw, ChevronDown } from "lucide-react";
 
 /**
  * HELP ANALYTICS PAGE — INSTITUTIONAL DESIGN
@@ -134,15 +134,18 @@ export default function HelpAnalyticsPage() {
           <p className="text-[13px] text-[#AAAAAA]">Help content performance and trends</p>
         </div>
         
-        <select
-          value={dateRange}
-          onChange={(e) => setDateRange(e.target.value as DateRange)}
-          className="h-9 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[12px] text-white focus:outline-none focus:border-[#505050]"
-        >
-          <option value="7">Last 7 days</option>
-          <option value="30">Last 30 days</option>
-          <option value="90">Last 90 days</option>
-        </select>
+        <div className="relative">
+          <select
+            value={dateRange}
+            onChange={(e) => setDateRange(e.target.value as DateRange)}
+            className="h-9 pl-3 pr-8 bg-transparent border-0 border-b border-[#303030] text-[12px] text-[#AAAAAA] focus:outline-none focus:border-[#505050] appearance-none cursor-pointer"
+          >
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+            <option value="90">Last 90 days</option>
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6B6B6B] pointer-events-none" strokeWidth={1.5} />
+        </div>
       </div>
 
       {/* Inline Error */}

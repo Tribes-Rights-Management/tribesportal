@@ -1,15 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, ArrowUpDown, ArrowUp, ArrowDown, MoreHorizontal, Archive, Eye, Pencil, RotateCcw, AlertCircle, RefreshCw } from "lucide-react";
+import { Plus, ArrowUpDown, ArrowUp, ArrowDown, AlertCircle, RefreshCw, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleStatus, HelpVisibility } from "@/hooks/useHelpManagement";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -170,37 +163,46 @@ export default function HelpArticlesListPage() {
         </div>
       )}
 
-      {/* Filters - No search icon */}
-      <div className="flex items-center gap-3 mb-6">
+      {/* Filters */}
+      <div className="flex items-center gap-4 mb-6">
         <input
           type="search"
-          placeholder="Search title or slug..."
+          placeholder="Search articles..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 max-w-md h-9 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[12px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050]"
+          className="flex-1 max-w-xs h-9 px-0 bg-transparent border-0 border-b border-[#303030] text-[12px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050]"
         />
-        <select
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className="h-9 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[12px] text-white focus:outline-none focus:border-[#505050]"
-        >
-          <option value="all">All categories</option>
-          {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
-        </select>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as any)}
-          className="h-9 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[12px] text-white focus:outline-none focus:border-[#505050]"
-        >
-          {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-        </select>
-        <select
-          value={visibilityFilter}
-          onChange={(e) => setVisibilityFilter(e.target.value as any)}
-          className="h-9 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[12px] text-white focus:outline-none focus:border-[#505050]"
-        >
-          {VISIBILITY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-        </select>
+        <div className="relative">
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="h-9 pl-3 pr-8 bg-transparent border-0 border-b border-[#303030] text-[12px] text-[#AAAAAA] focus:outline-none focus:border-[#505050] appearance-none cursor-pointer"
+          >
+            <option value="all">All categories</option>
+            {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6B6B6B] pointer-events-none" strokeWidth={1.5} />
+        </div>
+        <div className="relative">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+            className="h-9 pl-3 pr-8 bg-transparent border-0 border-b border-[#303030] text-[12px] text-[#AAAAAA] focus:outline-none focus:border-[#505050] appearance-none cursor-pointer"
+          >
+            {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6B6B6B] pointer-events-none" strokeWidth={1.5} />
+        </div>
+        <div className="relative">
+          <select
+            value={visibilityFilter}
+            onChange={(e) => setVisibilityFilter(e.target.value as any)}
+            className="h-9 pl-3 pr-8 bg-transparent border-0 border-b border-[#303030] text-[12px] text-[#AAAAAA] focus:outline-none focus:border-[#505050] appearance-none cursor-pointer"
+          >
+            {VISIBILITY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6B6B6B] pointer-events-none" strokeWidth={1.5} />
+        </div>
       </div>
 
       {/* Table */}

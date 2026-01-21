@@ -466,14 +466,14 @@ export default function HelpArticleEditorPage() {
                       id="category"
                       value={categoryId}
                       onChange={(e) => setCategoryId(e.target.value)}
-                      className="w-full text-sm text-gray-700 bg-transparent border-0 border-b border-gray-200 focus:border-gray-400 focus:outline-none pb-1 pr-5 appearance-none cursor-pointer"
+                      className="w-full text-sm text-gray-700 bg-transparent border-0 border-b border-gray-200 focus:border-gray-400 focus:outline-none pb-1 pr-8 appearance-none cursor-pointer"
                     >
                       <option value="none">None</option>
                       {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                       ))}
                     </select>
-                    <ChevronDown className="absolute right-0 top-1 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
+                    <ChevronDown className="absolute right-2 top-1 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
                   </div>
                 </div>
 
@@ -484,12 +484,12 @@ export default function HelpArticleEditorPage() {
                       id="visibility"
                       value={visibility}
                       onChange={(e) => setVisibility(e.target.value as "public" | "internal")}
-                      className="w-full text-sm text-gray-700 bg-transparent border-0 border-b border-gray-200 focus:border-gray-400 focus:outline-none pb-1 pr-5 appearance-none cursor-pointer"
+                      className="w-full text-sm text-gray-700 bg-transparent border-0 border-b border-gray-200 focus:border-gray-400 focus:outline-none pb-1 pr-8 appearance-none cursor-pointer"
                     >
                       <option value="public">Public</option>
                       <option value="internal">Internal</option>
                     </select>
-                    <ChevronDown className="absolute right-0 top-1 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
+                    <ChevronDown className="absolute right-2 top-1 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
                   </div>
                 </div>
               </div>
