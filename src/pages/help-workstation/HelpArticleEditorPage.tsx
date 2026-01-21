@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, AlertCircle, RefreshCw, Bold, Italic, Link, List, ListOrdered, Heading2, ChevronDown } from "lucide-react";
+import { ArrowLeft, Clock, AlertCircle, RefreshCw, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleVersion } from "@/hooks/useHelpManagement";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,10 +17,10 @@ import {
 
 /**
  * HELP ARTICLE EDITOR — HELP WORKSTATION
- * 
+ *
  * Full article editing with:
  * - Title, slug, category, visibility
- * - Markdown content editor
+ * - WYSIWYG rich text editor (TipTap)
  * - Status transitions (Draft → Published → Archived)
  * - Version history
  */
@@ -232,23 +233,6 @@ export default function HelpArticleEditorPage() {
     }
   };
 
-  // Markdown toolbar helper
-  const insertMarkdown = (prefix: string, suffix: string = "") => {
-    const textarea = document.getElementById("body") as HTMLTextAreaElement;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = bodyMd.substring(start, end);
-    const newText = bodyMd.substring(0, start) + prefix + selectedText + suffix + bodyMd.substring(end);
-    setBodyMd(newText);
-
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + prefix.length, end + prefix.length);
-    }, 0);
-  };
-
   if (loading) {
     return (
       <div className="flex-1 p-6">
@@ -381,71 +365,12 @@ export default function HelpArticleEditorPage() {
               className="w-full text-[12px] text-[#AAAAAA] placeholder:text-[#505050] bg-transparent border-0 border-b border-[#303030] focus:border-[#505050] focus:outline-none pb-2 mb-5"
             />
 
-            {/* Content area */}
-            <div className="border border-[#404040] rounded-md">
-              {/* Toolbar */}
-              <div className="flex items-center gap-0 px-2 py-1.5 border-b border-[#303030]">
-                <button
-                  type="button"
-                  onClick={() => insertMarkdown("**", "**")}
-                  className="p-1.5 text-[#6B6B6B] hover:text-[#AAAAAA]"
-                  title="Bold"
-                >
-                  <Bold className="h-3.5 w-3.5" strokeWidth={1.5} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => insertMarkdown("*", "*")}
-                  className="p-1.5 text-[#6B6B6B] hover:text-[#AAAAAA]"
-                  title="Italic"
-                >
-                  <Italic className="h-3.5 w-3.5" strokeWidth={1.5} />
-                </button>
-                <span className="w-px h-3 bg-[#303030] mx-1" />
-                <button
-                  type="button"
-                  onClick={() => insertMarkdown("## ")}
-                  className="p-1.5 text-[#6B6B6B] hover:text-[#AAAAAA]"
-                  title="Heading"
-                >
-                  <Heading2 className="h-3.5 w-3.5" strokeWidth={1.5} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => insertMarkdown("[", "](url)")}
-                  className="p-1.5 text-[#6B6B6B] hover:text-[#AAAAAA]"
-                  title="Link"
-                >
-                  <Link className="h-3.5 w-3.5" strokeWidth={1.5} />
-                </button>
-                <span className="w-px h-3 bg-[#303030] mx-1" />
-                <button
-                  type="button"
-                  onClick={() => insertMarkdown("- ")}
-                  className="p-1.5 text-[#6B6B6B] hover:text-[#AAAAAA]"
-                  title="List"
-                >
-                  <List className="h-3.5 w-3.5" strokeWidth={1.5} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => insertMarkdown("1. ")}
-                  className="p-1.5 text-[#6B6B6B] hover:text-[#AAAAAA]"
-                  title="Numbered list"
-                >
-                  <ListOrdered className="h-3.5 w-3.5" strokeWidth={1.5} />
-                </button>
-              </div>
-
-              {/* Textarea */}
-              <textarea
-                id="body"
-                value={bodyMd}
-                onChange={(e) => setBodyMd(e.target.value)}
-                placeholder="Start writing..."
-                className="w-full min-h-[400px] p-3 text-[13px] text-[#AAAAAA] placeholder:text-[#505050] bg-transparent border-0 focus:outline-none resize-none font-mono leading-relaxed"
-              />
-            </div>
+            {/* Rich Text Editor */}
+            <RichTextEditor
+              content={bodyMd}
+              onChange={setBodyMd}
+              placeholder="Start writing..."
+            />
           </div>
 
           {/* Sidebar */}

@@ -1617,3 +1617,174 @@ html[data-ui-density="compact"] {
 }
 
 /* Legacy compact density section removed - see html[data-ui-density="compact"] in @layer components above */
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   TIPTAP RICH TEXT EDITOR — INSTITUTIONAL DARK THEME (LOCKED)
+
+   Styling for the TipTap WYSIWYG editor used in Help article creation.
+   Matches the institutional dark theme of the Help Workstation.
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* TipTap editor content area */
+.ProseMirror {
+  outline: none;
+  min-height: 400px;
+  padding: 16px;
+}
+
+.ProseMirror p {
+  margin: 0 0 1em 0;
+  line-height: 1.6;
+}
+
+.ProseMirror p:last-child {
+  margin-bottom: 0;
+}
+
+/* Headings */
+.ProseMirror h2 {
+  font-size: 1.25em;
+  font-weight: 600;
+  margin: 1.5em 0 0.75em 0;
+  color: #FFFFFF;
+}
+
+.ProseMirror h2:first-child {
+  margin-top: 0;
+}
+
+.ProseMirror h3 {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin: 1.25em 0 0.5em 0;
+  color: #FFFFFF;
+}
+
+/* Lists - proper bullet points */
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin: 0.75em 0;
+}
+
+.ProseMirror ul li {
+  margin: 0.25em 0;
+  padding-left: 0.25em;
+}
+
+.ProseMirror ul li::marker {
+  color: #6B6B6B;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin: 0.75em 0;
+}
+
+.ProseMirror ol li {
+  margin: 0.25em 0;
+  padding-left: 0.25em;
+}
+
+.ProseMirror ol li::marker {
+  color: #6B6B6B;
+}
+
+/* Nested lists */
+.ProseMirror ul ul,
+.ProseMirror ol ul {
+  list-style-type: circle;
+  margin: 0.25em 0;
+}
+
+.ProseMirror ul ol,
+.ProseMirror ol ol {
+  margin: 0.25em 0;
+}
+
+/* Links */
+.ProseMirror a {
+  color: #60A5FA;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.ProseMirror a:hover {
+  color: #93C5FD;
+}
+
+/* Bold and italic */
+.ProseMirror strong {
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+.ProseMirror u {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Placeholder */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #505050;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Code blocks */
+.ProseMirror code {
+  background-color: #252525;
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+  font-size: 0.9em;
+  color: #E5E5E5;
+}
+
+.ProseMirror pre {
+  background-color: #1A1A1A;
+  border: 1px solid #303030;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 1em 0;
+  overflow-x: auto;
+}
+
+.ProseMirror pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Blockquotes */
+.ProseMirror blockquote {
+  border-left: 3px solid #404040;
+  padding-left: 1em;
+  margin: 1em 0;
+  color: #8F8F8F;
+}
+
+/* Horizontal rule */
+.ProseMirror hr {
+  border: none;
+  border-top: 1px solid #303030;
+  margin: 1.5em 0;
+}
+
+/* Selection styling */
+.ProseMirror ::selection {
+  background-color: rgba(96, 165, 250, 0.3);
+}
+
+/* Focus styling for cursor */
+.ProseMirror-focused {
+  outline: none;
+}
