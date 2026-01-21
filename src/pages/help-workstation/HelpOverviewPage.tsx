@@ -400,16 +400,22 @@ export default function HelpOverviewPage() {
   return (
     <div className="flex-1 p-8">
       {/* Header */}
-      <div className="mb-8">
-        <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
-          HELP WORKSTATION
-        </p>
-        <h1 className="text-[20px] font-medium text-white mb-2">
-          Overview
-        </h1>
-        <p className="text-[13px] text-[#AAAAAA]">
-          Manage articles, categories, and support content
-        </p>
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
+            HELP WORKSTATION
+          </p>
+          <h1 className="text-[20px] font-medium text-white mb-2">
+            Overview
+          </h1>
+          <p className="text-[13px] text-[#AAAAAA]">
+            Manage articles, categories, and support content
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => navigate('/help-workstation/articles/new')}>
+          <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
+          New Article
+        </Button>
       </div>
 
       {/* Inline Error */}
@@ -568,20 +574,6 @@ export default function HelpOverviewPage() {
           <p className="text-[28px] font-medium text-white tabular-nums mb-1.5">{messageStats.total}</p>
           <p className="text-[11px] text-[#8F8F8F]">{messageStats.newCount} new · {messageStats.open} open</p>
         </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="flex gap-2 mb-8">
-        <Button variant="default" size="sm" onClick={() => navigate('/help-workstation/articles/new')}>
-          <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
-          New Article
-        </Button>
-        <Button variant="outline" size="sm" onClick={() => navigate('/help-workstation/categories')}>
-          Manage Categories
-        </Button>
-        <Button variant="outline" size="sm" onClick={() => navigate('/help-workstation/tags')}>
-          Manage Tags
-        </Button>
       </div>
 
       {/* Bottom Sections */}
