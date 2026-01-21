@@ -13,33 +13,31 @@
  */
 
 // ═══════════════════════════════════════════════════════════════════════════
-// IDLE TIMEOUT POLICIES (minutes)
+// APPLE-STANDARD SESSION TIMEOUT POLICY
 // ═══════════════════════════════════════════════════════════════════════════
+// 
+// Simplified, universal timeout policy:
+// - 30 minutes inactivity → Show warning dialog
+// - 2 minutes after warning → Auto sign out
+// - Total: 32 minutes from last activity to sign out
+//
+// This matches Apple's approach: Long enough to not annoy, short enough 
+// to be secure, with clear warning before action.
 
+/** Universal inactivity timeout in minutes (Apple standard) */
+export const INACTIVITY_TIMEOUT_MINUTES = 30;
+
+/** Warning countdown duration in minutes */
+export const WARNING_COUNTDOWN_MINUTES = 2;
+
+/** Absolute session lifetime in hours (after this, force re-auth regardless of activity) */
+export const ABSOLUTE_SESSION_HOURS = 12;
+
+// Legacy exports for backward compatibility
 export const IDLE_TIMEOUT_MINUTES = {
-  /** System Console: 15 minutes idle (elevated privilege surface) */
-  SYSTEM_CONSOLE: 15,
-  
-  /** Organization workspaces (Client Portal, Licensing): 30 minutes idle */
-  ORGANIZATION: 30,
-  
-  /** External Auditor sessions: 15 minutes idle (strictest policy) */
-  EXTERNAL_AUDITOR: 15,
-} as const;
-
-// ═══════════════════════════════════════════════════════════════════════════
-// ABSOLUTE SESSION LIFETIME (hours)
-// ═══════════════════════════════════════════════════════════════════════════
-
-export const ABSOLUTE_SESSION_HOURS = {
-  /** Platform Executive / System Console: 8 hours max */
-  SYSTEM_CONSOLE: 8,
-  
-  /** Standard organization sessions: 12 hours max */
-  ORGANIZATION: 12,
-  
-  /** External Auditor: 8 hours max (stricter) */
-  EXTERNAL_AUDITOR: 8,
+  SYSTEM_CONSOLE: INACTIVITY_TIMEOUT_MINUTES,
+  ORGANIZATION: INACTIVITY_TIMEOUT_MINUTES,
+  EXTERNAL_AUDITOR: INACTIVITY_TIMEOUT_MINUTES,
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -47,7 +45,7 @@ export const ABSOLUTE_SESSION_HOURS = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 /** Warning modal appears this many minutes before idle logout */
-export const WARNING_THRESHOLD_MINUTES = 2;
+export const WARNING_THRESHOLD_MINUTES = WARNING_COUNTDOWN_MINUTES;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // AUTH GRACE PERIOD
@@ -80,25 +78,22 @@ export const SESSION_START_KEY = 'tribes-session-start';
 // ═══════════════════════════════════════════════════════════════════════════
 
 /**
- * Events that reset the idle timer.
- * These are intentional user actions, not background processes.
+ * Events that reset the idle timer (Apple standard).
+ * Includes mouse movement for better UX - throttled to prevent spam.
  */
 export const ACTIVITY_EVENTS = [
-  'click',
-  'pointerdown',
+  'mousedown',
+  'mousemove',
+  'keypress',
   'keydown',
+  'scroll',
   'touchstart',
+  'click',
   'wheel',
 ] as const;
 
-/**
- * Events that do NOT count as activity:
- * - background polling
- * - websocket messages
- * - passive data refresh
- * - tab visibility changes alone
- * - mousemove (too sensitive, fires constantly)
- */
+/** Throttle interval for activity detection (ms) - max once per 5 seconds */
+export const ACTIVITY_THROTTLE_MS = 5000;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SESSION SCOPE TYPE
@@ -118,38 +113,19 @@ export interface SessionPolicy {
 }
 
 /**
- * Get session policy based on current scope and role
+ * Get session policy - now unified Apple-standard policy for all users.
+ * Scope and role parameters kept for backward compatibility but ignored.
  */
 export function getSessionPolicy(
-  isExternalAuditor: boolean,
-  currentScope: 'system' | 'organization' | 'user' | 'auth' | 'public'
+  _isExternalAuditor?: boolean,
+  _currentScope?: 'system' | 'organization' | 'user' | 'auth' | 'public'
 ): SessionPolicy {
-  // External auditors always get stricter policy
-  if (isExternalAuditor) {
-    return {
-      idleTimeoutMs: IDLE_TIMEOUT_MINUTES.EXTERNAL_AUDITOR * 60 * 1000,
-      absoluteLifetimeMs: ABSOLUTE_SESSION_HOURS.EXTERNAL_AUDITOR * 60 * 60 * 1000,
-      warningThresholdMs: WARNING_THRESHOLD_MINUTES * 60 * 1000,
-      policyLabel: 'external_auditor',
-    };
-  }
-
-  // System Console scope
-  if (currentScope === 'system') {
-    return {
-      idleTimeoutMs: IDLE_TIMEOUT_MINUTES.SYSTEM_CONSOLE * 60 * 1000,
-      absoluteLifetimeMs: ABSOLUTE_SESSION_HOURS.SYSTEM_CONSOLE * 60 * 60 * 1000,
-      warningThresholdMs: WARNING_THRESHOLD_MINUTES * 60 * 1000,
-      policyLabel: 'system_console',
-    };
-  }
-
-  // Organization workspace (including user scope which is org-adjacent)
+  // Universal Apple-standard policy: 30 min idle, 2 min warning, 12 hour absolute
   return {
-    idleTimeoutMs: IDLE_TIMEOUT_MINUTES.ORGANIZATION * 60 * 1000,
-    absoluteLifetimeMs: ABSOLUTE_SESSION_HOURS.ORGANIZATION * 60 * 60 * 1000,
-    warningThresholdMs: WARNING_THRESHOLD_MINUTES * 60 * 1000,
-    policyLabel: 'organization',
+    idleTimeoutMs: INACTIVITY_TIMEOUT_MINUTES * 60 * 1000,
+    absoluteLifetimeMs: ABSOLUTE_SESSION_HOURS * 60 * 60 * 1000,
+    warningThresholdMs: WARNING_COUNTDOWN_MINUTES * 60 * 1000,
+    policyLabel: 'standard',
   };
 }
 
