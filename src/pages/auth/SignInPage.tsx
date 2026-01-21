@@ -41,9 +41,12 @@ export default function SignInPage() {
   const getLogoutMessage = () => {
     switch (logoutReason) {
       case LOGOUT_REASONS.IDLE:
-        return "You were signed out due to inactivity.";
+        return "Your session expired due to inactivity. Please sign in again.";
+      case LOGOUT_REASONS.MAX_SESSION:
+        return "Your session expired after 8 hours. Please sign in again.";
       case LOGOUT_REASONS.ABSOLUTE:
       case 'session-timeout': // Legacy support
+      case 'session-limit':   // Legacy support
         return "Your session has expired. Please sign in again.";
       default:
         return null;
@@ -56,7 +59,7 @@ export default function SignInPage() {
     <AuthLayout>
       {logoutMessage && (
         <div 
-          className="mb-6 py-3 px-4 rounded-lg text-[14px]"
+          className="mb-6 py-3 px-4 rounded-md text-[13px]"
           style={{ 
             backgroundColor: 'var(--auth-input-bg)',
             color: 'var(--auth-body)',
