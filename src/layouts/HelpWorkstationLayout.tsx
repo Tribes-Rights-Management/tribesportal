@@ -12,12 +12,6 @@ import {
   LogOut, 
   Settings, 
   ArrowLeft, 
-  LayoutDashboard, 
-  FileText, 
-  FolderOpen, 
-  MessageSquare, 
-  BarChart3,
-  ChevronRight,
   Menu,
   X
 } from "lucide-react";
@@ -26,57 +20,32 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 
 /**
- * HELP WORKSTATION LAYOUT — FIRST-CLASS WORKSTATION
+ * HELP WORKSTATION LAYOUT — INSTITUTIONAL DESIGN
  * 
- * Dedicated layout for Help content management with its own sidebar navigation.
- * Company-scoped (not workspace-scoped).
+ * Text-only navigation (no icons) for institutional clarity.
+ * Company-scoped, not workspace-scoped.
  * 
- * Navigation:
- * 1. Overview
- * 2. Articles
- * 3. Categories
- * 4. Messages
- * 5. Analytics
- * 6. Settings (optional)
- * 
- * NOT accessible to:
- * - External auditors
- * - Licensing users
- * - Portal users
+ * Design principles:
+ * - No icons in navigation (cleaner, more institutional)
+ * - Text creates hierarchy through weight and color
+ * - Monochromatic palette
+ * - Bloomberg Terminal aesthetic, not Notion
  */
 
-const NAV_ITEMS = [
-  { 
-    path: "/help-workstation", 
-    label: "Overview", 
-    icon: LayoutDashboard, 
-    exact: true 
-  },
-  { 
-    path: "/help-workstation/articles", 
-    label: "Articles", 
-    icon: FileText 
-  },
-  { 
-    path: "/help-workstation/categories", 
-    label: "Categories", 
-    icon: FolderOpen 
-  },
-  { 
-    path: "/help-workstation/messages", 
-    label: "Messages", 
-    icon: MessageSquare 
-  },
-  { 
-    path: "/help-workstation/analytics", 
-    label: "Analytics", 
-    icon: BarChart3 
-  },
-  { 
-    path: "/help-workstation/settings", 
-    label: "Settings", 
-    icon: Settings 
-  },
+interface NavItem {
+  path: string;
+  label: string;
+  exact?: boolean;
+  dividerBefore?: boolean;
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { path: "/help-workstation", label: "Overview", exact: true },
+  { path: "/help-workstation/articles", label: "Articles" },
+  { path: "/help-workstation/categories", label: "Categories" },
+  { path: "/help-workstation/messages", label: "Messages" },
+  { path: "/help-workstation/analytics", label: "Analytics" },
+  { path: "/help-workstation/settings", label: "Settings", dividerBefore: true },
 ];
 
 function HelpAccountMenu() {
@@ -173,29 +142,34 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const location = useLocation();
 
   return (
-    <nav className="flex flex-col gap-0.5 px-2 py-3">
+    <nav className="flex flex-col py-4 px-3">
       {NAV_ITEMS.map((item) => {
-        const Icon = item.icon;
         const isActive = item.exact 
           ? location.pathname === item.path
           : location.pathname.startsWith(item.path);
 
         return (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            onClick={onNavigate}
-            className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-colors duration-100",
-              "hover:bg-white/[0.04]",
-              isActive 
-                ? "bg-white/[0.06] text-white font-medium" 
-                : "text-white/60"
+          <div key={item.path}>
+            {/* Divider before Settings */}
+            {item.dividerBefore && (
+              <div 
+                className="my-2 mx-1" 
+                style={{ borderTop: '1px solid #303030' }}
+              />
             )}
-          >
-            <Icon className="h-4 w-4 shrink-0" />
-            <span>{item.label}</span>
-          </NavLink>
+            <NavLink
+              to={item.path}
+              onClick={onNavigate}
+              className={cn(
+                "block w-full text-left px-4 py-2.5 text-[14px] rounded-md transition-colors duration-100",
+                isActive 
+                  ? "bg-white/[0.04] text-white font-medium" 
+                  : "text-[#AAAAAA] hover:text-white hover:bg-white/[0.02]"
+              )}
+            >
+              {item.label}
+            </NavLink>
+          </div>
         );
       })}
     </nav>
@@ -290,10 +264,10 @@ export function HelpWorkstationLayout() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar — Desktop */}
+        {/* Sidebar — Desktop (narrower, 192px) */}
         {!isMobile && (
           <aside 
-            className="w-56 shrink-0 overflow-y-auto"
+            className="w-48 shrink-0 overflow-y-auto"
             style={{
               backgroundColor: 'var(--tribes-header-bg)',
               borderRight: '1px solid var(--tribes-border)',
