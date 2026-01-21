@@ -251,38 +251,34 @@ export default function HelpArticleEditorPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#fafafa] p-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-sm text-gray-400">Loading...</p>
-        </div>
+      <div className="flex-1 p-6">
+        <p className="text-[13px] text-[#6B6B6B]">Loading...</p>
       </div>
     );
   }
 
   if (loadError && !isNew) {
     return (
-      <div className="min-h-screen bg-[#fafafa] p-6">
-        <div className="max-w-4xl mx-auto">
-          <button
-            onClick={() => navigate("/help-workstation/articles")}
-            className="text-sm text-gray-500 hover:text-gray-700 mb-6 flex items-center gap-1"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Back
-          </button>
-          <div className="flex items-start gap-2 text-sm">
-            <AlertCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-gray-700">Unable to load article</p>
-              <p className="text-gray-400 text-xs mt-1">The article may not exist or you don't have permission.</p>
-              <button
-                onClick={() => window.location.reload()}
-                className="text-xs text-gray-500 hover:text-gray-700 underline mt-2 flex items-center gap-1"
-              >
-                <RefreshCw className="h-3 w-3" />
-                Try again
-              </button>
-            </div>
+      <div className="flex-1 p-6">
+        <button
+          onClick={() => navigate("/help-workstation/articles")}
+          className="text-[12px] text-[#6B6B6B] hover:text-[#AAAAAA] mb-6 flex items-center gap-1"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.5} />
+          Back
+        </button>
+        <div className="flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
+          <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
+          <div>
+            <p className="text-[12px] text-[#E5E5E5]">Unable to load article</p>
+            <p className="text-[11px] text-[#6B6B6B] mt-1">The article may not exist or you don't have permission.</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="text-[11px] text-[#DC2626] hover:text-[#EF4444] underline mt-2 flex items-center gap-1"
+            >
+              <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
+              Try again
+            </button>
           </div>
         </div>
       </div>
@@ -290,29 +286,29 @@ export default function HelpArticleEditorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
+    <div className="flex-1">
       {/* Top bar */}
-      <div className="border-b border-gray-200 bg-white">
-        <div className="max-w-6xl mx-auto px-6 h-12 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+      <div className="border-b border-[#303030]">
+        <div className="px-6 h-11 flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => navigate("/help-workstation/articles")}
-              className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+              className="text-[12px] text-[#6B6B6B] hover:text-[#AAAAAA] flex items-center gap-1"
             >
-              <ArrowLeft className="h-3.5 w-3.5" />
+              <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.5} />
               <span>Articles</span>
             </button>
             {!isNew && article && (
               <>
-                <span className="text-gray-300">/</span>
-                <span className={`text-xs px-1.5 py-0.5 rounded ${
-                  article.status === 'published' ? 'bg-green-100 text-green-700' :
-                  article.status === 'archived' ? 'bg-gray-100 text-gray-500' :
-                  'bg-yellow-100 text-yellow-700'
+                <span className="text-[#303030]">/</span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded ${
+                  article.status === 'published' ? 'bg-[#059669]/20 text-[#34D399]' :
+                  article.status === 'archived' ? 'bg-[#7F1D1D]/20 text-[#FCA5A5]' :
+                  'bg-[#303030] text-[#AAAAAA]'
                 }`}>
                   {article.status}
                 </span>
-                <span className="text-xs text-gray-400">
+                <span className="text-[11px] text-[#6B6B6B]">
                   · {format(new Date(article.updated_at), "MMM d")}
                 </span>
               </>
@@ -322,7 +318,7 @@ export default function HelpArticleEditorPage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50"
+              className="text-[12px] text-[#6B6B6B] hover:text-[#AAAAAA] disabled:opacity-50"
             >
               {saving ? "Saving..." : "Save draft"}
             </button>
@@ -330,7 +326,7 @@ export default function HelpArticleEditorPage() {
               <button
                 onClick={isNew ? handleSave : () => setPublishDialogOpen(true)}
                 disabled={saving}
-                className="text-sm bg-gray-900 text-white px-3 py-1.5 hover:bg-gray-800 disabled:opacity-50"
+                className="text-[12px] bg-white text-[#0A0A0A] px-3 py-1 rounded hover:bg-[#E5E5E5] disabled:opacity-50"
               >
                 {isNew ? "Publish" : "Publish"}
               </button>
@@ -340,16 +336,16 @@ export default function HelpArticleEditorPage() {
       </div>
 
       {/* Main content */}
-      <div className="max-w-6xl mx-auto px-6 py-6">
+      <div className="px-6 py-5">
         {/* Validation error */}
         {validationError && (
-          <div className="mb-4 flex items-center gap-2 text-sm text-red-600">
-            <AlertCircle className="h-3.5 w-3.5" />
-            {validationError}
+          <div className="mb-4 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
+            <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
+            <p className="text-[12px] text-[#E5E5E5]">{validationError}</p>
           </div>
         )}
 
-        <div className="flex gap-12">
+        <div className="flex gap-8">
           {/* Editor */}
           <div className="flex-1 min-w-0">
             {/* Title */}
@@ -358,12 +354,12 @@ export default function HelpArticleEditorPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Untitled"
-              className="w-full text-3xl font-semibold text-gray-900 placeholder-gray-300 bg-transparent border-0 border-b border-transparent focus:border-gray-200 focus:outline-none pb-2 mb-3"
+              className="w-full text-[24px] font-medium text-white placeholder:text-[#6B6B6B] bg-transparent border-0 border-b border-[#303030] focus:border-[#505050] focus:outline-none pb-2 mb-2"
             />
 
             {/* Slug */}
-            <div className="flex items-center gap-0.5 mb-4">
-              <span className="text-xs text-gray-400">/help/</span>
+            <div className="flex items-center gap-0.5 mb-3">
+              <span className="text-[11px] text-[#6B6B6B]">/help/</span>
               <input
                 id="slug"
                 value={slug}
@@ -372,7 +368,7 @@ export default function HelpArticleEditorPage() {
                   setSlugManual(true);
                 }}
                 placeholder="slug"
-                className="text-xs text-gray-500 bg-transparent border-0 focus:outline-none"
+                className="text-[11px] text-[#8F8F8F] placeholder:text-[#505050] bg-transparent border-0 focus:outline-none"
               />
             </div>
 
@@ -382,62 +378,62 @@ export default function HelpArticleEditorPage() {
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
               placeholder="Add summary..."
-              className="w-full text-sm text-gray-600 placeholder-gray-300 bg-transparent border-0 border-b border-transparent focus:border-gray-200 focus:outline-none pb-2 mb-6"
+              className="w-full text-[12px] text-[#AAAAAA] placeholder:text-[#505050] bg-transparent border-0 border-b border-[#303030] focus:border-[#505050] focus:outline-none pb-2 mb-5"
             />
 
             {/* Content area */}
-            <div className="border-t border-gray-200">
+            <div className="border border-[#303030] rounded">
               {/* Toolbar */}
-              <div className="flex items-center gap-0.5 py-2 border-b border-gray-100">
+              <div className="flex items-center gap-0 px-2 py-1.5 border-b border-[#303030]">
                 <button
                   type="button"
                   onClick={() => insertMarkdown("**", "**")}
-                  className="p-1 text-gray-400 hover:text-gray-600"
+                  className="p-1.5 text-[#6B6B6B] hover:text-[#AAAAAA]"
                   title="Bold"
                 >
-                  <Bold className="h-3.5 w-3.5" />
+                  <Bold className="h-3.5 w-3.5" strokeWidth={1.5} />
                 </button>
                 <button
                   type="button"
                   onClick={() => insertMarkdown("*", "*")}
-                  className="p-1 text-gray-400 hover:text-gray-600"
+                  className="p-1.5 text-[#6B6B6B] hover:text-[#AAAAAA]"
                   title="Italic"
                 >
-                  <Italic className="h-3.5 w-3.5" />
+                  <Italic className="h-3.5 w-3.5" strokeWidth={1.5} />
                 </button>
-                <span className="w-px h-3 bg-gray-200 mx-1" />
+                <span className="w-px h-3 bg-[#303030] mx-1" />
                 <button
                   type="button"
                   onClick={() => insertMarkdown("## ")}
-                  className="p-1 text-gray-400 hover:text-gray-600"
+                  className="p-1.5 text-[#6B6B6B] hover:text-[#AAAAAA]"
                   title="Heading"
                 >
-                  <Heading2 className="h-3.5 w-3.5" />
+                  <Heading2 className="h-3.5 w-3.5" strokeWidth={1.5} />
                 </button>
                 <button
                   type="button"
                   onClick={() => insertMarkdown("[", "](url)")}
-                  className="p-1 text-gray-400 hover:text-gray-600"
+                  className="p-1.5 text-[#6B6B6B] hover:text-[#AAAAAA]"
                   title="Link"
                 >
-                  <Link className="h-3.5 w-3.5" />
+                  <Link className="h-3.5 w-3.5" strokeWidth={1.5} />
                 </button>
-                <span className="w-px h-3 bg-gray-200 mx-1" />
+                <span className="w-px h-3 bg-[#303030] mx-1" />
                 <button
                   type="button"
                   onClick={() => insertMarkdown("- ")}
-                  className="p-1 text-gray-400 hover:text-gray-600"
+                  className="p-1.5 text-[#6B6B6B] hover:text-[#AAAAAA]"
                   title="List"
                 >
-                  <List className="h-3.5 w-3.5" />
+                  <List className="h-3.5 w-3.5" strokeWidth={1.5} />
                 </button>
                 <button
                   type="button"
                   onClick={() => insertMarkdown("1. ")}
-                  className="p-1 text-gray-400 hover:text-gray-600"
+                  className="p-1.5 text-[#6B6B6B] hover:text-[#AAAAAA]"
                   title="Numbered list"
                 >
-                  <ListOrdered className="h-3.5 w-3.5" />
+                  <ListOrdered className="h-3.5 w-3.5" strokeWidth={1.5} />
                 </button>
               </div>
 
@@ -447,49 +443,49 @@ export default function HelpArticleEditorPage() {
                 value={bodyMd}
                 onChange={(e) => setBodyMd(e.target.value)}
                 placeholder="Start writing..."
-                className="w-full min-h-[450px] py-4 text-sm text-gray-700 placeholder-gray-300 bg-transparent border-0 focus:outline-none resize-none font-mono leading-relaxed"
+                className="w-full min-h-[400px] p-3 text-[13px] text-[#AAAAAA] placeholder:text-[#505050] bg-transparent border-0 focus:outline-none resize-none font-mono leading-relaxed"
               />
             </div>
           </div>
 
           {/* Sidebar */}
-          <div className="w-48 shrink-0">
+          <div className="w-44 shrink-0 pl-6 border-l border-[#303030]">
             {/* Settings */}
-            <div className="mb-6">
-              <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-3">Settings</p>
+            <div className="mb-5">
+              <p className="text-[10px] font-medium text-[#6B6B6B] uppercase tracking-wider mb-3">Settings</p>
 
               <div className="space-y-4">
                 <div>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Category</p>
+                  <p className="text-[10px] text-[#6B6B6B] uppercase tracking-wider mb-1">Category</p>
                   <div className="relative">
                     <select
                       id="category"
                       value={categoryId}
                       onChange={(e) => setCategoryId(e.target.value)}
-                      className="w-full text-sm text-gray-700 bg-transparent border-0 border-b border-gray-200 focus:border-gray-400 focus:outline-none pb-1 pr-8 appearance-none cursor-pointer"
+                      className="w-full h-8 pl-0 pr-6 text-[12px] text-[#AAAAAA] bg-transparent border-0 border-b border-[#303030] focus:border-[#505050] focus:outline-none appearance-none cursor-pointer"
                     >
                       <option value="none">None</option>
                       {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                       ))}
                     </select>
-                    <ChevronDown className="absolute right-2 top-1 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
+                    <ChevronDown className="absolute right-0 top-2 h-3.5 w-3.5 text-[#6B6B6B] pointer-events-none" strokeWidth={1.5} />
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Visibility</p>
+                  <p className="text-[10px] text-[#6B6B6B] uppercase tracking-wider mb-1">Visibility</p>
                   <div className="relative">
                     <select
                       id="visibility"
                       value={visibility}
                       onChange={(e) => setVisibility(e.target.value as "public" | "internal")}
-                      className="w-full text-sm text-gray-700 bg-transparent border-0 border-b border-gray-200 focus:border-gray-400 focus:outline-none pb-1 pr-8 appearance-none cursor-pointer"
+                      className="w-full h-8 pl-0 pr-6 text-[12px] text-[#AAAAAA] bg-transparent border-0 border-b border-[#303030] focus:border-[#505050] focus:outline-none appearance-none cursor-pointer"
                     >
                       <option value="public">Public</option>
                       <option value="internal">Internal</option>
                     </select>
-                    <ChevronDown className="absolute right-2 top-1 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
+                    <ChevronDown className="absolute right-0 top-2 h-3.5 w-3.5 text-[#6B6B6B] pointer-events-none" strokeWidth={1.5} />
                   </div>
                 </div>
               </div>
@@ -497,19 +493,19 @@ export default function HelpArticleEditorPage() {
 
             {/* Actions */}
             {!isNew && article && (
-              <div className="mb-6 pt-4 border-t border-gray-200">
-                <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-3">Actions</p>
+              <div className="mb-5 pt-4 border-t border-[#303030]">
+                <p className="text-[10px] font-medium text-[#6B6B6B] uppercase tracking-wider mb-3">Actions</p>
                 {article.status === "archived" ? (
                   <button
                     onClick={() => setRestoreDialogOpen(true)}
-                    className="text-xs text-gray-500 hover:text-gray-700"
+                    className="text-[11px] text-[#6B6B6B] hover:text-[#AAAAAA]"
                   >
                     Restore article
                   </button>
                 ) : (
                   <button
                     onClick={() => setArchiveDialogOpen(true)}
-                    className="text-xs text-red-500 hover:text-red-600"
+                    className="text-[11px] text-[#DC2626] hover:text-[#EF4444]"
                   >
                     Archive article
                   </button>
@@ -519,18 +515,18 @@ export default function HelpArticleEditorPage() {
 
             {/* Version history */}
             {!isNew && (
-              <div className="pt-4 border-t border-gray-200">
-                <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-3">History</p>
+              <div className="pt-4 border-t border-[#303030]">
+                <p className="text-[10px] font-medium text-[#6B6B6B] uppercase tracking-wider mb-3">History</p>
                 {versionsLoading ? (
-                  <p className="text-xs text-gray-400">Loading...</p>
+                  <p className="text-[11px] text-[#6B6B6B]">Loading...</p>
                 ) : versions.length === 0 ? (
-                  <p className="text-xs text-gray-400">No versions</p>
+                  <p className="text-[11px] text-[#6B6B6B]">No versions</p>
                 ) : (
                   <div className="space-y-2">
                     {versions.slice(0, 5).map((version, index) => (
-                      <div key={version.id} className="flex items-center gap-2 text-xs">
-                        <Clock className="h-3 w-3 text-gray-300" />
-                        <span className="text-gray-500">
+                      <div key={version.id} className="flex items-center gap-2 text-[11px]">
+                        <Clock className="h-3 w-3 text-[#505050]" strokeWidth={1.5} />
+                        <span className="text-[#8F8F8F]">
                           {index === 0 ? "Current" : format(new Date(version.created_at), "MMM d")}
                         </span>
                       </div>
@@ -545,19 +541,19 @@ export default function HelpArticleEditorPage() {
 
       {/* Publish Dialog */}
       <AlertDialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen}>
-        <AlertDialogContent className="max-w-sm">
+        <AlertDialogContent className="max-w-sm bg-[#0A0A0A] border border-[#303030]">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-base">Publish article?</AlertDialogTitle>
-            <AlertDialogDescription className="text-sm text-gray-500">
+            <AlertDialogTitle className="text-[15px] text-white">Publish article?</AlertDialogTitle>
+            <AlertDialogDescription className="text-[13px] text-[#8F8F8F]">
               This will make it visible on the Help Center.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="text-sm">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="text-[12px] bg-transparent border border-[#303030] text-[#AAAAAA] hover:bg-[#1A1A1A] hover:text-white">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handlePublish}
               disabled={publishing}
-              className="text-sm bg-gray-900 hover:bg-gray-800"
+              className="text-[12px] bg-white text-[#0A0A0A] hover:bg-[#E5E5E5]"
             >
               {publishing ? "Publishing..." : "Publish"}
             </AlertDialogAction>
@@ -567,16 +563,16 @@ export default function HelpArticleEditorPage() {
 
       {/* Archive Dialog */}
       <AlertDialog open={archiveDialogOpen} onOpenChange={setArchiveDialogOpen}>
-        <AlertDialogContent className="max-w-sm">
+        <AlertDialogContent className="max-w-sm bg-[#0A0A0A] border border-[#303030]">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-base">Archive article?</AlertDialogTitle>
-            <AlertDialogDescription className="text-sm text-gray-500">
+            <AlertDialogTitle className="text-[15px] text-white">Archive article?</AlertDialogTitle>
+            <AlertDialogDescription className="text-[13px] text-[#8F8F8F]">
               This will remove it from the Help Center. You can restore it later.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="text-sm">Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleArchive} className="text-sm bg-gray-900 hover:bg-gray-800">
+            <AlertDialogCancel className="text-[12px] bg-transparent border border-[#303030] text-[#AAAAAA] hover:bg-[#1A1A1A] hover:text-white">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleArchive} className="text-[12px] bg-[#DC2626] text-white hover:bg-[#B91C1C]">
               Archive
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -585,16 +581,16 @@ export default function HelpArticleEditorPage() {
 
       {/* Restore Dialog */}
       <AlertDialog open={restoreDialogOpen} onOpenChange={setRestoreDialogOpen}>
-        <AlertDialogContent className="max-w-sm">
+        <AlertDialogContent className="max-w-sm bg-[#0A0A0A] border border-[#303030]">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-base">Restore article?</AlertDialogTitle>
-            <AlertDialogDescription className="text-sm text-gray-500">
+            <AlertDialogTitle className="text-[15px] text-white">Restore article?</AlertDialogTitle>
+            <AlertDialogDescription className="text-[13px] text-[#8F8F8F]">
               This will restore it as a draft.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="text-sm">Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleRestore} className="text-sm bg-gray-900 hover:bg-gray-800">
+            <AlertDialogCancel className="text-[12px] bg-transparent border border-[#303030] text-[#AAAAAA] hover:bg-[#1A1A1A] hover:text-white">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRestore} className="text-[12px] bg-white text-[#0A0A0A] hover:bg-[#E5E5E5]">
               Restore
             </AlertDialogAction>
           </AlertDialogFooter>
