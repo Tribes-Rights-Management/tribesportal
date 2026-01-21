@@ -49,7 +49,7 @@ export const WARNING_THRESHOLD_MINUTES = WARNING_COUNTDOWN_MINUTES;
 // ═══════════════════════════════════════════════════════════════════════════
 
 /** Grace period after login before session timeout monitoring begins (seconds) */
-export const AUTH_GRACE_PERIOD_SECONDS = 60;
+export const AUTH_GRACE_PERIOD_SECONDS = 120;
 
 /** Routes that are considered auth callback flows (session checks disabled) */
 export const AUTH_CALLBACK_ROUTES = ['/auth/callback', '/auth/sign-in'] as const;
