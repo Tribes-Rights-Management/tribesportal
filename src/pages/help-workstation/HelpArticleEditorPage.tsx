@@ -449,7 +449,7 @@ export default function HelpArticleEditorPage() {
               <button
                 onClick={isNew ? handleSave : () => setPublishDialogOpen(true)}
                 disabled={saving}
-                className="text-[12px] bg-white text-[#0A0A0A] px-3 py-1 rounded hover:bg-[#E5E5E5] disabled:opacity-50"
+                className="text-[12px] bg-[#303030] text-white px-3 py-1 rounded hover:bg-[#404040] disabled:opacity-50"
               >
                 {isNew ? "Publish" : "Publish"}
               </button>
@@ -626,7 +626,7 @@ export default function HelpArticleEditorPage() {
             <AlertDialogAction
               onClick={handlePublish}
               disabled={publishing}
-              className="text-[12px] bg-white text-[#0A0A0A] hover:bg-[#E5E5E5]"
+              className="text-[12px] bg-[#303030] text-white hover:bg-[#404040]"
             >
               {publishing ? "Publishing..." : "Publish"}
             </AlertDialogAction>
@@ -663,7 +663,7 @@ export default function HelpArticleEditorPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="text-[12px] bg-transparent border border-[#303030] text-[#AAAAAA] hover:bg-[#1A1A1A] hover:text-white">Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleRestore} className="text-[12px] bg-white text-[#0A0A0A] hover:bg-[#E5E5E5]">
+            <AlertDialogAction onClick={handleRestore} className="text-[12px] bg-[#303030] text-white hover:bg-[#404040]">
               Restore
             </AlertDialogAction>
           </AlertDialogFooter>
