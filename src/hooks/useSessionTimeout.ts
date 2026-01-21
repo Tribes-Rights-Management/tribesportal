@@ -333,6 +333,14 @@ export function useSessionTimeout(): UseSessionTimeoutResult {
       const storedStart = localStorage.getItem(SESSION_START_KEY);
       if (storedStart) {
         sessionStart = parseInt(storedStart, 10);
+        
+        // SAFETY CHECK: If stored start is more than 24 hours old, it's stale
+        const elapsed = Date.now() - sessionStart;
+        if (elapsed > 24 * 60 * 60 * 1000) {
+          console.warn('Stale session start detected, resetting to now');
+          sessionStart = Date.now();
+          localStorage.setItem(SESSION_START_KEY, sessionStart.toString());
+        }
       } else {
         sessionStart = Date.now();
         localStorage.setItem(SESSION_START_KEY, sessionStart.toString());
@@ -346,6 +354,7 @@ export function useSessionTimeout(): UseSessionTimeoutResult {
 
     if (remaining <= 0) {
       // Already expired - 8 hour max session reached
+      console.error('Session expired immediately', { elapsed, remaining, sessionStart });
       executeLogout(LOGOUT_REASONS.MAX_SESSION, SESSION_AUDIT_EVENTS.SIGNED_OUT_ABSOLUTE);
       return;
     }
@@ -520,8 +529,16 @@ export function useSessionTimeout(): UseSessionTimeoutResult {
   useEffect(() => {
     if (!isAuthenticated) {
       setCurrentPolicy(null);
+      // Clear old session data when not authenticated
+      localStorage.removeItem(SESSION_START_KEY);
+      sessionStartRef.current = null;
       return;
     }
+
+    // Force NEW session start time when becoming authenticated
+    const now = Date.now();
+    localStorage.setItem(SESSION_START_KEY, now.toString());
+    sessionStartRef.current = now;
 
     // Start grace period when user becomes authenticated
     if (!localStorage.getItem(AUTH_GRACE_KEY)) {
