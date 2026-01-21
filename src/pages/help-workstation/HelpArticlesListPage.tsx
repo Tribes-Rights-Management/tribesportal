@@ -44,6 +44,7 @@ export default function HelpArticlesListPage() {
   const {
     articles,
     articlesLoading,
+    articlesError,
     fetchArticles,
     archiveArticle,
     restoreArticle,
@@ -60,7 +61,6 @@ export default function HelpArticlesListPage() {
   const [sortField, setSortField] = useState<SortField>("updated_at");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [currentPage, setCurrentPage] = useState(1);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchArticles();
@@ -154,13 +154,13 @@ export default function HelpArticlesListPage() {
       </div>
 
       {/* Inline Error */}
-      {error && (
+      {articlesError && (
         <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
           <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
           <div className="flex-1">
-            <p className="text-[12px] text-[#E5E5E5]">{error}</p>
+            <p className="text-[12px] text-[#E5E5E5]">{articlesError}</p>
             <button 
-              onClick={() => { setError(null); fetchArticles(); }} 
+              onClick={() => fetchArticles()} 
               className="text-[11px] text-[#DC2626] hover:text-[#EF4444] underline mt-1 flex items-center gap-1"
             >
               <RefreshCw className="h-3 w-3" strokeWidth={1.5} />

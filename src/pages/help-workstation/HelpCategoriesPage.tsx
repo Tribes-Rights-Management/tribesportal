@@ -3,7 +3,6 @@ import { Plus, Pencil, Trash2, X, AlertCircle, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpCategory } from "@/hooks/useHelpManagement";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -31,6 +30,7 @@ export default function HelpCategoriesPage() {
   const {
     categories,
     categoriesLoading,
+    categoriesError,
     fetchCategories,
     createCategory,
     updateCategory,
@@ -198,16 +198,17 @@ export default function HelpCategoriesPage() {
       </div>
 
       {/* Inline Error */}
-      {error && (
+      {(error || categoriesError) && (
         <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
           <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
           <div className="flex-1">
-            <p className="text-[12px] text-[#E5E5E5]">{error}</p>
+            <p className="text-[12px] text-[#E5E5E5]">{error || categoriesError}</p>
             <button 
-              onClick={() => setError(null)} 
-              className="text-[11px] text-[#DC2626] hover:text-[#EF4444] underline mt-1"
+              onClick={() => { setError(null); fetchCategories(); }} 
+              className="text-[11px] text-[#DC2626] hover:text-[#EF4444] underline mt-1 flex items-center gap-1"
             >
-              Dismiss
+              <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
+              Try again
             </button>
           </div>
         </div>
