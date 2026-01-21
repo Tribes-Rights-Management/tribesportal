@@ -345,15 +345,15 @@ export function useSessionTimeout(): UseSessionTimeoutResult {
     const remaining = policy.absoluteLifetimeMs - elapsed;
 
     if (remaining <= 0) {
-      // Already expired
-      executeLogout(LOGOUT_REASONS.ABSOLUTE, SESSION_AUDIT_EVENTS.SIGNED_OUT_ABSOLUTE);
+      // Already expired - 8 hour max session reached
+      executeLogout(LOGOUT_REASONS.MAX_SESSION, SESSION_AUDIT_EVENTS.SIGNED_OUT_ABSOLUTE);
       return;
     }
 
-    // Set absolute timer
+    // Set absolute timer for 8-hour max session
     if (absoluteTimerRef.current) clearTimeout(absoluteTimerRef.current);
     absoluteTimerRef.current = setTimeout(() => {
-      executeLogout(LOGOUT_REASONS.ABSOLUTE, SESSION_AUDIT_EVENTS.SIGNED_OUT_ABSOLUTE);
+      executeLogout(LOGOUT_REASONS.MAX_SESSION, SESSION_AUDIT_EVENTS.SIGNED_OUT_ABSOLUTE);
     }, remaining);
   }, [executeLogout]);
 

@@ -2,36 +2,33 @@
  * SESSION TIMEOUT POLICY — INSTITUTIONAL INACTIVITY GOVERNANCE
  * 
  * ═══════════════════════════════════════════════════════════════════════════
- * AUTHORITATIVE TIMEOUT STANDARDS
+ * SESSION POLICY OVERVIEW
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * These values are scope-aware and role-aware. External auditors always
- * receive stricter timeouts. System Console sessions are shorter than
- * organization workspace sessions due to elevated privilege exposure.
+ * 1. ACTIVE SESSION: 8 hours maximum
+ *    - Even with constant activity, session expires after 8 hours
+ *    - Forces re-authentication for security
+ * 
+ * 2. IDLE TIMEOUT: 30 minutes
+ *    - 30 minutes of no activity → Show warning dialog
+ *    - 2 minutes after warning → Auto sign out
+ *    - Any activity resets idle timer (but not 8-hour max timer)
  * 
  * Values are in milliseconds unless otherwise noted.
  */
 
 // ═══════════════════════════════════════════════════════════════════════════
-// APPLE-STANDARD SESSION TIMEOUT POLICY
+// CORE TIMEOUT VALUES
 // ═══════════════════════════════════════════════════════════════════════════
-// 
-// Simplified, universal timeout policy:
-// - 30 minutes inactivity → Show warning dialog
-// - 2 minutes after warning → Auto sign out
-// - Total: 32 minutes from last activity to sign out
-//
-// This matches Apple's approach: Long enough to not annoy, short enough 
-// to be secure, with clear warning before action.
 
-/** Universal inactivity timeout in minutes (Apple standard) */
+/** Inactivity timeout in minutes before showing warning */
 export const INACTIVITY_TIMEOUT_MINUTES = 30;
 
 /** Warning countdown duration in minutes */
 export const WARNING_COUNTDOWN_MINUTES = 2;
 
-/** Absolute session lifetime in hours (after this, force re-auth regardless of activity) */
-export const ABSOLUTE_SESSION_HOURS = 12;
+/** Maximum session duration in hours (regardless of activity) */
+export const ABSOLUTE_SESSION_HOURS = 8;
 
 // Legacy exports for backward compatibility
 export const IDLE_TIMEOUT_MINUTES = {
@@ -78,8 +75,9 @@ export const SESSION_START_KEY = 'tribes-session-start';
 // ═══════════════════════════════════════════════════════════════════════════
 
 /**
- * Events that reset the idle timer (Apple standard).
+ * Events that reset the idle timer.
  * Includes mouse movement for better UX - throttled to prevent spam.
+ * Activity resets IDLE timer only, not the 8-hour max session timer.
  */
 export const ACTIVITY_EVENTS = [
   'mousedown',
@@ -104,28 +102,30 @@ export type SessionScope = 'system' | 'organization' | 'auditor';
 export interface SessionPolicy {
   /** Idle timeout in milliseconds */
   idleTimeoutMs: number;
-  /** Absolute session lifetime in milliseconds */
+  /** Absolute session lifetime in milliseconds (8 hours) */
   absoluteLifetimeMs: number;
-  /** Warning threshold in milliseconds */
+  /** Warning threshold in milliseconds (2 minutes) */
   warningThresholdMs: number;
   /** Policy label for audit logging */
   policyLabel: string;
 }
 
 /**
- * Get session policy - now unified Apple-standard policy for all users.
- * Scope and role parameters kept for backward compatibility but ignored.
+ * Get session policy - unified policy for all users.
+ * 
+ * - 8 hours max session (activity doesn't reset this)
+ * - 30 minutes idle → warning
+ * - 2 minutes after warning → logout
  */
 export function getSessionPolicy(
   _isExternalAuditor?: boolean,
   _currentScope?: 'system' | 'organization' | 'user' | 'auth' | 'public'
 ): SessionPolicy {
-  // Universal Apple-standard policy: 30 min idle, 2 min warning, 12 hour absolute
   return {
-    idleTimeoutMs: INACTIVITY_TIMEOUT_MINUTES * 60 * 1000,
-    absoluteLifetimeMs: ABSOLUTE_SESSION_HOURS * 60 * 60 * 1000,
-    warningThresholdMs: WARNING_COUNTDOWN_MINUTES * 60 * 1000,
-    policyLabel: 'standard',
+    idleTimeoutMs: INACTIVITY_TIMEOUT_MINUTES * 60 * 1000,           // 30 min
+    absoluteLifetimeMs: ABSOLUTE_SESSION_HOURS * 60 * 60 * 1000,     // 8 hours
+    warningThresholdMs: WARNING_COUNTDOWN_MINUTES * 60 * 1000,       // 2 min
+    policyLabel: 'standard-8h-30m',
   };
 }
 
@@ -136,7 +136,7 @@ export function getSessionPolicy(
 export const SESSION_AUDIT_EVENTS = {
   WARNING_SHOWN: 'auth.session_idle_warning_shown',
   SIGNED_OUT_IDLE: 'auth.session_signed_out_idle',
-  SIGNED_OUT_ABSOLUTE: 'auth.session_signed_out_absolute',
+  SIGNED_OUT_ABSOLUTE: 'auth.session_signed_out_max_duration',
   SIGNED_OUT_MANUAL: 'auth.session_signed_out_manual',
 } as const;
 
@@ -147,9 +147,14 @@ export type SessionAuditEvent = typeof SESSION_AUDIT_EVENTS[keyof typeof SESSION
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const LOGOUT_REASONS = {
+  /** User was idle for 30+ minutes */
   IDLE: 'idle',
-  ABSOLUTE: 'session-limit',
+  /** Session exceeded 8-hour maximum */
+  MAX_SESSION: 'max-session',
+  /** User clicked sign out */
   MANUAL: 'manual',
+  /** Legacy support */
+  ABSOLUTE: 'session-limit',
 } as const;
 
 export type LogoutReason = typeof LOGOUT_REASONS[keyof typeof LOGOUT_REASONS];
