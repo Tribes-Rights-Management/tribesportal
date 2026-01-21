@@ -49,16 +49,27 @@ export function useHelpAccess(): HelpAccessResult {
         return;
       }
 
-      // Check the can_manage_help capability via RPC (uses newer function)
-      const { data, error } = await supabase.rpc('can_manage_help', {
-        _user_id: user.id
-      });
+      // Internal platform users (platform_admin or platform_user) can access help
+      // The RPC call may not exist yet, so we fall back to role-based access
+      try {
+        const { data, error } = await supabase.rpc('can_manage_help', {
+          _user_id: user.id
+        });
 
-      if (error) {
-        console.error('Error checking help access:', error);
-        setCanManageHelp(false);
-      } else {
-        setCanManageHelp(data === true);
+        if (error) {
+          // RPC doesn't exist or failed - fall back to role-based check
+          // Allow platform_user and platform_admin roles to access help
+          console.warn('Help access RPC check failed, using role fallback:', error.message);
+          const hasInternalRole = profile.platform_role === 'platform_admin' || profile.platform_role === 'platform_user';
+          setCanManageHelp(hasInternalRole);
+        } else {
+          setCanManageHelp(data === true);
+        }
+      } catch (err) {
+        // Fallback: allow internal users
+        console.warn('Help access check exception, using role fallback:', err);
+        const hasInternalRole = profile.platform_role === 'platform_admin' || profile.platform_role === 'platform_user';
+        setCanManageHelp(hasInternalRole);
       }
 
       setLoading(false);
