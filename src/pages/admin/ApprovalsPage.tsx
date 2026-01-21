@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ChevronRight, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PageContainer } from "@/components/ui/page-container";
@@ -54,12 +55,14 @@ export default function ApprovalsPage() {
   const [pendingMemberships, setPendingMemberships] = useState<PendingMembership[]>([]);
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [processing, setProcessing] = useState<string | null>(null);
   const [formStates, setFormStates] = useState<Record<string, ApprovalFormState>>({});
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
+    setFetchError(null);
     
     const { data: memberships, error: membershipsError } = await supabase
       .from("tenant_memberships")
@@ -77,11 +80,7 @@ export default function ApprovalsPage() {
 
     if (membershipsError) {
       console.error("Error fetching pending memberships:", membershipsError);
-      toast({
-        title: "Operation failed",
-        description: "Unable to retrieve pending approvals",
-        variant: "destructive",
-      });
+      setFetchError("Unable to retrieve pending approvals");
       setLoading(false);
       return;
     }
@@ -274,6 +273,55 @@ export default function ApprovalsPage() {
               style={{ color: 'var(--platform-text-secondary)' }}
             >
               Retrieving records
+            </div>
+          ) : fetchError ? (
+            /* Inline Error State - Institutional Style */
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="max-w-md text-center space-y-4">
+                {/* Error indicator */}
+                <div className="flex justify-center">
+                  <div 
+                    className="h-12 w-12 rounded-full flex items-center justify-center"
+                    style={{ 
+                      backgroundColor: '#2A1A1A',
+                      border: '1px solid #7F1D1D'
+                    }}
+                  >
+                    <AlertCircle 
+                      className="h-5 w-5" 
+                      strokeWidth={1.5}
+                      style={{ color: '#DC2626' }}
+                    />
+                  </div>
+                </div>
+                
+                {/* Error message */}
+                <div className="space-y-1.5">
+                  <h3 
+                    className="text-[15px] font-medium"
+                    style={{ color: 'var(--platform-text)' }}
+                  >
+                    {fetchError}
+                  </h3>
+                  <p 
+                    className="text-[13px]"
+                    style={{ color: '#8F8F8F' }}
+                  >
+                    An error occurred while loading access requests. Please try again.
+                  </p>
+                </div>
+                
+                {/* Retry action */}
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={fetchData}
+                  className="mt-2 gap-2"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" strokeWidth={1.5} />
+                  Retry
+                </Button>
+              </div>
             </div>
           ) : pendingMemberships.length === 0 ? (
             <div 
