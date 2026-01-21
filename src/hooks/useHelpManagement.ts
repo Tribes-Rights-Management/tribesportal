@@ -327,9 +327,11 @@ export function useHelpManagement(): UseHelpManagementResult {
     }
     if (filters?.search) {
       const searchLower = filters.search.toLowerCase();
-      filteredArticles = filteredArticles.filter(a => 
-        a.title?.toLowerCase().includes(searchLower) || 
-        a.slug.toLowerCase().includes(searchLower)
+      filteredArticles = filteredArticles.filter(a =>
+        a.title?.toLowerCase().includes(searchLower) ||
+        a.slug.toLowerCase().includes(searchLower) ||
+        a.body_md?.toLowerCase().includes(searchLower) ||
+        a.summary?.toLowerCase().includes(searchLower)
       );
     }
 
