@@ -48,7 +48,7 @@ function slugify(text: string): string {
 export default function HelpArticleEditorPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const isNew = id === "new";
+  const isNew = !id || id === "new";
   
   const {
     categories,
