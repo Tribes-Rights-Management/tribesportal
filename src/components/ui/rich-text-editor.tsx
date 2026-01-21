@@ -118,13 +118,13 @@ function LinkDialog({ isOpen, onClose, onSubmit, initialUrl = "" }: LinkDialogPr
             <button
               type="button"
               onClick={onClose}
-              className="px-3 py-1.5 text-[12px] text-[#AAAAAA] hover:text-white border border-[#303030] rounded hover:bg-[#1A1A1A] transition-colors"
+              className="px-3 py-1.5 text-[12px] text-[#888888] hover:text-[#CCCCCC] rounded transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-3 py-1.5 text-[12px] bg-white text-[#0A0A0A] rounded hover:bg-[#E5E5E5] transition-colors"
+              className="px-3 py-1.5 text-[12px] bg-[#303030] text-white rounded hover:bg-[#404040] transition-colors"
             >
               {initialUrl ? "Update" : "Insert"}
             </button>
