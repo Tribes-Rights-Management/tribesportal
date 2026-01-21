@@ -1,11 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "@/hooks/use-toast";
 
 /**
  * HELP MANAGEMENT HOOK
  * 
+ * INSTITUTIONAL ERROR HANDLING:
+ * - No toast notifications - pages handle errors inline
+ * - Functions return null/false on error
+ * - Console logs preserved for debugging
+ *
  * Company-scoped hook for managing Help articles and categories.
  * Uses platform_user_capabilities.can_manage_help or platform_admin for access.
  * 
@@ -110,6 +114,7 @@ interface UseHelpManagementResult {
   // Articles
   articles: HelpArticle[];
   articlesLoading: boolean;
+  articlesError: string | null;
   fetchArticles: (filters?: ArticleFilters) => Promise<void>;
   fetchArticleWithVersion: (id: string) => Promise<HelpArticle | null>;
   createArticle: (article: CreateArticleInput) => Promise<HelpArticle | null>;
@@ -121,6 +126,7 @@ interface UseHelpManagementResult {
   // Categories
   categories: HelpCategory[];
   categoriesLoading: boolean;
+  categoriesError: string | null;
   fetchCategories: () => Promise<void>;
   createCategory: (category: CreateCategoryInput) => Promise<HelpCategory | null>;
   updateCategory: (id: string, updates: UpdateCategoryInput) => Promise<HelpCategory | null>;
@@ -193,9 +199,11 @@ export function useHelpManagement(): UseHelpManagementResult {
   
   const [articles, setArticles] = useState<HelpArticle[]>([]);
   const [articlesLoading, setArticlesLoading] = useState(false);
+  const [articlesError, setArticlesError] = useState<string | null>(null);
   
   const [categories, setCategories] = useState<HelpCategory[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [categoriesError, setCategoriesError] = useState<string | null>(null);
 
   // Check access on mount
   useEffect(() => {
@@ -233,6 +241,7 @@ export function useHelpManagement(): UseHelpManagementResult {
   // Fetch articles with current version data
   const fetchArticles = useCallback(async (filters?: ArticleFilters) => {
     setArticlesLoading(true);
+    setArticlesError(null);
     
     // First fetch articles
     let query = supabase
@@ -255,15 +264,11 @@ export function useHelpManagement(): UseHelpManagementResult {
       query = query.eq("status", filters.status);
     }
 
-    const { data: articlesData, error: articlesError } = await query;
+    const { data: articlesData, error: fetchError } = await query;
 
-    if (articlesError) {
-      console.error("Error fetching articles:", articlesError);
-      toast({ 
-        title: "Unable to load articles",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
+    if (fetchError) {
+      console.error("Error fetching articles:", fetchError);
+      setArticlesError("Unable to load articles");
       setArticlesLoading(false);
       return;
     }
@@ -350,11 +355,7 @@ export function useHelpManagement(): UseHelpManagementResult {
         .single();
 
       if (articleError || !articleData) {
-        toast({ 
-          title: "Unable to load article",
-          description: "Please try again.", 
-          variant: "destructive" 
-        });
+        console.error("Error loading article:", articleError);
         return null;
       }
 
@@ -436,11 +437,6 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (articleError) {
       console.error("Error creating article:", articleError);
-      toast({ 
-        title: "Unable to save changes",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
       return null;
     }
 
@@ -460,18 +456,8 @@ export function useHelpManagement(): UseHelpManagementResult {
       console.error("Error creating version:", versionError);
       // Rollback: delete the article
       await supabase.from("help_articles").delete().eq("id", articleData.id);
-      toast({ 
-        title: "Unable to save changes",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
       return null;
     }
-
-    toast({ 
-      title: "Draft saved",
-      description: "Your changes were saved." 
-    });
 
     return {
       id: articleData.id,
@@ -507,18 +493,8 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error creating version:", error);
-      toast({ 
-        title: "Unable to save changes",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
       return null;
     }
-
-    toast({ 
-      title: "Draft saved",
-      description: "Your changes were saved." 
-    });
 
     return versionId;
   }, []);
@@ -532,18 +508,9 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error publishing version:", error);
-      toast({ 
-        title: "Unable to publish",
-        description: "Your changes were not published. Please try again.", 
-        variant: "destructive" 
-      });
       return false;
     }
 
-    toast({ 
-      title: "Article published",
-      description: "This article is now live." 
-    });
     return true;
   }, []);
 
@@ -555,18 +522,9 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error archiving article:", error);
-      toast({ 
-        title: "Unable to archive",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
       return false;
     }
 
-    toast({ 
-      title: "Article archived",
-      description: "This article has been archived." 
-    });
     return true;
   }, []);
 
@@ -582,18 +540,9 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error restoring article:", error);
-      toast({ 
-        title: "Unable to restore",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
       return false;
     }
 
-    toast({ 
-      title: "Article restored",
-      description: "This article is visible again." 
-    });
     return true;
   }, [user?.id]);
 
@@ -616,6 +565,7 @@ export function useHelpManagement(): UseHelpManagementResult {
   // Fetch categories
   const fetchCategories = useCallback(async () => {
     setCategoriesLoading(true);
+    setCategoriesError(null);
     
     const { data, error } = await supabase
       .from("help_categories")
@@ -624,11 +574,7 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error fetching categories:", error);
-      toast({ 
-        title: "Unable to load categories",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
+      setCategoriesError("Unable to load categories");
     } else {
       setCategories((data as HelpCategory[]) || []);
     }
@@ -652,18 +598,9 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error creating category:", error);
-      toast({ 
-        title: "Unable to save changes",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
       return null;
     }
 
-    toast({ 
-      title: "Category created",
-      description: "Your changes were saved." 
-    });
     return data as HelpCategory;
   }, [user?.id]);
 
@@ -681,18 +618,9 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error updating category:", error);
-      toast({ 
-        title: "Unable to save changes",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
       return null;
     }
 
-    toast({ 
-      title: "Changes saved",
-      description: "Your changes were saved." 
-    });
     return data as HelpCategory;
   }, [user?.id]);
 
@@ -705,18 +633,9 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error deleting category:", error);
-      toast({ 
-        title: "Unable to delete category",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
       return false;
     }
 
-    toast({ 
-      title: "Category deleted",
-      description: "This category has been removed." 
-    });
     return true;
   }, []);
 
@@ -751,18 +670,9 @@ export function useHelpManagement(): UseHelpManagementResult {
 
     if (error) {
       console.error("Error deleting article:", error);
-      toast({ 
-        title: "Unable to delete",
-        description: "Please try again.", 
-        variant: "destructive" 
-      });
       return false;
     }
 
-    toast({ 
-      title: "Article deleted",
-      description: "This article has been removed." 
-    });
     return true;
   }, []);
 
@@ -776,11 +686,6 @@ export function useHelpManagement(): UseHelpManagementResult {
       .single();
 
     if (!article?.current_version_id) {
-      toast({ 
-        title: "Unable to publish",
-        description: "No version to publish.", 
-        variant: "destructive" 
-      });
       return false;
     }
 
@@ -810,6 +715,7 @@ export function useHelpManagement(): UseHelpManagementResult {
     accessLoading,
     articles,
     articlesLoading,
+    articlesError,
     fetchArticles,
     fetchArticleWithVersion,
     createArticle,
@@ -819,6 +725,7 @@ export function useHelpManagement(): UseHelpManagementResult {
     restoreArticle,
     categories,
     categoriesLoading,
+    categoriesError,
     fetchCategories,
     createCategory,
     updateCategory,
