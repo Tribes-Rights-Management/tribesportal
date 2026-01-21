@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, AlertCircle, RefreshCw, ChevronDown } from "lucide-react";
+import { ArrowLeft, Clock, AlertCircle, RefreshCw, ChevronDown, X, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleVersion } from "@/hooks/useHelpManagement";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
@@ -19,7 +19,7 @@ import {
  * HELP ARTICLE EDITOR — HELP WORKSTATION
  *
  * Full article editing with:
- * - Title, slug, category, visibility
+ * - Title, slug, category, visibility, tags
  * - WYSIWYG rich text editor (TipTap)
  * - Status transitions (Draft → Published → Archived)
  * - Version history
@@ -34,14 +34,148 @@ function slugify(text: string): string {
     .trim();
 }
 
+// Tags Input Component
+interface TagsInputProps {
+  value: string[];
+  onChange: (tags: string[]) => void;
+  suggestions: string[];
+}
+
+function TagsInput({ value, onChange, suggestions }: TagsInputProps) {
+  const [inputValue, setInputValue] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Filter suggestions based on input and exclude already selected tags
+  const filteredSuggestions = useMemo(() => {
+    if (!inputValue.trim()) return suggestions.filter(s => !value.includes(s));
+    const search = inputValue.toLowerCase();
+    return suggestions
+      .filter(s => s.toLowerCase().includes(search) && !value.includes(s));
+  }, [inputValue, suggestions, value]);
+
+  // Check if input is a new tag (not in suggestions)
+  const isNewTag = inputValue.trim() &&
+    !suggestions.some(s => s.toLowerCase() === inputValue.toLowerCase()) &&
+    !value.some(t => t.toLowerCase() === inputValue.toLowerCase());
+
+  const addTag = (tag: string) => {
+    const trimmed = tag.trim();
+    if (trimmed && !value.includes(trimmed)) {
+      onChange([...value, trimmed]);
+    }
+    setInputValue("");
+    setShowSuggestions(false);
+    inputRef.current?.focus();
+  };
+
+  const removeTag = (tag: string) => {
+    onChange(value.filter(t => t !== tag));
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && inputValue.trim()) {
+      e.preventDefault();
+      addTag(inputValue);
+    }
+    if (e.key === "Backspace" && !inputValue && value.length > 0) {
+      removeTag(value[value.length - 1]);
+    }
+    if (e.key === "Escape") {
+      setShowSuggestions(false);
+      inputRef.current?.blur();
+    }
+  };
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative">
+      {/* Selected tags */}
+      {value.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          {value.map(tag => (
+            <span
+              key={tag}
+              className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] bg-[#252525] text-[#AAAAAA] rounded"
+            >
+              {tag}
+              <button
+                type="button"
+                onClick={() => removeTag(tag)}
+                className="text-[#6B6B6B] hover:text-[#AAAAAA]"
+              >
+                <X className="h-3 w-3" strokeWidth={1.5} />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Input */}
+      <input
+        ref={inputRef}
+        type="text"
+        value={inputValue}
+        onChange={(e) => {
+          setInputValue(e.target.value);
+          setShowSuggestions(true);
+        }}
+        onFocus={() => setShowSuggestions(true)}
+        onKeyDown={handleKeyDown}
+        placeholder={value.length > 0 ? "Add more..." : "Add tags..."}
+        className="w-full h-7 text-[12px] text-[#AAAAAA] placeholder:text-[#505050] bg-transparent border-0 border-b border-[#303030] focus:border-[#505050] focus:outline-none"
+      />
+
+      {/* Suggestions dropdown */}
+      {showSuggestions && (filteredSuggestions.length > 0 || isNewTag) && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-[#1A1A1A] border border-[#303030] rounded shadow-lg z-10 max-h-40 overflow-y-auto">
+          {filteredSuggestions.map(suggestion => (
+            <button
+              key={suggestion}
+              type="button"
+              onClick={() => addTag(suggestion)}
+              className="w-full px-3 py-1.5 text-left text-[11px] text-[#AAAAAA] hover:bg-[#252525] hover:text-white"
+            >
+              {suggestion}
+            </button>
+          ))}
+          {isNewTag && (
+            <button
+              type="button"
+              onClick={() => addTag(inputValue)}
+              className="w-full px-3 py-1.5 text-left text-[11px] text-[#60A5FA] hover:bg-[#252525] flex items-center gap-1.5"
+            >
+              <Plus className="h-3 w-3" strokeWidth={1.5} />
+              Create "{inputValue}"
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function HelpArticleEditorPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const isNew = !id || id === "new";
-  
+
   const {
+    articles,
     categories,
     fetchCategories,
+    fetchArticles,
     createArticle,
     createVersion,
     publishVersion,
@@ -57,7 +191,7 @@ export default function HelpArticleEditorPage() {
   const [article, setArticle] = useState<HelpArticle | null>(null);
   const [versions, setVersions] = useState<HelpArticleVersion[]>([]);
   const [versionsLoading, setVersionsLoading] = useState(false);
-  
+
   // Inline error states (no toasts)
   const [loadError, setLoadError] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -75,17 +209,28 @@ export default function HelpArticleEditorPage() {
   const [bodyMd, setBodyMd] = useState("");
   const [categoryId, setCategoryId] = useState<string>("none");
   const [visibility, setVisibility] = useState<"public" | "internal">("public");
+  const [tags, setTags] = useState<string[]>([]);
 
-  // Load categories
+  // Collect all existing tags from articles for suggestions
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    articles.forEach(a => {
+      a.tags?.forEach(t => tagSet.add(t));
+    });
+    return Array.from(tagSet).sort();
+  }, [articles]);
+
+  // Load categories and articles (for tag suggestions)
   useEffect(() => {
     fetchCategories();
-  }, [fetchCategories]);
+    fetchArticles();
+  }, [fetchCategories, fetchArticles]);
 
   // Load article if editing
   useEffect(() => {
     async function loadArticle() {
       if (isNew) return;
-      
+
       setLoading(true);
       setLoadError(false);
       const art = await fetchArticleWithVersion(id!);
@@ -104,6 +249,7 @@ export default function HelpArticleEditorPage() {
       setBodyMd(art.body_md || "");
       setCategoryId(art.category_id || "none");
       setVisibility(art.visibility || "public");
+      setTags(art.tags || []);
       setLoading(false);
     }
 
@@ -134,7 +280,7 @@ export default function HelpArticleEditorPage() {
   const handleSave = async () => {
     // Clear previous validation error
     setValidationError(null);
-    
+
     if (!title.trim()) {
       setValidationError("Title is required");
       return;
@@ -158,6 +304,7 @@ export default function HelpArticleEditorPage() {
         body_md: bodyMd,
         category_id: categoryId !== "none" ? categoryId : undefined,
         visibility,
+        tags,
       });
 
       if (result) {
@@ -171,6 +318,7 @@ export default function HelpArticleEditorPage() {
         body_md: bodyMd,
         category_id: categoryId !== "none" ? categoryId : null,
         visibility,
+        tags,
       });
 
       if (versionId) {
@@ -187,15 +335,15 @@ export default function HelpArticleEditorPage() {
   // Handle publish
   const handlePublish = async () => {
     if (!article?.current_version_id) return;
-    
+
     setPublishing(true);
     const success = await publishVersion(article.id, article.current_version_id);
-    
+
     if (success) {
       const art = await fetchArticleWithVersion(article.id);
       if (art) setArticle(art);
     }
-    
+
     setPublishing(false);
     setPublishDialogOpen(false);
   };
@@ -203,7 +351,7 @@ export default function HelpArticleEditorPage() {
   // Handle archive
   const handleArchive = async () => {
     if (!article) return;
-    
+
     const success = await archiveArticle(article.id);
     if (success) {
       const art = await fetchArticleWithVersion(article.id);
@@ -215,22 +363,13 @@ export default function HelpArticleEditorPage() {
   // Handle restore
   const handleRestore = async () => {
     if (!article) return;
-    
+
     const success = await restoreArticle(article.id);
     if (success) {
       const art = await fetchArticleWithVersion(article.id);
       if (art) setArticle(art);
     }
     setRestoreDialogOpen(false);
-  };
-
-  const getStatusChipStatus = (status: string) => {
-    switch (status) {
-      case "published": return "pass";
-      case "draft": return "pending";
-      case "archived": return "fail";
-      default: return "pending";
-    }
   };
 
   if (loading) {
@@ -293,7 +432,7 @@ export default function HelpArticleEditorPage() {
                   {article.status}
                 </span>
                 <span className="text-[11px] text-[#6B6B6B]">
-                  · {format(new Date(article.updated_at), "MMM d")}
+                  · {format(new Date(article.updated_at), "MMM d, yyyy")}
                 </span>
               </>
             )}
@@ -374,7 +513,7 @@ export default function HelpArticleEditorPage() {
           </div>
 
           {/* Sidebar */}
-          <div className="w-44 shrink-0 pl-6 border-l border-[#303030]">
+          <div className="w-48 shrink-0 pl-6 border-l border-[#303030]">
             {/* Settings */}
             <div className="mb-5">
               <p className="text-[10px] font-medium text-[#6B6B6B] uppercase tracking-wider mb-3">Settings</p>
@@ -412,6 +551,15 @@ export default function HelpArticleEditorPage() {
                     </select>
                     <ChevronDown className="absolute right-0 top-2 h-3.5 w-3.5 text-[#6B6B6B] pointer-events-none" strokeWidth={1.5} />
                   </div>
+                </div>
+
+                <div>
+                  <p className="text-[10px] text-[#6B6B6B] uppercase tracking-wider mb-1">Tags</p>
+                  <TagsInput
+                    value={tags}
+                    onChange={setTags}
+                    suggestions={allTags}
+                  />
                 </div>
               </div>
             </div>
@@ -452,7 +600,7 @@ export default function HelpArticleEditorPage() {
                       <div key={version.id} className="flex items-center gap-2 text-[11px]">
                         <Clock className="h-3 w-3 text-[#505050]" strokeWidth={1.5} />
                         <span className="text-[#8F8F8F]">
-                          {index === 0 ? "Current" : format(new Date(version.created_at), "MMM d")}
+                          {index === 0 ? "Current" : format(new Date(version.created_at), "MMM d, yyyy")}
                         </span>
                       </div>
                     ))}

@@ -401,6 +401,24 @@ export default function HelpArticlesListPage() {
                             <span className="text-[10px] px-2 py-0.5 rounded bg-[#303030] text-[#AAAAAA]">DRAFT</span>
                           )}
                         </div>
+                        {/* Show tags */}
+                        {article.tags && article.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {article.tags.slice(0, 3).map(tag => (
+                              <span
+                                key={tag}
+                                className="text-[10px] px-1.5 py-0.5 bg-[#252525] text-[#8F8F8F] rounded"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                            {article.tags.length > 3 && (
+                              <span className="text-[10px] text-[#6B6B6B]">
+                                +{article.tags.length - 3}
+                              </span>
+                            )}
+                          </div>
+                        )}
                         {/* Show body snippet if match is in body */}
                         {bodySnippet && (
                           <p className="text-[11px] text-[#6B6B6B] line-clamp-1">
