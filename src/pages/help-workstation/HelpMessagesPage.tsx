@@ -1,49 +1,23 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
-import { PageContainer } from "@/components/ui/page-container";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
-import { 
-  AppButton, 
-  AppChip, 
-  AppSectionHeader,
-  AppCard,
-  AppCardBody,
-} from "@/components/app-ui";
-import { Search, Mail, ExternalLink, Check, X, Clock } from "lucide-react";
+import { X, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { AppChip } from "@/components/app-ui";
 
 /**
- * HELP MESSAGES PAGE — HELP WORKSTATION
+ * HELP MESSAGES PAGE — INSTITUTIONAL DESIGN
  * 
  * Inbox for help-related messages:
- * - Article feedback ("Was this helpful?")
- * - Contact form submissions
- * - In-app support messages
- * 
- * Features:
- * - Status management (New → Open → Waiting → Resolved → Archived)
- * - Search and filters
- * - Message detail view
+ * - NO decorative icons (envelope, etc.)
+ * - Text-only empty states
+ * - Right-slide panel for details
+ * - Sharp corners (rounded-md)
+ * - Dense layout
  */
 
 type MessageStatus = "new" | "open" | "waiting" | "resolved" | "archived";
-type MessageType = "feedback" | "question" | "bug" | "other";
 
 interface HelpMessage {
   id: string;
@@ -58,13 +32,12 @@ interface HelpMessage {
   referrer_url: string | null;
 }
 
-const STATUS_OPTIONS: { value: MessageStatus | "all"; label: string }[] = [
-  { value: "all", label: "All statuses" },
+const STATUS_TABS: { value: MessageStatus | "all"; label: string }[] = [
+  { value: "all", label: "All" },
   { value: "new", label: "New" },
   { value: "open", label: "Open" },
   { value: "waiting", label: "Waiting" },
   { value: "resolved", label: "Resolved" },
-  { value: "archived", label: "Archived" },
 ];
 
 function getStatusChipStatus(status: MessageStatus | null): "pending" | "running" | "pass" | "warning" | "fail" {
@@ -86,7 +59,6 @@ export default function HelpMessagesPage() {
   const [selectedMessage, setSelectedMessage] = useState<HelpMessage | null>(null);
   const [updating, setUpdating] = useState(false);
 
-  // Fetch messages
   useEffect(() => {
     fetchMessages();
   }, []);
@@ -114,17 +86,13 @@ export default function HelpMessagesPage() {
     setLoading(false);
   };
 
-  // Filter messages - moved outside fetchMessages
-
   // Filter messages
   const filteredMessages = messages.filter(msg => {
-    // Status filter
     if (statusFilter !== "all") {
       const msgStatus = msg.status || "new";
       if (msgStatus !== statusFilter) return false;
     }
     
-    // Search filter
     if (search.trim()) {
       const searchLower = search.toLowerCase();
       const matchesName = msg.name?.toLowerCase().includes(searchLower);
@@ -138,6 +106,15 @@ export default function HelpMessagesPage() {
     
     return true;
   });
+
+  // Status counts
+  const statusCounts = {
+    all: messages.length,
+    new: messages.filter(m => !m.status || m.status === "new").length,
+    open: messages.filter(m => m.status === "open").length,
+    waiting: messages.filter(m => m.status === "waiting").length,
+    resolved: messages.filter(m => m.status === "resolved").length,
+  };
 
   // Update message status
   const updateStatus = async (messageId: string, newStatus: MessageStatus) => {
@@ -157,7 +134,6 @@ export default function HelpMessagesPage() {
         variant: "destructive" 
       });
     } else {
-      // Update local state
       setMessages(prev => prev.map(m => 
         m.id === messageId 
           ? { ...m, status: newStatus, responded_at: newStatus === "resolved" ? new Date().toISOString() : m.responded_at }
@@ -171,274 +147,332 @@ export default function HelpMessagesPage() {
     setUpdating(false);
   };
 
-  // Stats
-  const stats = {
-    total: messages.length,
-    new: messages.filter(m => !m.status || m.status === "new").length,
-    open: messages.filter(m => m.status === "open").length,
-    waiting: messages.filter(m => m.status === "waiting").length,
-  };
-
   return (
-    <PageContainer maxWidth="wide">
-      <AppSectionHeader
-        title="Messages"
-        subtitle={`${filteredMessages.length} ${filteredMessages.length === 1 ? 'message' : 'messages'}`}
-      />
-
-      {/* Stats Row */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
-          <span className="text-sm font-medium">{stats.new}</span>
-          <span className="text-xs text-muted-foreground">New</span>
-        </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
-          <span className="text-sm font-medium">{stats.open}</span>
-          <span className="text-xs text-muted-foreground">Open</span>
-        </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
-          <span className="text-sm font-medium">{stats.waiting}</span>
-          <span className="text-xs text-muted-foreground">Waiting</span>
-        </div>
+    <div className="p-6 max-w-5xl">
+      {/* Header */}
+      <div className="mb-5">
+        <p 
+          className="text-[10px] uppercase tracking-wider font-medium mb-1"
+          style={{ color: '#6B6B6B' }}
+        >
+          Help Workstation
+        </p>
+        <h1 
+          className="text-[20px] font-medium leading-tight"
+          style={{ color: 'var(--platform-text)' }}
+        >
+          Messages
+        </h1>
+        <p 
+          className="text-[13px] mt-1"
+          style={{ color: '#AAAAAA' }}
+        >
+          {filteredMessages.length} {filteredMessages.length === 1 ? 'message' : 'messages'}
+        </p>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-2 mb-4">
-        <div className="relative flex-1">
-          <Search 
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" 
-            style={{ color: 'hsl(var(--muted-foreground))' }} 
-          />
-          <input
-            type="text"
-            placeholder="Search messages..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="h-10 w-full pl-10 pr-4 text-sm rounded-lg transition-colors duration-100 focus:outline-none"
+      {/* Status Tabs */}
+      <div 
+        className="flex gap-0 mb-5"
+        style={{ borderBottom: '1px solid #303030' }}
+      >
+        {STATUS_TABS.map(tab => (
+          <button
+            key={tab.value}
+            onClick={() => setStatusFilter(tab.value)}
+            className="px-4 py-2.5 text-[13px] transition-colors"
             style={{
-              backgroundColor: 'hsl(var(--card))',
-              border: '1px solid hsl(var(--border))',
-              color: 'hsl(var(--foreground))',
+              color: statusFilter === tab.value ? 'white' : '#AAAAAA',
+              borderBottom: statusFilter === tab.value ? '2px solid white' : '2px solid transparent',
+              marginBottom: '-1px',
             }}
-          />
-        </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as any)}
-          className="h-10 px-3 text-sm rounded-lg appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
+          >
+            {tab.label}
+            <span 
+              className="ml-2 text-[11px]"
+              style={{ color: statusFilter === tab.value ? '#8F8F8F' : '#6B6B6B' }}
+            >
+              {statusCounts[tab.value]}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Search - No icon */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search messages..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="h-10 w-full max-w-sm px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
           style={{
-            backgroundColor: 'hsl(var(--card))',
-            border: '1px solid hsl(var(--border))',
-            color: 'hsl(var(--foreground))',
-            minWidth: '150px',
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030',
+            color: 'white',
           }}
-        >
-          {STATUS_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
+          onFocus={(e) => e.currentTarget.style.borderColor = '#505050'}
+          onBlur={(e) => e.currentTarget.style.borderColor = '#303030'}
+        />
       </div>
 
       {/* Table */}
       {loading ? (
-        <InstitutionalLoadingState message="Loading messages" />
+        <div className="py-12 text-center">
+          <p className="text-[13px]" style={{ color: '#6B6B6B' }}>Loading messages...</p>
+        </div>
       ) : (
         <div 
-          className="rounded-lg overflow-hidden"
+          className="rounded-md overflow-hidden"
           style={{ 
-            backgroundColor: 'hsl(var(--card))',
-            border: '1px solid hsl(var(--border))',
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030'
           }}
         >
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="min-w-[200px] text-xs font-medium uppercase tracking-wider">
-                  Sender
-                </TableHead>
-                <TableHead className="hidden md:table-cell text-xs font-medium uppercase tracking-wider">
-                  Subject
-                </TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider">
-                  Status
-                </TableHead>
-                <TableHead className="hidden lg:table-cell text-xs font-medium uppercase tracking-wider">
-                  Received
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredMessages.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center py-12">
-                    <Mail className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">
-                      {search || statusFilter !== "all" 
-                        ? "No messages match your filters" 
-                        : "No messages yet"
-                      }
-                    </p>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredMessages.map((msg) => (
-                  <TableRow 
-                    key={msg.id} 
-                    className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => setSelectedMessage(msg)}
-                  >
-                    <TableCell>
-                      <div className="min-w-0">
-                        <p className="font-medium truncate">{msg.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{msg.email}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell text-muted-foreground">
-                      <p className="truncate max-w-[300px]">
-                        {msg.subject || msg.message.slice(0, 60) + (msg.message.length > 60 ? "..." : "")}
-                      </p>
-                    </TableCell>
-                    <TableCell>
-                      <AppChip 
-                        status={getStatusChipStatus(msg.status)} 
-                        label={(msg.status || "new").charAt(0).toUpperCase() + (msg.status || "new").slice(1)}
-                      />
-                    </TableCell>
-                    <TableCell className="hidden lg:table-cell text-muted-foreground">
-                      {format(new Date(msg.created_at), "MMM d, yyyy")}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+          {/* Table Header */}
+          <div 
+            className="grid grid-cols-12 gap-4 px-4 py-3 text-[11px] uppercase tracking-wider font-medium"
+            style={{ 
+              color: '#6B6B6B',
+              borderBottom: '1px solid #303030',
+            }}
+          >
+            <div className="col-span-3">Sender</div>
+            <div className="col-span-4 hidden md:block">Subject</div>
+            <div className="col-span-2">Status</div>
+            <div className="col-span-2 hidden lg:block">Received</div>
+            <div className="col-span-1"></div>
+          </div>
+          
+          {/* Table Body */}
+          {filteredMessages.length === 0 ? (
+            <div className="py-16 text-center">
+              <p 
+                className="text-[13px]"
+                style={{ color: '#8F8F8F' }}
+              >
+                {search || statusFilter !== "all" 
+                  ? "No messages match your filters" 
+                  : "No messages yet"
+                }
+              </p>
+              <p 
+                className="text-[12px] mt-1"
+                style={{ color: '#6B6B6B' }}
+              >
+                Messages from public Help Center will appear here
+              </p>
+            </div>
+          ) : (
+            filteredMessages.map((msg, index) => (
+              <div 
+                key={msg.id}
+                className="grid grid-cols-12 gap-4 px-4 py-3 items-center cursor-pointer transition-colors"
+                style={{ 
+                  borderBottom: index < filteredMessages.length - 1 ? '1px solid #303030' : 'none',
+                }}
+                onClick={() => setSelectedMessage(msg)}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                <div className="col-span-3">
+                  <p className="text-[13px] font-medium truncate" style={{ color: 'white' }}>
+                    {msg.name}
+                  </p>
+                  <p className="text-[11px] truncate" style={{ color: '#8F8F8F' }}>
+                    {msg.email}
+                  </p>
+                </div>
+                <div className="col-span-4 hidden md:block">
+                  <p className="text-[13px] truncate" style={{ color: '#AAAAAA' }}>
+                    {msg.subject || msg.message.slice(0, 60) + (msg.message.length > 60 ? "..." : "")}
+                  </p>
+                </div>
+                <div className="col-span-2">
+                  <AppChip 
+                    status={getStatusChipStatus(msg.status)} 
+                    label={(msg.status || "new").charAt(0).toUpperCase() + (msg.status || "new").slice(1)}
+                  />
+                </div>
+                <div className="col-span-2 hidden lg:block">
+                  <span className="text-[12px]" style={{ color: '#8F8F8F' }}>
+                    {format(new Date(msg.created_at), "MMM d, yyyy")}
+                  </span>
+                </div>
+                <div className="col-span-1 flex justify-end">
+                  <ChevronRight className="h-4 w-4" strokeWidth={1.5} style={{ color: '#6B6B6B' }} />
+                </div>
+              </div>
+            ))
+          )}
         </div>
       )}
 
-      {/* Message Detail Sheet */}
-      <Sheet open={!!selectedMessage} onOpenChange={(open) => !open && setSelectedMessage(null)}>
-        <SheetContent className="sm:max-w-lg overflow-y-auto">
-          {selectedMessage && (
-            <>
-              <SheetHeader>
-                <SheetTitle>{selectedMessage.name}</SheetTitle>
-                <SheetDescription>{selectedMessage.email}</SheetDescription>
-              </SheetHeader>
-              
-              <div className="mt-6 space-y-6">
-                {/* Status */}
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium">Status:</span>
-                  <AppChip 
-                    status={getStatusChipStatus(selectedMessage.status)} 
-                    label={(selectedMessage.status || "new").charAt(0).toUpperCase() + (selectedMessage.status || "new").slice(1)}
-                  />
-                </div>
-                
-                {/* Actions */}
-                <div className="flex flex-wrap gap-2">
-                  {selectedMessage.status !== "open" && (
-                    <AppButton 
-                      intent="secondary" 
-                      size="sm"
-                      onClick={() => updateStatus(selectedMessage.id, "open")}
-                      disabled={updating}
-                    >
-                      Mark as Open
-                    </AppButton>
-                  )}
-                  {selectedMessage.status !== "waiting" && (
-                    <AppButton 
-                      intent="secondary" 
-                      size="sm"
-                      onClick={() => updateStatus(selectedMessage.id, "waiting")}
-                      disabled={updating}
-                      icon={<Clock className="h-3.5 w-3.5" />}
-                    >
-                      Waiting
-                    </AppButton>
-                  )}
-                  {selectedMessage.status !== "resolved" && (
-                    <AppButton 
-                      intent="primary" 
-                      size="sm"
-                      onClick={() => updateStatus(selectedMessage.id, "resolved")}
-                      disabled={updating}
-                      icon={<Check className="h-3.5 w-3.5" />}
-                    >
-                      Resolve
-                    </AppButton>
-                  )}
-                  {selectedMessage.status !== "archived" && (
-                    <AppButton 
-                      intent="ghost" 
-                      size="sm"
-                      onClick={() => updateStatus(selectedMessage.id, "archived")}
-                      disabled={updating}
-                    >
-                      Archive
-                    </AppButton>
-                  )}
-                </div>
-                
-                {/* Message Content */}
-                <AppCard>
-                  <AppCardBody>
-                    {selectedMessage.subject && (
-                      <h4 className="font-medium mb-2">{selectedMessage.subject}</h4>
-                    )}
-                    <p className="text-sm whitespace-pre-wrap">{selectedMessage.message}</p>
-                  </AppCardBody>
-                </AppCard>
-                
-                {/* Metadata */}
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Received</span>
-                    <span>{format(new Date(selectedMessage.created_at), "MMM d, yyyy 'at' h:mm a")}</span>
-                  </div>
-                  {selectedMessage.responded_at && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Resolved</span>
-                      <span>{format(new Date(selectedMessage.responded_at), "MMM d, yyyy 'at' h:mm a")}</span>
-                    </div>
-                  )}
-                  {selectedMessage.search_query && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Search query</span>
-                      <span className="text-right">"{selectedMessage.search_query}"</span>
-                    </div>
-                  )}
-                  {selectedMessage.referrer_url && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Referrer</span>
-                      <a 
-                        href={selectedMessage.referrer_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-primary flex items-center gap-1 hover:underline"
-                      >
-                        View
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Reply action */}
-                <AppButton 
-                  intent="secondary" 
-                  fullWidth
-                  onClick={() => window.open(`mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject || 'Your message'}`)}
-                  icon={<Mail className="h-4 w-4" />}
-                >
-                  Reply via Email
-                </AppButton>
+      {/* Message count footer */}
+      {!loading && filteredMessages.length > 0 && (
+        <p 
+          className="mt-4 text-[12px]"
+          style={{ color: '#6B6B6B' }}
+        >
+          {filteredMessages.length} message{filteredMessages.length !== 1 ? 's' : ''}
+        </p>
+      )}
+
+      {/* Right-side Detail Panel */}
+      {selectedMessage && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 z-40"
+            style={{ backgroundColor: 'rgba(0,0,0,0.88)' }}
+            onClick={() => setSelectedMessage(null)}
+          />
+          
+          {/* Panel */}
+          <div 
+            className="fixed inset-y-0 right-0 w-full max-w-md z-50 flex flex-col"
+            style={{ 
+              backgroundColor: '#0A0A0A',
+              borderLeft: '1px solid #303030',
+            }}
+          >
+            {/* Header */}
+            <div 
+              className="flex items-start justify-between p-5"
+              style={{ borderBottom: '1px solid #303030' }}
+            >
+              <div className="min-w-0 flex-1">
+                <h2 className="text-[16px] font-medium" style={{ color: 'white' }}>
+                  {selectedMessage.name}
+                </h2>
+                <p className="text-[12px] mt-0.5" style={{ color: '#8F8F8F' }}>
+                  {selectedMessage.email}
+                </p>
               </div>
-            </>
-          )}
-        </SheetContent>
-      </Sheet>
-    </PageContainer>
+              <button 
+                onClick={() => setSelectedMessage(null)}
+                className="p-1.5 rounded hover:bg-white/[0.05] transition-colors ml-3"
+                style={{ color: '#AAAAAA' }}
+              >
+                <X className="h-4 w-4" strokeWidth={1.5} />
+              </button>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-5">
+              {/* Status */}
+              <div className="flex items-center gap-3">
+                <span className="text-[12px]" style={{ color: '#8F8F8F' }}>Status:</span>
+                <AppChip 
+                  status={getStatusChipStatus(selectedMessage.status)} 
+                  label={(selectedMessage.status || "new").charAt(0).toUpperCase() + (selectedMessage.status || "new").slice(1)}
+                />
+              </div>
+              
+              {/* Actions */}
+              <div className="flex flex-wrap gap-2">
+                {selectedMessage.status !== "open" && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => updateStatus(selectedMessage.id, "open")}
+                    disabled={updating}
+                  >
+                    Mark Open
+                  </Button>
+                )}
+                {selectedMessage.status !== "waiting" && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => updateStatus(selectedMessage.id, "waiting")}
+                    disabled={updating}
+                  >
+                    Waiting
+                  </Button>
+                )}
+                {selectedMessage.status !== "resolved" && (
+                  <Button 
+                    variant="default" 
+                    size="sm"
+                    onClick={() => updateStatus(selectedMessage.id, "resolved")}
+                    disabled={updating}
+                  >
+                    Resolve
+                  </Button>
+                )}
+                {selectedMessage.status !== "archived" && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => updateStatus(selectedMessage.id, "archived")}
+                    disabled={updating}
+                  >
+                    Archive
+                  </Button>
+                )}
+              </div>
+              
+              {/* Message Content */}
+              <div 
+                className="rounded-md p-4"
+                style={{ 
+                  backgroundColor: '#1A1A1A',
+                  border: '1px solid #303030'
+                }}
+              >
+                {selectedMessage.subject && (
+                  <h4 className="text-[13px] font-medium mb-2" style={{ color: 'white' }}>
+                    {selectedMessage.subject}
+                  </h4>
+                )}
+                <p className="text-[13px] whitespace-pre-wrap" style={{ color: '#AAAAAA' }}>
+                  {selectedMessage.message}
+                </p>
+              </div>
+              
+              {/* Metadata */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-[12px]">
+                  <span style={{ color: '#6B6B6B' }}>Received</span>
+                  <span style={{ color: '#AAAAAA' }}>
+                    {format(new Date(selectedMessage.created_at), "MMM d, yyyy 'at' h:mm a")}
+                  </span>
+                </div>
+                {selectedMessage.responded_at && (
+                  <div className="flex justify-between text-[12px]">
+                    <span style={{ color: '#6B6B6B' }}>Resolved</span>
+                    <span style={{ color: '#AAAAAA' }}>
+                      {format(new Date(selectedMessage.responded_at), "MMM d, yyyy 'at' h:mm a")}
+                    </span>
+                  </div>
+                )}
+                {selectedMessage.search_query && (
+                  <div className="flex justify-between text-[12px]">
+                    <span style={{ color: '#6B6B6B' }}>Search query</span>
+                    <span style={{ color: '#AAAAAA' }}>"{selectedMessage.search_query}"</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Footer */}
+            <div 
+              className="p-5"
+              style={{ borderTop: '1px solid #303030' }}
+            >
+              <Button 
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => window.open(`mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject || 'Your message'}`)}
+              >
+                Reply via Email
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
   );
 }

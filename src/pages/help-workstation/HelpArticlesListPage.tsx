@@ -1,16 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, Search, ArrowUpDown, ArrowUp, ArrowDown, MoreHorizontal, Archive, Eye, Pencil, RotateCcw } from "lucide-react";
+import { Plus, ArrowUpDown, ArrowUp, ArrowDown, MoreHorizontal, Archive, Eye, Pencil, RotateCcw, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleStatus, HelpVisibility } from "@/hooks/useHelpManagement";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,23 +10,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
-import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
-import { PageContainer } from "@/components/ui/page-container";
-import { 
-  AppButton, 
-  AppChip, 
-  AppSectionHeader 
-} from "@/components/app-ui";
+import { Button } from "@/components/ui/button";
+import { AppChip } from "@/components/app-ui";
 
 /**
- * HELP ARTICLES LIST — HELP WORKSTATION
+ * HELP ARTICLES LIST — INSTITUTIONAL DESIGN
  * 
- * Scalable table-based article management with:
- * - Search, filters (status/category/visibility)
- * - Sortable columns
- * - Pagination
- * - Bulk actions
+ * Table-based article management with:
+ * - NO decorative icons
+ * - No search icon in input
+ * - Sharp corners (rounded-md)
+ * - Dense layout
  */
 
 const STATUS_OPTIONS: { value: HelpArticleStatus | "all"; label: string }[] = [
@@ -77,7 +63,7 @@ export default function HelpArticlesListPage() {
     fetchCategories,
   } = useHelpManagement();
 
-  // Filters (initialize from URL params)
+  // Filters
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [statusFilter, setStatusFilter] = useState<HelpArticleStatus | "all">(
     (searchParams.get("status") as HelpArticleStatus) || "all"
@@ -92,10 +78,7 @@ export default function HelpArticlesListPage() {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Bulk selection
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-
-  // Load data on mount
+  // Load data
   useEffect(() => {
     fetchArticles();
     fetchCategories();
@@ -111,7 +94,6 @@ export default function HelpArticlesListPage() {
     
     fetchArticles(filters as any);
     setCurrentPage(1);
-    setSelectedIds(new Set());
   }, [search, statusFilter, visibilityFilter, categoryFilter, fetchArticles]);
 
   // Sorted and paginated data
@@ -156,11 +138,11 @@ export default function HelpArticlesListPage() {
 
   const getSortIcon = (field: SortField) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="h-3.5 w-3.5 ml-1.5 opacity-40" />;
+      return <ArrowUpDown className="h-3 w-3 ml-1 opacity-40" strokeWidth={1.5} />;
     }
     return sortOrder === "asc" 
-      ? <ArrowUp className="h-3.5 w-3.5 ml-1.5" /> 
-      : <ArrowDown className="h-3.5 w-3.5 ml-1.5" />;
+      ? <ArrowUp className="h-3 w-3 ml-1" strokeWidth={1.5} /> 
+      : <ArrowDown className="h-3 w-3 ml-1" strokeWidth={1.5} />;
   };
 
   const handleArchive = async (article: HelpArticle) => {
@@ -173,81 +155,68 @@ export default function HelpArticlesListPage() {
     fetchArticles();
   };
 
-  // Bulk selection
-  const toggleSelectAll = () => {
-    if (selectedIds.size === paginatedArticles.length) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(paginatedArticles.map(a => a.id)));
-    }
-  };
-
-  const toggleSelect = (id: string) => {
-    const newSet = new Set(selectedIds);
-    if (newSet.has(id)) {
-      newSet.delete(id);
-    } else {
-      newSet.add(id);
-    }
-    setSelectedIds(newSet);
-  };
-
-  // Bulk actions
-  const handleBulkArchive = async () => {
-    for (const id of selectedIds) {
-      await archiveArticle(id);
-    }
-    setSelectedIds(new Set());
-    fetchArticles();
-  };
-
   const hasFilters = search || statusFilter !== "all" || visibilityFilter !== "all" || categoryFilter !== "all";
 
   return (
-    <PageContainer maxWidth="wide">
-      <AppSectionHeader
-        title="Articles"
-        subtitle={`${sortedArticles.length} ${sortedArticles.length === 1 ? 'article' : 'articles'}`}
-        actions={
-          <AppButton 
-            intent="primary"
-            onClick={() => navigate("/help-workstation/articles/new")}
-            icon={<Plus className="h-4 w-4" />}
+    <div className="p-6 max-w-5xl">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-5">
+        <div>
+          <p 
+            className="text-[10px] uppercase tracking-wider font-medium mb-1"
+            style={{ color: '#6B6B6B' }}
           >
-            New Article
-          </AppButton>
-        }
-      />
-
-      {/* Filters Row */}
-      <div className="flex flex-col md:flex-row gap-2 mb-4">
-        <div className="relative flex-1">
-          <Search 
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" 
-            style={{ color: 'hsl(var(--muted-foreground))' }} 
-          />
-          <input
-            type="text"
-            placeholder="Search title or slug..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="h-10 w-full pl-10 pr-4 text-sm rounded-lg transition-colors duration-100 focus:outline-none"
-            style={{
-              backgroundColor: 'hsl(var(--card))',
-              border: '1px solid hsl(var(--border))',
-              color: 'hsl(var(--foreground))',
-            }}
-          />
+            Help Workstation
+          </p>
+          <h1 
+            className="text-[20px] font-medium leading-tight"
+            style={{ color: 'var(--platform-text)' }}
+          >
+            Articles
+          </h1>
+          <p 
+            className="text-[13px] mt-1"
+            style={{ color: '#AAAAAA' }}
+          >
+            {sortedArticles.length} {sortedArticles.length === 1 ? 'article' : 'articles'}
+          </p>
         </div>
+        <Button 
+          variant="default"
+          size="sm"
+          onClick={() => navigate("/help-workstation/articles/new")}
+          className="gap-1.5"
+        >
+          <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
+          New Article
+        </Button>
+      </div>
+
+      {/* Filters Row - No search icon */}
+      <div className="flex flex-col md:flex-row gap-2 mb-4">
+        <input
+          type="text"
+          placeholder="Search title or slug..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="h-10 flex-1 px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
+          style={{
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030',
+            color: 'white',
+          }}
+          onFocus={(e) => e.currentTarget.style.borderColor = '#505050'}
+          onBlur={(e) => e.currentTarget.style.borderColor = '#303030'}
+        />
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="h-10 px-3 text-sm rounded-lg appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
+          className="h-10 px-3 text-[13px] rounded-md appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
           style={{
-            backgroundColor: 'hsl(var(--card))',
-            border: '1px solid hsl(var(--border))',
-            color: 'hsl(var(--foreground))',
-            minWidth: '150px',
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030',
+            color: 'white',
+            minWidth: '140px',
           }}
         >
           <option value="all">All categories</option>
@@ -258,12 +227,12 @@ export default function HelpArticlesListPage() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as any)}
-          className="h-10 px-3 text-sm rounded-lg appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
+          className="h-10 px-3 text-[13px] rounded-md appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
           style={{
-            backgroundColor: 'hsl(var(--card))',
-            border: '1px solid hsl(var(--border))',
-            color: 'hsl(var(--foreground))',
-            minWidth: '130px',
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030',
+            color: 'white',
+            minWidth: '120px',
           }}
         >
           {STATUS_OPTIONS.map((opt) => (
@@ -273,12 +242,12 @@ export default function HelpArticlesListPage() {
         <select
           value={visibilityFilter}
           onChange={(e) => setVisibilityFilter(e.target.value as any)}
-          className="h-10 px-3 text-sm rounded-lg appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
+          className="h-10 px-3 text-[13px] rounded-md appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
           style={{
-            backgroundColor: 'hsl(var(--card))',
-            border: '1px solid hsl(var(--border))',
-            color: 'hsl(var(--foreground))',
-            minWidth: '130px',
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030',
+            color: 'white',
+            minWidth: '120px',
           }}
         >
           {VISIBILITY_OPTIONS.map((opt) => (
@@ -287,202 +256,163 @@ export default function HelpArticlesListPage() {
         </select>
       </div>
 
-      {/* Bulk Actions */}
-      {selectedIds.size > 0 && (
-        <div 
-          className="flex items-center gap-3 p-3 mb-4 rounded-lg"
-          style={{
-            backgroundColor: 'hsl(var(--muted) / 0.5)',
-            border: '1px solid hsl(var(--border))',
-          }}
-        >
-          <span className="text-sm font-medium">
-            {selectedIds.size} selected
-          </span>
-          <AppButton 
-            intent="secondary" 
-            size="sm"
-            onClick={handleBulkArchive}
-          >
-            Archive Selected
-          </AppButton>
-          <AppButton 
-            intent="ghost" 
-            size="sm"
-            onClick={() => setSelectedIds(new Set())}
-          >
-            Clear Selection
-          </AppButton>
-        </div>
-      )}
-
       {/* Table */}
       {articlesLoading ? (
-        <InstitutionalLoadingState message="Loading articles" />
+        <div className="py-12 text-center">
+          <p className="text-[13px]" style={{ color: '#6B6B6B' }}>Loading articles...</p>
+        </div>
       ) : (
         <div 
-          className="rounded-lg overflow-hidden"
+          className="rounded-md overflow-hidden"
           style={{ 
-            backgroundColor: 'hsl(var(--card))',
-            border: '1px solid hsl(var(--border))',
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030'
           }}
         >
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[44px]">
-                  <Checkbox 
-                    checked={selectedIds.size === paginatedArticles.length && paginatedArticles.length > 0}
-                    onCheckedChange={toggleSelectAll}
+          {/* Table Header */}
+          <div 
+            className="grid grid-cols-12 gap-4 px-4 py-3 text-[11px] uppercase tracking-wider font-medium"
+            style={{ 
+              color: '#6B6B6B',
+              borderBottom: '1px solid #303030',
+            }}
+          >
+            <button 
+              onClick={() => handleSort("title")}
+              className="col-span-4 text-left flex items-center hover:text-white transition-colors"
+            >
+              Title
+              {getSortIcon("title")}
+            </button>
+            <div className="col-span-2 hidden md:block">Category</div>
+            <div className="col-span-2">Status</div>
+            <div className="col-span-1 hidden md:block">Visibility</div>
+            <button 
+              onClick={() => handleSort("updated_at")}
+              className="col-span-2 hidden lg:flex items-center hover:text-white transition-colors"
+            >
+              Updated
+              {getSortIcon("updated_at")}
+            </button>
+            <div className="col-span-1"></div>
+          </div>
+          
+          {/* Table Body */}
+          {paginatedArticles.length === 0 ? (
+            <div className="py-12 text-center">
+              <p className="text-[13px]" style={{ color: '#8F8F8F' }}>
+                {hasFilters ? "No articles match your search" : "No articles yet"}
+              </p>
+            </div>
+          ) : (
+            paginatedArticles.map((article, index) => (
+              <div 
+                key={article.id}
+                className="grid grid-cols-12 gap-4 px-4 py-3 items-center cursor-pointer transition-colors"
+                style={{ 
+                  borderBottom: index < paginatedArticles.length - 1 ? '1px solid #303030' : 'none',
+                }}
+                onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                <div className="col-span-4 min-w-0">
+                  <p className="text-[13px] font-medium truncate" style={{ color: 'white' }}>
+                    {article.title || "Untitled"}
+                  </p>
+                  <p className="text-[11px] truncate mt-0.5" style={{ color: '#8F8F8F' }}>
+                    /{article.slug}
+                  </p>
+                </div>
+                <div className="col-span-2 hidden md:block">
+                  <span className="text-[12px]" style={{ color: '#8F8F8F' }}>
+                    {article.category?.name || "—"}
+                  </span>
+                </div>
+                <div className="col-span-2">
+                  <AppChip 
+                    status={getStatusChipStatus(article.status)} 
+                    label={article.status.charAt(0).toUpperCase() + article.status.slice(1)}
                   />
-                </TableHead>
-                <TableHead className="min-w-[200px]">
-                  <button 
-                    onClick={() => handleSort("title")}
-                    className="flex items-center hover:opacity-80 transition-opacity text-xs font-medium uppercase tracking-wider"
-                  >
-                    Title
-                    {getSortIcon("title")}
-                  </button>
-                </TableHead>
-                <TableHead className="hidden md:table-cell text-xs font-medium uppercase tracking-wider">
-                  Category
-                </TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider">
-                  Status
-                </TableHead>
-                <TableHead className="hidden md:table-cell text-xs font-medium uppercase tracking-wider">
-                  Visibility
-                </TableHead>
-                <TableHead className="hidden lg:table-cell">
-                  <button 
-                    onClick={() => handleSort("updated_at")}
-                    className="flex items-center hover:opacity-80 transition-opacity text-xs font-medium uppercase tracking-wider"
-                  >
-                    Updated
-                    {getSortIcon("updated_at")}
-                  </button>
-                </TableHead>
-                <TableHead className="w-[44px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedArticles.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
-                    <p className="text-sm text-muted-foreground">
-                      {hasFilters ? "No articles match your search." : "No articles yet."}
-                    </p>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                paginatedArticles.map((article) => (
-                  <TableRow 
-                    key={article.id} 
-                    className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
-                  >
-                    <TableCell onClick={(e) => e.stopPropagation()}>
-                      <Checkbox 
-                        checked={selectedIds.has(article.id)}
-                        onCheckedChange={() => toggleSelect(article.id)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <div className="min-w-0">
-                        <p className="truncate font-medium">
-                          {article.title || "Untitled"}
-                        </p>
-                        <p className="text-xs text-muted-foreground truncate mt-0.5">
-                          /{article.slug}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell text-muted-foreground">
-                      {article.category?.name || "—"}
-                    </TableCell>
-                    <TableCell>
-                      <AppChip 
-                        status={getStatusChipStatus(article.status)} 
-                        label={article.status.charAt(0).toUpperCase() + article.status.slice(1)}
-                      />
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell text-muted-foreground capitalize">
-                      {article.visibility || "public"}
-                    </TableCell>
-                    <TableCell className="hidden lg:table-cell text-muted-foreground">
-                      {format(new Date(article.updated_at), "MMM d, yyyy")}
-                    </TableCell>
-                    <TableCell onClick={(e) => e.stopPropagation()}>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <AppButton intent="ghost" size="xs">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </AppButton>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => navigate(`/help-workstation/articles/${article.id}`)}>
-                            <Pencil className="h-4 w-4 mr-2" />
-                            Edit
-                          </DropdownMenuItem>
-                          {article.status === "published" && (
-                            <DropdownMenuItem onClick={() => window.open(`/help/articles/${article.slug}`, '_blank')}>
-                              <Eye className="h-4 w-4 mr-2" />
-                              View Live
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuSeparator />
-                          {article.status === "archived" ? (
-                            <DropdownMenuItem onClick={() => handleRestore(article)}>
-                              <RotateCcw className="h-4 w-4 mr-2" />
-                              Restore
-                            </DropdownMenuItem>
-                          ) : (
-                            <DropdownMenuItem 
-                              onClick={() => handleArchive(article)}
-                              className="text-destructive"
-                            >
-                              <Archive className="h-4 w-4 mr-2" />
-                              Archive
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                </div>
+                <div className="col-span-1 hidden md:block">
+                  <span className="text-[12px] capitalize" style={{ color: '#8F8F8F' }}>
+                    {article.visibility || "public"}
+                  </span>
+                </div>
+                <div className="col-span-2 hidden lg:block">
+                  <span className="text-[12px]" style={{ color: '#8F8F8F' }}>
+                    {format(new Date(article.updated_at), "MMM d, yyyy")}
+                  </span>
+                </div>
+                <div className="col-span-1 flex justify-end" onClick={(e) => e.stopPropagation()}>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-1.5 rounded hover:bg-white/[0.05] transition-colors">
+                        <MoreHorizontal className="h-4 w-4" strokeWidth={1.5} style={{ color: '#AAAAAA' }} />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => navigate(`/help-workstation/articles/${article.id}`)}>
+                        <Pencil className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                        Edit
+                      </DropdownMenuItem>
+                      {article.status === "published" && (
+                        <DropdownMenuItem onClick={() => window.open(`/help/articles/${article.slug}`, '_blank')}>
+                          <Eye className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                          View Live
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuSeparator />
+                      {article.status === "archived" ? (
+                        <DropdownMenuItem onClick={() => handleRestore(article)}>
+                          <RotateCcw className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                          Restore
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem 
+                          onClick={() => handleArchive(article)}
+                          className="text-destructive"
+                        >
+                          <Archive className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                          Archive
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       )}
 
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[12px]" style={{ color: '#6B6B6B' }}>
             Page {currentPage} of {totalPages}
           </p>
           <div className="flex gap-2">
-            <AppButton 
-              intent="secondary" 
+            <Button 
+              variant="outline" 
               size="sm"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => p - 1)}
             >
               Previous
-            </AppButton>
-            <AppButton 
-              intent="secondary" 
+            </Button>
+            <Button 
+              variant="outline" 
               size="sm"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(p => p + 1)}
             >
               Next
-            </AppButton>
+            </Button>
           </div>
         </div>
       )}
-    </PageContainer>
+    </div>
   );
 }

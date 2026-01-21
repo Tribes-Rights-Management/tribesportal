@@ -1,27 +1,14 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { PageContainer } from "@/components/ui/page-container";
-import { 
-  AppCard, 
-  AppCardHeader, 
-  AppCardTitle, 
-  AppCardBody,
-  AppSectionHeader,
-  AppButton,
-} from "@/components/app-ui";
-import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
-import { Search, FileText, ThumbsUp, TrendingUp, BarChart3, AlertCircle } from "lucide-react";
 
 /**
- * HELP ANALYTICS PAGE — HELP WORKSTATION
+ * HELP ANALYTICS PAGE — INSTITUTIONAL DESIGN
  * 
  * Analytics dashboard showing:
- * - Top searched queries
- * - Most viewed articles
- * - Feedback ratios
- * - Message volume trends
- * 
- * MVP: Shows available data or intentional empty states if not instrumented.
+ * - NO decorative icons (search, chart, etc.)
+ * - Text-only empty states
+ * - Sharp corners (rounded-md)
+ * - Dense, data-focused layout
  */
 
 interface SearchStat {
@@ -54,19 +41,17 @@ export default function HelpAnalyticsPage() {
   const fetchAnalytics = async () => {
     setLoading(true);
     
-    // Calculate date range
     const daysAgo = parseInt(dateRange);
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - daysAgo);
     
-    // Fetch top searches from searches table
+    // Fetch top searches
     const { data: searchesData, error: searchesError } = await supabase
       .from("searches")
       .select("query")
       .gte("created_at", startDate.toISOString());
     
     if (!searchesError && searchesData && searchesData.length > 0) {
-      // Aggregate search queries
       const queryCount: Record<string, number> = {};
       searchesData.forEach(s => {
         if (s.query) {
@@ -86,7 +71,7 @@ export default function HelpAnalyticsPage() {
       setTopSearches([]);
     }
     
-    // Fetch top articles from articles table (has view_count)
+    // Fetch top articles
     const { data: articlesData, error: articlesError } = await supabase
       .from("articles")
       .select("id, title, slug, view_count, helpful_count, not_helpful_count")
@@ -126,183 +111,269 @@ export default function HelpAnalyticsPage() {
     setLoading(false);
   };
 
-  if (loading) {
-    return (
-      <PageContainer>
-        <InstitutionalLoadingState message="Loading analytics" />
-      </PageContainer>
-    );
-  }
+  const totalSearches = topSearches.reduce((sum, s) => sum + s.count, 0);
+  const totalViews = topArticles.reduce((sum, a) => sum + a.view_count, 0);
 
   return (
-    <PageContainer>
-      <AppSectionHeader
-        title="Analytics"
-        subtitle="Help content performance and trends"
-        actions={
-          <select
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value as DateRange)}
-            className="h-10 px-3 text-sm rounded-lg appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
-            style={{
-              backgroundColor: 'hsl(var(--card))',
-              border: '1px solid hsl(var(--border))',
-              color: 'hsl(var(--foreground))',
-            }}
+    <div className="p-6 max-w-5xl">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-5">
+        <div>
+          <p 
+            className="text-[10px] uppercase tracking-wider font-medium mb-1"
+            style={{ color: '#6B6B6B' }}
           >
-            <option value="7">Last 7 days</option>
-            <option value="30">Last 30 days</option>
-            <option value="90">Last 90 days</option>
-          </select>
-        }
-      />
+            Help Workstation
+          </p>
+          <h1 
+            className="text-[20px] font-medium leading-tight"
+            style={{ color: 'var(--platform-text)' }}
+          >
+            Analytics
+          </h1>
+          <p 
+            className="text-[13px] mt-1"
+            style={{ color: '#AAAAAA' }}
+          >
+            Help content performance and trends
+          </p>
+        </div>
+        
+        {/* Date Range Selector */}
+        <select
+          value={dateRange}
+          onChange={(e) => setDateRange(e.target.value as DateRange)}
+          className="h-9 px-3 text-[13px] rounded-md appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
+          style={{
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030',
+            color: 'white',
+          }}
+        >
+          <option value="7">Last 7 days</option>
+          <option value="30">Last 30 days</option>
+          <option value="90">Last 90 days</option>
+        </select>
+      </div>
 
-      {!hasData ? (
-        /* Empty State */
-        <AppCard>
-          <AppCardBody className="py-12 text-center">
-            <BarChart3 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-medium mb-2">No analytics data yet</h3>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              Analytics data will appear here once users start searching and viewing Help articles.
-              Make sure tracking is enabled in Settings.
-            </p>
-          </AppCardBody>
-        </AppCard>
+      {loading ? (
+        <div className="py-12 text-center">
+          <p className="text-[13px]" style={{ color: '#6B6B6B' }}>Loading analytics...</p>
+        </div>
+      ) : !hasData ? (
+        /* Empty State - No icons */
+        <div 
+          className="rounded-md py-16 text-center"
+          style={{ 
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030'
+          }}
+        >
+          <p 
+            className="text-[14px] mb-2"
+            style={{ color: '#8F8F8F' }}
+          >
+            No analytics data yet
+          </p>
+          <p 
+            className="text-[12px] max-w-md mx-auto"
+            style={{ color: '#6B6B6B' }}
+          >
+            Analytics data will appear here once users start searching and viewing Help articles.
+            Make sure tracking is enabled in Settings.
+          </p>
+        </div>
       ) : (
-        <div className="space-y-6">
-          {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <AppCard>
-              <AppCardHeader>
-                <AppCardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <Search className="h-4 w-4" />
-                  Total Searches
-                </AppCardTitle>
-              </AppCardHeader>
-              <AppCardBody className="pt-0">
-                <div className="text-2xl font-bold">
-                  {topSearches.reduce((sum, s) => sum + s.count, 0)}
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Last {dateRange} days
-                </p>
-              </AppCardBody>
-            </AppCard>
+        <div className="space-y-5">
+          {/* Summary Stats */}
+          <div className="grid grid-cols-3 gap-3">
+            <div 
+              className="rounded-md p-4"
+              style={{ 
+                backgroundColor: '#1A1A1A',
+                border: '1px solid #303030'
+              }}
+            >
+              <p 
+                className="text-[10px] uppercase tracking-wider font-medium mb-1.5"
+                style={{ color: '#6B6B6B' }}
+              >
+                Total Searches
+              </p>
+              <p 
+                className="text-[28px] font-medium tabular-nums leading-none"
+                style={{ color: 'white' }}
+              >
+                {totalSearches}
+              </p>
+              <p 
+                className="text-[11px] mt-1.5"
+                style={{ color: '#8F8F8F' }}
+              >
+                Last {dateRange} days
+              </p>
+            </div>
             
-            <AppCard>
-              <AppCardHeader>
-                <AppCardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Article Views
-                </AppCardTitle>
-              </AppCardHeader>
-              <AppCardBody className="pt-0">
-                <div className="text-2xl font-bold">
-                  {topArticles.reduce((sum, a) => sum + a.view_count, 0)}
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  All time
-                </p>
-              </AppCardBody>
-            </AppCard>
+            <div 
+              className="rounded-md p-4"
+              style={{ 
+                backgroundColor: '#1A1A1A',
+                border: '1px solid #303030'
+              }}
+            >
+              <p 
+                className="text-[10px] uppercase tracking-wider font-medium mb-1.5"
+                style={{ color: '#6B6B6B' }}
+              >
+                Article Views
+              </p>
+              <p 
+                className="text-[28px] font-medium tabular-nums leading-none"
+                style={{ color: 'white' }}
+              >
+                {totalViews}
+              </p>
+              <p 
+                className="text-[11px] mt-1.5"
+                style={{ color: '#8F8F8F' }}
+              >
+                All time
+              </p>
+            </div>
             
-            <AppCard>
-              <AppCardHeader>
-                <AppCardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <ThumbsUp className="h-4 w-4" />
-                  Messages
-                </AppCardTitle>
-              </AppCardHeader>
-              <AppCardBody className="pt-0">
-                <div className="text-2xl font-bold">{messageVolume.total}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {messageVolume.resolved} resolved
-                </p>
-              </AppCardBody>
-            </AppCard>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Top Searches */}
-            <AppCard>
-              <AppCardHeader>
-                <AppCardTitle>Top Search Queries</AppCardTitle>
-              </AppCardHeader>
-              <AppCardBody>
-                {topSearches.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No search data available</p>
-                ) : (
-                  <div className="space-y-3">
-                    {topSearches.map((item, index) => (
-                      <div 
-                        key={item.query}
-                        className="flex items-center justify-between"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <span className="text-sm text-muted-foreground w-5">{index + 1}.</span>
-                          <span className="text-sm truncate">"{item.query}"</span>
-                        </div>
-                        <span className="text-sm font-medium tabular-nums">{item.count}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </AppCardBody>
-            </AppCard>
-            
-            {/* Top Articles */}
-            <AppCard>
-              <AppCardHeader>
-                <AppCardTitle>Most Viewed Articles</AppCardTitle>
-              </AppCardHeader>
-              <AppCardBody>
-                {topArticles.filter(a => a.view_count > 0).length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No view data available</p>
-                ) : (
-                  <div className="space-y-3">
-                    {topArticles.filter(a => a.view_count > 0).map((article, index) => (
-                      <div 
-                        key={article.id}
-                        className="flex items-center justify-between"
-                      >
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <span className="text-sm text-muted-foreground w-5">{index + 1}.</span>
-                          <span className="text-sm truncate">{article.title}</span>
-                        </div>
-                        <div className="flex items-center gap-4 shrink-0">
-                          <span className="text-sm font-medium tabular-nums">{article.view_count} views</span>
-                          {article.helpful_ratio > 0 && (
-                            <span className="text-xs text-muted-foreground">{article.helpful_ratio}% helpful</span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </AppCardBody>
-            </AppCard>
-          </div>
-
-          {/* Instrumentation Notice */}
-          <div 
-            className="flex items-start gap-3 p-4 rounded-lg"
-            style={{
-              backgroundColor: 'hsl(var(--muted) / 0.3)',
-              border: '1px solid hsl(var(--border))',
-            }}
-          >
-            <AlertCircle className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-medium">Analytics data collection</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Search queries and article views are tracked when users interact with the public Help Center.
-                Ensure the Help Center is properly instrumented to capture complete analytics.
+            <div 
+              className="rounded-md p-4"
+              style={{ 
+                backgroundColor: '#1A1A1A',
+                border: '1px solid #303030'
+              }}
+            >
+              <p 
+                className="text-[10px] uppercase tracking-wider font-medium mb-1.5"
+                style={{ color: '#6B6B6B' }}
+              >
+                Messages
+              </p>
+              <p 
+                className="text-[28px] font-medium tabular-nums leading-none"
+                style={{ color: 'white' }}
+              >
+                {messageVolume.total}
+              </p>
+              <p 
+                className="text-[11px] mt-1.5"
+                style={{ color: '#8F8F8F' }}
+              >
+                {messageVolume.resolved} resolved
               </p>
             </div>
           </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            {/* Top Searches */}
+            <div 
+              className="rounded-md p-5"
+              style={{ 
+                backgroundColor: '#1A1A1A',
+                border: '1px solid #303030'
+              }}
+            >
+              <h3 
+                className="text-[14px] font-medium mb-4"
+                style={{ color: 'white' }}
+              >
+                Top Search Queries
+              </h3>
+              
+              {topSearches.length === 0 ? (
+                <p className="text-[12px] py-6 text-center" style={{ color: '#6B6B6B' }}>
+                  No search data available
+                </p>
+              ) : (
+                <div className="space-y-0">
+                  {topSearches.map((item, index) => (
+                    <div 
+                      key={item.query}
+                      className="flex items-center justify-between py-2"
+                      style={{ 
+                        borderBottom: index < topSearches.length - 1 ? '1px solid rgba(48,48,48,0.5)' : 'none'
+                      }}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="text-[12px] w-5" style={{ color: '#6B6B6B' }}>{index + 1}.</span>
+                        <span className="text-[13px] truncate" style={{ color: '#AAAAAA' }}>"{item.query}"</span>
+                      </div>
+                      <span className="text-[13px] font-medium tabular-nums" style={{ color: 'white' }}>{item.count}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            {/* Top Articles */}
+            <div 
+              className="rounded-md p-5"
+              style={{ 
+                backgroundColor: '#1A1A1A',
+                border: '1px solid #303030'
+              }}
+            >
+              <h3 
+                className="text-[14px] font-medium mb-4"
+                style={{ color: 'white' }}
+              >
+                Most Viewed Articles
+              </h3>
+              
+              {topArticles.filter(a => a.view_count > 0).length === 0 ? (
+                <p className="text-[12px] py-6 text-center" style={{ color: '#6B6B6B' }}>
+                  No view data available
+                </p>
+              ) : (
+                <div className="space-y-0">
+                  {topArticles.filter(a => a.view_count > 0).map((article, index) => (
+                    <div 
+                      key={article.id}
+                      className="flex items-center justify-between py-2"
+                      style={{ 
+                        borderBottom: index < topArticles.filter(a => a.view_count > 0).length - 1 ? '1px solid rgba(48,48,48,0.5)' : 'none'
+                      }}
+                    >
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <span className="text-[12px] w-5" style={{ color: '#6B6B6B' }}>{index + 1}.</span>
+                        <span className="text-[13px] truncate" style={{ color: '#AAAAAA' }}>{article.title}</span>
+                      </div>
+                      <div className="flex items-center gap-4 shrink-0">
+                        <span className="text-[13px] font-medium tabular-nums" style={{ color: 'white' }}>{article.view_count}</span>
+                        {article.helpful_ratio > 0 && (
+                          <span className="text-[11px]" style={{ color: '#6B6B6B' }}>{article.helpful_ratio}%</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Note - No icon */}
+          <div 
+            className="p-4 rounded-md"
+            style={{
+              backgroundColor: '#141414',
+              border: '1px solid #303030',
+            }}
+          >
+            <p className="text-[13px] font-medium" style={{ color: '#AAAAAA' }}>
+              Analytics data collection
+            </p>
+            <p className="text-[11px] mt-1" style={{ color: '#6B6B6B' }}>
+              Search queries and article views are tracked when users interact with the public Help Center.
+              Ensure the Help Center is properly instrumented to capture complete analytics.
+            </p>
+          </div>
         </div>
       )}
-    </PageContainer>
+    </div>
   );
 }

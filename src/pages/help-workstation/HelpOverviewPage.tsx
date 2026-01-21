@@ -3,22 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { AppChip } from "@/components/app-ui";
-import { 
-  Plus,
-  Search,
-  ArrowRight
-} from "lucide-react";
+import { Plus, ArrowRight, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 
 /**
- * HELP WORKSTATION OVERVIEW — INSTITUTIONAL DASHBOARD
+ * HELP WORKSTATION OVERVIEW — INSTITUTIONAL DESIGN
  * 
  * Dense, data-focused dashboard with:
  * - Sharp corners (rounded-md max)
  * - Tight spacing (p-4, gap-3)
  * - Smaller typography (10-28px scale)
  * - High information density
- * - Bloomberg Terminal aesthetic
+ * - NO decorative icons
+ * - Text-only search input
  */
 
 interface ArticleStats {
@@ -61,7 +58,7 @@ export default function HelpOverviewPage() {
     async function loadStats() {
       setLoading(true);
       
-      // Fetch article stats from help_articles table
+      // Fetch article stats
       const { data: articles, error: articlesError } = await supabase
         .from("help_articles")
         .select("id, status, updated_at, current_version_id");
@@ -85,7 +82,7 @@ export default function HelpOverviewPage() {
       
       setCategoryCount(catCount ?? 0);
       
-      // Fetch tag count (aggregate unique tags from articles)
+      // Fetch tag count
       const { data: allArticles } = await supabase
         .from("help_articles")
         .select("tags");
@@ -125,7 +122,6 @@ export default function HelpOverviewPage() {
         .limit(5);
       
       if (recentData) {
-        // Fetch version titles
         const versionIds = recentData.map(a => a.current_version_id).filter(Boolean);
         let titlesMap: Record<string, string> = {};
         
@@ -217,8 +213,8 @@ export default function HelpOverviewPage() {
 
   return (
     <div className="p-6 max-w-5xl">
-      {/* Header - Tighter spacing */}
-      <div className="mb-6">
+      {/* Header */}
+      <div className="mb-5">
         <p 
           className="text-[10px] uppercase tracking-wider font-medium mb-1"
           style={{ color: '#6B6B6B' }}
@@ -226,7 +222,7 @@ export default function HelpOverviewPage() {
           Help Workstation
         </p>
         <h1 
-          className="text-[22px] font-medium leading-tight"
+          className="text-[20px] font-medium leading-tight"
           style={{ color: 'var(--platform-text)' }}
         >
           Overview
@@ -239,33 +235,26 @@ export default function HelpOverviewPage() {
         </p>
       </div>
       
-      {/* Search Bar - Compact, sharp corners */}
-      <form onSubmit={handleSearch} className="mb-6">
-        <div className="relative max-w-2xl">
-          <Search 
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" 
-            strokeWidth={1.5}
-            style={{ color: '#6B6B6B' }} 
-          />
-          <input
-            type="search"
-            placeholder="Search articles..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-10 w-full pl-10 pr-4 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
-            style={{
-              backgroundColor: '#1A1A1A',
-              border: '1px solid #303030',
-              color: 'white',
-            }}
-            onFocus={(e) => e.currentTarget.style.borderColor = '#505050'}
-            onBlur={(e) => e.currentTarget.style.borderColor = '#303030'}
-          />
-        </div>
+      {/* Search Bar - No icon */}
+      <form onSubmit={handleSearch} className="mb-5">
+        <input
+          type="text"
+          placeholder="Search articles..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="h-10 w-full max-w-2xl px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
+          style={{
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030',
+            color: 'white',
+          }}
+          onFocus={(e) => e.currentTarget.style.borderColor = '#505050'}
+          onBlur={(e) => e.currentTarget.style.borderColor = '#303030'}
+        />
       </form>
       
-      <div className="space-y-6">
-        {/* Stats Cards - Dense, sharp corners, smaller numbers */}
+      <div className="space-y-5">
+        {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {/* Articles Card */}
           <div 
@@ -368,7 +357,7 @@ export default function HelpOverviewPage() {
           </div>
         </div>
         
-        {/* Quick Actions - Compact buttons */}
+        {/* Quick Actions */}
         <div className="flex flex-wrap gap-2">
           <Button 
             variant="default"
@@ -402,11 +391,11 @@ export default function HelpOverviewPage() {
           </Button>
         </div>
         
-        {/* Bottom sections - Dense, sharp corners */}
+        {/* Bottom sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {/* Drafts Needing Review */}
           <div 
-            className="rounded-md p-5"
+            className="rounded-md p-4"
             style={{ 
               backgroundColor: '#1A1A1A',
               border: '1px solid #303030'
@@ -427,7 +416,7 @@ export default function HelpOverviewPage() {
                 onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
               >
                 View all
-                <ArrowRight className="h-3 w-3" strokeWidth={1.5} />
+                <ChevronRight className="h-3 w-3" strokeWidth={1.5} />
               </button>
             </div>
             
@@ -466,7 +455,7 @@ export default function HelpOverviewPage() {
                         Updated {format(new Date(article.updated_at), "MMM d, yyyy")}
                       </div>
                     </div>
-                    <AppChip status="pending" label="Draft" />
+                    <ChevronRight className="h-4 w-4 shrink-0" strokeWidth={1.5} style={{ color: '#6B6B6B' }} />
                   </div>
                 ))}
               </div>
@@ -475,7 +464,7 @@ export default function HelpOverviewPage() {
           
           {/* Recent Articles */}
           <div 
-            className="rounded-md p-5"
+            className="rounded-md p-4"
             style={{ 
               backgroundColor: '#1A1A1A',
               border: '1px solid #303030'
@@ -496,7 +485,7 @@ export default function HelpOverviewPage() {
                 onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
               >
                 View all
-                <ArrowRight className="h-3 w-3" strokeWidth={1.5} />
+                <ChevronRight className="h-3 w-3" strokeWidth={1.5} />
               </button>
             </div>
             
@@ -530,28 +519,23 @@ export default function HelpOverviewPage() {
                       </div>
                       <div 
                         className="text-[11px] mt-0.5"
-                        style={{ color: '#717171' }}
+                        style={{ color: '#8F8F8F' }}
                       >
-                        /{article.slug}
+                        {format(new Date(article.updated_at), "MMM d, yyyy")}
                       </div>
                     </div>
-                    <AppChip 
-                      status={getStatusChipStatus(article.status)} 
-                      label={article.status.charAt(0).toUpperCase() + article.status.slice(1)}
-                    />
+                    <div className="flex items-center gap-2">
+                      <AppChip 
+                        status={getStatusChipStatus(article.status) as any} 
+                        label={article.status.charAt(0).toUpperCase() + article.status.slice(1)}
+                      />
+                      <ChevronRight className="h-4 w-4 shrink-0" strokeWidth={1.5} style={{ color: '#6B6B6B' }} />
+                    </div>
                   </div>
                 ))}
               </div>
             )}
           </div>
-        </div>
-        
-        {/* Minimal footer */}
-        <div 
-          className="text-[10px] text-center pt-6 uppercase tracking-wider"
-          style={{ color: '#4A4A4A' }}
-        >
-          Help Workstation
         </div>
       </div>
     </div>
