@@ -1,19 +1,15 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, ArrowUpDown, X } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { Plus, Pencil, Trash2, ArrowUpDown, X, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 
 /**
  * HELP TAGS PAGE — INSTITUTIONAL DESIGN
  * 
- * Manage tags for Help articles.
- * - NO decorative icons
- * - Right-slide panel for create/edit
- * - Sharp corners (rounded-md)
- * - Dense layout
+ * Right-side panel for create/edit
+ * Inline errors (not toasts)
+ * All icons: strokeWidth={1.5}
  */
 
 interface HelpTag {
@@ -35,7 +31,6 @@ function slugify(text: string): string {
 }
 
 export default function HelpTagsPage() {
-  const navigate = useNavigate();
   const [tags, setTags] = useState<HelpTag[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,6 +43,7 @@ export default function HelpTagsPage() {
   const [formName, setFormName] = useState("");
   const [formSlug, setFormSlug] = useState("");
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   
   // Delete confirmation
   const [deleteTag, setDeleteTag] = useState<HelpTag | null>(null);
@@ -69,7 +65,6 @@ export default function HelpTagsPage() {
       return;
     }
     
-    // Aggregate tags from all articles
     const tagCounts: Record<string, number> = {};
     articles?.forEach(article => {
       if (article.tags && Array.isArray(article.tags)) {
@@ -123,6 +118,7 @@ export default function HelpTagsPage() {
     setEditingTag(null);
     setFormName("");
     setFormSlug("");
+    setFormError(null);
     setPanelOpen(true);
   };
 
@@ -130,22 +126,18 @@ export default function HelpTagsPage() {
     setEditingTag(tag);
     setFormName(tag.name);
     setFormSlug(tag.slug);
+    setFormError(null);
     setPanelOpen(true);
   };
 
   const handleSave = async () => {
     if (!formName.trim()) {
-      toast({ title: "Name is required", variant: "destructive" });
+      setFormError("Name is required");
       return;
     }
     
     setSaving(true);
-    
-    toast({ 
-      title: editingTag ? "Tag updated" : "Tag created",
-      description: "Tag management is based on article tags."
-    });
-    
+    // Tags are managed through articles, so we just close the panel
     setSaving(false);
     setPanelOpen(false);
     loadTags();
@@ -153,12 +145,7 @@ export default function HelpTagsPage() {
 
   const handleDelete = async () => {
     if (!deleteTag) return;
-    
-    toast({ 
-      title: "Tag removal",
-      description: `To remove "${deleteTag.name}", edit articles using this tag.`
-    });
-    
+    // Tags are removed by editing articles
     setDeleteTag(null);
   };
 
@@ -170,298 +157,176 @@ export default function HelpTagsPage() {
   );
 
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="flex-1 p-8">
       {/* Header */}
-      <div className="flex items-start justify-between mb-5">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <p 
-            className="text-[10px] uppercase tracking-wider font-medium mb-1"
-            style={{ color: '#6B6B6B' }}
-          >
-            Help Workstation
+          <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
+            HELP WORKSTATION
           </p>
-          <h1 
-            className="text-[20px] font-medium leading-tight"
-            style={{ color: 'var(--platform-text)' }}
-          >
-            Tags
-          </h1>
-          <p 
-            className="text-[13px] mt-1"
-            style={{ color: '#AAAAAA' }}
-          >
-            Manage tags used across Help articles
+          <h1 className="text-[20px] font-medium text-white mb-1">Tags</h1>
+          <p className="text-[13px] text-[#AAAAAA]">{tags.length} tags</p>
+          <p className="text-[12px] text-[#6B6B6B] mt-1">
+            Tags are created when added to articles.
           </p>
         </div>
-        <Button 
-          variant="default"
-          size="sm"
-          onClick={openCreatePanel}
-          className="gap-1.5"
-        >
+        <Button variant="default" size="sm" onClick={openCreatePanel}>
           <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
           New Tag
         </Button>
       </div>
       
       {/* Search - No icon */}
-      <div className="mb-4">
+      <div className="mb-6 max-w-md">
         <input
-          type="text"
+          type="search"
           placeholder="Search tags..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="h-10 w-full max-w-sm px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
-          style={{
-            backgroundColor: '#1A1A1A',
-            border: '1px solid #303030',
-            color: 'white',
-          }}
-          onFocus={(e) => e.currentTarget.style.borderColor = '#505050'}
-          onBlur={(e) => e.currentTarget.style.borderColor = '#303030'}
+          className="w-full h-9 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[12px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050]"
         />
       </div>
       
-      {/* Tags Table */}
-      <div 
-        className="rounded-md overflow-hidden"
-        style={{ 
-          backgroundColor: '#1A1A1A',
-          border: '1px solid #303030'
-        }}
-      >
-        {/* Table Header */}
-        <div 
-          className="grid grid-cols-12 gap-4 px-4 py-3 text-[11px] uppercase tracking-wider font-medium"
-          style={{ 
-            color: '#6B6B6B',
-            borderBottom: '1px solid #303030',
-          }}
-        >
-          <button 
-            onClick={() => handleSort("name")}
-            className="col-span-4 text-left flex items-center hover:text-white transition-colors"
-          >
-            Name <SortIcon field="name" />
-          </button>
-          <div className="col-span-3 text-left">Slug</div>
-          <button 
-            onClick={() => handleSort("article_count")}
-            className="col-span-2 text-left flex items-center hover:text-white transition-colors"
-          >
-            Articles <SortIcon field="article_count" />
-          </button>
-          <div className="col-span-2 hidden md:block">Updated</div>
-          <div className="col-span-1 text-right"></div>
-        </div>
-        
-        {/* Table Body */}
-        {loading ? (
-          <div className="py-12 text-center">
-            <p className="text-[13px]" style={{ color: '#6B6B6B' }}>Loading tags...</p>
-          </div>
-        ) : sortedTags.length === 0 ? (
-          <div className="py-12 text-center">
-            <p className="text-[13px]" style={{ color: '#8F8F8F' }}>
-              {searchQuery ? "No tags match your search" : "No tags yet"}
-            </p>
-            <p className="text-[12px] mt-1" style={{ color: '#6B6B6B' }}>
-              Tags are created when added to articles
-            </p>
-          </div>
-        ) : (
-          sortedTags.map((tag, index) => (
-            <div 
-              key={tag.id}
-              className="grid grid-cols-12 gap-4 px-4 py-3 items-center transition-colors"
-              style={{ 
-                borderBottom: index < sortedTags.length - 1 ? '1px solid #303030' : 'none',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-            >
-              <div className="col-span-4">
-                <span className="text-[13px] font-medium" style={{ color: 'white' }}>
-                  {tag.name}
-                </span>
-              </div>
-              <div className="col-span-3">
-                <span className="text-[12px]" style={{ color: '#8F8F8F' }}>
-                  {tag.slug}
-                </span>
-              </div>
-              <div className="col-span-2">
-                <span className="text-[12px] tabular-nums" style={{ color: '#AAAAAA' }}>
-                  {tag.article_count || 0}
-                </span>
-              </div>
-              <div className="col-span-2 hidden md:block">
-                <span className="text-[12px]" style={{ color: '#8F8F8F' }}>
-                  {format(new Date(tag.updated_at), "MMM d, yyyy")}
-                </span>
-              </div>
-              <div className="col-span-1 flex justify-end gap-1">
-                <button
+      {/* Table */}
+      <div className="bg-[#1A1A1A] border border-[#303030] rounded">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-[#303030]">
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[35%]">
+                <button onClick={() => handleSort("name")} className="flex items-center hover:text-white transition-colors">
+                  Name <SortIcon field="name" />
+                </button>
+              </th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[30%]">Slug</th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[15%]">
+                <button onClick={() => handleSort("article_count")} className="flex items-center hover:text-white transition-colors">
+                  Articles <SortIcon field="article_count" />
+                </button>
+              </th>
+              <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[20%]">Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={4} className="text-center py-20">
+                  <p className="text-[13px] text-[#6B6B6B]">Loading tags...</p>
+                </td>
+              </tr>
+            ) : sortedTags.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="text-center py-20">
+                  <p className="text-[13px] text-[#8F8F8F]">
+                    {searchQuery ? "No tags match your search" : "No tags yet"}
+                  </p>
+                  <p className="text-[12px] text-[#6B6B6B] mt-1">
+                    Tags are created when added to articles
+                  </p>
+                </td>
+              </tr>
+            ) : (
+              sortedTags.map(tag => (
+                <tr 
+                  key={tag.id}
                   onClick={() => openEditPanel(tag)}
-                  className="p-1.5 rounded hover:bg-white/[0.05] transition-colors"
-                  style={{ color: '#AAAAAA' }}
+                  className="border-b border-[#303030]/30 hover:bg-white/[0.02] transition-colors cursor-pointer"
                 >
-                  <Pencil className="h-3.5 w-3.5" strokeWidth={1.5} />
-                </button>
-                <button
-                  onClick={() => setDeleteTag(tag)}
-                  className="p-1.5 rounded hover:bg-white/[0.05] transition-colors"
-                  style={{ color: '#AAAAAA' }}
-                >
-                  <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
-                </button>
-              </div>
-            </div>
-          ))
-        )}
+                  <td className="py-3 px-4 text-[13px] text-white">{tag.name}</td>
+                  <td className="py-3 px-4 text-[12px] text-[#8F8F8F]">{tag.slug}</td>
+                  <td className="py-3 px-4 text-[12px] text-[#AAAAAA] tabular-nums">{tag.article_count || 0}</td>
+                  <td className="py-3 px-4 text-right text-[12px] text-[#8F8F8F]">
+                    {format(new Date(tag.updated_at), "MMM d, yyyy")}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
       
-      {/* Tag count footer */}
-      {!loading && sortedTags.length > 0 && (
-        <p 
-          className="mt-4 text-[12px]"
-          style={{ color: '#6B6B6B' }}
-        >
-          {sortedTags.length} tag{sortedTags.length !== 1 ? 's' : ''} total
-        </p>
-      )}
-      
-      {/* Right-side Create/Edit Panel */}
+      {/* Right-side Panel */}
       {panelOpen && (
         <>
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 z-40"
-            style={{ backgroundColor: 'rgba(0,0,0,0.88)' }}
-            onClick={() => setPanelOpen(false)}
-          />
-          
-          {/* Panel */}
-          <div 
-            className="fixed inset-y-0 right-0 w-full max-w-md z-50 flex flex-col"
-            style={{ 
-              backgroundColor: '#0A0A0A',
-              borderLeft: '1px solid #303030',
-            }}
-          >
-            {/* Header */}
-            <div 
-              className="flex items-start justify-between p-5"
-              style={{ borderBottom: '1px solid #303030' }}
-            >
+          <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setPanelOpen(false)} />
+          <div className="fixed inset-y-0 right-0 w-[500px] bg-[#0A0A0A] border-l border-[#303030] shadow-2xl z-50 flex flex-col">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-[#303030]">
               <div>
-                <h2 className="text-[16px] font-medium" style={{ color: 'white' }}>
-                  {editingTag ? "Edit Tag" : "New Tag"}
+                <h2 className="text-[15px] font-medium text-white">
+                  {editingTag ? "Edit tag" : "New tag"}
                 </h2>
-                <p className="text-[12px] mt-0.5" style={{ color: '#8F8F8F' }}>
-                  {editingTag 
-                    ? "Update the tag name and slug" 
-                    : "Create a new tag for organizing articles"}
+                <p className="text-[11px] text-[#8F8F8F] mt-1">
+                  {editingTag ? "Update tag details" : "Create a new tag for organizing articles"}
                 </p>
               </div>
-              <button 
-                onClick={() => setPanelOpen(false)}
-                className="p-1.5 rounded hover:bg-white/[0.05] transition-colors"
-                style={{ color: '#AAAAAA' }}
-              >
+              <button onClick={() => setPanelOpen(false)} className="text-[#6B6B6B] hover:text-white transition-colors">
                 <X className="h-4 w-4" strokeWidth={1.5} />
               </button>
             </div>
             
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-5">
-              <div className="space-y-2">
-                <label className="block text-[12px]" style={{ color: '#AAAAAA' }}>Name</label>
+            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+              {formError && (
+                <div className="flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
+                  <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
+                  <p className="text-[12px] text-[#E5E5E5]">{formError}</p>
+                </div>
+              )}
+              
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Name</label>
                 <input
                   value={formName}
                   onChange={(e) => {
                     setFormName(e.target.value);
-                    if (!editingTag) {
-                      setFormSlug(slugify(e.target.value));
-                    }
+                    if (!editingTag) setFormSlug(slugify(e.target.value));
                   }}
                   placeholder="e.g., Getting Started"
-                  className="h-10 w-full px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
-                  style={{
-                    backgroundColor: '#1A1A1A',
-                    border: '1px solid #303030',
-                    color: 'white',
-                  }}
+                  className="w-full h-10 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] transition-colors"
                 />
               </div>
               
-              <div className="space-y-2">
-                <label className="block text-[12px]" style={{ color: '#AAAAAA' }}>Slug</label>
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Slug</label>
                 <input
                   value={formSlug}
                   onChange={(e) => setFormSlug(slugify(e.target.value))}
                   placeholder="e.g., getting-started"
-                  className="h-10 w-full px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
-                  style={{
-                    backgroundColor: '#1A1A1A',
-                    border: '1px solid #303030',
-                    color: 'white',
-                  }}
+                  className="w-full h-10 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] transition-colors"
                 />
-                <p className="text-[11px]" style={{ color: '#6B6B6B' }}>
-                  URL-friendly identifier for the tag
-                </p>
+                <p className="text-[11px] text-[#6B6B6B] mt-2">URL-friendly identifier for the tag</p>
               </div>
             </div>
             
-            {/* Footer */}
-            <div 
-              className="p-5 flex justify-end gap-2"
-              style={{ borderTop: '1px solid #303030' }}
-            >
-              <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>
-                Cancel
-              </Button>
+            <div className="flex items-center justify-end gap-2 px-6 py-5 border-t border-[#303030]">
+              <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>Cancel</Button>
               <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
-                {saving ? "Saving..." : editingTag ? "Update Tag" : "Create Tag"}
+                {editingTag ? "Save Changes" : "Create Tag"}
               </Button>
             </div>
           </div>
         </>
       )}
       
-      {/* Delete Confirmation */}
+      {/* Delete Confirmation Panel */}
       {deleteTag && (
         <>
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 z-40"
-            style={{ backgroundColor: 'rgba(0,0,0,0.88)' }}
-            onClick={() => setDeleteTag(null)}
-          />
-          
-          {/* Dialog */}
-          <div 
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm z-50 p-6 rounded-md"
-            style={{ 
-              backgroundColor: '#1A1A1A',
-              border: '1px solid #303030',
-            }}
-          >
-            <h3 className="text-[16px] font-medium mb-2" style={{ color: 'white' }}>
-              Delete Tag
-            </h3>
-            <p className="text-[13px] mb-5" style={{ color: '#8F8F8F' }}>
-              This will remove the tag "{deleteTag.name}" from all articles. 
-              This action cannot be undone.
-            </p>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" size="sm" onClick={() => setDeleteTag(null)}>
-                Cancel
-              </Button>
-              <Button variant="destructive" size="sm" onClick={handleDelete}>
-                Delete Tag
-              </Button>
+          <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setDeleteTag(null)} />
+          <div className="fixed inset-y-0 right-0 w-[400px] bg-[#0A0A0A] border-l border-[#303030] shadow-2xl z-50 flex flex-col">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-[#303030]">
+              <h2 className="text-[15px] font-medium text-white">Delete tag?</h2>
+              <button onClick={() => setDeleteTag(null)} className="text-[#6B6B6B] hover:text-white transition-colors">
+                <X className="h-4 w-4" strokeWidth={1.5} />
+              </button>
+            </div>
+            
+            <div className="flex-1 px-6 py-6">
+              <p className="text-[13px] text-[#8F8F8F]">
+                This will remove the tag "{deleteTag.name}" from all articles. This action cannot be undone.
+              </p>
+            </div>
+            
+            <div className="flex items-center justify-end gap-2 px-6 py-5 border-t border-[#303030]">
+              <Button variant="outline" size="sm" onClick={() => setDeleteTag(null)}>Cancel</Button>
+              <Button variant="destructive" size="sm" onClick={handleDelete}>Delete Tag</Button>
             </div>
           </div>
         </>

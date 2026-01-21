@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X, AlertCircle, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
-import { useNavigate } from "react-router-dom";
 import { useHelpManagement, HelpCategory } from "@/hooks/useHelpManagement";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -10,11 +9,9 @@ import { supabase } from "@/integrations/supabase/client";
 /**
  * HELP CATEGORIES PAGE — INSTITUTIONAL DESIGN
  * 
- * Category management with:
- * - NO decorative icons
- * - Right-slide panel for create/edit
- * - Sharp corners (rounded-md)
- * - Dense layout
+ * Right-side panel for create/edit (not centered modal)
+ * Inline errors (not toasts)
+ * All icons: strokeWidth={1.5}
  */
 
 function slugify(text: string): string {
@@ -31,7 +28,6 @@ interface CategoryWithCount extends HelpCategory {
 }
 
 export default function HelpCategoriesPage() {
-  const navigate = useNavigate();
   const {
     categories,
     categoriesLoading,
@@ -46,10 +42,10 @@ export default function HelpCategoriesPage() {
   const [editing, setEditing] = useState<HelpCategory | null>(null);
   const [deleting, setDeleting] = useState<CategoryWithCount | null>(null);
   const [saving, setSaving] = useState(false);
-
-  // Article counts per category
   const [articleCounts, setArticleCounts] = useState<Record<string, number>>({});
   const [countsLoading, setCountsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   // Form state
   const [name, setName] = useState("");
@@ -57,7 +53,6 @@ export default function HelpCategoriesPage() {
   const [slugManual, setSlugManual] = useState(false);
   const [sortOrder, setSortOrder] = useState(100);
 
-  // Load categories and article counts
   useEffect(() => {
     fetchCategories();
     fetchArticleCounts();
@@ -86,7 +81,6 @@ export default function HelpCategoriesPage() {
     setCountsLoading(false);
   };
 
-  // Merge categories with counts
   const categoriesWithCounts: CategoryWithCount[] = useMemo(() => {
     return categories.map(cat => ({
       ...cat,
@@ -94,68 +88,70 @@ export default function HelpCategoriesPage() {
     }));
   }, [categories, articleCounts]);
 
-  // Auto-generate slug
   useEffect(() => {
     if (!slugManual && name) {
       setSlug(slugify(name));
     }
   }, [name, slugManual]);
 
-  // Open panel for create
   const handleCreate = () => {
     setEditing(null);
     setName("");
     setSlug("");
     setSlugManual(false);
     setSortOrder(100);
+    setFormError(null);
     setPanelOpen(true);
   };
 
-  // Open panel for edit
   const handleEdit = (cat: HelpCategory) => {
     setEditing(cat);
     setName(cat.name);
     setSlug(cat.slug);
     setSlugManual(true);
     setSortOrder(cat.sort_order);
+    setFormError(null);
     setPanelOpen(true);
   };
 
-  // Save handler
   const handleSave = async () => {
     if (!name.trim() || !slug.trim()) {
-      toast({ description: "Name and slug are required", variant: "destructive" });
+      setFormError("Name and slug are required");
       return;
     }
 
     setSaving(true);
+    setFormError(null);
 
-    if (editing) {
-      const result = await updateCategory(editing.id, {
-        name: name.trim(),
-        slug: slug.trim(),
-        sort_order: sortOrder,
-      });
-      if (result) {
-        fetchCategories();
-        setPanelOpen(false);
+    try {
+      if (editing) {
+        const result = await updateCategory(editing.id, {
+          name: name.trim(),
+          slug: slug.trim(),
+          sort_order: sortOrder,
+        });
+        if (result) {
+          fetchCategories();
+          setPanelOpen(false);
+        }
+      } else {
+        const result = await createCategory({
+          name: name.trim(),
+          slug: slug.trim(),
+          sort_order: sortOrder,
+        });
+        if (result) {
+          fetchCategories();
+          setPanelOpen(false);
+        }
       }
-    } else {
-      const result = await createCategory({
-        name: name.trim(),
-        slug: slug.trim(),
-        sort_order: sortOrder,
-      });
-      if (result) {
-        fetchCategories();
-        setPanelOpen(false);
-      }
+    } catch (err) {
+      setFormError("Unable to save category");
     }
 
     setSaving(false);
   };
 
-  // Delete handler
   const handleDeleteClick = (cat: CategoryWithCount) => {
     setDeleting(cat);
     setDeleteDialogOpen(true);
@@ -165,11 +161,7 @@ export default function HelpCategoriesPage() {
     if (!deleting) return;
     
     if (deleting.article_count > 0) {
-      toast({ 
-        title: "Cannot delete category",
-        description: `This category has ${deleting.article_count} article${deleting.article_count > 1 ? 's' : ''}. Reassign or delete them first.`,
-        variant: "destructive" 
-      });
+      setError(`Cannot delete category with ${deleting.article_count} article${deleting.article_count > 1 ? 's' : ''}. Reassign or delete them first.`);
       setDeleteDialogOpen(false);
       setDeleting(null);
       return;
@@ -186,311 +178,197 @@ export default function HelpCategoriesPage() {
   const isLoading = categoriesLoading || countsLoading;
 
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="flex-1 p-8">
       {/* Header */}
-      <div className="flex items-start justify-between mb-5">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <p 
-            className="text-[10px] uppercase tracking-wider font-medium mb-1"
-            style={{ color: '#6B6B6B' }}
-          >
-            Help Workstation
+          <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
+            HELP WORKSTATION
           </p>
-          <h1 
-            className="text-[20px] font-medium leading-tight"
-            style={{ color: 'var(--platform-text)' }}
-          >
-            Categories
-          </h1>
-          <p 
-            className="text-[13px] mt-1"
-            style={{ color: '#AAAAAA' }}
-          >
-            {categories.length} {categories.length === 1 ? 'category' : 'categories'}
+          <h1 className="text-[20px] font-medium text-white mb-1">Categories</h1>
+          <p className="text-[13px] text-[#AAAAAA]">{categories.length} categories</p>
+          <p className="text-[12px] text-[#6B6B6B] mt-1">
+            Define how Help articles are organized. Categories with articles cannot be deleted.
           </p>
         </div>
-        <Button 
-          variant="default"
-          size="sm"
-          onClick={handleCreate}
-          className="gap-1.5"
-        >
+        <Button variant="default" size="sm" onClick={handleCreate}>
           <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
           New Category
         </Button>
       </div>
 
-      <p 
-        className="text-[12px] mb-4"
-        style={{ color: '#8F8F8F' }}
-      >
-        Define how Help articles are organized. Categories with articles cannot be deleted.
-      </p>
+      {/* Inline Error */}
+      {error && (
+        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
+          <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
+          <div className="flex-1">
+            <p className="text-[12px] text-[#E5E5E5]">{error}</p>
+            <button 
+              onClick={() => setError(null)} 
+              className="text-[11px] text-[#DC2626] hover:text-[#EF4444] underline mt-1"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Table */}
-      {isLoading ? (
-        <div className="py-12 text-center">
-          <p className="text-[13px]" style={{ color: '#6B6B6B' }}>Loading categories...</p>
-        </div>
-      ) : (
-        <div 
-          className="rounded-md overflow-hidden"
-          style={{ 
-            backgroundColor: '#1A1A1A',
-            border: '1px solid #303030'
-          }}
-        >
-          {/* Table Header */}
-          <div 
-            className="grid grid-cols-12 gap-4 px-4 py-3 text-[11px] uppercase tracking-wider font-medium"
-            style={{ 
-              color: '#6B6B6B',
-              borderBottom: '1px solid #303030',
-            }}
-          >
-            <div className="col-span-4">Name</div>
-            <div className="col-span-3">Slug</div>
-            <div className="col-span-2 text-right">Articles</div>
-            <div className="col-span-2 hidden md:block">Updated</div>
-            <div className="col-span-1"></div>
-          </div>
-          
-          {/* Table Body */}
-          {categoriesWithCounts.length === 0 ? (
-            <div className="py-12 text-center">
-              <p className="text-[13px]" style={{ color: '#8F8F8F' }}>
-                No categories configured yet
-              </p>
-            </div>
-          ) : (
-            categoriesWithCounts.map((cat, index) => (
-              <div 
-                key={cat.id}
-                className="grid grid-cols-12 gap-4 px-4 py-3 items-center transition-colors"
-                style={{ 
-                  borderBottom: index < categoriesWithCounts.length - 1 ? '1px solid #303030' : 'none',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                <div className="col-span-4">
-                  <span className="text-[13px] font-medium" style={{ color: 'white' }}>
-                    {cat.name}
-                  </span>
-                </div>
-                <div className="col-span-3">
-                  <span className="text-[12px]" style={{ color: '#8F8F8F' }}>
-                    /{cat.slug}
-                  </span>
-                </div>
-                <div className="col-span-2 text-right">
-                  <span className="text-[12px] tabular-nums" style={{ color: '#AAAAAA' }}>
-                    {cat.article_count}
-                  </span>
-                </div>
-                <div className="col-span-2 hidden md:block">
-                  <span className="text-[12px]" style={{ color: '#8F8F8F' }}>
+      <div className="bg-[#1A1A1A] border border-[#303030] rounded">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-[#303030]">
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[35%]">Name</th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[30%]">Slug</th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[15%]">Articles</th>
+              <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[20%]">Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan={4} className="text-center py-20">
+                  <p className="text-[13px] text-[#6B6B6B]">Loading categories...</p>
+                </td>
+              </tr>
+            ) : categoriesWithCounts.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="text-center py-20">
+                  <p className="text-[13px] text-[#6B6B6B]">No categories configured yet</p>
+                </td>
+              </tr>
+            ) : (
+              categoriesWithCounts.map(cat => (
+                <tr 
+                  key={cat.id} 
+                  onClick={() => handleEdit(cat)}
+                  className="border-b border-[#303030]/30 hover:bg-white/[0.02] transition-colors cursor-pointer"
+                >
+                  <td className="py-3 px-4 text-[13px] text-white">{cat.name}</td>
+                  <td className="py-3 px-4 text-[12px] text-[#AAAAAA] font-mono">{cat.slug}</td>
+                  <td className="py-3 px-4 text-[12px] text-[#8F8F8F]">{cat.article_count}</td>
+                  <td className="py-3 px-4 text-right text-[12px] text-[#8F8F8F]">
                     {format(new Date(cat.updated_at), "MMM d, yyyy")}
-                  </span>
-                </div>
-                <div className="col-span-1 flex justify-end gap-1">
-                  <button
-                    onClick={() => handleEdit(cat)}
-                    className="p-1.5 rounded hover:bg-white/[0.05] transition-colors"
-                    style={{ color: '#AAAAAA' }}
-                  >
-                    <Pencil className="h-3.5 w-3.5" strokeWidth={1.5} />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(cat)}
-                    className="p-1.5 rounded hover:bg-white/[0.05] transition-colors"
-                    style={{ color: '#AAAAAA' }}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
-      {/* Category count footer */}
-      {!isLoading && categoriesWithCounts.length > 0 && (
-        <p 
-          className="mt-4 text-[12px]"
-          style={{ color: '#6B6B6B' }}
-        >
-          {categoriesWithCounts.length} categor{categoriesWithCounts.length !== 1 ? 'ies' : 'y'} total
-        </p>
-      )}
-
-      {/* Right-side Create/Edit Panel */}
+      {/* Right-side Panel */}
       {panelOpen && (
         <>
-          {/* Backdrop */}
           <div 
-            className="fixed inset-0 z-40"
-            style={{ backgroundColor: 'rgba(0,0,0,0.88)' }}
+            className="fixed inset-0 bg-black/50 z-40"
             onClick={() => setPanelOpen(false)}
           />
-          
-          {/* Panel */}
-          <div 
-            className="fixed inset-y-0 right-0 w-full max-w-md z-50 flex flex-col"
-            style={{ 
-              backgroundColor: '#0A0A0A',
-              borderLeft: '1px solid #303030',
-            }}
-          >
-            {/* Header */}
-            <div 
-              className="flex items-start justify-between p-5"
-              style={{ borderBottom: '1px solid #303030' }}
-            >
+          <div className="fixed inset-y-0 right-0 w-[500px] bg-[#0A0A0A] border-l border-[#303030] shadow-2xl z-50 flex flex-col">
+            {/* Panel Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-[#303030]">
               <div>
-                <h2 className="text-[16px] font-medium" style={{ color: 'white' }}>
-                  {editing ? "Edit category" : "New category"}
+                <h2 className="text-[15px] font-medium text-white">
+                  {editing ? 'Edit category' : 'New category'}
                 </h2>
-                <p className="text-[12px] mt-0.5" style={{ color: '#8F8F8F' }}>
-                  {editing ? "Update category details" : "Create a new category for organizing articles"}
+                <p className="text-[11px] text-[#8F8F8F] mt-1">
+                  {editing ? 'Update category details' : 'Create a new category for organizing articles'}
                 </p>
               </div>
-              <button 
-                onClick={() => setPanelOpen(false)}
-                className="p-1.5 rounded hover:bg-white/[0.05] transition-colors"
-                style={{ color: '#AAAAAA' }}
-              >
+              <button onClick={() => setPanelOpen(false)} className="text-[#6B6B6B] hover:text-white transition-colors">
                 <X className="h-4 w-4" strokeWidth={1.5} />
               </button>
             </div>
             
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-5">
-              <div className="space-y-2">
-                <label className="block text-[12px]" style={{ color: '#AAAAAA' }}>Name</label>
-                <input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+            {/* Panel Content */}
+            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+              {/* Form Error */}
+              {formError && (
+                <div className="flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
+                  <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
+                  <p className="text-[12px] text-[#E5E5E5]">{formError}</p>
+                </div>
+              )}
+              
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Name</label>
+                <input 
+                  type="text" 
+                  value={name} 
+                  onChange={(e) => setName(e.target.value)} 
                   placeholder="Category name"
-                  className="h-10 w-full px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
-                  style={{
-                    backgroundColor: '#1A1A1A',
-                    border: '1px solid #303030',
-                    color: 'white',
-                  }}
+                  className="w-full h-10 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] transition-colors"
                 />
               </div>
               
-              <div className="space-y-2">
-                <label className="block text-[12px]" style={{ color: '#AAAAAA' }}>Slug</label>
-                <input
-                  value={slug}
-                  onChange={(e) => {
-                    setSlug(e.target.value);
-                    setSlugManual(true);
-                  }}
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Slug</label>
+                <input 
+                  type="text" 
+                  value={slug} 
+                  onChange={(e) => { setSlug(e.target.value); setSlugManual(true); }} 
                   placeholder="category-slug"
-                  className="h-10 w-full px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
-                  style={{
-                    backgroundColor: '#1A1A1A',
-                    border: '1px solid #303030',
-                    color: 'white',
-                  }}
+                  className="w-full h-10 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] transition-colors"
                 />
-                <p className="text-[11px]" style={{ color: '#6B6B6B' }}>
-                  URL-friendly identifier
-                </p>
+                <p className="text-[11px] text-[#6B6B6B] mt-2">URL-friendly identifier</p>
               </div>
               
-              <div className="space-y-2">
-                <label className="block text-[12px]" style={{ color: '#AAAAAA' }}>Sort order</label>
-                <input
-                  type="number"
-                  value={sortOrder}
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Sort order</label>
+                <input 
+                  type="number" 
+                  value={sortOrder} 
                   onChange={(e) => setSortOrder(parseInt(e.target.value) || 100)}
-                  className="h-10 w-full px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
-                  style={{
-                    backgroundColor: '#1A1A1A',
-                    border: '1px solid #303030',
-                    color: 'white',
-                  }}
+                  className="w-full h-10 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white focus:outline-none focus:border-[#505050] transition-colors"
                 />
-                <p className="text-[11px]" style={{ color: '#6B6B6B' }}>
-                  Lower numbers appear first
-                </p>
+                <p className="text-[11px] text-[#6B6B6B] mt-2">Lower numbers appear first</p>
               </div>
             </div>
             
-            {/* Footer */}
-            <div 
-              className="p-5 flex justify-end gap-2"
-              style={{ borderTop: '1px solid #303030' }}
-            >
-              <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>
-                Cancel
-              </Button>
+            {/* Panel Footer */}
+            <div className="flex items-center justify-end gap-2 px-6 py-5 border-t border-[#303030]">
+              <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>Cancel</Button>
               <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
-                {editing ? "Save" : "Create"}
+                {editing ? 'Save Changes' : 'Create'}
               </Button>
             </div>
           </div>
         </>
       )}
 
-      {/* Delete confirmation */}
+      {/* Delete Confirmation - Right-side panel */}
       {deleteDialogOpen && deleting && (
         <>
-          {/* Backdrop */}
           <div 
-            className="fixed inset-0 z-40"
-            style={{ backgroundColor: 'rgba(0,0,0,0.88)' }}
-            onClick={() => {
-              setDeleteDialogOpen(false);
-              setDeleting(null);
-            }}
+            className="fixed inset-0 bg-black/50 z-40"
+            onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }}
           />
-          
-          {/* Dialog */}
-          <div 
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm z-50 p-6 rounded-md"
-            style={{ 
-              backgroundColor: '#1A1A1A',
-              border: '1px solid #303030',
-            }}
-          >
-            <h3 className="text-[16px] font-medium mb-2" style={{ color: 'white' }}>
-              Delete category?
-            </h3>
-            <p className="text-[13px] mb-5" style={{ color: '#8F8F8F' }}>
-              {deleting.article_count > 0 ? (
-                <>
-                  This category has <strong>{deleting.article_count} article{deleting.article_count > 1 ? 's' : ''}</strong>. 
-                  You must reassign or delete them before deleting this category.
-                </>
-              ) : (
-                <>
-                  This will permanently delete "{deleting.name}". This action cannot be undone.
-                </>
-              )}
-            </p>
-            <div className="flex justify-end gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => {
-                  setDeleteDialogOpen(false);
-                  setDeleting(null);
-                }}
-              >
+          <div className="fixed inset-y-0 right-0 w-[400px] bg-[#0A0A0A] border-l border-[#303030] shadow-2xl z-50 flex flex-col">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-[#303030]">
+              <h2 className="text-[15px] font-medium text-white">Delete category?</h2>
+              <button onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }} className="text-[#6B6B6B] hover:text-white transition-colors">
+                <X className="h-4 w-4" strokeWidth={1.5} />
+              </button>
+            </div>
+            
+            <div className="flex-1 px-6 py-6">
+              <p className="text-[13px] text-[#8F8F8F]">
+                {deleting.article_count > 0 ? (
+                  <>
+                    This category has <strong className="text-white">{deleting.article_count} article{deleting.article_count > 1 ? 's' : ''}</strong>. 
+                    You must reassign or delete them before deleting this category.
+                  </>
+                ) : (
+                  <>This will permanently delete "{deleting.name}". This action cannot be undone.</>
+                )}
+              </p>
+            </div>
+            
+            <div className="flex items-center justify-end gap-2 px-6 py-5 border-t border-[#303030]">
+              <Button variant="outline" size="sm" onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }}>
                 Cancel
               </Button>
-              <Button 
-                variant="destructive" 
-                size="sm" 
-                onClick={handleDelete}
-                disabled={deleting.article_count > 0}
-              >
+              <Button variant="destructive" size="sm" onClick={handleDelete} disabled={deleting.article_count > 0}>
                 Delete
               </Button>
             </div>

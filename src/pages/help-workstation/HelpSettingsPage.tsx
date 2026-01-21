@@ -1,263 +1,172 @@
 import { useState } from "react";
-import { ExternalLink } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { ExternalLink, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 /**
  * HELP SETTINGS PAGE — INSTITUTIONAL DESIGN
  * 
- * Configuration for Help Center:
- * - NO decorative icons (globe, lock, chart)
- * - Text toggles instead of iOS switches
- * - Sharp corners (rounded-md)
- * - Dense layout
+ * Text toggles instead of iOS switches
+ * Checkboxes for boolean settings
+ * Inline errors (not toasts)
+ * All icons: strokeWidth={1.5}
  */
 
 export default function HelpSettingsPage() {
-  // Settings state (would be persisted in real implementation)
-  const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
   const [publicHelpEnabled, setPublicHelpEnabled] = useState(true);
-  const [feedbackEnabled, setFeedbackEnabled] = useState(true);
   const [searchEnabled, setSearchEnabled] = useState(true);
+  const [feedbackEnabled, setFeedbackEnabled] = useState(true);
   const [trackViews, setTrackViews] = useState(true);
   const [trackSearches, setTrackSearches] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
-    toast({ title: "Settings saved" });
+    setSaving(true);
+    setTimeout(() => {
+      setSaving(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }, 500);
   };
 
   return (
-    <div className="p-6 max-w-3xl">
+    <div className="flex-1 p-8">
       {/* Header */}
-      <div className="mb-5">
-        <p 
-          className="text-[10px] uppercase tracking-wider font-medium mb-1"
-          style={{ color: '#6B6B6B' }}
-        >
-          Help Workstation
+      <div className="mb-8">
+        <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
+          HELP WORKSTATION
         </p>
-        <h1 
-          className="text-[20px] font-medium leading-tight"
-          style={{ color: 'var(--platform-text)' }}
-        >
-          Settings
-        </h1>
-        <p 
-          className="text-[13px] mt-1"
-          style={{ color: '#AAAAAA' }}
-        >
-          Configure Help Center behavior
-        </p>
+        <h1 className="text-[20px] font-medium text-white mb-1">Settings</h1>
+        <p className="text-[13px] text-[#AAAAAA]">Configure Help Center behavior</p>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-6 max-w-3xl">
         {/* Public Help Center */}
-        <div 
-          className="rounded-md p-5"
-          style={{ 
-            backgroundColor: '#1A1A1A',
-            border: '1px solid #303030'
-          }}
-        >
-          <h3 
-            className="text-[14px] font-medium mb-4"
-            style={{ color: 'white' }}
-          >
-            Public Help Center
-          </h3>
+        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-5">
+          <h3 className="text-[14px] font-medium text-white mb-4">Public Help Center</h3>
           
-          <div className="space-y-0">
-            {/* Enable public Help Center */}
-            <SettingToggle
-              label="Enable public Help Center"
-              description="Make published articles accessible at /help"
-              enabled={publicHelpEnabled}
-              onToggle={() => setPublicHelpEnabled(!publicHelpEnabled)}
-            />
+          <div className="space-y-3">
+            <label className="flex items-center justify-between py-2.5 border-b border-[#303030]/30">
+              <div>
+                <p className="text-[13px] text-white">Enable public Help Center</p>
+                <p className="text-[11px] text-[#8F8F8F] mt-0.5">Make published articles accessible at /help</p>
+              </div>
+              <input 
+                type="checkbox" 
+                checked={publicHelpEnabled} 
+                onChange={(e) => setPublicHelpEnabled(e.target.checked)} 
+                className="h-4 w-4 rounded border-[#505050] bg-transparent checked:bg-white checked:border-white focus:ring-0 focus:ring-offset-0"
+              />
+            </label>
             
-            {/* Enable search */}
-            <SettingToggle
-              label="Enable search"
-              description="Allow visitors to search articles"
-              enabled={searchEnabled}
-              onToggle={() => setSearchEnabled(!searchEnabled)}
-            />
+            <label className="flex items-center justify-between py-2.5 border-b border-[#303030]/30">
+              <div>
+                <p className="text-[13px] text-white">Enable search</p>
+                <p className="text-[11px] text-[#8F8F8F] mt-0.5">Allow visitors to search articles</p>
+              </div>
+              <input 
+                type="checkbox" 
+                checked={searchEnabled} 
+                onChange={(e) => setSearchEnabled(e.target.checked)} 
+                className="h-4 w-4 rounded border-[#505050] bg-transparent checked:bg-white checked:border-white focus:ring-0 focus:ring-offset-0"
+              />
+            </label>
             
-            {/* Enable feedback */}
-            <SettingToggle
-              label="Enable article feedback"
-              description="Show 'Was this helpful?' on articles"
-              enabled={feedbackEnabled}
-              onToggle={() => setFeedbackEnabled(!feedbackEnabled)}
-              isLast
-            />
+            <label className="flex items-center justify-between py-2.5">
+              <div>
+                <p className="text-[13px] text-white">Enable article feedback</p>
+                <p className="text-[11px] text-[#8F8F8F] mt-0.5">Show "Was this helpful?" on articles</p>
+              </div>
+              <input 
+                type="checkbox" 
+                checked={feedbackEnabled} 
+                onChange={(e) => setFeedbackEnabled(e.target.checked)} 
+                className="h-4 w-4 rounded border-[#505050] bg-transparent checked:bg-white checked:border-white focus:ring-0 focus:ring-offset-0"
+              />
+            </label>
           </div>
-
-          {publicHelpEnabled && (
-            <div 
-              className="mt-4 pt-4"
-              style={{ borderTop: '1px solid #303030' }}
+          
+          <div className="mt-4 pt-4 border-t border-[#303030]">
+            <a 
+              href="/help" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-[12px] text-[#AAAAAA] hover:text-white flex items-center gap-1.5"
             >
-              <button
-                onClick={() => window.open("/help", "_blank")}
-                className="text-[12px] flex items-center gap-1.5 transition-colors"
-                style={{ color: '#AAAAAA' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
-              >
-                View Public Help Center
-                <ExternalLink className="h-3 w-3" strokeWidth={1.5} />
-              </button>
-            </div>
-          )}
+              View Public Help Center
+              <ExternalLink className="h-3 w-3" strokeWidth={1.5} />
+            </a>
+          </div>
         </div>
 
         {/* Analytics */}
-        <div 
-          className="rounded-md p-5"
-          style={{ 
-            backgroundColor: '#1A1A1A',
-            border: '1px solid #303030'
-          }}
-        >
-          <h3 
-            className="text-[14px] font-medium mb-4"
-            style={{ color: 'white' }}
-          >
-            Analytics
-          </h3>
+        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-5">
+          <h3 className="text-[14px] font-medium text-white mb-4">Analytics</h3>
           
-          <div className="space-y-0">
-            <SettingToggle
-              label="Track article views"
-              description="Record when articles are viewed"
-              enabled={trackViews}
-              onToggle={() => setTrackViews(!trackViews)}
-            />
+          <div className="space-y-3">
+            <label className="flex items-center justify-between py-2.5 border-b border-[#303030]/30">
+              <div>
+                <p className="text-[13px] text-white">Track article views</p>
+                <p className="text-[11px] text-[#8F8F8F] mt-0.5">Record when articles are viewed</p>
+              </div>
+              <input 
+                type="checkbox" 
+                checked={trackViews} 
+                onChange={(e) => setTrackViews(e.target.checked)} 
+                className="h-4 w-4 rounded border-[#505050] bg-transparent checked:bg-white checked:border-white focus:ring-0 focus:ring-offset-0"
+              />
+            </label>
             
-            <SettingToggle
-              label="Track search queries"
-              description="Log search terms for analytics"
-              enabled={trackSearches}
-              onToggle={() => setTrackSearches(!trackSearches)}
-              isLast
-            />
+            <label className="flex items-center justify-between py-2.5">
+              <div>
+                <p className="text-[13px] text-white">Track search queries</p>
+                <p className="text-[11px] text-[#8F8F8F] mt-0.5">Log search terms for analytics</p>
+              </div>
+              <input 
+                type="checkbox" 
+                checked={trackSearches} 
+                onChange={(e) => setTrackSearches(e.target.checked)} 
+                className="h-4 w-4 rounded border-[#505050] bg-transparent checked:bg-white checked:border-white focus:ring-0 focus:ring-offset-0"
+              />
+            </label>
           </div>
           
-          <p 
-            className="text-[11px] mt-4"
-            style={{ color: '#6B6B6B' }}
-          >
-            Analytics data helps improve Help content by showing popular topics and search gaps.
-          </p>
+          <div className="mt-4 p-3 bg-[#0A0A0A] border border-[#303030]/50 rounded">
+            <p className="text-[11px] text-[#8F8F8F]">
+              Analytics data helps improve Help content by showing popular topics and search gaps.
+            </p>
+          </div>
         </div>
 
         {/* Permissions */}
-        <div 
-          className="rounded-md p-5"
-          style={{ 
-            backgroundColor: '#1A1A1A',
-            border: '1px solid #303030'
-          }}
-        >
-          <h3 
-            className="text-[14px] font-medium mb-4"
-            style={{ color: 'white' }}
-          >
-            Permissions
-          </h3>
+        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-5">
+          <h3 className="text-[14px] font-medium text-white mb-4">Permissions</h3>
           
-          <p 
-            className="text-[13px] mb-3"
-            style={{ color: '#AAAAAA' }}
-          >
-            Help Workstation access is managed via platform capabilities. 
-            Users with the <code 
-              className="text-[11px] px-1 py-0.5 rounded"
-              style={{ backgroundColor: '#252525' }}
-            >can_manage_help</code> capability 
-            or Platform Administrators can access this workstation.
-          </p>
-          
-          <div 
-            className="p-3 rounded-md"
-            style={{
-              backgroundColor: '#141414',
-              border: '1px solid #303030',
-            }}
-          >
-            <p 
-              className="text-[13px] font-medium"
-              style={{ color: '#AAAAAA' }}
-            >
-              Role-based access
+          <div className="space-y-3">
+            <p className="text-[12px] text-[#AAAAAA]">
+              Help Workstation access is managed via platform capabilities. Users with the{" "}
+              <code className="px-1.5 py-0.5 bg-[#0A0A0A] border border-[#303030] rounded text-[11px] font-mono">
+                can_manage_help
+              </code>{" "}
+              capability or Platform Administrators can access this workstation.
             </p>
-            <p 
-              className="text-[11px] mt-0.5"
-              style={{ color: '#6B6B6B' }}
-            >
-              Contact a Platform Administrator to grant or revoke Help access for users.
-            </p>
+            
+            <div className="mt-4 p-3 bg-[#0A0A0A] border border-[#303030]/50 rounded">
+              <p className="text-[12px] text-white font-medium mb-1">Role-based access</p>
+              <p className="text-[11px] text-[#8F8F8F]">
+                Contact a Platform Administrator to grant or revoke Help access for users.
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Save Button */}
-        <div className="flex justify-end pt-2">
-          <Button 
-            variant="default"
-            size="sm"
-            onClick={handleSave}
-          >
-            Save Settings
+        <div className="flex justify-end pt-4">
+          <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
+            {saving ? "Saving..." : saved ? "Saved" : "Save Settings"}
           </Button>
         </div>
       </div>
     </div>
-  );
-}
-
-// Text-based toggle instead of iOS switch
-function SettingToggle({ 
-  label, 
-  description, 
-  enabled, 
-  onToggle,
-  isLast = false 
-}: { 
-  label: string; 
-  description: string; 
-  enabled: boolean; 
-  onToggle: () => void;
-  isLast?: boolean;
-}) {
-  return (
-    <button
-      onClick={onToggle}
-      className="flex items-center justify-between py-3 w-full text-left transition-colors"
-      style={{ 
-        borderBottom: isLast ? 'none' : '1px solid rgba(48,48,48,0.5)',
-      }}
-    >
-      <div>
-        <p 
-          className="text-[13px] font-medium"
-          style={{ color: 'white' }}
-        >
-          {label}
-        </p>
-        <p 
-          className="text-[11px] mt-0.5"
-          style={{ color: '#8F8F8F' }}
-        >
-          {description}
-        </p>
-      </div>
-      <span 
-        className="text-[12px] transition-colors"
-        style={{ color: enabled ? '#AAAAAA' : '#6B6B6B' }}
-      >
-        {enabled ? 'Enabled' : 'Disabled'}
-      </span>
-    </button>
   );
 }
