@@ -50,6 +50,7 @@ export default function HelpOverviewPage() {
     total: 0, newCount: 0, open: 0 
   });
   const [categoryCount, setCategoryCount] = useState(0);
+  const [tagCount, setTagCount] = useState(0);
   const [recentArticles, setRecentArticles] = useState<RecentArticle[]>([]);
   const [draftsToReview, setDraftsToReview] = useState<RecentArticle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,6 +83,19 @@ export default function HelpOverviewPage() {
         .select("*", { count: "exact", head: true });
       
       setCategoryCount(catCount ?? 0);
+      
+      // Fetch tag count (aggregate unique tags from articles)
+      const { data: allArticles } = await supabase
+        .from("help_articles")
+        .select("tags");
+      
+      const uniqueTags = new Set<string>();
+      allArticles?.forEach(article => {
+        if (article.tags && Array.isArray(article.tags)) {
+          article.tags.forEach((tag: string) => uniqueTags.add(tag.toLowerCase().trim()));
+        }
+      });
+      setTagCount(uniqueTags.size);
       
       // Fetch messages stats
       const { data: messages } = await supabase
@@ -251,7 +265,7 @@ export default function HelpOverviewPage() {
       
       <div className="space-y-8">
         {/* Stats Cards - No icons, numbers are the hero */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Articles Card */}
           <div 
             className="rounded-lg p-5"
@@ -306,6 +320,30 @@ export default function HelpOverviewPage() {
             </div>
           </div>
           
+          {/* Tags Card */}
+          <div 
+            className="rounded-lg p-5"
+            style={{ 
+              backgroundColor: '#1A1A1A',
+              border: '1px solid #303030'
+            }}
+          >
+            <div className="space-y-1">
+              <p 
+                className="text-[11px] uppercase tracking-wider font-medium"
+                style={{ color: '#6B6B6B' }}
+              >
+                Tags
+              </p>
+              <p 
+                className="text-[32px] font-medium tabular-nums"
+                style={{ color: 'white' }}
+              >
+                {tagCount}
+              </p>
+            </div>
+          </div>
+          
           {/* Messages Card */}
           <div 
             className="rounded-lg p-5"
@@ -335,39 +373,6 @@ export default function HelpOverviewPage() {
               </p>
             </div>
           </div>
-          
-          {/* Analytics Card - Clickable */}
-          <button 
-            onClick={() => navigate("/help-workstation/analytics")}
-            className="rounded-lg p-5 text-left transition-colors"
-            style={{ 
-              backgroundColor: '#1A1A1A',
-              border: '1px solid #303030'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.borderColor = '#505050'}
-            onMouseLeave={(e) => e.currentTarget.style.borderColor = '#303030'}
-          >
-            <div className="space-y-1">
-              <p 
-                className="text-[11px] uppercase tracking-wider font-medium"
-                style={{ color: '#6B6B6B' }}
-              >
-                Analytics
-              </p>
-              <p 
-                className="text-[13px] mt-3"
-                style={{ color: '#AAAAAA' }}
-              >
-                View search trends and article performance
-              </p>
-              <p 
-                className="text-[13px] mt-2"
-                style={{ color: 'white' }}
-              >
-                View Analytics →
-              </p>
-            </div>
-          </button>
         </div>
         
         {/* Quick Actions - Institutional buttons */}
@@ -385,6 +390,12 @@ export default function HelpOverviewPage() {
             onClick={() => navigate("/help-workstation/categories")}
           >
             Manage Categories
+          </Button>
+          <Button 
+            variant="outline"
+            onClick={() => navigate("/help-workstation/tags")}
+          >
+            Manage Tags
           </Button>
           <Button 
             variant="outline"
