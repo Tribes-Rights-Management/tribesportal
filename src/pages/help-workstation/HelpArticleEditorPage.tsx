@@ -301,10 +301,10 @@ export default function HelpArticleEditorPage() {
             {!isNew && article && (
               <>
                 <span className="text-[#303030]">/</span>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded ${
-                  article.status === 'published' ? 'bg-[#059669]/20 text-[#34D399]' :
-                  article.status === 'archived' ? 'bg-[#7F1D1D]/20 text-[#FCA5A5]' :
-                  'bg-[#303030] text-[#AAAAAA]'
+                <span className={`text-[11px] ${
+                  article.status === 'published' ? 'text-[#4ADE80]' :
+                  article.status === 'archived' ? 'text-[#6B6B6B]' :
+                  'text-[#6B6B6B]'
                 }`}>
                   {article.status}
                 </span>
@@ -382,7 +382,7 @@ export default function HelpArticleEditorPage() {
             />
 
             {/* Content area */}
-            <div className="border border-[#303030] rounded">
+            <div className="border border-[#404040] rounded-md">
               {/* Toolbar */}
               <div className="flex items-center gap-0 px-2 py-1.5 border-b border-[#303030]">
                 <button
