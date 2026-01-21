@@ -143,7 +143,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const location = useLocation();
 
   return (
-    <nav className="flex flex-col py-4 px-3">
+    <nav className="flex flex-col py-3 px-2 space-y-0.5">
       {NAV_ITEMS.map((item) => {
         const isActive = item.exact 
           ? location.pathname === item.path
@@ -154,7 +154,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             {/* Divider before Settings */}
             {item.dividerBefore && (
               <div 
-                className="my-2 mx-1" 
+                className="my-1.5 mx-1" 
                 style={{ borderTop: '1px solid #303030' }}
               />
             )}
@@ -162,7 +162,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
               to={item.path}
               onClick={onNavigate}
               className={cn(
-                "block w-full text-left px-4 py-2.5 text-[14px] rounded-md transition-colors duration-100",
+                "block w-full text-left px-3 py-2 text-[13px] rounded-md transition-colors duration-100",
                 isActive 
                   ? "bg-white/[0.04] text-white font-medium" 
                   : "text-[#AAAAAA] hover:text-white hover:bg-white/[0.02]"
@@ -265,10 +265,10 @@ export function HelpWorkstationLayout() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar — Desktop (narrower, 192px) */}
+        {/* Sidebar — Desktop (narrower, 176px for density) */}
         {!isMobile && (
           <aside 
-            className="w-48 shrink-0 overflow-y-auto"
+            className="w-44 shrink-0 overflow-y-auto"
             style={{
               backgroundColor: 'var(--tribes-header-bg)',
               borderRight: '1px solid var(--tribes-border)',
