@@ -43,6 +43,7 @@ export default function SignInPage() {
       case LOGOUT_REASONS.IDLE:
         return "You were signed out due to inactivity.";
       case LOGOUT_REASONS.ABSOLUTE:
+      case 'session-timeout': // Legacy support
         return "Your session has expired. Please sign in again.";
       default:
         return null;

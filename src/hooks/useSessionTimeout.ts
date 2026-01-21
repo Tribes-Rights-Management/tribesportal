@@ -6,6 +6,7 @@ import { useRouteMetadata } from '@/hooks/useRouteMetadata';
 import { supabase } from '@/integrations/supabase/client';
 import {
   ACTIVITY_EVENTS,
+  ACTIVITY_THROTTLE_MS,
   SESSION_BROADCAST_CHANNEL,
   SESSION_STORAGE_KEY,
   SESSION_START_KEY,
@@ -19,24 +20,25 @@ import {
 } from '@/constants/session-timeout';
 
 /**
- * SESSION TIMEOUT HOOK — INSTITUTIONAL INACTIVITY GOVERNANCE
+ * SESSION TIMEOUT HOOK — APPLE-STANDARD INACTIVITY GOVERNANCE
  * 
  * ═══════════════════════════════════════════════════════════════════════════
- * CORE RESPONSIBILITIES:
+ * APPLE-STANDARD TIMEOUT POLICY:
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * 1. Track user activity (clicks, keydowns, touch, wheel)
- * 2. Manage idle timer with scope-aware policy
- * 3. Manage absolute session lifetime
- * 4. Cross-tab synchronization via BroadcastChannel + localStorage fallback
- * 5. Trigger warning modal before logout
- * 6. Execute clean logout with audit logging
+ * - 30 minutes inactivity → Show warning dialog
+ * - 2 minutes after warning → Auto sign out
+ * - Total: 32 minutes from last activity to sign out
  * 
- * WHAT DOES NOT COUNT AS ACTIVITY:
- * - Background polling
- * - Websocket messages
- * - Passive data refresh
- * - Tab visibility changes
+ * ACTIVITY DETECTION (resets timer):
+ * - Mouse movement (throttled to max once per 5 seconds)
+ * - Mouse clicks
+ * - Keyboard input
+ * - Touch events
+ * - Scroll/wheel events
+ * - Page navigation
+ * 
+ * Cross-tab synchronization via BroadcastChannel + localStorage fallback.
  */
 
 interface SessionTimeoutState {
@@ -458,11 +460,19 @@ export function useSessionTimeout(): UseSessionTimeoutResult {
       return () => clearInterval(checkInterval);
     }
 
+    // Throttle activity detection (max once per ACTIVITY_THROTTLE_MS)
+    let lastActivityTime = Date.now();
+    
     const handleActivity = () => {
       // Skip if warning is showing (user must click Stay signed in)
       if (showWarning) return;
 
-      lastActivityRef.current = Date.now();
+      // Throttle: only register activity if enough time has passed
+      const now = Date.now();
+      if (now - lastActivityTime < ACTIVITY_THROTTLE_MS) return;
+      lastActivityTime = now;
+
+      lastActivityRef.current = now;
       
       // Broadcast to other tabs
       if (broadcastChannelRef.current) {
@@ -504,7 +514,7 @@ export function useSessionTimeout(): UseSessionTimeoutResult {
   }, [isAuthenticated, currentPolicy, showWarning, resetIdleTimer, setupAbsoluteTimer, shouldMonitorSession, clearGracePeriod]);
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // POLICY RESOLUTION (scope-aware, role-aware)
+  // POLICY RESOLUTION (Apple-standard: unified 30-min timeout)
   // ═══════════════════════════════════════════════════════════════════════════
 
   useEffect(() => {
@@ -518,12 +528,13 @@ export function useSessionTimeout(): UseSessionTimeoutResult {
       startGracePeriod();
     }
 
-    const policy = getSessionPolicy(isExternalAuditor, scope);
+    // Apple-standard: same policy for everyone
+    const policy = getSessionPolicy();
     setCurrentPolicy(policy);
-  }, [isAuthenticated, isExternalAuditor, scope, startGracePeriod]);
+  }, [isAuthenticated, startGracePeriod]);
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // ROUTE CHANGE = ACTIVITY (if user-initiated)
+  // ROUTE CHANGE = ACTIVITY
   // ═══════════════════════════════════════════════════════════════════════════
 
   useEffect(() => {
@@ -531,13 +542,7 @@ export function useSessionTimeout(): UseSessionTimeoutResult {
     
     // Route changes count as activity (user navigation)
     markActivity();
-    
-    // Policy may have changed with route (e.g., entering System Console)
-    const newPolicy = getSessionPolicy(isExternalAuditor, scope);
-    if (newPolicy.policyLabel !== currentPolicy.policyLabel) {
-      setCurrentPolicy(newPolicy);
-    }
-  }, [location.pathname, isAuthenticated, currentPolicy, isExternalAuditor, scope, markActivity]);
+  }, [location.pathname, isAuthenticated, currentPolicy, markActivity]);
 
   return {
     showWarning,
