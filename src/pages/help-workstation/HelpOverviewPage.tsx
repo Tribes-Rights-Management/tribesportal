@@ -13,10 +13,11 @@ import { format } from "date-fns";
 /**
  * HELP WORKSTATION OVERVIEW — INSTITUTIONAL DASHBOARD
  * 
- * Clean, data-focused dashboard with:
- * - No icons in metric cards (numbers are the hero)
- * - Subtle search styling
- * - Institutional typography (uppercase labels, tabular figures)
+ * Dense, data-focused dashboard with:
+ * - Sharp corners (rounded-md max)
+ * - Tight spacing (p-4, gap-3)
+ * - Smaller typography (10-28px scale)
+ * - High information density
  * - Bloomberg Terminal aesthetic
  */
 
@@ -215,34 +216,34 @@ export default function HelpOverviewPage() {
   };
 
   return (
-    <div className="p-8 max-w-6xl">
-      {/* Header */}
-      <div className="mb-8">
+    <div className="p-6 max-w-5xl">
+      {/* Header - Tighter spacing */}
+      <div className="mb-6">
         <p 
-          className="text-[11px] uppercase tracking-wider font-medium mb-1"
+          className="text-[10px] uppercase tracking-wider font-medium mb-1"
           style={{ color: '#6B6B6B' }}
         >
           Help Workstation
         </p>
         <h1 
-          className="text-[24px] font-medium"
+          className="text-[22px] font-medium leading-tight"
           style={{ color: 'var(--platform-text)' }}
         >
           Overview
         </h1>
         <p 
-          className="text-[14px] mt-1"
+          className="text-[13px] mt-1"
           style={{ color: '#AAAAAA' }}
         >
           Manage articles, categories, and support content
         </p>
       </div>
       
-      {/* Search Bar - Institutional styling */}
-      <form onSubmit={handleSearch} className="mb-8">
-        <div className="relative max-w-xl">
+      {/* Search Bar - Compact, sharp corners */}
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="relative max-w-2xl">
           <Search 
-            className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4" 
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" 
             strokeWidth={1.5}
             style={{ color: '#6B6B6B' }} 
           />
@@ -251,7 +252,7 @@ export default function HelpOverviewPage() {
             placeholder="Search articles..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-12 w-full pl-11 pr-4 text-[14px] rounded-md transition-colors duration-100 focus:outline-none"
+            className="h-10 w-full pl-10 pr-4 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
             style={{
               backgroundColor: '#1A1A1A',
               border: '1px solid #303030',
@@ -263,182 +264,179 @@ export default function HelpOverviewPage() {
         </div>
       </form>
       
-      <div className="space-y-8">
-        {/* Stats Cards - No icons, numbers are the hero */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="space-y-6">
+        {/* Stats Cards - Dense, sharp corners, smaller numbers */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {/* Articles Card */}
           <div 
-            className="rounded-lg p-5"
+            className="rounded-md p-4"
             style={{ 
               backgroundColor: '#1A1A1A',
               border: '1px solid #303030'
             }}
           >
-            <div className="space-y-1">
-              <p 
-                className="text-[11px] uppercase tracking-wider font-medium"
-                style={{ color: '#6B6B6B' }}
-              >
-                Articles
-              </p>
-              <p 
-                className="text-[32px] font-medium tabular-nums"
-                style={{ color: 'white' }}
-              >
-                {articleStats.total}
-              </p>
-              <p 
-                className="text-[12px]"
-                style={{ color: '#8F8F8F' }}
-              >
-                {articleStats.published} published · {articleStats.draft} draft
-              </p>
-            </div>
+            <p 
+              className="text-[10px] uppercase tracking-wider font-medium mb-1.5"
+              style={{ color: '#6B6B6B' }}
+            >
+              Articles
+            </p>
+            <p 
+              className="text-[28px] font-medium tabular-nums leading-none mb-1.5"
+              style={{ color: 'white' }}
+            >
+              {articleStats.total}
+            </p>
+            <p 
+              className="text-[11px]"
+              style={{ color: '#8F8F8F' }}
+            >
+              {articleStats.published} published · {articleStats.draft} draft
+            </p>
           </div>
           
           {/* Categories Card */}
           <div 
-            className="rounded-lg p-5"
+            className="rounded-md p-4"
             style={{ 
               backgroundColor: '#1A1A1A',
               border: '1px solid #303030'
             }}
           >
-            <div className="space-y-1">
-              <p 
-                className="text-[11px] uppercase tracking-wider font-medium"
-                style={{ color: '#6B6B6B' }}
-              >
-                Categories
-              </p>
-              <p 
-                className="text-[32px] font-medium tabular-nums"
-                style={{ color: 'white' }}
-              >
-                {categoryCount}
-              </p>
-            </div>
+            <p 
+              className="text-[10px] uppercase tracking-wider font-medium mb-1.5"
+              style={{ color: '#6B6B6B' }}
+            >
+              Categories
+            </p>
+            <p 
+              className="text-[28px] font-medium tabular-nums leading-none"
+              style={{ color: 'white' }}
+            >
+              {categoryCount}
+            </p>
           </div>
           
           {/* Tags Card */}
           <div 
-            className="rounded-lg p-5"
+            className="rounded-md p-4"
             style={{ 
               backgroundColor: '#1A1A1A',
               border: '1px solid #303030'
             }}
           >
-            <div className="space-y-1">
-              <p 
-                className="text-[11px] uppercase tracking-wider font-medium"
-                style={{ color: '#6B6B6B' }}
-              >
-                Tags
-              </p>
-              <p 
-                className="text-[32px] font-medium tabular-nums"
-                style={{ color: 'white' }}
-              >
-                {tagCount}
-              </p>
-            </div>
+            <p 
+              className="text-[10px] uppercase tracking-wider font-medium mb-1.5"
+              style={{ color: '#6B6B6B' }}
+            >
+              Tags
+            </p>
+            <p 
+              className="text-[28px] font-medium tabular-nums leading-none"
+              style={{ color: 'white' }}
+            >
+              {tagCount}
+            </p>
           </div>
           
           {/* Messages Card */}
           <div 
-            className="rounded-lg p-5"
+            className="rounded-md p-4"
             style={{ 
               backgroundColor: '#1A1A1A',
               border: '1px solid #303030'
             }}
           >
-            <div className="space-y-1">
-              <p 
-                className="text-[11px] uppercase tracking-wider font-medium"
-                style={{ color: '#6B6B6B' }}
-              >
-                Messages
-              </p>
-              <p 
-                className="text-[32px] font-medium tabular-nums"
-                style={{ color: 'white' }}
-              >
-                {messageStats.total}
-              </p>
-              <p 
-                className="text-[12px]"
-                style={{ color: '#8F8F8F' }}
-              >
-                {messageStats.newCount} new · {messageStats.open} open
-              </p>
-            </div>
+            <p 
+              className="text-[10px] uppercase tracking-wider font-medium mb-1.5"
+              style={{ color: '#6B6B6B' }}
+            >
+              Messages
+            </p>
+            <p 
+              className="text-[28px] font-medium tabular-nums leading-none mb-1.5"
+              style={{ color: 'white' }}
+            >
+              {messageStats.total}
+            </p>
+            <p 
+              className="text-[11px]"
+              style={{ color: '#8F8F8F' }}
+            >
+              {messageStats.newCount} new · {messageStats.open} open
+            </p>
           </div>
         </div>
         
-        {/* Quick Actions - Institutional buttons */}
-        <div className="flex flex-wrap gap-3">
+        {/* Quick Actions - Compact buttons */}
+        <div className="flex flex-wrap gap-2">
           <Button 
             variant="default"
+            size="sm"
             onClick={() => navigate("/help-workstation/articles/new")}
-            className="gap-2"
+            className="gap-1.5"
           >
             <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
             New Article
           </Button>
           <Button 
             variant="outline"
+            size="sm"
             onClick={() => navigate("/help-workstation/categories")}
           >
             Manage Categories
           </Button>
           <Button 
             variant="outline"
+            size="sm"
             onClick={() => navigate("/help-workstation/tags")}
           >
             Manage Tags
           </Button>
           <Button 
             variant="outline"
+            size="sm"
             onClick={() => navigate("/help-workstation/messages")}
           >
             View Messages
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Bottom sections - Dense, sharp corners */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {/* Drafts Needing Review */}
           <div 
-            className="rounded-lg p-6"
+            className="rounded-md p-5"
             style={{ 
               backgroundColor: '#1A1A1A',
               border: '1px solid #303030'
             }}
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <h3 
-                className="text-[15px] font-medium"
+                className="text-[14px] font-medium"
                 style={{ color: 'white' }}
               >
                 Drafts to Review
               </h3>
               <button 
                 onClick={() => navigate("/help-workstation/articles?status=draft")}
-                className="text-[13px] flex items-center gap-1 transition-colors"
+                className="text-[12px] flex items-center gap-1 transition-colors"
                 style={{ color: '#AAAAAA' }}
                 onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
                 onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
               >
                 View all
-                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
+                <ArrowRight className="h-3 w-3" strokeWidth={1.5} />
               </button>
             </div>
             
             {loading ? (
-              <p className="text-[13px] text-center py-8" style={{ color: '#6B6B6B' }}>
+              <p className="text-[12px] text-center py-6" style={{ color: '#6B6B6B' }}>
                 Loading...
               </p>
             ) : draftsToReview.length === 0 ? (
-              <p className="text-[13px] text-center py-8" style={{ color: '#6B6B6B' }}>
+              <p className="text-[12px] text-center py-6" style={{ color: '#6B6B6B' }}>
                 No drafts to review
               </p>
             ) : (
@@ -446,23 +444,23 @@ export default function HelpOverviewPage() {
                 {draftsToReview.map((article, index) => (
                   <div 
                     key={article.id}
-                    className="flex items-center justify-between py-3 cursor-pointer transition-colors"
+                    className="flex items-center justify-between py-2 cursor-pointer transition-colors"
                     style={{ 
-                      borderBottom: index < draftsToReview.length - 1 ? '1px solid #303030' : 'none'
+                      borderBottom: index < draftsToReview.length - 1 ? '1px solid rgba(48,48,48,0.5)' : 'none'
                     }}
                     onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
-                    <div className="min-w-0 flex-1 pr-4">
+                    <div className="min-w-0 flex-1 pr-3">
                       <div 
-                        className="text-[14px] font-medium truncate"
+                        className="text-[13px] font-medium truncate"
                         style={{ color: 'white' }}
                       >
                         {article.title}
                       </div>
                       <div 
-                        className="text-[12px] mt-0.5"
+                        className="text-[11px] mt-0.5"
                         style={{ color: '#8F8F8F' }}
                       >
                         Updated {format(new Date(article.updated_at), "MMM d, yyyy")}
@@ -477,37 +475,37 @@ export default function HelpOverviewPage() {
           
           {/* Recent Articles */}
           <div 
-            className="rounded-lg p-6"
+            className="rounded-md p-5"
             style={{ 
               backgroundColor: '#1A1A1A',
               border: '1px solid #303030'
             }}
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <h3 
-                className="text-[15px] font-medium"
+                className="text-[14px] font-medium"
                 style={{ color: 'white' }}
               >
                 Recent Articles
               </h3>
               <button 
                 onClick={() => navigate("/help-workstation/articles")}
-                className="text-[13px] flex items-center gap-1 transition-colors"
+                className="text-[12px] flex items-center gap-1 transition-colors"
                 style={{ color: '#AAAAAA' }}
                 onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
                 onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
               >
                 View all
-                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
+                <ArrowRight className="h-3 w-3" strokeWidth={1.5} />
               </button>
             </div>
             
             {loading ? (
-              <p className="text-[13px] text-center py-8" style={{ color: '#6B6B6B' }}>
+              <p className="text-[12px] text-center py-6" style={{ color: '#6B6B6B' }}>
                 Loading...
               </p>
             ) : recentArticles.length === 0 ? (
-              <p className="text-[13px] text-center py-8" style={{ color: '#6B6B6B' }}>
+              <p className="text-[12px] text-center py-6" style={{ color: '#6B6B6B' }}>
                 No articles yet
               </p>
             ) : (
@@ -515,23 +513,23 @@ export default function HelpOverviewPage() {
                 {recentArticles.map((article, index) => (
                   <div 
                     key={article.id}
-                    className="flex items-center justify-between py-3 cursor-pointer transition-colors"
+                    className="flex items-center justify-between py-2 cursor-pointer transition-colors"
                     style={{ 
-                      borderBottom: index < recentArticles.length - 1 ? '1px solid #303030' : 'none'
+                      borderBottom: index < recentArticles.length - 1 ? '1px solid rgba(48,48,48,0.5)' : 'none'
                     }}
                     onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
-                    <div className="min-w-0 flex-1 pr-4">
+                    <div className="min-w-0 flex-1 pr-3">
                       <div 
-                        className="text-[14px] font-medium truncate"
+                        className="text-[13px] font-medium truncate"
                         style={{ color: 'white' }}
                       >
                         {article.title}
                       </div>
                       <div 
-                        className="text-[12px] mt-0.5"
+                        className="text-[11px] mt-0.5"
                         style={{ color: '#717171' }}
                       >
                         /{article.slug}
@@ -548,15 +546,12 @@ export default function HelpOverviewPage() {
           </div>
         </div>
         
-        {/* Footer */}
+        {/* Minimal footer */}
         <div 
-          className="text-[11px] text-center py-4 uppercase tracking-wider"
-          style={{ 
-            borderTop: '1px solid #303030',
-            color: '#6B6B6B'
-          }}
+          className="text-[10px] text-center pt-6 uppercase tracking-wider"
+          style={{ color: '#4A4A4A' }}
         >
-          Help Workstation · Company-level content management
+          Help Workstation
         </div>
       </div>
     </div>
