@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Save, Send, Archive, RotateCcw, Clock, User } from "lucide-react";
+import { ArrowLeft, Save, Send, Archive, RotateCcw, Clock, User, AlertCircle, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleVersion } from "@/hooks/useHelpManagement";
 import { PageContainer } from "@/components/ui/page-container";
@@ -24,7 +24,6 @@ import {
   AppCardTitle,
   AppCardBody,
 } from "@/components/app-ui";
-import { toast } from "@/hooks/use-toast";
 import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
 
 /**
@@ -69,6 +68,10 @@ export default function HelpArticleEditorPage() {
   const [article, setArticle] = useState<HelpArticle | null>(null);
   const [versions, setVersions] = useState<HelpArticleVersion[]>([]);
   const [versionsLoading, setVersionsLoading] = useState(false);
+  
+  // Inline error states (no toasts)
+  const [loadError, setLoadError] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   // Confirmation dialogs
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
@@ -95,15 +98,12 @@ export default function HelpArticleEditorPage() {
       if (isNew) return;
       
       setLoading(true);
+      setLoadError(false);
       const art = await fetchArticleWithVersion(id!);
 
       if (!art) {
-        toast({ 
-          title: "Unable to load article",
-          description: "Please try again.", 
-          variant: "destructive" 
-        });
-        navigate("/help-workstation/articles");
+        setLoadError(true);
+        setLoading(false);
         return;
       }
 
@@ -119,7 +119,7 @@ export default function HelpArticleEditorPage() {
     }
 
     loadArticle();
-  }, [id, isNew, navigate, fetchArticleWithVersion]);
+  }, [id, isNew, fetchArticleWithVersion]);
 
   // Auto-generate slug from title
   useEffect(() => {
@@ -143,16 +143,19 @@ export default function HelpArticleEditorPage() {
 
   // Handle save (create or update)
   const handleSave = async () => {
+    // Clear previous validation error
+    setValidationError(null);
+    
     if (!title.trim()) {
-      toast({ description: "Title is required", variant: "destructive" });
+      setValidationError("Title is required");
       return;
     }
     if (!slug.trim()) {
-      toast({ description: "Slug is required", variant: "destructive" });
+      setValidationError("Slug is required");
       return;
     }
     if (!bodyMd.trim()) {
-      toast({ description: "Content is required", variant: "destructive" });
+      setValidationError("Content is required");
       return;
     }
 
@@ -249,6 +252,40 @@ export default function HelpArticleEditorPage() {
     );
   }
 
+  // Load error state with inline error
+  if (loadError && !isNew) {
+    return (
+      <PageContainer>
+        <div className="flex items-center gap-4 mb-6">
+          <AppButton 
+            intent="ghost" 
+            size="sm"
+            onClick={() => navigate("/help-workstation/articles")}
+            icon={<ArrowLeft className="h-4 w-4" />}
+          >
+            Back
+          </AppButton>
+        </div>
+        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r max-w-lg">
+          <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
+          <div className="flex-1">
+            <p className="text-[12px] text-[#E5E5E5]">Unable to load article</p>
+            <p className="text-[11px] text-[#8F8F8F] mt-1">
+              The article may not exist or you don't have permission to access it.
+            </p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="text-[11px] text-[#DC2626] hover:text-[#EF4444] underline mt-2 flex items-center gap-1"
+            >
+              <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
+              Try again
+            </button>
+          </div>
+        </div>
+      </PageContainer>
+    );
+  }
+
   return (
     <PageContainer>
       {/* Header */}
@@ -298,6 +335,16 @@ export default function HelpArticleEditorPage() {
           )}
         </div>
       </div>
+
+      {/* Validation Error - Inline */}
+      {validationError && (
+        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r max-w-lg">
+          <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
+          <div className="flex-1">
+            <p className="text-[12px] text-[#E5E5E5]">{validationError}</p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Editor */}
