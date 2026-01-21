@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, ArrowUpDown, X, AlertCircle } from "lucide-react";
+import { Trash2, ArrowUpDown, X } from "lucide-react";
 import { format } from "date-fns";
 
 /**
@@ -40,11 +40,7 @@ export default function HelpTagsPage() {
   // Panel state
   const [panelOpen, setPanelOpen] = useState(false);
   const [editingTag, setEditingTag] = useState<HelpTag | null>(null);
-  const [formName, setFormName] = useState("");
-  const [formSlug, setFormSlug] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-  
+
   // Delete confirmation
   const [deleteTag, setDeleteTag] = useState<HelpTag | null>(null);
 
@@ -114,33 +110,9 @@ export default function HelpTagsPage() {
       return sortOrder === "asc" ? comparison : -comparison;
     });
 
-  const openCreatePanel = () => {
-    setEditingTag(null);
-    setFormName("");
-    setFormSlug("");
-    setFormError(null);
-    setPanelOpen(true);
-  };
-
-  const openEditPanel = (tag: HelpTag) => {
+  const openDetailsPanel = (tag: HelpTag) => {
     setEditingTag(tag);
-    setFormName(tag.name);
-    setFormSlug(tag.slug);
-    setFormError(null);
     setPanelOpen(true);
-  };
-
-  const handleSave = async () => {
-    if (!formName.trim()) {
-      setFormError("Name is required");
-      return;
-    }
-    
-    setSaving(true);
-    // Tags are managed through articles, so we just close the panel
-    setSaving(false);
-    setPanelOpen(false);
-    loadTags();
   };
 
   const handleDelete = async () => {
@@ -177,13 +149,9 @@ export default function HelpTagsPage() {
           <h1 className="text-[20px] font-medium text-white mb-1">Tags</h1>
           <p className="text-[13px] text-[#AAAAAA]">{tags.length} tags</p>
           <p className="text-[12px] text-[#6B6B6B] mt-1">
-            Tags are created when added to articles.
+            Tags are created automatically when added to articles.
           </p>
         </div>
-        <Button variant="default" size="sm" onClick={openCreatePanel}>
-          <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
-          New Tag
-        </Button>
       </div>
       
       {/* Search - No icon */}
@@ -231,7 +199,7 @@ export default function HelpTagsPage() {
                     {searchQuery ? "No tags match your search" : "No tags yet"}
                   </p>
                   <p className="text-[12px] text-[#6B6B6B] mt-1">
-                    Tags are created when added to articles
+                    Add tags to articles to see them here
                   </p>
                 </td>
               </tr>
@@ -239,7 +207,7 @@ export default function HelpTagsPage() {
               sortedTags.map(tag => (
                 <tr
                   key={tag.id}
-                  onClick={() => openEditPanel(tag)}
+                  onClick={() => openDetailsPanel(tag)}
                   className="border-b border-[#303030]/30 hover:bg-white/[0.02] transition-colors cursor-pointer group"
                 >
                   <td className="py-3 px-4 text-[13px] text-white">{tag.name}</td>
@@ -269,79 +237,46 @@ export default function HelpTagsPage() {
         </table>
       </div>
       
-      {/* Right-side Panel */}
-      {panelOpen && (
+      {/* Right-side Panel - Tag Details (View Only) */}
+      {panelOpen && editingTag && (
         <>
           <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setPanelOpen(false)} />
-          <div className="fixed inset-y-0 right-0 w-[500px] bg-[#0A0A0A] border-l border-[#303030] shadow-2xl z-50 flex flex-col">
+          <div className="fixed inset-y-0 right-0 w-[400px] bg-[#0A0A0A] border-l border-[#303030] shadow-2xl z-50 flex flex-col">
             <div className="flex items-center justify-between px-6 py-5 border-b border-[#303030]">
               <div>
-                <h2 className="text-[15px] font-medium text-white">
-                  {editingTag ? "Edit tag" : "New tag"}
-                </h2>
-                <p className="text-[11px] text-[#8F8F8F] mt-1">
-                  {editingTag ? "Update tag details" : "Create a new tag for organizing articles"}
-                </p>
+                <h2 className="text-[15px] font-medium text-white">Tag details</h2>
+                <p className="text-[11px] text-[#8F8F8F] mt-1">View tag information</p>
               </div>
               <button onClick={() => setPanelOpen(false)} className="text-[#6B6B6B] hover:text-white transition-colors">
                 <X className="h-4 w-4" strokeWidth={1.5} />
               </button>
             </div>
-            
-            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-              {formError && (
-                <div className="flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
-                  <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
-                  <p className="text-[12px] text-[#E5E5E5]">{formError}</p>
-                </div>
-              )}
-              
+
+            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5">
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Name</label>
-                <input
-                  value={formName}
-                  onChange={(e) => {
-                    setFormName(e.target.value);
-                    if (!editingTag) setFormSlug(slugify(e.target.value));
-                  }}
-                  placeholder="e.g., Getting Started"
-                  className="w-full h-10 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] transition-colors"
-                />
+                <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] mb-1">Name</p>
+                <p className="text-[14px] text-white">{editingTag.name}</p>
               </div>
-              
+
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Slug</label>
-                <input
-                  value={formSlug}
-                  onChange={(e) => setFormSlug(slugify(e.target.value))}
-                  placeholder="e.g., getting-started"
-                  className="w-full h-10 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] transition-colors"
-                />
-                <p className="text-[11px] text-[#6B6B6B] mt-2">URL-friendly identifier for the tag</p>
+                <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] mb-1">Slug</p>
+                <p className="text-[13px] text-[#AAAAAA]">{editingTag.slug}</p>
+              </div>
+
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] mb-1">Articles using this tag</p>
+                <p className="text-[14px] text-white">{editingTag.article_count || 0}</p>
+              </div>
+
+              <div className="pt-4 border-t border-[#303030]">
+                <p className="text-[11px] text-[#6B6B6B]">
+                  To rename or remove this tag, edit the articles that use it.
+                </p>
               </div>
             </div>
-            
-            <div className="flex items-center justify-between px-6 py-5 border-t border-[#303030]">
-              <div>
-                {editingTag && (
-                  <button
-                    onClick={() => {
-                      setDeleteTag(editingTag);
-                      setPanelOpen(false);
-                    }}
-                    disabled={(editingTag.article_count || 0) > 0}
-                    className="text-[12px] text-[#DC2626] hover:text-[#EF4444] disabled:text-[#6B6B6B] disabled:cursor-not-allowed transition-colors"
-                  >
-                    Delete tag
-                  </button>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>Cancel</Button>
-                <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
-                  {editingTag ? "Save Changes" : "Create Tag"}
-                </Button>
-              </div>
+
+            <div className="flex items-center justify-end px-6 py-5 border-t border-[#303030]">
+              <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>Close</Button>
             </div>
           </div>
         </>

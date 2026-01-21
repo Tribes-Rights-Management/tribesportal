@@ -482,6 +482,20 @@ export function useHelpManagement(): UseHelpManagementResult {
 
   // Create new version (append-only)
   const createVersion = useCallback(async (articleId: string, content: CreateVersionInput): Promise<string | null> => {
+    // First, update the article's tags field (tags are stored on article, not just version)
+    const { error: updateError } = await supabase
+      .from("help_articles")
+      .update({
+        tags: content.tags || [],
+        updated_by: user?.id,
+      })
+      .eq("id", articleId);
+
+    if (updateError) {
+      console.error("Error updating article tags:", updateError);
+      // Continue anyway - version creation is more important
+    }
+
     const { data: versionId, error } = await supabase.rpc("create_help_article_version", {
       _article_id: articleId,
       _title: content.title,
@@ -499,7 +513,7 @@ export function useHelpManagement(): UseHelpManagementResult {
     }
 
     return versionId;
-  }, []);
+  }, [user?.id]);
 
   // Publish a specific version
   const publishVersion = useCallback(async (articleId: string, versionId: string): Promise<boolean> => {
