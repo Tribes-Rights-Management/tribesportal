@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Save, Send, Archive, RotateCcw, Clock, User, AlertCircle, RefreshCw } from "lucide-react";
+import { ArrowLeft, Save, Send, Archive, RotateCcw, Clock, AlertCircle, RefreshCw, Bold, Italic, Link, List, ListOrdered, Heading2 } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleVersion } from "@/hooks/useHelpManagement";
 import { PageContainer } from "@/components/ui/page-container";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -286,250 +285,282 @@ export default function HelpArticleEditorPage() {
     );
   }
 
+  // Markdown toolbar helper
+  const insertMarkdown = (prefix: string, suffix: string = "") => {
+    const textarea = document.getElementById("body") as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = bodyMd.substring(start, end);
+    const newText = bodyMd.substring(0, start) + prefix + selectedText + suffix + bodyMd.substring(end);
+    setBodyMd(newText);
+
+    // Restore focus and selection
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + prefix.length, end + prefix.length);
+    }, 0);
+  };
+
   return (
     <PageContainer>
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <AppButton 
-          intent="ghost" 
-          size="sm"
-          onClick={() => navigate("/help-workstation/articles")}
-          icon={<ArrowLeft className="h-4 w-4" />}
-        >
-          Back
-        </AppButton>
-        <div className="flex-1">
-          <h1 className="text-xl font-semibold">
-            {isNew ? "New Article" : (article?.title || "Untitled")}
-          </h1>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <AppButton
+            intent="ghost"
+            size="sm"
+            onClick={() => navigate("/help-workstation/articles")}
+            icon={<ArrowLeft className="h-4 w-4" />}
+          >
+            Back
+          </AppButton>
           {!isNew && article && (
-            <div className="flex items-center gap-2 mt-1">
-              <AppChip 
-                status={getStatusChipStatus(article.status)} 
+            <div className="flex items-center gap-3">
+              <AppChip
+                status={getStatusChipStatus(article.status)}
                 label={article.status.charAt(0).toUpperCase() + article.status.slice(1)}
               />
-              <span className="text-xs text-muted-foreground">
-                Last updated {format(new Date(article.updated_at), "MMM d, yyyy 'at' h:mm a")}
+              <span className="text-xs text-gray-500">
+                Updated {format(new Date(article.updated_at), "MMM d, yyyy")}
               </span>
             </div>
           )}
         </div>
         <div className="flex items-center gap-2">
-          <AppButton 
-            intent="secondary"
+          <AppButton
+            intent="ghost"
             onClick={handleSave}
             loading={saving}
             loadingText="Saving..."
             icon={<Save className="h-4 w-4" />}
+            className="text-gray-600 hover:text-gray-900 border border-gray-200 hover:border-gray-300"
           >
             Save Draft
           </AppButton>
-          {!isNew && article?.status !== "published" && (
-            <AppButton 
+          {(!isNew && article?.status !== "published") || isNew ? (
+            <AppButton
               intent="primary"
-              onClick={() => setPublishDialogOpen(true)}
+              onClick={isNew ? handleSave : () => setPublishDialogOpen(true)}
+              loading={isNew ? saving : undefined}
               icon={<Send className="h-4 w-4" />}
             >
-              Publish
+              {isNew ? "Create & Publish" : "Publish"}
             </AppButton>
-          )}
+          ) : null}
         </div>
       </div>
 
       {/* Validation Error - Inline */}
       {validationError && (
-        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r max-w-lg">
-          <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
-          <div className="flex-1">
-            <p className="text-[12px] text-[#E5E5E5]">{validationError}</p>
-          </div>
+        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-red-50 border-l-2 border-red-600 rounded-r-md max-w-xl">
+          <AlertCircle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" strokeWidth={1.5} />
+          <p className="text-sm text-red-800">{validationError}</p>
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Editor */}
-        <div className="lg:col-span-2 space-y-6">
-          <AppCard>
-            <AppCardBody className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
-                <input
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Article title"
-                  className="h-10 w-full px-3 text-sm rounded-lg transition-colors duration-100 focus:outline-none"
-                  style={{
-                    backgroundColor: 'hsl(var(--muted) / 0.3)',
-                    border: '1px solid hsl(var(--border))',
-                    color: 'hsl(var(--foreground))',
-                  }}
-                />
-              </div>
+        <div className="lg:col-span-2 space-y-1">
+          {/* Title Field - Large underline style */}
+          <div className="py-4">
+            <input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Untitled article"
+              className="w-full text-2xl font-semibold text-gray-900 placeholder-gray-300 bg-transparent border-0 border-b border-gray-200 focus:border-gray-400 focus:outline-none focus:ring-0 pb-3 transition-colors"
+            />
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="slug">Slug</Label>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">/help/</span>
-                  <input
-                    id="slug"
-                    value={slug}
-                    onChange={(e) => {
-                      setSlug(e.target.value);
-                      setSlugManual(true);
-                    }}
-                    placeholder="article-slug"
-                    className="h-10 flex-1 px-3 text-sm rounded-lg transition-colors duration-100 focus:outline-none"
-                    style={{
-                      backgroundColor: 'hsl(var(--muted) / 0.3)',
-                      border: '1px solid hsl(var(--border))',
-                      color: 'hsl(var(--foreground))',
-                    }}
-                  />
-                </div>
-              </div>
+          {/* Slug Field - Compact with prefix */}
+          <div className="flex items-center gap-1 py-2">
+            <span className="text-sm text-gray-400 select-none">/help/</span>
+            <input
+              id="slug"
+              value={slug}
+              onChange={(e) => {
+                setSlug(e.target.value);
+                setSlugManual(true);
+              }}
+              placeholder="article-slug"
+              className="flex-1 text-sm text-gray-600 bg-transparent border-0 focus:outline-none focus:ring-0 px-1"
+            />
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="summary">Summary (optional)</Label>
-                <input
-                  id="summary"
-                  value={summary}
-                  onChange={(e) => setSummary(e.target.value)}
-                  placeholder="Brief description for search results"
-                  className="h-10 w-full px-3 text-sm rounded-lg transition-colors duration-100 focus:outline-none"
-                  style={{
-                    backgroundColor: 'hsl(var(--muted) / 0.3)',
-                    border: '1px solid hsl(var(--border))',
-                    color: 'hsl(var(--foreground))',
-                  }}
-                />
-              </div>
+          {/* Summary Field */}
+          <div className="py-3">
+            <input
+              id="summary"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              placeholder="Add a brief summary for search results..."
+              className="w-full text-sm text-gray-600 placeholder-gray-300 bg-transparent border-0 focus:outline-none focus:ring-0"
+            />
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="body">Content (Markdown)</Label>
-                <Textarea
-                  id="body"
-                  value={bodyMd}
-                  onChange={(e) => setBodyMd(e.target.value)}
-                  placeholder="Write your article content in Markdown..."
-                  className="min-h-[400px] font-mono text-sm"
-                />
-              </div>
-            </AppCardBody>
-          </AppCard>
+          {/* Content Area with Toolbar */}
+          <div className="mt-4 border border-gray-200 rounded-md overflow-hidden bg-white">
+            {/* Markdown Toolbar */}
+            <div className="flex items-center gap-1 px-3 py-2 border-b border-gray-100 bg-gray-50">
+              <button
+                type="button"
+                onClick={() => insertMarkdown("**", "**")}
+                className="p-1.5 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
+                title="Bold"
+              >
+                <Bold className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => insertMarkdown("*", "*")}
+                className="p-1.5 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
+                title="Italic"
+              >
+                <Italic className="h-4 w-4" />
+              </button>
+              <div className="w-px h-4 bg-gray-200 mx-1" />
+              <button
+                type="button"
+                onClick={() => insertMarkdown("## ")}
+                className="p-1.5 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
+                title="Heading"
+              >
+                <Heading2 className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => insertMarkdown("[", "](url)")}
+                className="p-1.5 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
+                title="Link"
+              >
+                <Link className="h-4 w-4" />
+              </button>
+              <div className="w-px h-4 bg-gray-200 mx-1" />
+              <button
+                type="button"
+                onClick={() => insertMarkdown("- ")}
+                className="p-1.5 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
+                title="Bullet List"
+              >
+                <List className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => insertMarkdown("1. ")}
+                className="p-1.5 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
+                title="Numbered List"
+              >
+                <ListOrdered className="h-4 w-4" />
+              </button>
+              <span className="ml-auto text-xs text-gray-400">Markdown supported</span>
+            </div>
+            {/* Textarea */}
+            <textarea
+              id="body"
+              value={bodyMd}
+              onChange={(e) => setBodyMd(e.target.value)}
+              placeholder="Write your article content here..."
+              className="w-full min-h-[400px] p-4 text-sm text-gray-800 placeholder-gray-300 bg-white border-0 focus:outline-none focus:ring-0 resize-y font-mono leading-relaxed"
+            />
+          </div>
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Settings */}
-          <AppCard>
-            <AppCardHeader>
-              <AppCardTitle>Settings</AppCardTitle>
-            </AppCardHeader>
-            <AppCardBody className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <select
-                  id="category"
-                  value={categoryId}
-                  onChange={(e) => setCategoryId(e.target.value)}
-                  className="h-10 w-full px-3 text-sm rounded-lg appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
-                  style={{
-                    backgroundColor: 'hsl(var(--muted) / 0.3)',
-                    border: '1px solid hsl(var(--border))',
-                    color: 'hsl(var(--foreground))',
-                  }}
-                >
-                  <option value="none">No category</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
-                  ))}
-                </select>
-              </div>
+        <div className="space-y-4">
+          {/* Settings Panel */}
+          <div className="bg-gray-50 rounded-md p-4 space-y-4">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Settings</h3>
 
-              <div className="space-y-2">
-                <Label htmlFor="visibility">Visibility</Label>
-                <select
-                  id="visibility"
-                  value={visibility}
-                  onChange={(e) => setVisibility(e.target.value as any)}
-                  className="h-10 w-full px-3 text-sm rounded-lg appearance-none cursor-pointer transition-colors duration-100 focus:outline-none"
-                  style={{
-                    backgroundColor: 'hsl(var(--muted) / 0.3)',
-                    border: '1px solid hsl(var(--border))',
-                    color: 'hsl(var(--foreground))',
-                  }}
-                >
-                  <option value="public">Public</option>
-                  <option value="internal">Internal only</option>
-                </select>
-              </div>
-            </AppCardBody>
-          </AppCard>
+            <div className="space-y-1.5">
+              <Label htmlFor="category" className="text-xs text-gray-600">Category</Label>
+              <select
+                id="category"
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                className="h-9 w-full px-3 text-sm rounded-md appearance-none cursor-pointer bg-white border border-gray-200 text-gray-700 focus:outline-none focus:border-gray-400 transition-colors"
+              >
+                <option value="none">No category</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="visibility" className="text-xs text-gray-600">Visibility</Label>
+              <select
+                id="visibility"
+                value={visibility}
+                onChange={(e) => setVisibility(e.target.value as "public" | "internal")}
+                className="h-9 w-full px-3 text-sm rounded-md appearance-none cursor-pointer bg-white border border-gray-200 text-gray-700 focus:outline-none focus:border-gray-400 transition-colors"
+              >
+                <option value="public">Public</option>
+                <option value="internal">Internal only</option>
+              </select>
+            </div>
+          </div>
 
           {/* Actions */}
           {!isNew && article && (
-            <AppCard>
-              <AppCardHeader>
-                <AppCardTitle>Actions</AppCardTitle>
-              </AppCardHeader>
-              <AppCardBody className="space-y-2">
-                {article.status === "archived" ? (
-                  <AppButton 
-                    intent="secondary"
-                    fullWidth
-                    onClick={() => setRestoreDialogOpen(true)}
-                    icon={<RotateCcw className="h-4 w-4" />}
-                  >
-                    Restore Article
-                  </AppButton>
-                ) : (
-                  <AppButton 
-                    intent="danger"
-                    fullWidth
-                    onClick={() => setArchiveDialogOpen(true)}
-                    icon={<Archive className="h-4 w-4" />}
-                  >
-                    Archive Article
-                  </AppButton>
-                )}
-              </AppCardBody>
-            </AppCard>
+            <div className="bg-gray-50 rounded-md p-4">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Actions</h3>
+              {article.status === "archived" ? (
+                <AppButton
+                  intent="secondary"
+                  fullWidth
+                  size="sm"
+                  onClick={() => setRestoreDialogOpen(true)}
+                  icon={<RotateCcw className="h-3.5 w-3.5" />}
+                  className="text-sm"
+                >
+                  Restore Article
+                </AppButton>
+              ) : (
+                <AppButton
+                  intent="ghost"
+                  fullWidth
+                  size="sm"
+                  onClick={() => setArchiveDialogOpen(true)}
+                  icon={<Archive className="h-3.5 w-3.5" />}
+                  className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  Archive Article
+                </AppButton>
+              )}
+            </div>
           )}
 
           {/* Version History */}
           {!isNew && (
-            <AppCard>
-              <AppCardHeader>
-                <AppCardTitle>Version History</AppCardTitle>
-              </AppCardHeader>
-              <AppCardBody>
-                {versionsLoading ? (
-                  <p className="text-sm text-muted-foreground">Loading...</p>
-                ) : versions.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No versions yet</p>
-                ) : (
-                  <div className="space-y-3 max-h-64 overflow-y-auto">
-                    {versions.slice(0, 10).map((version, index) => (
-                      <div 
-                        key={version.id}
-                        className="flex items-start gap-2 text-xs"
-                      >
-                        <Clock className="h-3.5 w-3.5 mt-0.5 text-muted-foreground shrink-0" />
-                        <div className="min-w-0">
-                          <p className="font-medium">
-                            {index === 0 ? "Current version" : `Version`}
-                          </p>
-                          <p className="text-muted-foreground">
-                            {format(new Date(version.created_at), "MMM d, yyyy 'at' h:mm a")}
-                          </p>
-                        </div>
+            <div className="bg-gray-50 rounded-md p-4">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Version History</h3>
+              {versionsLoading ? (
+                <p className="text-xs text-gray-400">Loading...</p>
+              ) : versions.length === 0 ? (
+                <p className="text-xs text-gray-400">No versions yet</p>
+              ) : (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {versions.slice(0, 10).map((version, index) => (
+                    <div
+                      key={version.id}
+                      className="flex items-start gap-2 text-xs"
+                    >
+                      <Clock className="h-3 w-3 mt-0.5 text-gray-400 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="font-medium text-gray-700">
+                          {index === 0 ? "Current" : `v${versions.length - index}`}
+                        </p>
+                        <p className="text-gray-400">
+                          {format(new Date(version.created_at), "MMM d, h:mm a")}
+                        </p>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </AppCardBody>
-            </AppCard>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
