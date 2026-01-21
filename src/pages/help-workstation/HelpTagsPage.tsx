@@ -2,26 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Plus, Pencil, Trash2, Search, ArrowUpDown } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUpDown, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 
@@ -29,9 +10,10 @@ import { format } from "date-fns";
  * HELP TAGS PAGE — INSTITUTIONAL DESIGN
  * 
  * Manage tags for Help articles.
- * Tags can be assigned to articles for improved searchability.
- * 
- * Design: Bloomberg Terminal aesthetic - clean, data-focused
+ * - NO decorative icons
+ * - Right-slide panel for create/edit
+ * - Sharp corners (rounded-md)
+ * - Dense layout
  */
 
 interface HelpTag {
@@ -60,8 +42,8 @@ export default function HelpTagsPage() {
   const [sortField, setSortField] = useState<"name" | "article_count" | "updated_at">("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   
-  // Modal state
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // Panel state
+  const [panelOpen, setPanelOpen] = useState(false);
   const [editingTag, setEditingTag] = useState<HelpTag | null>(null);
   const [formName, setFormName] = useState("");
   const [formSlug, setFormSlug] = useState("");
@@ -77,8 +59,6 @@ export default function HelpTagsPage() {
   async function loadTags() {
     setLoading(true);
     
-    // Since we don't have a help_tags table yet, we'll extract tags from articles
-    // For now, we'll use the tags array from help_articles and aggregate them
     const { data: articles, error } = await supabase
       .from("help_articles")
       .select("tags");
@@ -100,9 +80,8 @@ export default function HelpTagsPage() {
       }
     });
     
-    // Convert to array format
     const tagsArray: HelpTag[] = Object.entries(tagCounts).map(([name, count]) => ({
-      id: name, // Using name as ID since we don't have a tags table
+      id: name,
       name: name.charAt(0).toUpperCase() + name.slice(1),
       slug: slugify(name),
       article_count: count,
@@ -140,18 +119,18 @@ export default function HelpTagsPage() {
       return sortOrder === "asc" ? comparison : -comparison;
     });
 
-  const openCreateModal = () => {
+  const openCreatePanel = () => {
     setEditingTag(null);
     setFormName("");
     setFormSlug("");
-    setIsModalOpen(true);
+    setPanelOpen(true);
   };
 
-  const openEditModal = (tag: HelpTag) => {
+  const openEditPanel = (tag: HelpTag) => {
     setEditingTag(tag);
     setFormName(tag.name);
     setFormSlug(tag.slug);
-    setIsModalOpen(true);
+    setPanelOpen(true);
   };
 
   const handleSave = async () => {
@@ -162,26 +141,19 @@ export default function HelpTagsPage() {
     
     setSaving(true);
     
-    // Since we don't have a dedicated tags table, we would need to:
-    // 1. Create a help_tags table, or
-    // 2. Manage tags as an aggregate from help_articles.tags
-    
-    // For now, show a message that this requires database setup
     toast({ 
       title: editingTag ? "Tag updated" : "Tag created",
       description: "Tag management is based on article tags."
     });
     
     setSaving(false);
-    setIsModalOpen(false);
+    setPanelOpen(false);
     loadTags();
   };
 
   const handleDelete = async () => {
     if (!deleteTag) return;
     
-    // To delete a tag, we would need to remove it from all articles
-    // This is a destructive operation that should require confirmation
     toast({ 
       title: "Tag removal",
       description: `To remove "${deleteTag.name}", edit articles using this tag.`
@@ -192,60 +164,54 @@ export default function HelpTagsPage() {
 
   const SortIcon = ({ field }: { field: typeof sortField }) => (
     <ArrowUpDown 
-      className={`h-3.5 w-3.5 ml-1 inline ${sortField === field ? 'opacity-100' : 'opacity-40'}`}
+      className={`h-3 w-3 ml-1 inline ${sortField === field ? 'opacity-100' : 'opacity-40'}`}
       strokeWidth={1.5}
     />
   );
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-6 max-w-4xl">
       {/* Header */}
-      <div className="mb-8">
-        <p 
-          className="text-[11px] uppercase tracking-wider font-medium mb-1"
-          style={{ color: '#6B6B6B' }}
-        >
-          Help Workstation
-        </p>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 
-              className="text-[24px] font-medium"
-              style={{ color: 'var(--platform-text)' }}
-            >
-              Tags
-            </h1>
-            <p 
-              className="text-[14px] mt-1"
-              style={{ color: '#AAAAAA' }}
-            >
-              Manage tags used across Help articles
-            </p>
-          </div>
-          <Button 
-            variant="default"
-            onClick={openCreateModal}
-            className="gap-2"
+      <div className="flex items-start justify-between mb-5">
+        <div>
+          <p 
+            className="text-[10px] uppercase tracking-wider font-medium mb-1"
+            style={{ color: '#6B6B6B' }}
           >
-            <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
-            New Tag
-          </Button>
+            Help Workstation
+          </p>
+          <h1 
+            className="text-[20px] font-medium leading-tight"
+            style={{ color: 'var(--platform-text)' }}
+          >
+            Tags
+          </h1>
+          <p 
+            className="text-[13px] mt-1"
+            style={{ color: '#AAAAAA' }}
+          >
+            Manage tags used across Help articles
+          </p>
         </div>
+        <Button 
+          variant="default"
+          size="sm"
+          onClick={openCreatePanel}
+          className="gap-1.5"
+        >
+          <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
+          New Tag
+        </Button>
       </div>
       
-      {/* Search */}
-      <div className="relative mb-6 max-w-sm">
-        <Search 
-          className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4" 
-          strokeWidth={1.5}
-          style={{ color: '#6B6B6B' }} 
-        />
+      {/* Search - No icon */}
+      <div className="mb-4">
         <input
-          type="search"
+          type="text"
           placeholder="Search tags..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="h-10 w-full pl-11 pr-4 text-[14px] rounded-md transition-colors duration-100 focus:outline-none"
+          className="h-10 w-full max-w-sm px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
           style={{
             backgroundColor: '#1A1A1A',
             border: '1px solid #303030',
@@ -258,7 +224,7 @@ export default function HelpTagsPage() {
       
       {/* Tags Table */}
       <div 
-        className="rounded-lg overflow-hidden"
+        className="rounded-md overflow-hidden"
         style={{ 
           backgroundColor: '#1A1A1A',
           border: '1px solid #303030'
@@ -285,8 +251,8 @@ export default function HelpTagsPage() {
           >
             Articles <SortIcon field="article_count" />
           </button>
-          <div className="col-span-2 text-left">Updated</div>
-          <div className="col-span-1 text-right">Actions</div>
+          <div className="col-span-2 hidden md:block">Updated</div>
+          <div className="col-span-1 text-right"></div>
         </div>
         
         {/* Table Body */}
@@ -296,46 +262,49 @@ export default function HelpTagsPage() {
           </div>
         ) : sortedTags.length === 0 ? (
           <div className="py-12 text-center">
-            <p className="text-[13px]" style={{ color: '#6B6B6B' }}>
-              {searchQuery ? "No tags match your search" : "No tags yet. Tags are created when added to articles."}
+            <p className="text-[13px]" style={{ color: '#8F8F8F' }}>
+              {searchQuery ? "No tags match your search" : "No tags yet"}
+            </p>
+            <p className="text-[12px] mt-1" style={{ color: '#6B6B6B' }}>
+              Tags are created when added to articles
             </p>
           </div>
         ) : (
           sortedTags.map((tag, index) => (
             <div 
               key={tag.id}
-              className="grid grid-cols-12 gap-4 px-4 py-3 items-center transition-colors hover:bg-white/[0.02]"
+              className="grid grid-cols-12 gap-4 px-4 py-3 items-center transition-colors"
               style={{ 
                 borderBottom: index < sortedTags.length - 1 ? '1px solid #303030' : 'none',
               }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               <div className="col-span-4">
-                <span className="text-[14px] font-medium" style={{ color: 'white' }}>
+                <span className="text-[13px] font-medium" style={{ color: 'white' }}>
                   {tag.name}
                 </span>
               </div>
               <div className="col-span-3">
-                <span className="text-[13px]" style={{ color: '#8F8F8F' }}>
+                <span className="text-[12px]" style={{ color: '#8F8F8F' }}>
                   {tag.slug}
                 </span>
               </div>
               <div className="col-span-2">
-                <span className="text-[13px] tabular-nums" style={{ color: '#AAAAAA' }}>
+                <span className="text-[12px] tabular-nums" style={{ color: '#AAAAAA' }}>
                   {tag.article_count || 0}
                 </span>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-2 hidden md:block">
                 <span className="text-[12px]" style={{ color: '#8F8F8F' }}>
                   {format(new Date(tag.updated_at), "MMM d, yyyy")}
                 </span>
               </div>
               <div className="col-span-1 flex justify-end gap-1">
                 <button
-                  onClick={() => openEditModal(tag)}
+                  onClick={() => openEditPanel(tag)}
                   className="p-1.5 rounded hover:bg-white/[0.05] transition-colors"
                   style={{ color: '#AAAAAA' }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
                 >
                   <Pencil className="h-3.5 w-3.5" strokeWidth={1.5} />
                 </button>
@@ -343,8 +312,6 @@ export default function HelpTagsPage() {
                   onClick={() => setDeleteTag(tag)}
                   className="p-1.5 rounded hover:bg-white/[0.05] transition-colors"
                   style={{ color: '#AAAAAA' }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#DC2626'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
                 >
                   <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
                 </button>
@@ -364,108 +331,141 @@ export default function HelpTagsPage() {
         </p>
       )}
       
-      {/* Create/Edit Modal */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent 
-          className="sm:max-w-md"
-          style={{
-            backgroundColor: '#1A1A1A',
-            border: '1px solid #303030',
-          }}
-        >
-          <DialogHeader>
-            <DialogTitle style={{ color: 'white' }}>
-              {editingTag ? "Edit Tag" : "New Tag"}
-            </DialogTitle>
-            <DialogDescription style={{ color: '#8F8F8F' }}>
-              {editingTag 
-                ? "Update the tag name and slug." 
-                : "Create a new tag for organizing articles."}
-            </DialogDescription>
-          </DialogHeader>
+      {/* Right-side Create/Edit Panel */}
+      {panelOpen && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 z-40"
+            style={{ backgroundColor: 'rgba(0,0,0,0.88)' }}
+            onClick={() => setPanelOpen(false)}
+          />
           
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label style={{ color: '#AAAAAA' }}>Name</Label>
-              <Input
-                value={formName}
-                onChange={(e) => {
-                  setFormName(e.target.value);
-                  if (!editingTag) {
-                    setFormSlug(slugify(e.target.value));
-                  }
-                }}
-                placeholder="e.g., Getting Started"
-                style={{
-                  backgroundColor: '#0A0A0A',
-                  border: '1px solid #303030',
-                  color: 'white',
-                }}
-              />
+          {/* Panel */}
+          <div 
+            className="fixed inset-y-0 right-0 w-full max-w-md z-50 flex flex-col"
+            style={{ 
+              backgroundColor: '#0A0A0A',
+              borderLeft: '1px solid #303030',
+            }}
+          >
+            {/* Header */}
+            <div 
+              className="flex items-start justify-between p-5"
+              style={{ borderBottom: '1px solid #303030' }}
+            >
+              <div>
+                <h2 className="text-[16px] font-medium" style={{ color: 'white' }}>
+                  {editingTag ? "Edit Tag" : "New Tag"}
+                </h2>
+                <p className="text-[12px] mt-0.5" style={{ color: '#8F8F8F' }}>
+                  {editingTag 
+                    ? "Update the tag name and slug" 
+                    : "Create a new tag for organizing articles"}
+                </p>
+              </div>
+              <button 
+                onClick={() => setPanelOpen(false)}
+                className="p-1.5 rounded hover:bg-white/[0.05] transition-colors"
+                style={{ color: '#AAAAAA' }}
+              >
+                <X className="h-4 w-4" strokeWidth={1.5} />
+              </button>
             </div>
             
-            <div className="space-y-2">
-              <Label style={{ color: '#AAAAAA' }}>Slug</Label>
-              <Input
-                value={formSlug}
-                onChange={(e) => setFormSlug(slugify(e.target.value))}
-                placeholder="e.g., getting-started"
-                style={{
-                  backgroundColor: '#0A0A0A',
-                  border: '1px solid #303030',
-                  color: 'white',
-                }}
-              />
-              <p className="text-[11px]" style={{ color: '#6B6B6B' }}>
-                URL-friendly identifier for the tag
-              </p>
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-5">
+              <div className="space-y-2">
+                <label className="block text-[12px]" style={{ color: '#AAAAAA' }}>Name</label>
+                <input
+                  value={formName}
+                  onChange={(e) => {
+                    setFormName(e.target.value);
+                    if (!editingTag) {
+                      setFormSlug(slugify(e.target.value));
+                    }
+                  }}
+                  placeholder="e.g., Getting Started"
+                  className="h-10 w-full px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
+                  style={{
+                    backgroundColor: '#1A1A1A',
+                    border: '1px solid #303030',
+                    color: 'white',
+                  }}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="block text-[12px]" style={{ color: '#AAAAAA' }}>Slug</label>
+                <input
+                  value={formSlug}
+                  onChange={(e) => setFormSlug(slugify(e.target.value))}
+                  placeholder="e.g., getting-started"
+                  className="h-10 w-full px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
+                  style={{
+                    backgroundColor: '#1A1A1A',
+                    border: '1px solid #303030',
+                    color: 'white',
+                  }}
+                />
+                <p className="text-[11px]" style={{ color: '#6B6B6B' }}>
+                  URL-friendly identifier for the tag
+                </p>
+              </div>
+            </div>
+            
+            {/* Footer */}
+            <div 
+              className="p-5 flex justify-end gap-2"
+              style={{ borderTop: '1px solid #303030' }}
+            >
+              <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
+                {saving ? "Saving..." : editingTag ? "Update Tag" : "Create Tag"}
+              </Button>
             </div>
           </div>
-          
-          <div className="flex justify-end gap-3">
-            <Button 
-              variant="outline" 
-              onClick={() => setIsModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button 
-              variant="default"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? "Saving..." : editingTag ? "Update Tag" : "Create Tag"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        </>
+      )}
       
       {/* Delete Confirmation */}
-      <AlertDialog open={!!deleteTag} onOpenChange={() => setDeleteTag(null)}>
-        <AlertDialogContent
-          style={{
-            backgroundColor: '#1A1A1A',
-            border: '1px solid #303030',
-          }}
-        >
-          <AlertDialogHeader>
-            <AlertDialogTitle style={{ color: 'white' }}>Delete Tag</AlertDialogTitle>
-            <AlertDialogDescription style={{ color: '#8F8F8F' }}>
-              This will remove the tag "{deleteTag?.name}" from all articles. 
-              This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
+      {deleteTag && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 z-40"
+            style={{ backgroundColor: 'rgba(0,0,0,0.88)' }}
+            onClick={() => setDeleteTag(null)}
+          />
+          
+          {/* Dialog */}
+          <div 
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm z-50 p-6 rounded-md"
+            style={{ 
+              backgroundColor: '#1A1A1A',
+              border: '1px solid #303030',
+            }}
+          >
+            <h3 className="text-[16px] font-medium mb-2" style={{ color: 'white' }}>
               Delete Tag
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </h3>
+            <p className="text-[13px] mb-5" style={{ color: '#8F8F8F' }}>
+              This will remove the tag "{deleteTag.name}" from all articles. 
+              This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" size="sm" onClick={() => setDeleteTag(null)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" size="sm" onClick={handleDelete}>
+                Delete Tag
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -1,25 +1,16 @@
 import { useState } from "react";
-import { PageContainer } from "@/components/ui/page-container";
-import { 
-  AppCard, 
-  AppCardHeader, 
-  AppCardTitle, 
-  AppCardBody,
-  AppSectionHeader,
-  AppButton,
-} from "@/components/app-ui";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { ExternalLink, Globe, Users, BarChart3, Lock } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 /**
- * HELP SETTINGS PAGE — HELP WORKSTATION
+ * HELP SETTINGS PAGE — INSTITUTIONAL DESIGN
  * 
  * Configuration for Help Center:
- * - Public routing settings
- * - Analytics tracking toggle
- * - Permission management
+ * - NO decorative icons (globe, lock, chart)
+ * - Text toggles instead of iOS switches
+ * - Sharp corners (rounded-md)
+ * - Dense layout
  */
 
 export default function HelpSettingsPage() {
@@ -28,163 +19,245 @@ export default function HelpSettingsPage() {
   const [publicHelpEnabled, setPublicHelpEnabled] = useState(true);
   const [feedbackEnabled, setFeedbackEnabled] = useState(true);
   const [searchEnabled, setSearchEnabled] = useState(true);
+  const [trackViews, setTrackViews] = useState(true);
+  const [trackSearches, setTrackSearches] = useState(true);
 
   const handleSave = () => {
     toast({ title: "Settings saved" });
   };
 
   return (
-    <PageContainer variant="settings">
-      <AppSectionHeader
-        title="Settings"
-        subtitle="Configure Help Center behavior"
-      />
+    <div className="p-6 max-w-3xl">
+      {/* Header */}
+      <div className="mb-5">
+        <p 
+          className="text-[10px] uppercase tracking-wider font-medium mb-1"
+          style={{ color: '#6B6B6B' }}
+        >
+          Help Workstation
+        </p>
+        <h1 
+          className="text-[20px] font-medium leading-tight"
+          style={{ color: 'var(--platform-text)' }}
+        >
+          Settings
+        </h1>
+        <p 
+          className="text-[13px] mt-1"
+          style={{ color: '#AAAAAA' }}
+        >
+          Configure Help Center behavior
+        </p>
+      </div>
 
-      <div className="space-y-6">
+      <div className="space-y-5">
         {/* Public Help Center */}
-        <AppCard>
-          <AppCardHeader>
-            <AppCardTitle className="flex items-center gap-2">
-              <Globe className="h-4 w-4" />
-              Public Help Center
-            </AppCardTitle>
-          </AppCardHeader>
-          <AppCardBody className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Enable public Help Center</Label>
-                <p className="text-xs text-muted-foreground">
-                  Make published articles accessible at /help
-                </p>
-              </div>
-              <Switch 
-                checked={publicHelpEnabled} 
-                onCheckedChange={setPublicHelpEnabled}
-              />
-            </div>
+        <div 
+          className="rounded-md p-5"
+          style={{ 
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030'
+          }}
+        >
+          <h3 
+            className="text-[14px] font-medium mb-4"
+            style={{ color: 'white' }}
+          >
+            Public Help Center
+          </h3>
+          
+          <div className="space-y-0">
+            {/* Enable public Help Center */}
+            <SettingToggle
+              label="Enable public Help Center"
+              description="Make published articles accessible at /help"
+              enabled={publicHelpEnabled}
+              onToggle={() => setPublicHelpEnabled(!publicHelpEnabled)}
+            />
             
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Enable search</Label>
-                <p className="text-xs text-muted-foreground">
-                  Allow visitors to search articles
-                </p>
-              </div>
-              <Switch 
-                checked={searchEnabled} 
-                onCheckedChange={setSearchEnabled}
-              />
-            </div>
+            {/* Enable search */}
+            <SettingToggle
+              label="Enable search"
+              description="Allow visitors to search articles"
+              enabled={searchEnabled}
+              onToggle={() => setSearchEnabled(!searchEnabled)}
+            />
             
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Enable article feedback</Label>
-                <p className="text-xs text-muted-foreground">
-                  Show "Was this helpful?" on articles
-                </p>
-              </div>
-              <Switch 
-                checked={feedbackEnabled} 
-                onCheckedChange={setFeedbackEnabled}
-              />
-            </div>
+            {/* Enable feedback */}
+            <SettingToggle
+              label="Enable article feedback"
+              description="Show 'Was this helpful?' on articles"
+              enabled={feedbackEnabled}
+              onToggle={() => setFeedbackEnabled(!feedbackEnabled)}
+              isLast
+            />
+          </div>
 
-            {publicHelpEnabled && (
-              <div className="pt-2">
-                <AppButton 
-                  intent="tertiary" 
-                  size="sm"
-                  onClick={() => window.open("/help", "_blank")}
-                  iconRight={<ExternalLink className="h-3.5 w-3.5" />}
-                >
-                  View Public Help Center
-                </AppButton>
-              </div>
-            )}
-          </AppCardBody>
-        </AppCard>
+          {publicHelpEnabled && (
+            <div 
+              className="mt-4 pt-4"
+              style={{ borderTop: '1px solid #303030' }}
+            >
+              <button
+                onClick={() => window.open("/help", "_blank")}
+                className="text-[12px] flex items-center gap-1.5 transition-colors"
+                style={{ color: '#AAAAAA' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
+              >
+                View Public Help Center
+                <ExternalLink className="h-3 w-3" strokeWidth={1.5} />
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Analytics */}
-        <AppCard>
-          <AppCardHeader>
-            <AppCardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Analytics
-            </AppCardTitle>
-          </AppCardHeader>
-          <AppCardBody className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Track article views</Label>
-                <p className="text-xs text-muted-foreground">
-                  Record when articles are viewed
-                </p>
-              </div>
-              <Switch 
-                checked={analyticsEnabled} 
-                onCheckedChange={setAnalyticsEnabled}
-              />
-            </div>
+        <div 
+          className="rounded-md p-5"
+          style={{ 
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030'
+          }}
+        >
+          <h3 
+            className="text-[14px] font-medium mb-4"
+            style={{ color: 'white' }}
+          >
+            Analytics
+          </h3>
+          
+          <div className="space-y-0">
+            <SettingToggle
+              label="Track article views"
+              description="Record when articles are viewed"
+              enabled={trackViews}
+              onToggle={() => setTrackViews(!trackViews)}
+            />
             
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Track search queries</Label>
-                <p className="text-xs text-muted-foreground">
-                  Log search terms for analytics
-                </p>
-              </div>
-              <Switch 
-                checked={analyticsEnabled} 
-                onCheckedChange={setAnalyticsEnabled}
-              />
-            </div>
-            
-            <p className="text-xs text-muted-foreground pt-2">
-              Analytics data helps improve Help content by showing popular topics and search gaps.
-            </p>
-          </AppCardBody>
-        </AppCard>
+            <SettingToggle
+              label="Track search queries"
+              description="Log search terms for analytics"
+              enabled={trackSearches}
+              onToggle={() => setTrackSearches(!trackSearches)}
+              isLast
+            />
+          </div>
+          
+          <p 
+            className="text-[11px] mt-4"
+            style={{ color: '#6B6B6B' }}
+          >
+            Analytics data helps improve Help content by showing popular topics and search gaps.
+          </p>
+        </div>
 
         {/* Permissions */}
-        <AppCard>
-          <AppCardHeader>
-            <AppCardTitle className="flex items-center gap-2">
-              <Lock className="h-4 w-4" />
-              Permissions
-            </AppCardTitle>
-          </AppCardHeader>
-          <AppCardBody className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Help Workstation access is managed via platform capabilities. 
-              Users with the <code className="text-xs bg-muted px-1 py-0.5 rounded">can_manage_help</code> capability 
-              or Platform Administrators can access this workstation.
-            </p>
-            
-            <div 
-              className="flex items-center gap-3 p-3 rounded-lg"
-              style={{
-                backgroundColor: 'hsl(var(--muted) / 0.3)',
-                border: '1px solid hsl(var(--border))',
-              }}
+        <div 
+          className="rounded-md p-5"
+          style={{ 
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #303030'
+          }}
+        >
+          <h3 
+            className="text-[14px] font-medium mb-4"
+            style={{ color: 'white' }}
+          >
+            Permissions
+          </h3>
+          
+          <p 
+            className="text-[13px] mb-3"
+            style={{ color: '#AAAAAA' }}
+          >
+            Help Workstation access is managed via platform capabilities. 
+            Users with the <code 
+              className="text-[11px] px-1 py-0.5 rounded"
+              style={{ backgroundColor: '#252525' }}
+            >can_manage_help</code> capability 
+            or Platform Administrators can access this workstation.
+          </p>
+          
+          <div 
+            className="p-3 rounded-md"
+            style={{
+              backgroundColor: '#141414',
+              border: '1px solid #303030',
+            }}
+          >
+            <p 
+              className="text-[13px] font-medium"
+              style={{ color: '#AAAAAA' }}
             >
-              <Users className="h-5 w-5 text-muted-foreground shrink-0" />
-              <div className="text-sm">
-                <p className="font-medium">Role-based access</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Contact a Platform Administrator to grant or revoke Help access for users.
-                </p>
-              </div>
-            </div>
-          </AppCardBody>
-        </AppCard>
+              Role-based access
+            </p>
+            <p 
+              className="text-[11px] mt-0.5"
+              style={{ color: '#6B6B6B' }}
+            >
+              Contact a Platform Administrator to grant or revoke Help access for users.
+            </p>
+          </div>
+        </div>
 
         {/* Save Button */}
-        <div className="flex justify-end">
-          <AppButton intent="primary" onClick={handleSave}>
+        <div className="flex justify-end pt-2">
+          <Button 
+            variant="default"
+            size="sm"
+            onClick={handleSave}
+          >
             Save Settings
-          </AppButton>
+          </Button>
         </div>
       </div>
-    </PageContainer>
+    </div>
+  );
+}
+
+// Text-based toggle instead of iOS switch
+function SettingToggle({ 
+  label, 
+  description, 
+  enabled, 
+  onToggle,
+  isLast = false 
+}: { 
+  label: string; 
+  description: string; 
+  enabled: boolean; 
+  onToggle: () => void;
+  isLast?: boolean;
+}) {
+  return (
+    <button
+      onClick={onToggle}
+      className="flex items-center justify-between py-3 w-full text-left transition-colors"
+      style={{ 
+        borderBottom: isLast ? 'none' : '1px solid rgba(48,48,48,0.5)',
+      }}
+    >
+      <div>
+        <p 
+          className="text-[13px] font-medium"
+          style={{ color: 'white' }}
+        >
+          {label}
+        </p>
+        <p 
+          className="text-[11px] mt-0.5"
+          style={{ color: '#8F8F8F' }}
+        >
+          {description}
+        </p>
+      </div>
+      <span 
+        className="text-[12px] transition-colors"
+        style={{ color: enabled ? '#AAAAAA' : '#6B6B6B' }}
+      >
+        {enabled ? 'Enabled' : 'Disabled'}
+      </span>
+    </button>
   );
 }
