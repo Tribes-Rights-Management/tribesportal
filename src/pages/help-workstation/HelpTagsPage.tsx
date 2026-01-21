@@ -145,7 +145,17 @@ export default function HelpTagsPage() {
 
   const handleDelete = async () => {
     if (!deleteTag) return;
-    // Tags are removed by editing articles
+
+    // Tags with articles cannot be deleted
+    if ((deleteTag.article_count || 0) > 0) {
+      setDeleteTag(null);
+      return;
+    }
+
+    // Since tags are derived from article.tags arrays,
+    // a tag with 0 articles doesn't need database cleanup.
+    // Simply remove it from local state.
+    setTags(prev => prev.filter(t => t.id !== deleteTag.id));
     setDeleteTag(null);
   };
 
@@ -204,18 +214,19 @@ export default function HelpTagsPage() {
                 </button>
               </th>
               <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[20%]">Updated</th>
+              <th className="w-[50px]"></th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={4} className="text-center py-20">
+                <td colSpan={5} className="text-center py-20">
                   <p className="text-[13px] text-[#6B6B6B]">Loading tags...</p>
                 </td>
               </tr>
             ) : sortedTags.length === 0 ? (
               <tr>
-                <td colSpan={4} className="text-center py-20">
+                <td colSpan={5} className="text-center py-20">
                   <p className="text-[13px] text-[#8F8F8F]">
                     {searchQuery ? "No tags match your search" : "No tags yet"}
                   </p>
@@ -226,16 +237,30 @@ export default function HelpTagsPage() {
               </tr>
             ) : (
               sortedTags.map(tag => (
-                <tr 
+                <tr
                   key={tag.id}
                   onClick={() => openEditPanel(tag)}
-                  className="border-b border-[#303030]/30 hover:bg-white/[0.02] transition-colors cursor-pointer"
+                  className="border-b border-[#303030]/30 hover:bg-white/[0.02] transition-colors cursor-pointer group"
                 >
                   <td className="py-3 px-4 text-[13px] text-white">{tag.name}</td>
                   <td className="py-3 px-4 text-[12px] text-[#8F8F8F]">{tag.slug}</td>
                   <td className="py-3 px-4 text-[12px] text-[#AAAAAA] tabular-nums">{tag.article_count || 0}</td>
                   <td className="py-3 px-4 text-right text-[12px] text-[#8F8F8F]">
                     {format(new Date(tag.updated_at), "MMM d, yyyy")}
+                  </td>
+                  <td className="py-3 px-4 text-right">
+                    {(tag.article_count || 0) === 0 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteTag(tag);
+                        }}
+                        className="p-1 text-[#6B6B6B] hover:text-[#DC2626] transition-colors opacity-0 group-hover:opacity-100"
+                        title="Delete tag"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
@@ -296,16 +321,32 @@ export default function HelpTagsPage() {
               </div>
             </div>
             
-            <div className="flex items-center justify-end gap-2 px-6 py-5 border-t border-[#303030]">
-              <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>Cancel</Button>
-              <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
-                {editingTag ? "Save Changes" : "Create Tag"}
-              </Button>
+            <div className="flex items-center justify-between px-6 py-5 border-t border-[#303030]">
+              <div>
+                {editingTag && (
+                  <button
+                    onClick={() => {
+                      setDeleteTag(editingTag);
+                      setPanelOpen(false);
+                    }}
+                    disabled={(editingTag.article_count || 0) > 0}
+                    className="text-[12px] text-[#DC2626] hover:text-[#EF4444] disabled:text-[#6B6B6B] disabled:cursor-not-allowed transition-colors"
+                  >
+                    Delete tag
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>Cancel</Button>
+                <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
+                  {editingTag ? "Save Changes" : "Create Tag"}
+                </Button>
+              </div>
             </div>
           </div>
         </>
       )}
-      
+
       {/* Delete Confirmation Panel */}
       {deleteTag && (
         <>
@@ -317,16 +358,30 @@ export default function HelpTagsPage() {
                 <X className="h-4 w-4" strokeWidth={1.5} />
               </button>
             </div>
-            
+
             <div className="flex-1 px-6 py-6">
               <p className="text-[13px] text-[#8F8F8F]">
-                This will remove the tag "{deleteTag.name}" from all articles. This action cannot be undone.
+                {(deleteTag.article_count || 0) > 0 ? (
+                  <>
+                    This tag is used by <strong className="text-white">{deleteTag.article_count} article{(deleteTag.article_count || 0) > 1 ? 's' : ''}</strong>.
+                    You must remove the tag from all articles before deleting it.
+                  </>
+                ) : (
+                  <>Are you sure you want to delete "{deleteTag.name}"? This action cannot be undone.</>
+                )}
               </p>
             </div>
-            
+
             <div className="flex items-center justify-end gap-2 px-6 py-5 border-t border-[#303030]">
               <Button variant="outline" size="sm" onClick={() => setDeleteTag(null)}>Cancel</Button>
-              <Button variant="destructive" size="sm" onClick={handleDelete}>Delete Tag</Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDelete}
+                disabled={(deleteTag.article_count || 0) > 0}
+              >
+                Delete
+              </Button>
             </div>
           </div>
         </>

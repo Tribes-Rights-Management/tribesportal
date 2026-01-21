@@ -223,33 +223,48 @@ export default function HelpCategoriesPage() {
               <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[30%]">Slug</th>
               <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[15%]">Articles</th>
               <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[20%]">Updated</th>
+              <th className="w-[50px]"></th>
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={4} className="text-center py-20">
+                <td colSpan={5} className="text-center py-20">
                   <p className="text-[13px] text-[#6B6B6B]">Loading categories...</p>
                 </td>
               </tr>
             ) : categoriesWithCounts.length === 0 ? (
               <tr>
-                <td colSpan={4} className="text-center py-20">
+                <td colSpan={5} className="text-center py-20">
                   <p className="text-[13px] text-[#6B6B6B]">No categories configured yet</p>
                 </td>
               </tr>
             ) : (
               categoriesWithCounts.map(cat => (
-                <tr 
-                  key={cat.id} 
+                <tr
+                  key={cat.id}
                   onClick={() => handleEdit(cat)}
-                  className="border-b border-[#303030]/30 hover:bg-white/[0.02] transition-colors cursor-pointer"
+                  className="border-b border-[#303030]/30 hover:bg-white/[0.02] transition-colors cursor-pointer group"
                 >
                   <td className="py-3 px-4 text-[13px] text-white">{cat.name}</td>
                   <td className="py-3 px-4 text-[12px] text-[#AAAAAA] font-mono">{cat.slug}</td>
                   <td className="py-3 px-4 text-[12px] text-[#8F8F8F]">{cat.article_count}</td>
                   <td className="py-3 px-4 text-right text-[12px] text-[#8F8F8F]">
                     {format(new Date(cat.updated_at), "MMM d, yyyy")}
+                  </td>
+                  <td className="py-3 px-4 text-right">
+                    {cat.article_count === 0 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(cat);
+                        }}
+                        className="p-1 text-[#6B6B6B] hover:text-[#DC2626] transition-colors opacity-0 group-hover:opacity-100"
+                        title="Delete category"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
@@ -327,11 +342,30 @@ export default function HelpCategoriesPage() {
             </div>
             
             {/* Panel Footer */}
-            <div className="flex items-center justify-end gap-2 px-6 py-5 border-t border-[#303030]">
-              <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>Cancel</Button>
-              <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
-                {editing ? 'Save Changes' : 'Create'}
-              </Button>
+            <div className="flex items-center justify-between px-6 py-5 border-t border-[#303030]">
+              <div>
+                {editing && (
+                  <button
+                    onClick={() => {
+                      const catWithCount = categoriesWithCounts.find(c => c.id === editing.id);
+                      if (catWithCount) {
+                        handleDeleteClick(catWithCount);
+                        setPanelOpen(false);
+                      }
+                    }}
+                    disabled={categoriesWithCounts.find(c => c.id === editing.id)?.article_count !== 0}
+                    className="text-[12px] text-[#DC2626] hover:text-[#EF4444] disabled:text-[#6B6B6B] disabled:cursor-not-allowed transition-colors"
+                  >
+                    Delete category
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>Cancel</Button>
+                <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
+                  {editing ? 'Save Changes' : 'Create'}
+                </Button>
+              </div>
             </div>
           </div>
         </>
