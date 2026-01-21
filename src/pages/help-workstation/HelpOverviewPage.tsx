@@ -535,23 +535,35 @@ export default function HelpOverviewPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-4 gap-4 mb-8">
-        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-4">
+        <div
+          onClick={() => navigate('/help-workstation/articles')}
+          className="bg-[#1A1A1A] border border-[#303030] rounded p-4 cursor-pointer transition-colors duration-150 hover:bg-[#222222] hover:border-[#404040]"
+        >
           <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">Articles</p>
           <p className="text-[28px] font-medium text-white tabular-nums mb-1.5">{articleStats.total}</p>
           <p className="text-[11px] text-[#8F8F8F]">{articleStats.published} published · {articleStats.draft} draft</p>
         </div>
 
-        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-4">
+        <div
+          onClick={() => navigate('/help-workstation/categories')}
+          className="bg-[#1A1A1A] border border-[#303030] rounded p-4 cursor-pointer transition-colors duration-150 hover:bg-[#222222] hover:border-[#404040]"
+        >
           <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">Categories</p>
           <p className="text-[28px] font-medium text-white tabular-nums">{categoryCount}</p>
         </div>
 
-        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-4">
+        <div
+          onClick={() => navigate('/help-workstation/tags')}
+          className="bg-[#1A1A1A] border border-[#303030] rounded p-4 cursor-pointer transition-colors duration-150 hover:bg-[#222222] hover:border-[#404040]"
+        >
           <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">Tags</p>
           <p className="text-[28px] font-medium text-white tabular-nums">{tagCount}</p>
         </div>
 
-        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-4">
+        <div
+          onClick={() => navigate('/help-workstation/messages')}
+          className="bg-[#1A1A1A] border border-[#303030] rounded p-4 cursor-pointer transition-colors duration-150 hover:bg-[#222222] hover:border-[#404040]"
+        >
           <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">Messages</p>
           <p className="text-[28px] font-medium text-white tabular-nums mb-1.5">{messageStats.total}</p>
           <p className="text-[11px] text-[#8F8F8F]">{messageStats.newCount} new · {messageStats.open} open</p>
