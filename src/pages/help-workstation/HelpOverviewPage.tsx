@@ -2,27 +2,30 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { AppChip } from "@/components/app-ui";
-import { Plus, ArrowRight, ChevronRight } from "lucide-react";
+import { Plus, ChevronRight, AlertCircle, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 
 /**
  * HELP WORKSTATION OVERVIEW — INSTITUTIONAL DESIGN
  * 
- * Dense, data-focused dashboard with:
- * - Sharp corners (rounded-md max)
- * - Tight spacing (p-4, gap-3)
- * - Smaller typography (10-28px scale)
- * - High information density
- * - NO decorative icons
- * - Text-only search input
+ * Typography:
+ * - Page titles: text-[20px] font-medium text-white
+ * - Section titles: text-[15px] font-medium text-white
+ * - Body text: text-[13px]
+ * - Column headers: text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium
+ * - Helper text: text-[11px] text-[#6B6B6B]
+ * - Metrics: text-[28px] font-medium text-white tabular-nums
+ * 
+ * Spacing:
+ * - Page padding: p-8
+ * - Section margins: mb-8
+ * - Element spacing: gap-4 or mb-4
  */
 
 interface ArticleStats {
   total: number;
   published: number;
   draft: number;
-  archived: number;
 }
 
 interface MessageStats {
@@ -42,7 +45,7 @@ interface RecentArticle {
 export default function HelpOverviewPage() {
   const navigate = useNavigate();
   const [articleStats, setArticleStats] = useState<ArticleStats>({ 
-    total: 0, published: 0, draft: 0, archived: 0 
+    total: 0, published: 0, draft: 0 
   });
   const [messageStats, setMessageStats] = useState<MessageStats>({ 
     total: 0, newCount: 0, open: 0 
@@ -52,27 +55,25 @@ export default function HelpOverviewPage() {
   const [recentArticles, setRecentArticles] = useState<RecentArticle[]>([]);
   const [draftsToReview, setDraftsToReview] = useState<RecentArticle[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    async function loadStats() {
-      setLoading(true);
-      
+  const loadStats = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
       // Fetch article stats
       const { data: articles, error: articlesError } = await supabase
         .from("help_articles")
         .select("id, status, updated_at, current_version_id");
       
-      if (!articlesError && articles) {
+      if (articlesError) throw articlesError;
+      
+      if (articles) {
         const published = articles.filter(a => a.status === "published").length;
         const draft = articles.filter(a => a.status === "draft").length;
-        const archived = articles.filter(a => a.status === "archived").length;
-        setArticleStats({
-          total: articles.length,
-          published,
-          draft,
-          archived,
-        });
+        setArticleStats({ total: articles.length, published, draft });
       }
       
       // Fetch category count
@@ -111,13 +112,7 @@ export default function HelpOverviewPage() {
       // Fetch recent articles with versions
       const { data: recentData } = await supabase
         .from("help_articles")
-        .select(`
-          id, 
-          slug, 
-          status, 
-          updated_at,
-          current_version_id
-        `)
+        .select("id, slug, status, updated_at, current_version_id")
         .order("updated_at", { ascending: false })
         .limit(5);
       
@@ -151,13 +146,7 @@ export default function HelpOverviewPage() {
       // Fetch drafts needing review
       const { data: draftsData } = await supabase
         .from("help_articles")
-        .select(`
-          id, 
-          slug, 
-          status, 
-          updated_at,
-          current_version_id
-        `)
+        .select("id, slug, status, updated_at, current_version_id")
         .eq("status", "draft")
         .order("updated_at", { ascending: false })
         .limit(5);
@@ -190,8 +179,14 @@ export default function HelpOverviewPage() {
       }
       
       setLoading(false);
+    } catch (err) {
+      console.error("Error loading stats:", err);
+      setError("Unable to load data");
+      setLoading(false);
     }
-    
+  };
+
+  useEffect(() => {
     loadStats();
   }, []);
 
@@ -202,340 +197,174 @@ export default function HelpOverviewPage() {
     }
   };
 
-  const getStatusChipStatus = (status: string) => {
-    switch (status) {
-      case "published": return "pass";
-      case "draft": return "pending";
-      case "archived": return "fail";
-      default: return "pending";
-    }
-  };
-
   return (
-    <div className="p-6 max-w-5xl">
+    <div className="flex-1 p-8">
       {/* Header */}
-      <div className="mb-5">
-        <p 
-          className="text-[10px] uppercase tracking-wider font-medium mb-1"
-          style={{ color: '#6B6B6B' }}
-        >
-          Help Workstation
+      <div className="mb-8">
+        <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
+          HELP WORKSTATION
         </p>
-        <h1 
-          className="text-[20px] font-medium leading-tight"
-          style={{ color: 'var(--platform-text)' }}
-        >
+        <h1 className="text-[20px] font-medium text-white mb-2">
           Overview
         </h1>
-        <p 
-          className="text-[13px] mt-1"
-          style={{ color: '#AAAAAA' }}
-        >
+        <p className="text-[13px] text-[#AAAAAA]">
           Manage articles, categories, and support content
         </p>
       </div>
+
+      {/* Inline Error */}
+      {error && (
+        <div className="mb-8 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
+          <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
+          <div className="flex-1">
+            <p className="text-[12px] text-[#E5E5E5]">{error}</p>
+            <button 
+              onClick={loadStats} 
+              className="text-[11px] text-[#DC2626] hover:text-[#EF4444] underline mt-1 flex items-center gap-1"
+            >
+              <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
+              Try again
+            </button>
+          </div>
+        </div>
+      )}
       
       {/* Search Bar - No icon */}
-      <form onSubmit={handleSearch} className="mb-5">
-        <input
-          type="text"
-          placeholder="Search articles..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="h-10 w-full max-w-2xl px-3 text-[13px] rounded-md transition-colors duration-100 focus:outline-none"
-          style={{
-            backgroundColor: '#1A1A1A',
-            border: '1px solid #303030',
-            color: 'white',
-          }}
-          onFocus={(e) => e.currentTarget.style.borderColor = '#505050'}
-          onBlur={(e) => e.currentTarget.style.borderColor = '#303030'}
-        />
-      </form>
+      <div className="mb-8 max-w-xl">
+        <form onSubmit={handleSearch}>
+          <input
+            type="search"
+            placeholder="Search articles..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full h-9 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[12px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050]"
+          />
+        </form>
+      </div>
       
-      <div className="space-y-5">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {/* Articles Card */}
-          <div 
-            className="rounded-md p-4"
-            style={{ 
-              backgroundColor: '#1A1A1A',
-              border: '1px solid #303030'
-            }}
-          >
-            <p 
-              className="text-[10px] uppercase tracking-wider font-medium mb-1.5"
-              style={{ color: '#6B6B6B' }}
-            >
-              Articles
-            </p>
-            <p 
-              className="text-[28px] font-medium tabular-nums leading-none mb-1.5"
-              style={{ color: 'white' }}
-            >
-              {articleStats.total}
-            </p>
-            <p 
-              className="text-[11px]"
-              style={{ color: '#8F8F8F' }}
-            >
-              {articleStats.published} published · {articleStats.draft} draft
-            </p>
-          </div>
-          
-          {/* Categories Card */}
-          <div 
-            className="rounded-md p-4"
-            style={{ 
-              backgroundColor: '#1A1A1A',
-              border: '1px solid #303030'
-            }}
-          >
-            <p 
-              className="text-[10px] uppercase tracking-wider font-medium mb-1.5"
-              style={{ color: '#6B6B6B' }}
-            >
-              Categories
-            </p>
-            <p 
-              className="text-[28px] font-medium tabular-nums leading-none"
-              style={{ color: 'white' }}
-            >
-              {categoryCount}
-            </p>
-          </div>
-          
-          {/* Tags Card */}
-          <div 
-            className="rounded-md p-4"
-            style={{ 
-              backgroundColor: '#1A1A1A',
-              border: '1px solid #303030'
-            }}
-          >
-            <p 
-              className="text-[10px] uppercase tracking-wider font-medium mb-1.5"
-              style={{ color: '#6B6B6B' }}
-            >
-              Tags
-            </p>
-            <p 
-              className="text-[28px] font-medium tabular-nums leading-none"
-              style={{ color: 'white' }}
-            >
-              {tagCount}
-            </p>
-          </div>
-          
-          {/* Messages Card */}
-          <div 
-            className="rounded-md p-4"
-            style={{ 
-              backgroundColor: '#1A1A1A',
-              border: '1px solid #303030'
-            }}
-          >
-            <p 
-              className="text-[10px] uppercase tracking-wider font-medium mb-1.5"
-              style={{ color: '#6B6B6B' }}
-            >
-              Messages
-            </p>
-            <p 
-              className="text-[28px] font-medium tabular-nums leading-none mb-1.5"
-              style={{ color: 'white' }}
-            >
-              {messageStats.total}
-            </p>
-            <p 
-              className="text-[11px]"
-              style={{ color: '#8F8F8F' }}
-            >
-              {messageStats.newCount} new · {messageStats.open} open
-            </p>
-          </div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-4 gap-4 mb-8">
+        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-4">
+          <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">Articles</p>
+          <p className="text-[28px] font-medium text-white tabular-nums mb-1.5">{articleStats.total}</p>
+          <p className="text-[11px] text-[#8F8F8F]">{articleStats.published} published · {articleStats.draft} draft</p>
         </div>
         
-        {/* Quick Actions */}
-        <div className="flex flex-wrap gap-2">
-          <Button 
-            variant="default"
-            size="sm"
-            onClick={() => navigate("/help-workstation/articles/new")}
-            className="gap-1.5"
-          >
-            <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
-            New Article
-          </Button>
-          <Button 
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/help-workstation/categories")}
-          >
-            Manage Categories
-          </Button>
-          <Button 
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/help-workstation/tags")}
-          >
-            Manage Tags
-          </Button>
-          <Button 
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/help-workstation/messages")}
-          >
-            View Messages
-          </Button>
+        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-4">
+          <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">Categories</p>
+          <p className="text-[28px] font-medium text-white tabular-nums">{categoryCount}</p>
         </div>
         
-        {/* Bottom sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {/* Drafts Needing Review */}
-          <div 
-            className="rounded-md p-4"
-            style={{ 
-              backgroundColor: '#1A1A1A',
-              border: '1px solid #303030'
-            }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <h3 
-                className="text-[14px] font-medium"
-                style={{ color: 'white' }}
-              >
-                Drafts to Review
-              </h3>
-              <button 
-                onClick={() => navigate("/help-workstation/articles?status=draft")}
-                className="text-[12px] flex items-center gap-1 transition-colors"
-                style={{ color: '#AAAAAA' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
-              >
-                View all
-                <ChevronRight className="h-3 w-3" strokeWidth={1.5} />
-              </button>
-            </div>
-            
-            {loading ? (
-              <p className="text-[12px] text-center py-6" style={{ color: '#6B6B6B' }}>
-                Loading...
-              </p>
-            ) : draftsToReview.length === 0 ? (
-              <p className="text-[12px] text-center py-6" style={{ color: '#6B6B6B' }}>
-                No drafts to review
-              </p>
-            ) : (
-              <div className="space-y-0">
-                {draftsToReview.map((article, index) => (
-                  <div 
-                    key={article.id}
-                    className="flex items-center justify-between py-2 cursor-pointer transition-colors"
-                    style={{ 
-                      borderBottom: index < draftsToReview.length - 1 ? '1px solid rgba(48,48,48,0.5)' : 'none'
-                    }}
-                    onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                  >
-                    <div className="min-w-0 flex-1 pr-3">
-                      <div 
-                        className="text-[13px] font-medium truncate"
-                        style={{ color: 'white' }}
-                      >
-                        {article.title}
-                      </div>
-                      <div 
-                        className="text-[11px] mt-0.5"
-                        style={{ color: '#8F8F8F' }}
-                      >
-                        Updated {format(new Date(article.updated_at), "MMM d, yyyy")}
-                      </div>
-                    </div>
-                    <ChevronRight className="h-4 w-4 shrink-0" strokeWidth={1.5} style={{ color: '#6B6B6B' }} />
-                  </div>
-                ))}
-              </div>
-            )}
+        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-4">
+          <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">Tags</p>
+          <p className="text-[28px] font-medium text-white tabular-nums">{tagCount}</p>
+        </div>
+        
+        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-4">
+          <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">Messages</p>
+          <p className="text-[28px] font-medium text-white tabular-nums mb-1.5">{messageStats.total}</p>
+          <p className="text-[11px] text-[#8F8F8F]">{messageStats.newCount} new · {messageStats.open} open</p>
+        </div>
+      </div>
+      
+      {/* Quick Actions */}
+      <div className="flex gap-2 mb-8">
+        <Button variant="default" size="sm" onClick={() => navigate('/help-workstation/articles/new')}>
+          <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
+          New Article
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => navigate('/help-workstation/categories')}>
+          Manage Categories
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => navigate('/help-workstation/tags')}>
+          Manage Tags
+        </Button>
+      </div>
+      
+      {/* Bottom Sections */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* Drafts to Review */}
+        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-[15px] font-medium text-white">Drafts to Review</h3>
+            <button 
+              onClick={() => navigate('/help-workstation/articles?filter=draft')} 
+              className="text-[12px] text-[#AAAAAA] hover:text-white flex items-center gap-1"
+            >
+              View all
+              <ChevronRight className="h-3 w-3" strokeWidth={1.5} />
+            </button>
           </div>
           
-          {/* Recent Articles */}
-          <div 
-            className="rounded-md p-4"
-            style={{ 
-              backgroundColor: '#1A1A1A',
-              border: '1px solid #303030'
-            }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <h3 
-                className="text-[14px] font-medium"
-                style={{ color: 'white' }}
-              >
-                Recent Articles
-              </h3>
-              <button 
-                onClick={() => navigate("/help-workstation/articles")}
-                className="text-[12px] flex items-center gap-1 transition-colors"
-                style={{ color: '#AAAAAA' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
-              >
-                View all
-                <ChevronRight className="h-3 w-3" strokeWidth={1.5} />
-              </button>
+          {loading ? (
+            <div className="text-center py-8">
+              <p className="text-[13px] text-[#6B6B6B]">Loading...</p>
             </div>
-            
-            {loading ? (
-              <p className="text-[12px] text-center py-6" style={{ color: '#6B6B6B' }}>
-                Loading...
-              </p>
-            ) : recentArticles.length === 0 ? (
-              <p className="text-[12px] text-center py-6" style={{ color: '#6B6B6B' }}>
-                No articles yet
-              </p>
-            ) : (
-              <div className="space-y-0">
-                {recentArticles.map((article, index) => (
-                  <div 
-                    key={article.id}
-                    className="flex items-center justify-between py-2 cursor-pointer transition-colors"
-                    style={{ 
-                      borderBottom: index < recentArticles.length - 1 ? '1px solid rgba(48,48,48,0.5)' : 'none'
-                    }}
-                    onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                  >
-                    <div className="min-w-0 flex-1 pr-3">
-                      <div 
-                        className="text-[13px] font-medium truncate"
-                        style={{ color: 'white' }}
-                      >
-                        {article.title}
-                      </div>
-                      <div 
-                        className="text-[11px] mt-0.5"
-                        style={{ color: '#8F8F8F' }}
-                      >
-                        {format(new Date(article.updated_at), "MMM d, yyyy")}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <AppChip 
-                        status={getStatusChipStatus(article.status) as any} 
-                        label={article.status.charAt(0).toUpperCase() + article.status.slice(1)}
-                      />
-                      <ChevronRight className="h-4 w-4 shrink-0" strokeWidth={1.5} style={{ color: '#6B6B6B' }} />
-                    </div>
+          ) : draftsToReview.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-[13px] text-[#6B6B6B]">No drafts to review</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {draftsToReview.map(draft => (
+                <div 
+                  key={draft.id} 
+                  className="flex items-start justify-between py-2 border-b border-[#303030]/30 last:border-0 cursor-pointer hover:bg-white/[0.02] transition-colors -mx-2 px-2 rounded"
+                  onClick={() => navigate(`/help-workstation/articles/${draft.id}`)}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] text-white truncate hover:underline">{draft.title}</p>
+                    <p className="text-[11px] text-[#8F8F8F] mt-0.5">
+                      {format(new Date(draft.updated_at), "MMM d, yyyy")}
+                    </p>
                   </div>
-                ))}
-              </div>
-            )}
+                  <ChevronRight className="h-3.5 w-3.5 text-[#6B6B6B] ml-2 shrink-0" strokeWidth={1.5} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {/* Recent Articles */}
+        <div className="bg-[#1A1A1A] border border-[#303030] rounded p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-[15px] font-medium text-white">Recent Articles</h3>
+            <button 
+              onClick={() => navigate('/help-workstation/articles')} 
+              className="text-[12px] text-[#AAAAAA] hover:text-white flex items-center gap-1"
+            >
+              View all
+              <ChevronRight className="h-3 w-3" strokeWidth={1.5} />
+            </button>
           </div>
+          
+          {loading ? (
+            <div className="text-center py-8">
+              <p className="text-[13px] text-[#6B6B6B]">Loading...</p>
+            </div>
+          ) : recentArticles.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-[13px] text-[#6B6B6B]">No articles yet</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {recentArticles.map(article => (
+                <div 
+                  key={article.id} 
+                  className="flex items-start justify-between py-2 border-b border-[#303030]/30 last:border-0 cursor-pointer hover:bg-white/[0.02] transition-colors -mx-2 px-2 rounded"
+                  onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] text-white truncate hover:underline">{article.title}</p>
+                    <p className="text-[11px] text-[#8F8F8F] mt-0.5">
+                      {format(new Date(article.updated_at), "MMM d, yyyy")}
+                    </p>
+                  </div>
+                  <ChevronRight className="h-3.5 w-3.5 text-[#6B6B6B] ml-2 shrink-0" strokeWidth={1.5} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
