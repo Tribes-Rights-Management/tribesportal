@@ -1,10 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Save, Send, Archive, RotateCcw, Clock, AlertCircle, RefreshCw, Bold, Italic, Link, List, ListOrdered, Heading2 } from "lucide-react";
+import { ArrowLeft, Clock, AlertCircle, RefreshCw, Bold, Italic, Link, List, ListOrdered, Heading2, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleVersion } from "@/hooks/useHelpManagement";
-import { PageContainer } from "@/components/ui/page-container";
-import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,15 +13,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { 
-  AppButton, 
-  AppChip, 
-  AppCard,
-  AppCardHeader,
-  AppCardTitle,
-  AppCardBody,
-} from "@/components/app-ui";
-import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
 
 /**
  * HELP ARTICLE EDITOR — HELP WORKSTATION
@@ -243,48 +232,6 @@ export default function HelpArticleEditorPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <PageContainer>
-        <InstitutionalLoadingState message="Loading article" />
-      </PageContainer>
-    );
-  }
-
-  // Load error state with inline error
-  if (loadError && !isNew) {
-    return (
-      <PageContainer>
-        <div className="flex items-center gap-4 mb-6">
-          <AppButton 
-            intent="ghost" 
-            size="sm"
-            onClick={() => navigate("/help-workstation/articles")}
-            icon={<ArrowLeft className="h-4 w-4" />}
-          >
-            Back
-          </AppButton>
-        </div>
-        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r max-w-lg">
-          <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
-          <div className="flex-1">
-            <p className="text-[12px] text-[#E5E5E5]">Unable to load article</p>
-            <p className="text-[11px] text-[#8F8F8F] mt-1">
-              The article may not exist or you don't have permission to access it.
-            </p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="text-[11px] text-[#DC2626] hover:text-[#EF4444] underline mt-2 flex items-center gap-1"
-            >
-              <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
-              Try again
-            </button>
-          </div>
-        </div>
-      </PageContainer>
-    );
-  }
-
   // Markdown toolbar helper
   const insertMarkdown = (prefix: string, suffix: string = "") => {
     const textarea = document.getElementById("body") as HTMLTextAreaElement;
@@ -296,288 +243,322 @@ export default function HelpArticleEditorPage() {
     const newText = bodyMd.substring(0, start) + prefix + selectedText + suffix + bodyMd.substring(end);
     setBodyMd(newText);
 
-    // Restore focus and selection
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(start + prefix.length, end + prefix.length);
     }, 0);
   };
 
-  return (
-    <PageContainer>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <AppButton
-            intent="ghost"
-            size="sm"
-            onClick={() => navigate("/help-workstation/articles")}
-            icon={<ArrowLeft className="h-4 w-4" />}
-          >
-            Back
-          </AppButton>
-          {!isNew && article && (
-            <div className="flex items-center gap-3">
-              <AppChip
-                status={getStatusChipStatus(article.status)}
-                label={article.status.charAt(0).toUpperCase() + article.status.slice(1)}
-              />
-              <span className="text-xs text-gray-500">
-                Updated {format(new Date(article.updated_at), "MMM d, yyyy")}
-              </span>
-            </div>
-          )}
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#fafafa] p-6">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-sm text-gray-400">Loading...</p>
         </div>
-        <div className="flex items-center gap-2">
-          <AppButton
-            intent="ghost"
-            onClick={handleSave}
-            loading={saving}
-            loadingText="Saving..."
-            icon={<Save className="h-4 w-4" />}
-            className="text-gray-600 hover:text-gray-900 border border-gray-200 hover:border-gray-300"
+      </div>
+    );
+  }
+
+  if (loadError && !isNew) {
+    return (
+      <div className="min-h-screen bg-[#fafafa] p-6">
+        <div className="max-w-4xl mx-auto">
+          <button
+            onClick={() => navigate("/help-workstation/articles")}
+            className="text-sm text-gray-500 hover:text-gray-700 mb-6 flex items-center gap-1"
           >
-            Save Draft
-          </AppButton>
-          {(!isNew && article?.status !== "published") || isNew ? (
-            <AppButton
-              intent="primary"
-              onClick={isNew ? handleSave : () => setPublishDialogOpen(true)}
-              loading={isNew ? saving : undefined}
-              icon={<Send className="h-4 w-4" />}
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back
+          </button>
+          <div className="flex items-start gap-2 text-sm">
+            <AlertCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-gray-700">Unable to load article</p>
+              <p className="text-gray-400 text-xs mt-1">The article may not exist or you don't have permission.</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="text-xs text-gray-500 hover:text-gray-700 underline mt-2 flex items-center gap-1"
+              >
+                <RefreshCw className="h-3 w-3" />
+                Try again
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#fafafa]">
+      {/* Top bar */}
+      <div className="border-b border-gray-200 bg-white">
+        <div className="max-w-6xl mx-auto px-6 h-12 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/help-workstation/articles")}
+              className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
             >
-              {isNew ? "Create & Publish" : "Publish"}
-            </AppButton>
-          ) : null}
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Articles</span>
+            </button>
+            {!isNew && article && (
+              <>
+                <span className="text-gray-300">/</span>
+                <span className={`text-xs px-1.5 py-0.5 rounded ${
+                  article.status === 'published' ? 'bg-green-100 text-green-700' :
+                  article.status === 'archived' ? 'bg-gray-100 text-gray-500' :
+                  'bg-yellow-100 text-yellow-700'
+                }`}>
+                  {article.status}
+                </span>
+                <span className="text-xs text-gray-400">
+                  · {format(new Date(article.updated_at), "MMM d")}
+                </span>
+              </>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50"
+            >
+              {saving ? "Saving..." : "Save draft"}
+            </button>
+            {(isNew || article?.status !== "published") && (
+              <button
+                onClick={isNew ? handleSave : () => setPublishDialogOpen(true)}
+                disabled={saving}
+                className="text-sm bg-gray-900 text-white px-3 py-1.5 hover:bg-gray-800 disabled:opacity-50"
+              >
+                {isNew ? "Publish" : "Publish"}
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Validation Error - Inline */}
-      {validationError && (
-        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-red-50 border-l-2 border-red-600 rounded-r-md max-w-xl">
-          <AlertCircle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" strokeWidth={1.5} />
-          <p className="text-sm text-red-800">{validationError}</p>
-        </div>
-      )}
+      {/* Main content */}
+      <div className="max-w-6xl mx-auto px-6 py-6">
+        {/* Validation error */}
+        {validationError && (
+          <div className="mb-4 flex items-center gap-2 text-sm text-red-600">
+            <AlertCircle className="h-3.5 w-3.5" />
+            {validationError}
+          </div>
+        )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Editor */}
-        <div className="lg:col-span-2 space-y-1">
-          {/* Title Field - Large underline style */}
-          <div className="py-4">
+        <div className="flex gap-12">
+          {/* Editor */}
+          <div className="flex-1 min-w-0">
+            {/* Title */}
             <input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Untitled article"
-              className="w-full text-2xl font-semibold text-gray-900 placeholder-gray-300 bg-transparent border-0 border-b border-gray-200 focus:border-gray-400 focus:outline-none focus:ring-0 pb-3 transition-colors"
+              placeholder="Untitled"
+              className="w-full text-3xl font-semibold text-gray-900 placeholder-gray-300 bg-transparent border-0 border-b border-transparent focus:border-gray-200 focus:outline-none pb-2 mb-3"
             />
-          </div>
 
-          {/* Slug Field - Compact with prefix */}
-          <div className="flex items-center gap-1 py-2">
-            <span className="text-sm text-gray-400 select-none">/help/</span>
-            <input
-              id="slug"
-              value={slug}
-              onChange={(e) => {
-                setSlug(e.target.value);
-                setSlugManual(true);
-              }}
-              placeholder="article-slug"
-              className="flex-1 text-sm text-gray-600 bg-transparent border-0 focus:outline-none focus:ring-0 px-1"
-            />
-          </div>
+            {/* Slug */}
+            <div className="flex items-center gap-0.5 mb-4">
+              <span className="text-xs text-gray-400">/help/</span>
+              <input
+                id="slug"
+                value={slug}
+                onChange={(e) => {
+                  setSlug(e.target.value);
+                  setSlugManual(true);
+                }}
+                placeholder="slug"
+                className="text-xs text-gray-500 bg-transparent border-0 focus:outline-none"
+              />
+            </div>
 
-          {/* Summary Field */}
-          <div className="py-3">
+            {/* Summary */}
             <input
               id="summary"
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
-              placeholder="Add a brief summary for search results..."
-              className="w-full text-sm text-gray-600 placeholder-gray-300 bg-transparent border-0 focus:outline-none focus:ring-0"
+              placeholder="Add summary..."
+              className="w-full text-sm text-gray-600 placeholder-gray-300 bg-transparent border-0 border-b border-transparent focus:border-gray-200 focus:outline-none pb-2 mb-6"
             />
-          </div>
 
-          {/* Content Area with Toolbar */}
-          <div className="mt-4 border border-gray-200 rounded-md overflow-hidden bg-white">
-            {/* Markdown Toolbar */}
-            <div className="flex items-center gap-1 px-3 py-2 border-b border-gray-100 bg-gray-50">
-              <button
-                type="button"
-                onClick={() => insertMarkdown("**", "**")}
-                className="p-1.5 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
-                title="Bold"
-              >
-                <Bold className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => insertMarkdown("*", "*")}
-                className="p-1.5 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
-                title="Italic"
-              >
-                <Italic className="h-4 w-4" />
-              </button>
-              <div className="w-px h-4 bg-gray-200 mx-1" />
-              <button
-                type="button"
-                onClick={() => insertMarkdown("## ")}
-                className="p-1.5 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
-                title="Heading"
-              >
-                <Heading2 className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => insertMarkdown("[", "](url)")}
-                className="p-1.5 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
-                title="Link"
-              >
-                <Link className="h-4 w-4" />
-              </button>
-              <div className="w-px h-4 bg-gray-200 mx-1" />
-              <button
-                type="button"
-                onClick={() => insertMarkdown("- ")}
-                className="p-1.5 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
-                title="Bullet List"
-              >
-                <List className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => insertMarkdown("1. ")}
-                className="p-1.5 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
-                title="Numbered List"
-              >
-                <ListOrdered className="h-4 w-4" />
-              </button>
-              <span className="ml-auto text-xs text-gray-400">Markdown supported</span>
-            </div>
-            {/* Textarea */}
-            <textarea
-              id="body"
-              value={bodyMd}
-              onChange={(e) => setBodyMd(e.target.value)}
-              placeholder="Write your article content here..."
-              className="w-full min-h-[400px] p-4 text-sm text-gray-800 placeholder-gray-300 bg-white border-0 focus:outline-none focus:ring-0 resize-y font-mono leading-relaxed"
-            />
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-4">
-          {/* Settings Panel */}
-          <div className="bg-gray-50 rounded-md p-4 space-y-4">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Settings</h3>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="category" className="text-xs text-gray-600">Category</Label>
-              <select
-                id="category"
-                value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
-                className="h-9 w-full px-3 text-sm rounded-md appearance-none cursor-pointer bg-white border border-gray-200 text-gray-700 focus:outline-none focus:border-gray-400 transition-colors"
-              >
-                <option value="none">No category</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="visibility" className="text-xs text-gray-600">Visibility</Label>
-              <select
-                id="visibility"
-                value={visibility}
-                onChange={(e) => setVisibility(e.target.value as "public" | "internal")}
-                className="h-9 w-full px-3 text-sm rounded-md appearance-none cursor-pointer bg-white border border-gray-200 text-gray-700 focus:outline-none focus:border-gray-400 transition-colors"
-              >
-                <option value="public">Public</option>
-                <option value="internal">Internal only</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Actions */}
-          {!isNew && article && (
-            <div className="bg-gray-50 rounded-md p-4">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Actions</h3>
-              {article.status === "archived" ? (
-                <AppButton
-                  intent="secondary"
-                  fullWidth
-                  size="sm"
-                  onClick={() => setRestoreDialogOpen(true)}
-                  icon={<RotateCcw className="h-3.5 w-3.5" />}
-                  className="text-sm"
+            {/* Content area */}
+            <div className="border-t border-gray-200">
+              {/* Toolbar */}
+              <div className="flex items-center gap-0.5 py-2 border-b border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => insertMarkdown("**", "**")}
+                  className="p-1 text-gray-400 hover:text-gray-600"
+                  title="Bold"
                 >
-                  Restore Article
-                </AppButton>
-              ) : (
-                <AppButton
-                  intent="ghost"
-                  fullWidth
-                  size="sm"
-                  onClick={() => setArchiveDialogOpen(true)}
-                  icon={<Archive className="h-3.5 w-3.5" />}
-                  className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50"
+                  <Bold className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => insertMarkdown("*", "*")}
+                  className="p-1 text-gray-400 hover:text-gray-600"
+                  title="Italic"
                 >
-                  Archive Article
-                </AppButton>
-              )}
-            </div>
-          )}
+                  <Italic className="h-3.5 w-3.5" />
+                </button>
+                <span className="w-px h-3 bg-gray-200 mx-1" />
+                <button
+                  type="button"
+                  onClick={() => insertMarkdown("## ")}
+                  className="p-1 text-gray-400 hover:text-gray-600"
+                  title="Heading"
+                >
+                  <Heading2 className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => insertMarkdown("[", "](url)")}
+                  className="p-1 text-gray-400 hover:text-gray-600"
+                  title="Link"
+                >
+                  <Link className="h-3.5 w-3.5" />
+                </button>
+                <span className="w-px h-3 bg-gray-200 mx-1" />
+                <button
+                  type="button"
+                  onClick={() => insertMarkdown("- ")}
+                  className="p-1 text-gray-400 hover:text-gray-600"
+                  title="List"
+                >
+                  <List className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => insertMarkdown("1. ")}
+                  className="p-1 text-gray-400 hover:text-gray-600"
+                  title="Numbered list"
+                >
+                  <ListOrdered className="h-3.5 w-3.5" />
+                </button>
+              </div>
 
-          {/* Version History */}
-          {!isNew && (
-            <div className="bg-gray-50 rounded-md p-4">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Version History</h3>
-              {versionsLoading ? (
-                <p className="text-xs text-gray-400">Loading...</p>
-              ) : versions.length === 0 ? (
-                <p className="text-xs text-gray-400">No versions yet</p>
-              ) : (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {versions.slice(0, 10).map((version, index) => (
-                    <div
-                      key={version.id}
-                      className="flex items-start gap-2 text-xs"
+              {/* Textarea */}
+              <textarea
+                id="body"
+                value={bodyMd}
+                onChange={(e) => setBodyMd(e.target.value)}
+                placeholder="Start writing..."
+                className="w-full min-h-[450px] py-4 text-sm text-gray-700 placeholder-gray-300 bg-transparent border-0 focus:outline-none resize-none font-mono leading-relaxed"
+              />
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="w-48 shrink-0">
+            {/* Settings */}
+            <div className="mb-6">
+              <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-3">Settings</p>
+
+              <div className="space-y-4">
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Category</p>
+                  <div className="relative">
+                    <select
+                      id="category"
+                      value={categoryId}
+                      onChange={(e) => setCategoryId(e.target.value)}
+                      className="w-full text-sm text-gray-700 bg-transparent border-0 border-b border-gray-200 focus:border-gray-400 focus:outline-none pb-1 pr-5 appearance-none cursor-pointer"
                     >
-                      <Clock className="h-3 w-3 mt-0.5 text-gray-400 shrink-0" />
-                      <div className="min-w-0">
-                        <p className="font-medium text-gray-700">
-                          {index === 0 ? "Current" : `v${versions.length - index}`}
-                        </p>
-                        <p className="text-gray-400">
-                          {format(new Date(version.created_at), "MMM d, h:mm a")}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                      <option value="none">None</option>
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-0 top-1 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
+                  </div>
                 </div>
-              )}
+
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Visibility</p>
+                  <div className="relative">
+                    <select
+                      id="visibility"
+                      value={visibility}
+                      onChange={(e) => setVisibility(e.target.value as "public" | "internal")}
+                      className="w-full text-sm text-gray-700 bg-transparent border-0 border-b border-gray-200 focus:border-gray-400 focus:outline-none pb-1 pr-5 appearance-none cursor-pointer"
+                    >
+                      <option value="public">Public</option>
+                      <option value="internal">Internal</option>
+                    </select>
+                    <ChevronDown className="absolute right-0 top-1 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
+
+            {/* Actions */}
+            {!isNew && article && (
+              <div className="mb-6 pt-4 border-t border-gray-200">
+                <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-3">Actions</p>
+                {article.status === "archived" ? (
+                  <button
+                    onClick={() => setRestoreDialogOpen(true)}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    Restore article
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setArchiveDialogOpen(true)}
+                    className="text-xs text-red-500 hover:text-red-600"
+                  >
+                    Archive article
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Version history */}
+            {!isNew && (
+              <div className="pt-4 border-t border-gray-200">
+                <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-3">History</p>
+                {versionsLoading ? (
+                  <p className="text-xs text-gray-400">Loading...</p>
+                ) : versions.length === 0 ? (
+                  <p className="text-xs text-gray-400">No versions</p>
+                ) : (
+                  <div className="space-y-2">
+                    {versions.slice(0, 5).map((version, index) => (
+                      <div key={version.id} className="flex items-center gap-2 text-xs">
+                        <Clock className="h-3 w-3 text-gray-300" />
+                        <span className="text-gray-500">
+                          {index === 0 ? "Current" : format(new Date(version.created_at), "MMM d")}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Publish Dialog */}
       <AlertDialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-sm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Publish article?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will make the article visible on the public Help Center. 
-              You can archive it later if needed.
+            <AlertDialogTitle className="text-base">Publish article?</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-gray-500">
+              This will make it visible on the Help Center.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handlePublish} disabled={publishing}>
+            <AlertDialogCancel className="text-sm">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handlePublish}
+              disabled={publishing}
+              className="text-sm bg-gray-900 hover:bg-gray-800"
+            >
               {publishing ? "Publishing..." : "Publish"}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -586,37 +567,39 @@ export default function HelpArticleEditorPage() {
 
       {/* Archive Dialog */}
       <AlertDialog open={archiveDialogOpen} onOpenChange={setArchiveDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-sm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Archive article?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will remove the article from the public Help Center. 
-              The content will be retained for recordkeeping and can be restored later.
+            <AlertDialogTitle className="text-base">Archive article?</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-gray-500">
+              This will remove it from the Help Center. You can restore it later.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleArchive}>Archive</AlertDialogAction>
+            <AlertDialogCancel className="text-sm">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleArchive} className="text-sm bg-gray-900 hover:bg-gray-800">
+              Archive
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
       {/* Restore Dialog */}
       <AlertDialog open={restoreDialogOpen} onOpenChange={setRestoreDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-sm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Restore article?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will restore the article as a draft. 
-              You'll need to publish it again to make it visible.
+            <AlertDialogTitle className="text-base">Restore article?</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-gray-500">
+              This will restore it as a draft.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleRestore}>Restore</AlertDialogAction>
+            <AlertDialogCancel className="text-sm">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRestore} className="text-sm bg-gray-900 hover:bg-gray-800">
+              Restore
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </PageContainer>
+    </div>
   );
 }
