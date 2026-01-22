@@ -413,7 +413,7 @@ export default function HelpOverviewPage() {
           </p>
         </div>
         <Button variant="default" size="sm" onClick={() => navigate('/help-workstation/articles/new')}>
-          <Plus className="h-2.5 w-2.5" strokeWidth={1} />
+          <Plus className="h-2 w-2" strokeWidth={1} />
           New Article
         </Button>
       </div>
@@ -439,7 +439,7 @@ export default function HelpOverviewPage() {
       <div className="mb-8 max-w-xl relative">
         <form onSubmit={handleSearchSubmit}>
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#505050]" strokeWidth={1} />
+            <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#505050]" strokeWidth={1} />
             <input
               ref={searchInputRef}
               type="text"
@@ -457,7 +457,7 @@ export default function HelpOverviewPage() {
                 }
               }}
               onKeyDown={handleKeyDown}
-              className="w-full h-10 pl-11 pr-10 bg-[#1A1A1A] border border-[#303030] rounded-lg text-[13px] text-[#E5E5E5] placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] focus:ring-1 focus:ring-[#505050]"
+              className="w-full h-9 pl-7 pr-8 bg-transparent border-0 border-b border-[#303030] text-[12px] text-[#E5E5E5] placeholder:text-[#505050] focus:outline-none focus:border-[#505050]"
             />
             {isSearching && searchQuery && (
               <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B] animate-spin" strokeWidth={1.5} />

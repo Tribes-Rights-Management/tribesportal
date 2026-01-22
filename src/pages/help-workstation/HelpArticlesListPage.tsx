@@ -244,7 +244,7 @@ export default function HelpArticlesListPage() {
           <p className="text-[13px] text-[#AAAAAA]">{sortedArticles.length} articles</p>
         </div>
         <Button variant="default" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
-          <Plus className="h-2.5 w-2.5" strokeWidth={1} />
+          <Plus className="h-2 w-2" strokeWidth={1} />
           New Article
         </Button>
       </div>
@@ -277,7 +277,7 @@ export default function HelpArticlesListPage() {
             placeholder="Search articles..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-9 pl-6 pr-8 bg-transparent border-0 border-b border-[#303030] text-[12px] text-[#E5E5E5] placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050]"
+            className="w-full h-9 pl-7 pr-8 bg-transparent border-0 border-b border-[#303030] text-[12px] text-[#E5E5E5] placeholder:text-[#505050] focus:outline-none focus:border-[#505050]"
           />
           {/* Clear button or loading indicator */}
           <div className="absolute right-0 top-1/2 -translate-y-1/2">

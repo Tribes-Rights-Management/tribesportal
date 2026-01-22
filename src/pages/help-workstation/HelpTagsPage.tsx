@@ -156,13 +156,13 @@ export default function HelpTagsPage() {
       
       {/* Search */}
       <div className="mb-6 max-w-md relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#505050]" strokeWidth={1} />
+        <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#505050]" strokeWidth={1} />
         <input
           type="search"
           placeholder="Search tags..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full h-9 pl-11 pr-3 bg-[#1A1A1A] border border-[#303030] rounded text-[12px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050]"
+          className="w-full h-9 pl-7 pr-3 bg-transparent border-0 border-b border-[#303030] text-[12px] text-white placeholder:text-[#505050] focus:outline-none focus:border-[#505050]"
         />
       </div>
       
