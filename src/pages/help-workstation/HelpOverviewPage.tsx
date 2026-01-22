@@ -413,7 +413,7 @@ export default function HelpOverviewPage() {
           </p>
         </div>
         <Button variant="default" size="sm" onClick={() => navigate('/help-workstation/articles/new')}>
-          <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
+          <Plus className="h-3 w-3" strokeWidth={1.25} />
           New Article
         </Button>
       </div>
@@ -439,7 +439,7 @@ export default function HelpOverviewPage() {
       <div className="mb-8 max-w-xl relative">
         <form onSubmit={handleSearchSubmit}>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B]" strokeWidth={1.5} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B]" strokeWidth={1.25} />
             <input
               ref={searchInputRef}
               type="text"
@@ -478,7 +478,7 @@ export default function HelpOverviewPage() {
               </div>
             ) : searchResults.length === 0 ? (
               <div className="px-4 py-6 text-center">
-                <Search className="h-5 w-5 text-[#404040] mx-auto mb-2" strokeWidth={1.5} />
+                <Search className="h-5 w-5 text-[#404040] mx-auto mb-2" strokeWidth={1.25} />
                 <p className="text-[12px] text-[#6B6B6B]">No results found for "{searchQuery}"</p>
               </div>
             ) : (
