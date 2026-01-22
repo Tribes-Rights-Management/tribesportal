@@ -413,7 +413,7 @@ export default function HelpOverviewPage() {
           </p>
         </div>
         <Button variant="default" size="sm" onClick={() => navigate('/help-workstation/articles/new')}>
-          <Plus className="h-3 w-3" strokeWidth={1.25} />
+          <Plus className="h-3 w-3" strokeWidth={1} />
           New Article
         </Button>
       </div>
@@ -439,7 +439,7 @@ export default function HelpOverviewPage() {
       <div className="mb-8 max-w-xl relative">
         <form onSubmit={handleSearchSubmit}>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B]" strokeWidth={1.25} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B]" strokeWidth={1} />
             <input
               ref={searchInputRef}
               type="text"
@@ -457,7 +457,7 @@ export default function HelpOverviewPage() {
                 }
               }}
               onKeyDown={handleKeyDown}
-              className="w-full h-10 pl-10 pr-10 bg-[#1A1A1A] border border-[#303030] rounded-lg text-[13px] text-[#E5E5E5] placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] focus:ring-1 focus:ring-[#505050]"
+              className="w-full h-10 pl-12 pr-10 bg-[#1A1A1A] border border-[#303030] rounded-lg text-[13px] text-[#E5E5E5] placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] focus:ring-1 focus:ring-[#505050]"
             />
             {isSearching && searchQuery && (
               <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B] animate-spin" strokeWidth={1.5} />
@@ -478,7 +478,7 @@ export default function HelpOverviewPage() {
               </div>
             ) : searchResults.length === 0 ? (
               <div className="px-4 py-6 text-center">
-                <Search className="h-5 w-5 text-[#404040] mx-auto mb-2" strokeWidth={1.25} />
+                <Search className="h-5 w-5 text-[#404040] mx-auto mb-2" strokeWidth={1} />
                 <p className="text-[12px] text-[#6B6B6B]">No results found for "{searchQuery}"</p>
               </div>
             ) : (

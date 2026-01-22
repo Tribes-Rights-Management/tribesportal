@@ -180,13 +180,13 @@ export default function HelpMessagesPage() {
 
       {/* Search */}
       <div className="mb-6 max-w-md relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B]" strokeWidth={1.25} />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B]" strokeWidth={1} />
         <input
           type="search"
           placeholder="Search messages..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full h-9 pl-10 pr-3 bg-[#1A1A1A] border border-[#303030] rounded text-[12px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050]"
+          className="w-full h-9 pl-12 pr-3 bg-[#1A1A1A] border border-[#303030] rounded text-[12px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050]"
         />
       </div>
 

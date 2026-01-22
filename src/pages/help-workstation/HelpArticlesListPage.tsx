@@ -244,7 +244,7 @@ export default function HelpArticlesListPage() {
           <p className="text-[13px] text-[#AAAAAA]">{sortedArticles.length} articles</p>
         </div>
         <Button variant="default" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
-          <Plus className="h-3 w-3" strokeWidth={1.25} />
+          <Plus className="h-3 w-3" strokeWidth={1} />
           New Article
         </Button>
       </div>
@@ -270,7 +270,7 @@ export default function HelpArticlesListPage() {
       <div className="flex items-center gap-4 mb-6">
         {/* Search Input */}
         <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B]" strokeWidth={1.25} />
+          <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B]" strokeWidth={1} />
           <input
             ref={searchInputRef}
             type="text"
@@ -361,7 +361,7 @@ export default function HelpArticlesListPage() {
                 <td colSpan={5} className="text-center py-20">
                   {debouncedSearch ? (
                     <div>
-                      <Search className="h-8 w-8 text-[#404040] mx-auto mb-3" strokeWidth={1.25} />
+                      <Search className="h-8 w-8 text-[#404040] mx-auto mb-3" strokeWidth={1} />
                       <p className="text-[13px] text-[#6B6B6B]">
                         No articles found for "<span className="text-[#AAAAAA]">{debouncedSearch}</span>"
                       </p>
