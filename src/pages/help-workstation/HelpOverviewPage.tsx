@@ -405,7 +405,7 @@ export default function HelpOverviewPage() {
           <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
             HELP WORKSTATION
           </p>
-          <h1 className="text-[20px] font-medium text-white mb-2">
+          <h1 className="text-[20px] font-medium text-white mb-1">
             Overview
           </h1>
           <p className="text-[13px] text-[#AAAAAA]">
@@ -436,7 +436,7 @@ export default function HelpOverviewPage() {
       )}
 
       {/* Search Bar with Live Results */}
-      <div className="mb-8 max-w-xl relative">
+      <div className="mb-6 max-w-md relative">
         <form onSubmit={handleSearchSubmit}>
           <div className="relative">
             <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#505050]" strokeWidth={1} />

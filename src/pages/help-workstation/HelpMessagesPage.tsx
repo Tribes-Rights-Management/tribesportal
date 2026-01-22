@@ -133,12 +133,14 @@ export default function HelpMessagesPage() {
   return (
     <div className="flex-1 p-8">
       {/* Header */}
-      <div className="mb-8">
-        <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
-          HELP WORKSTATION
-        </p>
-        <h1 className="text-[20px] font-medium text-white mb-1">Messages</h1>
-        <p className="text-[13px] text-[#AAAAAA]">{messages.length} messages</p>
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
+            HELP WORKSTATION
+          </p>
+          <h1 className="text-[20px] font-medium text-white mb-1">Messages</h1>
+          <p className="text-[13px] text-[#AAAAAA]">{messages.length} messages</p>
+        </div>
       </div>
 
       {/* Inline Error */}
