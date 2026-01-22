@@ -156,7 +156,7 @@ function TagsInput({ value, onChange, suggestions }: TagsInputProps) {
               onClick={() => addTag(inputValue)}
               className="w-full px-3 py-1.5 text-left text-[11px] text-[#60A5FA] hover:bg-[#252525] flex items-center gap-1.5"
             >
-              <Plus className="h-3 w-3" strokeWidth={1} />
+              <Plus className="h-2.5 w-2.5" strokeWidth={1} />
               Create "{inputValue}"
             </button>
           )}

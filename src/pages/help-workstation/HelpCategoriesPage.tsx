@@ -192,7 +192,7 @@ export default function HelpCategoriesPage() {
           </p>
         </div>
         <Button variant="default" size="sm" onClick={handleCreate}>
-          <Plus className="h-3 w-3" strokeWidth={1} />
+          <Plus className="h-2.5 w-2.5" strokeWidth={1} />
           New Category
         </Button>
       </div>

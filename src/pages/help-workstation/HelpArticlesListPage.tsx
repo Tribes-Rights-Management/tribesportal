@@ -244,7 +244,7 @@ export default function HelpArticlesListPage() {
           <p className="text-[13px] text-[#AAAAAA]">{sortedArticles.length} articles</p>
         </div>
         <Button variant="default" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
-          <Plus className="h-3 w-3" strokeWidth={1} />
+          <Plus className="h-2.5 w-2.5" strokeWidth={1} />
           New Article
         </Button>
       </div>
@@ -270,7 +270,7 @@ export default function HelpArticlesListPage() {
       <div className="flex items-center gap-4 mb-6">
         {/* Search Input */}
         <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B]" strokeWidth={1} />
+          <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#505050]" strokeWidth={1} />
           <input
             ref={searchInputRef}
             type="text"
