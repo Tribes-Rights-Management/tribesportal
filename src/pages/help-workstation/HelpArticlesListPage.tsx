@@ -235,7 +235,7 @@ export default function HelpArticlesListPage() {
   return (
     <div className="flex-1 p-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-start justify-between mb-8">
         <div>
           <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
             HELP WORKSTATION
