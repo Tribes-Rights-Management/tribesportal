@@ -457,11 +457,8 @@ export default function HelpOverviewPage() {
                 }
               }}
               onKeyDown={handleKeyDown}
-              className="w-full h-9 pl-7 pr-8 bg-transparent border-0 border-b border-[#303030] text-[12px] text-[#E5E5E5] placeholder:text-[#505050] focus:outline-none focus:border-[#505050]"
+              className="w-full h-9 pl-7 pr-3 bg-transparent border-0 border-b border-[#303030] text-[12px] text-[#E5E5E5] placeholder:text-[#505050] focus:outline-none focus:border-[#505050]"
             />
-            {isSearching && searchQuery && (
-              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B] animate-spin" strokeWidth={1.5} />
-            )}
           </div>
         </form>
 

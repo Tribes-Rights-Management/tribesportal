@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Trash2, ArrowUpDown, X, Search } from "lucide-react";
+import { Trash2, ArrowUpDown, X, Search, Plus } from "lucide-react";
 import { format } from "date-fns";
 
 /**
@@ -148,10 +148,11 @@ export default function HelpTagsPage() {
           </p>
           <h1 className="text-[20px] font-medium text-white mb-1">Tags</h1>
           <p className="text-[13px] text-[#AAAAAA]">{tags.length} tags</p>
-          <p className="text-[12px] text-[#6B6B6B] mt-1">
-            Tags are created automatically when added to articles.
-          </p>
         </div>
+        <Button variant="outline" size="sm" disabled title="Tags are created automatically when added to articles">
+          <Plus className="h-2 w-2" strokeWidth={1} />
+          New Tag
+        </Button>
       </div>
       
       {/* Search */}

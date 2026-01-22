@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, ArrowUpDown, ArrowUp, ArrowDown, AlertCircle, RefreshCw, ChevronDown, Search, X, Loader2 } from "lucide-react";
+import { Plus, ArrowUpDown, ArrowUp, ArrowDown, AlertCircle, RefreshCw, ChevronDown, Search } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleStatus, HelpVisibility } from "@/hooks/useHelpManagement";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -275,23 +275,8 @@ export default function HelpArticlesListPage() {
           placeholder="Search articles..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full h-9 pl-7 pr-8 bg-transparent border-0 border-b border-[#303030] text-[12px] text-[#E5E5E5] placeholder:text-[#505050] focus:outline-none focus:border-[#505050]"
+          className="w-full h-9 pl-7 pr-3 bg-transparent border-0 border-b border-[#303030] text-[12px] text-[#E5E5E5] placeholder:text-[#505050] focus:outline-none focus:border-[#505050]"
         />
-        {/* Clear button or loading indicator */}
-        <div className="absolute right-0 top-1/2 -translate-y-1/2">
-          {showSearching && search ? (
-            <Loader2 className="h-3.5 w-3.5 text-[#6B6B6B] animate-spin" strokeWidth={1.5} />
-          ) : search ? (
-            <button
-              onClick={clearSearch}
-              className="p-1 text-[#6B6B6B] hover:text-[#AAAAAA] transition-colors"
-            >
-              <X className="h-3.5 w-3.5" strokeWidth={1.5} />
-            </button>
-          ) : (
-            <span className="text-[10px] text-[#505050] font-mono">/</span>
-          )}
-        </div>
       </div>
 
       {/* Filters */}
