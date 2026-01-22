@@ -412,7 +412,7 @@ export default function HelpOverviewPage() {
             Manage articles, categories, and support content
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => navigate('/help-workstation/articles/new')}>
+        <Button variant="default" size="sm" onClick={() => navigate('/help-workstation/articles/new')}>
           <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
           New Article
         </Button>

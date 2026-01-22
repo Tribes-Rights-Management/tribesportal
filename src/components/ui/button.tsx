@@ -14,12 +14,11 @@ const buttonVariants = cva(
         default: "bg-transparent border border-white text-white font-medium tracking-[0.01em] hover:bg-white/[0.08] active:bg-white/[0.12]",
         // Destructive: Red border on transparent
         destructive: "bg-transparent border border-[#DC2626] text-[#DC2626] font-medium hover:bg-[rgba(220,38,38,0.1)]",
-        // Outline/Secondary: Gray border, muted text
+        // Outline: Gray border, muted text - secondary actions
         outline: "bg-transparent border border-[#303030] text-[#AAAAAA] hover:border-[#505050] hover:text-white",
-        secondary: "bg-transparent border border-[#303030] text-[#AAAAAA] hover:border-[#505050] hover:text-white",
         // Ghost: Invisible until hover
         ghost: "bg-transparent border border-transparent text-[#AAAAAA] hover:bg-white/[0.04] hover:text-white",
-        // Link/Text: No border, underline on hover
+        // Link: No border, underline on hover
         link: "bg-transparent text-[#AAAAAA] hover:text-white hover:underline underline-offset-4",
       },
       size: {
