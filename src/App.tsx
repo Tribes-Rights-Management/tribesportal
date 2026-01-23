@@ -88,6 +88,7 @@ import { HelpProtectedRoute } from "@/components/help/HelpProtectedRoute";
 import { HelpWorkstationLayout } from "@/layouts/HelpWorkstationLayout";
 import {
   HelpOverviewPage,
+  HelpAudiencesPage,
   HelpArticlesListPage,
   HelpArticleEditorPage as HelpWorkstationArticleEditorPage,
   HelpCategoriesPage as HelpWorkstationCategoriesPage,
@@ -311,10 +312,11 @@ const App = () => (
         ═══════════════════════════════════════════════════════════════════════ */}
         <Route path="/help-workstation" element={<HelpProtectedRoute><HelpWorkstationLayout /></HelpProtectedRoute>}>
           <Route index element={<HelpOverviewPage />} />
+          <Route path="audiences" element={<HelpAudiencesPage />} />
+          <Route path="categories" element={<HelpWorkstationCategoriesPage />} />
           <Route path="articles" element={<HelpArticlesListPage />} />
           <Route path="articles/new" element={<HelpWorkstationArticleEditorPage />} />
           <Route path="articles/:id" element={<HelpWorkstationArticleEditorPage />} />
-          <Route path="categories" element={<HelpWorkstationCategoriesPage />} />
           <Route path="tags" element={<HelpTagsPage />} />
           <Route path="messages" element={<HelpMessagesPage />} />
           <Route path="analytics" element={<HelpAnalyticsPage />} />
