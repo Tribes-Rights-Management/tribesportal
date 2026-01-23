@@ -184,11 +184,11 @@ export function AppPanelFooter({
     <div className="flex items-center justify-between w-full">
       <div>{left}</div>
       <div className="flex items-center gap-2">
-        <AppButton variant="secondary" size="sm" onClick={onCancel}>
+        <AppButton intent="secondary" size="sm" onClick={onCancel}>
           {cancelLabel}
         </AppButton>
         <AppButton
-          variant="primary"
+          intent="primary"
           size="sm"
           onClick={onSubmit}
           disabled={submitting || submitDisabled}
