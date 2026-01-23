@@ -1,14 +1,30 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Plus, ChevronRight, AlertCircle, RefreshCw, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import { format } from "date-fns";
 import { useDebounce } from "@/hooks/useDebounce";
 
+// Import from unified app-ui kit
+import {
+  AppButton,
+  AppPageHeader,
+  AppStatCard,
+  AppStatCardGrid,
+  AppListCard,
+  AppListRow,
+  AppListAction,
+  AppEmptyState,
+  AppSearchInput,
+  AppAlert,
+  AppSectionGrid,
+} from "@/components/app-ui";
+
 /**
- * HELP WORKSTATION OVERVIEW — INSTITUTIONAL DESIGN
- * Simplified to match actual database schema.
+ * HELP WORKSTATION OVERVIEW — UNIFIED DESIGN SYSTEM
+ * 
+ * Uses canonical app-ui components for consistency across the application.
+ * No hardcoded colors - all styling via CSS variables.
  */
 
 interface ArticleStats {
@@ -27,7 +43,6 @@ interface RecentArticle {
 
 export default function HelpOverviewPage() {
   const navigate = useNavigate();
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [articleStats, setArticleStats] = useState<ArticleStats>({ total: 0, published: 0, draft: 0 });
   const [categoryCount, setCategoryCount] = useState(0);
@@ -110,112 +125,126 @@ export default function HelpOverviewPage() {
   };
 
   return (
-    <div className="flex-1 p-8">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-8">
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
-            HELP WORKSTATION
-          </p>
-          <h1 className="text-[20px] font-medium text-foreground mb-1">Overview</h1>
-          <p className="text-[13px] text-muted-foreground">Manage Help Center content</p>
-        </div>
-        <Button variant="default" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
-          <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
-          New Article
-        </Button>
-      </div>
+    <div className="flex-1 p-6 md:p-8">
+      {/* Page Header */}
+      <AppPageHeader
+        eyebrow="Help Workstation"
+        title="Overview"
+        description="Manage Help Center content"
+        action={
+          <AppButton
+            intent="primary"
+            size="sm"
+            onClick={() => navigate("/help-workstation/articles/new")}
+          >
+            <Plus className="h-4 w-4" strokeWidth={1.5} />
+            New Article
+          </AppButton>
+        }
+      />
 
-      {/* Error */}
+      {/* Error Alert */}
       {error && (
-        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
-          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
-          <div className="flex-1">
-            <p className="text-[12px] text-foreground">{error}</p>
-            <button onClick={loadStats} className="text-[11px] text-destructive hover:text-destructive/80 underline mt-1 flex items-center gap-1">
-              <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
-              Try again
-            </button>
-          </div>
+        <div className="mb-6">
+          <AppAlert
+            variant="error"
+            message={error}
+            onRetry={loadStats}
+          />
         </div>
       )}
 
       {/* Search */}
-      <div className="mb-8 max-w-md relative">
-        <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/50" strokeWidth={1.5} />
-        <input
-          ref={searchInputRef}
-          type="text"
-          placeholder="Search articles..."
+      <div className="mb-8 max-w-md">
+        <AppSearchInput
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          className="w-full h-9 pl-7 pr-3 bg-transparent border-0 border-b border-border text-[12px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-muted-foreground"
+          onChange={setSearchQuery}
+          onSubmit={handleSearch}
+          placeholder="Search articles..."
+          variant="underline"
         />
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-card border border-border rounded p-4 cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => navigate("/help-workstation/articles")}>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Articles</p>
-          <p className="text-[24px] font-medium text-foreground">{loading ? "—" : articleStats.total}</p>
-          <p className="text-[11px] text-muted-foreground mt-1">{articleStats.published} published, {articleStats.draft} draft</p>
-        </div>
-        <div className="bg-card border border-border rounded p-4 cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => navigate("/help-workstation/categories")}>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Categories</p>
-          <p className="text-[24px] font-medium text-foreground">{loading ? "—" : categoryCount}</p>
-        </div>
-        <div className="bg-card border border-border rounded p-4 cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => navigate("/help-workstation/audiences")}>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Audiences</p>
-          <p className="text-[24px] font-medium text-foreground">{loading ? "—" : audienceCount}</p>
-        </div>
-        <div className="bg-card border border-border rounded p-4 cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => navigate("/help-workstation/messages")}>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Messages</p>
-          <p className="text-[24px] font-medium text-foreground">—</p>
-        </div>
+      <div className="mb-8">
+        <AppStatCardGrid columns={4}>
+          <AppStatCard
+            label="Articles"
+            value={articleStats.total}
+            subtitle={`${articleStats.published} published, ${articleStats.draft} draft`}
+            loading={loading}
+            onClick={() => navigate("/help-workstation/articles")}
+          />
+          <AppStatCard
+            label="Categories"
+            value={categoryCount}
+            loading={loading}
+            onClick={() => navigate("/help-workstation/categories")}
+          />
+          <AppStatCard
+            label="Audiences"
+            value={audienceCount}
+            loading={loading}
+            onClick={() => navigate("/help-workstation/audiences")}
+          />
+          <AppStatCard
+            label="Messages"
+            value="—"
+            loading={loading}
+            onClick={() => navigate("/help-workstation/messages")}
+          />
+        </AppStatCardGrid>
       </div>
 
-      {/* Recent & Drafts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-card border border-border rounded">
-          <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-            <h3 className="text-[13px] font-medium text-foreground">Recent Articles</h3>
-            <button onClick={() => navigate("/help-workstation/articles")} className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1">
-              View all <ChevronRight className="h-3 w-3" strokeWidth={1.5} />
-            </button>
-          </div>
-          <div className="divide-y divide-border/30">
-            {recentArticles.length === 0 ? (
-              <p className="px-4 py-8 text-[12px] text-muted-foreground text-center">No articles yet</p>
-            ) : (
-              recentArticles.map(article => (
-                <div key={article.id} onClick={() => navigate(`/help-workstation/articles/${article.id}`)} className="px-4 py-3 hover:bg-accent/50 cursor-pointer transition-colors">
-                  <p className="text-[13px] text-foreground truncate">{article.title}</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">{format(new Date(article.updated_at), "MMM d, yyyy")}</p>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
+      {/* Recent Articles & Drafts */}
+      <AppSectionGrid columns={2}>
+        {/* Recent Articles */}
+        <AppListCard
+          title="Recent Articles"
+          action={
+            <AppListAction onClick={() => navigate("/help-workstation/articles")}>
+              View all
+            </AppListAction>
+          }
+        >
+          {recentArticles.length === 0 ? (
+            <AppEmptyState
+              icon="file"
+              message="No articles yet"
+              size="sm"
+            />
+          ) : (
+            recentArticles.map(article => (
+              <AppListRow
+                key={article.id}
+                title={article.title}
+                subtitle={format(new Date(article.updated_at), "MMM d, yyyy")}
+                onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
+              />
+            ))
+          )}
+        </AppListCard>
 
-        <div className="bg-card border border-border rounded">
-          <div className="px-4 py-3 border-b border-border">
-            <h3 className="text-[13px] font-medium text-foreground">Drafts to Review</h3>
-          </div>
-          <div className="divide-y divide-border/30">
-            {draftsToReview.length === 0 ? (
-              <p className="px-4 py-8 text-[12px] text-muted-foreground text-center">No drafts</p>
-            ) : (
-              draftsToReview.map(article => (
-                <div key={article.id} onClick={() => navigate(`/help-workstation/articles/${article.id}`)} className="px-4 py-3 hover:bg-accent/50 cursor-pointer transition-colors">
-                  <p className="text-[13px] text-foreground truncate">{article.title}</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">{format(new Date(article.updated_at), "MMM d, yyyy")}</p>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </div>
+        {/* Drafts to Review */}
+        <AppListCard title="Drafts to Review">
+          {draftsToReview.length === 0 ? (
+            <AppEmptyState
+              icon="file"
+              message="No drafts"
+              size="sm"
+            />
+          ) : (
+            draftsToReview.map(article => (
+              <AppListRow
+                key={article.id}
+                title={article.title}
+                subtitle={format(new Date(article.updated_at), "MMM d, yyyy")}
+                onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
+              />
+            ))
+          )}
+        </AppListCard>
+      </AppSectionGrid>
     </div>
   );
 }
