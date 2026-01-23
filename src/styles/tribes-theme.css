@@ -1,109 +1,187 @@
 /**
  * ═══════════════════════════════════════════════════════════════════════════════
- * TRIBES CANONICAL THEME — YouTube Studio-inspired Soft Dark Mode
+ * TRIBES CANONICAL THEME — Light/Dark Mode Support
  * ═══════════════════════════════════════════════════════════════════════════════
  * 
  * This file defines the AUTHORITATIVE color system for the Tribes application.
- * Warmer, more readable, better contrast than pure black.
  * 
- * PALETTE (YouTube Studio-inspired):
- * - BG (page): #181818
- * - Surface: #212121
- * - Elevated: #282828
- * - Border: #303030
- * - Text primary: #FFFFFF
- * - Text secondary: #AAAAAA
- * - Text muted: #717171
+ * LIGHT MODE (default):
+ * - Clean white backgrounds
+ * - Near-black text for readability
+ * - Subtle gray borders
+ * - Matches marketing site aesthetic
+ * 
+ * DARK MODE (.dark class):
+ * - YouTube Studio-inspired soft dark
+ * - Warmer, more readable than pure black
+ * - High contrast text
  * 
  * ENFORCEMENT:
  * - No component may hardcode colors outside these tokens
  * - All backgrounds must derive from --tribes-bg or --tribes-surface
- * - All text must derive from --tribes-text / --tribes-text-secondary / --tribes-text-muted
- * - No super-dark values (#0A0A0A, #0B0F14, etc.) may be introduced
+ * - All text must derive from --tribes-fg / --tribes-fg-secondary / --tribes-fg-muted
  * 
  * This file is the single source of truth for the Tribes color system.
  * ═══════════════════════════════════════════════════════════════════════════════
  */
 
 :root {
-  /* ═══════════════════════════════════════════════════════════════════════════
-     GLOBAL FOUNDATION — YouTube Studio-inspired Soft Dark Mode
-     Warmer, more readable, better contrast than pure black
-     ═══════════════════════════════════════════════════════════════════════════ */
-  
-  /* Page background: YouTube Studio main bg */
-  --tribes-bg: #181818;
-  
-  /* Header background: pure black for brand consistency with marketing site */
+    /* ═══════════════════════════════════════════════════════════════════════════
+       LIGHT MODE — Default Theme
+       Clean, professional, matches marketing site
+       ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* Page background: Pure white */
+  --tribes-bg: #FFFFFF;
+
+  /* Header background: Black for brand consistency (stays dark in both modes) */
   --tribes-header-bg: #000000;
-  
+
   /* ═══════════════════════════════════════════════════════════════════════════
-     TEXT HIERARCHY — High contrast for readability
-     ═══════════════════════════════════════════════════════════════════════════ */
-  
+       TEXT HIERARCHY — High contrast for readability
+       ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* Primary text: Near-black for excellent readability */
+  --tribes-fg: #111111;
+    --tribes-text: #111111;
+
+  /* Secondary text: Medium gray */
+  --tribes-fg-secondary: #6B6B6B;
+    --tribes-text-secondary: #6B6B6B;
+
+  /* Muted text: Light gray for labels, captions */
+  --tribes-fg-muted: #9CA3AF;
+    --tribes-text-muted: #9CA3AF;
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+       SURFACE SYSTEM — Subtle elevation on white
+       ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* Card/panel surface: Very light gray for subtle elevation */
+  --tribes-card: #FAFAFA;
+    --tribes-surface: #FAFAFA;
+
+  /* Card border: Subtle gray */
+  --tribes-card-border: #E5E5E5;
+
+  /* Table surface: Slightly darker for visual distinction */
+  --tribes-surface-table: #F5F5F5;
+
+  /* Elevated surface: for nested content */
+  --tribes-surface-elevated: #F0F0F0;
+
+  /* Nested surface: tertiary elevation */
+  --tribes-surface-nested: #EBEBEB;
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+       BORDERS & DIVIDERS — Clean, subtle
+       ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* Hairline borders */
+  --tribes-border: #E5E5E5;
+
+  /* Divider: same as border for consistency */
+  --tribes-divider: #E5E5E5;
+
+  /* Strong borders: emphasized separation */
+  --tribes-border-strong: #D1D5DB;
+
+  /* Soft shadow: subtle depth */
+  --tribes-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+       INTERACTIVE STATES — Clear hover/focus feedback
+       ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* Focus ring: visible for accessibility */
+  --tribes-focus-ring: rgba(0, 0, 0, 0.2);
+
+  /* Hover state: subtle darkening */
+  --tribes-hover: #F5F5F5;
+
+  /* Active state: pressed feedback */
+  --tribes-active: #EBEBEB;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   DARK MODE — Applied via .dark class on <html>
+   YouTube Studio-inspired soft dark
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.dark {
+    /* Page background: YouTube Studio main bg */
+  --tribes-bg: #181818;
+
+  /* Header background: Pure black (same in both modes) */
+  --tribes-header-bg: #000000;
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+       TEXT HIERARCHY — High contrast for readability
+       ═══════════════════════════════════════════════════════════════════════════ */
+
   /* Primary text: pure white for maximum contrast */
   --tribes-fg: #FFFFFF;
-  --tribes-text: #FFFFFF;
-  
+    --tribes-text: #FFFFFF;
+
   /* Secondary text: lighter gray, more readable */
   --tribes-fg-secondary: #AAAAAA;
-  --tribes-text-secondary: #AAAAAA;
-  
+    --tribes-text-secondary: #AAAAAA;
+
   /* Muted text: YouTube's muted text */
   --tribes-fg-muted: #717171;
-  --tribes-text-muted: #717171;
-  
+    --tribes-text-muted: #717171;
+
   /* ═══════════════════════════════════════════════════════════════════════════
-     SURFACE SYSTEM — Elevated surfaces with subtle differentiation
-     ═══════════════════════════════════════════════════════════════════════════ */
-  
+       SURFACE SYSTEM — Elevated surfaces with subtle differentiation
+       ═══════════════════════════════════════════════════════════════════════════ */
+
   /* Card/panel surface: YouTube elevated surface */
   --tribes-card: #212121;
-  --tribes-surface: #212121;
-  
+    --tribes-surface: #212121;
+
   /* Card border: visible but subtle */
   --tribes-card-border: #303030;
-  
+
   /* Table surface: slightly darker than cards */
   --tribes-surface-table: #1E1E1E;
-  
+
   /* Elevated surface: for nested content */
   --tribes-surface-elevated: #282828;
-  
+
   /* Nested surface: tertiary elevation */
   --tribes-surface-nested: #2D2D2D;
-  
+
   /* ═══════════════════════════════════════════════════════════════════════════
      BORDERS & DIVIDERS — Visible but subtle
      ═══════════════════════════════════════════════════════════════════════════ */
-  
+
   /* Hairline borders */
   --tribes-border: #303030;
-  
+
   /* Divider: same as border for consistency */
   --tribes-divider: #303030;
-  
+
   /* Strong borders: emphasized separation */
   --tribes-border-strong: #404040;
-  
+
   /* Soft shadow: subtle depth */
   --tribes-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  
+
   /* ═══════════════════════════════════════════════════════════════════════════
      INTERACTIVE STATES — Clear hover/focus feedback
      ═══════════════════════════════════════════════════════════════════════════ */
-  
+
   /* Focus ring: visible for accessibility */
   --tribes-focus-ring: rgba(255, 255, 255, 0.4);
-  
+
   /* Hover state: subtle but noticeable */
   --tribes-hover: #282828;
-  
+
   /* Active state: pressed feedback */
   --tribes-active: #303030;
 }
 
 /* iOS underlay rule - ensures underlay uses exact background */
 #ios-underlay {
-  background: var(--tribes-bg) !important;
+    background: var(--tribes-bg) !important;
 }
