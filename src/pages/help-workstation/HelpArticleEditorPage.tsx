@@ -211,7 +211,6 @@ export default function HelpArticleEditorPage() {
   const [categoryId, setCategoryId] = useState<string>("none");
   const [visibility, setVisibility] = useState<"public" | "internal">("public");
   const [tags, setTags] = useState<string[]>([]);
-  const [sortOrder, setSortOrder] = useState<number>(0);
 
   // Collect all existing tags from articles for suggestions
   const allTags = useMemo(() => {
@@ -252,7 +251,6 @@ export default function HelpArticleEditorPage() {
       setCategoryId(art.category_id || "none");
       setVisibility(art.visibility || "public");
       setTags(art.tags || []);
-      setSortOrder(art.sort_order ?? 0);
       setLoading(false);
     }
 
@@ -308,19 +306,12 @@ export default function HelpArticleEditorPage() {
         category_id: categoryId !== "none" ? categoryId : undefined,
         visibility,
         tags,
-        sort_order: sortOrder,
       });
 
       if (result) {
         navigate(`/help-workstation/articles/${result.id}`);
       }
     } else {
-      // Update sort_order on the article
-      await supabase
-        .from("help_articles")
-        .update({ sort_order: sortOrder })
-        .eq("id", id);
-
       // Create new version
       const versionId = await createVersion(id!, {
         title: title.trim(),
@@ -572,16 +563,6 @@ export default function HelpArticleEditorPage() {
                   />
                 </div>
 
-                <div>
-                  <p className="text-[10px] text-[#6B6B6B] uppercase tracking-wider mb-1">Sort Order</p>
-                  <input
-                    type="number"
-                    value={sortOrder}
-                    onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
-                    className="w-full h-8 pl-0 pr-2 text-[12px] text-[#AAAAAA] bg-transparent border-0 border-b border-[#303030] focus:border-[#505050] focus:outline-none"
-                  />
-                  <p className="text-[10px] text-[#505050] mt-1">Lower numbers appear first</p>
-                </div>
               </div>
             </div>
 
