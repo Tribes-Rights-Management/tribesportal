@@ -80,7 +80,6 @@ export interface HelpArticle {
   published_at: string | null;
   updated_at: string;
   updated_by: string | null;
-  sort_order: number;
   // Current version data (joined/loaded separately)
   title?: string;
   summary?: string | null;
@@ -158,7 +157,6 @@ interface CreateArticleInput {
   category_id?: string;
   tags?: string[];
   visibility?: HelpVisibility;
-  sort_order?: number;
 }
 
 interface CreateVersionInput {
@@ -258,10 +256,8 @@ export function useHelpManagement(): UseHelpManagementResult {
         published_at,
         updated_at,
         updated_by,
-        sort_order,
         category:help_categories(id, name, slug)
       `)
-      .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false });
 
     if (filters?.status) {
@@ -430,7 +426,6 @@ export function useHelpManagement(): UseHelpManagementResult {
         status: "draft" as const,
         created_by: user?.id,
         updated_by: user?.id,
-        sort_order: input.sort_order ?? 0,
         // Legacy fields still in table until fully migrated
         title: input.title,
         body_md: input.body_md,
