@@ -58,7 +58,7 @@ export function AppPagination({
       )}
       <div className={cn("flex gap-2", !showInfo && "ml-auto")}>
         <AppButton
-          variant="secondary"
+          intent="secondary"
           size="sm"
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
@@ -66,7 +66,7 @@ export function AppPagination({
           Previous
         </AppButton>
         <AppButton
-          variant="secondary"
+          intent="secondary"
           size="sm"
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
