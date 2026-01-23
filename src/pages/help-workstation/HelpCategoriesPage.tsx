@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Plus, Pencil, Trash2, X, AlertCircle, RefreshCw } from "lucide-react";
+import { Plus, Trash2, X, AlertCircle, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpCategory } from "@/hooks/useHelpManagement";
 import { Button } from "@/components/ui/button";
@@ -51,7 +51,8 @@ export default function HelpCategoriesPage() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [slugManual, setSlugManual] = useState(false);
-  const [sortOrder, setSortOrder] = useState(100);
+  const [description, setDescription] = useState("");
+  const [icon, setIcon] = useState("");
 
   useEffect(() => {
     fetchCategories();
@@ -60,24 +61,9 @@ export default function HelpCategoriesPage() {
 
   const fetchArticleCounts = async () => {
     setCountsLoading(true);
-    const { data, error } = await supabase
-      .from("help_articles")
-      .select("category_id")
-      .not("category_id", "is", null);
-
-    if (error) {
-      console.error("Error fetching article counts:", error);
-      setCountsLoading(false);
-      return;
-    }
-
-    const counts: Record<string, number> = {};
-    data?.forEach(article => {
-      if (article.category_id) {
-        counts[article.category_id] = (counts[article.category_id] || 0) + 1;
-      }
-    });
-    setArticleCounts(counts);
+    // In the simplified schema, articles don't have category_id
+    // For now, we'll show 0 counts
+    setArticleCounts({});
     setCountsLoading(false);
   };
 
@@ -99,7 +85,8 @@ export default function HelpCategoriesPage() {
     setName("");
     setSlug("");
     setSlugManual(false);
-    setSortOrder(100);
+    setDescription("");
+    setIcon("");
     setFormError(null);
     setPanelOpen(true);
   };
@@ -109,7 +96,8 @@ export default function HelpCategoriesPage() {
     setName(cat.name);
     setSlug(cat.slug);
     setSlugManual(true);
-    setSortOrder(cat.sort_order);
+    setDescription(cat.description || "");
+    setIcon(cat.icon || "");
     setFormError(null);
     setPanelOpen(true);
   };
@@ -128,7 +116,8 @@ export default function HelpCategoriesPage() {
         const result = await updateCategory(editing.id, {
           name: name.trim(),
           slug: slug.trim(),
-          sort_order: sortOrder,
+          description: description.trim() || undefined,
+          icon: icon.trim() || undefined,
         });
         if (result) {
           fetchCategories();
@@ -138,7 +127,8 @@ export default function HelpCategoriesPage() {
         const result = await createCategory({
           name: name.trim(),
           slug: slug.trim(),
-          sort_order: sortOrder,
+          description: description.trim() || undefined,
+          icon: icon.trim() || undefined,
         });
         if (result) {
           fetchCategories();
@@ -219,8 +209,9 @@ export default function HelpCategoriesPage() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-[#303030]">
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[35%]">Name</th>
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[30%]">Slug</th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[30%]">Name</th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[25%]">Slug</th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[10%]">Icon</th>
               <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[15%]">Articles</th>
               <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[20%]">Updated</th>
               <th className="w-[50px]"></th>
@@ -229,13 +220,13 @@ export default function HelpCategoriesPage() {
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={5} className="text-center py-20">
+                <td colSpan={6} className="text-center py-20">
                   <p className="text-[13px] text-[#6B6B6B]">Loading categories...</p>
                 </td>
               </tr>
             ) : categoriesWithCounts.length === 0 ? (
               <tr>
-                <td colSpan={5} className="text-center py-20">
+                <td colSpan={6} className="text-center py-20">
                   <p className="text-[13px] text-[#6B6B6B]">No categories configured yet</p>
                 </td>
               </tr>
@@ -248,6 +239,7 @@ export default function HelpCategoriesPage() {
                 >
                   <td className="py-3 px-4 text-[13px] text-white">{cat.name}</td>
                   <td className="py-3 px-4 text-[12px] text-[#AAAAAA] font-mono">{cat.slug}</td>
+                  <td className="py-3 px-4 text-[12px] text-[#8F8F8F]">{cat.icon || "—"}</td>
                   <td className="py-3 px-4 text-[12px] text-[#8F8F8F]">{cat.article_count}</td>
                   <td className="py-3 px-4 text-right text-[12px] text-[#8F8F8F]">
                     {format(new Date(cat.updated_at), "MMM d, yyyy")}
@@ -330,14 +322,26 @@ export default function HelpCategoriesPage() {
               </div>
               
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Sort order</label>
-                <input 
-                  type="number" 
-                  value={sortOrder} 
-                  onChange={(e) => setSortOrder(parseInt(e.target.value) || 100)}
-                  className="w-full h-10 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white focus:outline-none focus:border-[#505050] transition-colors"
+                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Description</label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Brief description of this category"
+                  rows={3}
+                  className="w-full px-3 py-2 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] transition-colors resize-none"
                 />
-                <p className="text-[11px] text-[#6B6B6B] mt-2">Lower numbers appear first</p>
+              </div>
+              
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Icon (Lucide name)</label>
+                <input 
+                  type="text" 
+                  value={icon} 
+                  onChange={(e) => setIcon(e.target.value)}
+                  placeholder="e.g., CheckCircle, CreditCard"
+                  className="w-full h-10 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] transition-colors"
+                />
+                <p className="text-[11px] text-[#6B6B6B] mt-2">Enter a Lucide icon name</p>
               </div>
             </div>
             

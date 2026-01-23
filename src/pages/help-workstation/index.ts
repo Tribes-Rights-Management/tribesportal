@@ -6,15 +6,17 @@
  * 
  * Information Architecture:
  * - Overview (dashboard)
- * - Articles (CRUD)
- * - Categories (CRUD, reorder)
- * - Tags (CRUD) [NEW]
+ * - Audiences (manage audience segments)
+ * - Categories (CRUD, reorder, audience assignments)
+ * - Articles (CRUD, audience/category assignments)
+ * - Tags (CRUD)
  * - Messages (support inquiries)
  * - Analytics (search trends, performance)
  * - Settings (configuration)
  */
 
 export { default as HelpOverviewPage } from "./HelpOverviewPage";
+export { default as HelpAudiencesPage } from "./HelpAudiencesPage";
 export { default as HelpArticlesListPage } from "./HelpArticlesListPage";
 export { default as HelpArticleEditorPage } from "./HelpArticleEditorPage";
 export { default as HelpCategoriesPage } from "./HelpCategoriesPage";
