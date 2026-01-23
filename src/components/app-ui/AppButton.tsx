@@ -29,10 +29,14 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
+type ButtonIntent = "primary" | "secondary" | "tertiary" | "ghost" | "danger" | "destructive";
+
 export interface AppButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Button intent/style variant */
-  intent?: "primary" | "secondary" | "tertiary" | "ghost" | "danger";
+  intent?: ButtonIntent;
+  /** Alias for intent (for compatibility) */
+  variant?: ButtonIntent;
   /** Button size */
   size?: "xs" | "sm" | "md" | "lg";
   /** Loading state - shows spinner and disables button */
@@ -53,7 +57,8 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
   (
     {
       className,
-      intent = "primary",
+      intent: intentProp,
+      variant,
       size = "md",
       loading = false,
       loadingText,
@@ -68,6 +73,9 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
     },
     ref
   ) => {
+    // Support both intent and variant props, normalize destructive to danger
+    const rawIntent = intentProp || variant || "primary";
+    const intent = rawIntent === "destructive" ? "danger" : rawIntent;
     const isDisabled = disabled || loading;
 
     // Size-based classes - institutional padding and radius
