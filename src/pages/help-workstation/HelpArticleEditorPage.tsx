@@ -51,7 +51,7 @@ export default function HelpArticleEditorPage() {
   const [slug, setSlug] = useState("");
   const [slugManual, setSlugManual] = useState(false);
   const [bodyMd, setBodyMd] = useState("");
-  const [status, setStatus] = useState<"draft" | "published" | "archived">("draft");
+  const [status, setStatus] = useState<"draft" | "internal" | "published" | "archived">("draft");
 
   useEffect(() => {
     fetchCategories();
