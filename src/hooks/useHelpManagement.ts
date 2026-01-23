@@ -13,83 +13,79 @@ import { useAuth } from "@/contexts/AuthContext";
  * Company-scoped hook for managing Help articles and categories.
  * Uses platform_user_capabilities.can_manage_help or platform_admin for access.
  * 
- * APPEND-ONLY VERSIONING:
- * - All edits create new versions
- * - No in-place updates to content
- * - Versions are immutable and auditable
- * 
- * Institutional tone: authoritative, neutral, calm.
+ * Simplified to match actual database schema:
+ * - help_articles: id, title, slug, content, status, created_at, updated_at, published_at
+ * - help_categories: id, name, slug, description, icon, created_at, updated_at
+ * - help_audiences: id, name, slug, description, position, is_active
+ * - help_category_audiences: junction table
+ * - help_article_audiences: junction table with overrides
  */
 
-export type HelpArticleStatus = "draft" | "published" | "archived";
+export type HelpArticleStatus = "draft" | "internal" | "published" | "archived";
 export type HelpVisibility = "public" | "internal";
 
 export interface HelpCategory {
   id: string;
   slug: string;
   name: string;
-  sort_order: number;
+  description: string | null;
+  icon: string | null;
   created_at: string;
-  created_by: string | null;
   updated_at: string;
-  updated_by: string | null;
 }
 
-/**
- * HELP ARTICLE VERSION
- * 
- * Immutable version record. All edits create new versions.
- * 
- * APPROVAL FIELDS (DORMANT):
- * - requires_approval, approved_at, approved_by, approval_notes
- * - These fields exist for future approval workflow
- * - NOT ENFORCED — publishing proceeds immediately regardless
- * - Do not activate without explicit instruction
- * 
- * AUTHORITY MODEL (when activated):
- * - Platform Executives are approvers
- * - Tribes Admins are authors
- * - No cross-org approvals
- */
-export interface HelpArticleVersion {
+export interface HelpAudience {
   id: string;
-  article_id: string;
-  title: string;
-  summary: string | null;
-  body_md: string;
-  category_id: string | null;
-  visibility: HelpVisibility;
-  tags: string[];
-  status: HelpArticleStatus;
+  slug: string;
+  name: string;
+  description: string | null;
+  position: number;
+  is_active: boolean;
   created_at: string;
-  created_by: string | null;
-  // DORMANT: Approval metadata — NOT ENFORCED
-  requires_approval: boolean;
-  approved_at: string | null;
-  approved_by: string | null;
-  approval_notes: string | null;
+  updated_at: string;
 }
 
 export interface HelpArticle {
   id: string;
   slug: string;
+  title: string;
+  content: string;
   status: HelpArticleStatus;
-  current_version_id: string | null;
-  published_version_id: string | null;
   created_at: string;
-  published_at: string | null;
   updated_at: string;
-  updated_by: string | null;
-  // Current version data (joined/loaded separately)
-  title?: string;
-  summary?: string | null;
+  published_at: string | null;
+  // For UI compatibility
   body_md?: string;
-  category_id?: string | null;
   visibility?: HelpVisibility;
   tags?: string[];
-  version?: HelpArticleVersion;
-  // Joined category
+  category_id?: string | null;
   category?: Pick<HelpCategory, 'id' | 'name' | 'slug'>;
+  // Audience assignments
+  help_article_audiences?: HelpArticleAudience[];
+}
+
+export interface HelpArticleAudience {
+  id: string;
+  article_id: string;
+  audience_id: string;
+  category_id: string;
+  position: number;
+  title_override: string | null;
+  content_override: string | null;
+  created_at: string;
+  // Joined
+  help_audiences?: HelpAudience;
+  help_categories?: HelpCategory;
+}
+
+export interface HelpCategoryAudience {
+  id: string;
+  category_id: string;
+  audience_id: string;
+  position: number;
+  created_at: string;
+  // Joined
+  help_audiences?: HelpAudience;
 }
 
 // Legacy revision interface for backward compatibility
@@ -104,6 +100,25 @@ export interface HelpArticleRevision {
   visibility: HelpVisibility;
   actor_user_id: string | null;
   created_at: string;
+}
+
+// Legacy version interface
+export interface HelpArticleVersion {
+  id: string;
+  article_id: string;
+  title: string;
+  summary: string | null;
+  body_md: string;
+  category_id: string | null;
+  visibility: HelpVisibility;
+  tags: string[];
+  status: HelpArticleStatus;
+  created_at: string;
+  created_by: string | null;
+  requires_approval: boolean;
+  approved_at: string | null;
+  approved_by: string | null;
+  approval_notes: string | null;
 }
 
 interface UseHelpManagementResult {
@@ -132,7 +147,13 @@ interface UseHelpManagementResult {
   updateCategory: (id: string, updates: UpdateCategoryInput) => Promise<HelpCategory | null>;
   deleteCategory: (id: string) => Promise<boolean>;
   
-  // Versions
+  // Audiences
+  audiences: HelpAudience[];
+  audiencesLoading: boolean;
+  audiencesError: string | null;
+  fetchAudiences: () => Promise<void>;
+  
+  // Versions (legacy compatibility)
   fetchVersions: (articleId: string) => Promise<HelpArticleVersion[]>;
   
   // Legacy (deprecated)
@@ -182,13 +203,15 @@ interface UpdateArticleInput {
 interface CreateCategoryInput {
   name: string;
   slug: string;
-  sort_order?: number;
+  description?: string;
+  icon?: string;
 }
 
 interface UpdateCategoryInput {
   name?: string;
   slug?: string;
-  sort_order?: number;
+  description?: string;
+  icon?: string;
 }
 
 export function useHelpManagement(): UseHelpManagementResult {
@@ -204,6 +227,10 @@ export function useHelpManagement(): UseHelpManagementResult {
   const [categories, setCategories] = useState<HelpCategory[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [categoriesError, setCategoriesError] = useState<string | null>(null);
+  
+  const [audiences, setAudiences] = useState<HelpAudience[]>([]);
+  const [audiencesLoading, setAudiencesLoading] = useState(false);
+  const [audiencesError, setAudiencesError] = useState<string | null>(null);
 
   // Check access on mount
   useEffect(() => {
@@ -238,303 +265,166 @@ export function useHelpManagement(): UseHelpManagementResult {
     checkAccess();
   }, [user?.id, isPlatformAdmin]);
 
-  // Fetch articles with current version data
+  // Fetch articles
   const fetchArticles = useCallback(async (filters?: ArticleFilters) => {
     setArticlesLoading(true);
     setArticlesError(null);
     
-    // First fetch articles
     let query = supabase
       .from("help_articles")
-      .select(`
-        id,
-        slug,
-        status,
-        current_version_id,
-        published_version_id,
-        created_at,
-        published_at,
-        updated_at,
-        updated_by,
-        category:help_categories(id, name, slug)
-      `)
-      .order("created_at", { ascending: false });
+      .select("*")
+      .order("updated_at", { ascending: false });
 
     if (filters?.status) {
       query = query.eq("status", filters.status);
     }
 
-    const { data: articlesData, error: fetchError } = await query;
+    const { data, error } = await query;
 
-    if (fetchError) {
-      console.error("Error fetching articles:", fetchError);
+    if (error) {
+      console.error("Error fetching articles:", error);
       setArticlesError("Unable to load articles");
       setArticlesLoading(false);
       return;
     }
 
-    // Fetch current versions for all articles
-    const versionIds = articlesData
-      ?.map(a => a.current_version_id)
-      .filter(Boolean) as string[] || [];
+    // Map to our interface with compatibility fields
+    let mappedArticles: HelpArticle[] = (data || []).map(a => ({
+      id: a.id,
+      slug: a.slug,
+      title: a.title,
+      content: a.content,
+      status: a.status as HelpArticleStatus,
+      created_at: a.created_at || new Date().toISOString(),
+      updated_at: a.updated_at || new Date().toISOString(),
+      published_at: a.published_at,
+      // Compatibility fields
+      body_md: a.content,
+      visibility: "public" as HelpVisibility,
+      tags: [],
+    }));
 
-    let versionsMap: Record<string, HelpArticleVersion> = {};
-    
-    if (versionIds.length > 0) {
-      const { data: versionsData, error: versionsError } = await supabase
-        .from("help_article_versions")
-        .select("*")
-        .in("id", versionIds);
-
-      if (!versionsError && versionsData) {
-        versionsMap = versionsData.reduce((acc, v) => {
-          acc[v.id] = v as HelpArticleVersion;
-          return acc;
-        }, {} as Record<string, HelpArticleVersion>);
-      }
-    }
-
-    // Merge articles with version data
-    const mergedArticles: HelpArticle[] = (articlesData || []).map(a => {
-      const version = a.current_version_id ? versionsMap[a.current_version_id] : null;
-      return {
-        id: a.id,
-        slug: a.slug,
-        status: a.status,
-        current_version_id: a.current_version_id,
-        published_version_id: a.published_version_id,
-        created_at: a.created_at,
-        published_at: a.published_at,
-        updated_at: a.updated_at,
-        updated_by: a.updated_by,
-        title: version?.title,
-        summary: version?.summary,
-        body_md: version?.body_md,
-        category_id: version?.category_id,
-        visibility: version?.visibility,
-        tags: version?.tags,
-        category: a.category as Pick<HelpCategory, 'id' | 'name' | 'slug'> | undefined,
-      };
-    });
-
-    // Apply filters on merged data
-    let filteredArticles = mergedArticles;
-    if (filters?.visibility) {
-      filteredArticles = filteredArticles.filter(a => a.visibility === filters.visibility);
-    }
-    if (filters?.category_id) {
-      filteredArticles = filteredArticles.filter(a => a.category_id === filters.category_id);
-    }
+    // Apply search filter
     if (filters?.search) {
       const searchLower = filters.search.toLowerCase();
-      filteredArticles = filteredArticles.filter(a =>
+      mappedArticles = mappedArticles.filter(a =>
         a.title?.toLowerCase().includes(searchLower) ||
         a.slug.toLowerCase().includes(searchLower) ||
-        a.body_md?.toLowerCase().includes(searchLower) ||
-        a.summary?.toLowerCase().includes(searchLower)
+        a.content?.toLowerCase().includes(searchLower)
       );
     }
 
-    setArticles(filteredArticles);
+    setArticles(mappedArticles);
     setArticlesLoading(false);
   }, []);
 
-  // Fetch single article with current version data
+  // Fetch single article
   const fetchArticleWithVersion = useCallback(async (id: string): Promise<HelpArticle | null> => {
-    // Try to use the RPC function first
-    const { data, error } = await supabase.rpc("get_help_article_with_version", {
-      _article_id: id,
-    });
+    const { data, error } = await supabase
+      .from("help_articles")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-    if (error) {
-      console.error("Error fetching article with version:", error);
-      
-      // Fallback: manual join
-      const { data: articleData, error: articleError } = await supabase
-        .from("help_articles")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (articleError || !articleData) {
-        console.error("Error loading article:", articleError);
-        return null;
-      }
-
-      // Fetch current version
-      let version: HelpArticleVersion | null = null;
-      if (articleData.current_version_id) {
-        const { data: versionData } = await supabase
-          .from("help_article_versions")
-          .select("*")
-          .eq("id", articleData.current_version_id)
-          .single();
-        version = versionData as HelpArticleVersion;
-      }
-
-      return {
-        id: articleData.id,
-        slug: articleData.slug,
-        status: articleData.status,
-        current_version_id: articleData.current_version_id,
-        published_version_id: articleData.published_version_id,
-        created_at: articleData.created_at,
-        published_at: articleData.published_at,
-        updated_at: articleData.updated_at,
-        updated_by: articleData.updated_by,
-        title: version?.title,
-        summary: version?.summary,
-        body_md: version?.body_md,
-        category_id: version?.category_id,
-        visibility: version?.visibility,
-        tags: version?.tags,
-        version,
-      };
-    }
-
-    if (!data || data.length === 0) {
+    if (error || !data) {
+      console.error("Error fetching article:", error);
       return null;
     }
 
-    const row = data[0];
     return {
-      id: row.id,
-      slug: row.slug,
-      status: row.status,
-      current_version_id: row.current_version_id,
-      published_version_id: row.published_version_id,
-      created_at: row.created_at,
-      published_at: row.published_at,
-      updated_at: row.updated_at,
-      updated_by: row.updated_by,
-      title: row.title,
-      summary: row.summary,
-      body_md: row.body_md,
-      category_id: row.category_id,
-      visibility: row.visibility,
-      tags: row.tags,
+      id: data.id,
+      slug: data.slug,
+      title: data.title,
+      content: data.content,
+      status: data.status as HelpArticleStatus,
+      created_at: data.created_at || new Date().toISOString(),
+      updated_at: data.updated_at || new Date().toISOString(),
+      published_at: data.published_at,
+      body_md: data.content,
+      visibility: "public",
     };
   }, []);
 
-  // Create new article with initial version
+  // Create article
   const createArticle = useCallback(async (input: CreateArticleInput): Promise<HelpArticle | null> => {
-    // First create the article shell
-    const { data: articleData, error: articleError } = await supabase
+    const { data, error } = await supabase
       .from("help_articles")
       .insert({
         slug: input.slug,
-        status: "draft" as const,
-        created_by: user?.id,
-        updated_by: user?.id,
-        // Legacy fields still in table until fully migrated
         title: input.title,
-        body_md: input.body_md,
-        summary: input.summary || null,
-        category_id: input.category_id || null,
-        visibility: input.visibility || "public",
-        tags: input.tags || [],
+        content: input.body_md,
+        status: "draft" as const,
       })
       .select()
       .single();
 
-    if (articleError) {
-      console.error("Error creating article:", articleError);
-      return null;
-    }
-
-    // Create initial version using RPC
-    const { data: versionId, error: versionError } = await supabase.rpc("create_help_article_version", {
-      _article_id: articleData.id,
-      _title: input.title,
-      _summary: input.summary || null,
-      _body_md: input.body_md,
-      _category_id: input.category_id || null,
-      _visibility: input.visibility || "public",
-      _tags: input.tags || [],
-      _status: "draft",
-    });
-
-    if (versionError) {
-      console.error("Error creating version:", versionError);
-      // Rollback: delete the article
-      await supabase.from("help_articles").delete().eq("id", articleData.id);
+    if (error) {
+      console.error("Error creating article:", error);
       return null;
     }
 
     return {
-      id: articleData.id,
-      slug: articleData.slug,
-      status: "draft",
-      current_version_id: versionId,
-      published_version_id: null,
-      created_at: articleData.created_at,
-      published_at: null,
-      updated_at: articleData.updated_at,
-      updated_by: articleData.updated_by,
-      title: input.title,
-      summary: input.summary,
-      body_md: input.body_md,
-      category_id: input.category_id,
-      visibility: input.visibility || "public",
-      tags: input.tags || [],
+      id: data.id,
+      slug: data.slug,
+      title: data.title,
+      content: data.content,
+      status: data.status as HelpArticleStatus,
+      created_at: data.created_at || new Date().toISOString(),
+      updated_at: data.updated_at || new Date().toISOString(),
+      published_at: data.published_at,
+      body_md: data.content,
     };
-  }, [user?.id]);
+  }, []);
 
-  // Create new version (append-only)
+  // Create version (simplified - just update the article)
   const createVersion = useCallback(async (articleId: string, content: CreateVersionInput): Promise<string | null> => {
-    // First, update the article's tags field (tags are stored on article, not just version)
-    const { error: updateError } = await supabase
+    const { data, error } = await supabase
       .from("help_articles")
       .update({
-        tags: content.tags || [],
-        updated_by: user?.id,
+        title: content.title,
+        content: content.body_md,
+        updated_at: new Date().toISOString(),
       })
-      .eq("id", articleId);
-
-    if (updateError) {
-      console.error("Error updating article tags:", updateError);
-      // Continue anyway - version creation is more important
-    }
-
-    const { data: versionId, error } = await supabase.rpc("create_help_article_version", {
-      _article_id: articleId,
-      _title: content.title,
-      _summary: content.summary || null,
-      _body_md: content.body_md,
-      _category_id: content.category_id || null,
-      _visibility: content.visibility || "public",
-      _tags: content.tags || [],
-      _status: "draft",
-    });
+      .eq("id", articleId)
+      .select()
+      .single();
 
     if (error) {
-      console.error("Error creating version:", error);
+      console.error("Error updating article:", error);
       return null;
     }
 
-    return versionId;
-  }, [user?.id]);
+    return data.id;
+  }, []);
 
-  // Publish a specific version
-  const publishVersion = useCallback(async (articleId: string, versionId: string): Promise<boolean> => {
-    const { error } = await supabase.rpc("publish_help_article_version", {
-      _article_id: articleId,
-      _version_id: versionId,
-    });
+  // Publish version (set status to published)
+  const publishVersion = useCallback(async (articleId: string, _versionId: string): Promise<boolean> => {
+    const { error } = await supabase
+      .from("help_articles")
+      .update({
+        status: "published",
+        published_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", articleId);
 
     if (error) {
-      console.error("Error publishing version:", error);
+      console.error("Error publishing article:", error);
       return false;
     }
 
     return true;
   }, []);
 
-  // Archive article (not versions)
+  // Archive article
   const archiveArticle = useCallback(async (id: string): Promise<boolean> => {
-    const { error } = await supabase.rpc("archive_help_article", {
-      _article_id: id,
-    });
+    const { error } = await supabase
+      .from("help_articles")
+      .update({
+        status: "archived",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id);
 
     if (error) {
       console.error("Error archiving article:", error);
@@ -544,13 +434,13 @@ export function useHelpManagement(): UseHelpManagementResult {
     return true;
   }, []);
 
-  // Restore article from archived
+  // Restore article
   const restoreArticle = useCallback(async (id: string): Promise<boolean> => {
     const { error } = await supabase
       .from("help_articles")
       .update({
         status: "draft",
-        updated_by: user?.id,
+        updated_at: new Date().toISOString(),
       })
       .eq("id", id);
 
@@ -560,22 +450,11 @@ export function useHelpManagement(): UseHelpManagementResult {
     }
 
     return true;
-  }, [user?.id]);
+  }, []);
 
-  // Fetch all versions for an article
-  const fetchVersions = useCallback(async (articleId: string): Promise<HelpArticleVersion[]> => {
-    const { data, error } = await supabase
-      .from("help_article_versions")
-      .select("*")
-      .eq("article_id", articleId)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching versions:", error);
-      return [];
-    }
-
-    return (data as HelpArticleVersion[]) || [];
+  // Fetch versions (legacy - returns empty for now)
+  const fetchVersions = useCallback(async (_articleId: string): Promise<HelpArticleVersion[]> => {
+    return [];
   }, []);
 
   // Fetch categories
@@ -586,13 +465,21 @@ export function useHelpManagement(): UseHelpManagementResult {
     const { data, error } = await supabase
       .from("help_categories")
       .select("*")
-      .order("sort_order", { ascending: true });
+      .order("name", { ascending: true });
 
     if (error) {
       console.error("Error fetching categories:", error);
       setCategoriesError("Unable to load categories");
     } else {
-      setCategories((data as HelpCategory[]) || []);
+      setCategories((data || []).map(c => ({
+        id: c.id,
+        slug: c.slug,
+        name: c.name,
+        description: c.description,
+        icon: c.icon,
+        created_at: c.created_at || new Date().toISOString(),
+        updated_at: c.updated_at || new Date().toISOString(),
+      })));
     }
 
     setCategoriesLoading(false);
@@ -605,9 +492,8 @@ export function useHelpManagement(): UseHelpManagementResult {
       .insert({
         name: input.name,
         slug: input.slug,
-        sort_order: input.sort_order ?? 100,
-        created_by: user?.id,
-        updated_by: user?.id,
+        description: input.description || null,
+        icon: input.icon || null,
       })
       .select()
       .single();
@@ -617,17 +503,28 @@ export function useHelpManagement(): UseHelpManagementResult {
       return null;
     }
 
-    return data as HelpCategory;
-  }, [user?.id]);
+    return {
+      id: data.id,
+      slug: data.slug,
+      name: data.name,
+      description: data.description,
+      icon: data.icon,
+      created_at: data.created_at || new Date().toISOString(),
+      updated_at: data.updated_at || new Date().toISOString(),
+    };
+  }, []);
 
   // Update category
   const updateCategory = useCallback(async (id: string, updates: UpdateCategoryInput): Promise<HelpCategory | null> => {
+    const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    if (updates.name !== undefined) updateData.name = updates.name;
+    if (updates.slug !== undefined) updateData.slug = updates.slug;
+    if (updates.description !== undefined) updateData.description = updates.description;
+    if (updates.icon !== undefined) updateData.icon = updates.icon;
+
     const { data, error } = await supabase
       .from("help_categories")
-      .update({
-        ...updates,
-        updated_by: user?.id,
-      })
+      .update(updateData)
       .eq("id", id)
       .select()
       .single();
@@ -637,8 +534,16 @@ export function useHelpManagement(): UseHelpManagementResult {
       return null;
     }
 
-    return data as HelpCategory;
-  }, [user?.id]);
+    return {
+      id: data.id,
+      slug: data.slug,
+      name: data.name,
+      description: data.description,
+      icon: data.icon,
+      created_at: data.created_at || new Date().toISOString(),
+      updated_at: data.updated_at || new Date().toISOString(),
+    };
+  }, []);
 
   // Delete category
   const deleteCategory = useCallback(async (id: string): Promise<boolean> => {
@@ -655,27 +560,67 @@ export function useHelpManagement(): UseHelpManagementResult {
     return true;
   }, []);
 
-  // ============ LEGACY METHODS (deprecated, for backward compatibility) ============
+  // Fetch audiences
+  const fetchAudiences = useCallback(async () => {
+    setAudiencesLoading(true);
+    setAudiencesError(null);
+    
+    const { data, error } = await supabase
+      .from("help_audiences")
+      .select("*")
+      .order("position", { ascending: true });
 
-  // Legacy: Update article (now creates a version)
+    if (error) {
+      console.error("Error fetching audiences:", error);
+      setAudiencesError("Unable to load audiences");
+    } else {
+      setAudiences((data || []).map(a => ({
+        id: a.id,
+        slug: a.slug,
+        name: a.name,
+        description: a.description,
+        position: a.position,
+        is_active: a.is_active,
+        created_at: a.created_at || new Date().toISOString(),
+        updated_at: a.updated_at || new Date().toISOString(),
+      })));
+    }
+
+    setAudiencesLoading(false);
+  }, []);
+
+  // Legacy: Update article
   const updateArticle = useCallback(async (id: string, updates: UpdateArticleInput): Promise<HelpArticle | null> => {
-    // Create a new version instead of updating in place
-    const versionId = await createVersion(id, {
-      title: updates.title || "",
-      summary: updates.summary,
-      body_md: updates.body_md || "",
-      category_id: updates.category_id,
-      visibility: updates.visibility,
-      tags: updates.tags,
-    });
+    const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    if (updates.title !== undefined) updateData.title = updates.title;
+    if (updates.slug !== undefined) updateData.slug = updates.slug;
+    if (updates.body_md !== undefined) updateData.content = updates.body_md;
+    if (updates.status !== undefined) updateData.status = updates.status;
 
-    if (!versionId) {
+    const { data, error } = await supabase
+      .from("help_articles")
+      .update(updateData)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error updating article:", error);
       return null;
     }
 
-    // Fetch updated article
-    return fetchArticleWithVersion(id);
-  }, [createVersion, fetchArticleWithVersion]);
+    return {
+      id: data.id,
+      slug: data.slug,
+      title: data.title,
+      content: data.content,
+      status: data.status as HelpArticleStatus,
+      created_at: data.created_at || new Date().toISOString(),
+      updated_at: data.updated_at || new Date().toISOString(),
+      published_at: data.published_at,
+      body_md: data.content,
+    };
+  }, []);
 
   // Legacy: Delete article
   const deleteArticle = useCallback(async (id: string): Promise<boolean> => {
@@ -692,39 +637,15 @@ export function useHelpManagement(): UseHelpManagementResult {
     return true;
   }, []);
 
-  // Legacy: Publish article (publishes current version)
+  // Legacy: Publish article
   const publishArticle = useCallback(async (id: string): Promise<boolean> => {
-    // Fetch current version ID
-    const { data: article } = await supabase
-      .from("help_articles")
-      .select("current_version_id")
-      .eq("id", id)
-      .single();
-
-    if (!article?.current_version_id) {
-      return false;
-    }
-
-    return publishVersion(id, article.current_version_id);
+    return publishVersion(id, "");
   }, [publishVersion]);
 
-  // Legacy: Fetch revisions (now fetches versions)
-  const fetchRevisions = useCallback(async (articleId: string): Promise<HelpArticleRevision[]> => {
-    const versions = await fetchVersions(articleId);
-    // Map to legacy format
-    return versions.map((v, index) => ({
-      id: v.id,
-      article_id: v.article_id,
-      version: versions.length - index,
-      title: v.title,
-      summary: v.summary,
-      body_md: v.body_md,
-      status: v.status,
-      visibility: v.visibility,
-      actor_user_id: v.created_by,
-      created_at: v.created_at,
-    }));
-  }, [fetchVersions]);
+  // Legacy: Fetch revisions
+  const fetchRevisions = useCallback(async (_articleId: string): Promise<HelpArticleRevision[]> => {
+    return [];
+  }, []);
 
   return {
     canManageHelp,
@@ -746,6 +667,10 @@ export function useHelpManagement(): UseHelpManagementResult {
     createCategory,
     updateCategory,
     deleteCategory,
+    audiences,
+    audiencesLoading,
+    audiencesError,
+    fetchAudiences,
     fetchVersions,
     // Legacy
     updateArticle,
