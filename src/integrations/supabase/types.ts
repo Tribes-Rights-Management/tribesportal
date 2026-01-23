@@ -94,6 +94,27 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_agent_config: {
+        Row: {
+          config_key: string
+          config_value: string
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          config_key: string
+          config_value: string
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          config_key?: string
+          config_value?: string
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       api_access_logs: {
         Row: {
           accessed_at: string
@@ -1894,6 +1915,81 @@ export type Database = {
           },
         ]
       }
+      support_knowledge_base: {
+        Row: {
+          category: string
+          content: string
+          created_at: string | null
+          embedding: string | null
+          id: string
+          is_active: boolean | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          content: string
+          created_at?: string | null
+          embedding?: string | null
+          id?: string
+          is_active?: boolean | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string | null
+          embedding?: string | null
+          id?: string
+          is_active?: boolean | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      support_tickets: {
+        Row: {
+          body: string
+          created_at: string | null
+          from_email: string
+          from_name: string | null
+          id: string
+          mailgun_message_id: string | null
+          metadata: Json | null
+          priority: string | null
+          status: string | null
+          subject: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          from_email: string
+          from_name?: string | null
+          id?: string
+          mailgun_message_id?: string | null
+          metadata?: Json | null
+          priority?: string | null
+          status?: string | null
+          subject?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          from_email?: string
+          from_name?: string | null
+          id?: string
+          mailgun_message_id?: string | null
+          metadata?: Json | null
+          priority?: string | null
+          status?: string | null
+          subject?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       tenant_memberships: {
         Row: {
           allowed_contexts: Database["public"]["Enums"]["portal_context"][]
@@ -1990,6 +2086,41 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      ticket_messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          mailgun_message_id: string | null
+          role: string
+          ticket_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          mailgun_message_id?: string | null
+          role: string
+          ticket_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          mailgun_message_id?: string | null
+          role?: string
+          ticket_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_preferences: {
         Row: {
