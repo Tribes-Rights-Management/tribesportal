@@ -118,7 +118,7 @@ export default function HelpCenterMessages() {
       case "responded":
         return "rgba(34, 197, 94, 0.1)";
       case "closed":
-        return "rgba(255, 255, 255, 0.05)";
+        return "hsl(var(--muted) / 0.5)";
       default:
         return "rgba(59, 130, 246, 0.15)";
     }
