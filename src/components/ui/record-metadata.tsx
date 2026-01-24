@@ -36,18 +36,18 @@ export function RecordMetadata({
   className,
 }: RecordMetadataProps) {
   return (
-    <div className={cn("text-[12px] text-[#6B6B6B] space-y-1", className)}>
+    <div className={cn("text-[12px] text-muted-foreground space-y-1", className)}>
       {/* Record ID - always prominent */}
       <div className="flex items-baseline gap-2">
         <span className="text-[#8A8A8A]">{RECORD_LABELS.RECORD_ID}</span>
-        <span className="font-mono text-[11px] text-[#111]">{recordId}</span>
+        <span className="font-mono text-[11px] text-foreground">{recordId}</span>
       </div>
       
       {/* Version - if applicable */}
       {version !== undefined && (
         <div className="flex items-baseline gap-2">
           <span className="text-[#8A8A8A]">{RECORD_LABELS.CURRENT_VERSION}</span>
-          <span className="text-[#111]">v{version}</span>
+          <span className="text-foreground">v{version}</span>
         </div>
       )}
       
@@ -55,7 +55,7 @@ export function RecordMetadata({
       {effectiveDate && (
         <div className="flex items-baseline gap-2">
           <span className="text-[#8A8A8A]">{RECORD_LABELS.EFFECTIVE_AS_OF}</span>
-          <span className="text-[#111]">{effectiveDate}</span>
+          <span className="text-foreground">{effectiveDate}</span>
         </div>
       )}
       
@@ -109,10 +109,10 @@ export function TrustSignal({ level, label, className }: TrustSignalProps) {
     <span
       className={cn(
         "text-[11px] uppercase tracking-[0.04em] font-medium",
-        level === "verified" && "text-[#166534]",
-        level === "official" && "text-[#111]",
+        level === "verified" && "text-emerald-700 dark:text-emerald-400",
+        level === "official" && "text-foreground",
         level === "pending" && "text-[#B45309]",
-        level === "unverified" && "text-[#6B6B6B]",
+        level === "unverified" && "text-muted-foreground",
         className
       )}
     >
@@ -161,8 +161,8 @@ export function VersionBadge({ version, isCurrent = true, className }: VersionBa
       className={cn(
         "inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded",
         isCurrent
-          ? "bg-[#F5F5F5] text-[#111]"
-          : "bg-[#F5F5F5] text-[#8A8A8A] line-through",
+          ? "bg-muted text-foreground"
+          : "bg-muted text-[#8A8A8A] line-through",
         className
       )}
     >
