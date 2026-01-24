@@ -297,6 +297,13 @@ export default function HelpMessagesPage() {
                 )}
               </div>
               
+              {/* AI Insights */}
+              <MessageAIInsights
+                message={selectedMessage.message}
+                senderName={selectedMessage.name}
+                subject={selectedMessage.subject}
+              />
+              
               {/* Message Content */}
               <div className="bg-card border border-border rounded p-4">
                 {selectedMessage.subject && (
