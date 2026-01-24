@@ -224,7 +224,7 @@ export default function UserDirectoryPage() {
                             {isCurrentUser(user) && (
                               <span 
                                 className="text-[12px] uppercase tracking-wider font-medium"
-                                style={{ color: '#8F8F8F' }}
+                                style={{ color: 'var(--platform-text-muted)' }}
                               >
                                 (YOU)
                               </span>
@@ -235,8 +235,8 @@ export default function UserDirectoryPage() {
                           <span 
                             className="inline-flex items-center px-3 py-1.5 rounded text-[12px] font-medium"
                             style={{ 
-                              backgroundColor: '#404040',
-                              color: '#E5E5E5',
+                              backgroundColor: 'var(--platform-surface-2)',
+                              color: 'var(--platform-text)',
                             }}
                           >
                             {formatPlatformRole(user.platform_role)}
@@ -254,7 +254,7 @@ export default function UserDirectoryPage() {
                           </span>
                         </TableCell>
                         <TableCell className="py-6">
-                          <span className="text-[14px]" style={{ color: '#8F8F8F' }}>
+                          <span className="text-[14px]" style={{ color: 'var(--platform-text-muted)' }}>
                             {activeOrgCount > 0 ? `${activeOrgCount} org${activeOrgCount > 1 ? 's' : ''}` : '—'}
                           </span>
                         </TableCell>
@@ -262,7 +262,7 @@ export default function UserDirectoryPage() {
                           <ChevronRight 
                             className="h-4 w-4 opacity-40 group-hover:opacity-70 transition-opacity" 
                              strokeWidth={1.5}
-                            style={{ color: '#6B6B6B' }}
+                            style={{ color: 'var(--platform-text-muted)' }}
                           />
                         </TableCell>
                       </TableRow>
@@ -297,7 +297,7 @@ export default function UserDirectoryPage() {
                       <ChevronRight 
                         className="h-5 w-5 shrink-0" 
                          strokeWidth={1.5}
-                        style={{ color: '#6B6B6B' }} 
+                        style={{ color: 'var(--platform-text-muted)' }} 
                       />
                     </div>
                     
@@ -355,7 +355,7 @@ export default function UserDirectoryPage() {
           {selectedUser && (
             <>
               {/* Clean header: email + copy + close */}
-              <DialogHeader className="px-6 pt-6 pb-5 border-b" style={{ borderColor: '#303030' }}>
+              <DialogHeader className="px-6 pt-6 pb-5 border-b" style={{ borderColor: 'var(--platform-border)' }}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <DialogTitle 
@@ -367,9 +367,9 @@ export default function UserDirectoryPage() {
                     <button
                       onClick={() => handleCopyEmail(selectedUser.email)}
                       className="p-1 rounded transition-colors"
-                      style={{ color: '#6B6B6B' }}
-                      onMouseEnter={(e) => e.currentTarget.style.color = '#AAAAAA'}
-                      onMouseLeave={(e) => e.currentTarget.style.color = '#6B6B6B'}
+                      style={{ color: 'var(--platform-text-muted)' }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = 'var(--platform-text-secondary)'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = 'var(--platform-text-muted)'}
                       title="Copy email"
                     >
                       <Copy className="h-3 w-3" strokeWidth={1.5} />
@@ -377,10 +377,10 @@ export default function UserDirectoryPage() {
                   </div>
                   <button
                     onClick={() => setModalOpen(false)}
-                    className="p-1.5 rounded transition-colors hover:bg-white/[0.04]"
-                    style={{ color: '#AAAAAA' }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
-                    onMouseLeave={(e) => e.currentTarget.style.color = '#AAAAAA'}
+                    className="p-1.5 rounded transition-colors row-hover"
+                    style={{ color: 'var(--platform-text-secondary)' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--platform-text)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--platform-text-secondary)'}
                   >
                     <X className="h-4 w-4" strokeWidth={1.5} />
                   </button>
@@ -391,16 +391,16 @@ export default function UserDirectoryPage() {
               <div className="px-6 py-5 space-y-6">
                 
                 {/* Identity Section - no redundant email */}
-                <section className="pb-5 border-b" style={{ borderColor: '#303030' }}>
+                <section className="pb-5 border-b" style={{ borderColor: 'var(--platform-border)' }}>
                   <h3 
                     className="text-[11px] uppercase tracking-wider font-medium mb-4"
-                    style={{ color: '#6B6B6B' }}
+                    style={{ color: 'var(--platform-text-muted)' }}
                   >
                     Identity
                   </h3>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-[13px]" style={{ color: '#6B6B6B' }}>
+                      <span className="text-[13px]" style={{ color: 'var(--platform-text-muted)' }}>
                         Account Created
                       </span>
                       <span className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>
@@ -408,7 +408,7 @@ export default function UserDirectoryPage() {
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-[13px]" style={{ color: '#6B6B6B' }}>
+                      <span className="text-[13px]" style={{ color: 'var(--platform-text-muted)' }}>
                         Account Status
                       </span>
                       <span 
@@ -425,10 +425,10 @@ export default function UserDirectoryPage() {
                 </section>
 
                 {/* Platform Authority Section */}
-                <section className="pb-5 border-b" style={{ borderColor: '#303030' }}>
+                <section className="pb-5 border-b" style={{ borderColor: 'var(--platform-border)' }}>
                   <h3 
                     className="text-[11px] uppercase tracking-wider font-medium mb-4"
-                    style={{ color: '#6B6B6B' }}
+                    style={{ color: 'var(--platform-text-muted)' }}
                   >
                     Platform Authority
                   </h3>
@@ -437,23 +437,22 @@ export default function UserDirectoryPage() {
                     <div 
                       className="flex items-start gap-2.5 px-3 py-2.5 rounded mb-4"
                       style={{ 
-                        backgroundColor: '#2A2419',
+                        backgroundColor: 'hsl(45 100% 15%)',
                         borderLeft: '2px solid #92400E'
                       }}
                     >
                       <AlertCircle 
-                        className="h-3.5 w-3.5 shrink-0 mt-0.5" 
+                        className="h-3.5 w-3.5 shrink-0 mt-0.5 text-amber-700 dark:text-amber-500" 
                         strokeWidth={1.5}
-                        style={{ color: '#92400E' }} 
                       />
-                      <span className="text-[12px]" style={{ color: '#D4A574' }}>
+                      <span className="text-[12px] text-amber-600 dark:text-amber-400">
                         You cannot modify your own access
                       </span>
                     </div>
                   )}
                   
                   <div className="flex justify-between items-center">
-                    <span className="text-[13px]" style={{ color: '#6B6B6B' }}>
+                    <span className="text-[13px]" style={{ color: 'var(--platform-text-muted)' }}>
                       Platform Role
                     </span>
                     <span 
@@ -472,7 +471,7 @@ export default function UserDirectoryPage() {
                 <section>
                   <h3 
                     className="text-[11px] uppercase tracking-wider font-medium mb-4"
-                    style={{ color: '#6B6B6B' }}
+                    style={{ color: 'var(--platform-text-muted)' }}
                   >
                     Organization Memberships
                   </h3>
