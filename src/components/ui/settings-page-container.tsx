@@ -158,7 +158,7 @@ export function SettingsRowV2({
         {Icon && (
           <div
             className="h-8 w-8 rounded flex items-center justify-center shrink-0"
-            style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+            style={{ backgroundColor: "hsl(var(--muted) / 0.5)" }}
           >
             <Icon className="h-4 w-4" style={{ color: "var(--platform-text-secondary)" }} />
           </div>
