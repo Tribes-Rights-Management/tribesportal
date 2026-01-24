@@ -283,14 +283,14 @@ export default function ApprovalsPage() {
                   <div 
                     className="h-12 w-12 rounded-full flex items-center justify-center"
                     style={{ 
-                      backgroundColor: '#2A1A1A',
+                      backgroundColor: 'hsl(var(--destructive) / 0.1)',
                       border: '1px solid #7F1D1D'
                     }}
                   >
                     <AlertCircle 
                       className="h-5 w-5" 
                       strokeWidth={1.5}
-                      style={{ color: '#DC2626' }}
+                      style={{ color: 'hsl(var(--destructive))' }}
                     />
                   </div>
                 </div>
@@ -305,7 +305,7 @@ export default function ApprovalsPage() {
                   </h3>
                   <p 
                     className="text-[13px]"
-                    style={{ color: '#8F8F8F' }}
+                    style={{ color: 'var(--platform-text-muted)' }}
                   >
                     An error occurred while loading access requests. Please try again.
                   </p>
@@ -399,7 +399,7 @@ export default function ApprovalsPage() {
                             >
                               <SelectValue placeholder="Select organization" />
                             </SelectTrigger>
-                            <SelectContent className="bg-[#1A1A1B] border-white/10">
+                            <SelectContent className="bg-card border-border">
                               {tenants.map((tenant) => (
                                 <SelectItem 
                                   key={tenant.id} 
@@ -437,7 +437,7 @@ export default function ApprovalsPage() {
                             >
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="bg-[#1A1A1B] border-white/10">
+                            <SelectContent className="bg-card border-border">
                               {availableRoles.map((role) => (
                                 <SelectItem 
                                   key={role.value} 
@@ -517,7 +517,7 @@ export default function ApprovalsPage() {
                               >
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="bg-[#1A1A1B] border-white/10">
+                              <SelectContent className="bg-card border-border">
                                 {formState.contexts.map((ctx) => (
                                   <SelectItem 
                                     key={ctx} 
@@ -602,10 +602,10 @@ export default function ApprovalsPage() {
                           }
                           disabled={processing === membership.id}
                         >
-                          <SelectTrigger className="w-40 h-8 text-[13px] bg-transparent border-white/10 text-white/90">
+                          <SelectTrigger className="w-40 h-8 text-[13px] bg-transparent border-border text-white/90">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
-                          <SelectContent className="bg-[#1A1A1B] border-white/10">
+                          <SelectContent className="bg-card border-border">
                             {tenants.map((tenant) => (
                               <SelectItem 
                                 key={tenant.id} 
@@ -626,10 +626,10 @@ export default function ApprovalsPage() {
                           }
                           disabled={processing === membership.id}
                         >
-                          <SelectTrigger className="w-28 h-8 text-[13px] bg-transparent border-white/10 text-white/90">
+                          <SelectTrigger className="w-28 h-8 text-[13px] bg-transparent border-border text-white/90">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="bg-[#1A1A1B] border-white/10">
+                          <SelectContent className="bg-card border-border">
                             {availableRoles.map((role) => (
                               <SelectItem 
                                 key={role.value} 
@@ -673,10 +673,10 @@ export default function ApprovalsPage() {
                           }
                           disabled={processing === membership.id}
                         >
-                          <SelectTrigger className="w-24 h-8 text-[13px] bg-transparent border-white/10 text-white/90">
+                          <SelectTrigger className="w-24 h-8 text-[13px] bg-transparent border-border text-white/90">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="bg-[#1A1A1B] border-white/10">
+                          <SelectContent className="bg-card border-border">
                             {formState.contexts.map((ctx) => (
                               <SelectItem 
                                 key={ctx} 

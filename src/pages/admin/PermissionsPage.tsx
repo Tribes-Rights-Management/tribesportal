@@ -602,7 +602,7 @@ export default function PermissionsPage() {
                         onClick={() => prepareStatusChange("revoked")}
                         className="px-3 py-1.5 text-[12px] rounded transition-colors"
                         style={{ 
-                          color: '#B54545',
+                          color: 'hsl(var(--destructive))',
                           border: '1px solid #4A2525'
                         }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(181,69,69,0.1)'}
