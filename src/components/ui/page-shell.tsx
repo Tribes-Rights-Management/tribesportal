@@ -76,7 +76,7 @@ export function PageShell({
             "transition-colors shrink-0 -ml-2",
           )}
           style={{ color: 'var(--platform-text-secondary)' }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           aria-label={backLabel}
         >
