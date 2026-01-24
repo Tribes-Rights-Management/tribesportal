@@ -161,9 +161,9 @@ export default function TenantsPage() {
                 <button
                   key={tenant.id}
                   onClick={() => openEditDialog(tenant)}
-                  className="w-full flex items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors group hover:bg-white/[0.02]"
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3.5 text-left row-hover group"
                   style={{ 
-                    borderBottom: index < tenants.length - 1 ? '1px solid var(--platform-border)' : undefined
+                    borderBottom: index < tenants.length - 1 ? '1px solid var(--platform-border)' : undefined,
                   }}
                 >
                   {/* Left: Name + Slug */}
@@ -217,7 +217,11 @@ export default function TenantsPage() {
                 </TableHeader>
                 <TableBody>
                   {tenants.map((tenant) => (
-                    <TableRow key={tenant.id}>
+                    <TableRow 
+                      key={tenant.id}
+                      className="row-hover"
+                      onClick={() => openEditDialog(tenant)}
+                    >
                       <TableCell className="font-medium">
                         {tenant.name}
                       </TableCell>
@@ -234,15 +238,12 @@ export default function TenantsPage() {
                         {new Date(tenant.created_at).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
-                        <button
-                          onClick={() => openEditDialog(tenant)}
-                          className="text-[13px] transition-colors"
+                        <span
+                          className="text-[13px]"
                           style={{ color: 'var(--platform-text-secondary)' }}
-                          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--platform-text)'}
-                          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--platform-text-secondary)'}
                         >
                           Edit
-                        </button>
+                        </span>
                       </TableCell>
                     </TableRow>
                   ))}

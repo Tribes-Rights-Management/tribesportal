@@ -110,12 +110,12 @@ export function AdminListRow({
   );
 
   const baseClassName = cn(
-    "flex items-center justify-between gap-3 px-4 md:px-5 row-density",
-    "transition-colors duration-150 group hover:bg-white/[0.02]",
+    "flex items-center justify-between gap-3 px-4 md:px-5 row-density row-hover",
+    "group",
     className
   );
 
-  const baseStyle = { 
+  const baseStyle: React.CSSProperties = { 
     borderBottom: '1px solid var(--platform-border)',
   };
 
@@ -132,7 +132,7 @@ export function AdminListRow({
             onClick();
           }
         }}
-        className={cn(baseClassName, "w-full text-left cursor-pointer")}
+        className={cn(baseClassName, "w-full text-left")}
         style={baseStyle}
       >
         {content}
@@ -155,10 +155,10 @@ export function AdminListRow({
  * ADMIN METRIC ROW — Read-only stat with subtle left accent
  * 
  * Visual distinction from navigation rows:
- * - 2px left border accent (muted, institutional)
+ * - 3px left border accent (visible but institutional)
  * - More compact (no description)
  * - Label left, value right
- * - Subtle background tint on hover
+ * - Visible background tint on hover
  */
 interface AdminMetricRowProps {
   to: string;
@@ -176,23 +176,23 @@ export function AdminMetricRow({
   return (
     <Link 
       to={to} 
-      className="relative flex items-center justify-between px-4 md:px-5 py-3 md:py-3.5 transition-colors duration-150 group hover:bg-white/[0.03]"
+      className="relative flex items-center justify-between px-4 md:px-5 py-3 md:py-3.5 row-hover group"
       style={{ 
         borderBottom: '1px solid var(--platform-border)',
       }}
     >
       {/* Left accent bar — distinguishes stats from navigation */}
       <div 
-        className="absolute left-0 top-2 bottom-2 w-[2px] rounded-full"
+        className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-sm"
         style={{ 
           backgroundColor: highlight 
-            ? 'rgba(59, 130, 246, 0.5)'  // Blue accent for highlighted metrics
-            : 'rgba(255, 255, 255, 0.08)' // Subtle gray for normal metrics
+            ? 'rgba(59, 130, 246, 0.6)'   // Blue accent for highlighted metrics
+            : 'rgba(255, 255, 255, 0.15)' // More visible gray for normal metrics
         }}
       />
       
       <span 
-        className="text-[13px] md:text-[14px] min-w-0 flex-1"
+        className="text-[13px] md:text-[14px] min-w-0 flex-1 pl-2"
         style={{ color: 'var(--platform-text-secondary)' }}
       >
         {label}
@@ -207,7 +207,7 @@ export function AdminMetricRow({
           {value}
         </span>
         <ChevronRight 
-          className="h-3.5 w-3.5 opacity-20 group-hover:opacity-40 transition-opacity"
+          className="h-3.5 w-3.5 opacity-25 group-hover:opacity-50 transition-opacity"
           style={{ color: 'var(--platform-text-muted)' }}
         />
       </div>
