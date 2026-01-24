@@ -1,7 +1,7 @@
 /**
- * AI MESSAGE ANALYSIS — CLAUDE-POWERED SUPPORT INTELLIGENCE
+ * AI MESSAGE ANALYSIS — LOVABLE AI GATEWAY
  * 
- * Uses Claude API to analyze support messages and provide:
+ * Uses Lovable AI Gateway to analyze support messages and provide:
  * - Priority detection (urgent/high/medium/low)
  * - Category suggestions
  * - Sentiment analysis
@@ -9,7 +9,9 @@
  * - Response drafts
  */
 
-interface MessageAnalysis {
+import { supabase } from '@/integrations/supabase/client';
+
+export interface MessageAnalysis {
   priority: 'urgent' | 'high' | 'medium' | 'low';
   suggestedCategory: string;
   sentiment: 'positive' | 'neutral' | 'negative' | 'frustrated';
@@ -20,7 +22,6 @@ interface MessageAnalysis {
 }
 
 interface AnalysisOptions {
-  knowledgeBase?: string[]; // Relevant help articles
   companyName?: string;
   responseStyle?: 'formal' | 'friendly' | 'professional';
 }
@@ -32,80 +33,32 @@ export async function analyzeMessage(
   options: AnalysisOptions = {}
 ): Promise<MessageAnalysis> {
   const {
-    knowledgeBase = [],
     companyName = 'Tribes Rights Management',
     responseStyle = 'professional',
   } = options;
 
-  const prompt = `You are analyzing a customer support message for ${companyName}, a music publishing rights management platform.
-
-MESSAGE DETAILS:
-From: ${senderName}
-Subject: ${subject || 'No subject'}
-Message:
-${message}
-
-${knowledgeBase.length > 0 ? `AVAILABLE HELP ARTICLES:
-${knowledgeBase.join('\n')}
-` : ''}
-
-Analyze this message and provide a JSON response with:
-
-1. **priority** (string): One of: "urgent", "high", "medium", "low"
-   - urgent: System down, data loss, security issue, angry escalation
-   - high: Important feature not working, blocking work, payment issues
-   - medium: Questions about features, how-to requests, minor bugs
-   - low: General questions, feature requests, feedback
-
-2. **suggestedCategory** (string): Best category for this message
-   - Options: "Technical Support", "Billing", "Account", "Feature Request", "Bug Report", "General Question", "Feedback"
-
-3. **sentiment** (string): One of: "positive", "neutral", "negative", "frustrated"
-
-4. **topics** (array of strings): Key topics/themes in the message (max 3)
-
-5. **draftResponse** (string): A ${responseStyle} response draft that:
-   - Acknowledges their message
-   - Addresses their concern
-   - Provides helpful information or next steps
-   - Maintains ${companyName}'s institutional, professional tone
-   - Is ready for a human to review and send
-
-6. **reasoning** (string): Brief explanation of your priority/category decision
-
-7. **confidence** (number): 0-100, how confident you are in this analysis
-
-Return ONLY valid JSON, no markdown, no explanation.`;
-
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const { data, error } = await supabase.functions.invoke('analyze-message', {
+      body: {
+        message,
+        senderName,
+        subject,
+        companyName,
+        responseStyle,
       },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        messages: [
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-      }),
     });
 
-    if (!response.ok) {
-      throw new Error(`Claude API error: ${response.status}`);
+    if (error) {
+      console.error('Edge function error:', error);
+      throw new Error(error.message || 'Failed to analyze message');
     }
 
-    const data = await response.json();
-    const content = data.content[0]?.text || '';
-    
-    // Parse JSON response
-    const analysis: MessageAnalysis = JSON.parse(content);
-    
-    return analysis;
+    // Check for error response from the function
+    if (data?.error) {
+      throw new Error(data.error);
+    }
+
+    return data as MessageAnalysis;
   } catch (error) {
     console.error('AI analysis error:', error);
     
