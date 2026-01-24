@@ -437,15 +437,15 @@ export default function UserDirectoryPage() {
                     <div 
                       className="flex items-start gap-2.5 px-3 py-2.5 rounded mb-4"
                       style={{ 
-                        backgroundColor: 'hsl(45 100% 15%)',
-                        borderLeft: '2px solid #92400E'
+                        backgroundColor: 'rgba(180, 83, 9, 0.15)',
+                        borderLeft: '2px solid rgba(180, 83, 9, 0.6)'
                       }}
                     >
                       <AlertCircle 
-                        className="h-3.5 w-3.5 shrink-0 mt-0.5 text-amber-700 dark:text-amber-500" 
+                        className="h-3.5 w-3.5 shrink-0 mt-0.5 text-amber-500" 
                         strokeWidth={1.5}
                       />
-                      <span className="text-[12px] text-amber-600 dark:text-amber-400">
+                      <span className="text-[12px] text-amber-400">
                         You cannot modify your own access
                       </span>
                     </div>

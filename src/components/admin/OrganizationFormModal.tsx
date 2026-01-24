@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import {
   AppModal,
   AppModalBody,
@@ -182,11 +183,10 @@ export function OrganizationFormModal({
               placeholder="Acme Publishing"
               autoComplete="organization"
               autoCapitalize="words"
-              className="h-12 md:h-11 text-[16px] md:text-[14px] bg-transparent text-white placeholder:text-white/30 pr-12"
-              style={{ 
-                border: errors.name ? '1px solid #ef4444' : '1px solid rgba(255,255,255,0.12)',
-                borderRadius: '8px',
-              }}
+              className={cn(
+                "h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px] placeholder:text-muted-foreground/50",
+                errors.name ? "border-destructive" : "border-border"
+              )}
             />
           </AppModalField>
 
@@ -206,11 +206,10 @@ export function OrganizationFormModal({
               autoCapitalize="off"
               autoCorrect="off"
               spellCheck={false}
-              className="h-12 md:h-11 text-[16px] md:text-[14px] font-mono bg-transparent text-white placeholder:text-white/30 pr-12"
-              style={{ 
-                border: errors.slug ? '1px solid #ef4444' : '1px solid rgba(255,255,255,0.12)',
-                borderRadius: '8px',
-              }}
+              className={cn(
+                "h-12 md:h-11 text-[16px] md:text-[14px] font-mono bg-muted/50 border rounded-[10px] placeholder:text-muted-foreground/50",
+                errors.slug ? "border-destructive" : "border-border"
+              )}
             />
           </AppModalField>
         </AppModalFields>
