@@ -232,12 +232,12 @@ export default function HelpAudiencesPage() {
       {/* Header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
             HELP WORKSTATION
           </p>
-          <h1 className="text-[20px] font-medium text-white mb-1">Audiences</h1>
-          <p className="text-[13px] text-[#AAAAAA]">{audiences.length} audience segments</p>
-          <p className="text-[12px] text-[#6B6B6B] mt-1">
+          <h1 className="text-[20px] font-medium text-foreground mb-1">Audiences</h1>
+          <p className="text-[13px] text-muted-foreground">{audiences.length} audience segments</p>
+          <p className="text-[12px] text-muted-foreground mt-1">
             Drag to reorder. This controls the header tab order on the public Help Center.
           </p>
         </div>
@@ -249,13 +249,13 @@ export default function HelpAudiencesPage() {
 
       {/* Error */}
       {error && (
-        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
-          <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
+        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
+          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
           <div className="flex-1">
-            <p className="text-[12px] text-[#E5E5E5]">{error}</p>
+            <p className="text-[12px] text-foreground">{error}</p>
             <button
               onClick={() => { setError(null); fetchAudiences(); }}
-              className="text-[11px] text-[#DC2626] hover:text-[#EF4444] underline mt-1 flex items-center gap-1"
+              className="text-[11px] text-destructive hover:text-destructive/80 underline mt-1 flex items-center gap-1"
             >
               <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
               Try again
@@ -268,11 +268,11 @@ export default function HelpAudiencesPage() {
       <div className="space-y-2">
         {loading ? (
           <div className="py-20 text-center">
-            <p className="text-[13px] text-[#6B6B6B]">Loading audiences...</p>
+            <p className="text-[13px] text-muted-foreground">Loading audiences...</p>
           </div>
         ) : audiences.length === 0 ? (
           <div className="py-20 text-center">
-            <p className="text-[13px] text-[#6B6B6B]">No audiences configured yet</p>
+            <p className="text-[13px] text-muted-foreground">No audiences configured yet</p>
           </div>
         ) : (
           audiences.map((audience, index) => (
@@ -283,31 +283,31 @@ export default function HelpAudiencesPage() {
               onDragOver={(e) => handleDragOver(e, index)}
               onDragEnd={handleDragEnd}
               className={`
-                bg-[#1A1A1A] border border-[#303030] rounded p-4
+                bg-card border border-border rounded p-4 row-hover
                 ${draggedIndex === index ? "opacity-50" : ""}
-                ${dragOverIndex === index ? "border-white/30" : ""}
+                ${dragOverIndex === index ? "border-ring" : ""}
                 cursor-grab active:cursor-grabbing
               `}
             >
               <div className="flex items-center gap-4">
                 {/* Drag handle */}
-                <div className="text-[#505050] hover:text-[#8F8F8F] transition-colors">
+                <div className="text-muted-foreground hover:text-foreground transition-colors">
                   <GripVertical className="h-4 w-4" strokeWidth={1.5} />
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-[14px] font-medium text-white">{audience.name}</h3>
+                    <h3 className="text-[14px] font-medium text-foreground">{audience.name}</h3>
                     {!audience.is_active && (
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-[#303030] text-[#8F8F8F]">
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-muted text-muted-foreground">
                         INACTIVE
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-[#6B6B6B] mt-0.5 font-mono">/{audience.slug}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5 font-mono">/{audience.slug}</p>
                   {audience.description && (
-                    <p className="text-[12px] text-[#8F8F8F] mt-1">{audience.description}</p>
+                    <p className="text-[12px] text-muted-foreground/70 mt-1">{audience.description}</p>
                   )}
                 </div>
 
@@ -318,8 +318,8 @@ export default function HelpAudiencesPage() {
                     className={`
                       text-[11px] px-3 py-1.5 rounded border transition-colors
                       ${audience.is_active
-                        ? "border-[#059669]/30 text-[#34D399] hover:bg-[#059669]/10"
-                        : "border-[#303030] text-[#6B6B6B] hover:bg-white/5"
+                        ? "border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
+                        : "border-border text-muted-foreground hover:bg-white/5"
                       }
                     `}
                   >
@@ -329,7 +329,7 @@ export default function HelpAudiencesPage() {
                     intent="ghost"
                     size="sm"
                     onClick={(e) => { e.stopPropagation(); handleEdit(audience); }}
-                    className="text-[12px] text-[#AAAAAA] hover:text-white"
+                    className="text-[12px] text-muted-foreground hover:text-foreground"
                   >
                     Edit
                   </AppButton>
@@ -347,20 +347,20 @@ export default function HelpAudiencesPage() {
             className="fixed inset-0 bg-black/50 z-40"
             onClick={() => setPanelOpen(false)}
           />
-          <div className="fixed inset-y-0 right-0 w-[500px] bg-[#0A0A0A] border-l border-[#303030] shadow-2xl z-50 flex flex-col">
+          <div className="fixed inset-y-0 right-0 w-[500px] bg-background border-l border-border shadow-2xl z-50 flex flex-col">
             {/* Panel Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-[#303030]">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-border">
               <div>
-                <h2 className="text-[15px] font-medium text-white">
+                <h2 className="text-[15px] font-medium text-foreground">
                   {editing ? "Edit audience" : "New audience"}
                 </h2>
-                <p className="text-[11px] text-[#8F8F8F] mt-1">
+                <p className="text-[11px] text-muted-foreground mt-1">
                   {editing ? "Update audience details" : "Create a new audience segment"}
                 </p>
               </div>
               <button
                 onClick={() => setPanelOpen(false)}
-                className="text-[#6B6B6B] hover:text-white transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <X className="h-4 w-4" strokeWidth={1.5} />
               </button>
@@ -370,14 +370,14 @@ export default function HelpAudiencesPage() {
             <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
               {/* Form Error */}
               {formError && (
-                <div className="flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
-                  <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
-                  <p className="text-[12px] text-[#E5E5E5]">{formError}</p>
+                <div className="flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
+                  <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
+                  <p className="text-[12px] text-foreground">{formError}</p>
                 </div>
               )}
 
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">
+                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
                   Name *
                 </label>
                 <input
@@ -385,12 +385,12 @@ export default function HelpAudiencesPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Publishers"
-                  className="w-full h-10 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] transition-colors"
+                  className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">
+                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
                   Slug * (URL-friendly, lowercase)
                 </label>
                 <input
@@ -398,12 +398,12 @@ export default function HelpAudiencesPage() {
                   value={slug}
                   onChange={(e) => { setSlug(e.target.value); setSlugManual(true); }}
                   placeholder="publishers"
-                  className="w-full h-10 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] transition-colors font-mono"
+                  className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">
+                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
                   Description (internal use)
                 </label>
                 <textarea
@@ -411,19 +411,19 @@ export default function HelpAudiencesPage() {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Help content for music publishers"
                   rows={3}
-                  className="w-full px-3 py-2 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] transition-colors resize-none"
+                  className="w-full px-3 py-2 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors resize-none"
                 />
               </div>
             </div>
 
             {/* Panel Footer */}
-            <div className="flex items-center justify-between px-6 py-5 border-t border-[#303030]">
+            <div className="flex items-center justify-between px-6 py-5 border-t border-border">
               <div>
                 {editing && (
                   <button
                     onClick={handleDelete}
                     disabled={saving}
-                    className="text-[12px] text-[#DC2626] hover:text-[#EF4444] disabled:text-[#6B6B6B] transition-colors"
+                    className="text-[12px] text-destructive hover:text-destructive/80 disabled:text-muted-foreground transition-colors"
                   >
                     Delete audience
                   </button>
