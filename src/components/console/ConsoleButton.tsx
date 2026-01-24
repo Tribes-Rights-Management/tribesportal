@@ -67,15 +67,16 @@ export const ConsoleButton = React.forwardRef<HTMLButtonElement, ConsoleButtonPr
     };
 
     // Intent-based inline styles - border-focused institutional design
+    // Uses CSS variables that adapt to light/dark mode via console-scope
     const getIntentStyles = (): React.CSSProperties => {
       const baseTransition = "all 150ms ease";
       
       switch (intent) {
         case "primary":
           return {
-            backgroundColor: "transparent",
-            color: isDisabled ? "rgba(255,255,255,0.4)" : "#FFFFFF",
-            border: isDisabled ? "1px solid rgba(255,255,255,0.3)" : "1px solid #FFFFFF",
+            backgroundColor: isDisabled ? "transparent" : "var(--console-primary-bg, hsl(var(--foreground)))",
+            color: isDisabled ? "var(--console-fg-muted, hsl(var(--muted-foreground)))" : "var(--console-primary-fg, hsl(var(--background)))",
+            border: isDisabled ? "1px solid var(--console-card-border, hsl(var(--border)))" : "1px solid var(--console-primary-border, hsl(var(--foreground)))",
             fontWeight: 500,
             letterSpacing: "0.01em",
             transition: baseTransition,
@@ -83,15 +84,15 @@ export const ConsoleButton = React.forwardRef<HTMLButtonElement, ConsoleButtonPr
         case "secondary":
           return {
             backgroundColor: "transparent",
-            color: isDisabled ? "rgba(170,170,170,0.5)" : "#AAAAAA",
-            border: isDisabled ? "1px solid rgba(48,48,48,0.5)" : "1px solid #303030",
+            color: isDisabled ? "var(--console-fg-muted, hsl(var(--muted-foreground)))" : "var(--console-fg-secondary, hsl(var(--muted-foreground)))",
+            border: isDisabled ? "1px solid var(--console-card-border, hsl(var(--border) / 0.5))" : "1px solid var(--console-card-border, hsl(var(--border)))",
             fontWeight: 400,
             transition: baseTransition,
           };
         case "ghost":
           return {
             backgroundColor: "transparent",
-            color: isDisabled ? "rgba(170,170,170,0.5)" : "#AAAAAA",
+            color: isDisabled ? "var(--console-fg-muted, hsl(var(--muted-foreground)))" : "var(--console-fg-secondary, hsl(var(--muted-foreground)))",
             border: "1px solid transparent",
             fontWeight: 400,
             transition: baseTransition,
@@ -99,8 +100,8 @@ export const ConsoleButton = React.forwardRef<HTMLButtonElement, ConsoleButtonPr
         case "danger":
           return {
             backgroundColor: "transparent",
-            color: isDisabled ? "rgba(220,38,38,0.5)" : "#DC2626",
-            border: isDisabled ? "1px solid rgba(220,38,38,0.3)" : "1px solid #DC2626",
+            color: isDisabled ? "hsl(var(--destructive) / 0.5)" : "hsl(var(--destructive))",
+            border: isDisabled ? "1px solid hsl(var(--destructive) / 0.3)" : "1px solid hsl(var(--destructive))",
             fontWeight: 500,
             transition: baseTransition,
           };
@@ -109,18 +110,18 @@ export const ConsoleButton = React.forwardRef<HTMLButtonElement, ConsoleButtonPr
       }
     };
 
-    // Hover classes - subtle effects
+    // Hover classes - subtle effects using CSS variables
     const getHoverClass = () => {
       if (isDisabled) return "";
       switch (intent) {
         case "primary":
-          return "hover:bg-white/[0.08] active:bg-white/[0.12]";
+          return "hover:opacity-90 active:opacity-80";
         case "secondary":
-          return "hover:border-[#505050] hover:text-white";
+          return "hover:border-ring hover:text-foreground";
         case "ghost":
-          return "hover:bg-white/[0.04] hover:text-white";
+          return "hover:bg-muted/50 hover:text-foreground";
         case "danger":
-          return "hover:bg-[rgba(220,38,38,0.1)]";
+          return "hover:bg-destructive/10";
         default:
           return "";
       }

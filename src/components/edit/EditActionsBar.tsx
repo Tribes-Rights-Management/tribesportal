@@ -63,13 +63,13 @@ export function EditActionsBar({
         className={cn(
           "flex-1 text-[14px] font-normal py-3.5 rounded-[6px]",
           "transition-all duration-150",
-          "hover:border-[#505050] hover:text-white",
+          "hover:border-ring hover:text-foreground",
           saving && "opacity-40 cursor-not-allowed"
         )}
         style={{ 
-          color: '#AAAAAA',
+          color: 'var(--muted-foreground)',
           backgroundColor: 'transparent',
-          border: '1px solid #303030',
+          border: '1px solid var(--border)',
         }}
       >
         {cancelLabel}
@@ -88,7 +88,7 @@ export function EditActionsBar({
         )}
         style={{ 
           backgroundColor: 'transparent',
-          color: '#FFFFFF',
+          color: 'var(--foreground)',
           border: '1px solid #FFFFFF',
         }}
       >
