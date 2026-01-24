@@ -98,7 +98,7 @@ export default function RLSAuditPage() {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <Link to="/admin" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <Link to="/admin" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-4 w-4" />
             Back
           </Link>

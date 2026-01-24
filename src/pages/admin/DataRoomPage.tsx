@@ -368,9 +368,7 @@ export default function DataRoomPage() {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: 'var(--platform-text-secondary)' }}>
-                        {exp.scope_type}
-                      </span>
+                      <ConsoleChip label={exp.scope_type} className="text-[10px]" />
                     </TableCell>
                     <TableCell>
                       <span className="text-[12px] text-muted-foreground">
@@ -380,9 +378,11 @@ export default function DataRoomPage() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {getStatusIcon(exp.status)}
-                        <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: 'var(--platform-text-secondary)' }}>
-                          {exp.status}
-                        </span>
+                        <ConsoleChip 
+                          status={exp.status === "completed" ? "pass" : exp.status === "failed" ? "fail" : "running"} 
+                          label={exp.status}
+                          className="text-[10px]" 
+                        />
                       </div>
                     </TableCell>
                     <TableCell>

@@ -371,7 +371,7 @@ export default function PermissionsPage() {
               to="/admin/users" 
               className="h-8 w-8 rounded flex items-center justify-center transition-colors"
               style={{ color: 'var(--platform-text-secondary)' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               <ArrowLeft className="h-4 w-4" />
@@ -398,12 +398,12 @@ export default function PermissionsPage() {
               onClick={() => setEditMode(!editMode)}
               className="px-4 py-2 text-[13px] font-medium rounded transition-colors"
               style={{ 
-                backgroundColor: editMode ? 'rgba(255,255,255,0.1)' : 'transparent',
+                backgroundColor: editMode ? 'hsl(var(--muted))' : 'transparent',
                 color: 'var(--platform-text-secondary)',
                 border: '1px solid var(--platform-border)'
               }}
               onMouseEnter={(e) => {
-                if (!editMode) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                if (!editMode) e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)';
               }}
               onMouseLeave={(e) => {
                 if (!editMode) e.currentTarget.style.backgroundColor = 'transparent';
@@ -532,7 +532,7 @@ export default function PermissionsPage() {
                           color: 'var(--platform-text-secondary)',
                           border: '1px solid var(--platform-border)'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)'}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                       >
                         Grant Admin
@@ -546,7 +546,7 @@ export default function PermissionsPage() {
                           color: 'var(--platform-text-secondary)',
                           border: '1px solid var(--platform-border)'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)'}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                       >
                         Restrict to User
@@ -577,7 +577,7 @@ export default function PermissionsPage() {
                           color: 'var(--platform-text-secondary)',
                           border: '1px solid var(--platform-border)'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)'}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                       >
                         Activate
@@ -591,7 +591,7 @@ export default function PermissionsPage() {
                           color: 'var(--platform-text-secondary)',
                           border: '1px solid var(--platform-border)'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)'}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                       >
                         Suspend
