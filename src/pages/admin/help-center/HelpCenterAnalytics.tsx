@@ -453,7 +453,7 @@ export default function HelpCenterAnalytics() {
                         <LineChart data={messageTrend}>
                           <CartesianGrid
                             strokeDasharray="3 3"
-                            stroke="rgba(255,255,255,0.05)"
+                            stroke="hsl(var(--muted) / 0.5)"
                           />
                           <XAxis
                             dataKey="date"
