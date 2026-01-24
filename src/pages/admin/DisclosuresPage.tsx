@@ -441,8 +441,8 @@ export default function DisclosuresPage() {
             </div>
 
             <div className="flex items-end">
-              <Button
-                variant="default"
+              <ConsoleButton
+                intent="primary"
                 onClick={handleGenerateExport}
                 disabled={generating}
                 className="w-full"
@@ -566,8 +566,8 @@ export default function DisclosuresPage() {
                   </span>
                 </TableCell>
                 <TableCell className="text-center">
-                  <Button
-                    variant="ghost"
+                  <ConsoleButton
+                    intent="ghost"
                     size="sm"
                     className="h-7 w-7 p-0"
                     onClick={(e) => {
@@ -810,8 +810,8 @@ export default function DisclosuresPage() {
               {/* Download Action (if completed, not on mobile) */}
               {selectedExport.status === 'completed' && !isMobile && (
                 <div className="flex justify-end pt-2">
-                  <Button
-                    variant="outline"
+                  <ConsoleButton
+                    intent="secondary"
                     onClick={() => {
                       toast.info('Export data available at time of generation. Re-download requires regeneration.');
                     }}

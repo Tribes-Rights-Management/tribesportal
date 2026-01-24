@@ -313,7 +313,7 @@ export default function ApprovalsPage() {
                 
                 {/* Retry action */}
                 <ConsoleButton 
-                  variant="outline" 
+                  intent="secondary" 
                   size="sm"
                   onClick={fetchData}
                   className="mt-2 gap-2"
