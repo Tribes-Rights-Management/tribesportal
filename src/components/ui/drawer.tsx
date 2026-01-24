@@ -66,16 +66,16 @@ const DrawerContent = React.forwardRef<
         className,
       )}
       style={{
-        backgroundColor: '#18181B',
-        borderTop: '1px solid rgba(255,255,255,0.08)',
-        borderLeft: '1px solid rgba(255,255,255,0.08)',
-        borderRight: '1px solid rgba(255,255,255,0.08)',
+        backgroundColor: 'var(--background)',
+        borderTop: '1px solid hsl(var(--border))',
+        borderLeft: '1px solid hsl(var(--border))',
+        borderRight: '1px solid hsl(var(--border))',
         boxShadow: '0 -4px 24px rgba(0,0,0,0.4)',
       }}
       {...props}
     >
       {/* Drag handle */}
-      <div className="mx-auto mt-3 h-1.5 w-12 rounded-full shrink-0" style={{ backgroundColor: 'rgba(255,255,255,0.12)' }} />
+      <div className="mx-auto mt-3 h-1.5 w-12 rounded-full shrink-0" style={{ backgroundColor: 'hsl(var(--border))' }} />
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>
