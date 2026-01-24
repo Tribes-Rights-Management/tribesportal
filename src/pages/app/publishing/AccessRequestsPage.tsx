@@ -202,7 +202,7 @@ export default function AccessRequestsPage() {
         <div className="border border-[#E4E4E7] rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow className="bg-[#FAFAFA]">
+              <TableRow className="bg-muted/50">
                 <TableHead className="text-[12px] font-medium text-[#71717A] uppercase tracking-wide">
                   User
                 </TableHead>
@@ -244,7 +244,7 @@ export default function AccessRequestsPage() {
                   <TableCell>
                     <Badge
                       variant="outline"
-                      className="text-[11px] font-normal border-[#FCD34D] bg-[#FFFBEB] text-[#92400E]"
+                      className="text-[11px] font-normal border-[#FCD34D] bg-[#FFFBEB] text-amber-700 dark:text-amber-400"
                     >
                       <Clock className="h-3 w-3 mr-1" />
                       Pending
