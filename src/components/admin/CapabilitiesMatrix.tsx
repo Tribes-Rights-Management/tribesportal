@@ -88,7 +88,7 @@ export function CapabilitiesMatrix({
                 className="px-3 py-1.5 text-[12px] rounded"
                 style={{ 
                   backgroundColor: platformCapabilities.includes(cap) 
-                    ? 'rgba(255,255,255,0.08)' 
+                    ? 'hsl(var(--border))' 
                     : 'transparent',
                   color: platformCapabilities.includes(cap) 
                     ? 'var(--platform-text)' 

@@ -217,12 +217,12 @@ export function AuthorityRecordSheet({
                     className="px-2.5 py-1 text-[12px] rounded"
                     style={{ 
                       backgroundColor: isGranted 
-                        ? 'rgba(255,255,255,0.08)' 
+                        ? 'hsl(var(--border))' 
                         : 'transparent',
                       color: isGranted 
                         ? 'var(--platform-text)' 
                         : 'var(--platform-text-muted)',
-                      border: `1px solid ${isGranted ? 'rgba(255,255,255,0.12)' : 'var(--platform-border)'}`,
+                      border: `1px solid ${isGranted ? 'hsl(var(--border))' : 'var(--platform-border)'}`,
                       opacity: isGranted ? 1 : 0.5,
                     }}
                   >
@@ -325,7 +325,7 @@ export function AuthorityRecordSheet({
                                 color: isGranted 
                                   ? 'var(--platform-text-secondary)' 
                                   : 'var(--platform-text-muted)',
-                                border: `1px solid ${isGranted ? 'rgba(255,255,255,0.08)' : 'var(--platform-border)'}`,
+                                border: `1px solid ${isGranted ? 'hsl(var(--border))' : 'var(--platform-border)'}`,
                                 opacity: isGranted ? 1 : 0.4,
                               }}
                             >
