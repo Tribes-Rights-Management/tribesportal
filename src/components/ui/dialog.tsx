@@ -63,21 +63,15 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-[520px] max-h-[85vh] translate-x-[-50%] translate-y-[-50%] gap-0 overflow-hidden duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-xl",
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-[520px] max-h-[85vh] translate-x-[-50%] translate-y-[-50%] gap-0 overflow-hidden duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-xl bg-background border border-border shadow-xl",
         className,
       )}
-      style={{
-        backgroundColor: '#18181B',
-        border: '1px solid rgba(255,255,255,0.08)',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,0,0,0.2)',
-      }}
       {...props}
     >
       {children}
       {!hideDefaultClose && (
         <DialogPrimitive.Close 
-          className="absolute right-3 top-3 h-11 w-11 rounded-lg flex items-center justify-center opacity-60 transition-all hover:opacity-100 hover:bg-white/[0.05] focus:outline-none focus-visible:bg-white/[0.08] disabled:pointer-events-none"
-          style={{ color: 'var(--platform-text-muted)' }}
+          className="absolute right-3 top-3 h-11 w-11 rounded-lg flex items-center justify-center opacity-60 transition-all hover:opacity-100 hover:bg-muted focus:outline-none focus-visible:bg-muted disabled:pointer-events-none text-muted-foreground"
         >
           <X className="h-5 w-5" />
           <span className="sr-only">Close</span>

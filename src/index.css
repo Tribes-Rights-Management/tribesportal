@@ -665,6 +665,68 @@ body {
   --console-severity-low-fg: hsl(213 93% 68%);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONSOLE SCOPE — LIGHT MODE OVERRIDES
+   
+   When the app is in light mode, console surfaces should also be light.
+   This ensures consistency across the entire application.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.light .console-scope,
+html.light .console-scope {
+  --console-bg: #FFFFFF;
+  --console-fg: #1A1A1A;
+  --console-fg-secondary: #6B6B6B;
+  --console-fg-muted: #9CA3AF;
+  
+  /* Card/panel surfaces */
+  --console-card-bg: #FFFFFF;
+  --console-card-fg: #1A1A1A;
+  --console-card-border: #E5E5E5;
+  
+  /* Elevated surface (modals, dropdowns) */
+  --console-elevated-bg: #FFFFFF;
+  --console-elevated-border: #E5E5E5;
+  
+  /* Primary button - light mode */
+  --console-primary-bg: #1A1A1A;
+  --console-primary-bg-hover: #2D2D2D;
+  --console-primary-bg-disabled: #E5E5E5;
+  --console-primary-fg: #FFFFFF;
+  --console-primary-fg-disabled: #9CA3AF;
+  --console-primary-border: #1A1A1A;
+  --console-primary-border-hover: #2D2D2D;
+  
+  /* Secondary/ghost button - light mode */
+  --console-secondary-bg: transparent;
+  --console-secondary-bg-hover: #F5F5F5;
+  --console-secondary-fg: #6B6B6B;
+  --console-secondary-border: #E5E5E5;
+  
+  /* Input fields - light mode */
+  --console-input-bg: #FFFFFF;
+  --console-input-bg-disabled: #F5F5F5;
+  --console-input-border: #E5E5E5;
+  --console-input-border-focus: #1A1A1A;
+  --console-input-placeholder: #9CA3AF;
+  
+  /* Status colors - light mode (slightly adjusted for visibility) */
+  --console-success-bg: hsla(142, 71%, 45%, 0.1);
+  --console-success-border: hsla(142, 71%, 45%, 0.2);
+  --console-success-fg: hsl(142 71% 35%);
+  
+  --console-warning-bg: hsla(38, 92%, 50%, 0.1);
+  --console-warning-border: hsla(38, 92%, 50%, 0.2);
+  --console-warning-fg: hsl(38 92% 40%);
+  
+  --console-error-bg: hsla(0, 84%, 60%, 0.1);
+  --console-error-border: hsla(0, 84%, 60%, 0.2);
+  --console-error-fg: hsl(0 84% 50%);
+  
+  --console-info-bg: hsla(217, 91%, 60%, 0.1);
+  --console-info-border: hsla(217, 91%, 60%, 0.2);
+  --console-info-fg: hsl(217 91% 50%);
+}
+
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    GLOBAL TYPOGRAPHY SCALE â€” LOCKED
 
