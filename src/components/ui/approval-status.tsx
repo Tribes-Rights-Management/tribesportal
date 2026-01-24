@@ -34,11 +34,11 @@ export function ApprovalStatus({ state, className }: ApprovalStatusProps) {
     <span
       className={cn(
         "inline-flex items-center px-2 py-0.5 text-[11px] font-medium uppercase tracking-[0.02em] rounded",
-        state === "pending" && "bg-[#FEF3C7] text-[#B45309]",
-        state === "approved" && "bg-[#DCFCE7] text-[#166534]",
+        state === "pending" && "bg-amber-50 dark:bg-amber-950 text-[#B45309]",
+        state === "approved" && "bg-[#DCFCE7] text-emerald-700 dark:text-emerald-400",
         state === "rejected" && "bg-[#FEE2E2] text-[#DC2626]",
-        state === "withdrawn" && "bg-[#F5F5F5] text-[#6B6B6B]",
-        state === "expired" && "bg-[#F5F5F5] text-[#8A8A8A]",
+        state === "withdrawn" && "bg-muted text-muted-foreground",
+        state === "expired" && "bg-muted text-[#8A8A8A]",
         className
       )}
     >
@@ -70,7 +70,7 @@ export function ApprovalMetadata({
   className,
 }: ApprovalMetadataProps) {
   return (
-    <div className={cn("text-[12px] text-[#6B6B6B] space-y-1", className)}>
+    <div className={cn("text-[12px] text-muted-foreground space-y-1", className)}>
       {/* Submitted info */}
       {submittedBy && (
         <div className="flex items-baseline gap-2">
@@ -101,7 +101,7 @@ export function ApprovalMetadata({
       {reason && state === "rejected" && (
         <div className="mt-2">
           <span className="text-[#8A8A8A]">{APPROVAL_LABELS.REJECTION_REASON}</span>
-          <p className="text-[#111] mt-0.5">{reason}</p>
+          <p className="text-foreground mt-0.5">{reason}</p>
         </div>
       )}
     </div>
@@ -127,7 +127,7 @@ export function PendingApprovalBanner({
   return (
     <div
       className={cn(
-        "bg-[#FEF3C7] border border-[#F59E0B]/20 rounded-md px-4 py-3",
+        "bg-amber-50 dark:bg-amber-950 border border-[#F59E0B]/20 rounded-md px-4 py-3",
         className
       )}
     >
@@ -136,7 +136,7 @@ export function PendingApprovalBanner({
           <p className="text-[13px] font-medium text-[#B45309]">
             {APPROVAL_LABELS.PENDING_APPROVAL}
           </p>
-          <p className="text-[12px] text-[#92400E] mt-0.5">
+          <p className="text-[12px] text-amber-700 dark:text-amber-400 mt-0.5">
             {type}
             {submittedBy && ` · Submitted by ${submittedBy}`}
             {submittedAt && ` · ${submittedAt}`}
