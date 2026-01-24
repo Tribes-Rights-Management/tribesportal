@@ -213,7 +213,7 @@ export default function UserDirectoryPage() {
                         onClick={() => handleRowClick(user)}
                         className="group"
                       >
-                        <TableCell className="py-6">
+                        <TableCell className="py-3.5">
                           <div className="flex items-center gap-2">
                             <span 
                               className="text-[15px] font-medium truncate"
@@ -231,7 +231,7 @@ export default function UserDirectoryPage() {
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="py-6">
+                        <TableCell className="py-3.5">
                           <span 
                             className="inline-flex items-center px-3 py-1.5 rounded text-[12px] font-medium"
                             style={{ 
@@ -242,7 +242,7 @@ export default function UserDirectoryPage() {
                             {formatPlatformRole(user.platform_role)}
                           </span>
                         </TableCell>
-                        <TableCell className="py-6">
+                        <TableCell className="py-3.5">
                           <span 
                             className="inline-flex items-center px-3 py-1.5 rounded text-[12px] font-medium"
                             style={{ 
@@ -253,12 +253,12 @@ export default function UserDirectoryPage() {
                             {formatStatus(user.status)}
                           </span>
                         </TableCell>
-                        <TableCell className="py-6">
+                        <TableCell className="py-3.5">
                           <span className="text-[14px]" style={{ color: 'var(--platform-text-muted)' }}>
                             {activeOrgCount > 0 ? `${activeOrgCount} org${activeOrgCount > 1 ? 's' : ''}` : '—'}
                           </span>
                         </TableCell>
-                        <TableCell className="py-6">
+                        <TableCell className="py-3.5">
                           <ChevronRight 
                             className="h-4 w-4 opacity-40 group-hover:opacity-70 transition-opacity" 
                              strokeWidth={1.5}

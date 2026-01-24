@@ -94,6 +94,8 @@ export function PageContainer({
         "w-full max-w-full overflow-x-clip",
         // Flex child protection
         "min-w-0",
+        // Fill available vertical space
+        "flex-1",
         // Vertical padding
         "py-6 sm:py-10",
         className
