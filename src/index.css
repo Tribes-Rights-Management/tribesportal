@@ -4,13 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   GLOBAL OVERFLOW SAFEGUARD — MOBILE-FIRST (LOCKED)
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   GLOBAL OVERFLOW SAFEGUARD â€” MOBILE-FIRST (LOCKED)
    
    Prevents horizontal scrolling on all surfaces. 
    CRITICAL: Never use 100vw (causes overflow with scrollbars/safe-area).
    Always use 100% + overflow-x: clip for bulletproof containment.
-   ═══════════════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 html {
   width: 100%;
   max-width: 100%;
@@ -34,8 +34,8 @@ body {
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   GLOBAL SPACING SYSTEM — TRIBES STANDARD (LOCKED)
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   GLOBAL SPACING SYSTEM â€” TRIBES STANDARD (LOCKED)
 
    Premium spacing tokens for Apple/Stripe/Mercury-level vertical rhythm.
    These tokens are authoritative and must be used consistently across all
@@ -45,12 +45,12 @@ body {
    - Sections: Use --section-padding-* for consistent vertical rhythm
    - Gutters: Use --gutter-* for horizontal page margins
    - Internal: Use --space-* for component-level spacing
-   ═══════════════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 :root {
-  /* ─────────────────────────────────────────────────────────────────────────
-     SPACING SCALE — 8px base unit, reduced ~15-20% for institutional density
-     ───────────────────────────────────────────────────────────────────────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     SPACING SCALE â€” 8px base unit, reduced ~15-20% for institutional density
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --space-0: 0px;
   --space-1: 4px;
   --space-2: 8px;
@@ -65,15 +65,15 @@ body {
   --space-11: 120px;
   --space-12: 160px;
 
-  /* ─────────────────────────────────────────────────────────────────────────
-     CANONICAL APP PAGE PADDING — Runtime layout contract
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     CANONICAL APP PAGE PADDING â€” Runtime layout contract
      Mobile: 16px (px-4)
      Tablet/Desktop: 24px (px-6)
      Used by PageContainer + header bars via CSS var + safe-area max().
-     ───────────────────────────────────────────────────────────────────────── */
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --page-pad-x: 16px;
   
-  /* Footer-specific tokens — Institutional grade, balanced zones */
+  /* Footer-specific tokens â€” Institutional grade, balanced zones */
   --footer-pt-mobile: 72px;    /* Locked: equal top/bottom */
   --footer-pt-tablet: 72px;
   --footer-pt-desktop: 72px;
@@ -81,38 +81,38 @@ body {
   --footer-pb-tablet: 72px;
   --footer-pb-desktop: 72px;
   --footer-group-gap-mobile: 40px;   /* Column group spacing (mobile stack) */
-  --footer-label-to-link-mobile: 16px;  /* Tight label→link */
+  --footer-label-to-link-mobile: 16px;  /* Tight labelâ†’link */
   --footer-label-to-link-desktop: 16px;
-  --footer-link-gap-mobile: 13px;    /* Link→link: 12-14px range */
+  --footer-link-gap-mobile: 13px;    /* Linkâ†’link: 12-14px range */
   --footer-link-gap-desktop: 12px;
   --footer-column-gap-tablet: 40px;
   --footer-column-gap-desktop: 64px;
-  --footer-signature-mt-mobile: 56px;  /* Zone gap: links → brand block */
+  --footer-signature-mt-mobile: 56px;  /* Zone gap: links â†’ brand block */
   --footer-signature-mt-tablet: 56px;
   --footer-signature-mt-desktop: 56px;
 
-  /* ─────────────────────────────────────────────────────────────────────────
-     PAGE GUTTERS — Horizontal container padding
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     PAGE GUTTERS â€” Horizontal container padding
      Mobile: 24px | Tablet: 32px | Desktop: 48px
-     ───────────────────────────────────────────────────────────────────────── */
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --gutter: var(--space-4); /* 24px mobile default */
 
-  /* ─────────────────────────────────────────────────────────────────────────
-     SECTION PADDING — Vertical rhythm for major page sections
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     SECTION PADDING â€” Vertical rhythm for major page sections
      Mobile: 96px | Tablet: 120px | Desktop: 160px
-     ───────────────────────────────────────────────────────────────────────── */
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --section-padding-y: var(--space-9); /* 96px mobile default */
 
-  /* ─────────────────────────────────────────────────────────────────────────
-     SECTION HEADER RHYTHM — Eyebrow + headline pattern
-     ───────────────────────────────────────────────────────────────────────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     SECTION HEADER RHYTHM â€” Eyebrow + headline pattern
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --eyebrow-top: var(--space-5);     /* 32px breathing room from section top */
   --eyebrow-bottom: var(--space-4);  /* 24px to headline */
   --headline-bottom: var(--space-6); /* 48px to content */
 
-  /* ─────────────────────────────────────────────────────────────────────────
-     CONTENT RHYTHM — Internal spacing
-     ───────────────────────────────────────────────────────────────────────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     CONTENT RHYTHM â€” Internal spacing
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --paragraph-gap: 28px;             /* Between paragraph blocks */
   --card-gap: var(--space-6);        /* 48px between major items */
   --step-gap: 56px;                  /* Between numbered steps */
@@ -137,30 +137,30 @@ body {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   GLOBAL COLOR CONTRAST SYSTEM — LOCKED
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   GLOBAL COLOR CONTRAST SYSTEM â€” LOCKED
 
    This color system is authoritative and must not drift.
    All text must pass WCAG AA contrast minimums.
 
    LIGHT MODE (default):
-   - Primary text: foreground (HSL 0 0% 9%) — near-black
-   - Secondary text: muted-foreground (HSL 0 0% 45%) — readable gray
-   - Background: background (HSL 0 0% 100%) — white
+   - Primary text: foreground (HSL 0 0% 9%) â€” near-black
+   - Secondary text: muted-foreground (HSL 0 0% 45%) â€” readable gray
+   - Background: background (HSL 0 0% 100%) â€” white
 
    DARK SECTIONS (#111214):
-   - Primary text: white/92 — Headlines, critical copy
-   - Secondary text: white/70-72 — Descriptions, body copy
-   - Tertiary text: white/55-65 — Labels, meta, supporting copy
-   - Meta/Footer text: white/50-60 — Copyright, legal links
-   - Links: white/60 default → white/80 hover
+   - Primary text: white/92 â€” Headlines, critical copy
+   - Secondary text: white/70-72 â€” Descriptions, body copy
+   - Tertiary text: white/55-65 â€” Labels, meta, supporting copy
+   - Meta/Footer text: white/50-60 â€” Copyright, legal links
+   - Links: white/60 default â†’ white/80 hover
    - Dividers: white/15
 
    PROHIBITIONS:
    - No text below white/50 on dark backgrounds
-   - No arbitrary gray values — use semantic tokens
+   - No arbitrary gray values â€” use semantic tokens
    - No opacity-based text that reduces readability
-   ═══════════════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 /* Apple-grade Design System
    System typography, spacing-led layout, minimal dividers, calm hierarchy */
@@ -172,8 +172,8 @@ body {
     /* Mobile-aware header height variable used by hero sections */
     --header-h: 56px; /* Mobile: 56px (h-14) */
 
-    /* ═══════════════════════════════════════════════════════════════════════
-       CANONICAL VISUAL TOKENS — TRIBES INSTITUTIONAL UI (LOCKED)
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       CANONICAL VISUAL TOKENS â€” TRIBES INSTITUTIONAL UI (LOCKED)
        
        All tokens now derive from src/styles/tribes-theme.css (single source of truth).
        Page background = website THEME_DARK_BG (#0B0F14)
@@ -181,16 +181,16 @@ body {
        
        ENFORCEMENT: No data, tables, lists, or controls may render 
        directly on page background. All content lives inside elevated surfaces.
-       ═══════════════════════════════════════════════════════════════════════ */
+       â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     
-    /* GLOBAL — Derived from tribes-theme.css (LOCKED) */
+    /* GLOBAL â€” Derived from tribes-theme.css (LOCKED) */
     --tribes-bg-page: var(--tribes-bg);               /* Exact website page background */
     --tribes-bg-header: var(--tribes-header-bg);      /* Exact website header color */
     --tribes-text-primary: var(--tribes-fg);          /* Pure white, maximum contrast */
     --tribes-text-secondary: var(--tribes-fg-secondary); /* Readable body copy */
     --tribes-text-muted: var(--tribes-fg-muted);      /* Captions, labels, meta */
     
-    /* APPLICATION SURFACES — Derived from tribes-theme.css (LOCKED) */
+    /* APPLICATION SURFACES â€” Derived from tribes-theme.css (LOCKED) */
     --tribes-surface-card: var(--tribes-surface);     /* Primary elevated surface */
     --tribes-surface-table: var(--tribes-surface-table); /* Table surface */
     --tribes-surface-elevated: var(--tribes-surface-elevated); /* Secondary elevation */
@@ -199,7 +199,7 @@ body {
     --tribes-border-strong: var(--tribes-border-strong); /* Stronger separation */
     --tribes-shadow-soft: var(--tribes-shadow);       /* Restrained, institutional */
     
-    /* LEGACY ALIASES — Map to canonical tokens for backward compatibility */
+    /* LEGACY ALIASES â€” Map to canonical tokens for backward compatibility */
     --platform-canvas: var(--tribes-bg);
     --platform-surface: var(--tribes-surface);
     --platform-surface-2: var(--tribes-surface-elevated);
@@ -211,10 +211,10 @@ body {
     --platform-text-muted: var(--tribes-fg-muted);
     --platform-accent: var(--tribes-fg);
 
-    /* ─────────────────────────────────────────────────────────────────────────
-       AUTH GATEWAY TOKENS — YouTube Studio Soft Dark
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       AUTH GATEWAY TOKENS â€” YouTube Studio Soft Dark
        Dark canvas institutional access boundary.
-       ───────────────────────────────────────────────────────────────────────── */
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     --auth-canvas-bg: #181818;
     --auth-canvas-gradient: linear-gradient(180deg, #181818 0%, #1E1E1E 100%);
     --auth-content-width: 380px;
@@ -236,11 +236,11 @@ body {
     --auth-button-disabled-bg: #282828;
     --auth-button-disabled-text: #717171;
 
-    /* ─────────────────────────────────────────────────────────────────────────
-       EDIT FLOW INPUT TOKENS — YouTube Studio Soft Dark
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       EDIT FLOW INPUT TOKENS â€” YouTube Studio Soft Dark
        Apple-grade input styling for all edit surfaces.
        Border MUST be visible on dark backgrounds.
-       ───────────────────────────────────────────────────────────────────────── */
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     --edit-input-height: 48px;
     --edit-input-padding: 0 16px;
     --edit-input-font-size: 16px;                             /* CRITICAL: 16px prevents iOS Safari zoom */
@@ -253,10 +253,10 @@ body {
     --edit-input-placeholder: #717171;
     --edit-input-disabled-opacity: 0.5;
 
-    /* ─────────────────────────────────────────────────────────────────────────
-       LIGHT MODE (DEFAULT) — Clean, professional, matches marketing site
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       LIGHT MODE (DEFAULT) â€” Clean, professional, matches marketing site
        White backgrounds, near-black text, subtle gray borders
-       ───────────────────────────────────────────────────────────────────────── */
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     
     /* Background & Surface - Pure white */
     --background: 0 0% 100%;
@@ -308,11 +308,11 @@ body {
     --button-height: 40px;
     --input-height: 48px;
 
-    /* ─────────────────────────────────────────────────────────────────────────
-       UNIVERSAL CONTROL GEOMETRY TOKENS — APP-WIDE (LOCKED)
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       UNIVERSAL CONTROL GEOMETRY TOKENS â€” APP-WIDE (LOCKED)
        These tokens apply to all controls across the entire application.
        Console-scope inherits these but may override for console-specific styling.
-       ───────────────────────────────────────────────────────────────────────── */
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     --control-height-xs: 28px;
     --control-height-sm: 36px;
     --control-height-md: 44px;
@@ -322,10 +322,10 @@ body {
     --surface-radius: 16px;
     --surface-radius-sm: 12px;
 
-    /* ─────────────────────────────────────────────────────────────────────────
-       INSTITUTIONAL BUTTON TOKENS — BORDER-BASED, MONOCHROMATIC (LIGHT MODE)
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       INSTITUTIONAL BUTTON TOKENS â€” BORDER-BASED, MONOCHROMATIC (LIGHT MODE)
        Subtle, sophisticated, governance-focused.
-       ───────────────────────────────────────────────────────────────────────── */
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     
     /* PRIMARY: Dark border on transparent - main actions */
     --app-btn-primary-bg: transparent;
@@ -360,10 +360,10 @@ body {
     --app-btn-danger-fg: 0 72% 51%;
     --app-btn-danger-border: 0 72% 51%;
 
-    /* ─────────────────────────────────────────────────────────────────────────
-       APP CHIP TOKENS — STATUS INDICATORS (LIGHT MODE)
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       APP CHIP TOKENS â€” STATUS INDICATORS (LIGHT MODE)
        Non-interactive chips for status display across the application.
-       ───────────────────────────────────────────────────────────────────────── */
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     --app-chip-pending-bg: 0 0% 95%;
     --app-chip-pending-border: 0 0% 85%;
     --app-chip-pending-fg: 0 0% 50%;
@@ -384,12 +384,12 @@ body {
     --app-chip-fail-border: 0 72% 51% / 0.25;
     --app-chip-fail-fg: 0 72% 50%;
 
-    /* ─────────────────────────────────────────────────────────────────────────
-       CANONICAL INPUT STYLING — APPLE-GRADE (LIGHT MODE)
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       CANONICAL INPUT STYLING â€” APPLE-GRADE (LIGHT MODE)
        
        All inputs across the app must use these tokens for consistency.
        Visible borders. Focus states clearly indicated.
-       ───────────────────────────────────────────────────────────────────────── */
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     --edit-input-bg: #FFFFFF;
     --edit-input-border: #D1D5DB;
     --edit-input-border-focus: #9CA3AF;
@@ -430,10 +430,10 @@ body {
     --info-foreground: 0 0% 100%;
   }
 
-  /* ═══════════════════════════════════════════════════════════════════════════
-     DARK MODE OVERRIDES — Applied via .dark class on <html>
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     DARK MODE OVERRIDES â€” Applied via .dark class on <html>
      YouTube Studio-inspired soft dark mode
-     ═══════════════════════════════════════════════════════════════════════════ */
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .dark {
     /* Background & Surface - Soft dark canvas */
     --background: 0 0% 9%;
@@ -558,8 +558,8 @@ body {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   SYSTEM CONSOLE SCOPE — INSTITUTIONAL CONTROL PLANE (LOCKED)
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SYSTEM CONSOLE SCOPE â€” INSTITUTIONAL CONTROL PLANE (LOCKED)
    
    This scope provides console-specific tokens that enforce institutional styling
    for all /admin routes. Console components inherit these tokens automatically.
@@ -569,11 +569,11 @@ body {
    - Dark, restrained surfaces throughout
    - Subtle borders, high-contrast text
    - Consistent 44px control height, 12px radius
-   ═══════════════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .console-scope {
-  /* ─────────────────────────────────────────────────────────────────────────
-     FOUNDATIONAL SURFACES — YouTube Studio Soft Dark
-     ───────────────────────────────────────────────────────────────────────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     FOUNDATIONAL SURFACES â€” YouTube Studio Soft Dark
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --console-bg: #181818;
   --console-fg: #FFFFFF;
   --console-fg-secondary: #AAAAAA;
@@ -588,9 +588,9 @@ body {
   --console-elevated-bg: #282828;
   --console-elevated-border: #404040;
   
-  /* ─────────────────────────────────────────────────────────────────────────
-     CONTROL GEOMETRY — LOCKED
-     ───────────────────────────────────────────────────────────────────────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     CONTROL GEOMETRY â€” LOCKED
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --console-control-height: 44px;
   --console-control-height-sm: 36px;
   --console-control-height-xs: 28px;
@@ -598,10 +598,10 @@ body {
   --console-control-radius-sm: 8px;
   --console-chip-radius: 9999px;
   
-  /* ─────────────────────────────────────────────────────────────────────────
-     PRIMARY BUTTON — INSTITUTIONAL (NOT WHITE PILL)
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     PRIMARY BUTTON â€” INSTITUTIONAL (NOT WHITE PILL)
      Dark elevated surface with subtle border
-     ───────────────────────────────────────────────────────────────────────── */
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --console-primary-bg: #2D2D2D;
   --console-primary-bg-hover: #383838;
   --console-primary-bg-disabled: #252525;
@@ -610,25 +610,25 @@ body {
   --console-primary-border: #404040;
   --console-primary-border-hover: #4A4A4A;
   
-  /* ─────────────────────────────────────────────────────────────────────────
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
      SECONDARY/GHOST BUTTON
-     ───────────────────────────────────────────────────────────────────────── */
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --console-secondary-bg: transparent;
   --console-secondary-bg-hover: #282828;
   --console-secondary-fg: #AAAAAA;
   --console-secondary-border: #303030;
   
-  /* ─────────────────────────────────────────────────────────────────────────
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
      DANGER/DESTRUCTIVE
-     ───────────────────────────────────────────────────────────────────────── */
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --console-danger-bg: hsla(0, 72%, 51%, 0.15);
   --console-danger-bg-hover: hsla(0, 72%, 51%, 0.22);
   --console-danger-fg: hsl(0 84% 68%);
   --console-danger-border: hsla(0, 72%, 51%, 0.30);
   
-  /* ─────────────────────────────────────────────────────────────────────────
-     STATUS CHIPS — Soft dark, visible fills
-     ───────────────────────────────────────────────────────────────────────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     STATUS CHIPS â€” Soft dark, visible fills
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --console-chip-pending-bg: #282828;
   --console-chip-pending-border: #404040;
   --console-chip-pending-fg: #717171;
@@ -649,9 +649,9 @@ body {
   --console-chip-fail-border: hsla(0, 72%, 51%, 0.22);
   --console-chip-fail-fg: hsl(0 91% 71%);
   
-  /* ─────────────────────────────────────────────────────────────────────────
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
      SEVERITY CHIPS
-     ───────────────────────────────────────────────────────────────────────── */
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --console-severity-high-bg: hsla(0, 72%, 51%, 0.15);
   --console-severity-high-border: hsla(0, 72%, 51%, 0.25);
   --console-severity-high-fg: hsl(0 91% 71%);
@@ -665,8 +665,8 @@ body {
   --console-severity-low-fg: hsl(213 93% 68%);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   GLOBAL TYPOGRAPHY SCALE — LOCKED
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   GLOBAL TYPOGRAPHY SCALE â€” LOCKED
 
    This typography system is authoritative and must not drift.
    No page-specific overrides. Mercury/JPMorgan reference standard.
@@ -680,23 +680,23 @@ body {
    - H1 margin-bottom: 12px (tight coupling to intro)
    - H2 margin-bottom: 16px
    - Paragraph gap: 1rem (not stacked whitespace)
-   ═══════════════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 @layer base {
   * {
     @apply border-border;
   }
 
-  /* ═══════════════════════════════════════════════════════════════════════
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      GLOBAL VIEWPORT + THEME-AWARE BACKGROUNDS
      
      Background uses var(--tribes-bg) which automatically adapts to light/dark mode.
      Light mode: white (#FFFFFF)
      Dark mode: soft dark (#181818)
-     ═══════════════════════════════════════════════════════════════════════ */
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   html {
-    /* ═══════════════════════════════════════════════════════════════════════
-       AUTHORITATIVE GLOBAL BACKGROUND — Adapts to theme via CSS variables
-       ═══════════════════════════════════════════════════════════════════════ */
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       AUTHORITATIVE GLOBAL BACKGROUND â€” Adapts to theme via CSS variables
+       â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     background: var(--tribes-bg) !important;
     background-color: var(--tribes-bg) !important;
     margin: 0;
@@ -710,9 +710,9 @@ body {
   }
 
   body {
-    /* ═══════════════════════════════════════════════════════════════════════
-       AUTHORITATIVE BODY BACKGROUND — Adapts to theme via CSS variables
-       ═══════════════════════════════════════════════════════════════════════ */
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       AUTHORITATIVE BODY BACKGROUND â€” Adapts to theme via CSS variables
+       â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     background: var(--tribes-bg) !important;
     background-color: var(--tribes-bg) !important;
     /* Text adapts to theme */
@@ -771,7 +771,7 @@ body {
     color: var(--tribes-fg);
   }
 
-  /* H1 — Primary page heading. Marketing site alignment: 32px, 700, -0.02em */
+  /* H1 â€” Primary page heading. Marketing site alignment: 32px, 700, -0.02em */
   h1 {
     font-size: 32px;
     font-weight: 700;
@@ -791,7 +791,7 @@ body {
     }
   }
 
-  /* H2 — Section titles. Marketing site alignment. */
+  /* H2 â€” Section titles. Marketing site alignment. */
   h2 {
     font-size: 24px;
     font-weight: 600;
@@ -800,7 +800,7 @@ body {
     scroll-margin-top: calc(var(--header-height) + 16px);
   }
 
-  /* H3-H6 — Subsection headings */
+  /* H3-H6 â€” Subsection headings */
   h3 {
     font-size: 18px;
     font-weight: 600;
@@ -813,13 +813,13 @@ body {
     line-height: 1.4;
   }
 
-  /* Paragraph rhythm — use gap between siblings, not stacked margins */
+  /* Paragraph rhythm â€” use gap between siblings, not stacked margins */
   p + p {
     margin-top: 1rem;
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MOBILE TEXT SAFETY + ANTI-CLIPPING RULES (LOCKED)
 
    ENFORCED:
@@ -832,7 +832,7 @@ body {
    - Titles may truncate to 1 line with ellipsis via line-clamp-1
    - Descriptions may wrap OR use line-clamp-2 with drill-in affordance
    - Never clip text without explicit truncation intent
-   ═══════════════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 /* Mobile-safe typography defaults */
 @layer base {
@@ -906,22 +906,22 @@ body {
     @apply border border-border bg-transparent text-muted-foreground;
   }
 
-  /* ─────────────────────────────────────────────────────────────────────────
-     SECTION PADDING — Premium vertical rhythm for marketing pages
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     SECTION PADDING â€” Premium vertical rhythm for marketing pages
      Uses CSS custom properties from :root for responsive values
-     ───────────────────────────────────────────────────────────────────────── */
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .section-padding {
     padding-top: var(--section-padding-y);
     padding-bottom: var(--section-padding-y);
   }
 
-  /* Footer compact padding — original spacing for root temp page */
+  /* Footer compact padding â€” original spacing for root temp page */
   .footer-padding {
     padding-top: var(--section-padding-y);
     padding-bottom: var(--space-9); /* 96px bottom on all sizes */
   }
 
-  /* Footer premium institutional padding — standard for all marketing pages */
+  /* Footer premium institutional padding â€” standard for all marketing pages */
   .footer-padding-standard {
     padding-top: var(--footer-pt-mobile);
     padding-bottom: var(--footer-pb-mobile);
@@ -1003,7 +1003,7 @@ body {
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     ROW HOVER — INSTITUTIONAL SUBTLE HOVER STATE
+     ROW HOVER â€" INSTITUTIONAL SUBTLE HOVER STATE
      
      Provides visible but restrained hover feedback for clickable rows.
      Uses rgba for consistent behavior across light/dark themes.
@@ -1014,22 +1014,23 @@ body {
   }
   
   .row-hover:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(0, 0, 0, 0.04);
   }
   
   /* Slightly stronger hover for dark mode tables */
   .dark .row-hover:hover,
+  html.dark .row-hover:hover,
   [data-theme="dark"] .row-hover:hover {
     background-color: rgba(255, 255, 255, 0.06);
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   UI DENSITY SYSTEM — GLOBAL COMPACT MODE OVERRIDES
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   UI DENSITY SYSTEM â€” GLOBAL COMPACT MODE OVERRIDES
    
    Activated via html[data-ui-density="compact"]
    Applied by AppUiBoot component based on user preference or workspace policy.
-   ═══════════════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 html[data-ui-density="compact"] {
   /* Row density override - tighter rows for compact mode */
   .row-density {
@@ -1059,9 +1060,9 @@ html[data-ui-density="compact"] {
 
 @layer components {
 
-  /* ═══════════════════════════════════════════════════════════════════════
-     GLOBAL INTERACTION STATE SYSTEM — LOCKED
-     ═══════════════════════════════════════════════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     GLOBAL INTERACTION STATE SYSTEM â€” LOCKED
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
   /* Focus ring - visible, 1px solid, 2px offset */
   .focus-ring {
@@ -1141,8 +1142,8 @@ html[data-ui-density="compact"] {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   FORM PRIMITIVE HARD OVERRIDES — TRIBES INSTITUTIONAL STANDARD (LOCKED)
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   FORM PRIMITIVE HARD OVERRIDES â€” TRIBES INSTITUTIONAL STANDARD (LOCKED)
 
    Purpose: ensure NO default/consumer-grade form UI survives anywhere.
    Applies to: all forms across the site (public + auth + portal + admin).
@@ -1153,10 +1154,10 @@ html[data-ui-density="compact"] {
    - No pill inputs
    - No glows/shadows
    - Strong disabled contrast separation
-   ═══════════════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 @layer base {
-  /* Inputs / textareas / selects — hard reset inside forms */
+  /* Inputs / textareas / selects â€” hard reset inside forms */
   :where(form) :where(
       input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
       textarea,
@@ -1229,7 +1230,7 @@ html[data-ui-density="compact"] {
     pointer-events: none;
   }
 
-  /* Radix Checkbox (role="checkbox") — FORCIBLY NO FILL WHEN CHECKED */
+  /* Radix Checkbox (role="checkbox") â€” FORCIBLY NO FILL WHEN CHECKED */
   button[role="checkbox"][data-state] {
     background-color: hsl(var(--background)) !important;
     border: 1px solid hsl(0 0% 82%) !important;
@@ -1247,7 +1248,7 @@ html[data-ui-density="compact"] {
     opacity: 0.45 !important;
   }
 
-  /* Native checkbox fallback (if any exist) — EXCLUDES TribesCheckbox */
+  /* Native checkbox fallback (if any exist) â€” EXCLUDES TribesCheckbox */
   :where(form) input[type="checkbox"]:not([data-tribes-checkbox]) {
     -webkit-appearance: none;
     appearance: none;
@@ -1280,14 +1281,14 @@ html[data-ui-density="compact"] {
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   UX HARDENING — TRIBES INSTITUTIONAL STANDARD (LOCKED)
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   UX HARDENING â€” TRIBES INSTITUTIONAL STANDARD (LOCKED)
    
    Global interaction polish: tap targets, focus states, link feedback,
    headline orphan prevention. Applied to all marketing pages.
-   ═══════════════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* C) TAP TARGETS — Minimum 44px touch area for mobile accessibility */
+/* C) TAP TARGETS â€” Minimum 44px touch area for mobile accessibility */
 @layer base {
   /* Ensure all interactive elements have adequate tap area + centered content */
   a, button {
@@ -1297,7 +1298,7 @@ html[data-ui-density="compact"] {
     justify-content: center;
   }
   
-  /* CRITICAL: Radix checkbox renders as button — prevent inflation */
+  /* CRITICAL: Radix checkbox renders as button â€” prevent inflation */
   button[role="checkbox"] {
     min-height: unset;
     height: auto;
@@ -1317,7 +1318,7 @@ html[data-ui-density="compact"] {
   }
 }
 
-/* D) FOCUS STATES — Visible, subtle, brand-appropriate */
+/* D) FOCUS STATES â€” Visible, subtle, brand-appropriate */
 @layer base {
   /* Global focus-visible for all interactive elements */
   a:focus-visible,
@@ -1348,7 +1349,7 @@ html[data-ui-density="compact"] {
   }
 }
 
-/* E) LINK FEEDBACK — Immediate interaction response */
+/* E) LINK FEEDBACK â€” Immediate interaction response */
 @layer base {
   /* All links get pointer cursor */
   a {
@@ -1362,7 +1363,7 @@ html[data-ui-density="compact"] {
   }
 }
 
-/* F) HEADLINE ORPHAN PREVENTION — Controlled measure for premium line breaks */
+/* F) HEADLINE ORPHAN PREVENTION â€” Controlled measure for premium line breaks */
 @layer components {
   /* Marketing section headlines - prevent single-word orphans */
   .headline-measure {
@@ -1376,7 +1377,7 @@ html[data-ui-density="compact"] {
   }
 }
 
-/* G) FONT LOADING STABILITY — Prevent layout shift */
+/* G) FONT LOADING STABILITY â€” Prevent layout shift */
 @layer base {
   /* System font stack with font-display swap for custom fonts if added */
   @font-face {
@@ -1386,8 +1387,8 @@ html[data-ui-density="compact"] {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   INTERNAL FORM SYSTEM — TRIBES INSTITUTIONAL STANDARD (LOCKED)
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   INTERNAL FORM SYSTEM â€” TRIBES INSTITUTIONAL STANDARD (LOCKED)
 
    Purpose: Compact, operational forms for authenticated portal contexts.
    Applies to: Licensing, Publishing, Admin, and all internal data entry.
@@ -1403,7 +1404,7 @@ html[data-ui-density="compact"] {
    - Section-to-section: 24-32px (--internal-section-gap)
    - Label-to-input: 4-6px (--internal-label-gap)
    - Button group: 16-24px above (--internal-button-gap)
-   ═══════════════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 :root {
   /* Internal form spacing tokens - tighter for institutional density */
@@ -1420,113 +1421,80 @@ html[data-ui-density="compact"] {
 }
 
 @layer components {
-  /* ═══════════════════════════════════════════════════════════════════════
-     INTERNAL FORM — Base container styling
-     ═══════════════════════════════════════════════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     INTERNAL FORM CONTAINER â€” Main wrapper for portal forms
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .internal-form {
     max-width: var(--internal-form-width);
+    width: 100%;
+  }
+
+  .internal-form-narrow {
+    max-width: var(--internal-form-width-narrow);
+    width: 100%;
+  }
+
+  .internal-form-wide {
+    max-width: var(--internal-form-width-wide);
+    width: 100%;
+  }
+
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     INTERNAL FORM SECTION â€” Groups related fields with subtle header
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+  .internal-form-section {
+    margin-bottom: var(--internal-section-gap);
+  }
+
+  .internal-form-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .internal-form-section-header {
+    font-size: 10px;
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  .internal-form-section-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: hsl(var(--foreground));
+    margin-bottom: 8px;
+  }
+
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     INTERNAL FORM FIELD STACK â€” Compact vertical field spacing
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+  .internal-form-fields {
     display: flex;
     flex-direction: column;
     gap: var(--internal-field-gap);
   }
 
-  .internal-form-narrow {
-    max-width: var(--internal-form-width-narrow);
-  }
-
-  .internal-form-wide {
-    max-width: var(--internal-form-width-wide);
-  }
-
-  .internal-form-full {
-    max-width: 100%;
-  }
-
-  /* ═══════════════════════════════════════════════════════════════════════
-     INTERNAL FORM FIELD — Single field unit (label + input + helper)
-     ═══════════════════════════════════════════════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     INTERNAL FORM FIELD â€” Individual field wrapper with tight label spacing
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .internal-form-field {
     display: flex;
     flex-direction: column;
     gap: var(--internal-label-gap);
   }
 
-  /* Internal form label - tighter, minimal */
+  /* Internal form label - concise, factual, always visible */
   .internal-form-label {
     font-size: 11px;
     font-weight: 500;
-    color: hsl(var(--muted-foreground));
-    text-transform: none;
-    letter-spacing: 0;
-    line-height: 1.3;
-  }
-
-  /* Required asterisk styling */
-  .internal-form-label-required::after {
-    content: " *";
-    color: hsl(0 72% 51%);
-  }
-
-  /* Internal form input - compact, visible border */
-  .internal-form-input {
-    height: 40px;
-    padding: 0 12px;
-    font-size: 13px;
-    line-height: 1.4;
-    border-radius: 6px;
-    border: 1px solid hsl(var(--border));
-    background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    transition: border-color 150ms ease-in-out;
+    line-height: 1.35;
   }
 
-  .internal-form-input:hover:not(:disabled):not(:focus) {
-    border-color: hsl(0 0% 70%);
-  }
-
-  .internal-form-input:focus {
-    outline: none;
-    border-color: hsl(0 0% 50%);
-  }
-
-  .internal-form-input:disabled {
-    background-color: hsl(0 0% 98%);
-    color: hsl(0 0% 45%);
-    cursor: not-allowed;
-  }
-
-  .internal-form-input::placeholder {
-    color: hsl(0 0% 55%);
-  }
-
-  /* Error state */
-  .internal-form-input-error {
-    border-color: hsl(0 72% 51%);
-  }
-
-  .internal-form-input-error:focus {
-    border-color: hsl(0 72% 40%);
-  }
-
-  /* Internal form textarea - same styling, different height */
-  .internal-form-textarea {
-    min-height: 100px;
-    padding: 10px 12px;
-    font-size: 13px;
-    line-height: 1.5;
-    border-radius: 6px;
-    border: 1px solid hsl(var(--border));
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    resize: vertical;
-  }
-
-  .internal-form-textarea:focus {
-    outline: none;
-    border-color: hsl(0 0% 50%);
-  }
-
-  /* Internal form helper text - minimal, informational only */
+  /* Internal form helper text - minimal, low-contrast, factual */
   .internal-form-helper {
     font-size: 10px;
     color: hsl(var(--muted-foreground));
@@ -1542,9 +1510,9 @@ html[data-ui-density="compact"] {
     margin-top: var(--internal-helper-gap);
   }
 
-  /* ═══════════════════════════════════════════════════════════════════════
-     INTERNAL FORM ROW — Horizontal field grouping (2-3 fields)
-     ═══════════════════════════════════════════════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     INTERNAL FORM ROW â€” Horizontal field grouping (2-3 fields)
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .internal-form-row {
     display: grid;
     gap: 16px;
@@ -1565,9 +1533,9 @@ html[data-ui-density="compact"] {
     }
   }
 
-  /* ═══════════════════════════════════════════════════════════════════════
-     INTERNAL FORM ACTIONS — Button group with proper spacing
-     ═══════════════════════════════════════════════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     INTERNAL FORM ACTIONS â€” Button group with proper spacing
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .internal-form-actions {
     display: flex;
     align-items: center;
@@ -1594,18 +1562,18 @@ html[data-ui-density="compact"] {
     justify-content: space-between;
   }
 
-  /* ═══════════════════════════════════════════════════════════════════════
-     INTERNAL FORM DIVIDER — Subtle section separator
-     ═══════════════════════════════════════════════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     INTERNAL FORM DIVIDER â€” Subtle section separator
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .internal-form-divider {
     height: 1px;
     background-color: hsl(var(--border));
     margin: var(--internal-section-gap) 0;
   }
 
-  /* ═══════════════════════════════════════════════════════════════════════
-     INTERNAL FORM INLINE ROW — Key-value or label-action pairs
-     ═══════════════════════════════════════════════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     INTERNAL FORM INLINE ROW â€” Key-value or label-action pairs
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .internal-form-inline {
     display: flex;
     align-items: center;
@@ -1625,9 +1593,9 @@ html[data-ui-density="compact"] {
     color: hsl(var(--muted-foreground));
   }
 
-  /* ═══════════════════════════════════════════════════════════════════════
-     APPROVAL FORM — Extremely compact, decision-focused
-     ═══════════════════════════════════════════════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     APPROVAL FORM â€” Extremely compact, decision-focused
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .approval-form {
     max-width: 480px;
     display: flex;
@@ -1680,12 +1648,12 @@ html[data-ui-density="compact"] {
 }
 
 @layer utilities {
-  /* ═══════════════════════════════════════════════════════════════════════
-     iOS SAFARI VIEWPORT UTILITIES — LOCKED
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     iOS SAFARI VIEWPORT UTILITIES â€” LOCKED
      
      These utilities ensure full viewport coverage on iOS Safari with
      dynamic viewport height support and safe-area handling.
-     ═══════════════════════════════════════════════════════════════════════ */
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   
   /* Full dynamic viewport height - iOS Safari compatible */
   .min-h-dvh {
@@ -1719,15 +1687,15 @@ html[data-ui-density="compact"] {
     outline-offset: 2px;
   }
 
-  /* ═══════════════════════════════════════════════════════════════════════
-     INSTITUTIONAL MOTION SYSTEM — LOCKED
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     INSTITUTIONAL MOTION SYSTEM â€” LOCKED
      
      All motion uses calm, financial-grade timing:
      - Micro-interactions: 280ms
      - Standard transitions: 320ms  
      - Overlays/modals: 360-400ms
      - Easing: ease-in-out only (no bounce, no elastic, no spring)
-     ═══════════════════════════════════════════════════════════════════════ */
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
   /* Standard interaction - hover, focus, state changes */
   .transition-interaction {
@@ -1759,12 +1727,12 @@ html[data-ui-density="compact"] {
     @apply transition-transform duration-[320ms] ease-in-out;
   }
 
-  /* ═══════════════════════════════════════════════════════════════════════
-     TEXT CLIPPING PREVENTION — INSTITUTIONAL READABILITY (LOCKED)
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     TEXT CLIPPING PREVENTION â€” INSTITUTIONAL READABILITY (LOCKED)
      
      Global rules to prevent text from being clipped mid-word/sentence.
      Secondary descriptions should wrap to 2 lines before truncating.
-     ═══════════════════════════════════════════════════════════════════════ */
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
   /* Secondary description text - 2-line clamp for mobile readability */
   .description-text {
@@ -1796,12 +1764,12 @@ html[data-ui-density="compact"] {
 
 /* Legacy compact density section removed - see html[data-ui-density="compact"] in @layer components above */
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   TIPTAP RICH TEXT EDITOR — INSTITUTIONAL DARK THEME (LOCKED)
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   TIPTAP RICH TEXT EDITOR â€” INSTITUTIONAL DARK THEME (LOCKED)
 
    Styling for the TipTap WYSIWYG editor used in Help article creation.
    Matches the institutional dark theme of the Help Workstation.
-   ═══════════════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 /* TipTap editor content area */
 .ProseMirror {
