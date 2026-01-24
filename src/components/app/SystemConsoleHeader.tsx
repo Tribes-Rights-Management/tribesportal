@@ -182,7 +182,7 @@ export function SystemConsoleHeader() {
               style={{
                 fontSize: '11px',
                 letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-                color: '#FFFFFF',
+                color: 'var(--foreground)',
               }}
             >
               {NAV_LABELS.BRAND_WORDMARK}
@@ -261,7 +261,7 @@ export function SystemConsoleHeader() {
             style={{
               fontSize: PORTAL_TYPOGRAPHY.brandWordmark.size,
               letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-              color: '#FFFFFF',
+              color: 'var(--foreground)',
             }}
           >
             {NAV_LABELS.BRAND_WORDMARK}

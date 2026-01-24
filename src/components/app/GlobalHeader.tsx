@@ -516,7 +516,7 @@ export function GlobalHeader() {
               style={{
                 fontSize: '11px',
                 letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-                color: '#FFFFFF',
+                color: 'var(--foreground)',
               }}
             >
             {NAV_LABELS.BRAND_WORDMARK}
@@ -587,7 +587,7 @@ export function GlobalHeader() {
           style={{
             fontSize: PORTAL_TYPOGRAPHY.brandWordmark.size,
             letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-            color: '#FFFFFF',
+            color: 'var(--foreground)',
           }}
         >
           {NAV_LABELS.BRAND_WORDMARK}

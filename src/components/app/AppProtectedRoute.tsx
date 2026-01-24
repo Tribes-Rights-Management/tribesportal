@@ -50,7 +50,7 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
   if (accessState === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F5F5F7]">
-        <p className="text-[14px] text-[#6B6B6B]">Loading data</p>
+        <p className="text-[14px] text-muted-foreground">Loading data</p>
       </div>
     );
   }
