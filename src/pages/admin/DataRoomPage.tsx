@@ -368,9 +368,9 @@ export default function DataRoomPage() {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <ConsoleChip variant="outline" className="text-[10px]">
+                      <span className="text-[10px] px-2 py-0.5 rounded border border-[--console-card-border] text-[--platform-text-muted]">
                         {exp.scope_type}
-                      </ConsoleChip>
+                      </span>
                     </TableCell>
                     <TableCell>
                       <span className="text-[12px] text-muted-foreground">
@@ -380,9 +380,9 @@ export default function DataRoomPage() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {getStatusIcon(exp.status)}
-                        <ConsoleChip variant={getStatusVariant(exp.status)} className="text-[10px]">
+                        <span className="text-[10px] px-2 py-0.5 rounded border border-[--console-card-border] text-[--platform-text-muted]">
                           {exp.status}
-                        </ConsoleChip>
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -392,24 +392,24 @@ export default function DataRoomPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
+                        <ConsoleButton
+                          intent="ghost"
                           size="sm"
                           className="h-8 w-8 p-0"
                           disabled={exp.status !== "completed"}
                         >
                           <Eye className="h-4 w-4" />
                         </ConsoleButton>
-                        <Button
-                          variant="ghost"
+                        <ConsoleButton
+                          intent="ghost"
                           size="sm"
                           className="h-8 w-8 p-0"
                           disabled={exp.status !== "completed" || !exp.file_url}
                         >
                           <Download className="h-4 w-4" />
                         </ConsoleButton>
-                        <Button
-                          variant="ghost"
+                        <ConsoleButton
+                          intent="ghost"
                           size="sm"
                           className="h-8 w-8 p-0"
                         >

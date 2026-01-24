@@ -98,12 +98,10 @@ export default function RLSAuditPage() {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <ConsoleButton intent="ghost" size="sm" asChild>
-            <Link to="/admin">
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              Back
-            </Link>
-          </ConsoleButton>
+          <Link to="/admin" className="inline-flex items-center gap-1 h-[36px] px-4 text-[13px] text-[#AAAAAA] hover:text-white transition-colors rounded-[var(--control-radius)]">
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Link>
           <div>
             <h1 className="text-xl font-medium flex items-center gap-2">
               <Shield className="h-5 w-5" />

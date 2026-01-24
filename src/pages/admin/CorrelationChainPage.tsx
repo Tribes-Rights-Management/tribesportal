@@ -197,8 +197,8 @@ export default function CorrelationChainPage() {
               style={{ color: 'var(--platform-text)' }}
             />
           </div>
-          <Button
-            variant="default"
+          <ConsoleButton
+            intent="primary"
             onClick={handleSearch}
           >
             <Search className="h-4 w-4 mr-2" />
@@ -279,8 +279,8 @@ export default function CorrelationChainPage() {
                       </span>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Button
-                        variant="ghost"
+                      <ConsoleButton
+                        intent="ghost"
                         size="sm"
                         className="h-8 px-3"
                         onClick={() => handleSelectCorrelation(record.correlation_id)}

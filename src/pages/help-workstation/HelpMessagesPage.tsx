@@ -327,8 +327,8 @@ export default function HelpMessagesPage() {
             
             {/* Panel Footer */}
             <div className="px-6 py-5 border-t border-[#303030]">
-              <Button 
-                variant="outline" 
+              <AppButton 
+                intent="secondary" 
                 size="sm" 
                 className="w-full"
                 onClick={() => window.open(`mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject || 'Your message'}`)}

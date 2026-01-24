@@ -325,8 +325,8 @@ export default function HelpAudiencesPage() {
                   >
                     {audience.is_active ? "Active" : "Inactive"}
                   </button>
-                  <Button
-                    variant="ghost"
+                  <AppButton
+                    intent="ghost"
                     size="sm"
                     onClick={(e) => { e.stopPropagation(); handleEdit(audience); }}
                     className="text-[12px] text-[#AAAAAA] hover:text-white"

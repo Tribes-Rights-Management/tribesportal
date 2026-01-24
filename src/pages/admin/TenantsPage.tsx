@@ -134,7 +134,7 @@ export default function TenantsPage() {
       >
         {/* Add button */}
         <ConsoleButton 
-          variant="default"
+          intent="primary"
           size="sm"
           onClick={openCreateDialog}
           className="shrink-0"
