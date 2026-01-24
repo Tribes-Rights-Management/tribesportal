@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { X, ChevronRight, AlertCircle, RefreshCw, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AppButton } from "@/components/app-ui";
 
 /**
  * HELP MESSAGES PAGE — INSTITUTIONAL DESIGN
@@ -275,24 +275,24 @@ export default function HelpMessagesPage() {
               {/* Actions */}
               <div className="flex flex-wrap gap-2">
                 {selectedMessage.status !== "open" && (
-                  <Button variant="outline" size="sm" onClick={() => updateStatus(selectedMessage.id, "open")} disabled={updating}>
+                  <AppButton intent="secondary" size="sm" onClick={() => updateStatus(selectedMessage.id, "open")} disabled={updating}>
                     Mark Open
-                  </Button>
+                  </AppButton>
                 )}
                 {selectedMessage.status !== "waiting" && (
-                  <Button variant="outline" size="sm" onClick={() => updateStatus(selectedMessage.id, "waiting")} disabled={updating}>
+                  <AppButton intent="secondary" size="sm" onClick={() => updateStatus(selectedMessage.id, "waiting")} disabled={updating}>
                     Waiting
-                  </Button>
+                  </AppButton>
                 )}
                 {selectedMessage.status !== "resolved" && (
-                  <Button variant="default" size="sm" onClick={() => updateStatus(selectedMessage.id, "resolved")} disabled={updating}>
+                  <AppButton intent="primary" size="sm" onClick={() => updateStatus(selectedMessage.id, "resolved")} disabled={updating}>
                     Resolve
-                  </Button>
+                  </AppButton>
                 )}
                 {selectedMessage.status !== "archived" && (
-                  <Button variant="ghost" size="sm" onClick={() => updateStatus(selectedMessage.id, "archived")} disabled={updating}>
+                  <AppButton intent="ghost" size="sm" onClick={() => updateStatus(selectedMessage.id, "archived")} disabled={updating}>
                     Archive
-                  </Button>
+                  </AppButton>
                 )}
               </div>
               
@@ -334,7 +334,7 @@ export default function HelpMessagesPage() {
                 onClick={() => window.open(`mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject || 'Your message'}`)}
               >
                 Reply via Email
-              </Button>
+              </AppButton>
             </div>
           </div>
         </>

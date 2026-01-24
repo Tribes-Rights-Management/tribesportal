@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, AlertCircle, ChevronDown } from "lucide-react";
 import { useHelpManagement, HelpArticle } from "@/hooks/useHelpManagement";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
-import { Button } from "@/components/ui/button";
+import { AppButton, AppChip } from "@/components/app-ui";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -169,18 +169,18 @@ export default function HelpArticleEditorPage() {
         </button>
         <div className="flex items-center gap-2">
           {!isNew && status !== "archived" && (
-            <Button variant="ghost" size="sm" onClick={handleArchive} className="text-[#8F8F8F]">
+            <AppButton intent="ghost" size="sm" onClick={handleArchive}>
               Archive
-            </Button>
+            </AppButton>
           )}
           {!isNew && status === "draft" && (
-            <Button variant="outline" size="sm" onClick={() => setPublishDialogOpen(true)}>
+            <AppButton intent="secondary" size="sm" onClick={() => setPublishDialogOpen(true)}>
               Publish
-            </Button>
+            </AppButton>
           )}
-          <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
+          <AppButton intent="primary" size="sm" onClick={handleSave} disabled={saving}>
             {saving ? "Saving..." : "Save"}
-          </Button>
+          </AppButton>
         </div>
       </div>
 
@@ -198,13 +198,10 @@ export default function HelpArticleEditorPage() {
           {/* Status Badge */}
           {!isNew && (
             <div className="mb-6">
-              <span className={`text-[11px] px-2 py-1 rounded ${
-                status === "published" ? "bg-[#059669]/20 text-[#34D399]" :
-                status === "archived" ? "bg-[#7F1D1D]/20 text-[#FCA5A5]" :
-                "bg-[#303030] text-[#AAAAAA]"
-              }`}>
-                {status.toUpperCase()}
-              </span>
+              <AppChip 
+                status={status === "published" ? "pass" : status === "archived" ? "fail" : "pending"}
+                label={status.toUpperCase()}
+              />
             </div>
           )}
 

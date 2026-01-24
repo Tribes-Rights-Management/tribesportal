@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Plus, GripVertical, X, AlertCircle, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AppButton } from "@/components/app-ui";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -241,10 +241,10 @@ export default function HelpAudiencesPage() {
             Drag to reorder. This controls the header tab order on the public Help Center.
           </p>
         </div>
-        <Button variant="default" size="sm" onClick={handleCreate}>
+        <AppButton intent="primary" size="sm" onClick={handleCreate}>
           <Plus className="h-2 w-2" strokeWidth={1} />
           New Audience
-        </Button>
+        </AppButton>
       </div>
 
       {/* Error */}
@@ -332,7 +332,7 @@ export default function HelpAudiencesPage() {
                     className="text-[12px] text-[#AAAAAA] hover:text-white"
                   >
                     Edit
-                  </Button>
+                  </AppButton>
                 </div>
               </div>
             </div>
@@ -430,12 +430,12 @@ export default function HelpAudiencesPage() {
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>
+                <AppButton intent="secondary" size="sm" onClick={() => setPanelOpen(false)}>
                   Cancel
-                </Button>
-                <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
+                </AppButton>
+                <AppButton intent="primary" size="sm" onClick={handleSave} disabled={saving}>
                   {saving ? "Saving..." : editing ? "Save Changes" : "Create Audience"}
-                </Button>
+                </AppButton>
               </div>
             </div>
           </div>

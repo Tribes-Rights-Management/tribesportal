@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Plus, Trash2, X, AlertCircle, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpCategory } from "@/hooks/useHelpManagement";
-import { Button } from "@/components/ui/button";
+import { AppButton } from "@/components/app-ui";
 
 /**
  * HELP CATEGORIES PAGE — INSTITUTIONAL DESIGN
@@ -164,10 +164,10 @@ export default function HelpCategoriesPage() {
           <h1 className="text-[20px] font-medium text-foreground mb-1">Categories</h1>
           <p className="text-[13px] text-muted-foreground">{categories.length} categories</p>
         </div>
-        <Button variant="default" size="sm" onClick={handleCreate}>
+        <AppButton intent="primary" size="sm" onClick={handleCreate}>
           <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
           New Category
-        </Button>
+        </AppButton>
       </div>
 
       {/* Error */}
@@ -338,10 +338,10 @@ export default function HelpCategoriesPage() {
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => setPanelOpen(false)}>Cancel</Button>
-                <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
+                <AppButton intent="secondary" size="sm" onClick={() => setPanelOpen(false)}>Cancel</AppButton>
+                <AppButton intent="primary" size="sm" onClick={handleSave} disabled={saving}>
                   {saving ? "Saving..." : editing ? "Save Changes" : "Create"}
-                </Button>
+                </AppButton>
               </div>
             </div>
           </div>
@@ -374,12 +374,12 @@ export default function HelpCategoriesPage() {
             </div>
 
             <div className="flex items-center justify-end gap-2 px-6 py-5 border-t border-border">
-              <Button variant="outline" size="sm" onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }}>
+              <AppButton intent="secondary" size="sm" onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }}>
                 Cancel
-              </Button>
-              <Button variant="destructive" size="sm" onClick={handleDelete} disabled={deleting.article_count > 0}>
+              </AppButton>
+              <AppButton intent="danger" size="sm" onClick={handleDelete} disabled={deleting.article_count > 0}>
                 Delete
-              </Button>
+              </AppButton>
             </div>
           </div>
         </>

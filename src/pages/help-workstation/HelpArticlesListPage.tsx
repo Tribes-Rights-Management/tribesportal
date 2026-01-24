@@ -4,8 +4,7 @@ import { Plus, Search, AlertCircle, RefreshCw, ChevronUp, ChevronDown } from "lu
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleStatus } from "@/hooks/useHelpManagement";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Button } from "@/components/ui/button";
-import { AppChip } from "@/components/app-ui";
+import { AppButton, AppChip, AppSearchInput, AppSelect } from "@/components/app-ui";
 
 /**
  * HELP ARTICLES LIST — INSTITUTIONAL DESIGN
@@ -129,10 +128,10 @@ export default function HelpArticlesListPage() {
           <h1 className="text-[20px] font-medium text-foreground mb-1">Articles</h1>
           <p className="text-[13px] text-muted-foreground">{filteredArticles.length} articles</p>
         </div>
-        <Button variant="default" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
+        <AppButton intent="primary" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
           <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
           New Article
-        </Button>
+        </AppButton>
       </div>
 
       {/* Error */}
@@ -250,22 +249,22 @@ export default function HelpArticlesListPage() {
             Page {currentPage} of {totalPages}
           </p>
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
+            <AppButton
+              intent="secondary"
               size="sm"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => p - 1)}
             >
               Previous
-            </Button>
-            <Button
-              variant="outline"
+            </AppButton>
+            <AppButton
+              intent="secondary"
               size="sm"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(p => p + 1)}
             >
               Next
-            </Button>
+            </AppButton>
           </div>
         </div>
       )}

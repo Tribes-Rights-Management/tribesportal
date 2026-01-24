@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ExternalLink, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AppButton } from "@/components/app-ui";
 
 /**
  * HELP SETTINGS PAGE — INSTITUTIONAL DESIGN
@@ -162,9 +162,9 @@ export default function HelpSettingsPage() {
 
         {/* Save Button */}
         <div className="flex justify-end pt-4">
-          <Button variant="default" size="sm" onClick={handleSave} disabled={saving}>
+          <AppButton intent="primary" size="sm" onClick={handleSave} disabled={saving}>
             {saving ? "Saving..." : saved ? "Saved" : "Save Settings"}
-          </Button>
+          </AppButton>
         </div>
       </div>
     </div>
