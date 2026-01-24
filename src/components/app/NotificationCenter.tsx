@@ -234,7 +234,7 @@ function CategoryGroup({ category, notifications, onNotificationClick }: Categor
             <span 
               className="text-[11px] font-medium px-1.5 py-0.5 rounded"
               style={{ 
-                backgroundColor: isEscalated ? 'rgba(251, 191, 36, 0.15)' : 'rgba(255,255,255,0.08)',
+                backgroundColor: isEscalated ? 'rgba(251, 191, 36, 0.15)' : 'hsl(var(--border))',
                 color: isEscalated ? '#fbbf24' : 'var(--tribes-text-muted)',
               }}
             >

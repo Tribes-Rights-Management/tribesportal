@@ -11,7 +11,7 @@ export function AppIndexRedirect() {
   if (accessState === "loading") {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-[14px] text-[#6B6B6B]">Loading data</p>
+        <p className="text-[14px] text-muted-foreground">Loading data</p>
       </div>
     );
   }
