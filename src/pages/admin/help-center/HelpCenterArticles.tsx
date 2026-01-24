@@ -398,7 +398,7 @@ function StatusBadge({ published }: { published: boolean }) {
       style={{
         backgroundColor: published
           ? "rgba(34, 197, 94, 0.1)"
-          : "rgba(255, 255, 255, 0.05)",
+          : "hsl(var(--muted) / 0.5)",
         color: published ? "rgb(34, 197, 94)" : "var(--platform-text-muted)",
       }}
     >

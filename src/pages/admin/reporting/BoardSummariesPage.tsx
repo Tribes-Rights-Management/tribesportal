@@ -128,7 +128,7 @@ function SummaryPackCard({ pack, onGenerate }: { pack: SummaryPack; onGenerate: 
       <div className="flex items-start gap-3">
         <div 
           className="p-2 rounded"
-          style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}
+          style={{ backgroundColor: 'hsl(var(--muted) / 0.5)' }}
         >
           <Icon size={16} style={{ color: 'var(--tribes-text-muted)' }} />
         </div>
