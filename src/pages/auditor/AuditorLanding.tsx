@@ -130,7 +130,7 @@ export default function AuditorLanding() {
           <div 
             className="px-3 py-1.5 rounded-md text-[12px] font-medium"
             style={{ 
-              backgroundColor: 'rgba(255,255,255,0.04)',
+              backgroundColor: 'hsl(var(--muted) / 0.5)',
               color: 'var(--platform-text-secondary)'
             }}
           >
