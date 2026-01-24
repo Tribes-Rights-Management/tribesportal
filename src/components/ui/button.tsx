@@ -11,15 +11,15 @@ const buttonVariants = cva(
     variants: {
       variant: {
         // Primary: White border on transparent - main actions
-        default: "bg-transparent border border-white text-white font-medium tracking-[0.01em] hover:bg-white/[0.08] active:bg-white/[0.12]",
+        default: "bg-transparent border border-white text-foreground font-medium tracking-[0.01em] hover:bg-white/[0.08] active:bg-white/[0.12]",
         // Destructive: Red border on transparent
-        destructive: "bg-transparent border border-[#DC2626] text-[#DC2626] font-medium hover:bg-[rgba(220,38,38,0.1)]",
+        destructive: "bg-transparent border border-destructive text-destructive font-medium hover:bg-destructive/10",
         // Outline: Gray border, muted text - secondary actions
-        outline: "bg-transparent border border-[#303030] text-[#AAAAAA] hover:border-[#505050] hover:text-white",
+        outline: "bg-transparent border border-border text-muted-foreground hover:border-ring hover:text-foreground",
         // Ghost: Invisible until hover
-        ghost: "bg-transparent border border-transparent text-[#AAAAAA] hover:bg-white/[0.04] hover:text-white",
+        ghost: "bg-transparent border border-transparent text-muted-foreground hover:bg-white/[0.04] hover:text-foreground",
         // Link: No border, underline on hover
-        link: "bg-transparent text-[#AAAAAA] hover:text-white hover:underline underline-offset-4",
+        link: "bg-transparent text-muted-foreground hover:text-foreground hover:underline underline-offset-4",
       },
       size: {
         // Institutional sizing: 6px radius, proportional padding

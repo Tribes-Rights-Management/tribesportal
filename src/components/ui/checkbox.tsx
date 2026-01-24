@@ -26,9 +26,9 @@ const Checkbox = React.forwardRef<
     className={cn(
       // Square, thin border, NO fill on checked, NO rounded corners
       // Scaled to 18px to match reduced input proportions
-      "peer h-[18px] w-[18px] shrink-0 rounded-none border border-[#c4c4c4] bg-white transition-colors duration-100 ease-out",
-      "data-[state=checked]:border-[#888888] data-[state=checked]:bg-white",
-      "focus-visible:outline-none focus-visible:border-[#666666]",
+      "peer h-[18px] w-[18px] shrink-0 rounded-none border border-border bg-background transition-colors duration-100 ease-out",
+      "data-[state=checked]:border-foreground data-[state=checked]:bg-background",
+      "focus-visible:outline-none focus-visible:border-ring",
       "disabled:cursor-not-allowed disabled:opacity-40",
       className,
     )}
