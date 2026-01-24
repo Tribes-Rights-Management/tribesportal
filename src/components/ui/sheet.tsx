@@ -80,11 +80,11 @@ const SheetContent = React.forwardRef<React.ElementRef<typeof SheetPrimitive.Con
         ref={ref} 
         className={cn(sheetVariants({ side }), className)} 
         style={{
-          backgroundColor: '#18181B',
-          borderLeft: side === 'right' ? '1px solid rgba(255,255,255,0.08)' : undefined,
-          borderRight: side === 'left' ? '1px solid rgba(255,255,255,0.08)' : undefined,
-          borderTop: side === 'bottom' ? '1px solid rgba(255,255,255,0.08)' : undefined,
-          borderBottom: side === 'top' ? '1px solid rgba(255,255,255,0.08)' : undefined,
+          backgroundColor: 'var(--background)',
+          borderLeft: side === 'right' ? '1px solid hsl(var(--border))' : undefined,
+          borderRight: side === 'left' ? '1px solid hsl(var(--border))' : undefined,
+          borderTop: side === 'bottom' ? '1px solid hsl(var(--border))' : undefined,
+          borderBottom: side === 'top' ? '1px solid hsl(var(--border))' : undefined,
         }}
         {...props}
       >
