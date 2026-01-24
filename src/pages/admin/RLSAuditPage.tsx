@@ -1,5 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
+import { ConsoleButton, ConsoleChip, ConsoleCard, ConsoleCardHeader, ConsoleCardBody } from "@/components/console";
 import {
   Table,
   TableBody,
@@ -8,8 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Check, X, Shield, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -61,27 +59,12 @@ type AuditStatus = "compliant" | "warning" | "unsafe";
 
 function StatusBadge({ status }: { status: AuditStatus }) {
   if (status === "compliant") {
-    return (
-      <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 text-[10px]">
-        <Check className="h-3 w-3 mr-1" />
-        Compliant
-      </Badge>
-    );
+    return <ConsoleChip status="pass" />;
   }
   if (status === "warning") {
-    return (
-      <Badge className="bg-amber-100 text-amber-800 border-amber-200 text-[10px]">
-        <AlertTriangle className="h-3 w-3 mr-1" />
-        Warning
-      </Badge>
-    );
+    return <ConsoleChip status="warning" />;
   }
-  return (
-    <Badge className="bg-red-100 text-red-800 border-red-200 text-[10px]">
-      <X className="h-3 w-3 mr-1" />
-      Unsafe
-    </Badge>
-  );
+  return <ConsoleChip status="fail" />;
 }
 
 function BooleanIndicator({ value, successLabel, failLabel }: { value: boolean; successLabel?: string; failLabel?: string }) {
@@ -115,12 +98,12 @@ export default function RLSAuditPage() {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild className="text-muted-foreground">
+          <ConsoleButton intent="ghost" size="sm" asChild>
             <Link to="/admin">
               <ArrowLeft className="h-4 w-4 mr-1" />
               Back
             </Link>
-          </Button>
+          </ConsoleButton>
           <div>
             <h1 className="text-xl font-medium flex items-center gap-2">
               <Shield className="h-5 w-5" />
@@ -134,56 +117,54 @@ export default function RLSAuditPage() {
 
         {/* Summary Stats */}
         <div className="grid grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="pt-4">
+          <ConsoleCard>
+            <ConsoleCardBody>
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                  <Check className="h-5 w-5 text-emerald-600" />
+                <div className="h-10 w-10 rounded-lg bg-emerald-900/30 flex items-center justify-center">
+                  <Check className="h-5 w-5 text-emerald-400" />
                 </div>
                 <div>
                   <p className="text-2xl font-semibold">{compliantCount}</p>
                   <p className="text-xs text-muted-foreground">Compliant</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-4">
+            </ConsoleCardBody>
+          </ConsoleCard>
+          <ConsoleCard>
+            <ConsoleCardBody>
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                  <AlertTriangle className="h-5 w-5 text-amber-600" />
+                <div className="h-10 w-10 rounded-lg bg-amber-900/30 flex items-center justify-center">
+                  <AlertTriangle className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
                   <p className="text-2xl font-semibold">{warningCount}</p>
                   <p className="text-xs text-muted-foreground">Warnings</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-4">
+            </ConsoleCardBody>
+          </ConsoleCard>
+          <ConsoleCard>
+            <ConsoleCardBody>
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-red-100 flex items-center justify-center">
-                  <X className="h-5 w-5 text-red-600" />
+                <div className="h-10 w-10 rounded-lg bg-red-900/30 flex items-center justify-center">
+                  <X className="h-5 w-5 text-red-400" />
                 </div>
                 <div>
                   <p className="text-2xl font-semibold">{unsafeCount}</p>
                   <p className="text-xs text-muted-foreground">Unsafe</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </ConsoleCardBody>
+          </ConsoleCard>
         </div>
 
         {/* RLS Coverage Table */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-medium">Policy Coverage Inventory</CardTitle>
-            <CardDescription className="text-xs">
-              Audit of RLS status, policy counts, and tenant isolation for all tables in public schema
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        <ConsoleCard>
+          <ConsoleCardHeader 
+            title="Policy Coverage Inventory"
+            description="Audit of RLS status, policy counts, and tenant isolation for all tables in public schema"
+          />
+          <ConsoleCardBody>
             <div className="border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
@@ -224,8 +205,8 @@ export default function RLSAuditPage() {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
-        </Card>
+          </ConsoleCardBody>
+        </ConsoleCard>
 
         {/* Read-only notice */}
         <div className="text-center text-xs text-muted-foreground pt-2">

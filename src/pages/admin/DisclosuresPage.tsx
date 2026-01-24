@@ -13,7 +13,7 @@ import {
   TableCell,
   TableEmptyRow 
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { ConsoleButton } from "@/components/console";
 import { 
   Select,
   SelectContent,
@@ -458,7 +458,7 @@ export default function DisclosuresPage() {
                     Generate Export
                   </>
                 )}
-              </Button>
+              </ConsoleButton>
             </div>
           </div>
 
@@ -576,7 +576,7 @@ export default function DisclosuresPage() {
                     }}
                   >
                     <ChevronRight className="h-4 w-4" style={{ color: 'hsl(var(--platform-text-muted))' }} />
-                  </Button>
+                  </ConsoleButton>
                 </TableCell>
               </TableRow>
             ))
@@ -820,7 +820,7 @@ export default function DisclosuresPage() {
                   >
                     <Download className="mr-2 h-4 w-4" />
                     Download Export
-                  </Button>
+                  </ConsoleButton>
                 </div>
               )}
 

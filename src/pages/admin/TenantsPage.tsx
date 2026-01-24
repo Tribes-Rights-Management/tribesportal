@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { ConsoleButton } from "@/components/console";
 import { Plus, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { OrganizationFormModal } from "@/components/admin/OrganizationFormModal";
@@ -133,7 +133,7 @@ export default function TenantsPage() {
         backLabel="System Console"
       >
         {/* Add button */}
-        <Button 
+        <ConsoleButton 
           variant="default"
           size="sm"
           onClick={openCreateDialog}
@@ -142,7 +142,7 @@ export default function TenantsPage() {
         >
           <Plus className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Add organization</span>
-        </Button>
+        </ConsoleButton>
       </PageShell>
 
       <ContentPanel>

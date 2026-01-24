@@ -19,8 +19,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { BackButton } from "@/components/ui/back-button";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { ConsoleButton, ConsoleChip } from "@/components/console";
 import { 
   Table, 
   TableHeader, 
@@ -236,12 +235,12 @@ function CreateExportDialog({ open, onOpenChange }: CreateExportDialogProps) {
         </div>
         
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <ConsoleButton intent="secondary" onClick={() => onOpenChange(false)}>
             Cancel
-          </Button>
-          <Button onClick={handleCreate} disabled={createExport.isPending}>
+          </ConsoleButton>
+          <ConsoleButton onClick={handleCreate} disabled={createExport.isPending}>
             {createExport.isPending ? "Creating..." : "Create Export"}
-          </Button>
+          </ConsoleButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -278,10 +277,10 @@ export default function DataRoomPage() {
             title="Data Room" 
             description="Formal disclosure packages for audits and compliance"
           />
-          <Button onClick={() => setShowCreateDialog(true)}>
+          <ConsoleButton onClick={() => setShowCreateDialog(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Create Export
-          </Button>
+          </ConsoleButton>
         </div>
       </div>
 
@@ -369,9 +368,9 @@ export default function DataRoomPage() {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="text-[10px]">
+                      <ConsoleChip variant="outline" className="text-[10px]">
                         {exp.scope_type}
-                      </Badge>
+                      </ConsoleChip>
                     </TableCell>
                     <TableCell>
                       <span className="text-[12px] text-muted-foreground">
@@ -381,9 +380,9 @@ export default function DataRoomPage() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {getStatusIcon(exp.status)}
-                        <Badge variant={getStatusVariant(exp.status)} className="text-[10px]">
+                        <ConsoleChip variant={getStatusVariant(exp.status)} className="text-[10px]">
                           {exp.status}
-                        </Badge>
+                        </ConsoleChip>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -400,7 +399,7 @@ export default function DataRoomPage() {
                           disabled={exp.status !== "completed"}
                         >
                           <Eye className="h-4 w-4" />
-                        </Button>
+                        </ConsoleButton>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -408,14 +407,14 @@ export default function DataRoomPage() {
                           disabled={exp.status !== "completed" || !exp.file_url}
                         >
                           <Download className="h-4 w-4" />
-                        </Button>
+                        </ConsoleButton>
                         <Button
                           variant="ghost"
                           size="sm"
                           className="h-8 w-8 p-0"
                         >
                           <Users className="h-4 w-4" />
-                        </Button>
+                        </ConsoleButton>
                       </div>
                     </TableCell>
                   </TableRow>

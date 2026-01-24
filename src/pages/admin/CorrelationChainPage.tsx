@@ -17,7 +17,7 @@ import {
   TableEmptyRow 
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { ConsoleButton } from "@/components/console";
 import { Search, Link2 } from "lucide-react";
 import { EMPTY_STATES, AUDIT_COPY } from "@/constants/institutional-copy";
 
@@ -203,7 +203,7 @@ export default function CorrelationChainPage() {
           >
             <Search className="h-4 w-4 mr-2" />
             Search
-          </Button>
+          </ConsoleButton>
         </div>
       </div>
 
@@ -287,7 +287,7 @@ export default function CorrelationChainPage() {
                       >
                         <Link2 className="h-4 w-4 mr-1" />
                         View Chain
-                      </Button>
+                      </ConsoleButton>
                     </TableCell>
                   </TableRow>
                 ))

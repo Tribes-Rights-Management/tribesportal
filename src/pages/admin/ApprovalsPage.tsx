@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
+import { ConsoleButton } from "@/components/console";
 import { ChevronRight, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -312,7 +312,7 @@ export default function ApprovalsPage() {
                 </div>
                 
                 {/* Retry action */}
-                <Button 
+                <ConsoleButton 
                   variant="outline" 
                   size="sm"
                   onClick={fetchData}
@@ -320,7 +320,7 @@ export default function ApprovalsPage() {
                 >
                   <RefreshCw className="h-3.5 w-3.5" strokeWidth={1.5} />
                   Retry
-                </Button>
+                </ConsoleButton>
               </div>
             </div>
           ) : pendingMemberships.length === 0 ? (
