@@ -133,7 +133,7 @@ export default function HelpOverviewPage() {
         description="Manage Help Center content"
         action={
           <AppButton
-            variant="primary"
+            intent="primary"
             size="sm"
             onClick={() => navigate("/help-workstation/articles/new")}
           >

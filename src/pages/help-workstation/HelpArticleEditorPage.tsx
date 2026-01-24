@@ -138,7 +138,7 @@ export default function HelpArticleEditorPage() {
   if (loading) {
     return (
       <div className="flex-1 p-8">
-        <p className="text-[13px] text-[#6B6B6B]">Loading article...</p>
+        <p className="text-[13px] text-muted-foreground">Loading article...</p>
       </div>
     );
   }
@@ -146,11 +146,11 @@ export default function HelpArticleEditorPage() {
   if (loadError) {
     return (
       <div className="flex-1 p-8">
-        <div className="flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r max-w-md">
-          <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
+        <div className="flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r max-w-md">
+          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
           <div>
-            <p className="text-[12px] text-[#E5E5E5]">Unable to load article</p>
-            <button onClick={() => navigate("/help-workstation/articles")} className="text-[11px] text-[#DC2626] hover:text-[#EF4444] underline mt-1">
+            <p className="text-[12px] text-foreground">Unable to load article</p>
+            <button onClick={() => navigate("/help-workstation/articles")} className="text-[11px] text-destructive hover:text-destructive/80 underline mt-1">
               Back to articles
             </button>
           </div>
@@ -162,8 +162,8 @@ export default function HelpArticleEditorPage() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <div className="px-8 py-4 border-b border-[#303030] flex items-center justify-between">
-        <button onClick={() => navigate("/help-workstation/articles")} className="flex items-center gap-2 text-[13px] text-[#AAAAAA] hover:text-white">
+      <div className="px-8 py-4 border-b border-border flex items-center justify-between">
+        <button onClick={() => navigate("/help-workstation/articles")} className="flex items-center gap-2 text-[13px] text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
           Back to Articles
         </button>
@@ -189,9 +189,9 @@ export default function HelpArticleEditorPage() {
         <div className="max-w-4xl">
           {/* Validation Error */}
           {validationError && (
-            <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
-              <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
-              <p className="text-[12px] text-[#E5E5E5]">{validationError}</p>
+            <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
+              <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
+              <p className="text-[12px] text-foreground">{validationError}</p>
             </div>
           )}
 
@@ -207,32 +207,32 @@ export default function HelpArticleEditorPage() {
 
           {/* Title */}
           <div className="mb-6">
-            <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Title</label>
+            <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">Title</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Article title"
-              className="w-full h-12 px-4 bg-[#1A1A1A] border border-[#303030] rounded text-[16px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050]"
+              className="w-full h-12 px-4 bg-card border border-border rounded text-[16px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
 
           {/* Slug */}
           <div className="mb-6">
-            <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Slug</label>
+            <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">Slug</label>
             <input
               type="text"
               value={slug}
               onChange={(e) => { setSlug(e.target.value); setSlugManual(true); }}
               placeholder="article-slug"
-              className="w-full h-10 px-3 bg-[#1A1A1A] border border-[#303030] rounded text-[13px] text-white placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#505050] font-mono"
+              className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring font-mono"
             />
           </div>
 
           {/* Content */}
           <div className="mb-6">
-            <label className="block text-[11px] uppercase tracking-wider text-[#6B6B6B] mb-2">Content</label>
-            <div className="bg-[#1A1A1A] border border-[#303030] rounded min-h-[400px]">
+            <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">Content</label>
+            <div className="bg-card border border-border rounded min-h-[400px]">
               <RichTextEditor content={bodyMd} onChange={setBodyMd} />
             </div>
           </div>
@@ -241,15 +241,15 @@ export default function HelpArticleEditorPage() {
 
       {/* Publish Dialog */}
       <AlertDialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen}>
-        <AlertDialogContent className="bg-[#0A0A0A] border-[#303030]">
+        <AlertDialogContent className="bg-background border-border">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-white">Publish Article?</AlertDialogTitle>
-            <AlertDialogDescription className="text-[#8F8F8F]">
+            <AlertDialogTitle className="text-foreground">Publish Article?</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
               This will make the article visible on the public Help Center.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-transparent border-[#303030] text-[#AAAAAA]">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-transparent border-border text-muted-foreground">Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handlePublish} disabled={publishing}>
               {publishing ? "Publishing..." : "Publish"}
             </AlertDialogAction>

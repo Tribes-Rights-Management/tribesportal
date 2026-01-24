@@ -36,11 +36,11 @@ const STATUS_TABS: { value: MessageStatus | "all"; label: string }[] = [
 
 function getStatusStyle(status: MessageStatus | null): string {
   switch (status) {
-    case "new": return "bg-[#059669]/20 text-[#34D399]";
-    case "open": return "bg-[#3B82F6]/20 text-[#60A5FA]";
-    case "waiting": return "bg-[#F59E0B]/20 text-[#FBBF24]";
-    case "resolved": return "bg-[#6B7280]/20 text-[#9CA3AF]";
-    default: return "bg-[#303030] text-[#AAAAAA]";
+    case "new": return "bg-emerald-500/20 text-emerald-400";
+    case "open": return "bg-blue-500/20 text-blue-400";
+    case "waiting": return "bg-amber-500/20 text-amber-400";
+    case "resolved": return "bg-gray-500/20 text-gray-400";
+    default: return "bg-muted text-muted-foreground";
   }
 }
 
@@ -135,23 +135,23 @@ export default function HelpMessagesPage() {
       {/* Header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
             HELP WORKSTATION
           </p>
-          <h1 className="text-[20px] font-medium text-white mb-1">Messages</h1>
-          <p className="text-[13px] text-[#AAAAAA]">{messages.length} messages</p>
+          <h1 className="text-[20px] font-medium text-foreground mb-1">Messages</h1>
+          <p className="text-[13px] text-muted-foreground">{messages.length} messages</p>
         </div>
       </div>
 
       {/* Inline Error */}
       {error && (
-        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
-          <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
+        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
+          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
           <div className="flex-1">
-            <p className="text-[12px] text-[#E5E5E5]">{error}</p>
+            <p className="text-[12px] text-foreground">{error}</p>
             <button 
               onClick={() => { setError(null); fetchMessages(); }} 
-              className="text-[11px] text-[#DC2626] hover:text-[#EF4444] underline mt-1 flex items-center gap-1"
+              className="text-[11px] text-destructive hover:text-destructive/80 underline mt-1 flex items-center gap-1"
             >
               <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
               Try again
@@ -161,19 +161,19 @@ export default function HelpMessagesPage() {
       )}
 
       {/* Status Tabs */}
-      <div className="flex gap-1 mb-6 border-b border-[#303030]">
+      <div className="flex gap-1 mb-6 border-b border-border">
         {STATUS_TABS.map(tab => (
           <button
             key={tab.value}
             onClick={() => setStatusFilter(tab.value)}
             className={`px-4 py-2.5 text-[12px] border-b-2 transition-colors ${
               statusFilter === tab.value 
-                ? 'text-white border-white' 
-                : 'text-[#AAAAAA] hover:text-white border-transparent'
+                ? 'text-foreground border-white' 
+                : 'text-muted-foreground hover:text-foreground border-transparent'
             }`}
           >
             {tab.label}
-            <span className={`ml-2 text-[11px] ${statusFilter === tab.value ? 'text-[#8F8F8F]' : 'text-[#6B6B6B]'}`}>
+            <span className={`ml-2 text-[11px] ${statusFilter === tab.value ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
               {statusCounts[tab.value]}
             </span>
           </button>
@@ -182,39 +182,39 @@ export default function HelpMessagesPage() {
 
       {/* Search */}
       <div className="mb-6 max-w-md relative">
-        <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#505050]" strokeWidth={1} />
+        <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/50" strokeWidth={1} />
         <input
           type="search"
           placeholder="Search messages..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full h-9 pl-7 pr-3 bg-transparent border-0 border-b border-[#303030] text-[12px] text-white placeholder:text-[#505050] focus:outline-none focus:border-[#505050]"
+          className="w-full h-9 pl-7 pr-3 bg-transparent border-0 border-b border-border text-[12px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-ring"
         />
       </div>
 
       {/* Table */}
-      <div className="bg-[#1A1A1A] border border-[#303030] rounded">
+      <div className="bg-card border border-border rounded">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-[#303030]">
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[25%]">Sender</th>
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[35%]">Subject</th>
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[15%]">Status</th>
-              <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium w-[25%]">Received</th>
+            <tr className="border-b border-border">
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[25%]">Sender</th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[35%]">Subject</th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[15%]">Status</th>
+              <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[25%]">Received</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
                 <td colSpan={4} className="text-center py-20">
-                  <p className="text-[13px] text-[#6B6B6B]">Loading messages...</p>
+                  <p className="text-[13px] text-muted-foreground">Loading messages...</p>
                 </td>
               </tr>
             ) : filteredMessages.length === 0 ? (
               <tr>
                 <td colSpan={4} className="text-center py-20">
-                  <p className="text-[14px] text-[#8F8F8F] mb-2">No messages yet</p>
-                  <p className="text-[12px] text-[#6B6B6B]">Messages from public Help Center will appear here</p>
+                  <p className="text-[14px] text-muted-foreground mb-2">No messages yet</p>
+                  <p className="text-[12px] text-muted-foreground">Messages from public Help Center will appear here</p>
                 </td>
               </tr>
             ) : (
@@ -222,13 +222,13 @@ export default function HelpMessagesPage() {
                 <tr 
                   key={msg.id}
                   onClick={() => setSelectedMessage(msg)}
-                  className="border-b border-[#303030]/30 hover:bg-white/[0.02] transition-colors cursor-pointer"
+                  className="border-b border-border/30 row-hover"
                 >
                   <td className="py-3 px-4">
-                    <p className="text-[13px] text-white">{msg.name}</p>
-                    <p className="text-[11px] text-[#8F8F8F] mt-0.5">{msg.email}</p>
+                    <p className="text-[13px] text-foreground">{msg.name}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">{msg.email}</p>
                   </td>
-                  <td className="py-3 px-4 text-[13px] text-white">
+                  <td className="py-3 px-4 text-[13px] text-foreground">
                     {msg.subject || msg.message.slice(0, 60) + (msg.message.length > 60 ? "..." : "")}
                   </td>
                   <td className="py-3 px-4">
@@ -236,7 +236,7 @@ export default function HelpMessagesPage() {
                       {(msg.status || "new")}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-right text-[12px] text-[#8F8F8F]">
+                  <td className="py-3 px-4 text-right text-[12px] text-muted-foreground">
                     {format(new Date(msg.created_at), "MMM d, yyyy")}
                   </td>
                 </tr>
@@ -250,14 +250,14 @@ export default function HelpMessagesPage() {
       {selectedMessage && (
         <>
           <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setSelectedMessage(null)} />
-          <div className="fixed inset-y-0 right-0 w-[500px] bg-[#0A0A0A] border-l border-[#303030] shadow-2xl z-50 flex flex-col">
+          <div className="fixed inset-y-0 right-0 w-[500px] bg-background border-l border-border shadow-2xl z-50 flex flex-col">
             {/* Panel Header */}
-            <div className="flex items-start justify-between px-6 py-5 border-b border-[#303030]">
+            <div className="flex items-start justify-between px-6 py-5 border-b border-border">
               <div className="min-w-0 flex-1">
-                <h2 className="text-[15px] font-medium text-white">{selectedMessage.name}</h2>
-                <p className="text-[11px] text-[#8F8F8F] mt-1">{selectedMessage.email}</p>
+                <h2 className="text-[15px] font-medium text-foreground">{selectedMessage.name}</h2>
+                <p className="text-[11px] text-muted-foreground mt-1">{selectedMessage.email}</p>
               </div>
-              <button onClick={() => setSelectedMessage(null)} className="text-[#6B6B6B] hover:text-white transition-colors ml-3">
+              <button onClick={() => setSelectedMessage(null)} className="text-muted-foreground hover:text-foreground transition-colors ml-3">
                 <X className="h-4 w-4" strokeWidth={1.5} />
               </button>
             </div>
@@ -266,7 +266,7 @@ export default function HelpMessagesPage() {
             <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
               {/* Status */}
               <div className="flex items-center gap-3">
-                <span className="text-[12px] text-[#8F8F8F]">Status:</span>
+                <span className="text-[12px] text-muted-foreground">Status:</span>
                 <span className={`text-[11px] px-2 py-1 rounded ${getStatusStyle(selectedMessage.status)}`}>
                   {(selectedMessage.status || "new")}
                 </span>
@@ -297,36 +297,36 @@ export default function HelpMessagesPage() {
               </div>
               
               {/* Message Content */}
-              <div className="bg-[#1A1A1A] border border-[#303030] rounded p-4">
+              <div className="bg-card border border-border rounded p-4">
                 {selectedMessage.subject && (
-                  <h4 className="text-[13px] font-medium text-white mb-2">{selectedMessage.subject}</h4>
+                  <h4 className="text-[13px] font-medium text-foreground mb-2">{selectedMessage.subject}</h4>
                 )}
-                <p className="text-[13px] text-[#AAAAAA] whitespace-pre-wrap">{selectedMessage.message}</p>
+                <p className="text-[13px] text-muted-foreground whitespace-pre-wrap">{selectedMessage.message}</p>
               </div>
               
               {/* Metadata */}
               <div className="space-y-2">
                 <div className="flex justify-between text-[12px]">
-                  <span className="text-[#6B6B6B]">Received</span>
-                  <span className="text-[#AAAAAA]">{format(new Date(selectedMessage.created_at), "MMM d, yyyy 'at' h:mm a")}</span>
+                  <span className="text-muted-foreground">Received</span>
+                  <span className="text-muted-foreground">{format(new Date(selectedMessage.created_at), "MMM d, yyyy 'at' h:mm a")}</span>
                 </div>
                 {selectedMessage.responded_at && (
                   <div className="flex justify-between text-[12px]">
-                    <span className="text-[#6B6B6B]">Resolved</span>
-                    <span className="text-[#AAAAAA]">{format(new Date(selectedMessage.responded_at), "MMM d, yyyy 'at' h:mm a")}</span>
+                    <span className="text-muted-foreground">Resolved</span>
+                    <span className="text-muted-foreground">{format(new Date(selectedMessage.responded_at), "MMM d, yyyy 'at' h:mm a")}</span>
                   </div>
                 )}
                 {selectedMessage.search_query && (
                   <div className="flex justify-between text-[12px]">
-                    <span className="text-[#6B6B6B]">Search query</span>
-                    <span className="text-[#AAAAAA]">"{selectedMessage.search_query}"</span>
+                    <span className="text-muted-foreground">Search query</span>
+                    <span className="text-muted-foreground">"{selectedMessage.search_query}"</span>
                   </div>
                 )}
               </div>
             </div>
             
             {/* Panel Footer */}
-            <div className="px-6 py-5 border-t border-[#303030]">
+            <div className="px-6 py-5 border-t border-border">
               <AppButton 
                 intent="secondary" 
                 size="sm" 

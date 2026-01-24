@@ -127,36 +127,36 @@ export default function HelpAnalyticsPage() {
       {/* Header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
             HELP WORKSTATION
           </p>
-          <h1 className="text-[20px] font-medium text-white mb-1">Analytics</h1>
-          <p className="text-[13px] text-[#AAAAAA]">Help content performance and trends</p>
+          <h1 className="text-[20px] font-medium text-foreground mb-1">Analytics</h1>
+          <p className="text-[13px] text-muted-foreground">Help content performance and trends</p>
         </div>
         
         <div className="relative">
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value as DateRange)}
-            className="h-9 pl-3 pr-8 bg-transparent border-0 border-b border-[#303030] text-[12px] text-[#AAAAAA] focus:outline-none focus:border-[#505050] appearance-none cursor-pointer"
+            className="h-9 pl-3 pr-8 bg-transparent border-0 border-b border-border text-[12px] text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring appearance-none cursor-pointer"
           >
             <option value="7">Last 7 days</option>
             <option value="30">Last 30 days</option>
             <option value="90">Last 90 days</option>
           </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6B6B6B] pointer-events-none" strokeWidth={1.5} />
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" strokeWidth={1.5} />
         </div>
       </div>
 
       {/* Inline Error */}
       {error && (
-        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-[#2A1A1A] border-l-2 border-[#7F1D1D] rounded-r">
-          <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
+        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
+          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
           <div className="flex-1">
-            <p className="text-[12px] text-[#E5E5E5]">{error}</p>
+            <p className="text-[12px] text-foreground">{error}</p>
             <button 
               onClick={fetchAnalytics} 
-              className="text-[11px] text-[#DC2626] hover:text-[#EF4444] underline mt-1 flex items-center gap-1"
+              className="text-[11px] text-destructive hover:text-destructive/80 underline mt-1 flex items-center gap-1"
             >
               <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
               Try again
@@ -167,12 +167,12 @@ export default function HelpAnalyticsPage() {
 
       {loading ? (
         <div className="py-12 text-center">
-          <p className="text-[13px] text-[#6B6B6B]">Loading analytics...</p>
+          <p className="text-[13px] text-muted-foreground">Loading analytics...</p>
         </div>
       ) : !hasData ? (
-        <div className="bg-[#1A1A1A] border border-[#303030] rounded py-16 text-center">
-          <p className="text-[14px] text-[#8F8F8F] mb-2">No analytics data yet</p>
-          <p className="text-[12px] text-[#6B6B6B] max-w-md mx-auto">
+        <div className="bg-card border border-border rounded py-16 text-center">
+          <p className="text-[14px] text-muted-foreground mb-2">No analytics data yet</p>
+          <p className="text-[12px] text-muted-foreground max-w-md mx-auto">
             Analytics data will appear here once users start searching and viewing Help articles.
             Make sure tracking is enabled in Settings.
           </p>
@@ -181,44 +181,44 @@ export default function HelpAnalyticsPage() {
         <div className="space-y-6">
           {/* Summary Stats */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-[#1A1A1A] border border-[#303030] rounded p-4">
-              <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">Total Searches</p>
-              <p className="text-[28px] font-medium text-white tabular-nums">{totalSearches}</p>
-              <p className="text-[11px] text-[#8F8F8F] mt-1.5">Last {dateRange} days</p>
+            <div className="bg-card border border-border rounded p-4">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Total Searches</p>
+              <p className="text-[28px] font-medium text-foreground tabular-nums">{totalSearches}</p>
+              <p className="text-[11px] text-muted-foreground mt-1.5">Last {dateRange} days</p>
             </div>
             
-            <div className="bg-[#1A1A1A] border border-[#303030] rounded p-4">
-              <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">Article Views</p>
-              <p className="text-[28px] font-medium text-white tabular-nums">{totalViews}</p>
-              <p className="text-[11px] text-[#8F8F8F] mt-1.5">All time</p>
+            <div className="bg-card border border-border rounded p-4">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Article Views</p>
+              <p className="text-[28px] font-medium text-foreground tabular-nums">{totalViews}</p>
+              <p className="text-[11px] text-muted-foreground mt-1.5">All time</p>
             </div>
             
-            <div className="bg-[#1A1A1A] border border-[#303030] rounded p-4">
-              <p className="text-[10px] uppercase tracking-wider text-[#6B6B6B] font-medium mb-2">Messages</p>
-              <p className="text-[28px] font-medium text-white tabular-nums">{messageVolume.total}</p>
-              <p className="text-[11px] text-[#8F8F8F] mt-1.5">{messageVolume.resolved} resolved</p>
+            <div className="bg-card border border-border rounded p-4">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Messages</p>
+              <p className="text-[28px] font-medium text-foreground tabular-nums">{messageVolume.total}</p>
+              <p className="text-[11px] text-muted-foreground mt-1.5">{messageVolume.resolved} resolved</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Top Searches */}
-            <div className="bg-[#1A1A1A] border border-[#303030] rounded p-5">
-              <h3 className="text-[15px] font-medium text-white mb-4">Top Search Queries</h3>
+            <div className="bg-card border border-border rounded p-5">
+              <h3 className="text-[15px] font-medium text-foreground mb-4">Top Search Queries</h3>
               
               {topSearches.length === 0 ? (
-                <p className="text-[12px] text-[#6B6B6B] py-6 text-center">No search data available</p>
+                <p className="text-[12px] text-muted-foreground py-6 text-center">No search data available</p>
               ) : (
                 <div className="space-y-0">
                   {topSearches.map((item, index) => (
                     <div 
                       key={item.query}
-                      className="flex items-center justify-between py-2 border-b border-[#303030]/30 last:border-0"
+                      className="flex items-center justify-between py-2 border-b border-border/30 last:border-0"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-[12px] w-5 text-[#6B6B6B]">{index + 1}.</span>
-                        <span className="text-[13px] text-[#AAAAAA] truncate">"{item.query}"</span>
+                        <span className="text-[12px] w-5 text-muted-foreground">{index + 1}.</span>
+                        <span className="text-[13px] text-muted-foreground truncate">"{item.query}"</span>
                       </div>
-                      <span className="text-[13px] font-medium text-white tabular-nums">{item.count}</span>
+                      <span className="text-[13px] font-medium text-foreground tabular-nums">{item.count}</span>
                     </div>
                   ))}
                 </div>
@@ -226,26 +226,26 @@ export default function HelpAnalyticsPage() {
             </div>
             
             {/* Top Articles */}
-            <div className="bg-[#1A1A1A] border border-[#303030] rounded p-5">
-              <h3 className="text-[15px] font-medium text-white mb-4">Most Viewed Articles</h3>
+            <div className="bg-card border border-border rounded p-5">
+              <h3 className="text-[15px] font-medium text-foreground mb-4">Most Viewed Articles</h3>
               
               {topArticles.filter(a => a.view_count > 0).length === 0 ? (
-                <p className="text-[12px] text-[#6B6B6B] py-6 text-center">No view data available</p>
+                <p className="text-[12px] text-muted-foreground py-6 text-center">No view data available</p>
               ) : (
                 <div className="space-y-0">
                   {topArticles.filter(a => a.view_count > 0).map((article, index) => (
                     <div 
                       key={article.id}
-                      className="flex items-center justify-between py-2 border-b border-[#303030]/30 last:border-0"
+                      className="flex items-center justify-between py-2 border-b border-border/30 last:border-0"
                     >
                       <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <span className="text-[12px] w-5 text-[#6B6B6B]">{index + 1}.</span>
-                        <span className="text-[13px] text-[#AAAAAA] truncate">{article.title}</span>
+                        <span className="text-[12px] w-5 text-muted-foreground">{index + 1}.</span>
+                        <span className="text-[13px] text-muted-foreground truncate">{article.title}</span>
                       </div>
                       <div className="flex items-center gap-4 shrink-0">
-                        <span className="text-[13px] font-medium text-white tabular-nums">{article.view_count}</span>
+                        <span className="text-[13px] font-medium text-foreground tabular-nums">{article.view_count}</span>
                         {article.helpful_ratio > 0 && (
-                          <span className="text-[11px] text-[#6B6B6B]">{article.helpful_ratio}%</span>
+                          <span className="text-[11px] text-muted-foreground">{article.helpful_ratio}%</span>
                         )}
                       </div>
                     </div>
@@ -256,9 +256,9 @@ export default function HelpAnalyticsPage() {
           </div>
 
           {/* Note */}
-          <div className="p-4 bg-[#141414] border border-[#303030] rounded">
-            <p className="text-[13px] text-[#AAAAAA] font-medium">Analytics data collection</p>
-            <p className="text-[11px] text-[#6B6B6B] mt-1">
+          <div className="p-4 bg-muted border border-border rounded">
+            <p className="text-[13px] text-muted-foreground font-medium">Analytics data collection</p>
+            <p className="text-[11px] text-muted-foreground mt-1">
               Search queries and article views are tracked when users interact with the public Help Center.
               Ensure the Help Center is properly instrumented to capture complete analytics.
             </p>
