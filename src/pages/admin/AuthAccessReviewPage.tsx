@@ -75,7 +75,7 @@ function ScopeChip({ scope }: { scope: "tenant" | "platform" }) {
       style={{ 
         backgroundColor: 'rgba(255,255,255,0.06)',
         color: 'var(--platform-text-secondary)',
-        border: '1px solid rgba(255,255,255,0.1)'
+        border: '1px solid hsl(var(--muted))'
       }}
     >
       {scope}
@@ -286,7 +286,7 @@ function ExceptionDetailModal({
         className="max-w-lg"
         style={{ 
           backgroundColor: 'var(--platform-surface)',
-          border: '1px solid rgba(255,255,255,0.1)'
+          border: '1px solid hsl(var(--muted))'
         }}
       >
         <DialogHeader>
@@ -318,7 +318,7 @@ function ExceptionDetailModal({
               <label className="text-[11px] uppercase tracking-wide font-medium" style={{ color: 'var(--platform-text-muted)' }}>
                 Expected
               </label>
-              <p className="text-[13px] mt-1 font-mono text-[12px] p-2 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: 'var(--platform-text-secondary)' }}>
+              <p className="text-[13px] mt-1 font-mono text-[12px] p-2 rounded" style={{ backgroundColor: 'hsl(var(--muted) / 0.5)', color: 'var(--platform-text-secondary)' }}>
                 {exception.expected}
               </p>
             </div>
@@ -535,7 +535,7 @@ export default function SecurityVerificationPage() {
       {/* ========== COMMAND BAR ========== */}
       <div 
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 pb-6"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
+        style={{ borderBottom: '1px solid hsl(var(--border))' }}
       >
         <div className="min-w-0">
           <div className="flex items-center gap-3 mb-1">
@@ -602,7 +602,7 @@ export default function SecurityVerificationPage() {
           className="rounded-lg overflow-hidden"
           style={{ 
             backgroundColor: 'var(--platform-surface)',
-            border: '1px solid rgba(255,255,255,0.08)'
+            border: '1px solid hsl(var(--border))'
           }}
         >
           <div 
@@ -616,7 +616,7 @@ export default function SecurityVerificationPage() {
               <span 
                 className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[11px] font-semibold rounded"
                 style={{ 
-                  backgroundColor: exceptions.length > 0 ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.08)',
+                  backgroundColor: exceptions.length > 0 ? 'rgba(239,68,68,0.15)' : 'hsl(var(--border))',
                   color: exceptions.length > 0 ? 'hsl(var(--destructive))' : 'var(--platform-text-muted)'
                 }}
               >
@@ -667,7 +667,7 @@ export default function SecurityVerificationPage() {
           className="rounded-lg overflow-hidden"
           style={{ 
             backgroundColor: 'var(--platform-surface)',
-            border: '1px solid rgba(255,255,255,0.08)'
+            border: '1px solid hsl(var(--border))'
           }}
         >
           <div 
@@ -694,7 +694,7 @@ export default function SecurityVerificationPage() {
           className="rounded-lg overflow-hidden"
           style={{ 
             backgroundColor: 'var(--platform-surface)',
-            border: '1px solid rgba(255,255,255,0.08)'
+            border: '1px solid hsl(var(--border))'
           }}
         >
           <div 

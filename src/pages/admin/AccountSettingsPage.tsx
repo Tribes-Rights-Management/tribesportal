@@ -121,7 +121,7 @@ export default function AccountSettingsPage() {
             to="/admin" 
             className="h-8 w-8 rounded flex items-center justify-center transition-colors"
             style={{ color: 'var(--platform-text-secondary)' }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             <ArrowLeft className="h-4 w-4" />
@@ -166,7 +166,7 @@ export default function AccountSettingsPage() {
             <div className="flex items-start gap-3 mb-4">
               <div 
                 className="h-8 w-8 rounded flex items-center justify-center shrink-0 mt-0.5"
-                style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+                style={{ backgroundColor: 'hsl(var(--muted) / 0.5)' }}
               >
                 <Monitor className="h-4 w-4" style={{ color: 'var(--platform-text-secondary)' }} />
               </div>
@@ -189,7 +189,7 @@ export default function AccountSettingsPage() {
             <div className="flex items-start gap-3">
               <div 
                 className="h-8 w-8 rounded flex items-center justify-center shrink-0 mt-0.5"
-                style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+                style={{ backgroundColor: 'hsl(var(--muted) / 0.5)' }}
               >
                 <Clock className="h-4 w-4" style={{ color: 'var(--platform-text-secondary)' }} />
               </div>

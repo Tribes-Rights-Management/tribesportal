@@ -404,7 +404,7 @@ export default function ApprovalsPage() {
                                 <SelectItem 
                                   key={tenant.id} 
                                   value={tenant.id}
-                                  className="text-white/80 focus:bg-white/10 focus:text-white"
+                                  className="text-foreground/80 focus:bg-white/10 focus:text-foreground"
                                 >
                                   {tenant.name}
                                 </SelectItem>
@@ -442,7 +442,7 @@ export default function ApprovalsPage() {
                                 <SelectItem 
                                   key={role.value} 
                                   value={role.value}
-                                  className="text-white/80 focus:bg-white/10 focus:text-white"
+                                  className="text-foreground/80 focus:bg-white/10 focus:text-foreground"
                                 >
                                   {role.label}
                                 </SelectItem>
@@ -466,7 +466,7 @@ export default function ApprovalsPage() {
                                 className="flex items-center gap-3 h-11 px-3 rounded-lg cursor-pointer"
                                 style={{ 
                                   backgroundColor: formState.contexts.includes(context.value) 
-                                    ? 'rgba(255,255,255,0.04)' 
+                                    ? 'hsl(var(--muted) / 0.5)' 
                                     : 'transparent',
                                   border: '1px solid var(--platform-border)',
                                 }}
@@ -522,7 +522,7 @@ export default function ApprovalsPage() {
                                   <SelectItem 
                                     key={ctx} 
                                     value={ctx}
-                                    className="text-white/80 focus:bg-white/10 focus:text-white"
+                                    className="text-foreground/80 focus:bg-white/10 focus:text-foreground"
                                   >
                                     {ctx === "licensing" ? "Licensing" : "Publishing"}
                                   </SelectItem>
@@ -602,7 +602,7 @@ export default function ApprovalsPage() {
                           }
                           disabled={processing === membership.id}
                         >
-                          <SelectTrigger className="w-40 h-8 text-[13px] bg-transparent border-border text-white/90">
+                          <SelectTrigger className="w-40 h-8 text-[13px] bg-transparent border-border text-foreground/90">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent className="bg-card border-border">
@@ -610,7 +610,7 @@ export default function ApprovalsPage() {
                               <SelectItem 
                                 key={tenant.id} 
                                 value={tenant.id}
-                                className="text-white/80 focus:bg-white/10 focus:text-white"
+                                className="text-foreground/80 focus:bg-white/10 focus:text-foreground"
                               >
                                 {tenant.name}
                               </SelectItem>
@@ -626,7 +626,7 @@ export default function ApprovalsPage() {
                           }
                           disabled={processing === membership.id}
                         >
-                          <SelectTrigger className="w-28 h-8 text-[13px] bg-transparent border-border text-white/90">
+                          <SelectTrigger className="w-28 h-8 text-[13px] bg-transparent border-border text-foreground/90">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="bg-card border-border">
@@ -634,7 +634,7 @@ export default function ApprovalsPage() {
                               <SelectItem 
                                 key={role.value} 
                                 value={role.value}
-                                className="text-white/80 focus:bg-white/10 focus:text-white"
+                                className="text-foreground/80 focus:bg-white/10 focus:text-foreground"
                               >
                                 {role.label}
                               </SelectItem>
@@ -673,7 +673,7 @@ export default function ApprovalsPage() {
                           }
                           disabled={processing === membership.id}
                         >
-                          <SelectTrigger className="w-24 h-8 text-[13px] bg-transparent border-border text-white/90">
+                          <SelectTrigger className="w-24 h-8 text-[13px] bg-transparent border-border text-foreground/90">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="bg-card border-border">
@@ -681,7 +681,7 @@ export default function ApprovalsPage() {
                               <SelectItem 
                                 key={ctx} 
                                 value={ctx}
-                                className="text-white/80 focus:bg-white/10 focus:text-white"
+                                className="text-foreground/80 focus:bg-white/10 focus:text-foreground"
                               >
                                 {ctx === "licensing" ? "Licensing" : "Publishing"}
                               </SelectItem>
