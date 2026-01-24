@@ -3,31 +3,34 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 /**
- * ADMIN LIST ROW — CANONICAL ROW COMPONENT (INSTITUTIONAL STANDARD)
+ * ADMIN ROW COMPONENTS — CANONICAL SYSTEM CONSOLE ROWS (INSTITUTIONAL STANDARD)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
+ * TWO DISTINCT ROW TYPES:
+ * ═══════════════════════════════════════════════════════════════════════════
+ * 
+ * 1. AdminMetricRow — STATS (read-only metrics)
+ *    - Subtle left border accent (muted blue-gray)
+ *    - Compact height, no description
+ *    - Value on right, label on left
+ *    - Used in: Governance Overview
+ * 
+ * 2. AdminListRow — NAVIGATION (links to sub-pages)
+ *    - No left border (clean edge)
+ *    - Title + optional description
+ *    - Chevron indicates navigation
+ *    - Used in: All other sections
+ * 
+ * VISUAL DIFFERENTIATION:
+ * - Stats rows have a 2px left border accent
+ * - Navigation rows have no left accent
+ * - This creates instant visual recognition of "data vs action"
+ * 
  * MOBILE READABILITY RULES (NON-NEGOTIABLE):
- * ═══════════════════════════════════════════════════════════════════════════
- * 
- * 1. TITLE: Single-line, truncate with ellipsis if needed
- * 2. DESCRIPTION: Must wrap up to TWO lines, then truncate
- *    - Uses: line-clamp-2 + break-words + overflow-hidden
- *    - NO single-line truncation on descriptions
- * 3. LAYOUT SAFEGUARDS:
- *    - Parent flex containers include min-w-0
- *    - Right-side space reserved for chevrons/icons (no overlap)
- *    - Row height expands naturally for 2-line descriptions
- * 
- * NOTE: Uses native elements for list row semantics, not Button component.
- * The Button component is for actions, not navigation list items.
- * 
- * USAGE:
- * <AdminListRow
- *   to="/admin/some-page"
- *   title="Row Title"
- *   description="Optional secondary text that can wrap to two lines"
- *   trailing="Optional value"
- * />
+ * - Title: Single-line, truncate with ellipsis if needed
+ * - Description: Wraps to 2 lines max, then truncates
+ * - Parent flex containers include min-w-0
+ * - Right-side space reserved for chevrons (no overlap)
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -65,7 +68,7 @@ export function AdminListRow({
       {/* Left: Title + Description */}
       <div className="min-w-0 flex-1">
         <p 
-          className="text-[13px] md:text-[14px] truncate"
+          className="text-[13px] md:text-[14px] truncate font-medium"
           style={{ color: 'var(--platform-text)' }}
         >
           {title}
@@ -116,8 +119,7 @@ export function AdminListRow({
     borderBottom: '1px solid var(--platform-border)',
   };
 
-  // For onClick handlers, we use a div with role="button" for accessibility
-  // This maintains list row semantics while being keyboard accessible
+  // For onClick handlers, use div with role="button" for accessibility
   if (onClick) {
     return (
       <div
@@ -150,8 +152,13 @@ export function AdminListRow({
 }
 
 /**
- * ADMIN METRIC ROW — Read-only count with subtle link
- * No action affordance. Link goes to detail view.
+ * ADMIN METRIC ROW — Read-only stat with subtle left accent
+ * 
+ * Visual distinction from navigation rows:
+ * - 2px left border accent (muted, institutional)
+ * - More compact (no description)
+ * - Label left, value right
+ * - Subtle background tint on hover
  */
 interface AdminMetricRowProps {
   to: string;
@@ -169,20 +176,30 @@ export function AdminMetricRow({
   return (
     <Link 
       to={to} 
-      className="flex items-center justify-between px-4 md:px-5 py-3 md:py-3.5 transition-colors duration-150 group hover:bg-white/[0.02]"
+      className="relative flex items-center justify-between px-4 md:px-5 py-3 md:py-3.5 transition-colors duration-150 group hover:bg-white/[0.03]"
       style={{ 
         borderBottom: '1px solid var(--platform-border)',
       }}
     >
+      {/* Left accent bar — distinguishes stats from navigation */}
+      <div 
+        className="absolute left-0 top-2 bottom-2 w-[2px] rounded-full"
+        style={{ 
+          backgroundColor: highlight 
+            ? 'rgba(59, 130, 246, 0.5)'  // Blue accent for highlighted metrics
+            : 'rgba(255, 255, 255, 0.08)' // Subtle gray for normal metrics
+        }}
+      />
+      
       <span 
         className="text-[13px] md:text-[14px] min-w-0 flex-1"
         style={{ color: 'var(--platform-text-secondary)' }}
       >
         {label}
       </span>
-      <div className="flex items-center gap-2 shrink-0">
+      <div className="flex items-center gap-2.5 shrink-0">
         <span 
-          className="text-[13px] md:text-[14px] font-medium tabular-nums"
+          className="text-[14px] md:text-[15px] font-semibold tabular-nums"
           style={{ 
             color: highlight ? 'var(--platform-text)' : 'var(--platform-text-muted)'
           }}
@@ -190,7 +207,7 @@ export function AdminMetricRow({
           {value}
         </span>
         <ChevronRight 
-          className="h-3.5 w-3.5 opacity-30 group-hover:opacity-50 transition-opacity"
+          className="h-3.5 w-3.5 opacity-20 group-hover:opacity-40 transition-opacity"
           style={{ color: 'var(--platform-text-muted)' }}
         />
       </div>
@@ -200,18 +217,24 @@ export function AdminMetricRow({
 
 /**
  * ADMIN SECTION — Sparse grouping with small caps label
+ * 
+ * Contains either metric rows OR navigation rows (not mixed)
  */
 interface AdminSectionProps {
   label: string;
   children: React.ReactNode;
+  /** Optional: adds subtle top padding for visual breathing room */
+  variant?: 'default' | 'compact';
 }
 
-export function AdminSection({ label, children }: AdminSectionProps) {
+export function AdminSection({ label, children, variant = 'default' }: AdminSectionProps) {
   return (
-    <section className="mb-8 md:mb-10">
+    <section className={cn(
+      variant === 'compact' ? 'mb-6 md:mb-8' : 'mb-8 md:mb-10'
+    )}>
       <h2 
-        className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.1em] mb-3 md:mb-4"
-        style={{ color: 'var(--platform-text-muted)', opacity: 0.7 }}
+        className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.1em] mb-2.5 md:mb-3"
+        style={{ color: 'var(--platform-text-muted)', opacity: 0.6 }}
       >
         {label}
       </h2>
