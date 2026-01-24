@@ -113,9 +113,9 @@ function WorkspaceRow({
         <span 
           className={cn(
             "text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded",
-            variant === "admin" && "bg-white/10 text-white/70",
-            variant === "member" && "bg-white/5 text-white/50",
-            variant === "readonly" && "bg-white/5 text-white/40"
+            variant === "admin" && "bg-white/10 text-foreground/70",
+            variant === "member" && "bg-white/5 text-foreground/50",
+            variant === "readonly" && "bg-white/5 text-foreground/40"
           )}
         >
           {label}

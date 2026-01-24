@@ -121,7 +121,7 @@ export function ScopeAssignments({
                             color: 'var(--platform-text-muted)',
                             border: '1px solid var(--platform-border)'
                           }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)'}
                           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                         >
                           Suspend
@@ -135,7 +135,7 @@ export function ScopeAssignments({
                             color: 'var(--platform-text-muted)',
                             border: '1px solid var(--platform-border)'
                           }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)'}
                           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                         >
                           Restore
@@ -180,7 +180,7 @@ export function ScopeAssignments({
                           className="px-3 py-1.5 text-[12px] rounded transition-colors"
                           style={{ 
                             backgroundColor: membership.role === role 
-                              ? 'rgba(255,255,255,0.1)' 
+                              ? 'hsl(var(--muted))' 
                               : 'transparent',
                             color: membership.role === role 
                               ? 'var(--platform-text)' 
@@ -189,7 +189,7 @@ export function ScopeAssignments({
                           }}
                           onMouseEnter={(e) => {
                             if (membership.role !== role) {
-                              e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                              e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)';
                             }
                           }}
                           onMouseLeave={(e) => {
