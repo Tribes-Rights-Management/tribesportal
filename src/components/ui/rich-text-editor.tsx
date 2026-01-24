@@ -62,8 +62,8 @@ function ToolbarButton({ onClick, isActive, disabled, title, children }: Toolbar
       title={title}
       className={`p-1.5 rounded transition-colors ${
         isActive
-          ? "bg-[#303030] text-white"
-          : "text-[#6B6B6B] hover:text-[#AAAAAA] hover:bg-[#252525]"
+          ? "bg-muted text-foreground"
+          : "text-muted-foreground hover:text-muted-foreground hover:bg-[#252525]"
       } ${disabled ? "opacity-40 cursor-not-allowed" : ""}`}
     >
       {children}
@@ -72,7 +72,7 @@ function ToolbarButton({ onClick, isActive, disabled, title, children }: Toolbar
 }
 
 function ToolbarDivider() {
-  return <span className="w-px h-4 bg-[#303030] mx-1" />;
+  return <span className="w-px h-4 bg-muted mx-1" />;
 }
 
 // ============================================================================
@@ -107,10 +107,10 @@ function LinkDialog({ isOpen, onClose, onSubmit, initialUrl = "" }: LinkDialogPr
   return (
     <>
       <div className="fixed inset-0 bg-black/50 z-40" onClick={onClose} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] bg-[#1A1A1A] border border-[#303030] rounded-lg shadow-xl z-50">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] bg-card border border-border rounded-lg shadow-xl z-50">
         <form onSubmit={handleSubmit}>
-          <div className="px-4 py-3 border-b border-[#303030]">
-            <p className="text-[14px] font-medium text-[#E5E5E5]">Insert Link</p>
+          <div className="px-4 py-3 border-b border-border">
+            <p className="text-[14px] font-medium text-foreground">Insert Link</p>
           </div>
           <div className="px-4 py-4">
             <label className="block text-[11px] uppercase tracking-wider text-[#888888] mb-2">
@@ -122,10 +122,10 @@ function LinkDialog({ isOpen, onClose, onSubmit, initialUrl = "" }: LinkDialogPr
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://example.com"
               autoFocus
-              className="w-full h-10 px-3 bg-[#252525] border border-[#404040] rounded-md text-[13px] text-[#E5E5E5] placeholder:text-[#666666] focus:outline-none focus:border-[#505050]"
+              className="w-full h-10 px-3 bg-[#252525] border border-border rounded-md text-[13px] text-foreground placeholder:text-[#666666] focus:outline-none focus:border-ring"
             />
           </div>
-          <div className="flex justify-end gap-2 px-4 py-3 border-t border-[#303030]">
+          <div className="flex justify-end gap-2 px-4 py-3 border-t border-border">
             <button
               type="button"
               onClick={onClose}
@@ -135,7 +135,7 @@ function LinkDialog({ isOpen, onClose, onSubmit, initialUrl = "" }: LinkDialogPr
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 text-[13px] bg-[#303030] text-[#E5E5E5] rounded-md hover:bg-[#404040] transition-colors"
+              className="px-4 py-1.5 text-[13px] bg-muted text-foreground rounded-md hover:bg-[#404040] transition-colors"
             >
               {initialUrl ? "Update" : "Insert"}
             </button>
@@ -216,19 +216,19 @@ function ImageDialog({ isOpen, onClose, onInsert }: ImageDialogProps) {
   return (
     <>
       <div className="fixed inset-0 bg-black/50 z-40" onClick={onClose} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-[#1A1A1A] border border-[#303030] rounded-lg shadow-xl z-50">
-        <div className="px-4 py-3 border-b border-[#303030]">
-          <p className="text-[14px] font-medium text-[#E5E5E5]">Insert Image</p>
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-card border border-border rounded-lg shadow-xl z-50">
+        <div className="px-4 py-3 border-b border-border">
+          <p className="text-[14px] font-medium text-foreground">Insert Image</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-[#303030]">
+        <div className="flex border-b border-border">
           <button
             type="button"
             onClick={() => setActiveTab("upload")}
             className={`flex-1 px-4 py-2.5 text-[13px] transition-colors ${
               activeTab === "upload"
-                ? "text-[#E5E5E5] border-b-2 border-[#E5E5E5]"
+                ? "text-foreground border-b-2 border-[#E5E5E5]"
                 : "text-[#666666] hover:text-[#999999]"
             }`}
           >
@@ -239,7 +239,7 @@ function ImageDialog({ isOpen, onClose, onInsert }: ImageDialogProps) {
             onClick={() => setActiveTab("url")}
             className={`flex-1 px-4 py-2.5 text-[13px] transition-colors ${
               activeTab === "url"
-                ? "text-[#E5E5E5] border-b-2 border-[#E5E5E5]"
+                ? "text-foreground border-b-2 border-[#E5E5E5]"
                 : "text-[#666666] hover:text-[#999999]"
             }`}
           >
@@ -261,7 +261,7 @@ function ImageDialog({ isOpen, onClose, onInsert }: ImageDialogProps) {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="w-full h-32 border-2 border-dashed border-[#404040] rounded-lg flex flex-col items-center justify-center gap-2 hover:border-[#505050] hover:bg-[#252525] transition-colors disabled:opacity-50"
+                className="w-full h-32 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center gap-2 hover:border-ring hover:bg-[#252525] transition-colors disabled:opacity-50"
               >
                 {uploading ? (
                   <>
@@ -292,7 +292,7 @@ function ImageDialog({ isOpen, onClose, onInsert }: ImageDialogProps) {
                 onChange={(e) => setUrlInput(e.target.value)}
                 placeholder="https://example.com/image.jpg"
                 autoFocus
-                className="w-full h-10 px-3 bg-[#252525] border border-[#404040] rounded-md text-[13px] text-[#E5E5E5] placeholder:text-[#666666] focus:outline-none focus:border-[#505050]"
+                className="w-full h-10 px-3 bg-[#252525] border border-border rounded-md text-[13px] text-foreground placeholder:text-[#666666] focus:outline-none focus:border-ring"
               />
             </form>
           )}
@@ -302,7 +302,7 @@ function ImageDialog({ isOpen, onClose, onInsert }: ImageDialogProps) {
           )}
         </div>
 
-        <div className="flex justify-end gap-2 px-4 py-3 border-t border-[#303030]">
+        <div className="flex justify-end gap-2 px-4 py-3 border-t border-border">
           <button
             type="button"
             onClick={onClose}
@@ -315,7 +315,7 @@ function ImageDialog({ isOpen, onClose, onInsert }: ImageDialogProps) {
               type="button"
               onClick={handleUrlSubmit}
               disabled={!urlInput.trim()}
-              className="px-4 py-1.5 text-[13px] bg-[#303030] text-[#E5E5E5] rounded-md hover:bg-[#404040] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-1.5 text-[13px] bg-muted text-foreground rounded-md hover:bg-[#404040] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Insert
             </button>
@@ -419,10 +419,10 @@ function VideoDialog({ isOpen, onClose, onInsert }: VideoDialogProps) {
   return (
     <>
       <div className="fixed inset-0 bg-black/50 z-40" onClick={onClose} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[440px] bg-[#1A1A1A] border border-[#303030] rounded-lg shadow-xl z-50">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[440px] bg-card border border-border rounded-lg shadow-xl z-50">
         <form onSubmit={handleSubmit}>
-          <div className="px-4 py-3 border-b border-[#303030]">
-            <p className="text-[14px] font-medium text-[#E5E5E5]">Embed Video</p>
+          <div className="px-4 py-3 border-b border-border">
+            <p className="text-[14px] font-medium text-foreground">Embed Video</p>
           </div>
 
           <div className="px-4 py-4 space-y-4">
@@ -436,7 +436,7 @@ function VideoDialog({ isOpen, onClose, onInsert }: VideoDialogProps) {
                 onChange={(e) => handleUrlChange(e.target.value)}
                 placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
                 autoFocus
-                className="w-full h-10 px-3 bg-[#252525] border border-[#404040] rounded-md text-[13px] text-[#E5E5E5] placeholder:text-[#666666] focus:outline-none focus:border-[#505050]"
+                className="w-full h-10 px-3 bg-[#252525] border border-border rounded-md text-[13px] text-foreground placeholder:text-[#666666] focus:outline-none focus:border-ring"
               />
               <p className="mt-1.5 text-[11px] text-[#666666]">
                 Supports YouTube and Vimeo links
@@ -469,7 +469,7 @@ function VideoDialog({ isOpen, onClose, onInsert }: VideoDialogProps) {
             )}
           </div>
 
-          <div className="flex justify-end gap-2 px-4 py-3 border-t border-[#303030]">
+          <div className="flex justify-end gap-2 px-4 py-3 border-t border-border">
             <button
               type="button"
               onClick={onClose}
@@ -480,7 +480,7 @@ function VideoDialog({ isOpen, onClose, onInsert }: VideoDialogProps) {
             <button
               type="submit"
               disabled={!preview}
-              className="px-4 py-1.5 text-[13px] bg-[#303030] text-[#E5E5E5] rounded-md hover:bg-[#404040] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-1.5 text-[13px] bg-muted text-foreground rounded-md hover:bg-[#404040] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Embed
             </button>
@@ -563,7 +563,7 @@ function EditorToolbar({ editor, onImageUpload }: EditorToolbarProps) {
 
   return (
     <>
-      <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-[#303030] bg-[#141414]">
+      <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border bg-muted">
         {/* Text formatting */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -841,7 +841,7 @@ export function RichTextEditor({
 
   return (
     <div
-      className={`border border-[#404040] rounded-md overflow-hidden relative ${className} ${
+      className={`border border-border rounded-md overflow-hidden relative ${className} ${
         isDragging ? "ring-2 ring-[#60A5FA] ring-opacity-50" : ""
       }`}
       onDragOver={handleDragOver}
@@ -853,20 +853,20 @@ export function RichTextEditor({
 
       {/* Upload overlay */}
       {isDragging && (
-        <div className="absolute inset-0 bg-[#1A1A1A]/90 flex items-center justify-center pointer-events-none z-10">
+        <div className="absolute inset-0 bg-card/90 flex items-center justify-center pointer-events-none z-10">
           <div className="text-center">
             <ImageIcon className="h-12 w-12 text-[#60A5FA] mx-auto mb-2" />
-            <p className="text-[14px] text-[#E5E5E5]">Drop image to upload</p>
+            <p className="text-[14px] text-foreground">Drop image to upload</p>
           </div>
         </div>
       )}
 
       {/* Uploading indicator */}
       {isUploading && (
-        <div className="absolute inset-0 bg-[#1A1A1A]/90 flex items-center justify-center z-10">
+        <div className="absolute inset-0 bg-card/90 flex items-center justify-center z-10">
           <div className="text-center">
             <Loader2 className="h-8 w-8 text-[#60A5FA] mx-auto mb-2 animate-spin" />
-            <p className="text-[14px] text-[#E5E5E5]">Uploading image...</p>
+            <p className="text-[14px] text-foreground">Uploading image...</p>
           </div>
         </div>
       )}
