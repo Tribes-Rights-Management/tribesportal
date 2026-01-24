@@ -139,7 +139,7 @@ export function EditSelectSheet({
                 disabled && "opacity-50 cursor-not-allowed"
               )}
               style={{ 
-                borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                borderBottom: isLast ? 'none' : '1px solid hsl(var(--border))',
               }}
             >
               <span 

@@ -53,8 +53,8 @@ const AlertDialogContent = React.forwardRef<
         className,
       )}
       style={{
-        backgroundColor: '#18181B',
-        border: '1px solid rgba(255,255,255,0.08)',
+        backgroundColor: 'var(--background)',
+        border: '1px solid hsl(var(--border))',
         boxShadow: '0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,0,0,0.2)',
       }}
       {...props}

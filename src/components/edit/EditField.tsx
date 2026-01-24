@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
  * Uses canonical CSS variables from index.css for consistency.
  * 
  * STYLING (NON-NEGOTIABLE):
- * - Background: rgba(255,255,255,0.04) — subtle surface lift
+ * - Background: hsl(var(--muted) / 0.5) — subtle surface lift
  * - Border: 1px solid rgba(255,255,255,0.18) — visible light-gray
  * - Border on focus: 1px solid rgba(255,255,255,0.28) — slightly stronger
  * - Corner radius: 10px (Apple-like, slightly rounded)
@@ -64,7 +64,7 @@ export const EditField = React.forwardRef<HTMLInputElement, EditFieldProps>(
             padding: 'var(--edit-input-padding, 0 16px)',
             fontSize: 'var(--edit-input-font-size, 16px)', // 16px prevents iOS zoom
             borderRadius: 'var(--edit-input-radius, 10px)',
-            backgroundColor: 'var(--edit-input-bg, rgba(255,255,255,0.04))',
+            backgroundColor: 'var(--edit-input-bg, hsl(var(--muted) / 0.5))',
             color: 'var(--edit-input-text, var(--platform-text))',
             border: hasError 
               ? '1px solid var(--edit-input-error-border, hsl(0 62% 50%))' 
