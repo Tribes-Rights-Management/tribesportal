@@ -206,7 +206,7 @@ function ExceptionRow({
 function RLSCoverageRow({ row }: { row: typeof RLS_COVERAGE[0] }) {
   const PolicyIndicator = ({ expected }: { expected: boolean }) => (
     expected ? (
-      <Check className="h-3 w-3" style={{ color: '#4ade80' }} />
+      <Check className="h-3 w-3 text-emerald-400" />
     ) : (
       <span style={{ color: 'var(--platform-text-muted)' }}>—</span>
     )
@@ -256,7 +256,7 @@ function RLSCoverageRow({ row }: { row: typeof RLS_COVERAGE[0] }) {
           {row.template === "-" ? "Platform" : row.template}
         </span>
         <div className="text-center">
-          {row.requiresTenantId ? <Check className="h-3 w-3 mx-auto" style={{ color: '#60a5fa' }} /> : <span style={{ color: 'var(--platform-text-muted)' }}>—</span>}
+          {row.requiresTenantId ? <Check className="h-3 w-3 mx-auto text-blue-400" /> : <span style={{ color: 'var(--platform-text-muted)' }}>—</span>}
         </div>
         <div className="text-center"><PolicyIndicator expected={row.expectedPolicies.select} /></div>
         <div className="text-center"><PolicyIndicator expected={row.expectedPolicies.insert} /></div>
@@ -327,7 +327,7 @@ function ExceptionDetailModal({
               <label className="text-[11px] uppercase tracking-wide font-medium" style={{ color: 'var(--platform-text-muted)' }}>
                 Observed
               </label>
-              <p className="text-[13px] mt-1 font-mono text-[12px] p-2 rounded" style={{ backgroundColor: 'rgba(239,68,68,0.08)', color: '#f87171' }}>
+              <p className="text-[13px] mt-1 font-mono text-[12px] p-2 rounded" style={{ backgroundColor: 'rgba(239,68,68,0.08)', color: 'hsl(var(--destructive))' }}>
                 {exception.observed}
               </p>
             </div>
@@ -617,7 +617,7 @@ export default function SecurityVerificationPage() {
                 className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[11px] font-semibold rounded"
                 style={{ 
                   backgroundColor: exceptions.length > 0 ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.08)',
-                  color: exceptions.length > 0 ? '#f87171' : 'var(--platform-text-muted)'
+                  color: exceptions.length > 0 ? 'hsl(var(--destructive))' : 'var(--platform-text-muted)'
                 }}
               >
                 {exceptions.length}

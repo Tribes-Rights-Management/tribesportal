@@ -368,7 +368,7 @@ export default function DataRoomPage() {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className="text-[10px] px-2 py-0.5 rounded border border-[--console-card-border] text-[--platform-text-muted]">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: 'var(--platform-text-secondary)' }}>
                         {exp.scope_type}
                       </span>
                     </TableCell>
@@ -380,7 +380,7 @@ export default function DataRoomPage() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {getStatusIcon(exp.status)}
-                        <span className="text-[10px] px-2 py-0.5 rounded border border-[--console-card-border] text-[--platform-text-muted]">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: 'var(--platform-text-secondary)' }}>
                           {exp.status}
                         </span>
                       </div>
