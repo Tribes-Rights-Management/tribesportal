@@ -249,12 +249,12 @@ export function AppModalAction({
   
   const variantStyles = {
     primary: {
-      backgroundColor: isDisabled ? 'rgba(255,255,255,0.1)' : 'var(--platform-text)',
+      backgroundColor: isDisabled ? 'hsl(var(--muted))' : 'var(--platform-text)',
       color: isDisabled ? 'var(--platform-text-muted)' : 'var(--platform-canvas)',
     },
     destructive: {
-      backgroundColor: isDisabled ? 'rgba(239,68,68,0.2)' : '#ef4444',
-      color: isDisabled ? 'rgba(239,68,68,0.5)' : '#ffffff',
+      backgroundColor: isDisabled ? 'hsl(var(--destructive) / 0.2)' : 'hsl(var(--destructive))',
+      color: isDisabled ? 'hsl(var(--destructive) / 0.5)' : 'hsl(var(--destructive-foreground))',
     },
   };
 
