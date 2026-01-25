@@ -92,24 +92,24 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
       ? "[&>svg]:h-3.5 [&>svg]:w-3.5 [&>svg]:[stroke-width:1.25] [&>span>svg]:h-3.5 [&>span>svg]:w-3.5 [&>span>svg]:[stroke-width:1.25]"
       : "[&>svg]:h-4 [&>svg]:w-4 [&>svg]:[stroke-width:1.25] [&>span>svg]:h-4 [&>span>svg]:w-4 [&>span>svg]:[stroke-width:1.25]";
 
-    // Intent-based classes using Tailwind for proper theme adaptation
+    // Intent-based classes — Mercury/Stripe-like neutrals (NO BLUE FILLS)
     const getIntentClasses = () => {
       switch (intent) {
         case "primary":
+          // Charcoal fill — the most prominent action (Stripe-like)
           return cn(
-            // Deep neutral fill - less harsh than pure black
-            "bg-foreground/90 text-background border border-foreground/20",
+            "bg-[#1A1A1A] text-white border border-[#1A1A1A]",
             "font-medium tracking-[0.01em]",
-            !isDisabled && "hover:bg-foreground/80",
+            !isDisabled && "hover:bg-[#2D2D2D]",
             isDisabled && "bg-transparent text-muted-foreground border-border"
           );
         case "secondary":
+          // Light grey fill with subtle border — most common action style (Stripe/Mercury)
           return cn(
-            // Outline style - the default recommended action look
-            "bg-transparent text-foreground border border-border",
-            "font-normal",
-            !isDisabled && "hover:bg-muted/50 hover:border-muted-foreground/50",
-            isDisabled && "text-muted-foreground/50 border-border/50"
+            "bg-[#F3F4F6] text-[#111827] border border-[var(--border-subtle)]",
+            "font-medium",
+            !isDisabled && "hover:bg-[#E5E7EB] hover:border-[#D1D5DB]",
+            isDisabled && "text-muted-foreground/50 border-border/50 bg-muted/30"
           );
         case "tertiary":
           return cn(
@@ -119,10 +119,11 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
             isDisabled && "text-muted-foreground/50"
           );
         case "ghost":
+          // Invisible until hover — subtle neutral wash
           return cn(
             "bg-transparent text-muted-foreground border border-transparent",
             "font-normal",
-            !isDisabled && "hover:bg-muted/50 hover:text-foreground",
+            !isDisabled && "hover:bg-[#F3F4F6] hover:text-foreground",
             isDisabled && "text-muted-foreground/50"
           );
         case "danger":

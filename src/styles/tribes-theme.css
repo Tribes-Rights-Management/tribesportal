@@ -24,31 +24,31 @@
 
 :root {
   /* ═══════════════════════════════════════════════════════════════════════════
-     MERCURY + STRIPE 3-SURFACE SYSTEM — Global Neutral Tokens (SINGLE SOURCE)
+     MERCURY + STRIPE CHROME SYSTEM — Global Neutral Tokens (SINGLE SOURCE)
      
      Layout: Sidebar (grey) → Canvas (white) → Panels (grey) → Cards (white)
-     Light, institutional, no blue accents. Focus ring is #0071E3 only.
+     Light, institutional, NO BLUE ACCENTS. Focus ring #0071E3 is the ONLY blue.
      ═══════════════════════════════════════════════════════════════════════════ */
 
   /* ─────────────────────────────────────────────────────────────────────────
-     GLOBAL 4-SURFACE TOKENS (AUTHORITATIVE)
+     GLOBAL 4-SURFACE TOKENS (AUTHORITATIVE — STRIPE/MERCURY PRECISE)
      ───────────────────────────────────────────────────────────────────────── */
   
-  /* Surface 1: Sidebar — light neutral grey */
-  --sidebar-bg: #F2F3F5;
-  --app-sidebar-bg: #F2F3F5;
+  /* Surface 1: Sidebar — Mercury-like neutral grey (R=G=B, NO blue tint) */
+  --sidebar-bg: #FBFBFB;
+  --app-sidebar-bg: #FBFBFB;
   
   /* Surface 2: Top bar/header — true white */
   --topbar-bg: #FFFFFF;
   --app-header-bg: #FFFFFF;
   
-  /* Surface 3: Main page canvas — soft WHITE (Mercury/Stripe-like) */
+  /* Surface 3: Main page canvas — true white (Stripe/Mercury) */
   --page-bg: #FFFFFF;
   --app-bg: #FFFFFF;
   --app-canvas-bg: #FFFFFF;
   
-  /* Surface 4: Panel/section backgrounds — Stripe-like light grey */
-  --panel-bg: #F5F5F5;
+  /* Surface 4: Panel/section backgrounds — Stripe-like light grey boxes */
+  --panel-bg: #F5F6F8;
   
   /* Surface 5: Cards, tables — true white */
   --card-bg: #FFFFFF;
