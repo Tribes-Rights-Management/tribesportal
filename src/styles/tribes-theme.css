@@ -90,6 +90,17 @@
   --tribes-control-border: var(--border-subtle);
   --tribes-control-placeholder: #9CA3AF;
   
+  /* ─────────────────────────────────────────────────────────────────────────
+     SEARCH BAR TOKENS — Stripe-like Pill Input (SINGLE SOURCE OF TRUTH)
+     ───────────────────────────────────────────────────────────────────────── */
+  --search-bg: #F3F4F6;           /* Stripe-like soft grey fill */
+  --search-bg-focus: #FFFFFF;     /* White on focus */
+  --search-border: transparent;    /* No border by default (Stripe-like) */
+  --search-border-focus: #E6E8EC; /* Subtle border on focus */
+  --search-placeholder: #9CA3AF;  /* Muted placeholder */
+  --search-kbd-bg: #FFFFFF;       /* Keyboard hint background */
+  --search-kbd-border: #E6E8EC;   /* Keyboard hint border */
+  
   /* Neutral focus ring for Help Workstation (NO BLUE) */
   --tribes-focus-ring-neutral: rgba(17, 24, 39, 0.25);
   
@@ -218,6 +229,15 @@
   --tribes-focus-ring: #0071E3;
   --tribes-hover: #282828;
   --tribes-active: #303030;
+  
+  /* Search bar tokens - dark mode */
+  --search-bg: #2D2D2D;
+  --search-bg-focus: #212121;
+  --search-border: transparent;
+  --search-border-focus: #404040;
+  --search-placeholder: #717171;
+  --search-kbd-bg: #303030;
+  --search-kbd-border: #404040;
 }
 
 /* iOS underlay rule - ensures underlay uses exact background */
