@@ -12,18 +12,17 @@ import { cn } from "@/lib/utils";
  * This component matches AppButton exactly for visual consistency across
  * all workstations (Help, System Console, Licensing, etc.).
  * 
+ * MERCURY/STRIPE-LIKE NEUTRAL BUTTON SYSTEM:
+ * - NO BLACK BUTTONS — all primary buttons use neutral grey
+ * - NO BLUE FILLS — blue (#0071E3) only for focus rings
+ * 
  * USAGE:
  * - All /admin/* pages MUST use ConsoleButton
  * - Do not create custom button styles in page files
  * 
- * DESIGN PHILOSOPHY:
- * - Institutional, not consumer
- * - Mercury-like neutral greys
- * - No blue fills (blue only for focus rings: #0071E3)
- * 
  * VARIANTS:
- * - Primary: Charcoal fill with white text
- * - Secondary: Light grey fill with subtle border
+ * - Primary: Light grey fill with subtle border (NO BLACK)
+ * - Secondary: Same as primary (unified look)
  * - Ghost: Transparent with hover wash
  * - Danger: Red border on transparent
  * ═══════════════════════════════════════════════════════════════════════════
@@ -74,8 +73,8 @@ export const ConsoleButton = React.forwardRef<HTMLButtonElement, ConsoleButtonPr
     const sizeClasses = {
       xs: "h-[28px] px-3 text-[12px] gap-1 rounded-[6px]",
       sm: "h-[36px] px-4 text-[13px] gap-1.5 rounded-[6px]",
-      md: "h-[44px] px-5 text-[14px] gap-2 rounded-[6px]",
-      lg: "h-[52px] px-6 text-[15px] gap-2.5 rounded-[6px]",
+      md: "h-[40px] px-5 text-[14px] gap-2 rounded-[6px]",
+      lg: "h-[44px] px-6 text-[15px] gap-2.5 rounded-[6px]",
     };
 
     // Icon utility classes - enforce consistent sizing and stroke width
@@ -83,23 +82,23 @@ export const ConsoleButton = React.forwardRef<HTMLButtonElement, ConsoleButtonPr
       ? "[&>svg]:h-3.5 [&>svg]:w-3.5 [&>svg]:[stroke-width:1.25] [&>span>svg]:h-3.5 [&>span>svg]:w-3.5 [&>span>svg]:[stroke-width:1.25]"
       : "[&>svg]:h-4 [&>svg]:w-4 [&>svg]:[stroke-width:1.25] [&>span>svg]:h-4 [&>span>svg]:w-4 [&>span>svg]:[stroke-width:1.25]";
 
-    // Intent-based classes — Mercury/Stripe-like neutrals (NO BLUE FILLS)
+    // Intent-based classes — Mercury/Stripe-like neutrals (NO BLACK, NO BLUE FILLS)
     const getIntentClasses = () => {
       switch (intent) {
         case "primary":
-          // Charcoal fill — the most prominent action (Stripe-like)
+          // Light grey fill with subtle border — Mercury/Stripe neutral (NO BLACK)
           return cn(
-            "bg-[#1A1A1A] text-white border border-[#1A1A1A]",
-            "font-medium tracking-[0.01em]",
-            !isDisabled && "hover:bg-[#2D2D2D]",
-            isDisabled && "bg-transparent text-muted-foreground border-border"
+            "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)]",
+            "font-medium",
+            !isDisabled && "hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)]",
+            isDisabled && "text-muted-foreground/50 border-border/50 bg-muted/30"
           );
         case "secondary":
-          // Light grey fill with subtle border — most common action style (Mercury)
+          // Same as primary for unified Mercury-like look
           return cn(
-            "bg-[#F3F4F6] text-[#111827] border border-[#E6E8EC]",
+            "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)]",
             "font-medium",
-            !isDisabled && "hover:bg-[#E5E7EB] hover:border-[#D1D5DB]",
+            !isDisabled && "hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)]",
             isDisabled && "text-muted-foreground/50 border-border/50 bg-muted/30"
           );
         case "ghost":
@@ -107,7 +106,7 @@ export const ConsoleButton = React.forwardRef<HTMLButtonElement, ConsoleButtonPr
           return cn(
             "bg-transparent text-muted-foreground border border-transparent",
             "font-normal",
-            !isDisabled && "hover:bg-[#F3F4F6] hover:text-foreground",
+            !isDisabled && "hover:bg-[var(--muted-wash)] hover:text-foreground",
             isDisabled && "text-muted-foreground/50"
           );
         case "danger":

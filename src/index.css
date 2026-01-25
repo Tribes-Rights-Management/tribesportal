@@ -687,26 +687,26 @@ html.light .console-scope {
   --console-elevated-bg: #FFFFFF;
   --console-elevated-border: #E5E5E5;
   
-  /* Primary button - light mode */
-  --console-primary-bg: #1A1A1A;
-  --console-primary-bg-hover: #2D2D2D;
+  /* Primary button - light mode (NEUTRAL GREY, NO BLACK) */
+  --console-primary-bg: var(--btn-bg);
+  --console-primary-bg-hover: var(--btn-bg-hover);
   --console-primary-bg-disabled: #E5E5E5;
-  --console-primary-fg: #FFFFFF;
+  --console-primary-fg: var(--btn-text);
   --console-primary-fg-disabled: #9CA3AF;
-  --console-primary-border: #1A1A1A;
-  --console-primary-border-hover: #2D2D2D;
+  --console-primary-border: var(--btn-border);
+  --console-primary-border-hover: var(--btn-border-hover);
   
   /* Secondary/ghost button - light mode */
   --console-secondary-bg: transparent;
-  --console-secondary-bg-hover: #F5F5F5;
+  --console-secondary-bg-hover: var(--muted-wash);
   --console-secondary-fg: #6B6B6B;
-  --console-secondary-border: #E5E5E5;
+  --console-secondary-border: var(--btn-border);
   
   /* Input fields - light mode */
   --console-input-bg: #FFFFFF;
   --console-input-bg-disabled: #F5F5F5;
-  --console-input-border: #E5E5E5;
-  --console-input-border-focus: #1A1A1A;
+  --console-input-border: var(--btn-border);
+  --console-input-border-focus: var(--btn-border-hover);
   --console-input-placeholder: #9CA3AF;
   
   /* Status colors - light mode (slightly adjusted for visibility) */

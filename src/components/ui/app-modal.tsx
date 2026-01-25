@@ -294,8 +294,8 @@ export function AppModalCancel({
       className={cn(
         "w-full sm:w-auto h-10 sm:h-9 px-4 rounded-[6px] text-[14px] font-medium",
         "transition-colors disabled:opacity-40",
-        "bg-[#F3F4F6] text-[#111827] border border-[#E6E8EC]",
-        "hover:bg-[#E5E7EB] hover:border-[#D1D5DB]",
+        "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)]",
+        "hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2",
         className
       )}

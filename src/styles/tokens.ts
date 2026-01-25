@@ -586,29 +586,33 @@ export const SYSTEM_BUTTON_CLASSES = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
-// PLATFORM UI CLASSES
+// PLATFORM UI CLASSES — Mercury/Stripe-like Neutral System (NO BLACK BUTTONS)
 // ═══════════════════════════════════════════════════════════════════════════
 
-/** Primary button - Mercury/Stripe neutral (charcoal fill) */
+/** 
+ * Primary button - Mercury/Stripe neutral GREY (NO BLACK)
+ * Uses CSS variables from tribes-theme.css for consistency
+ */
 export const PRIMARY_BUTTON_CLASSES =
-  "w-full h-12 rounded-[6px] inline-flex items-center justify-center px-6 " +
-  "text-[14px] font-medium tracking-[0.01em] " +
-  "bg-[#1A1A1A] text-white border border-[#1A1A1A] hover:bg-[#2D2D2D] " +
-  "disabled:bg-transparent disabled:text-[#9CA3AF] disabled:border-[#E6E8EC] disabled:cursor-not-allowed disabled:opacity-40 " +
+  "w-full h-10 rounded-[6px] inline-flex items-center justify-center px-6 " +
+  "text-[14px] font-medium " +
+  "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)] " +
+  "hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)] " +
+  "disabled:bg-muted/30 disabled:text-[#9CA3AF] disabled:border-[#E6E8EC] disabled:cursor-not-allowed disabled:opacity-40 " +
   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2";
 
-/** Secondary button - Mercury neutral grey fill */
+/** Secondary button - Same as primary for unified Mercury-like look */
 export const SECONDARY_BUTTON_CLASSES =
   "h-10 rounded-[6px] inline-flex items-center justify-center px-4 " +
   "text-[13px] font-medium " +
-  "bg-[#F3F4F6] border border-[#E6E8EC] text-[#111827] " +
-  "hover:bg-[#E5E7EB] hover:border-[#D1D5DB] " +
+  "bg-[var(--btn-bg)] border border-[var(--btn-border)] text-[var(--btn-text)] " +
+  "hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)] " +
   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2";
 
 /** Icon button - subtle, Mercury neutral */
 export const ICON_BUTTON_CLASSES =
   "h-9 w-9 rounded-[6px] inline-flex items-center justify-center " +
-  "hover:bg-[#F3F4F6] active:bg-[#E5E7EB] " +
+  "hover:bg-[var(--muted-wash)] active:bg-[var(--btn-bg-hover)] " +
   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2";
 
 /** Input field - administrative clarity */
