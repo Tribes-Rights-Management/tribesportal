@@ -82,24 +82,24 @@ export const ConsoleButton = React.forwardRef<HTMLButtonElement, ConsoleButtonPr
       ? "[&>svg]:h-3.5 [&>svg]:w-3.5 [&>svg]:[stroke-width:1.25] [&>span>svg]:h-3.5 [&>span>svg]:w-3.5 [&>span>svg]:[stroke-width:1.25]"
       : "[&>svg]:h-4 [&>svg]:w-4 [&>svg]:[stroke-width:1.25] [&>span>svg]:h-4 [&>span>svg]:w-4 [&>span>svg]:[stroke-width:1.25]";
 
-    // Intent-based classes — Mercury/Stripe-like neutrals (NO BLACK, NO BLUE FILLS, NO VISIBLE BORDER ON FILLED)
+    // Intent-based classes — Mercury/Stripe-like WHITE surface buttons (NO BLACK, NO BLUE FILLS)
     const getIntentClasses = () => {
       switch (intent) {
         case "primary":
-          // Light grey fill — Mercury/Stripe neutral (NO BLACK, NO VISIBLE BORDER)
+          // WHITE surface with subtle border — visible on grey backgrounds (NO BLACK)
           return cn(
-            "bg-[var(--control-fill)] text-[var(--btn-text)]",
+            "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)]",
             "font-medium",
-            !isDisabled && "hover:bg-[var(--control-hover)]",
-            isDisabled && "text-muted-foreground/50 bg-muted/30"
+            !isDisabled && "hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)]",
+            isDisabled && "text-muted-foreground/50 bg-muted/30 border-border/50"
           );
         case "secondary":
-          // Same as primary for unified Mercury-like look (NO VISIBLE BORDER)
+          // Same as primary with softer border
           return cn(
-            "bg-[var(--control-fill)] text-[var(--btn-text)]",
+            "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--border-subtle)]",
             "font-medium",
-            !isDisabled && "hover:bg-[var(--control-hover)]",
-            isDisabled && "text-muted-foreground/50 bg-muted/30"
+            !isDisabled && "hover:bg-[var(--btn-bg-hover)]",
+            isDisabled && "text-muted-foreground/50 bg-muted/30 border-border/50"
           );
         case "ghost":
           // Invisible until hover — subtle neutral wash

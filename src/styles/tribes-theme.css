@@ -24,7 +24,11 @@
   /* ═══════════════════════════════════════════════════════════════════════════
      MERCURY + STRIPE CHROME SYSTEM — Global Neutral Tokens (SINGLE SOURCE)
      
-     Layout: Sidebar (grey) → Canvas (soft grey) → Cards (white)
+     SURFACE HIERARCHY (3-layer):
+     1. App canvas: #F3F4F6 (light grey backdrop behind everything)
+     2. Content area: #FAFAFA (off-white main content region)
+     3. Cards/tables: #FFFFFF (white surfaces with subtle border)
+     
      Light, institutional, NO BLUE ACCENTS. Focus ring #0071E3 is the ONLY blue.
      ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -32,38 +36,37 @@
      GLOBAL SURFACE TOKENS (AUTHORITATIVE — STRIPE/MERCURY PRECISE)
      ───────────────────────────────────────────────────────────────────────── */
   
-  /* Surface 1: Sidebar — Mercury-like neutral grey (R=G=B, NO blue tint) */
-  --sidebar-bg: #F1F2F4;
-  --app-sidebar-bg: #F1F2F4;
+  /* Layer 0: App canvas — overall app background behind everything */
+  --app-canvas: #F3F4F6;
+  --page-bg: #F3F4F6;
+  --app-bg: #F3F4F6;
+  --app-canvas-bg: #F3F4F6;
   
-  /* Surface 2: Top bar/header — true white */
+  /* Layer 1: Content area — main content region (off-white, not pure white) */
+  --content-bg: #FAFAFA;
+  
+  /* Layer 2: Sidebar — Mercury-like neutral grey (R=G=B, NO blue tint) */
+  --sidebar-bg: #F2F3F5;
+  --app-sidebar-bg: #F2F3F5;
+  
+  /* Layer 3: Top bar/header — true white */
   --topbar-bg: #FFFFFF;
   --app-header-bg: #FFFFFF;
   
-  /* Surface 3: Main page canvas — soft grey (Stripe/Mercury) */
-  --page-bg: #F5F5F5;
-  --app-bg: #F5F5F5;
-  --app-canvas-bg: #F5F5F5;
-  
-  /* Surface 4: Panel/section backgrounds — Stripe-like light grey boxes */
-  --panel-bg: #F5F6F8;
-  
-  /* Surface 5: Cards, tables — true white */
+  /* Layer 4: Cards, tables, panels — true white surfaces */
   --card-bg: #FFFFFF;
+  --panel-bg: #FFFFFF;
   --app-surface-bg: #FFFFFF;
   
-  /* Muted wash — for active pills, hover backgrounds, inactive states */
-  --muted-wash: #F6F7F8;
+  /* Muted wash — for active pills, hover backgrounds */
+  --muted-wash: #F3F4F6;
   
-  /* Control fill — for filled buttons/inputs (neutral) */
-  --control-fill: #EEF0F3;
-  --control-hover: #E9ECF0;
-  
-  /* Global border: Subtle but visible (~10-12% black on white) */
+  /* ─────────────────────────────────────────────────────────────────────────
+     BORDER TOKENS — Two-tier system
+     ───────────────────────────────────────────────────────────────────────── */
   --border-subtle: #E6E8EC;
+  --border-strong: #D9DDE3;
   --app-surface-border: #E6E8EC;
-  
-  /* Chrome border: Same as surface border for consistency */
   --app-chrome-border: #E6E8EC;
   
   /* Radius: Stripe-like restraint (10-12px) */
@@ -74,18 +77,18 @@
   --app-focus: #0071E3;
 
   /* ─────────────────────────────────────────────────────────────────────────
-     BUTTON TOKENS — Mercury-like Neutral Grey System (NO BLACK BUTTONS)
+     BUTTON TOKENS — Mercury-like WHITE surface buttons (NO BLACK)
      
-     Primary buttons use light grey fill with NO visible border.
-     This matches Stripe/Mercury's restrained institutional aesthetic.
+     Primary buttons use WHITE surface with subtle border.
+     This ensures buttons are VISIBLE on grey backgrounds.
      
-     CRITICAL: Filled buttons must NOT show visible borders.
+     CRITICAL: Buttons must NOT disappear into grey backgrounds.
      ───────────────────────────────────────────────────────────────────────── */
-  --btn-bg: #EEF0F3;
-  --btn-bg-hover: #E5E7EB;
-  --btn-bg-active: #D1D5DB;
-  --btn-border: transparent;
-  --btn-border-hover: transparent;
+  --btn-bg: #FFFFFF;
+  --btn-bg-hover: #FAFAFA;
+  --btn-bg-active: #F5F5F5;
+  --btn-border: #D9DDE3;
+  --btn-border-hover: #C7CBD1;
   --btn-text: #111827;
   --btn-text-muted: #6B7280;
   --btn-disabled-opacity: 0.55;

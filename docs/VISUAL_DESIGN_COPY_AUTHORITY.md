@@ -102,34 +102,35 @@ These are not aesthetic preferences. They are signals of credibility, restraint,
 
 | Property | Value |
 |----------|-------|
-| Background | `#111` (near-black) |
-| Text | White |
-| Height | 44px |
-| Radius | 8–10px |
+| Background | `#FFFFFF` (white) |
+| Border | `#D9DDE3` (subtle) |
+| Text | `#111827` (near-black) |
+| Height | 40–44px |
+| Radius | 6px |
 | Padding | Balanced left/right |
 
 #### Secondary Action
 
 | Property | Value |
 |----------|-------|
-| Background | Transparent |
-| Border | 1px subtle gray |
-| Text | Muted |
-| Hover | Subtle, no drama |
+| Background | `#FFFFFF` (white) |
+| Border | `#E6E8EC` (subtle) |
+| Text | `#111827` (near-black) |
+| Hover | Subtle grey wash |
 
 #### Governance Principle
 
-> Approval buttons should look **serious**, not attractive.
+> Buttons should be **visible** on grey backgrounds. Use WHITE surface with subtle border, NOT grey-on-grey.
 
 ```tsx
-// Correct: Institutional primary button
-<Button className="bg-[#111] text-white h-11 px-6 rounded-lg">
+// Correct: Institutional white surface button with border
+<Button>
   Approve change
 </Button>
 
-// Wrong: Consumer-style button
-<Button className="bg-gradient-to-r from-purple-500 to-blue-500">
-  Let's go! 🚀
+// Wrong: Grey button that disappears on grey backgrounds
+<Button className="bg-gray-200">
+  Submit
 </Button>
 ```
 
