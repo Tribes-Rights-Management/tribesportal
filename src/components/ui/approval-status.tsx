@@ -34,11 +34,11 @@ export function ApprovalStatus({ state, className }: ApprovalStatusProps) {
     <span
       className={cn(
         "inline-flex items-center px-2 py-0.5 text-[11px] font-medium uppercase tracking-[0.02em] rounded",
-        state === "pending" && "bg-amber-50 dark:bg-amber-950 text-[#B45309]",
-        state === "approved" && "bg-[#DCFCE7] text-emerald-700 dark:text-emerald-400",
-        state === "rejected" && "bg-[#FEE2E2] text-[#DC2626]",
+        state === "pending" && "bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400",
+        state === "approved" && "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400",
+        state === "rejected" && "bg-red-100 dark:bg-red-950 text-destructive",
         state === "withdrawn" && "bg-muted text-muted-foreground",
-        state === "expired" && "bg-muted text-[#8A8A8A]",
+        state === "expired" && "bg-muted text-muted-foreground",
         className
       )}
     >
@@ -74,33 +74,33 @@ export function ApprovalMetadata({
       {/* Submitted info */}
       {submittedBy && (
         <div className="flex items-baseline gap-2">
-          <span className="text-[#8A8A8A]">{APPROVAL_LABELS.SUBMITTED_BY}</span>
+          <span className="text-muted-foreground">{APPROVAL_LABELS.SUBMITTED_BY}</span>
           <span>{submittedBy}</span>
-          {submittedAt && <span className="text-[#8A8A8A]">· {submittedAt}</span>}
+          {submittedAt && <span className="text-muted-foreground">· {submittedAt}</span>}
         </div>
       )}
       
       {/* Processed info */}
       {processedBy && state === "approved" && (
         <div className="flex items-baseline gap-2">
-          <span className="text-[#8A8A8A]">{APPROVAL_LABELS.APPROVED_BY}</span>
+          <span className="text-muted-foreground">{APPROVAL_LABELS.APPROVED_BY}</span>
           <span>{processedBy}</span>
-          {processedAt && <span className="text-[#8A8A8A]">· {processedAt}</span>}
+          {processedAt && <span className="text-muted-foreground">· {processedAt}</span>}
         </div>
       )}
       
       {processedBy && state === "rejected" && (
         <div className="flex items-baseline gap-2">
-          <span className="text-[#8A8A8A]">{APPROVAL_LABELS.REJECTED_BY}</span>
+          <span className="text-muted-foreground">{APPROVAL_LABELS.REJECTED_BY}</span>
           <span>{processedBy}</span>
-          {processedAt && <span className="text-[#8A8A8A]">· {processedAt}</span>}
+          {processedAt && <span className="text-muted-foreground">· {processedAt}</span>}
         </div>
       )}
       
       {/* Rejection reason */}
       {reason && state === "rejected" && (
         <div className="mt-2">
-          <span className="text-[#8A8A8A]">{APPROVAL_LABELS.REJECTION_REASON}</span>
+          <span className="text-muted-foreground">{APPROVAL_LABELS.REJECTION_REASON}</span>
           <p className="text-foreground mt-0.5">{reason}</p>
         </div>
       )}
@@ -127,13 +127,13 @@ export function PendingApprovalBanner({
   return (
     <div
       className={cn(
-        "bg-amber-50 dark:bg-amber-950 border border-[#F59E0B]/20 rounded-md px-4 py-3",
+        "bg-amber-50 dark:bg-amber-950 border border-amber-500/20 rounded-md px-4 py-3",
         className
       )}
     >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[13px] font-medium text-[#B45309]">
+          <p className="text-[13px] font-medium text-amber-700 dark:text-amber-400">
             {APPROVAL_LABELS.PENDING_APPROVAL}
           </p>
           <p className="text-[12px] text-amber-700 dark:text-amber-400 mt-0.5">

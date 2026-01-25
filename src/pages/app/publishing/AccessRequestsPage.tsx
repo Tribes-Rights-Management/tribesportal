@@ -161,7 +161,7 @@ export default function AccessRequestsPage() {
 
   if (!activeTenant) {
     return (
-      <div className="text-center py-12 text-[#71717A]">
+      <div className="text-center py-12 text-muted-foreground">
         No tenant selected
       </div>
     );
@@ -171,54 +171,54 @@ export default function AccessRequestsPage() {
     <div className="max-w-[1000px]">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-[24px] font-medium text-[#0A0A0A] tracking-[-0.02em]">
+        <h1 className="text-[24px] font-medium text-foreground tracking-[-0.02em]">
           Access Requests
         </h1>
-        <p className="mt-2 text-[14px] text-[#71717A]">
+        <p className="mt-2 text-[14px] text-muted-foreground">
           Review and approve pending access requests for {activeTenant.tenant_name}.
         </p>
       </div>
 
       {/* Content */}
       {isLoading ? (
-        <div className="text-center py-12 text-[#71717A]">
+        <div className="text-center py-12 text-muted-foreground">
           Loading requests...
         </div>
       ) : pendingRequests?.length === 0 ? (
-        <div className="border border-[#E4E4E7] rounded-lg p-12 text-center">
+        <div className="border border-border rounded-lg p-12 text-center">
           <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 rounded-full bg-[#F4F4F5] flex items-center justify-center">
-              <Check className="h-6 w-6 text-[#71717A]" />
+            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+              <Check className="h-6 w-6 text-muted-foreground" />
             </div>
           </div>
-          <p className="text-[15px] text-[#52525B] font-medium">
+          <p className="text-[15px] text-foreground font-medium">
             No pending requests
           </p>
-          <p className="mt-1 text-[13px] text-[#A1A1AA]">
+          <p className="mt-1 text-[13px] text-muted-foreground">
             All access requests have been processed.
           </p>
         </div>
       ) : (
-        <div className="border border-[#E4E4E7] rounded-lg overflow-hidden">
+        <div className="border border-border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">
-                <TableHead className="text-[12px] font-medium text-[#71717A] uppercase tracking-wide">
+                <TableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
                   User
                 </TableHead>
-                <TableHead className="text-[12px] font-medium text-[#71717A] uppercase tracking-wide">
+                <TableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
                   Requested
                 </TableHead>
-                <TableHead className="text-[12px] font-medium text-[#71717A] uppercase tracking-wide">
+                <TableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
                   Status
                 </TableHead>
-                <TableHead className="text-[12px] font-medium text-[#71717A] uppercase tracking-wide">
+                <TableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
                   Role
                 </TableHead>
-                <TableHead className="text-[12px] font-medium text-[#71717A] uppercase tracking-wide">
+                <TableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
                   Contexts
                 </TableHead>
-                <TableHead className="text-[12px] font-medium text-[#71717A] uppercase tracking-wide text-right">
+                <TableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide text-right">
                   Actions
                 </TableHead>
               </TableRow>
@@ -228,23 +228,23 @@ export default function AccessRequestsPage() {
                 <TableRow key={request.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#F4F4F5] flex items-center justify-center">
-                        <UserCircle className="h-4 w-4 text-[#71717A]" />
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                        <UserCircle className="h-4 w-4 text-muted-foreground" />
                       </div>
-                      <span className="text-[13px] text-[#0A0A0A] font-medium">
+                      <span className="text-[13px] text-foreground font-medium">
                         {request.user_email}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-[13px] text-[#71717A]">
+                    <span className="text-[13px] text-muted-foreground">
                       {format(new Date(request.created_at), "MMM d, yyyy")}
                     </span>
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
-                      className="text-[11px] font-normal border-[#FCD34D] bg-[#FFFBEB] text-amber-700 dark:text-amber-400"
+                      className="text-[11px] font-normal border-amber-400 bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400"
                     >
                       <Clock className="h-3 w-3 mr-1" />
                       Pending
@@ -255,7 +255,7 @@ export default function AccessRequestsPage() {
                       value={selectedRoles[request.id] ?? "tenant_user"}
                       onValueChange={(value) => handleRoleChange(request.id, value as PortalRole)}
                     >
-                      <SelectTrigger className="h-8 w-[140px] text-[12px] border-[#E4E4E7]">
+                      <SelectTrigger className="h-8 w-[140px] text-[12px] border-border">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>

@@ -15,33 +15,33 @@ export default function PendingApprovalPage() {
     <AuthLayout>
       {/* System identifier */}
       <div className="mb-10 text-center">
-        <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-[#4A4A4A]">
+        <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-muted-foreground">
           Tribes Rights Management System
         </span>
       </div>
 
       {/* Heading */}
-      <h1 className="text-[22px] font-medium leading-[1.25] text-[#E5E5E3] text-center tracking-[-0.02em]">
+      <h1 className="text-[22px] font-medium leading-[1.25] text-foreground text-center tracking-[-0.02em]">
         {SYSTEM_COPY.ACCESS_PENDING_TITLE}
       </h1>
 
       {/* Body */}
-      <p className="mt-4 text-[14px] leading-[1.6] text-[#707070] text-center">
+      <p className="mt-4 text-[14px] leading-[1.6] text-muted-foreground text-center">
         {SYSTEM_COPY.ACCESS_PENDING_BODY}
       </p>
 
       {/* Account display */}
       {profile?.email && (
         <div className="mt-8 text-center">
-          <span className="text-[13px] text-[#505050]">Account: </span>
-          <span className="text-[13px] font-medium text-[#E5E5E3]">{profile.email}</span>
+          <span className="text-[13px] text-muted-foreground">Account: </span>
+          <span className="text-[13px] font-medium text-foreground">{profile.email}</span>
         </div>
       )}
 
       {/* Status */}
       <div className="mt-4 text-center">
-        <span className="text-[12px] text-[#505050]">Status: </span>
-        <span className="text-[12px] font-medium text-[#707070]">Pending authorization</span>
+        <span className="text-[12px] text-muted-foreground">Status: </span>
+        <span className="text-[12px] font-medium text-muted-foreground">Pending authorization</span>
       </div>
 
       {/* Action - using Button component */}
@@ -56,14 +56,14 @@ export default function PendingApprovalPage() {
       </div>
 
       {/* Contact */}
-      <p className="mt-12 text-center text-[12px] leading-[1.5] text-[#4A4A4A]">
+      <p className="mt-12 text-center text-[12px] leading-[1.5] text-muted-foreground">
         {SYSTEM_COPY.CONTACT_ADMIN}
       </p>
 
       <p className="mt-2 text-center">
         <a 
           href={`mailto:${SYSTEM_COPY.SUPPORT_EMAIL}`}
-          className="text-[12px] text-[#4A4A4A] hover:text-[#606060] transition-colors duration-75"
+          className="text-[12px] text-muted-foreground hover:text-muted-foreground transition-colors duration-75"
         >
           {SYSTEM_COPY.SUPPORT_EMAIL}
         </a>

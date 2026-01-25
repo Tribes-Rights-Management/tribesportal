@@ -149,7 +149,7 @@ export function SignInHelpDialog({
             aria-label="Copy email address"
           >
             {copied ? (
-              <Check className="h-3.5 w-3.5" strokeWidth={1.5} style={{ color: '#6B8E6B' }} />
+              <Check className="h-3.5 w-3.5" strokeWidth={1.5} style={{ color: 'hsl(var(--success, 120 20% 49%))' }} />
             ) : (
               <Copy className="h-3.5 w-3.5" strokeWidth={1.5} style={{ color: 'var(--platform-text-muted)' }} />
             )}

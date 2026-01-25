@@ -145,7 +145,7 @@ export function ScopeAssignments({
                         onClick={() => onStatusChange(membership, "revoked")}
                         className="px-2.5 py-1 text-[11px] rounded transition-colors"
                         style={{ 
-                          color: '#B54545',
+                          color: 'hsl(var(--destructive))',
                           border: '1px solid #4A2525'
                         }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(181,69,69,0.1)'}

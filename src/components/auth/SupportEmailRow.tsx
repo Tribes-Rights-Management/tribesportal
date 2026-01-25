@@ -27,7 +27,7 @@ export function SupportEmailRow({ showLabel = true }: SupportEmailRowProps) {
         <button
           type="button"
           onClick={() => setShowEmail(true)}
-          className="text-[13px] text-[#71717A] hover:text-[#0A0A0A] transition-colors"
+          className="text-[13px] text-muted-foreground hover:text-foreground transition-colors"
         >
           Need help? Contact support.
         </button>
@@ -48,7 +48,7 @@ export function SupportEmailRow({ showLabel = true }: SupportEmailRowProps) {
         {copied ? (
           <Check className="h-[14px] w-[14px] text-emerald-600" strokeWidth={1.5} />
         ) : (
-          <Copy className="h-[14px] w-[14px] text-[#9CA3AF] hover:text-[#6B7280]" strokeWidth={1.5} />
+          <Copy className="h-[14px] w-[14px] text-muted-foreground hover:text-muted-foreground" strokeWidth={1.5} />
         )}
       </button>
     </div>

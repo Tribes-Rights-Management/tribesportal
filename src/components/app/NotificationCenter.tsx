@@ -235,7 +235,7 @@ function CategoryGroup({ category, notifications, onNotificationClick }: Categor
               className="text-[11px] font-medium px-1.5 py-0.5 rounded"
               style={{ 
                 backgroundColor: isEscalated ? 'rgba(251, 191, 36, 0.15)' : 'hsl(var(--border))',
-                color: isEscalated ? '#fbbf24' : 'var(--tribes-text-muted)',
+                color: isEscalated ? 'hsl(var(--warning, 45 93% 47%))' : 'var(--tribes-text-muted)',
               }}
             >
               {unreadCount}
@@ -244,7 +244,7 @@ function CategoryGroup({ category, notifications, onNotificationClick }: Categor
           {isEscalated && (
             <span 
               className="text-[10px] uppercase tracking-wide font-medium"
-              style={{ color: '#fbbf24' }}
+              style={{ color: 'var(--warning, #fbbf24)' }}
             >
               Escalated
             </span>
@@ -329,7 +329,7 @@ function NotificationItem({ notification, onClick }: NotificationItemProps) {
               {notification.title}
             </span>
             {isEscalated && (
-              <AlertTriangle size={12} className="shrink-0" style={{ color: '#fbbf24' }} />
+              <AlertTriangle size={12} className="shrink-0" style={{ color: 'var(--warning, #fbbf24)' }} />
             )}
           </div>
           <p 

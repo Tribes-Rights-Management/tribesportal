@@ -153,7 +153,7 @@ export function EditSelectSheet({
               {isSelected && (
                 <Check 
                   className="h-5 w-5 shrink-0" 
-                  style={{ color: '#4ade80' }} 
+                  style={{ color: 'rgb(74 222 128)' }} 
                 />
               )}
             </button>

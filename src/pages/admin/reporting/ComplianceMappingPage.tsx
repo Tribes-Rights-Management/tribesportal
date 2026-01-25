@@ -337,7 +337,7 @@ export default function ComplianceMappingPage() {
           border: '1px solid rgba(251, 191, 36, 0.2)',
         }}
       >
-        <AlertTriangle size={16} style={{ color: '#fbbf24', flexShrink: 0, marginTop: 2 }} />
+        <AlertTriangle size={16} style={{ color: 'var(--warning, #fbbf24)', flexShrink: 0, marginTop: 2 }} />
         <p 
           className="text-[12px]"
           style={{ color: 'var(--tribes-text-secondary)' }}
@@ -451,7 +451,7 @@ export default function ComplianceMappingPage() {
                 className="flex items-center gap-2 px-4 py-3 border-b"
                 style={{ borderColor: 'var(--tribes-border)' }}
               >
-                <Check size={14} style={{ color: '#22c55e' }} />
+                <Check size={14} style={{ color: 'var(--success, #22c55e)' }} />
                 <span 
                   className="text-[11px] uppercase tracking-wider font-medium"
                   style={{ color: 'var(--tribes-text-muted)' }}
@@ -467,7 +467,7 @@ export default function ComplianceMappingPage() {
                       className="text-[12px] flex items-start gap-2"
                       style={{ color: 'var(--tribes-text-secondary)' }}
                     >
-                      <span style={{ color: '#22c55e' }}>•</span>
+                      <span style={{ color: 'var(--success, #22c55e)' }}>•</span>
                       {note.description}
                     </li>
                   ))}
@@ -487,7 +487,7 @@ export default function ComplianceMappingPage() {
                 className="flex items-center gap-2 px-4 py-3 border-b"
                 style={{ borderColor: 'var(--tribes-border)' }}
               >
-                <Minus size={14} style={{ color: '#9ca3af' }} />
+                <Minus size={14} style={{ color: 'var(--muted-foreground)' }} />
                 <span 
                   className="text-[11px] uppercase tracking-wider font-medium"
                   style={{ color: 'var(--tribes-text-muted)' }}
@@ -503,7 +503,7 @@ export default function ComplianceMappingPage() {
                       className="text-[12px] flex items-start gap-2"
                       style={{ color: 'var(--tribes-text-secondary)' }}
                     >
-                      <span style={{ color: '#9ca3af' }}>•</span>
+                      <span style={{ color: 'var(--muted-foreground)' }}>•</span>
                       {note.description}
                     </li>
                   ))}
@@ -523,7 +523,7 @@ export default function ComplianceMappingPage() {
                 className="flex items-center gap-2 px-4 py-3 border-b"
                 style={{ borderColor: 'var(--tribes-border)' }}
               >
-                <ExternalLink size={14} style={{ color: '#6b7280' }} />
+                <ExternalLink size={14} style={{ color: 'var(--muted-foreground)' }} />
                 <span 
                   className="text-[11px] uppercase tracking-wider font-medium"
                   style={{ color: 'var(--tribes-text-muted)' }}
@@ -539,7 +539,7 @@ export default function ComplianceMappingPage() {
                       className="text-[12px] flex items-start gap-2"
                       style={{ color: 'var(--tribes-text-secondary)' }}
                     >
-                      <span style={{ color: '#6b7280' }}>•</span>
+                      <span style={{ color: 'var(--muted-foreground)' }}>•</span>
                       {note.description}
                     </li>
                   ))}

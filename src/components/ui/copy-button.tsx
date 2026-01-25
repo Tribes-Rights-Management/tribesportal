@@ -95,7 +95,7 @@ export function CopyButton({
       aria-label={label}
     >
       {copied ? (
-        <Check className={cn(iconSize)} style={{ color: '#4ade80' }} />
+        <Check className={cn(iconSize)} style={{ color: 'rgb(74 222 128)' }} />
       ) : (
         <Copy className={cn(iconSize)} />
       )}

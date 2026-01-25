@@ -99,7 +99,7 @@ export default function AuthCallbackPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-6">
       <div className="text-center">
-        <p className="text-[15px] text-[#6B6B6B] tracking-wide">
+        <p className="text-[15px] text-muted-foreground tracking-wide">
           {status === "error" ? "Session verification failed" : "Establishing session..."}
         </p>
       </div>

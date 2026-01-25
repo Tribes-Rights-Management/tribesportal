@@ -13,7 +13,7 @@ export default function RoleProtectedRoute({ children, allowedRoles }: RoleProte
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F5F5F7]">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <p className="text-[14px] text-muted-foreground">Loading data</p>
       </div>
     );

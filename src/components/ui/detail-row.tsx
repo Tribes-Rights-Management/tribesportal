@@ -180,7 +180,7 @@ export function DetailRow({
               aria-label="Copy to clipboard"
             >
               {copied ? (
-                <Check className="h-3.5 w-3.5" style={{ color: '#4ade80' }} />
+                <Check className="h-3.5 w-3.5" style={{ color: 'rgb(var(--success, 74 222 128))' }} />
               ) : (
                 <Copy className="h-3.5 w-3.5" />
               )}

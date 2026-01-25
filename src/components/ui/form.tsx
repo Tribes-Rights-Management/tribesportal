@@ -191,8 +191,8 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, FormMessageProps>(
         id={formMessageId} 
         className={cn(
           variant === 'internal'
-            ? "text-[12px] text-[#525252] leading-snug mt-1"
-            : "text-[13px] text-[#525252] leading-snug mt-1.5",
+            ? "text-[12px] text-muted-foreground leading-snug mt-1"
+            : "text-[13px] text-muted-foreground leading-snug mt-1.5",
           className
         )} 
         {...props}

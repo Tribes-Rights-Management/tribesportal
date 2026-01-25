@@ -272,7 +272,7 @@ export function AuthSurface() {
                 type="button"
                 variant="link"
                 onClick={handleChangeEmail}
-                className="w-full mt-3 justify-start text-[#505050] hover:text-[#707070]"
+                className="w-full mt-3 justify-start text-muted-foreground hover:text-foreground"
               >
                 Use a different email
               </Button>
@@ -299,7 +299,7 @@ export function AuthSurface() {
           type="button"
           variant="link"
           onClick={() => setHelpDialogOpen(true)}
-          className="p-0 h-auto text-[12px] text-[#505050] hover:text-[#707070]"
+          className="p-0 h-auto text-[12px] text-muted-foreground hover:text-foreground"
         >
           Access assistance
         </Button>

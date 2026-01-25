@@ -39,14 +39,14 @@ export function RecordMetadata({
     <div className={cn("text-[12px] text-muted-foreground space-y-1", className)}>
       {/* Record ID - always prominent */}
       <div className="flex items-baseline gap-2">
-        <span className="text-[#8A8A8A]">{RECORD_LABELS.RECORD_ID}</span>
+        <span className="text-muted-foreground">{RECORD_LABELS.RECORD_ID}</span>
         <span className="font-mono text-[11px] text-foreground">{recordId}</span>
       </div>
       
       {/* Version - if applicable */}
       {version !== undefined && (
         <div className="flex items-baseline gap-2">
-          <span className="text-[#8A8A8A]">{RECORD_LABELS.CURRENT_VERSION}</span>
+          <span className="text-muted-foreground">{RECORD_LABELS.CURRENT_VERSION}</span>
           <span className="text-foreground">v{version}</span>
         </div>
       )}
@@ -54,7 +54,7 @@ export function RecordMetadata({
       {/* Effective date */}
       {effectiveDate && (
         <div className="flex items-baseline gap-2">
-          <span className="text-[#8A8A8A]">{RECORD_LABELS.EFFECTIVE_AS_OF}</span>
+          <span className="text-muted-foreground">{RECORD_LABELS.EFFECTIVE_AS_OF}</span>
           <span className="text-foreground">{effectiveDate}</span>
         </div>
       )}
@@ -62,7 +62,7 @@ export function RecordMetadata({
       {/* Created */}
       {createdAt && (
         <div className="flex items-baseline gap-2">
-          <span className="text-[#8A8A8A]">{RECORD_LABELS.CREATED_AT}</span>
+          <span className="text-muted-foreground">{RECORD_LABELS.CREATED_AT}</span>
           <span>{createdAt}</span>
           {createdBy && <span>by {createdBy}</span>}
         </div>
@@ -71,7 +71,7 @@ export function RecordMetadata({
       {/* Modified */}
       {modifiedAt && (
         <div className="flex items-baseline gap-2">
-          <span className="text-[#8A8A8A]">{RECORD_LABELS.LAST_MODIFIED}</span>
+          <span className="text-muted-foreground">{RECORD_LABELS.LAST_MODIFIED}</span>
           <span>{modifiedAt}</span>
           {modifiedBy && <span>by {modifiedBy}</span>}
         </div>
@@ -111,7 +111,7 @@ export function TrustSignal({ level, label, className }: TrustSignalProps) {
         "text-[11px] uppercase tracking-[0.04em] font-medium",
         level === "verified" && "text-emerald-700 dark:text-emerald-400",
         level === "official" && "text-foreground",
-        level === "pending" && "text-[#B45309]",
+        level === "pending" && "text-amber-700 dark:text-amber-400",
         level === "unverified" && "text-muted-foreground",
         className
       )}
@@ -137,7 +137,7 @@ interface DisclaimerProps {
 
 export function Disclaimer({ type, className }: DisclaimerProps) {
   return (
-    <p className={cn("text-[11px] text-[#8A8A8A] italic", className)}>
+    <p className={cn("text-[11px] text-muted-foreground italic", className)}>
       {DISCLAIMERS[type]}
     </p>
   );
@@ -162,13 +162,13 @@ export function VersionBadge({ version, isCurrent = true, className }: VersionBa
         "inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded",
         isCurrent
           ? "bg-muted text-foreground"
-          : "bg-muted text-[#8A8A8A] line-through",
+          : "bg-muted text-muted-foreground line-through",
         className
       )}
     >
       v{version}
       {!isCurrent && (
-        <span className="ml-1.5 no-underline text-[#B45309]">
+        <span className="ml-1.5 no-underline text-amber-700 dark:text-amber-400">
           {RECORD_LABELS.SUPERSEDED}
         </span>
       )}
