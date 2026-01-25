@@ -34,9 +34,9 @@ export function ApprovalStatus({ state, className }: ApprovalStatusProps) {
     <span
       className={cn(
         "inline-flex items-center px-2 py-0.5 text-[11px] font-medium uppercase tracking-[0.02em] rounded",
-        state === "pending" && "bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400",
-        state === "approved" && "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400",
-        state === "rejected" && "bg-red-100 dark:bg-red-950 text-destructive",
+        state === "pending" && "bg-[var(--warning-bg)] text-[var(--warning-text)]",
+        state === "approved" && "bg-[var(--success-bg)] text-[var(--success-text)]",
+        state === "rejected" && "bg-[var(--error-bg)] text-[var(--error-text)]",
         state === "withdrawn" && "bg-muted text-muted-foreground",
         state === "expired" && "bg-muted text-muted-foreground",
         className
@@ -127,16 +127,16 @@ export function PendingApprovalBanner({
   return (
     <div
       className={cn(
-        "bg-amber-50 dark:bg-amber-950 border border-amber-500/20 rounded-md px-4 py-3",
+        "bg-[var(--warning-bg)] border border-[var(--warning-border)] rounded-md px-4 py-3",
         className
       )}
     >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[13px] font-medium text-amber-700 dark:text-amber-400">
+          <p className="text-[13px] font-medium text-[var(--warning-text)]">
             {APPROVAL_LABELS.PENDING_APPROVAL}
           </p>
-          <p className="text-[12px] text-amber-700 dark:text-amber-400 mt-0.5">
+          <p className="text-[12px] text-[var(--warning-text)] opacity-80 mt-0.5">
             {type}
             {submittedBy && ` · Submitted by ${submittedBy}`}
             {submittedAt && ` · ${submittedAt}`}

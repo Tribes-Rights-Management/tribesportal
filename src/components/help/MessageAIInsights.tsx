@@ -50,20 +50,20 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'text-red-500';
-      case 'high': return 'text-orange-500';
-      case 'medium': return 'text-yellow-500';
-      case 'low': return 'text-green-500';
+      case 'urgent': return 'text-[var(--error-text)]';
+      case 'high': return 'text-[var(--warning-text)]';
+      case 'medium': return 'text-muted-foreground';
+      case 'low': return 'text-[var(--success-text)]';
       default: return 'text-muted-foreground';
     }
   };
 
   const getSentimentColor = (sentiment: string) => {
     switch (sentiment) {
-      case 'positive': return 'text-green-500';
+      case 'positive': return 'text-[var(--success-text)]';
       case 'neutral': return 'text-muted-foreground';
-      case 'negative': return 'text-orange-500';
-      case 'frustrated': return 'text-red-500';
+      case 'negative': return 'text-[var(--warning-text)]';
+      case 'frustrated': return 'text-[var(--error-text)]';
       default: return 'text-muted-foreground';
     }
   };

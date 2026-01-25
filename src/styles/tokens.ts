@@ -586,27 +586,27 @@ export const SYSTEM_BUTTON_CLASSES = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
-// PLATFORM UI CLASSES — Mercury/Stripe-like WHITE Surface Buttons (NO BLACK)
+// PLATFORM UI CLASSES — Mercury/Stripe-like Neutral Fill Buttons (NO BLACK)
 // ═══════════════════════════════════════════════════════════════════════════
 
 /** 
- * Primary button - WHITE surface with subtle border (NO BLACK, NO GREY ON GREY)
+ * Primary button - Neutral grey fill (NO BLACK, visible on grey/white backgrounds)
  * Uses CSS variables from tribes-theme.css for consistency
  */
 export const PRIMARY_BUTTON_CLASSES =
   "w-full h-10 rounded-[6px] inline-flex items-center justify-center px-6 " +
   "text-[14px] font-medium " +
-  "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)] " +
-  "hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)] " +
-  "disabled:bg-muted/30 disabled:text-[#9CA3AF] disabled:border-border/50 disabled:cursor-not-allowed disabled:opacity-40 " +
+  "bg-[var(--btn-bg)] text-[var(--btn-text)] " +
+  "hover:bg-[var(--btn-bg-hover)] " +
+  "disabled:bg-muted/30 disabled:text-[#9CA3AF] disabled:cursor-not-allowed disabled:opacity-40 " +
   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2";
 
-/** Secondary button - Same as primary with softer border */
+/** Secondary button - Outline variant (transparent with subtle border) */
 export const SECONDARY_BUTTON_CLASSES =
   "h-10 rounded-[6px] inline-flex items-center justify-center px-4 " +
   "text-[13px] font-medium " +
-  "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--border-subtle)] " +
-  "hover:bg-[var(--btn-bg-hover)] " +
+  "bg-[var(--btn-outline-bg)] text-[var(--btn-text)] border border-[var(--btn-outline-border)] " +
+  "hover:bg-[var(--btn-outline-hover-bg)] " +
   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2";
 
 /** Icon button - subtle, Mercury neutral */
@@ -619,7 +619,7 @@ export const ICON_BUTTON_CLASSES =
 export const INPUT_CLASSES =
   "w-full h-11 rounded-md border border-[var(--border-subtle)] bg-white " +
   "px-4 text-[14px] text-[#111] placeholder:text-[#9CA3AF] " +
-  "focus:outline-none focus:border-[var(--btn-border)]";
+  "focus:outline-none focus:border-[var(--border-strong)]";
 
 /** Table header cell - dense, clear */
 export const TABLE_HEADER_CLASSES =

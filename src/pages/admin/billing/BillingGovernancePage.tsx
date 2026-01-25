@@ -60,14 +60,14 @@ export default function BillingGovernancePage() {
       />
 
       {/* Governance Notice */}
-      <Card className="border-amber-500/20 bg-amber-500/5">
+      <Card className="border-[var(--warning-border)] bg-[var(--warning-bg)]">
         <CardContent className="p-4 flex items-start gap-3">
-          <Lock className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+          <Lock className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--warning-text)' }} />
           <div className="space-y-1">
-            <p className="text-sm font-medium text-foreground">
+            <p className="text-sm font-medium" style={{ color: 'var(--warning-text)' }}>
               Governance Surface — Read-Only Operations
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm" style={{ color: 'var(--warning-text)', opacity: 0.8 }}>
               This surface governs billing configuration and provides oversight. 
               Payment transactions occur within organization workspaces.
             </p>

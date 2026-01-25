@@ -142,16 +142,16 @@ export default function RefundsPage() {
       <div 
         className="flex items-start gap-3 p-4 rounded-lg"
         style={{
-          backgroundColor: 'rgba(234, 179, 8, 0.1)',
-          border: '1px solid rgba(234, 179, 8, 0.2)',
+          backgroundColor: 'var(--warning-bg)',
+          border: '1px solid var(--warning-border)',
         }}
       >
-        <AlertTriangle className="h-5 w-5 text-yellow-500 shrink-0 mt-0.5" />
+        <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" style={{ color: 'var(--warning-text)' }} />
         <div className="space-y-1">
-          <p className="text-sm font-medium" style={{ color: 'var(--platform-text)' }}>
+          <p className="text-sm font-medium" style={{ color: 'var(--warning-text)' }}>
             Financial governance action
           </p>
-          <p className="text-xs" style={{ color: 'var(--platform-text-muted)' }}>
+          <p className="text-xs" style={{ color: 'var(--warning-text)', opacity: 0.8 }}>
             All refund actions are logged immutably with actor identity, amount, reason, 
             and timestamp. This record cannot be modified or deleted.
           </p>

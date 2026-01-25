@@ -77,21 +77,57 @@
   --app-focus: #0071E3;
 
   /* ─────────────────────────────────────────────────────────────────────────
-     BUTTON TOKENS — Mercury-like WHITE surface buttons (NO BLACK)
+     BUTTON TOKENS — Mercury-like Neutral Surface Buttons (NO BLACK)
      
-     Primary buttons use WHITE surface with subtle border.
+     Primary buttons use light neutral fill with subtle border.
      This ensures buttons are VISIBLE on grey backgrounds.
      
      CRITICAL: Buttons must NOT disappear into grey backgrounds.
      ───────────────────────────────────────────────────────────────────────── */
-  --btn-bg: #FFFFFF;
-  --btn-bg-hover: #FAFAFA;
-  --btn-bg-active: #F5F5F5;
-  --btn-border: #D9DDE3;
-  --btn-border-hover: #C7CBD1;
-  --btn-text: #111827;
+  --btn-bg: #EEF0F3;
+  --btn-bg-hover: #E7E9ED;
+  --btn-bg-active: #DFE2E7;
+  --btn-border: transparent;
+  --btn-border-hover: transparent;
+  --btn-text: #1F2937;
   --btn-text-muted: #6B7280;
   --btn-disabled-opacity: 0.55;
+  
+  /* Outline variant (for secondary actions) */
+  --btn-outline-bg: transparent;
+  --btn-outline-border: var(--border-subtle);
+  --btn-outline-hover-bg: #F2F3F5;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     ALERT/NOTICE TOKENS — Neutral-first with semantic variants
+     
+     REPLACES peach/orange system-wide. Use these instead.
+     ───────────────────────────────────────────────────────────────────────── */
+  
+  /* Neutral notice (default) */
+  --notice-bg: #F3F4F6;
+  --notice-border: #D1D5DB;
+  --notice-text: #374151;
+  
+  /* Warning (soft amber, not peach/orange) */
+  --warning-bg: #FFFBEB;
+  --warning-border: #FCD34D;
+  --warning-text: #92400E;
+  
+  /* Error */
+  --error-bg: #FEF2F2;
+  --error-border: #FECACA;
+  --error-text: #991B1B;
+  
+  /* Success */
+  --success-bg: #F0FDF4;
+  --success-border: #BBF7D0;
+  --success-text: #166534;
+  
+  /* Info */
+  --info-bg: #EFF6FF;
+  --info-border: #BFDBFE;
+  --info-text: #1E40AF;
 
   /* ─────────────────────────────────────────────────────────────────────────
      MERCURY SHELL TOKENS — Neutral Navigation States

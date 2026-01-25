@@ -53,9 +53,9 @@ export function StatusIndicator({
         className={cn(
           "text-[28px] font-semibold mt-1 tracking-tight",
           level === "neutral" && "text-[var(--platform-text)]",
-          level === "warning" && "text-amber-500",
-          level === "alert" && "text-red-500",
-          level === "info" && "text-blue-400"
+          level === "warning" && "text-[var(--warning-text)]",
+          level === "alert" && "text-[var(--error-text)]",
+          level === "info" && "text-[var(--info-text)]"
         )}
         style={level === "neutral" ? { color: 'var(--platform-text)' } : undefined}
       >
@@ -90,9 +90,9 @@ export function StatusAlert({
       className={cn(
         "py-2 px-3 text-[13px]",
         level === "neutral" && "text-[var(--platform-text-secondary)]",
-        level === "warning" && "text-amber-500",
-        level === "alert" && "text-red-500",
-        level === "info" && "text-blue-400",
+        level === "warning" && "text-[var(--warning-text)]",
+        level === "alert" && "text-[var(--error-text)]",
+        level === "info" && "text-[var(--info-text)]",
         className
       )}
       style={level === "neutral" ? { color: 'var(--platform-text-secondary)' } : undefined}

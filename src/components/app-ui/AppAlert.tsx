@@ -34,26 +34,26 @@ type AlertVariant = "error" | "warning" | "success" | "info";
 const variantConfig = {
   error: {
     icon: AlertCircle,
-    containerClass: "bg-destructive/10 border-l-destructive",
-    iconClass: "text-destructive",
+    containerClass: "bg-[var(--error-bg)] border-l-[var(--error-border)]",
+    iconClass: "text-[var(--error-text)]",
     textClass: "text-foreground",
   },
   warning: {
     icon: AlertTriangle,
-    containerClass: "bg-warning/10 border-l-warning",
-    iconClass: "text-warning",
+    containerClass: "bg-[var(--warning-bg)] border-l-[var(--warning-border)]",
+    iconClass: "text-[var(--warning-text)]",
     textClass: "text-foreground",
   },
   success: {
     icon: CheckCircle,
-    containerClass: "bg-success/10 border-l-success",
-    iconClass: "text-success",
+    containerClass: "bg-[var(--success-bg)] border-l-[var(--success-border)]",
+    iconClass: "text-[var(--success-text)]",
     textClass: "text-foreground",
   },
   info: {
     icon: Info,
-    containerClass: "bg-info/10 border-l-info",
-    iconClass: "text-info",
+    containerClass: "bg-[var(--info-bg)] border-l-[var(--info-border)]",
+    iconClass: "text-[var(--info-text)]",
     textClass: "text-foreground",
   },
 };

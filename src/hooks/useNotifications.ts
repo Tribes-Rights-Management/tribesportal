@@ -378,7 +378,7 @@ export const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
 export const PRIORITY_STYLES: Record<NotificationPriority, { bg: string; text: string }> = {
   low: { bg: "bg-muted", text: "text-muted-foreground" },
   normal: { bg: "bg-secondary", text: "text-secondary-foreground" },
-  high: { bg: "bg-amber-500/20", text: "text-amber-600" },
+  high: { bg: "bg-[var(--warning-bg)]", text: "text-[var(--warning-text)]" },
   critical: { bg: "bg-destructive/20", text: "text-destructive" },
 };
 

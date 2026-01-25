@@ -270,8 +270,8 @@ export const EVENT_TYPE_LABELS: Record<RecoveryEventType, string> = {
 };
 
 export const EVENT_STATUS_STYLES: Record<string, { bg: string; text: string }> = {
-  initiated: { bg: "bg-blue-500/20", text: "text-blue-600" },
-  in_progress: { bg: "bg-amber-500/20", text: "text-amber-600" },
-  completed: { bg: "bg-emerald-500/20", text: "text-emerald-600" },
+  initiated: { bg: "bg-[var(--info-bg)]", text: "text-[var(--info-text)]" },
+  in_progress: { bg: "bg-[var(--warning-bg)]", text: "text-[var(--warning-text)]" },
+  completed: { bg: "bg-[var(--success-bg)]", text: "text-[var(--success-text)]" },
   failed: { bg: "bg-destructive/20", text: "text-destructive" },
 };
