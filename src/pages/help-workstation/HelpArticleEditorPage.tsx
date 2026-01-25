@@ -150,9 +150,14 @@ export default function HelpArticleEditorPage() {
           <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
           <div>
             <p className="text-[12px] text-foreground">Unable to load article</p>
-            <button onClick={() => navigate("/help-workstation/articles")} className="text-[11px] text-destructive hover:text-destructive/80 underline mt-1">
+            <AppButton 
+              intent="tertiary" 
+              size="xs"
+              onClick={() => navigate("/help-workstation/articles")} 
+              className="text-[11px] text-destructive hover:text-destructive/80 mt-1"
+            >
               Back to articles
-            </button>
+            </AppButton>
           </div>
         </div>
       </div>
@@ -163,10 +168,14 @@ export default function HelpArticleEditorPage() {
     <div className="flex-1 flex flex-col">
       {/* Header */}
       <div className="px-8 py-4 border-b border-border flex items-center justify-between">
-        <button onClick={() => navigate("/help-workstation/articles")} className="flex items-center gap-2 text-[13px] text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
+        <AppButton 
+          intent="ghost" 
+          size="sm" 
+          onClick={() => navigate("/help-workstation/articles")}
+          icon={<ArrowLeft className="h-4 w-4" strokeWidth={1.5} />}
+        >
           Back to Articles
-        </button>
+        </AppButton>
         <div className="flex items-center gap-2">
           {!isNew && status !== "archived" && (
             <AppButton intent="ghost" size="sm" onClick={handleArchive}>

@@ -140,10 +140,15 @@ export default function HelpArticlesListPage() {
           <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
           <div className="flex-1">
             <p className="text-[12px] text-foreground">{articlesError}</p>
-            <button onClick={() => fetchArticles()} className="text-[11px] text-destructive hover:text-destructive/80 underline mt-1 flex items-center gap-1">
-              <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
+            <AppButton 
+              intent="tertiary" 
+              size="xs"
+              onClick={() => fetchArticles()} 
+              className="text-[11px] text-destructive hover:text-destructive/80 mt-1"
+              icon={<RefreshCw className="h-3 w-3" strokeWidth={1.5} />}
+            >
               Try again
-            </button>
+            </AppButton>
           </div>
         </div>
       )}

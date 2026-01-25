@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AlertCircle, RefreshCw } from "lucide-react";
+import { AppButton } from "@/components/app-ui";
 
 /**
  * HELP TAGS PAGE — INSTITUTIONAL DESIGN
@@ -25,10 +26,15 @@ export default function HelpTagsPage() {
           <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
           <div className="flex-1">
             <p className="text-[12px] text-foreground">{error}</p>
-            <button onClick={() => setError(null)} className="text-[11px] text-destructive hover:text-destructive/80 underline mt-1 flex items-center gap-1">
-              <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
+            <AppButton 
+              intent="tertiary" 
+              size="xs"
+              onClick={() => setError(null)} 
+              className="text-[11px] text-destructive hover:text-destructive/80 mt-1"
+              icon={<RefreshCw className="h-3 w-3" strokeWidth={1.5} />}
+            >
               Try again
-            </button>
+            </AppButton>
           </div>
         </div>
       )}

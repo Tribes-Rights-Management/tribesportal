@@ -16,7 +16,7 @@ import {
   TableCell,
   TableEmptyRow 
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
+import { AppSearchInput, AppButton } from "@/components/app-ui";
 import { ConsoleButton } from "@/components/console";
 import { Search, Link2 } from "lucide-react";
 import { EMPTY_STATES, AUDIT_COPY } from "@/constants/institutional-copy";
@@ -186,15 +186,13 @@ export default function CorrelationChainPage() {
           border: '1px solid var(--platform-border)'
         }}
       >
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-center">
           <div className="flex-1">
-            <Input
+            <AppSearchInput
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={handleKeyDown}
+              onChange={(value) => setSearchInput(value)}
               placeholder="Enter correlation ID (e.g., CORR-20260116-143012-A1B2C3D4)"
-              className="bg-transparent border-[var(--platform-border)] font-mono"
-              style={{ color: 'var(--platform-text)' }}
+              className="font-mono"
             />
           </div>
           <ConsoleButton

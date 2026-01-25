@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { AlertCircle, CheckCircle, Info, AlertTriangle, RefreshCw } from "lucide-react";
+import { AlertCircle, CheckCircle, Info, AlertTriangle, RefreshCw, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 /**
  * APP ALERT — GLOBAL UI KIT (SINGLE SOURCE OF TRUTH)
@@ -106,40 +107,27 @@ export function AppAlert({
           </p>
         )}
         {onRetry && (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={onRetry}
-            className={cn(
-              "text-[12px] mt-2 flex items-center gap-1",
-              "underline underline-offset-2 hover:no-underline",
-              config.iconClass
-            )}
+            className={cn("text-[12px] mt-2 h-auto py-1 px-2", config.iconClass)}
           >
             <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
             Try again
-          </button>
+          </Button>
         )}
       </div>
       {onDismiss && (
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={onDismiss}
-          className="text-muted-foreground hover:text-foreground transition-colors p-1"
+          className="h-auto p-1"
           aria-label="Dismiss"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
+          <X className="h-3.5 w-3.5" strokeWidth={1.5} />
+        </Button>
       )}
     </div>
   );

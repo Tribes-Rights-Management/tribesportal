@@ -17,7 +17,7 @@ import {
   TableCell,
   TableEmptyRow 
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
+import { AppSearchInput } from "@/components/app-ui";
 import { Button } from "@/components/ui/button";
 import { Search, Link2 } from "lucide-react";
 import { EMPTY_STATES } from "@/constants/institutional-copy";
@@ -175,15 +175,13 @@ export default function AuditorChainPage() {
           border: '1px solid var(--platform-border)'
         }}
       >
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-center">
           <div className="flex-1">
-            <Input
+            <AppSearchInput
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={handleKeyDown}
+              onChange={(value) => setSearchInput(value)}
               placeholder="Enter correlation ID"
-              className="bg-transparent border-[var(--platform-border)] font-mono"
-              style={{ color: 'var(--platform-text)' }}
+              className="font-mono"
             />
           </div>
           <Button
