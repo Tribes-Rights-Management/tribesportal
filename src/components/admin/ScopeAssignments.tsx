@@ -1,4 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox";
+import { AppButton } from "@/components/app-ui";
 import type { Database } from "@/integrations/supabase/types";
 
 type PortalRole = Database["public"]["Enums"]["portal_role"];
@@ -114,45 +115,30 @@ export function ScopeAssignments({
                   {editMode && (
                     <div className="flex gap-2">
                       {membership.status === "active" && (
-                        <button
+                        <AppButton
                           onClick={() => onStatusChange(membership, "suspended")}
-                          className="px-2.5 py-1 text-[11px] rounded transition-colors"
-                          style={{ 
-                            color: 'var(--platform-text-muted)',
-                            border: '1px solid var(--platform-border)'
-                          }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)'}
-                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                          intent="secondary"
+                          size="xs"
                         >
                           Suspend
-                        </button>
+                        </AppButton>
                       )}
                       {membership.status !== "active" && (
-                        <button
+                        <AppButton
                           onClick={() => onStatusChange(membership, "active")}
-                          className="px-2.5 py-1 text-[11px] rounded transition-colors"
-                          style={{ 
-                            color: 'var(--platform-text-muted)',
-                            border: '1px solid var(--platform-border)'
-                          }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--muted) / 0.5)'}
-                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                          intent="secondary"
+                          size="xs"
                         >
                           Restore
-                        </button>
+                        </AppButton>
                       )}
-                      <button
+                      <AppButton
                         onClick={() => onStatusChange(membership, "revoked")}
-                        className="px-2.5 py-1 text-[11px] rounded transition-colors"
-                        style={{ 
-                          color: 'hsl(var(--destructive))',
-                          border: '1px solid #4A2525'
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(181,69,69,0.1)'}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        intent="danger"
+                        size="xs"
                       >
                         Revoke
-                      </button>
+                      </AppButton>
                     </div>
                   )}
                 </div>

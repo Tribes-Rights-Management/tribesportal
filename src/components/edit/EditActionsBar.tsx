@@ -1,12 +1,14 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { AppButton } from "@/components/app-ui";
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- * EDIT ACTIONS BAR — CANONICAL FOOTER ACTIONS (LOCKED)
+ * EDIT ACTIONS BAR — CANONICAL FOOTER ACTIONS (UNIFIED MERCURY STYLE)
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * Standard Cancel/Save layout for the Edit Flow.
+ * Uses unified AppButton components for consistency.
  * 
  * LAYOUT:
  * - Cancel (left) — secondary action
@@ -17,10 +19,6 @@ import { cn } from "@/lib/utils";
  * - Save disabled unless canSave is true
  * - Save shows loading state when saving
  * - Keyboard-safe: accounts for iOS Safari bottom safe area
- * 
- * STYLING:
- * - Apple-like rounded buttons
- * - Clear visual distinction between primary and secondary
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -51,49 +49,37 @@ export function EditActionsBar({
     <div 
       className="flex flex-row gap-3 px-5 pt-4 pb-5 shrink-0"
       style={{ 
-        borderTop: '1px solid var(--platform-border)',
+        borderTop: '1px solid var(--border-subtle, #E6E8EC)',
         paddingBottom: 'max(20px, env(safe-area-inset-bottom, 20px))',
       }}
     >
-      {/* Cancel button - secondary institutional styling */}
-      <button
+      {/* Cancel button - secondary styling */}
+      <AppButton
         type="button"
         onClick={onCancel}
         disabled={saving}
-        className={cn(
-          "flex-1 text-[14px] font-normal py-3.5 rounded-[6px]",
-          "transition-all duration-150",
-          "hover:border-ring hover:text-foreground",
-          saving && "opacity-40 cursor-not-allowed"
-        )}
-        style={{ 
-          color: 'var(--muted-foreground)',
-          backgroundColor: 'transparent',
-          border: '1px solid var(--border)',
-        }}
+        intent="secondary"
+        size="md"
+        fullWidth
+        className="flex-1"
       >
         {cancelLabel}
-      </button>
+      </AppButton>
 
-      {/* Save button - primary institutional styling */}
-      <button
+      {/* Save button - primary styling */}
+      <AppButton
         type="button"
         onClick={onSave}
-        disabled={!canSave || saving}
-        className={cn(
-          "flex-1 text-[14px] font-medium py-3.5 rounded-[6px]",
-          "transition-all duration-150 tracking-[0.01em]",
-          canSave && !saving && "hover:bg-white/[0.08] active:bg-white/[0.12]",
-          (!canSave || saving) && "opacity-40 cursor-not-allowed"
-        )}
-        style={{ 
-          backgroundColor: 'transparent',
-          color: 'var(--foreground)',
-          border: '1px solid #FFFFFF',
-        }}
+        disabled={!canSave}
+        loading={saving}
+        loadingText="Saving..."
+        intent="primary"
+        size="md"
+        fullWidth
+        className="flex-1"
       >
-        {saving ? "Saving..." : saveLabel}
-      </button>
+        {saveLabel}
+      </AppButton>
     </div>
   );
 }
