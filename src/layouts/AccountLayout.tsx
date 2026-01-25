@@ -192,7 +192,7 @@ export default function AccountLayout() {
     return (
       <div
         className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-        style={{ backgroundColor: "var(--app-bg)" }}
+        style={{ backgroundColor: "var(--page-bg)" }}
       >
         <GlobalHeader />
         <div className="flex-1 flex items-center justify-center">
@@ -229,7 +229,7 @@ export default function AccountLayout() {
     return (
       <div
         className="flex flex-col min-h-screen w-full max-w-full overflow-x-clip"
-        style={{ backgroundColor: "var(--app-bg)" }}
+        style={{ backgroundColor: "var(--page-bg)" }}
       >
         <GlobalHeader />
         <main
@@ -245,7 +245,7 @@ export default function AccountLayout() {
   return (
     <div
       className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-      style={{ backgroundColor: "var(--app-bg)" }}
+      style={{ backgroundColor: "var(--page-bg)" }}
     >
       <GlobalHeader />
       <div className="flex flex-1 overflow-hidden w-full max-w-full">

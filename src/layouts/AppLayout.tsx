@@ -33,7 +33,7 @@ export function AppLayout() {
   return (
     <div 
       className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-      style={{ backgroundColor: 'var(--app-bg)' }}
+      style={{ backgroundColor: 'var(--page-bg)' }}
     >
       <GlobalHeader />
       <WorkspaceContextBar />

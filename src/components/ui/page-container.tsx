@@ -96,12 +96,12 @@ export function PageContainer({
         "min-w-0",
         // Fill available vertical space
         "flex-1",
-        // Vertical padding
-        "py-6 sm:py-10",
+        // Reduced vertical padding (Stripe-like: content starts higher)
+        "py-4 sm:py-6",
         className
       )}
       style={{
-        backgroundColor: "var(--platform-canvas)",
+        backgroundColor: "var(--page-bg)",
         ...paddingStyles,
         ...style,
       }}
