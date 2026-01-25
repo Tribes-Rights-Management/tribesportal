@@ -1,24 +1,25 @@
-import { PageHeader } from "@/components/ui/page-header";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { BackButton } from "@/components/ui/back-button";
-import { 
-  Clock, 
-  Download,
-  Check,
-  X
-} from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Download, Check, X } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
-import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
+import { BackButton } from "@/components/ui/back-button";
+import { PageContainer } from "@/components/ui/page-container";
+import {
+  AppPageHeader,
+  AppCard,
+  AppCardHeader,
+  AppCardTitle,
+  AppCardBody,
+  AppTable,
+  AppTableHeader,
+  AppTableBody,
+  AppTableRow,
+  AppTableHead,
+  AppTableCell,
+  AppTableEmpty,
+  AppTableBadge,
+  AppEmptyState,
+  AppButton,
+} from "@/components/app-ui";
 
 /**
  * PORTAL — PAYMENT HISTORY
@@ -31,83 +32,86 @@ export default function PortalPaymentHistoryPage() {
 
   if (!canViewHistory) {
     return (
-      <div className="p-6 max-w-4xl mx-auto">
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Access restricted</p>
-        </div>
-      </div>
+      <PageContainer maxWidth="wide">
+        <AppCard>
+          <AppCardBody className="p-6 md:p-8">
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Access restricted</p>
+            </div>
+          </AppCardBody>
+        </AppCard>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
+    <PageContainer maxWidth="wide">
+      <div className="flex items-center gap-4 mb-6">
         <BackButton />
-        <PageHeader
-          title="Payment History"
-          description="View past payments and download receipts"
-        />
       </div>
 
+      <AppPageHeader
+        eyebrow="PORTAL"
+        title="Payment History"
+        description="View past payments and download receipts"
+      />
+
       {/* Filters */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="cursor-pointer">All</Badge>
-          <Badge variant="secondary" className="cursor-pointer">Succeeded</Badge>
-          <Badge variant="secondary" className="cursor-pointer">Refunded</Badge>
-          <Badge variant="secondary" className="cursor-pointer">Failed</Badge>
+          <AppTableBadge variant="default">All</AppTableBadge>
+          <AppTableBadge variant="success">Succeeded</AppTableBadge>
+          <AppTableBadge variant="warning">Refunded</AppTableBadge>
+          <AppTableBadge variant="error">Failed</AppTableBadge>
         </div>
         {canDownloadReceipts && (
-          <Button variant="outline" size="sm" disabled>
+          <AppButton intent="secondary" size="sm" disabled>
             <Download className="h-4 w-4 mr-2" />
             Export
-          </Button>
+          </AppButton>
         )}
       </div>
 
       {/* Payments Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base font-medium">Payments</CardTitle>
-          <CardDescription>
-            All payment transactions for your organization
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Receipt</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  <InstitutionalEmptyState
-                    title="No payment history"
-                    description="Payments will appear here after processing"
-                  />
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <AppCard className="mb-6">
+        <AppCardHeader>
+          <AppCardTitle>Payments</AppCardTitle>
+        </AppCardHeader>
+        <AppCardBody className="p-0">
+          <AppTable>
+            <AppTableHeader>
+              <AppTableRow header>
+                <AppTableHead>Date</AppTableHead>
+                <AppTableHead>Description</AppTableHead>
+                <AppTableHead>Amount</AppTableHead>
+                <AppTableHead>Status</AppTableHead>
+                <AppTableHead>Receipt</AppTableHead>
+              </AppTableRow>
+            </AppTableHeader>
+            <AppTableBody>
+              <AppTableEmpty colSpan={5}>
+                <AppEmptyState
+                  icon="file"
+                  message="No payment history"
+                  description="Payments will appear here after processing"
+                  size="sm"
+                />
+              </AppTableEmpty>
+            </AppTableBody>
+          </AppTable>
+        </AppCardBody>
+      </AppCard>
 
       {/* Example Row (Template) */}
-      <Card className="border-dashed opacity-50">
-        <CardHeader>
-          <CardTitle className="text-base font-medium">Example Payment Record</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between p-4 rounded-lg border">
+      <AppCard className="border-dashed opacity-50">
+        <AppCardHeader>
+          <AppCardTitle>Example Payment Record</AppCardTitle>
+        </AppCardHeader>
+        <AppCardBody>
+          <div className="flex items-center justify-between p-4 rounded-lg border border-border">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                <Check className="h-5 w-5 text-green-500" />
+              <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center">
+                <Check className="h-5 w-5 text-success" />
               </div>
               <div>
                 <p className="font-medium">Invoice #INV-001</p>
@@ -116,16 +120,16 @@ export default function PortalPaymentHistoryPage() {
             </div>
             <div className="text-right">
               <p className="font-medium">$99.00</p>
-              <Badge variant="secondary" className="text-xs">Succeeded</Badge>
+              <AppTableBadge variant="success">Succeeded</AppTableBadge>
             </div>
             {canDownloadReceipts && (
-              <Button variant="ghost" size="sm" disabled>
+              <AppButton intent="ghost" size="sm" disabled>
                 <Download className="h-4 w-4" />
-              </Button>
+              </AppButton>
             )}
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </AppCardBody>
+      </AppCard>
+    </PageContainer>
   );
 }

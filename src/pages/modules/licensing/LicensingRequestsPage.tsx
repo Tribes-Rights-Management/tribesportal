@@ -1,5 +1,10 @@
-import { InstitutionalEmptyPanel } from "@/components/ui/institutional-states";
-import { PageHeader } from "@/components/ui/page-header";
+import { PageContainer } from "@/components/ui/page-container";
+import {
+  AppPageHeader,
+  AppCard,
+  AppCardBody,
+  AppEmptyState,
+} from "@/components/app-ui";
 
 /**
  * LICENSING MODULE — REQUESTS
@@ -9,18 +14,24 @@ import { PageHeader } from "@/components/ui/page-header";
  */
 export default function LicensingRequestsPage() {
   return (
-    <div className="p-6 md:p-8 max-w-[1040px] mx-auto">
-      <PageHeader 
-        title="License Requests"
-        description="Review and manage incoming licensing requests"
-      />
-      
-      <div className="mt-8">
-        <InstitutionalEmptyPanel
-          title="No requests available"
-          description="License requests will appear once submitted."
-        />
-      </div>
-    </div>
+    <PageContainer maxWidth="wide">
+      <AppCard>
+        <AppCardBody className="p-6 md:p-8">
+          <AppPageHeader 
+            eyebrow="LICENSING"
+            title="License Requests"
+            description="Review and manage incoming licensing requests"
+          />
+          
+          <div className="mt-8">
+            <AppEmptyState
+              icon="inbox"
+              message="No requests available"
+              description="License requests will appear once submitted."
+            />
+          </div>
+        </AppCardBody>
+      </AppCard>
+    </PageContainer>
   );
 }

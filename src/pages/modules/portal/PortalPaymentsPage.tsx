@@ -1,211 +1,127 @@
-import { PageHeader } from "@/components/ui/page-header";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { 
-  CreditCard, 
-  FileText, 
-  Clock,
-  Download,
-  Plus,
-  ArrowRight
-} from "lucide-react";
-import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { Link } from "react-router-dom";
-import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
+import { CreditCard, Clock, FileText } from "lucide-react";
+import { useBillingAuthority } from "@/hooks/useBillingAuthority";
+import { PageContainer } from "@/components/ui/page-container";
+import {
+  AppPageHeader,
+  AppCard,
+  AppCardHeader,
+  AppCardTitle,
+  AppCardBody,
+  AppStatCard,
+  AppStatCardGrid,
+  AppEmptyState,
+  AppButton,
+} from "@/components/app-ui";
 
 /**
- * PORTAL PAYMENTS — ORGANIZATION BILLING OPERATIONS
- * 
- * ═══════════════════════════════════════════════════════════════════════════
- * SCOPE: Organization Workspace (Tribes Admin)
- * ═══════════════════════════════════════════════════════════════════════════
- * 
- * ALLOWED:
- * - View invoices for this organization
- * - Pay invoices
- * - Update payment method (Org Admin only)
- * - View payment history
- * - Download receipts/statements
- * 
- * DISALLOWED:
- * - Modify pricing
- * - View platform revenue
- * - View other organizations
- * - Access payment provider configuration
- * 
- * ROLES:
- * - Org Admin: full org-scoped billing actions
- * - Member: pay/view invoices only (no config)
- * ═══════════════════════════════════════════════════════════════════════════
+ * PORTAL — PAYMENTS OVERVIEW
  */
 
 export default function PortalPaymentsPage() {
   const { 
     canViewOrgInvoices, 
     canPayInvoices, 
-    canManagePaymentMethods,
-    canViewHistory,
+    canManagePaymentMethods, 
+    canViewHistory, 
     canDownloadReceipts 
   } = useBillingAuthority();
 
   if (!canViewOrgInvoices) {
     return (
-      <div className="p-6 max-w-4xl mx-auto">
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Access restricted</p>
-        </div>
-      </div>
+      <PageContainer maxWidth="wide">
+        <AppCard>
+          <AppCardBody className="p-6 md:p-8">
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Access restricted</p>
+            </div>
+          </AppCardBody>
+        </AppCard>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <PageHeader
+    <PageContainer maxWidth="wide">
+      <AppPageHeader
+        eyebrow="PORTAL"
         title="Payments"
-        description="Manage invoices and payment methods for your organization"
+        description="Invoices, payment methods, and transaction history"
       />
 
-      {/* Quick Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Open Invoices
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-semibold">—</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              No outstanding invoices
-            </p>
-          </CardContent>
-        </Card>
+      <AppStatCardGrid columns={3} className="mb-8">
+        <AppStatCard label="Open Invoices" value="0" subtitle="No pending invoices" />
+        <AppStatCard label="Next Payment" value="—" subtitle="No upcoming payments" />
+        <AppStatCard label="Payment Methods" value="0" subtitle="No saved methods" />
+      </AppStatCardGrid>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              Next Payment Due
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-semibold">—</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              No upcoming payments
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4" />
-              Payment Methods
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-semibold">—</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              No payment methods
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Navigation Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {/* Invoices */}
-        <Link to="/portal/payments/invoices" className="block">
-          <Card className="h-full hover:border-foreground/20 transition-colors cursor-pointer">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-medium">Invoices</CardTitle>
-                <FileText className="h-5 w-5 text-muted-foreground" />
+      <div className="grid gap-4 md:grid-cols-3 mb-8">
+        <Link to="/portal/payments/invoices">
+          <AppCard className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
+            <AppCardBody className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <div>
+                  <h3 className="text-[14px] font-medium text-foreground mb-1">Invoices</h3>
+                  <p className="text-[13px] text-muted-foreground">View and pay invoices</p>
+                </div>
               </div>
-              <CardDescription>
-                View and pay your organization's invoices
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center text-sm text-muted-foreground">
-                View invoices
-                <ArrowRight className="h-4 w-4 ml-auto" />
-              </div>
-            </CardContent>
-          </Card>
+            </AppCardBody>
+          </AppCard>
         </Link>
 
-        {/* Payment Methods */}
         {canManagePaymentMethods && (
-          <Link to="/portal/payments/methods" className="block">
-            <Card className="h-full hover:border-foreground/20 transition-colors cursor-pointer">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base font-medium">Payment Methods</CardTitle>
-                  <CreditCard className="h-5 w-5 text-muted-foreground" />
+          <Link to="/portal/payments/methods">
+            <AppCard className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
+              <AppCardBody className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
+                    <CreditCard className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="text-[14px] font-medium text-foreground mb-1">Payment Methods</h3>
+                    <p className="text-[13px] text-muted-foreground">Manage saved cards</p>
+                  </div>
                 </div>
-                <CardDescription>
-                  Manage cards and payment sources
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  Manage methods
-                  <ArrowRight className="h-4 w-4 ml-auto" />
-                </div>
-              </CardContent>
-            </Card>
+              </AppCardBody>
+            </AppCard>
           </Link>
         )}
 
-        {/* Payment History */}
         {canViewHistory && (
-          <Link to="/portal/payments/history" className="block">
-            <Card className="h-full hover:border-foreground/20 transition-colors cursor-pointer">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base font-medium">Payment History</CardTitle>
-                  <Clock className="h-5 w-5 text-muted-foreground" />
+          <Link to="/portal/payments/history">
+            <AppCard className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
+              <AppCardBody className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="text-[14px] font-medium text-foreground mb-1">Payment History</h3>
+                    <p className="text-[13px] text-muted-foreground">View past transactions</p>
+                  </div>
                 </div>
-                <CardDescription>
-                  View past payments and download receipts
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  View history
-                  <ArrowRight className="h-4 w-4 ml-auto" />
-                </div>
-              </CardContent>
-            </Card>
+              </AppCardBody>
+            </AppCard>
           </Link>
         )}
       </div>
 
-      {/* Recent Invoices */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-base font-medium">Recent Invoices</CardTitle>
-            <CardDescription>
-              Your organization's latest invoices
-            </CardDescription>
+      <AppCard>
+        <AppCardHeader>
+          <div className="flex items-center justify-between">
+            <AppCardTitle>Recent Invoices</AppCardTitle>
+            <Link to="/portal/payments/invoices">
+              <AppButton intent="ghost" size="sm">View All</AppButton>
+            </Link>
           </div>
-          <Link to="/portal/payments/invoices">
-            <Button variant="outline" size="sm">
-              View All
-            </Button>
-          </Link>
-        </CardHeader>
-        <CardContent>
-          <InstitutionalEmptyState
-            title="No invoices"
-            description="Invoices will appear here when generated"
-          />
-        </CardContent>
-      </Card>
-    </div>
+        </AppCardHeader>
+        <AppCardBody>
+          <AppEmptyState icon="file" message="No recent invoices" description="Invoices will appear here when generated" />
+        </AppCardBody>
+      </AppCard>
+    </PageContainer>
   );
 }

@@ -1,41 +1,45 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { usePortalDocuments, usePortalAgreements, usePortalStatements } from "@/hooks/usePortalData";
-import { InstitutionalEmptyPanel, InstitutionalLoadingState, SystemErrorState } from "@/components/ui/institutional-states";
-import { PageHeader } from "@/components/ui/page-header";
 import { TenantSelector } from "@/components/app/TenantSelector";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
+import { PageContainer } from "@/components/ui/page-container";
+import {
+  AppPageHeader,
+  AppCard,
+  AppCardBody,
+  AppTable,
+  AppTableHeader,
+  AppTableBody,
+  AppTableRow,
+  AppTableHead,
+  AppTableCell,
+  AppTableBadge,
+  AppEmptyState,
+  AppSectionHeader,
+} from "@/components/app-ui";
+import { InstitutionalLoadingState, SystemErrorState } from "@/components/ui/institutional-states";
 
 /**
  * CLIENT PORTAL MODULE — OVERVIEW (LANDING PAGE)
  * 
  * Route: /portal
  * Permission: portal.view
- * 
- * All content is rendered on elevated surfaces above the page background.
- * Page background matches the public website (#0A0A0B via --platform-canvas).
  */
 
-function getStatusVariant(status: string): "default" | "secondary" | "destructive" | "outline" {
+type BadgeVariant = "default" | "success" | "warning" | "error" | "info";
+
+function getStatusVariant(status: string): BadgeVariant {
   switch (status) {
     case "active":
-      return "default";
+      return "success";
     case "draft":
-      return "secondary";
+      return "warning";
     case "expired":
     case "terminated":
-      return "destructive";
+      return "error";
     default:
-      return "outline";
+      return "default";
   }
 }
 
@@ -48,38 +52,33 @@ export default function PortalOverview() {
   // No tenant selected
   if (!activeTenant) {
     return (
-      <div 
-        className="min-h-full py-8 md:py-10 px-4 md:px-6"
-        style={{ backgroundColor: 'var(--platform-canvas)' }}
-      >
-        <div 
-          className="max-w-[1040px] mx-auto rounded-lg p-6 md:p-8"
-          style={{
-            backgroundColor: 'var(--platform-surface)',
-            border: '1px solid var(--platform-border)',
-          }}
-        >
-          <PageHeader 
-            title="Client Portal"
-            description="Access your statements, agreements, and documents"
-          />
-          {tenantMemberships.length > 1 ? (
-            <div className="mt-8">
-              <p className="text-[13px] text-[--platform-text-muted] mb-4">
-                Select an organization to view your portal.
-              </p>
-              <TenantSelector />
-            </div>
-          ) : (
-            <div className="mt-8">
-              <InstitutionalEmptyPanel
-                title="No organization available"
-                description="You are not a member of any organization."
-              />
-            </div>
-          )}
-        </div>
-      </div>
+      <PageContainer maxWidth="wide">
+        <AppCard>
+          <AppCardBody className="p-6 md:p-8">
+            <AppPageHeader 
+              eyebrow="PORTAL"
+              title="Client Portal"
+              description="Access your statements, agreements, and documents"
+            />
+            {tenantMemberships.length > 1 ? (
+              <div className="mt-8">
+                <p className="text-[13px] text-muted-foreground mb-4">
+                  Select an organization to view your portal.
+                </p>
+                <TenantSelector />
+              </div>
+            ) : (
+              <div className="mt-8">
+                <AppEmptyState
+                  icon="folder"
+                  message="No organization available"
+                  description="You are not a member of any organization."
+                />
+              </div>
+            )}
+          </AppCardBody>
+        </AppCard>
+      </PageContainer>
     );
   }
 
@@ -88,73 +87,52 @@ export default function PortalOverview() {
 
   if (isLoading) {
     return (
-      <div 
-        className="min-h-full py-8 md:py-10 px-4 md:px-6"
-        style={{ backgroundColor: 'var(--platform-canvas)' }}
-      >
-        <div 
-          className="max-w-[1040px] mx-auto rounded-lg p-6 md:p-8"
-          style={{
-            backgroundColor: 'var(--platform-surface)',
-            border: '1px solid var(--platform-border)',
-          }}
-        >
-          <PageHeader 
-            title="Client Portal"
-            description="Access your statements, agreements, and documents"
-          />
-          <div className="mt-8">
-            <InstitutionalLoadingState message="Loading portal data" />
-          </div>
-        </div>
-      </div>
+      <PageContainer maxWidth="wide">
+        <AppCard>
+          <AppCardBody className="p-6 md:p-8">
+            <AppPageHeader 
+              eyebrow="PORTAL"
+              title="Client Portal"
+              description="Access your statements, agreements, and documents"
+            />
+            <div className="mt-8">
+              <InstitutionalLoadingState message="Loading portal data" />
+            </div>
+          </AppCardBody>
+        </AppCard>
+      </PageContainer>
     );
   }
 
   if (hasError) {
     return (
-      <div 
-        className="min-h-full py-8 md:py-10 px-4 md:px-6"
-        style={{ backgroundColor: 'var(--platform-canvas)' }}
-      >
-        <div 
-          className="max-w-[1040px] mx-auto rounded-lg p-6 md:p-8"
-          style={{
-            backgroundColor: 'var(--platform-surface)',
-            border: '1px solid var(--platform-border)',
-          }}
-        >
-          <PageHeader 
-            title="Client Portal"
-            description="Access your statements, agreements, and documents"
-          />
-          <div className="mt-8">
-            <SystemErrorState 
-              title="Unable to load portal data"
-              description="Please try again or contact support if the issue persists."
+      <PageContainer maxWidth="wide">
+        <AppCard>
+          <AppCardBody className="p-6 md:p-8">
+            <AppPageHeader 
+              eyebrow="PORTAL"
+              title="Client Portal"
+              description="Access your statements, agreements, and documents"
             />
-          </div>
-        </div>
-      </div>
+            <div className="mt-8">
+              <SystemErrorState 
+                title="Unable to load portal data"
+                description="Please try again or contact support if the issue persists."
+              />
+            </div>
+          </AppCardBody>
+        </AppCard>
+      </PageContainer>
     );
   }
 
   return (
-    <div 
-      className="min-h-full py-8 md:py-10 px-4 md:px-6"
-      style={{ backgroundColor: 'var(--platform-canvas)' }}
-    >
-      {/* Main content card - elevated surface above page background */}
-      <div 
-        className="max-w-[1040px] mx-auto rounded-lg"
-        style={{
-          backgroundColor: 'var(--platform-surface)',
-          border: '1px solid var(--platform-border)',
-        }}
-      >
-        <div className="p-6 md:p-8">
+    <PageContainer maxWidth="wide">
+      <AppCard>
+        <AppCardBody className="p-6 md:p-8">
           <div className="flex items-start justify-between gap-4 mb-8">
-            <PageHeader 
+            <AppPageHeader 
+              eyebrow="PORTAL"
               title="Client Portal"
               description="Access your statements, agreements, and documents"
             />
@@ -163,48 +141,40 @@ export default function PortalOverview() {
 
           {/* Statements Section */}
           <section className="mb-10">
-            <h2 className="text-[14px] font-medium text-[--platform-text] mb-4">
-              Statements
-            </h2>
+            <AppSectionHeader title="Statements" />
             
             {statements && statements.length > 0 ? (
-              <div 
-                className="rounded overflow-hidden"
-                style={{
-                  backgroundColor: "var(--platform-surface-2)",
-                  border: "1px solid var(--platform-border)",
-                }}
-              >
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Period</TableHead>
-                      <TableHead>Created</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+              <div>
+                <AppTable>
+                  <AppTableHeader>
+                    <AppTableRow header>
+                      <AppTableHead>Period</AppTableHead>
+                      <AppTableHead>Created</AppTableHead>
+                    </AppTableRow>
+                  </AppTableHeader>
+                  <AppTableBody>
                     {statements.slice(0, 5).map((statement) => (
-                      <TableRow key={statement.id}>
-                        <TableCell>
+                      <AppTableRow key={statement.id} clickable>
+                        <AppTableCell>
                           <Link 
                             to={`/portal/statements?id=${statement.id}`}
                             className="hover:underline"
                           >
                             {statement.statement_period}
                           </Link>
-                        </TableCell>
-                        <TableCell className="text-[--platform-text-muted]">
+                        </AppTableCell>
+                        <AppTableCell muted>
                           {format(new Date(statement.created_at), "MMM d, yyyy")}
-                        </TableCell>
-                      </TableRow>
+                        </AppTableCell>
+                      </AppTableRow>
                     ))}
-                  </TableBody>
-                </Table>
+                  </AppTableBody>
+                </AppTable>
                 {statements.length > 5 && (
-                  <div className="px-4 py-3 border-t border-[--platform-border]">
+                  <div className="px-4 py-3 border-t border-border">
                     <Link 
                       to="/portal/statements"
-                      className="text-[13px] text-[--platform-text-muted] hover:text-[--platform-text]"
+                      className="text-[13px] text-muted-foreground hover:text-foreground"
                     >
                       View all statements →
                     </Link>
@@ -212,8 +182,9 @@ export default function PortalOverview() {
                 )}
               </div>
             ) : (
-              <InstitutionalEmptyPanel
-                title="No statements available"
+              <AppEmptyState
+                icon="file"
+                message="No statements available"
                 description="Statements will appear once processed."
               />
             )}
@@ -221,50 +192,42 @@ export default function PortalOverview() {
 
           {/* Agreements Section */}
           <section className="mb-10">
-            <h2 className="text-[14px] font-medium text-[--platform-text] mb-4">
-              Agreements
-            </h2>
+            <AppSectionHeader title="Agreements" />
             
             {agreements && agreements.length > 0 ? (
-              <div 
-                className="rounded overflow-hidden"
-                style={{
-                  backgroundColor: "var(--platform-surface-2)",
-                  border: "1px solid var(--platform-border)",
-                }}
-              >
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Agreement Title</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+              <div>
+                <AppTable>
+                  <AppTableHeader>
+                    <AppTableRow header>
+                      <AppTableHead>Agreement Title</AppTableHead>
+                      <AppTableHead>Status</AppTableHead>
+                    </AppTableRow>
+                  </AppTableHeader>
+                  <AppTableBody>
                     {agreements.slice(0, 5).map((agreement) => (
-                      <TableRow key={agreement.id}>
-                        <TableCell>
+                      <AppTableRow key={agreement.id} clickable>
+                        <AppTableCell>
                           <Link 
                             to={`/portal/agreements?id=${agreement.id}`}
                             className="hover:underline"
                           >
                             {agreement.agreement_title}
                           </Link>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={getStatusVariant(agreement.status)}>
+                        </AppTableCell>
+                        <AppTableCell>
+                          <AppTableBadge variant={getStatusVariant(agreement.status)}>
                             {agreement.status}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
+                          </AppTableBadge>
+                        </AppTableCell>
+                      </AppTableRow>
                     ))}
-                  </TableBody>
-                </Table>
+                  </AppTableBody>
+                </AppTable>
                 {agreements.length > 5 && (
-                  <div className="px-4 py-3 border-t border-[--platform-border]">
+                  <div className="px-4 py-3 border-t border-border">
                     <Link 
                       to="/portal/agreements"
-                      className="text-[13px] text-[--platform-text-muted] hover:text-[--platform-text]"
+                      className="text-[13px] text-muted-foreground hover:text-foreground"
                     >
                       View all agreements →
                     </Link>
@@ -272,8 +235,9 @@ export default function PortalOverview() {
                 )}
               </div>
             ) : (
-              <InstitutionalEmptyPanel
-                title="No agreements available"
+              <AppEmptyState
+                icon="file"
+                message="No agreements available"
                 description="Agreements will appear once executed."
               />
             )}
@@ -281,52 +245,44 @@ export default function PortalOverview() {
 
           {/* Documents Section */}
           <section>
-            <h2 className="text-[14px] font-medium text-[--platform-text] mb-4">
-              Documents
-            </h2>
+            <AppSectionHeader title="Documents" />
             
             {documents && documents.length > 0 ? (
-              <div 
-                className="rounded overflow-hidden"
-                style={{
-                  backgroundColor: "var(--platform-surface-2)",
-                  border: "1px solid var(--platform-border)",
-                }}
-              >
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Created</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+              <div>
+                <AppTable>
+                  <AppTableHeader>
+                    <AppTableRow header>
+                      <AppTableHead>Title</AppTableHead>
+                      <AppTableHead>Type</AppTableHead>
+                      <AppTableHead>Created</AppTableHead>
+                    </AppTableRow>
+                  </AppTableHeader>
+                  <AppTableBody>
                     {documents.slice(0, 5).map((doc) => (
-                      <TableRow key={doc.id}>
-                        <TableCell>
+                      <AppTableRow key={doc.id} clickable>
+                        <AppTableCell>
                           <Link 
                             to={`/portal/documents?id=${doc.id}`}
                             className="hover:underline"
                           >
                             {doc.title}
                           </Link>
-                        </TableCell>
-                        <TableCell className="text-[--platform-text-muted]">
+                        </AppTableCell>
+                        <AppTableCell muted>
                           {doc.document_type || "—"}
-                        </TableCell>
-                        <TableCell className="text-[--platform-text-muted]">
+                        </AppTableCell>
+                        <AppTableCell muted>
                           {format(new Date(doc.created_at), "MMM d, yyyy")}
-                        </TableCell>
-                      </TableRow>
+                        </AppTableCell>
+                      </AppTableRow>
                     ))}
-                  </TableBody>
-                </Table>
+                  </AppTableBody>
+                </AppTable>
                 {documents.length > 5 && (
-                  <div className="px-4 py-3 border-t border-[--platform-border]">
+                  <div className="px-4 py-3 border-t border-border">
                     <Link 
                       to="/portal/documents"
-                      className="text-[13px] text-[--platform-text-muted] hover:text-[--platform-text]"
+                      className="text-[13px] text-muted-foreground hover:text-foreground"
                     >
                       View all documents →
                     </Link>
@@ -334,14 +290,15 @@ export default function PortalOverview() {
                 )}
               </div>
             ) : (
-              <InstitutionalEmptyPanel
-                title="No documents available"
+              <AppEmptyState
+                icon="file"
+                message="No documents available"
                 description="Documents will appear once uploaded."
               />
             )}
           </section>
-        </div>
-      </div>
-    </div>
+        </AppCardBody>
+      </AppCard>
+    </PageContainer>
   );
 }

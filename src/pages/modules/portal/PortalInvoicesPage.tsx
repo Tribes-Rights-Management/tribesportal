@@ -1,26 +1,25 @@
-import { PageHeader } from "@/components/ui/page-header";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { BackButton } from "@/components/ui/back-button";
-import { 
-  FileText, 
-  Download,
-  DollarSign,
-  Clock,
-  Check,
-  AlertCircle
-} from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, AlertCircle, Clock, Check } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
-import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
+import { PageContainer } from "@/components/ui/page-container";
+import {
+  AppPageHeader,
+  AppCard,
+  AppCardHeader,
+  AppCardTitle,
+  AppCardBody,
+  AppStatCard,
+  AppStatCardGrid,
+  AppTable,
+  AppTableHeader,
+  AppTableBody,
+  AppTableRow,
+  AppTableHead,
+  AppTableCell,
+  AppTableEmpty,
+  AppEmptyState,
+  AppButton,
+} from "@/components/app-ui";
 
 /**
  * PORTAL — ORGANIZATION INVOICES
@@ -33,96 +32,83 @@ export default function PortalInvoicesPage() {
 
   if (!canViewOrgInvoices) {
     return (
-      <div className="p-6 max-w-4xl mx-auto">
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Access restricted</p>
-        </div>
-      </div>
+      <PageContainer maxWidth="wide">
+        <AppCard>
+          <AppCardBody className="p-6 md:p-8">
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Access restricted</p>
+            </div>
+          </AppCardBody>
+        </AppCard>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
-        <BackButton />
-        <PageHeader
-          title="Invoices"
-          description="View and pay your organization's invoices"
-        />
-      </div>
+    <PageContainer maxWidth="wide">
+      <Link 
+        to="/portal/payments" 
+        className="inline-flex items-center gap-2 text-[13px] text-muted-foreground hover:text-foreground transition-colors mb-6"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        <span>Back to Payments</span>
+      </Link>
+
+      <AppPageHeader
+        eyebrow="PORTAL"
+        title="Invoices"
+        description="View and pay your organization's invoices"
+      />
 
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription className="flex items-center gap-2">
-              <AlertCircle className="h-4 w-4" />
-              Outstanding
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-semibold">$0.00</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              Due Soon
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-semibold">—</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription className="flex items-center gap-2">
-              <Check className="h-4 w-4" />
-              Paid This Month
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-semibold">$0.00</div>
-          </CardContent>
-        </Card>
-      </div>
+      <AppStatCardGrid columns={3} className="mb-8">
+        <AppStatCard
+          label="Outstanding"
+          value="$0.00"
+        />
+        <AppStatCard
+          label="Due Soon"
+          value="—"
+        />
+        <AppStatCard
+          label="Paid This Month"
+          value="$0.00"
+        />
+      </AppStatCardGrid>
 
       {/* Invoices Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base font-medium">All Invoices</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Invoice #</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Due Date</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  <InstitutionalEmptyState
-                    title="No invoices"
-                    description="Invoices will appear here when generated"
-                  />
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <AppCard className="mb-6">
+        <AppCardHeader>
+          <AppCardTitle>All Invoices</AppCardTitle>
+        </AppCardHeader>
+        <AppCardBody className="p-0">
+          <AppTable>
+            <AppTableHeader>
+              <AppTableRow header>
+                <AppTableHead>Invoice #</AppTableHead>
+                <AppTableHead>Amount</AppTableHead>
+                <AppTableHead>Status</AppTableHead>
+                <AppTableHead>Due Date</AppTableHead>
+                <AppTableHead>Actions</AppTableHead>
+              </AppTableRow>
+            </AppTableHeader>
+            <AppTableBody>
+              <AppTableEmpty colSpan={5}>
+                <AppEmptyState
+                  icon="file"
+                  message="No invoices"
+                  description="Invoices will appear here when generated"
+                  size="sm"
+                />
+              </AppTableEmpty>
+            </AppTableBody>
+          </AppTable>
+        </AppCardBody>
+      </AppCard>
 
       {/* Permission Notice */}
-      <Card className="border-muted">
-        <CardContent className="p-4">
+      <AppCard>
+        <AppCardBody className="p-4">
           <p className="text-sm text-muted-foreground">
             {canPayInvoices ? (
               <>
@@ -134,8 +120,8 @@ export default function PortalInvoicesPage() {
               </>
             )}
           </p>
-        </CardContent>
-      </Card>
-    </div>
+        </AppCardBody>
+      </AppCard>
+    </PageContainer>
   );
 }
