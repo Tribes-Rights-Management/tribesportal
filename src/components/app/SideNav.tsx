@@ -83,15 +83,14 @@ export function SideNav({ items, settingsItems }: SideNavProps) {
 
   return (
     <nav 
-      className="w-48 shrink-0 flex flex-col"
+      className="flex flex-col h-full overflow-hidden"
       style={{ 
         backgroundColor: 'var(--sidebar-bg)',
-        borderRight: '1px solid var(--border-subtle)'
       }}
     >
       {/* Main navigation - functional grouping */}
       {visibleItems.length > 0 && (
-        <div className="flex-1 py-4">
+        <div className="flex-1 py-4 overflow-y-auto">
           <div className="px-3 space-y-0.5">
             {visibleItems.map((item) => (
               <SideNavLink key={item.to} {...item} />
@@ -103,7 +102,7 @@ export function SideNav({ items, settingsItems }: SideNavProps) {
       {/* Settings at bottom - separated by hairline */}
       {visibleSettingsItems && visibleSettingsItems.length > 0 && (
         <div 
-          className="py-3"
+          className="py-3 shrink-0"
           style={{ borderTop: '1px solid var(--border-subtle)' }}
         >
           <div className="px-3 space-y-0.5">

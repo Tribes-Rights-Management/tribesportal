@@ -1,28 +1,22 @@
 import { Outlet } from "react-router-dom";
-import { GlobalHeader } from "@/components/app/GlobalHeader";
+import { AppShell } from "@/components/app/AppShell";
+import { AppHeader } from "@/components/app/AppHeader";
 
 /**
- * ADMIN LAYOUT — CONSOLE LIGHT (Stripe-like)
+ * ADMIN LAYOUT — STRIPE-LIKE SHELL (NO SIDEBAR)
  * 
  * Layout Rules:
  * - Light canvas with white surfaces
- * - Subtle borders, no heavy shadows
+ * - No sidebar (admin dashboard is full-width)
  * - Institutional command center aesthetic
- * 
- * Role-based Entry:
- * - Platform admins land here by default
- * - This is the institutional control surface
  */
 export function AdminLayout() {
   return (
-    <div 
-      className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-      style={{ backgroundColor: 'var(--page-bg)' }}
+    <AppShell
+      showSidebar={false}
+      headerContent={<AppHeader showSidebarLogo={false} />}
     >
-      <GlobalHeader />
-      <main className="flex-1 overflow-y-auto overflow-x-clip min-w-0 w-full max-w-full">
-        <Outlet />
-      </main>
-    </div>
+      <Outlet />
+    </AppShell>
   );
 }

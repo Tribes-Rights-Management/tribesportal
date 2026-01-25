@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { GlobalHeader } from "@/components/app/GlobalHeader";
+import { AppShell } from "@/components/app/AppShell";
+import { AppHeader } from "@/components/app/AppHeader";
 import { useScrollReset } from "@/hooks/useScrollReset";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { User, Shield, Sliders, ChevronRight } from "lucide-react";
@@ -10,7 +11,7 @@ import { PageContainer } from "@/components/ui/page-container";
 import { PageShell } from "@/components/ui/page-shell";
 
 /**
- * ACCOUNT SETTINGS LAYOUT — SINGLE LAYOUT AUTHORITY FOR /account (LOCKED)
+ * ACCOUNT SETTINGS LAYOUT — STRIPE-LIKE GRID SHELL (CANONICAL)
  *
  * This file is the ONLY layout mounted for:
  * - /account
@@ -84,18 +85,12 @@ function getAccountShellMeta(pathname: string): AccountShellMeta {
 }
 
 /**
- * Desktop Navigation Rail
+ * Account Navigation Sidebar
  */
-function DesktopNav() {
+function AccountNav() {
   return (
-    <nav
-      className="w-56 shrink-0 border-r py-6 px-4"
-      style={{
-        backgroundColor: "var(--sidebar-bg)",
-        borderColor: "var(--border-subtle)",
-      }}
-    >
-      <div className="space-y-1">
+    <nav className="flex flex-col h-full py-4 overflow-y-auto">
+      <div className="px-3 space-y-1">
         {accountNavItems.map((item) => (
           <NavLink
             key={item.to}
@@ -151,14 +146,14 @@ function AccountIndexList() {
           <div className="flex-1 min-w-0">
             <p
               className="text-[15px] font-medium truncate"
-              style={{ color: "var(--platform-text)" }}
+              style={{ color: "var(--tribes-fg)" }}
             >
               {item.label}
             </p>
             <p
               className="text-[13px] mt-0.5 line-clamp-2"
               style={{
-                color: "var(--platform-text-secondary)",
+                color: "var(--tribes-fg-secondary)",
                 overflowWrap: "anywhere",
                 wordBreak: "break-word",
               }}
@@ -168,7 +163,7 @@ function AccountIndexList() {
           </div>
           <ChevronRight
             className="h-5 w-5 shrink-0"
-            style={{ color: "var(--platform-text-muted)" }}
+            style={{ color: "var(--tribes-fg-muted)" }}
           />
         </NavLink>
       ))}
@@ -190,17 +185,16 @@ export default function AccountLayout() {
 
   if (loading) {
     return (
-      <div
-        className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-        style={{ backgroundColor: "var(--page-bg)" }}
+      <AppShell
+        showSidebar={false}
+        headerContent={<AppHeader showSidebarLogo={false} />}
       >
-        <GlobalHeader />
         <div className="flex-1 flex items-center justify-center">
           <p className="text-[14px] text-muted-foreground">
             Loading account
           </p>
         </div>
-      </div>
+      </AppShell>
     );
   }
 
@@ -213,7 +207,7 @@ export default function AccountLayout() {
     return <Navigate to="/account/profile" replace />;
   }
 
-  const shell = (
+  const content = (
     <PageContainer variant="settings" padding="default" safeArea>
       <PageShell
         title={meta.title}
@@ -225,35 +219,26 @@ export default function AccountLayout() {
     </PageContainer>
   );
 
+  // Mobile: no sidebar
   if (isMobile) {
     return (
-      <div
-        className="flex flex-col min-h-screen w-full max-w-full overflow-x-clip"
-        style={{ backgroundColor: "var(--page-bg)" }}
+      <AppShell
+        showSidebar={false}
+        headerContent={<AppHeader showSidebarLogo={false} />}
       >
-        <GlobalHeader />
-        <main
-          ref={contentRef}
-          className="flex-1 overflow-y-auto w-full max-w-full overflow-x-clip"
-        >
-          {shell}
-        </main>
-      </div>
+        {content}
+      </AppShell>
     );
   }
 
+  // Desktop: with account nav sidebar
   return (
-    <div
-      className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-      style={{ backgroundColor: "var(--page-bg)" }}
+    <AppShell
+      showSidebar={true}
+      headerContent={<AppHeader showSidebarLogo={true} />}
+      sidebarContent={<AccountNav />}
     >
-      <GlobalHeader />
-      <div className="flex flex-1 overflow-hidden w-full max-w-full">
-        <DesktopNav />
-        <main ref={contentRef} className="flex-1 overflow-y-auto overflow-x-clip min-w-0">
-          {shell}
-        </main>
-      </div>
-    </div>
+      {content}
+    </AppShell>
   );
 }
