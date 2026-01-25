@@ -17,7 +17,7 @@ export function AdminLayout() {
   return (
     <div 
       className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-      style={{ backgroundColor: 'var(--app-canvas-bg)' }}
+      style={{ backgroundColor: 'var(--app-bg)' }}
     >
       <GlobalHeader />
       <main className="flex-1 overflow-y-auto overflow-x-clip min-w-0 w-full max-w-full">

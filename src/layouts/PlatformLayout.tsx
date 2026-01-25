@@ -62,14 +62,14 @@ export function PlatformLayout({
   return (
     <div
       className={cn("min-h-full", PADDING_MAP[padding])}
-      style={{ backgroundColor: "var(--platform-canvas)" }}
+      style={{ backgroundColor: "var(--app-bg)" }}
     >
       {elevated ? (
         <div 
           className={cn(MAX_WIDTH_MAP[maxWidth], "mx-auto rounded-lg", className)}
           style={{
-            backgroundColor: "var(--platform-surface)",
-            border: "1px solid var(--platform-border)",
+            backgroundColor: "var(--card-bg)",
+            border: "1px solid var(--border-subtle)",
           }}
         >
           <div className="p-6 md:p-8">
@@ -109,15 +109,13 @@ export function InstitutionalHeader({
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1
-            className="text-[28px] font-semibold tracking-[-0.02em]"
-            style={{ color: "var(--platform-text)" }}
+            className="text-[28px] font-semibold tracking-[-0.02em] text-foreground"
           >
             {title}
           </h1>
           {description && (
             <p
-              className="text-[15px] mt-1.5 leading-relaxed"
-              style={{ color: "var(--platform-text-secondary)" }}
+              className="text-[15px] mt-1.5 leading-relaxed text-muted-foreground"
             >
               {description}
             </p>
@@ -155,18 +153,12 @@ export function InstitutionalSection({
       {(title || description) && (
         <div className="mb-4">
           {title && (
-            <h2
-              className="text-[16px] font-medium"
-              style={{ color: "var(--platform-text)" }}
-            >
+            <h2 className="text-[16px] font-medium text-foreground">
               {title}
             </h2>
           )}
           {description && (
-            <p
-              className="text-[13px] mt-0.5"
-              style={{ color: "var(--platform-text-secondary)" }}
-            >
+            <p className="text-[13px] mt-0.5 text-muted-foreground">
               {description}
             </p>
           )}
@@ -196,8 +188,8 @@ export function InstitutionalPanel({
     <div
       className={cn("rounded overflow-hidden", className)}
       style={{
-        backgroundColor: "var(--platform-surface)",
-        border: "1px solid var(--platform-border)",
+        backgroundColor: "var(--card-bg)",
+        border: "1px solid var(--border-subtle)",
       }}
     >
       {children}
@@ -214,7 +206,7 @@ export function InstitutionalDivider({ className }: { className?: string }) {
   return (
     <div
       className={cn("h-px", className)}
-      style={{ backgroundColor: "var(--platform-border)" }}
+      style={{ backgroundColor: "var(--border-subtle)" }}
     />
   );
 }

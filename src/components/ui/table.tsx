@@ -58,7 +58,10 @@ const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttribut
         "border-b",
         className
       )}
-      style={{ borderColor: 'var(--platform-border)' }}
+      style={{ 
+        borderColor: 'var(--border-subtle)',
+        backgroundColor: 'var(--card-bg)'
+      }}
       {...props} 
     />
   ),
@@ -85,8 +88,8 @@ const TableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttribut
         className
       )}
       style={{ 
-        borderColor: 'var(--platform-border)',
-        backgroundColor: 'var(--platform-surface-2)'
+        borderColor: 'var(--border-subtle)',
+        backgroundColor: 'var(--tribes-surface-elevated)'
       }}
       {...props} 
     />
@@ -107,11 +110,11 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
         // Horizontal divider only, subtle hover tint
         // NO shadows, NO motion, NO lift
         "border-b transition-colors duration-150",
-        clickable && "row-hover",
+        clickable && "hover:bg-[var(--tribes-nav-hover)] cursor-pointer",
         className
       )}
       style={{ 
-        borderColor: 'var(--platform-border)',
+        borderColor: 'var(--border-subtle)',
       }}
       {...props}
     />
@@ -141,7 +144,7 @@ const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
         "[&:has([role=checkbox])]:pr-0",
         className,
       )}
-      style={{ color: 'var(--platform-text-muted)' }}
+      style={{ color: 'var(--tribes-fg-muted)' }}
       {...props}
     />
   ),
@@ -170,7 +173,7 @@ const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
         "[&:has([role=checkbox])]:pr-0",
         className
       )}
-      style={{ color: muted ? 'var(--platform-text-muted)' : 'var(--platform-text)' }}
+      style={{ color: muted ? 'var(--tribes-fg-muted)' : 'var(--tribes-fg)' }}
       {...props} 
     />
   ),
@@ -185,7 +188,7 @@ const TableCaption = React.forwardRef<HTMLTableCaptionElement, React.HTMLAttribu
         "mt-4 text-[13px]",
         className
       )}
-      style={{ color: 'var(--platform-text-secondary)' }}
+      style={{ color: 'var(--tribes-fg-secondary)' }}
       {...props} 
     />
   ),
@@ -211,14 +214,14 @@ const TableEmptyRow = React.forwardRef<HTMLTableRowElement, TableEmptyRowProps>(
       >
         <p 
           className="text-[14px] font-medium"
-          style={{ color: 'var(--platform-text-secondary)' }}
+          style={{ color: 'var(--tribes-fg-secondary)' }}
         >
           {title}
         </p>
         {description && (
           <p 
             className="text-[13px] mt-1"
-            style={{ color: 'var(--platform-text-muted)' }}
+            style={{ color: 'var(--tribes-fg-muted)' }}
           >
             {description}
           </p>
