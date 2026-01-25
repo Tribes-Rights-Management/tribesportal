@@ -56,6 +56,34 @@
   
   /* Focus ring: Brand blue for accessibility */
   --app-focus: #0071E3;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     MERCURY SHELL TOKENS — Help Workstation (No Blue)
+     ───────────────────────────────────────────────────────────────────────── */
+  
+  /* Shell background: App canvas like Mercury */
+  --tribes-shell-bg: #F6F7F9;
+  
+  /* Header: Pure white top bar */
+  /* --tribes-header-bg already defined below */
+  
+  /* Sidebar: Soft gray nav panel */
+  --tribes-sidebar-bg-mercury: #F4F5F7;
+  
+  /* Borders: Thin subtle separators */
+  --tribes-border-subtle: #E5E7EB;
+  
+  /* Nav states */
+  --tribes-nav-hover: #EEF0F3;
+  --tribes-nav-active: #E9ECF0;
+  
+  /* Control styling */
+  --tribes-control-bg: #FFFFFF;
+  --tribes-control-border: #E5E7EB;
+  --tribes-control-placeholder: #9CA3AF;
+  
+  /* Neutral focus ring (NO BLUE) */
+  --tribes-focus-ring-neutral: rgba(17, 24, 39, 0.25);
   
   /* ─────────────────────────────────────────────────────────────────────────
      LEGACY TOKENS — Maintained for compatibility
