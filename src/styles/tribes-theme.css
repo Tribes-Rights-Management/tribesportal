@@ -61,8 +61,8 @@
      MERCURY SHELL TOKENS — Help Workstation (No Blue)
      ───────────────────────────────────────────────────────────────────────── */
   
-  /* Shell background: App canvas like Mercury */
-  --tribes-shell-bg: #F6F7F9;
+  /* Shell background: Neutral gray canvas (no blue cast) */
+  --tribes-shell-bg: #F5F5F5;
   
   /* Header: Pure white top bar */
   /* --tribes-header-bg already defined below */
