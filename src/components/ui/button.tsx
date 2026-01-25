@@ -4,6 +4,31 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
+/**
+ * BUTTON — CANONICAL UI PRIMITIVE (SINGLE SOURCE OF TRUTH)
+ * 
+ * ═══════════════════════════════════════════════════════════════════════════
+ * DO NOT STYLE BUTTONS PER-PAGE. USE VARIANTS HERE.
+ * ═══════════════════════════════════════════════════════════════════════════
+ * 
+ * This is the base button component. Most pages should use:
+ * - AppButton from @/components/app-ui (for workstation pages)
+ * - ConsoleButton from @/components/console (for admin console pages)
+ * 
+ * Both of those components wrap this primitive and add specialized features.
+ * 
+ * VARIANTS:
+ * - default: Charcoal fill (primary actions)
+ * - secondary: Light grey fill (secondary actions)
+ * - outline: Same as secondary for consistency
+ * - ghost: Transparent until hover
+ * - destructive: Red border on transparent
+ * - link: Text only with underline on hover
+ * 
+ * Focus ring: #0071E3 (brand blue) ONLY — no blue fills anywhere
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+
 const buttonVariants = cva(
   // Base: Institutional button system - Mercury/Stripe neutrals, no blue fills
   "inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",

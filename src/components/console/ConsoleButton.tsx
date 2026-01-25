@@ -3,19 +3,23 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * CONSOLE BUTTON — UNIFIED MERCURY-LIKE BUTTON FOR SYSTEM CONSOLE
+ * CONSOLE BUTTON — SYSTEM CONSOLE BUTTON (SINGLE SOURCE OF TRUTH)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
- * INSTITUTIONAL STYLING — MERCURY/STRIPE NEUTRALS, NO BLUE FILLS
+ * DO NOT STYLE BUTTONS PER-PAGE. USE VARIANTS HERE.
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * This component matches AppButton exactly for visual consistency across
  * all workstations (Help, System Console, Licensing, etc.).
  * 
+ * USAGE:
+ * - All /admin/* pages MUST use ConsoleButton
+ * - Do not create custom button styles in page files
+ * 
  * DESIGN PHILOSOPHY:
  * - Institutional, not consumer
  * - Mercury-like neutral greys
- * - No blue fills (blue only for focus rings)
+ * - No blue fills (blue only for focus rings: #0071E3)
  * 
  * VARIANTS:
  * - Primary: Charcoal fill with white text

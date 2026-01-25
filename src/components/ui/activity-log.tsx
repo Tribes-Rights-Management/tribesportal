@@ -1,5 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { 
   Table, 
   TableHeader, 
@@ -244,16 +246,11 @@ function ActivityLogFilters({
         >
           From
         </label>
-        <input
+        <Input
           type="date"
           value={filters.dateFrom ?? ''}
           onChange={(e) => onFilterChange({ ...filters, dateFrom: e.target.value })}
-          className="px-3 py-1.5 text-[13px] rounded-md"
-          style={{
-            backgroundColor: 'var(--platform-surface)',
-            border: '1px solid var(--platform-border)',
-            color: 'var(--platform-text)',
-          }}
+          className="h-9 px-3 py-1.5 text-[13px] rounded-md bg-[var(--platform-surface)] border-[var(--platform-border)] text-[var(--platform-text)]"
         />
       </div>
       <div className="flex items-center gap-2">
@@ -263,31 +260,21 @@ function ActivityLogFilters({
         >
           To
         </label>
-        <input
+        <Input
           type="date"
           value={filters.dateTo ?? ''}
           onChange={(e) => onFilterChange({ ...filters, dateTo: e.target.value })}
-          className="px-3 py-1.5 text-[13px] rounded-md"
-          style={{
-            backgroundColor: 'var(--platform-surface)',
-            border: '1px solid var(--platform-border)',
-            color: 'var(--platform-text)',
-          }}
+          className="h-9 px-3 py-1.5 text-[13px] rounded-md bg-[var(--platform-surface)] border-[var(--platform-border)] text-[var(--platform-text)]"
         />
       </div>
 
       {/* Actor Filter */}
-      <input
+      <Input
         type="text"
         placeholder="Filter by actor"
         value={filters.actor ?? ''}
         onChange={(e) => onFilterChange({ ...filters, actor: e.target.value })}
-        className="px-3 py-1.5 text-[13px] rounded-md flex-1 max-w-[200px]"
-        style={{
-          backgroundColor: 'var(--platform-surface)',
-          border: '1px solid var(--platform-border)',
-          color: 'var(--platform-text)',
-        }}
+        className="h-9 px-3 py-1.5 text-[13px] rounded-md flex-1 max-w-[200px] bg-[var(--platform-surface)] border-[var(--platform-border)] text-[var(--platform-text)]"
       />
 
       {/* Action Type Filter */}
@@ -313,28 +300,20 @@ function ActivityLogFilters({
       {/* Export Buttons */}
       {onExport && (
         <div className="flex items-center gap-2 ml-auto">
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => onExport('csv')}
-            className="px-3 py-1.5 text-[13px] font-medium rounded-md transition-colors"
-            style={{
-              backgroundColor: 'transparent',
-              border: '1px solid var(--platform-border)',
-              color: 'var(--platform-text-secondary)',
-            }}
           >
             {BUTTON_LABELS.EXPORT} CSV
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => onExport('pdf')}
-            className="px-3 py-1.5 text-[13px] font-medium rounded-md transition-colors"
-            style={{
-              backgroundColor: 'transparent',
-              border: '1px solid var(--platform-border)',
-              color: 'var(--platform-text-secondary)',
-            }}
           >
             {BUTTON_LABELS.EXPORT} PDF
-          </button>
+          </Button>
         </div>
       )}
     </div>

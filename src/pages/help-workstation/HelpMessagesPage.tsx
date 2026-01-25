@@ -255,9 +255,14 @@ export default function HelpMessagesPage() {
                 <h2 className="text-[15px] font-medium text-foreground">{selectedMessage.name}</h2>
                 <p className="text-[11px] text-muted-foreground mt-1">{selectedMessage.email}</p>
               </div>
-              <button onClick={() => setSelectedMessage(null)} className="text-muted-foreground hover:text-foreground transition-colors ml-3">
+              <AppButton 
+                intent="ghost" 
+                size="sm" 
+                onClick={() => setSelectedMessage(null)} 
+                className="ml-3"
+              >
                 <X className="h-4 w-4" strokeWidth={1.5} />
-              </button>
+              </AppButton>
             </div>
             
             {/* Panel Content */}

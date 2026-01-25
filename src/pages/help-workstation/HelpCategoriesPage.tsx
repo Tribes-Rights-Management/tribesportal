@@ -258,9 +258,13 @@ export default function HelpCategoriesPage() {
                   {editing ? "Update category details" : "Create a new category"}
                 </p>
               </div>
-              <button onClick={() => setPanelOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors">
+              <AppButton 
+                intent="ghost" 
+                size="sm" 
+                onClick={() => setPanelOpen(false)}
+              >
                 <X className="h-4 w-4" strokeWidth={1.5} />
-              </button>
+              </AppButton>
             </div>
 
             {/* Panel Content */}
@@ -355,9 +359,13 @@ export default function HelpCategoriesPage() {
           <div className="fixed inset-y-0 right-0 w-[400px] bg-background border-l border-border shadow-2xl z-50 flex flex-col">
             <div className="flex items-center justify-between px-6 py-5 border-b border-border">
               <h2 className="text-[15px] font-medium text-foreground">Delete category?</h2>
-              <button onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }} className="text-muted-foreground hover:text-foreground transition-colors">
+              <AppButton 
+                intent="ghost" 
+                size="sm" 
+                onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }}
+              >
                 <X className="h-4 w-4" strokeWidth={1.5} />
-              </button>
+              </AppButton>
             </div>
 
             <div className="flex-1 px-6 py-6">
