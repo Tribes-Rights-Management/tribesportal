@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus } from "lucide-react";
 import { format } from "date-fns";
-import { useDebounce } from "@/hooks/useDebounce";
 
 // Import from unified app-ui kit
 import {
@@ -15,7 +14,6 @@ import {
   AppListRow,
   AppListAction,
   AppEmptyState,
-  AppSearchInput,
   AppAlert,
   AppSectionGrid,
 } from "@/components/app-ui";
@@ -51,9 +49,6 @@ export default function HelpOverviewPage() {
   const [draftsToReview, setDraftsToReview] = useState<RecentArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const debouncedSearch = useDebounce(searchQuery, 300);
 
   useEffect(() => {
     loadStats();
@@ -118,11 +113,6 @@ export default function HelpOverviewPage() {
     }
   };
 
-  const handleSearch = () => {
-    if (debouncedSearch.trim()) {
-      navigate(`/help-workstation/articles?search=${encodeURIComponent(debouncedSearch)}`);
-    }
-  };
 
   return (
     <div className="flex-1 p-6 md:p-8">
@@ -154,15 +144,6 @@ export default function HelpOverviewPage() {
         </div>
       )}
 
-      {/* Search */}
-      <div className="mb-8 max-w-md">
-        <AppSearchInput
-          value={searchQuery}
-          onChange={setSearchQuery}
-          onSubmit={handleSearch}
-          placeholder="Search articles..."
-        />
-      </div>
 
       {/* Stats Cards */}
       <div className="mb-8">
