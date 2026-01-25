@@ -24,7 +24,7 @@
   /* ═══════════════════════════════════════════════════════════════════════════
      MERCURY + STRIPE CHROME SYSTEM — Global Neutral Tokens (SINGLE SOURCE)
      
-     Layout: Sidebar (grey) → Canvas (white) → Panels (grey) → Cards (white)
+     Layout: Sidebar (grey) → Canvas (soft grey) → Cards (white)
      Light, institutional, NO BLUE ACCENTS. Focus ring #0071E3 is the ONLY blue.
      ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -33,17 +33,17 @@
      ───────────────────────────────────────────────────────────────────────── */
   
   /* Surface 1: Sidebar — Mercury-like neutral grey (R=G=B, NO blue tint) */
-  --sidebar-bg: #F3F4F6;
-  --app-sidebar-bg: #F3F4F6;
+  --sidebar-bg: #F1F2F4;
+  --app-sidebar-bg: #F1F2F4;
   
   /* Surface 2: Top bar/header — true white */
   --topbar-bg: #FFFFFF;
   --app-header-bg: #FFFFFF;
   
-  /* Surface 3: Main page canvas — true white (Stripe/Mercury) */
-  --page-bg: #FFFFFF;
-  --app-bg: #FFFFFF;
-  --app-canvas-bg: #FFFFFF;
+  /* Surface 3: Main page canvas — soft grey (Stripe/Mercury) */
+  --page-bg: #F5F5F5;
+  --app-bg: #F5F5F5;
+  --app-canvas-bg: #F5F5F5;
   
   /* Surface 4: Panel/section backgrounds — Stripe-like light grey boxes */
   --panel-bg: #F5F6F8;
@@ -54,6 +54,10 @@
   
   /* Muted wash — for active pills, hover backgrounds, inactive states */
   --muted-wash: #F6F7F8;
+  
+  /* Control fill — for filled buttons/inputs (neutral) */
+  --control-fill: #EEF0F3;
+  --control-hover: #E9ECF0;
   
   /* Global border: Subtle but visible (~10-12% black on white) */
   --border-subtle: #E6E8EC;
@@ -72,14 +76,16 @@
   /* ─────────────────────────────────────────────────────────────────────────
      BUTTON TOKENS — Mercury-like Neutral Grey System (NO BLACK BUTTONS)
      
-     Primary buttons use light grey fill with subtle border, NOT charcoal.
+     Primary buttons use light grey fill with NO visible border.
      This matches Stripe/Mercury's restrained institutional aesthetic.
+     
+     CRITICAL: Filled buttons must NOT show visible borders.
      ───────────────────────────────────────────────────────────────────────── */
-  --btn-bg: #F2F3F5;
-  --btn-bg-hover: #E9EBEF;
-  --btn-bg-active: #E2E4E8;
-  --btn-border: #E6E8EC;
-  --btn-border-hover: #D1D5DB;
+  --btn-bg: #EEF0F3;
+  --btn-bg-hover: #E5E7EB;
+  --btn-bg-active: #D1D5DB;
+  --btn-border: transparent;
+  --btn-border-hover: transparent;
   --btn-text: #111827;
   --btn-text-muted: #6B7280;
   --btn-disabled-opacity: 0.55;

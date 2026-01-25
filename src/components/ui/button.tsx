@@ -39,16 +39,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Primary: Light grey fill — Mercury-like neutral (NO BLACK)
-        default: "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)] font-medium hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)]",
+        // Primary: Light grey fill — Mercury-like neutral (NO BLACK, NO VISIBLE BORDER)
+        default: "bg-[var(--control-fill)] text-[var(--btn-text)] font-medium hover:bg-[var(--control-hover)]",
         // Destructive: Red border on transparent
         destructive: "bg-transparent border border-destructive text-destructive font-medium hover:bg-destructive/10",
-        // Outline: Same as default — light grey fill with border
-        outline: "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)] font-medium hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)]",
-        // Secondary: Same as default for consistency
-        secondary: "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)] font-medium hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)]",
+        // Outline: Transparent with subtle border (for secondary actions)
+        outline: "bg-transparent text-[var(--btn-text)] border border-[var(--border-subtle)] font-medium hover:bg-[var(--muted-wash)]",
+        // Secondary: Same as default (filled neutral)
+        secondary: "bg-[var(--control-fill)] text-[var(--btn-text)] font-medium hover:bg-[var(--control-hover)]",
         // Ghost: Invisible until hover
-        ghost: "bg-transparent border border-transparent text-muted-foreground hover:bg-[var(--muted-wash)] hover:text-foreground",
+        ghost: "bg-transparent text-muted-foreground hover:bg-[var(--muted-wash)] hover:text-foreground",
         // Link: No border, underline on hover
         link: "bg-transparent text-muted-foreground hover:text-foreground hover:underline underline-offset-4",
       },

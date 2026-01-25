@@ -154,7 +154,7 @@ export function AppSearchInput({
           className={cn(
             "absolute right-3 top-1/2 -translate-y-1/2",
             "p-1 rounded-[6px] transition-colors",
-            "text-muted-foreground/60 hover:text-muted-foreground hover:bg-[#E5E7EB]",
+            "text-muted-foreground/60 hover:text-muted-foreground hover:bg-[var(--muted-wash)]",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
           )}
           type="button"

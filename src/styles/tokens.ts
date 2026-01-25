@@ -590,29 +590,29 @@ export const SYSTEM_BUTTON_CLASSES = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 /** 
- * Primary button - Mercury/Stripe neutral GREY (NO BLACK)
+ * Primary button - Mercury/Stripe neutral GREY (NO BLACK, NO VISIBLE BORDER)
  * Uses CSS variables from tribes-theme.css for consistency
  */
 export const PRIMARY_BUTTON_CLASSES =
   "w-full h-10 rounded-[6px] inline-flex items-center justify-center px-6 " +
   "text-[14px] font-medium " +
-  "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)] " +
-  "hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)] " +
-  "disabled:bg-muted/30 disabled:text-[#9CA3AF] disabled:border-[#E6E8EC] disabled:cursor-not-allowed disabled:opacity-40 " +
+  "bg-[var(--control-fill)] text-[var(--btn-text)] " +
+  "hover:bg-[var(--control-hover)] " +
+  "disabled:bg-muted/30 disabled:text-[#9CA3AF] disabled:cursor-not-allowed disabled:opacity-40 " +
   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2";
 
-/** Secondary button - Same as primary for unified Mercury-like look */
+/** Secondary button - Same as primary for unified Mercury-like look (NO VISIBLE BORDER) */
 export const SECONDARY_BUTTON_CLASSES =
   "h-10 rounded-[6px] inline-flex items-center justify-center px-4 " +
   "text-[13px] font-medium " +
-  "bg-[var(--btn-bg)] border border-[var(--btn-border)] text-[var(--btn-text)] " +
-  "hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)] " +
+  "bg-[var(--control-fill)] text-[var(--btn-text)] " +
+  "hover:bg-[var(--control-hover)] " +
   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2";
 
 /** Icon button - subtle, Mercury neutral */
 export const ICON_BUTTON_CLASSES =
   "h-9 w-9 rounded-[6px] inline-flex items-center justify-center " +
-  "hover:bg-[var(--muted-wash)] active:bg-[var(--btn-bg-hover)] " +
+  "hover:bg-[var(--muted-wash)] active:bg-[var(--control-hover)] " +
   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2";
 
 /** Input field - administrative clarity */
