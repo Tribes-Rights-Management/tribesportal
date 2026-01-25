@@ -34,8 +34,11 @@
   /* Page background: Pure white */
   --tribes-bg: #FFFFFF;
 
-  /* Header background: Black for brand consistency (stays dark in both modes) */
-  --tribes-header-bg: #000000;
+  /* Header background: Institutional graphite (softer than pure black) */
+  --tribes-header-bg: #111214;
+
+  /* Sidebar background: Slightly softer graphite for depth separation */
+  --tribes-sidebar-bg: #0F1115;
 
   /* ═══════════════════════════════════════════════════════════════════════════
        TEXT HIERARCHY — High contrast for readability
@@ -112,8 +115,11 @@
     /* Page background: YouTube Studio main bg */
   --tribes-bg: #181818;
 
-  /* Header background: Pure black (same in both modes) */
-  --tribes-header-bg: #000000;
+  /* Header background: Institutional graphite (softer than pure black) */
+  --tribes-header-bg: #111214;
+
+  /* Sidebar background: Slightly softer graphite for depth separation */
+  --tribes-sidebar-bg: #0F1115;
 
   /* ═══════════════════════════════════════════════════════════════════════════
        TEXT HIERARCHY — High contrast for readability
