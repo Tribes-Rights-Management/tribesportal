@@ -85,8 +85,8 @@ export function SideNav({ items, settingsItems }: SideNavProps) {
     <nav 
       className="w-48 shrink-0 flex flex-col"
       style={{ 
-        backgroundColor: 'var(--app-sidebar-bg)',
-        borderRight: '1px solid var(--app-chrome-border)'
+        backgroundColor: 'var(--sidebar-bg)',
+        borderRight: '1px solid var(--border-subtle)'
       }}
     >
       {/* Main navigation - functional grouping */}
@@ -104,7 +104,7 @@ export function SideNav({ items, settingsItems }: SideNavProps) {
       {visibleSettingsItems && visibleSettingsItems.length > 0 && (
         <div 
           className="py-3"
-          style={{ borderTop: '1px solid var(--app-chrome-border)' }}
+          style={{ borderTop: '1px solid var(--border-subtle)' }}
         >
           <div className="px-3 space-y-0.5">
             {visibleSettingsItems.map((item) => (

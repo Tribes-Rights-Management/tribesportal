@@ -36,7 +36,7 @@ export function SystemConsoleLayout() {
   return (
     <div 
       className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-      style={{ backgroundColor: 'var(--app-canvas-bg)' }}
+      style={{ backgroundColor: 'var(--app-bg)' }}
     >
       <SystemConsoleHeader />
       <main 

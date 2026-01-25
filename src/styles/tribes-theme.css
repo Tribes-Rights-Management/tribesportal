@@ -24,78 +24,82 @@
 
 :root {
   /* ═══════════════════════════════════════════════════════════════════════════
-     CONSOLE LIGHT — Default Theme (Stripe-like)
-     Soft canvas, white surfaces, subtle borders, institutional restraint
+     MERCURY 3-SURFACE SYSTEM — Global Neutral Tokens (SINGLE SOURCE OF TRUTH)
+     
+     Canvas → Sidebar → Cards/Tables
+     Light, institutional, no blue accents. Focus ring is #0071E3 only.
      ═══════════════════════════════════════════════════════════════════════════ */
 
   /* ─────────────────────────────────────────────────────────────────────────
-     APP CHROME TOKENS — Header, Sidebar, Shell
+     GLOBAL 3-SURFACE TOKENS (AUTHORITATIVE)
      ───────────────────────────────────────────────────────────────────────── */
   
-  /* Canvas: Warm neutral background for authenticated app */
-  --app-canvas-bg: #F5F4F2;
+  /* Surface 1: Main page canvas — very light neutral gray */
+  --app-bg: #F5F5F5;
+  --app-canvas-bg: #F5F5F5;
   
-  /* Surface: White for cards, tables, content areas */
-  --app-surface-bg: #FFFFFF;
+  /* Surface 2: Sidebar — slightly different neutral tint */
+  --sidebar-bg: #F2F3F5;
+  --app-sidebar-bg: #F2F3F5;
   
-  /* Surface border: Subtle but visible (~10-12% black) */
-  --app-surface-border: #E0E0E0;
-  
-  /* Sidebar: Near-white, subtle separation from canvas */
-  --app-sidebar-bg: #FFFFFF;
-  
-  /* Header: White with subtle bottom border */
+  /* Surface 3: Top bar/header — true white */
+  --topbar-bg: #FFFFFF;
   --app-header-bg: #FFFFFF;
   
-  /* Chrome border: Subtle divider for header/sidebar edges */
-  --app-chrome-border: #E5E7EB;
+  /* Surface 3: Cards, tables, panels — true white */
+  --card-bg: #FFFFFF;
+  --app-surface-bg: #FFFFFF;
+  
+  /* Global border: Subtle but visible (~10-12% black on white) */
+  --border-subtle: #E6E8EC;
+  --app-surface-border: #E6E8EC;
+  
+  /* Chrome border: Same as surface border for consistency */
+  --app-chrome-border: #E6E8EC;
   
   /* Radius: Stripe-like restraint (10-12px) */
   --app-radius: 10px;
   --app-radius-sm: 8px;
   
-  /* Focus ring: Brand blue for accessibility */
+  /* Focus ring: Brand blue for accessibility — THE ONLY BLUE IN THE SYSTEM */
   --app-focus: #0071E3;
 
   /* ─────────────────────────────────────────────────────────────────────────
-     MERCURY SHELL TOKENS — Help Workstation (No Blue)
+     MERCURY SHELL TOKENS — Neutral Navigation States
      ───────────────────────────────────────────────────────────────────────── */
   
-  /* Shell background: Warm neutral canvas (no cool cast) */
-  --tribes-shell-bg: #F5F4F2;
+  /* Shell background: Matches global canvas */
+  --tribes-shell-bg: var(--app-bg);
   
-  /* Header: Pure white top bar */
-  /* --tribes-header-bg already defined below */
+  /* Mercury sidebar: Uses global sidebar token */
+  --tribes-sidebar-bg-mercury: var(--sidebar-bg);
   
-  /* Sidebar: Soft gray nav panel */
-  --tribes-sidebar-bg-mercury: #F4F5F7;
+  /* Borders: Use global border token */
+  --tribes-border-subtle: var(--border-subtle);
   
-  /* Borders: Thin subtle separators */
-  --tribes-border-subtle: #E5E7EB;
-  
-  /* Nav states */
-  --tribes-nav-hover: #EEF0F3;
-  --tribes-nav-active: #E9ECF0;
+  /* Nav states: Subtle neutral washes (NO BLUE) */
+  --tribes-nav-hover: #EAEBEE;
+  --tribes-nav-active: #E2E4E8;
   
   /* Control styling */
-  --tribes-control-bg: #FFFFFF;
-  --tribes-control-border: #E5E7EB;
+  --tribes-control-bg: var(--card-bg);
+  --tribes-control-border: var(--border-subtle);
   --tribes-control-placeholder: #9CA3AF;
   
-  /* Neutral focus ring (NO BLUE) */
+  /* Neutral focus ring for Help Workstation (NO BLUE) */
   --tribes-focus-ring-neutral: rgba(17, 24, 39, 0.25);
   
   /* ─────────────────────────────────────────────────────────────────────────
-     LEGACY TOKENS — Maintained for compatibility
+     LEGACY TOKENS — Mapped to global 3-surface system
      ───────────────────────────────────────────────────────────────────────── */
   
-  /* Page background: Warm neutral canvas */
-  --tribes-bg: #F5F4F2;
-  --tribes-bg-page: #F5F4F2;
+  /* Page background: Uses global canvas token */
+  --tribes-bg: var(--app-bg);
+  --tribes-bg-page: var(--app-bg);
   
-  /* Header/sidebar - now light (Console Light mode) */
-  --tribes-header-bg: #FFFFFF;
-  --tribes-sidebar-bg: #FFFFFF;
+  /* Header/sidebar: Uses global tokens */
+  --tribes-header-bg: var(--topbar-bg);
+  --tribes-sidebar-bg: var(--sidebar-bg);
 
   /* ─────────────────────────────────────────────────────────────────────────
      TEXT HIERARCHY — High contrast for readability
@@ -114,18 +118,18 @@
   --tribes-text-muted: #9CA3AF;
 
   /* ─────────────────────────────────────────────────────────────────────────
-     SURFACE SYSTEM — White surfaces on soft canvas
+     SURFACE SYSTEM — Uses global 3-surface tokens
      ───────────────────────────────────────────────────────────────────────── */
 
-  /* Card/panel surface: Pure white */
-  --tribes-card: #FFFFFF;
-  --tribes-surface: #FFFFFF;
+  /* Card/panel surface: Uses global card-bg */
+  --tribes-card: var(--card-bg);
+  --tribes-surface: var(--card-bg);
 
-  /* Card border: Visible separation (~10-12% black) */
-  --tribes-card-border: #E0E0E0;
+  /* Card border: Uses global border-subtle */
+  --tribes-card-border: var(--border-subtle);
 
-  /* Table surface: White (same as cards for consistency) */
-  --tribes-surface-table: #FFFFFF;
+  /* Table surface: Same as cards for consistency */
+  --tribes-surface-table: var(--card-bg);
 
   /* Elevated surface: Slightly off-white for nested content */
   --tribes-surface-elevated: #F9FAFB;
@@ -134,20 +138,20 @@
   --tribes-surface-nested: #F3F4F6;
 
   /* ─────────────────────────────────────────────────────────────────────────
-     BORDERS & DIVIDERS — Clean, subtle (Stripe-like)
+     BORDERS & DIVIDERS — Uses global border-subtle
      ───────────────────────────────────────────────────────────────────────── */
 
-  /* Hairline borders */
-  --tribes-border: #E5E7EB;
+  /* Hairline borders: Uses global token */
+  --tribes-border: var(--border-subtle);
 
   /* Divider: same as border for consistency */
-  --tribes-divider: #E5E7EB;
+  --tribes-divider: var(--border-subtle);
 
   /* Strong borders: emphasized separation */
   --tribes-border-strong: #D1D5DB;
 
-  /* Soft shadow: subtle lift for cards */
-  --tribes-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  /* Soft shadow: very minimal for Mercury-like feel */
+  --tribes-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 
   /* ─────────────────────────────────────────────────────────────────────────
      INTERACTIVE STATES — Clear hover/focus feedback

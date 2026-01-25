@@ -97,7 +97,10 @@ export default function AuthCallbackPage() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-6">
+    <div 
+      className="min-h-screen flex items-center justify-center px-6"
+      style={{ backgroundColor: 'var(--app-bg)' }}
+    >
       <div className="text-center">
         <p className="text-[15px] text-muted-foreground tracking-wide">
           {status === "error" ? "Session verification failed" : "Establishing session..."}

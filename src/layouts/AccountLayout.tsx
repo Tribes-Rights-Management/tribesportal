@@ -91,8 +91,8 @@ function DesktopNav() {
     <nav
       className="w-56 shrink-0 border-r py-6 px-4"
       style={{
-        backgroundColor: "var(--platform-surface)",
-        borderColor: "var(--platform-border)",
+        backgroundColor: "var(--sidebar-bg)",
+        borderColor: "var(--border-subtle)",
       }}
     >
       <div className="space-y-1">
@@ -102,10 +102,10 @@ function DesktopNav() {
             to={item.to}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 px-3 py-2 rounded text-[13px] font-medium transition-colors",
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors",
                 isActive
-                  ? "text-[--platform-text] bg-white/5"
-                  : "text-[--platform-text-muted] hover:text-[--platform-text] hover:bg-white/3"
+                  ? "text-foreground bg-[var(--tribes-nav-active)]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-[var(--tribes-nav-hover)]"
               )
             }
           >
@@ -123,29 +123,29 @@ function AccountIndexList() {
     <div
       className="rounded-lg overflow-hidden w-full max-w-full"
       style={{
-        backgroundColor: "var(--platform-surface)",
-        border: "1px solid var(--platform-border)",
+        backgroundColor: "var(--card-bg)",
+        border: "1px solid var(--border-subtle)",
       }}
     >
       {accountNavItems.map((item, index) => (
         <NavLink
           key={item.to}
           to={item.to}
-          className="flex items-center gap-3 px-4 py-4 transition-colors active:bg-white/[0.03] w-full min-w-0"
+          className="flex items-center gap-3 px-4 py-4 transition-colors hover:bg-[var(--tribes-nav-hover)] active:bg-[var(--tribes-nav-active)] w-full min-w-0"
           style={{
             borderBottom:
               index < accountNavItems.length - 1
-                ? "1px solid var(--platform-border)"
+                ? "1px solid var(--border-subtle)"
                 : "none",
           }}
         >
           <div
             className="h-10 w-10 rounded-lg flex items-center justify-center shrink-0"
-            style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+            style={{ backgroundColor: "var(--tribes-surface-elevated)" }}
           >
             <item.icon
               className="h-5 w-5"
-              style={{ color: "var(--platform-text-secondary)" }}
+              style={{ color: "var(--tribes-fg-secondary)" }}
             />
           </div>
           <div className="flex-1 min-w-0">
@@ -192,11 +192,11 @@ export default function AccountLayout() {
     return (
       <div
         className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-        style={{ backgroundColor: "var(--platform-canvas)" }}
+        style={{ backgroundColor: "var(--app-bg)" }}
       >
         <GlobalHeader />
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-[14px]" style={{ color: "var(--platform-text-muted)" }}>
+          <p className="text-[14px] text-muted-foreground">
             Loading account
           </p>
         </div>
@@ -229,7 +229,7 @@ export default function AccountLayout() {
     return (
       <div
         className="flex flex-col min-h-screen w-full max-w-full overflow-x-clip"
-        style={{ backgroundColor: "var(--platform-canvas)" }}
+        style={{ backgroundColor: "var(--app-bg)" }}
       >
         <GlobalHeader />
         <main
@@ -245,7 +245,7 @@ export default function AccountLayout() {
   return (
     <div
       className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-      style={{ backgroundColor: "var(--platform-canvas)" }}
+      style={{ backgroundColor: "var(--app-bg)" }}
     >
       <GlobalHeader />
       <div className="flex flex-1 overflow-hidden w-full max-w-full">

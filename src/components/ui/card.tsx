@@ -14,13 +14,18 @@ import { cn } from "@/lib/utils";
  */
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
+  ({ className, style, ...props }, ref) => (
     <div 
       ref={ref} 
       className={cn(
-        "rounded-lg border border-border bg-card", // Flat, minimal
+        "rounded-lg", // Uses token-based styling
         className
-      )} 
+      )}
+      style={{
+        backgroundColor: 'var(--card-bg)',
+        border: '1px solid var(--border-subtle)',
+        ...style
+      }}
       {...props} 
     />
   )
