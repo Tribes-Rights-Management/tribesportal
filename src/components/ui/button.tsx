@@ -17,10 +17,14 @@ import { cn } from "@/lib/utils";
  * 
  * Both of those components wrap this primitive and add specialized features.
  * 
+ * MERCURY/STRIPE-LIKE NEUTRAL BUTTON SYSTEM:
+ * - NO BLACK BUTTONS — all primary buttons use neutral grey
+ * - NO BLUE FILLS — blue (#0071E3) only for focus rings
+ * 
  * VARIANTS:
- * - default: Charcoal fill (primary actions)
- * - secondary: Light grey fill (secondary actions)
- * - outline: Same as secondary for consistency
+ * - default: Light grey fill with subtle border (primary action)
+ * - secondary: Same as default for consistency
+ * - outline: Same as default (light grey fill)
  * - ghost: Transparent until hover
  * - destructive: Red border on transparent
  * - link: Text only with underline on hover
@@ -30,30 +34,30 @@ import { cn } from "@/lib/utils";
  */
 
 const buttonVariants = cva(
-  // Base: Institutional button system - Mercury/Stripe neutrals, no blue fills
+  // Base: Institutional button system - Mercury/Stripe neutrals, no blue fills, NO BLACK
   "inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        // Primary: Charcoal fill — main actions (Stripe-like)
-        default: "bg-[#1A1A1A] text-white border border-[#1A1A1A] font-medium tracking-[0.01em] hover:bg-[#2D2D2D]",
+        // Primary: Light grey fill — Mercury-like neutral (NO BLACK)
+        default: "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)] font-medium hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)]",
         // Destructive: Red border on transparent
         destructive: "bg-transparent border border-destructive text-destructive font-medium hover:bg-destructive/10",
-        // Outline: Light grey fill with border — secondary actions (Mercury-like)
-        outline: "bg-[#F3F4F6] text-[#111827] border border-[#E6E8EC] font-medium hover:bg-[#E5E7EB] hover:border-[#D1D5DB]",
-        // Secondary: Same as outline for consistency
-        secondary: "bg-[#F3F4F6] text-[#111827] border border-[#E6E8EC] font-medium hover:bg-[#E5E7EB] hover:border-[#D1D5DB]",
+        // Outline: Same as default — light grey fill with border
+        outline: "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)] font-medium hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)]",
+        // Secondary: Same as default for consistency
+        secondary: "bg-[var(--btn-bg)] text-[var(--btn-text)] border border-[var(--btn-border)] font-medium hover:bg-[var(--btn-bg-hover)] hover:border-[var(--btn-border-hover)]",
         // Ghost: Invisible until hover
-        ghost: "bg-transparent border border-transparent text-muted-foreground hover:bg-[#F3F4F6] hover:text-foreground",
+        ghost: "bg-transparent border border-transparent text-muted-foreground hover:bg-[var(--muted-wash)] hover:text-foreground",
         // Link: No border, underline on hover
         link: "bg-transparent text-muted-foreground hover:text-foreground hover:underline underline-offset-4",
       },
       size: {
         // Institutional sizing: 6px radius, proportional padding
-        default: "h-11 px-5 rounded-[6px] text-[14px]",
+        default: "h-10 px-5 rounded-[6px] text-[14px]",
         sm: "h-9 px-4 rounded-[6px] text-[13px]",
-        lg: "h-[52px] px-6 rounded-[6px] text-[15px]",
-        icon: "h-11 w-11 rounded-[6px]",
+        lg: "h-11 px-6 rounded-[6px] text-[15px]",
+        icon: "h-10 w-10 rounded-[6px]",
         // Internal form button sizes
         "internal": "h-10 px-5 rounded-[6px] text-[14px] font-medium",
         "internal-sm": "h-9 px-4 rounded-[6px] text-[13px] font-medium",
