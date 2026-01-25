@@ -3,33 +3,17 @@ import { cn } from "@/lib/utils";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 /**
- * APP TABLE — GLOBAL UI KIT (SINGLE SOURCE OF TRUTH)
+ * APP TABLE — CONSOLE LIGHT (Stripe-like)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
  * CANONICAL TABLE COMPONENTS (LOCKED)
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * Consistent table styling with:
- * - Themed backgrounds and borders
- * - Sortable column headers
- * - Hover states for rows
- * - Empty state support
- * 
- * USAGE:
- *   <AppTable>
- *     <AppTableHeader>
- *       <AppTableRow>
- *         <AppTableHead sortable onSort={handleSort}>Title</AppTableHead>
- *         <AppTableHead>Status</AppTableHead>
- *       </AppTableRow>
- *     </AppTableHeader>
- *     <AppTableBody>
- *       <AppTableRow clickable onClick={handleClick}>
- *         <AppTableCell>Article Title</AppTableCell>
- *         <AppTableCell>Published</AppTableCell>
- *       </AppTableRow>
- *     </AppTableBody>
- *   </AppTable>
+ * - White surface with subtle border
+ * - Subtle header (no heavy background)
+ * - Light row hover (muted/30)
+ * - Consistent density across all tables
  * 
  * ENFORCEMENT:
  * - All data tables must use these components
@@ -50,8 +34,8 @@ export function AppTable({ children, className }: AppTableProps) {
   return (
     <div
       className={cn(
-        "bg-card border border-border rounded-[var(--surface-radius-sm)]",
-        "overflow-hidden",
+        "bg-[var(--app-surface-bg)] border border-[var(--app-surface-border)]",
+        "rounded-[var(--app-radius)] overflow-hidden",
         className
       )}
     >
@@ -70,7 +54,11 @@ interface AppTableHeaderProps {
 }
 
 export function AppTableHeader({ children, className }: AppTableHeaderProps) {
-  return <thead className={className}>{children}</thead>;
+  return (
+    <thead className={cn("bg-muted/30", className)}>
+      {children}
+    </thead>
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -112,8 +100,10 @@ export function AppTableRow({
     <tr
       onClick={clickable ? onClick : undefined}
       className={cn(
-        header ? "border-b border-border" : "border-b border-border/50",
-        clickable && "cursor-pointer hover:bg-accent/50 transition-colors",
+        header 
+          ? "border-b border-[var(--app-surface-border)]" 
+          : "border-b border-[var(--app-surface-border)]/50",
+        clickable && "cursor-pointer hover:bg-muted/30 transition-colors",
         className
       )}
       role={clickable ? "button" : undefined}
@@ -189,7 +179,7 @@ export function AppTableHead({
     <th
       className={cn(
         "py-3 px-4",
-        "text-[10px] uppercase tracking-wider font-medium text-muted-foreground",
+        "text-[11px] uppercase tracking-wider font-medium text-muted-foreground",
         alignClasses[align],
         className
       )}
@@ -200,6 +190,7 @@ export function AppTableHead({
           onClick={onSort}
           className={cn(
             "flex items-center hover:text-foreground transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded",
             align === "right" && "ml-auto"
           )}
         >
@@ -301,7 +292,7 @@ export function AppTableBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2 py-1 rounded text-[11px] font-medium",
+        "inline-flex items-center px-2 py-1 rounded-md text-[11px] font-medium",
         badgeVariants[variant],
         className
       )}

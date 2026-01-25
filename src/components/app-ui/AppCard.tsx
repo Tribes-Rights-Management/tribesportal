@@ -2,20 +2,21 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * APP CARD — GLOBAL UI KIT (SINGLE SOURCE OF TRUTH)
+ * APP CARD — CONSOLE LIGHT (Stripe-like)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
  * INSTITUTIONAL SURFACE COMPONENT (LOCKED)
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * - Background: --card token (elevated surface)
- * - Border: --border token (subtle separator)
- * - Radius: --surface-radius (16px) or --surface-radius-sm (12px)
+ * - Background: White (--app-surface-bg)
+ * - Border: Subtle (--app-surface-border)
+ * - Radius: 10-12px (Stripe restraint)
+ * - Shadow: None or extremely subtle
  * - Consistent padding across all cards
  * 
  * ENFORCEMENT:
  * - Import from @/components/app-ui
- * - Do NOT use Card from @/components/ui/card directly for new development
+ * - Do NOT use Card from @/components/ui/card directly
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -33,19 +34,13 @@ export function AppCard({
   children,
   ...props
 }: AppCardProps) {
-  const sizeClasses = {
-    sm: "rounded-[var(--surface-radius-sm)]",
-    md: "rounded-[var(--surface-radius)]",
-    lg: "rounded-[var(--surface-radius)]",
-  };
-
   return (
     <div
       className={cn(
-        "border",
-        sizeClasses[size],
-        transparent ? "bg-transparent" : "bg-card",
-        "border-[hsl(var(--border-hsl))]",
+        "rounded-[var(--app-radius)]",
+        transparent 
+          ? "bg-transparent" 
+          : "bg-[var(--app-surface-bg)] border border-[var(--app-surface-border)]",
         className
       )}
       {...props}
@@ -70,7 +65,7 @@ export function AppCardHeader({
     <div
       className={cn(
         "flex items-center justify-between gap-4",
-        "px-5 py-4 border-b border-[hsl(var(--border-hsl))]",
+        "px-5 py-4 border-b border-[var(--app-surface-border)]",
         className
       )}
       {...props}
@@ -123,7 +118,7 @@ export function AppCardFooter({
     <div
       className={cn(
         "flex items-center justify-end gap-3",
-        "px-5 py-4 border-t border-[hsl(var(--border-hsl))]",
+        "px-5 py-4 border-t border-[var(--app-surface-border)]",
         className
       )}
       {...props}

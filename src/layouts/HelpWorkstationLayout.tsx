@@ -20,16 +20,16 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 
 /**
- * HELP WORKSTATION LAYOUT — INSTITUTIONAL DESIGN
+ * HELP WORKSTATION LAYOUT — CONSOLE LIGHT (Stripe-like)
  * 
- * Text-only navigation (no icons) for institutional clarity.
+ * Light canvas with white chrome for institutional clarity.
  * Company-scoped, not workspace-scoped.
  * 
  * Design principles:
- * - No icons in navigation (cleaner, more institutional)
- * - Text creates hierarchy through weight and color
- * - Monochromatic palette
- * - Bloomberg Terminal aesthetic, not Notion
+ * - Soft neutral canvas (#F6F7F9)
+ * - White header and sidebar
+ * - Subtle borders, no heavy shadows
+ * - Text-only navigation for institutional clarity
  */
 
 interface NavItem {
@@ -83,15 +83,15 @@ function HelpAccountMenu() {
           className={cn(
             "rounded-full shrink-0 inline-flex items-center justify-center",
             "text-[10px] font-medium uppercase",
-            "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2"
           )}
           style={{
             height: avatarSize,
             width: avatarSize,
             minHeight: avatarSize,
             minWidth: avatarSize,
-            backgroundColor: PORTAL_AVATAR.bgColor,
-            color: PORTAL_AVATAR.textColor,
+            backgroundColor: '#E5E7EB',
+            color: '#374151',
           }}
           aria-label="Account menu"
         >
@@ -100,37 +100,32 @@ function HelpAccountMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-56 rounded-lg"
-        style={{
-          backgroundColor: 'var(--tribes-header-bg)',
-          borderColor: 'var(--tribes-border)',
-        }}
+        className="w-56 rounded-lg bg-white border-[var(--app-chrome-border)]"
         sideOffset={8}
       >
         <div className="px-3 py-2.5">
-          <p className="text-[13px] font-medium truncate" style={{ color: 'var(--tribes-fg)' }}>
+          <p className="text-[13px] font-medium truncate text-foreground">
             {profile?.full_name || profile?.email}
           </p>
-          <p className="text-[10px] uppercase tracking-wider mt-1" style={{ color: 'var(--tribes-fg-muted)' }}>
+          <p className="text-[10px] uppercase tracking-wider mt-1 text-muted-foreground">
             Help Workstation
           </p>
         </div>
         
-        <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
+        <DropdownMenuSeparator className="bg-border" />
         
         <DropdownMenuItem
           onClick={() => navigate("/account")}
-          className="text-[13px] py-2 focus:bg-white/5"
-          style={{ color: 'var(--tribes-fg-secondary)' }}
+          className="text-[13px] py-2 text-muted-foreground focus:bg-muted/50"
         >
           <Settings size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
           {NAV_LABELS.ACCOUNT_SETTINGS}
         </DropdownMenuItem>
         
-        <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
+        <DropdownMenuSeparator className="bg-border" />
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="text-[13px] py-2 text-red-400 focus:bg-white/5 focus:text-red-300"
+          className="text-[13px] py-2 text-destructive focus:bg-destructive/10"
         >
           <LogOut size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
           Sign out
@@ -144,7 +139,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const location = useLocation();
 
   return (
-    <nav className="flex flex-col py-3 px-2 space-y-0.5">
+    <nav className="flex flex-col py-4 px-3 space-y-0.5">
       {NAV_ITEMS.map((item) => {
         const isActive = item.exact 
           ? location.pathname === item.path
@@ -154,18 +149,15 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           <div key={item.path}>
             {/* Divider before Settings */}
             {item.dividerBefore && (
-              <div 
-                className="my-1.5 mx-1" 
-                style={{ borderTop: '1px solid #303030' }}
-              />
+              <div className="my-2 border-t border-border" />
             )}
             <NavLink
               to={item.path}
               onClick={onNavigate}
               className={cn(
-                "block w-full text-left px-3 py-2 text-[13px] rounded-md transition-colors duration-100",
+                "block w-full text-left px-3 py-2 text-[13px] rounded-lg transition-colors duration-150",
                 isActive 
-                  ? "bg-white/[0.04] text-white font-medium" 
+                  ? "bg-muted text-foreground font-medium" 
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               )}
             >
@@ -185,17 +177,15 @@ export function HelpWorkstationLayout() {
 
   return (
     <div 
-      className={cn(
-        "min-h-screen flex flex-col",
-        "bg-[var(--platform-canvas)]"
-      )}
+      className="min-h-screen flex flex-col"
+      style={{ backgroundColor: 'var(--app-canvas-bg)' }}
     >
-      {/* Header */}
+      {/* Header — Console Light */}
       <header 
         className="h-14 px-4 md:px-6 flex items-center shrink-0 sticky top-0 z-40"
         style={{ 
-          backgroundColor: 'var(--tribes-header-bg)',
-          borderBottom: '1px solid var(--tribes-border)',
+          backgroundColor: 'var(--app-header-bg)',
+          borderBottom: '1px solid var(--app-chrome-border)',
         }}
       >
         {/* Left: Back + Wordmark */}
@@ -204,9 +194,9 @@ export function HelpWorkstationLayout() {
             <button
               onClick={() => setMobileNavOpen(!mobileNavOpen)}
               className={cn(
-                "flex items-center justify-center rounded shrink-0",
-                "hover:bg-white/[0.04] transition-colors duration-150",
-                "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
+                "flex items-center justify-center rounded-lg shrink-0",
+                "hover:bg-muted transition-colors duration-150",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
               )}
               style={{ 
                 color: 'var(--tribes-text-secondary)',
@@ -221,9 +211,9 @@ export function HelpWorkstationLayout() {
             <button
               onClick={() => navigate("/admin")}
               className={cn(
-                "flex items-center justify-center rounded shrink-0",
-                "hover:bg-white/[0.04] transition-colors duration-150",
-                "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
+                "flex items-center justify-center rounded-lg shrink-0",
+                "hover:bg-muted transition-colors duration-150",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
               )}
               style={{ 
                 color: 'var(--tribes-text-secondary)',
@@ -238,7 +228,7 @@ export function HelpWorkstationLayout() {
           
           <button
             onClick={() => navigate("/help-workstation")}
-            className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
+            className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded uppercase"
             style={{
               fontSize: isMobile ? '11px' : PORTAL_TYPOGRAPHY.brandWordmark.size,
               letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
@@ -266,13 +256,13 @@ export function HelpWorkstationLayout() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar — Desktop (narrower, 176px for density) */}
+        {/* Sidebar — Console Light */}
         {!isMobile && (
           <aside 
-            className="w-44 shrink-0 overflow-y-auto"
+            className="w-48 shrink-0 overflow-y-auto"
             style={{
-              backgroundColor: 'var(--tribes-sidebar-bg)',
-              borderRight: '1px solid var(--tribes-border)',
+              backgroundColor: 'var(--app-sidebar-bg)',
+              borderRight: '1px solid var(--app-chrome-border)',
             }}
           >
             <SidebarNav />
@@ -283,13 +273,14 @@ export function HelpWorkstationLayout() {
         {isMobile && mobileNavOpen && (
           <>
             <div 
-              className="fixed inset-0 bg-black/50 z-30"
+              className="fixed inset-0 bg-black/20 z-30"
               onClick={() => setMobileNavOpen(false)}
             />
             <aside 
               className="fixed left-0 top-14 bottom-0 w-64 z-40 overflow-y-auto"
               style={{
-                backgroundColor: 'var(--tribes-sidebar-bg)',
+                backgroundColor: 'var(--app-sidebar-bg)',
+                borderRight: '1px solid var(--app-chrome-border)',
               }}
             >
               <SidebarNav onNavigate={() => setMobileNavOpen(false)} />
