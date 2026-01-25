@@ -87,13 +87,14 @@ export function AppInput({
         disabled={disabled}
         required={required}
         className={cn(
-          "w-full h-10 px-3",
-          "bg-card border rounded-[var(--control-radius)]",
+          "w-full h-9 px-3",
+          "bg-[var(--app-surface-bg)] border rounded-lg",
           "text-[13px] text-foreground placeholder:text-muted-foreground/60",
-          "focus:outline-none transition-colors duration-150",
+          "focus:outline-none focus:ring-2 focus:ring-[#0071E3]/20 focus:border-[#0071E3]",
+          "transition-colors duration-150",
           hasError
-            ? "border-destructive focus:border-destructive"
-            : "border-border focus:border-muted-foreground",
+            ? "border-destructive focus:border-destructive focus:ring-destructive/20"
+            : "border-border hover:border-muted-foreground/50",
           disabled && "opacity-50 cursor-not-allowed",
           className
         )}
@@ -183,12 +184,13 @@ export function AppTextarea({
         rows={rows}
         className={cn(
           "w-full px-3 py-2",
-          "bg-card border rounded-[var(--control-radius)]",
+          "bg-[var(--app-surface-bg)] border rounded-lg",
           "text-[13px] text-foreground placeholder:text-muted-foreground/60",
-          "focus:outline-none transition-colors duration-150",
+          "focus:outline-none focus:ring-2 focus:ring-[#0071E3]/20 focus:border-[#0071E3]",
+          "transition-colors duration-150",
           hasError
-            ? "border-destructive focus:border-destructive"
-            : "border-border focus:border-muted-foreground",
+            ? "border-destructive focus:border-destructive focus:ring-destructive/20"
+            : "border-border hover:border-muted-foreground/50",
           disabled && "opacity-50 cursor-not-allowed",
           !resize && "resize-none",
           className

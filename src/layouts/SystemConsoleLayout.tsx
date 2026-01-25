@@ -6,7 +6,7 @@ import { useScopeTransition } from "@/hooks/useScopeTransition";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 
 /**
- * SYSTEM CONSOLE LAYOUT — COMPANY-LEVEL GOVERNANCE (CANONICAL)
+ * SYSTEM CONSOLE LAYOUT — CONSOLE LIGHT (Stripe-like)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
  * MASTER ENFORCEMENT DIRECTIVE — LOCKED ARCHITECTURE
@@ -14,62 +14,13 @@ import { useRoleAccess } from "@/hooks/useRoleAccess";
  * 
  * System Console is NOT a workspace. It is company-level governance.
  * 
- * ─────────────────────────────────────────────────────────────────────────
- * ACCESS CONTROL
- * ─────────────────────────────────────────────────────────────────────────
- * - platform_admin: Full access to all governance surfaces
- * - external_auditor: Read-only access for inspection
- * 
- * ─────────────────────────────────────────────────────────────────────────
- * ARCHITECTURE RULES (IMMUTABLE)
- * ─────────────────────────────────────────────────────────────────────────
- * - System Console ≠ Organization Workspace
- * - NO workspace selector (this is company-scoped, not org-scoped)
- * - NO product navigation (Licensing, Tribes Admin, Tribes Team)
- * - External auditors have read-only access
- * - Scoped to: governance, audit oversight, compliance, security
- * 
- * ─────────────────────────────────────────────────────────────────────────
- * WHAT SYSTEM CONSOLE MAY CONTAIN
- * ─────────────────────────────────────────────────────────────────────────
- * - Governance dashboards
- * - Security posture
- * - Audit logs
- * - Regulatory disclosures
- * - Cross-workspace reporting
- * - Correlation views
- * - Financial Governance (billing configuration, not transactions)
- * 
- * ─────────────────────────────────────────────────────────────────────────
- * WHAT SYSTEM CONSOLE MUST NEVER CONTAIN
- * ─────────────────────────────────────────────────────────────────────────
- * - Licensing
- * - Tribes Admin
- * - Tribes Team
- * - Operational queues
- * - Catalogs
- * - Requests
- * - Client or licensee actions
- * - Any organization-scoped views
- * - Any workspace-specific data
- * - Any operational workflows or actions
- * - Payment submission (governance only, never operations)
- * 
- * ─────────────────────────────────────────────────────────────────────────
- * MOBILE BEHAVIOR
- * ─────────────────────────────────────────────────────────────────────────
- * - Read-only governance, audit, disclosures
- * - No workspace switcher
- * - No operational tools
- * - No primary actions permitted on mobile
- * 
- * UI FEEL: Sparse, supervisory, non-operational
+ * UI FEEL: Light canvas, white surfaces, sparse and supervisory
  * ═══════════════════════════════════════════════════════════════════════════
  */
 export function SystemConsoleLayout() {
   const mainRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
-  const { canAccessScope, validateScopeAccess } = useScopeTransition();
+  const { canAccessScope } = useScopeTransition();
   const { isPlatformAdmin, isExternalAuditor } = useRoleAccess();
   
   // Enforce scroll reset on route changes (per Navigation Enforcement Spec)
@@ -84,8 +35,8 @@ export function SystemConsoleLayout() {
 
   return (
     <div 
-      className="console-scope min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-      style={{ backgroundColor: 'var(--console-bg)' }}
+      className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
+      style={{ backgroundColor: 'var(--app-canvas-bg)' }}
     >
       <SystemConsoleHeader />
       <main 

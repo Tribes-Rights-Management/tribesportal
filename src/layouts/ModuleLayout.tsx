@@ -16,19 +16,14 @@ import {
 import type { NavItem } from "@/components/app/SideNav";
 
 /**
- * MODULE LAYOUT — INSTITUTIONAL SHELL FOR FIRST-CLASS MODULES
+ * MODULE LAYOUT — CONSOLE LIGHT (Stripe-like)
  * 
  * Layout Rules:
- * - Dark canvas persists (no light mode)
- * - Flat hierarchy, no elevation
+ * - Light canvas with white surfaces
+ * - Subtle borders, no heavy shadows
  * - Seamless continuation from marketing + auth
  * - Module-specific side navigation
  * - WorkspaceContextBar confirms operational context
- * 
- * WORKSPACE TRANSITION:
- * - When entering from System Console, sidebar appears
- * - Context bar confirms active workspace
- * - Exit to System Console via user menu only
  */
 
 // Licensing module navigation
@@ -69,7 +64,7 @@ export function ModuleLayout() {
   return (
     <div 
       className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-      style={{ backgroundColor: 'var(--tribes-bg-page)' }}
+      style={{ backgroundColor: 'var(--app-canvas-bg)' }}
     >
       <GlobalHeader />
       <WorkspaceContextBar />

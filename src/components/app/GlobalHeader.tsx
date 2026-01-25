@@ -487,8 +487,8 @@ export function GlobalHeader() {
       <header 
         className="shrink-0 sticky top-0 z-40 w-full max-w-full overflow-x-clip"
         style={{ 
-          backgroundColor: 'var(--tribes-header-bg)',
-          borderBottom: '1px solid var(--tribes-border)',
+          backgroundColor: 'var(--app-header-bg)',
+          borderBottom: '1px solid var(--app-chrome-border)',
         }}
       >
         {/* Mobile Grid Layout: 2 rows */}
@@ -573,8 +573,8 @@ export function GlobalHeader() {
     <header 
       className="h-14 border-b flex items-center shrink-0 sticky top-0 z-40 w-full max-w-full overflow-x-clip"
       style={{ 
-        backgroundColor: 'var(--tribes-header-bg)',
-        borderColor: 'var(--tribes-border)',
+        backgroundColor: 'var(--app-header-bg)',
+        borderColor: 'var(--app-chrome-border)',
         paddingLeft: 'max(24px, env(safe-area-inset-left, 24px))',
         paddingRight: 'max(24px, env(safe-area-inset-right, 24px))',
       }}
@@ -583,7 +583,7 @@ export function GlobalHeader() {
       <div className="flex items-center min-w-0 gap-3">
         <button
           onClick={handleLogoClick}
-          className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
+          className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded uppercase"
           style={{
             fontSize: PORTAL_TYPOGRAPHY.brandWordmark.size,
             letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
@@ -622,14 +622,12 @@ export function GlobalHeader() {
               <button
                 onClick={() => navigate("/portal")}
                 className={cn(
-                  "h-7 px-3 rounded text-[13px] font-medium transition-opacity duration-[180ms]",
-                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
+                  "h-8 px-3 rounded-lg text-[13px] font-medium transition-colors duration-150",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]",
+                  (currentMode === "portal" || currentMode === "publishing")
+                    ? "text-foreground bg-muted"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
-                style={{
-                  color: (currentMode === "portal" || currentMode === "publishing")
-                    ? 'var(--tribes-text)' 
-                    : 'var(--tribes-text-muted)'
-                }}
               >
                 {NAV_LABELS.TRIBES_ADMIN}
               </button>
@@ -639,14 +637,12 @@ export function GlobalHeader() {
               <button
                 onClick={() => navigate("/licensing")}
                 className={cn(
-                  "h-7 px-3 rounded text-[13px] font-medium transition-opacity duration-[180ms]",
-                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
+                  "h-8 px-3 rounded-lg text-[13px] font-medium transition-colors duration-150",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]",
+                  currentMode === "licensing"
+                    ? "text-foreground bg-muted"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
-                style={{
-                  color: currentMode === "licensing" 
-                    ? 'var(--tribes-text)' 
-                    : 'var(--tribes-text-muted)'
-                }}
               >
                 {NAV_LABELS.LICENSING}
               </button>

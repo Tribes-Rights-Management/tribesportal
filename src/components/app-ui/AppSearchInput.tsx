@@ -91,9 +91,10 @@ export function AppSearchInput({
       "focus:border-muted-foreground"
     ),
     boxed: cn(
-      "h-10 pl-9 pr-9 rounded-[var(--control-radius)]",
-      "border border-border bg-card",
-      "focus:border-muted-foreground focus:ring-1 focus:ring-ring"
+      "h-9 pl-9 pr-9 rounded-lg",
+      "border border-border bg-muted/40",
+      "hover:border-muted-foreground/50",
+      "focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20"
     ),
   };
 
