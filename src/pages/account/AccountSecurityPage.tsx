@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Monitor, Clock, KeyRound, ShieldCheck, Timer } from "lucide-react";
 import { useUserPreferences, INACTIVITY_TIMEOUT_OPTIONS } from "@/hooks/useUserPreferences";
 import { EditSelectSheet } from "@/components/edit";
+import { AppButton } from "@/components/app-ui";
 import {
   SettingsRow,
   SettingsSectionCard,
@@ -108,30 +109,17 @@ export default function AccountSecurityPage() {
         description="Manage your active sessions"
       >
         <div className="px-4 py-4">
-          <button
+          <AppButton
             onClick={handleSignOutAll}
             disabled={signingOut}
-            className="text-[13px] font-medium px-4 py-2.5 rounded transition-colors min-h-[44px] disabled:opacity-50"
-            style={{
-              backgroundColor: "rgba(255,255,255,0.05)",
-              color: "var(--platform-text)",
-              border: "1px solid var(--platform-border)",
-            }}
-            onMouseEnter={(e) => {
-              if (!signingOut) {
-                e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.08)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)";
-            }}
+            loading={signingOut}
+            loadingText="Signing out..."
+            intent="secondary"
+            size="md"
           >
-            {signingOut ? "Signing out..." : "Sign out all sessions"}
-          </button>
-          <p
-            className="text-[12px] mt-3 line-clamp-2"
-            style={{ color: "var(--platform-text-muted)" }}
-          >
+            Sign out all sessions
+          </AppButton>
+          <p className="text-[12px] mt-3 line-clamp-2 text-muted-foreground">
             This will sign you out from all devices and require re-authentication.
           </p>
         </div>

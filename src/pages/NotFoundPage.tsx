@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { AppButton } from "@/components/app-ui";
 
 /**
  * 404 PAGE — INSTITUTIONAL NOT FOUND (AUTHENTICATED USERS)
  * 
  * Replaces generic 404 with institutional language.
  * Directs users back to their appropriate workspace.
+ * Uses unified AppButton for consistency.
  */
 export default function NotFoundPage() {
   const navigate = useNavigate();
@@ -26,46 +28,26 @@ export default function NotFoundPage() {
   };
 
   return (
-    <div 
-      className="min-h-screen flex flex-col items-center justify-center px-6"
-      style={{ backgroundColor: 'var(--platform-canvas, #0A0A0B)' }}
-    >
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-background">
       <div className="max-w-[420px] w-full text-center">
-        <h1 
-          className="text-[22px] font-medium tracking-[-0.02em] mb-4"
-          style={{ color: 'var(--platform-text, #E5E5E3)' }}
-        >
+        <h1 className="text-[22px] font-medium tracking-[-0.02em] mb-4 text-foreground">
           Page unavailable
         </h1>
 
-        <p 
-          className="text-[14px] leading-relaxed mb-8"
-          style={{ color: 'var(--platform-text-secondary, #707070)' }}
-        >
+        <p className="text-[14px] leading-relaxed mb-8 text-muted-foreground">
           This page does not exist or you do not have access to it.
         </p>
 
-        <button
+        <AppButton
           onClick={handleReturnToWorkspace}
-          className="w-full h-12 rounded text-[14px] font-medium transition-colors"
-          style={{ 
-            backgroundColor: 'var(--platform-text, #E5E5E3)',
-            color: 'var(--platform-canvas, #0A0A0B)'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.opacity = '0.9';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.opacity = '1';
-          }}
+          intent="primary"
+          size="lg"
+          fullWidth
         >
           Return to workspace
-        </button>
+        </AppButton>
 
-        <p 
-          className="text-[12px] mt-6"
-          style={{ color: 'var(--platform-text-muted, #505050)' }}
-        >
+        <p className="text-[12px] mt-6 text-muted-foreground">
           If you believe this is an error, contact the Tribes team.
         </p>
       </div>

@@ -6,6 +6,7 @@ import {
   SettingsRow,
   SettingsSectionCard,
 } from "@/components/ui/settings-row";
+import { AppButton } from "@/components/app-ui";
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];
@@ -141,16 +142,15 @@ export function AuthorityRecordSheet({
     >
       <AppSheetBody className="space-y-6 overflow-x-hidden" data-authority-sheet-body>
         {/* Back to Member Details */}
-        <button
+        <AppButton
           onClick={() => onOpenChange(false)}
-          className="flex items-center gap-2 text-[13px] transition-colors -mt-2 min-h-[44px]"
-          style={{ color: 'var(--platform-text-secondary)' }}
-          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--platform-text)'}
-          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--platform-text-secondary)'}
+          intent="ghost"
+          size="sm"
+          icon={<ArrowLeft />}
+          className="-mt-2"
         >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Back to Member Details</span>
-        </button>
+          Back to Member Details
+        </AppButton>
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 1: USER IDENTITY SUMMARY

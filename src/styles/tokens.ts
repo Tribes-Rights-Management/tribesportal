@@ -589,27 +589,27 @@ export const SYSTEM_BUTTON_CLASSES = {
 // PLATFORM UI CLASSES
 // ═══════════════════════════════════════════════════════════════════════════
 
-/** Primary button - solid, authoritative */
+/** Primary button - Mercury/Stripe neutral (charcoal fill) */
 export const PRIMARY_BUTTON_CLASSES =
-  "w-full h-12 rounded-md inline-flex items-center justify-center px-6 " +
-  "text-[14px] font-medium " +
-  "bg-[#111] text-white hover:bg-[#1a1a1a] " +
-  "disabled:bg-[#E5E5E5] disabled:text-[#8A8A8A] disabled:cursor-not-allowed " +
-  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111]/20 focus-visible:ring-offset-2";
+  "w-full h-12 rounded-[6px] inline-flex items-center justify-center px-6 " +
+  "text-[14px] font-medium tracking-[0.01em] " +
+  "bg-[#1A1A1A] text-white border border-[#1A1A1A] hover:bg-[#2D2D2D] " +
+  "disabled:bg-transparent disabled:text-[#9CA3AF] disabled:border-[#E6E8EC] disabled:cursor-not-allowed disabled:opacity-40 " +
+  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2";
 
-/** Secondary button - outline, de-emphasized */
+/** Secondary button - Mercury neutral grey fill */
 export const SECONDARY_BUTTON_CLASSES =
-  "h-10 rounded-md inline-flex items-center justify-center px-4 " +
+  "h-10 rounded-[6px] inline-flex items-center justify-center px-4 " +
   "text-[13px] font-medium " +
-  "bg-transparent border border-[#E5E5E5] text-[#6B6B6B] " +
-  "hover:border-[#D4D4D4] hover:text-[#111] " +
-  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111]/10 focus-visible:ring-offset-2";
+  "bg-[#F3F4F6] border border-[#E6E8EC] text-[#111827] " +
+  "hover:bg-[#E5E7EB] hover:border-[#D1D5DB] " +
+  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2";
 
-/** Icon button - subtle, institutional */
+/** Icon button - subtle, Mercury neutral */
 export const ICON_BUTTON_CLASSES =
-  "h-9 w-9 rounded-md inline-flex items-center justify-center " +
-  "hover:bg-black/5 active:bg-black/8 " +
-  "focus:outline-none focus-visible:ring-2 focus-visible:ring-black/10 focus-visible:ring-offset-2";
+  "h-9 w-9 rounded-[6px] inline-flex items-center justify-center " +
+  "hover:bg-[#F3F4F6] active:bg-[#E5E7EB] " +
+  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2";
 
 /** Input field - administrative clarity */
 export const INPUT_CLASSES =

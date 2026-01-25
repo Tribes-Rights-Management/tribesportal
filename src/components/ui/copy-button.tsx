@@ -78,24 +78,17 @@ export function CopyButton({
       type="button"
       onClick={handleCopy}
       className={cn(
-        "shrink-0 rounded flex items-center justify-center",
+        "shrink-0 rounded-[6px] flex items-center justify-center",
         "transition-colors",
+        "text-muted-foreground hover:bg-[#F3F4F6] hover:text-foreground",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2",
         sizeClasses[size],
         className
       )}
-      style={{ color: 'var(--platform-text-muted)' }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)';
-        e.currentTarget.style.color = 'var(--platform-text-secondary)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = 'transparent';
-        e.currentTarget.style.color = 'var(--platform-text-muted)';
-      }}
       aria-label={label}
     >
       {copied ? (
-        <Check className={cn(iconSize)} style={{ color: 'rgb(74 222 128)' }} />
+        <Check className={cn(iconSize, "text-green-500")} />
       ) : (
         <Copy className={cn(iconSize)} />
       )}

@@ -1,9 +1,10 @@
 import { cn } from "@/lib/utils";
-import { Download } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { EXPORT_LABELS } from "@/styles/tokens";
+import { AppButton } from "@/components/app-ui";
 
 /**
- * EXPORT BUTTON — CHAIN OF CUSTODY (INSTITUTIONAL DARK THEME)
+ * EXPORT BUTTON — CHAIN OF CUSTODY (UNIFIED MERCURY STYLE)
  * 
  * Rules:
  * - Exports include record IDs
@@ -11,7 +12,6 @@ import { EXPORT_LABELS } from "@/styles/tokens";
  * - Identify exporting account
  * - No celebration, no download animations
  * - Exports must feel admissible and verifiable
- * - Dark theme to match platform canvas
  */
 
 interface ExportButtonProps {
@@ -30,35 +30,17 @@ export function ExportButton({
   className,
 }: ExportButtonProps) {
   return (
-    <button
+    <AppButton
       onClick={onClick}
-      disabled={disabled || loading}
-      className={cn(
-        "inline-flex items-center gap-2 h-9 px-3 rounded-md",
-        "text-[13px] font-medium",
-        "border transition-colors duration-[150ms]",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/10",
-        className
-      )}
-      style={{
-        backgroundColor: 'var(--platform-surface-2)',
-        borderColor: 'var(--platform-border)',
-        color: disabled || loading ? 'var(--platform-text-muted)' : 'var(--platform-text)',
-        cursor: disabled || loading ? 'not-allowed' : 'pointer',
-        opacity: disabled || loading ? 0.6 : 1,
-      }}
-      onMouseEnter={(e) => {
-        if (!disabled && !loading) {
-          e.currentTarget.style.backgroundColor = 'var(--platform-surface-3)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = 'var(--platform-surface-2)';
-      }}
+      disabled={disabled}
+      loading={loading}
+      intent="secondary"
+      size="sm"
+      icon={<Download />}
+      className={className}
     >
-      <Download className="h-4 w-4" strokeWidth={1.5} />
       {loading ? EXPORT_LABELS.PREPARING_EXPORT : label}
-    </button>
+    </AppButton>
   );
 }
 
@@ -66,7 +48,6 @@ export function ExportButton({
  * EXPORT CONFIRMATION — File available message
  * 
  * No celebration, just factual confirmation
- * Dark theme styling
  */
 interface ExportConfirmationProps {
   fileName: string;
@@ -84,39 +65,27 @@ export function ExportConfirmation({
   className,
 }: ExportConfirmationProps) {
   return (
-    <div 
-      className={cn("text-[12px] space-y-1", className)}
-      style={{ color: 'var(--platform-text-muted)' }}
-    >
-      <p 
-        className="text-[13px] font-medium"
-        style={{ color: 'var(--platform-text)' }}
-      >
+    <div className={cn("text-[12px] space-y-1 text-muted-foreground", className)}>
+      <p className="text-[13px] font-medium text-foreground">
         {EXPORT_LABELS.EXPORT_GENERATED}
       </p>
-      <p 
-        className="font-mono text-[11px]"
-        style={{ color: 'var(--platform-text-secondary)' }}
-      >
+      <p className="font-mono text-[11px] text-muted-foreground">
         {fileName}
       </p>
       <div className="flex items-baseline gap-3 mt-1">
         <span>
-          <span style={{ color: 'var(--platform-text-muted)' }}>{EXPORT_LABELS.GENERATED_AT}</span>{" "}
-          <span style={{ color: 'var(--platform-text-secondary)' }}>{generatedAt}</span>
+          <span className="text-muted-foreground">{EXPORT_LABELS.GENERATED_AT}</span>{" "}
+          <span className="text-muted-foreground">{generatedAt}</span>
         </span>
         {generatedBy && (
           <span>
-            <span style={{ color: 'var(--platform-text-muted)' }}>{EXPORT_LABELS.GENERATED_BY}</span>{" "}
-            <span style={{ color: 'var(--platform-text-secondary)' }}>{generatedBy}</span>
+            <span className="text-muted-foreground">{EXPORT_LABELS.GENERATED_BY}</span>{" "}
+            <span className="text-muted-foreground">{generatedBy}</span>
           </span>
         )}
       </div>
       {exportId && (
-        <p 
-          className="font-mono text-[10px]"
-          style={{ color: 'var(--platform-text-muted)' }}
-        >
+        <p className="font-mono text-[10px] text-muted-foreground">
           {EXPORT_LABELS.EXPORT_ID}: {exportId}
         </p>
       )}
@@ -126,7 +95,7 @@ export function ExportConfirmation({
 
 /**
  * REPORT GENERATION BUTTON — For reports/summaries
- * Primary action styling, dark theme
+ * Primary action styling
  */
 interface GenerateReportButtonProps {
   label?: string;
@@ -144,33 +113,17 @@ export function GenerateReportButton({
   className,
 }: GenerateReportButtonProps) {
   return (
-    <button
+    <AppButton
       onClick={onClick}
-      disabled={disabled || loading}
-      className={cn(
-        "inline-flex items-center justify-center gap-2 h-10 px-4 rounded-md",
-        "text-[13px] font-medium",
-        "transition-colors duration-[150ms]",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2",
-        className
-      )}
-      style={{
-        backgroundColor: disabled || loading ? 'var(--platform-surface-2)' : 'var(--platform-text)',
-        color: disabled || loading ? 'var(--platform-text-muted)' : 'var(--platform-canvas)',
-        cursor: disabled || loading ? 'not-allowed' : 'pointer',
-        opacity: disabled || loading ? 0.6 : 1,
-      }}
-      onMouseEnter={(e) => {
-        if (!disabled && !loading) {
-          e.currentTarget.style.opacity = '0.9';
-        }
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.opacity = disabled || loading ? '0.6' : '1';
-      }}
+      disabled={disabled}
+      loading={loading}
+      loadingText={EXPORT_LABELS.PREPARING_EXPORT}
+      intent="primary"
+      size="md"
+      className={className}
     >
-      {loading ? EXPORT_LABELS.PREPARING_EXPORT : label}
-    </button>
+      {label}
+    </AppButton>
   );
 }
 
