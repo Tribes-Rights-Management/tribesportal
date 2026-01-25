@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Outlet, useNavigate, useLocation, NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { AppSearchInput } from "@/components/app-ui";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
@@ -28,7 +30,6 @@ import {
 } from "lucide-react";
 import { NAV_LABELS, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } from "@/styles/tokens";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState } from "react";
 
 /**
  * HELP WORKSTATION LAYOUT — Mercury-like Design
@@ -293,56 +294,17 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 function HeaderSearch() {
+  const [searchValue, setSearchValue] = useState("");
+  
   return (
-    <div className="relative w-full max-w-[680px]">
-      <div
-        className={cn(
-          "flex items-center h-10 w-full rounded-lg",
-          "transition-all duration-150",
-          "focus-within:ring-2 focus-within:ring-offset-2"
-        )}
-        style={{
-          backgroundColor: 'var(--tribes-control-bg)',
-          border: '1px solid var(--tribes-control-border)',
-          // @ts-ignore
-          '--tw-ring-color': 'var(--tribes-focus-ring-neutral)',
-        }}
-      >
-        {/* Search Icon */}
-        <div className="pl-3.5 flex items-center pointer-events-none">
-          <Search 
-            className="h-4 w-4"
-            strokeWidth={1.5}
-            style={{ color: 'var(--tribes-control-placeholder)' }}
-          />
-        </div>
-        
-        {/* Input */}
-        <input
-          type="text"
-          placeholder="Search for anything"
-          className={cn(
-            "flex-1 h-full bg-transparent border-0 px-3 text-sm",
-            "placeholder:text-[var(--tribes-control-placeholder)]",
-            "focus:outline-none focus:ring-0"
-          )}
-          style={{ color: 'var(--tribes-text)' }}
-        />
-        
-        {/* Keyboard Shortcut Hint */}
-        <div className="pr-3 flex items-center">
-          <span 
-            className="text-[11px] px-1.5 py-0.5 rounded border"
-            style={{ 
-              color: 'var(--tribes-text-muted)',
-              borderColor: 'var(--tribes-border-subtle)',
-              backgroundColor: 'var(--tribes-shell-bg)',
-            }}
-          >
-            ⌘ K
-          </span>
-        </div>
-      </div>
+    <div className="w-full max-w-[680px]">
+      <AppSearchInput
+        value={searchValue}
+        onChange={setSearchValue}
+        placeholder="Search for anything"
+        rightHint="⌘ K"
+        size="md"
+      />
     </div>
   );
 }
