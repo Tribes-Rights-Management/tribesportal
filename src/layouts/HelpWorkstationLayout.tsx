@@ -271,7 +271,7 @@ export function HelpWorkstationLayout() {
           <aside 
             className="w-44 shrink-0 overflow-y-auto"
             style={{
-              backgroundColor: 'var(--tribes-header-bg)',
+              backgroundColor: 'var(--tribes-sidebar-bg)',
               borderRight: '1px solid var(--tribes-border)',
             }}
           >
@@ -289,7 +289,7 @@ export function HelpWorkstationLayout() {
             <aside 
               className="fixed left-0 top-14 bottom-0 w-64 z-40 overflow-y-auto"
               style={{
-                backgroundColor: 'var(--tribes-header-bg)',
+                backgroundColor: 'var(--tribes-sidebar-bg)',
               }}
             >
               <SidebarNav onNavigate={() => setMobileNavOpen(false)} />
