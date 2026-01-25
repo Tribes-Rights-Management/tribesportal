@@ -32,14 +32,14 @@
      APP CHROME TOKENS — Header, Sidebar, Shell
      ───────────────────────────────────────────────────────────────────────── */
   
-  /* Canvas: Soft neutral background for authenticated app */
-  --app-canvas-bg: #F6F7F9;
+  /* Canvas: Warm neutral background for authenticated app */
+  --app-canvas-bg: #F5F4F2;
   
   /* Surface: White for cards, tables, content areas */
   --app-surface-bg: #FFFFFF;
   
-  /* Surface border: Subtle, low-contrast */
-  --app-surface-border: #E5E7EB;
+  /* Surface border: Subtle but visible (~10-12% black) */
+  --app-surface-border: #E0E0E0;
   
   /* Sidebar: Near-white, subtle separation from canvas */
   --app-sidebar-bg: #FFFFFF;
@@ -61,8 +61,8 @@
      MERCURY SHELL TOKENS — Help Workstation (No Blue)
      ───────────────────────────────────────────────────────────────────────── */
   
-  /* Shell background: Neutral gray canvas (no blue cast) */
-  --tribes-shell-bg: #F5F5F5;
+  /* Shell background: Warm neutral canvas (no cool cast) */
+  --tribes-shell-bg: #F5F4F2;
   
   /* Header: Pure white top bar */
   /* --tribes-header-bg already defined below */
@@ -89,9 +89,9 @@
      LEGACY TOKENS — Maintained for compatibility
      ───────────────────────────────────────────────────────────────────────── */
   
-  /* Page background: Soft canvas (replaces pure white) */
-  --tribes-bg: #F6F7F9;
-  --tribes-bg-page: #F6F7F9;
+  /* Page background: Warm neutral canvas */
+  --tribes-bg: #F5F4F2;
+  --tribes-bg-page: #F5F4F2;
   
   /* Header/sidebar - now light (Console Light mode) */
   --tribes-header-bg: #FFFFFF;
@@ -121,8 +121,8 @@
   --tribes-card: #FFFFFF;
   --tribes-surface: #FFFFFF;
 
-  /* Card border: Subtle gray */
-  --tribes-card-border: #E5E7EB;
+  /* Card border: Visible separation (~10-12% black) */
+  --tribes-card-border: #E0E0E0;
 
   /* Table surface: White (same as cards for consistency) */
   --tribes-surface-table: #FFFFFF;
@@ -146,8 +146,8 @@
   /* Strong borders: emphasized separation */
   --tribes-border-strong: #D1D5DB;
 
-  /* Soft shadow: extremely subtle or none (Stripe uses mostly border) */
-  --tribes-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  /* Soft shadow: subtle lift for cards */
+  --tribes-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 
   /* ─────────────────────────────────────────────────────────────────────────
      INTERACTIVE STATES — Clear hover/focus feedback
