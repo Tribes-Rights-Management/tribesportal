@@ -257,7 +257,7 @@ export function SystemErrorState({
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-4 text-[13px] font-medium transition-colors duration-75"
+          className="mt-4 text-[13px] font-medium transition-colors duration-75 hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
           style={{ color: "var(--platform-text)" }}
         >
           {BUTTON_LABELS.RETRY}
@@ -297,7 +297,7 @@ export function SessionExpiredState({
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-4 text-[13px] font-medium transition-colors duration-75"
+          className="mt-4 text-[13px] font-medium transition-colors duration-75 hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
           style={{ color: "var(--platform-text)" }}
         >
           Sign in

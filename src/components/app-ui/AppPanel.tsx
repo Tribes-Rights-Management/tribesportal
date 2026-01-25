@@ -127,7 +127,7 @@ export function AppPanel({
           </div>
           <button
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded hover:bg-accent/50"
+            className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-[6px] hover:bg-[var(--muted-wash)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
             aria-label="Close panel"
           >
             <X className="h-4 w-4" strokeWidth={1.5} />
