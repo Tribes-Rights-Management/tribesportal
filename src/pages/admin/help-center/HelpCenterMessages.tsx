@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Search, Mail, ExternalLink } from "lucide-react";
+import { Mail, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { AppButton } from "@/components/app-ui";
+import { AppButton, AppSearchInput } from "@/components/app-ui";
 import {
   Dialog,
   DialogContent,
@@ -186,23 +185,12 @@ export default function HelpCenterMessages() {
               </TabsList>
             </Tabs>
 
-            <div className="relative flex-1">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
-                style={{ color: "var(--platform-text-muted)" }}
-              />
-              <Input
-                placeholder="Search by name or email..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9"
-                style={{
-                  backgroundColor: "rgba(255,255,255,0.02)",
-                  borderColor: "var(--platform-border)",
-                  color: "var(--platform-text)",
-                }}
-              />
-            </div>
+            <AppSearchInput
+              value={search}
+              onChange={setSearch}
+              placeholder="Search by name or email..."
+              className="flex-1"
+            />
           </div>
 
           {/* Table */}

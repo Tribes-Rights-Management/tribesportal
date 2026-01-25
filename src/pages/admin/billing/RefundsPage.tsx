@@ -2,19 +2,19 @@ import { useState } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { 
   AlertTriangle,
   RotateCcw,
-  Search,
   DollarSign,
   Clock,
   User,
   FileText
 } from "lucide-react";
+import { AppSearchInput } from "@/components/app-ui";
+import { Input } from "@/components/ui/input";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
 import {
@@ -168,15 +168,12 @@ export default function RefundsPage() {
         </CardHeader>
         <CardContent>
           <div className="flex gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Enter transaction ID or invoice number..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
+            <AppSearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Enter transaction ID or invoice number..."
+              className="flex-1"
+            />
             <Button variant="outline" disabled={!searchQuery}>
               Search
             </Button>

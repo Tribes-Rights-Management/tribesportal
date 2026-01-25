@@ -7,7 +7,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FileText, ExternalLink, Filter, Search } from "lucide-react";
+import { FileText, ExternalLink, Filter } from "lucide-react";
 import { format } from "date-fns";
 import { PageHeader } from "@/components/ui/page-header";
 import { BackButton } from "@/components/ui/back-button";
@@ -21,7 +21,6 @@ import {
   TableEmptyRow 
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -32,6 +31,7 @@ import {
 import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
 import { useAllContracts } from "@/hooks/useBillingLineage";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
+import { AppSearchInput } from "@/components/app-ui";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // HELPERS
@@ -103,15 +103,12 @@ export default function ContractsPage() {
           border: "1px solid var(--platform-border)",
         }}
       >
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search contracts..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
+        <AppSearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Search contracts..."
+          className="flex-1 max-w-sm"
+        />
         
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-[160px]">

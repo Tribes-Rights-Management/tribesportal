@@ -7,14 +7,14 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, X, FileText, CreditCard, Users, Building2, Receipt } from "lucide-react";
+import { FileText, CreditCard, Users, Building2, Receipt } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { AppSearchInput } from "@/components/app-ui";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -164,24 +164,12 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
           </div>
           
           {/* Search Input */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search contracts, invoices, payments..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="pl-10 pr-10"
-              autoFocus
-            />
-            {query && (
-              <button
-                onClick={() => setQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
+          <AppSearchInput
+            value={query}
+            onChange={setQuery}
+            placeholder="Search contracts, invoices, payments..."
+            autoFocus
+          />
           
           {/* Filters */}
           <div className="flex items-center gap-3 mt-3">
