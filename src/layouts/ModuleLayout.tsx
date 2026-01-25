@@ -1,9 +1,10 @@
 import { useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { GlobalHeader } from "@/components/app/GlobalHeader";
+import { AppShell } from "@/components/app/AppShell";
+import { AppHeader } from "@/components/app/AppHeader";
 import { SideNav } from "@/components/app/SideNav";
-import { WorkspaceContextBar } from "@/components/app/WorkspaceContextBar";
 import { useScrollReset } from "@/hooks/useScrollReset";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -16,14 +17,14 @@ import {
 import type { NavItem } from "@/components/app/SideNav";
 
 /**
- * MODULE LAYOUT — CONSOLE LIGHT (Stripe-like)
+ * MODULE LAYOUT — STRIPE-LIKE GRID SHELL (CANONICAL)
  * 
  * Layout Rules:
- * - Light canvas with white surfaces
- * - Subtle borders, no heavy shadows
- * - Seamless continuation from marketing + auth
+ * - Desktop: 2-column CSS Grid (sidebar + content)
+ * - Sidebar starts at y=0 (full viewport height)
+ * - Header spans full width with logo in sidebar column
+ * - Mobile: stacked layout (header above content)
  * - Module-specific side navigation
- * - WorkspaceContextBar confirms operational context
  */
 
 // Licensing module navigation
@@ -57,23 +58,20 @@ export function ModuleLayout() {
   const location = useLocation();
   const navItems = getNavItemsForPath(location.pathname);
   const mainRef = useRef<HTMLElement>(null);
+  const isMobile = useIsMobile();
   
   // Enforce scroll reset on route changes (per Navigation Enforcement Spec)
   useScrollReset(mainRef);
 
+  const showSidebar = !isMobile && navItems.length > 0;
+
   return (
-    <div 
-      className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-      style={{ backgroundColor: 'var(--page-bg)' }}
+    <AppShell
+      showSidebar={showSidebar}
+      headerContent={<AppHeader showSidebarLogo={showSidebar} />}
+      sidebarContent={<SideNav items={navItems} />}
     >
-      <GlobalHeader />
-      <WorkspaceContextBar />
-      <div className="flex flex-1 overflow-hidden w-full max-w-full">
-        {navItems.length > 0 && <SideNav items={navItems} />}
-        <main ref={mainRef} className="flex-1 overflow-y-auto overflow-x-clip min-w-0 w-full max-w-full">
-          <Outlet />
-        </main>
-      </div>
-    </div>
+      <Outlet />
+    </AppShell>
   );
 }

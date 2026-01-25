@@ -1,20 +1,17 @@
 import { useRef, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import { AppShell } from "@/components/app/AppShell";
 import { SystemConsoleHeader } from "@/components/app/SystemConsoleHeader";
 import { useScrollReset } from "@/hooks/useScrollReset";
 import { useScopeTransition } from "@/hooks/useScopeTransition";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 
 /**
- * SYSTEM CONSOLE LAYOUT — CONSOLE LIGHT (Stripe-like)
+ * SYSTEM CONSOLE LAYOUT — STRIPE-LIKE SHELL (NO SIDEBAR)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
- * MASTER ENFORCEMENT DIRECTIVE — LOCKED ARCHITECTURE
- * ═══════════════════════════════════════════════════════════════════════════
- * 
  * System Console is NOT a workspace. It is company-level governance.
- * 
- * UI FEEL: Light canvas, white surfaces, sparse and supervisory
+ * Uses a simple full-width layout without sidebar.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 export function SystemConsoleLayout() {
@@ -34,17 +31,11 @@ export function SystemConsoleLayout() {
   }, [canAccessScope, isPlatformAdmin, isExternalAuditor, navigate]);
 
   return (
-    <div 
-      className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
-      style={{ backgroundColor: 'var(--page-bg)' }}
+    <AppShell
+      showSidebar={false}
+      headerContent={<SystemConsoleHeader />}
     >
-      <SystemConsoleHeader />
-      <main 
-        ref={mainRef} 
-        className="flex-1 overflow-y-auto overflow-x-clip w-full max-w-full min-w-0"
-      >
-        <Outlet />
-      </main>
-    </div>
+      <Outlet />
+    </AppShell>
   );
 }

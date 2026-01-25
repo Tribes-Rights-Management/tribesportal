@@ -155,162 +155,79 @@ export function SystemConsoleHeader() {
   // Show "Enter Workspace" only if user has accessible workspaces
   const hasWorkspaces = tenantMemberships.length > 0;
 
-  // Mobile: Clean single-row header with stable height
-  if (isMobile) {
-    return (
-      <>
-        <header 
-          className="shrink-0 sticky top-0 z-40"
-          style={{ 
-            backgroundColor: 'var(--tribes-header-bg)',
-            borderBottom: '1px solid var(--tribes-border)',
-          }}
-        >
-          {/* Mobile: CSS Grid 3-zone layout — stable single row */}
-          <div 
-            className="grid items-center px-4"
-            style={{
-              gridTemplateColumns: 'auto 1fr auto',
-              height: '56px',
-              gap: '12px',
-            }}
-          >
-            {/* Left: Wordmark (fixed width, no wrap) */}
-            <button
-              onClick={handleLogoClick}
-              className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase whitespace-nowrap"
-              style={{
-                fontSize: '11px',
-                letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-                color: 'var(--foreground)',
-              }}
-            >
-              {NAV_LABELS.BRAND_WORDMARK}
-            </button>
-
-            {/* Center: Context label + read-only badge (truncated if needed) */}
-            <div className="flex items-center justify-center gap-2 min-w-0 overflow-hidden">
-              <span 
-                className="text-[10px] font-medium uppercase tracking-wider truncate"
-                style={{ color: 'var(--tribes-text-muted)' }}
-              >
-                {NAV_LABELS.SYSTEM_CONSOLE}
-              </span>
-              {isExternalAuditor && (
-                <span 
-                  className="inline-flex items-center gap-1 text-[8px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0"
-                  style={{ 
-                    backgroundColor: 'var(--tribes-surface)',
-                    color: 'var(--tribes-text-muted)'
-                  }}
-                >
-                  <Eye className="h-2.5 w-2.5" />
-                </span>
-              )}
-            </div>
-
-            {/* Right: Primary action (icon-only on narrow) + Avatar */}
-            <div className="flex items-center gap-2 shrink-0">
-              {hasWorkspaces && (
-                <button
-                  onClick={() => setWorkspaceModalOpen(true)}
-                  className={cn(
-                    "flex items-center justify-center rounded shrink-0",
-                    "hover:bg-white/[0.04] transition-colors duration-150",
-                    "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
-                  )}
-                  style={{ 
-                    color: 'var(--tribes-text-secondary)',
-                    height: '32px',
-                    width: '32px',
-                  }}
-                  aria-label="Enter Workspace"
-                >
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-              )}
-              <ConsoleAccountMenu />
-            </div>
-          </div>
-        </header>
-
-        {/* Workspace Selector Modal */}
-        <WorkspaceSelectorModal 
-          open={workspaceModalOpen} 
-          onOpenChange={setWorkspaceModalOpen} 
-        />
-      </>
-    );
-  }
-
-  // Desktop: Single-row layout
+  // Render full-width header content for AppShell
   return (
     <>
-      <header 
-        className="h-14 px-6 flex items-center shrink-0 sticky top-0 z-40"
+      <div 
+        className="w-full h-full flex items-center justify-between"
         style={{ 
-          backgroundColor: 'var(--tribes-header-bg)',
-          borderBottom: '1px solid var(--tribes-border)',
+          paddingLeft: isMobile ? 'max(16px, env(safe-area-inset-left, 16px))' : 'max(24px, env(safe-area-inset-left, 24px))',
+          paddingRight: isMobile ? 'max(16px, env(safe-area-inset-right, 16px))' : 'max(24px, env(safe-area-inset-right, 24px))',
         }}
       >
         {/* Left: Wordmark */}
-        <div className="flex items-center min-w-0">
-          <button
-            onClick={handleLogoClick}
-            className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase"
-            style={{
-              fontSize: PORTAL_TYPOGRAPHY.brandWordmark.size,
-              letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-              color: 'var(--foreground)',
-            }}
-          >
-            {NAV_LABELS.BRAND_WORDMARK}
-          </button>
-        </div>
+        <button
+          onClick={handleLogoClick}
+          className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded uppercase shrink-0"
+          style={{
+            fontSize: isMobile ? '11px' : PORTAL_TYPOGRAPHY.brandWordmark.size,
+            letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
+            color: 'var(--tribes-fg)',
+          }}
+        >
+          {NAV_LABELS.BRAND_WORDMARK}
+        </button>
 
         {/* Center: System Console label + read-only indicator for auditors */}
         <div className="flex-1 flex items-center justify-center gap-2">
           <span 
-            className="text-[13px] font-medium uppercase tracking-wider"
+            className={cn(
+              "font-medium uppercase tracking-wider",
+              isMobile ? "text-[10px]" : "text-[13px]"
+            )}
             style={{ color: 'var(--tribes-text-muted)' }}
           >
             {NAV_LABELS.SYSTEM_CONSOLE}
           </span>
           {isExternalAuditor && (
             <span 
-              className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded"
+              className={cn(
+                "inline-flex items-center gap-1 font-medium uppercase tracking-wider px-2 py-0.5 rounded",
+                isMobile ? "text-[8px]" : "text-[10px]"
+              )}
               style={{ 
-                backgroundColor: 'var(--tribes-surface)',
+                backgroundColor: 'var(--panel-bg)',
                 color: 'var(--tribes-text-muted)'
               }}
             >
-              <Eye className="h-3 w-3" />
-              Read-only
+              <Eye className={isMobile ? "h-2.5 w-2.5" : "h-3 w-3"} />
+              {!isMobile && "Read-only"}
             </span>
           )}
         </div>
 
         {/* Right: Enter Workspace button + Account */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           {hasWorkspaces && (
             <button
               onClick={() => setWorkspaceModalOpen(true)}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded",
-                "text-[12px] font-medium",
-                "hover:bg-white/[0.04] transition-colors duration-150",
-                "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
+                "flex items-center gap-1.5 rounded transition-colors duration-150",
+                "hover:bg-muted/50",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]",
+                isMobile ? "h-8 w-8 justify-center" : "px-3 py-1.5 text-[12px] font-medium"
               )}
-              style={{ color: 'var(--tribes-text-secondary)' }}
+              style={{ color: 'var(--tribes-fg-secondary)' }}
+              aria-label="Enter Workspace"
             >
-              <span>{NAV_LABELS.ENTER_WORKSPACE}</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              {!isMobile && <span>{NAV_LABELS.ENTER_WORKSPACE}</span>}
+              <ArrowRight className={isMobile ? "h-4 w-4" : "h-3.5 w-3.5"} />
             </button>
           )}
           
           <ConsoleAccountMenu />
         </div>
-      </header>
+      </div>
 
       {/* Workspace Selector Modal */}
       <WorkspaceSelectorModal 
