@@ -5,19 +5,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  // Base: Institutional button system - border-based, monochromatic
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  // Base: Institutional button system - Mercury/Stripe neutrals, no blue fills
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        // Primary: White border on transparent - main actions
-        default: "bg-transparent border border-white text-foreground font-medium tracking-[0.01em] hover:bg-white/[0.08] active:bg-white/[0.12]",
+        // Primary: Charcoal fill — main actions (Stripe-like)
+        default: "bg-[#1A1A1A] text-white border border-[#1A1A1A] font-medium tracking-[0.01em] hover:bg-[#2D2D2D]",
         // Destructive: Red border on transparent
         destructive: "bg-transparent border border-destructive text-destructive font-medium hover:bg-destructive/10",
-        // Outline: Gray border, muted text - secondary actions
-        outline: "bg-transparent border border-border text-muted-foreground hover:border-ring hover:text-foreground",
+        // Outline: Light grey fill with border — secondary actions (Mercury-like)
+        outline: "bg-[#F3F4F6] text-[#111827] border border-[#E6E8EC] font-medium hover:bg-[#E5E7EB] hover:border-[#D1D5DB]",
+        // Secondary: Same as outline for consistency
+        secondary: "bg-[#F3F4F6] text-[#111827] border border-[#E6E8EC] font-medium hover:bg-[#E5E7EB] hover:border-[#D1D5DB]",
         // Ghost: Invisible until hover
-        ghost: "bg-transparent border border-transparent text-muted-foreground hover:bg-white/[0.04] hover:text-foreground",
+        ghost: "bg-transparent border border-transparent text-muted-foreground hover:bg-[#F3F4F6] hover:text-foreground",
         // Link: No border, underline on hover
         link: "bg-transparent text-muted-foreground hover:text-foreground hover:underline underline-offset-4",
       },

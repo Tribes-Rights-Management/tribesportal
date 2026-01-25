@@ -108,7 +108,7 @@ export function AppSearchInput({
       <Search
         className={cn(
           "absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none transition-colors duration-150",
-          isFocused ? "text-foreground/70" : "text-muted-foreground/60"
+          isFocused ? "text-[#374151]" : "text-[#9CA3AF]"
         )}
         strokeWidth={1.5}
       />
@@ -126,22 +126,24 @@ export function AppSearchInput({
         aria-label={ariaLabel || placeholder}
         className={cn(
           // Base styles (Stripe-like pill)
-          "w-full text-[13px] text-foreground rounded-full",
+          "w-full text-[13px] text-foreground",
+          // Rounded corners: 10-12px (Stripe-like, not fully rounded)
+          "rounded-xl",
           heightClass,
-          "placeholder:text-[var(--search-placeholder)]",
-          // Background: grey fill, white on focus
+          "placeholder:text-[#9CA3AF]",
+          // Background: light grey fill, white on focus
           "transition-all duration-150",
-          // No border by default, subtle on focus
-          "border border-transparent",
-          // Focus: brand blue ring
+          // Very subtle border (or none)
+          "border",
+          // Focus: brand blue ring ONLY
           "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           // Padding for icons
           "pl-10",
           value ? "pr-9" : (rightHint ? "pr-14" : "pr-4")
         )}
         style={{
-          backgroundColor: isFocused ? 'var(--search-bg-focus)' : 'var(--search-bg)',
-          borderColor: isFocused ? 'var(--search-border-focus)' : 'var(--search-border)',
+          backgroundColor: isFocused ? '#FFFFFF' : '#F3F4F6',
+          borderColor: isFocused ? '#E6E8EC' : 'transparent',
         }}
       />
       
@@ -161,20 +163,18 @@ export function AppSearchInput({
         </button>
       )}
 
-      {/* Keyboard hint - shown when no value and hint is provided */}
+      {/* Keyboard hint - shown when no value and hint is provided (Stripe-like keycap) */}
       {!value && rightHint && (
         <kbd
           className={cn(
             "absolute right-3 top-1/2 -translate-y-1/2",
             "inline-flex items-center justify-center",
-            "h-6 min-w-[24px] px-1.5 rounded",
-            "text-[11px] font-medium text-muted-foreground/70",
-            "pointer-events-none select-none"
+            "h-[22px] min-w-[22px] px-1.5 rounded-md",
+            "text-[11px] font-medium text-[#6B7280]",
+            "pointer-events-none select-none",
+            "bg-white border border-[#E6E8EC]",
+            "shadow-[0_1px_0_rgba(0,0,0,0.05)]"
           )}
-          style={{
-            backgroundColor: 'var(--search-kbd-bg)',
-            border: '1px solid var(--search-kbd-border)',
-          }}
         >
           {rightHint}
         </kbd>
