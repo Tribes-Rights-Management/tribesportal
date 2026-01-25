@@ -86,6 +86,12 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
       lg: "h-[52px] px-6 text-[15px] gap-2.5 rounded-[var(--control-radius)]",
     };
 
+    // Icon utility classes - enforce consistent sizing and stroke width
+    // xs buttons use 14px icons, all others use 16px icons
+    const iconUtilityClasses = size === "xs"
+      ? "[&>svg]:h-3.5 [&>svg]:w-3.5 [&>svg]:[stroke-width:1.25] [&>span>svg]:h-3.5 [&>span>svg]:w-3.5 [&>span>svg]:[stroke-width:1.25]"
+      : "[&>svg]:h-4 [&>svg]:w-4 [&>svg]:[stroke-width:1.25] [&>span>svg]:h-4 [&>span>svg]:w-4 [&>span>svg]:[stroke-width:1.25]";
+
     // Intent-based styles - border-focused institutional design
     // Uses CSS variables that adapt to light/dark mode
     const getIntentStyles = (): React.CSSProperties => {
@@ -167,6 +173,8 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
           "focus-visible:ring-white/20 focus-visible:ring-offset-background",
           "whitespace-nowrap select-none",
+          // Icon normalization - enforce consistent sizing and stroke
+          iconUtilityClasses,
           // Size
           intent !== "tertiary" && sizeClasses[size],
           // Tertiary has minimal padding

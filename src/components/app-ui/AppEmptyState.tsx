@@ -68,19 +68,19 @@ export function AppEmptyState({
   const sizeClasses = {
     sm: {
       wrapper: "py-6",
-      icon: "h-8 w-8",
+      icon: "h-6 w-6",
       message: "text-[12px]",
       description: "text-[11px]",
     },
     md: {
       wrapper: "py-10",
-      icon: "h-10 w-10",
+      icon: "h-7 w-7",
       message: "text-[13px]",
       description: "text-[12px]",
     },
     lg: {
       wrapper: "py-16",
-      icon: "h-12 w-12",
+      icon: "h-8 w-8",
       message: "text-[14px]",
       description: "text-[13px]",
     },
@@ -101,7 +101,7 @@ export function AppEmptyState({
       ) : (
         <Icon
           className={cn(styles.icon, "text-muted-foreground/40 mb-3")}
-          strokeWidth={1}
+          strokeWidth={1.0}
         />
       )}
       <p className={cn(styles.message, "text-muted-foreground font-medium")}>
