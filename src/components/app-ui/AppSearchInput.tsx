@@ -106,10 +106,10 @@ export function AppSearchInput({
     <div className={cn("relative", className)}>
       <Search
         className={cn(
-          "absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50",
+          "absolute top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/50",
           iconPositionClasses[variant]
         )}
-        strokeWidth={1.5}
+        strokeWidth={1.25}
       />
       <input
         ref={inputRef}
@@ -134,7 +134,7 @@ export function AppSearchInput({
           type="button"
           aria-label="Clear search"
         >
-          <X className="h-3.5 w-3.5" strokeWidth={1.5} />
+          <X className="h-3.5 w-3.5" strokeWidth={1.25} />
         </button>
       )}
 

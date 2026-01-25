@@ -454,11 +454,17 @@ export const TABLE_ROW_HEIGHT = 44;
 /** Icon button size */
 export const ICON_BUTTON_SIZE = 36;
 
-/** Standard icon size */
-export const ICON_SIZE = 18;
+/** Standard icon size (16px default) */
+export const ICON_SIZE = 16;
 
-/** Icon stroke width */
-export const ICON_STROKE = 1.5;
+/** Small icon size (14px for inputs, chips, table sort) */
+export const ICON_SIZE_SM = 14;
+
+/** Icon stroke width (thin institutional) */
+export const ICON_STROKE = 1.25;
+
+/** Light stroke width (for empty states only) */
+export const ICON_STROKE_LIGHT = 1.0;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SPACING — INSTITUTIONAL DENSITY

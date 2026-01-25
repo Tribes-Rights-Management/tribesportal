@@ -170,12 +170,12 @@ export function AppTableHead({
   const SortIcon = () => {
     if (!sortable) return null;
     if (sortDirection === "asc") {
-      return <ArrowUp className="h-3 w-3 ml-1" strokeWidth={1.5} />;
+      return <ArrowUp className="h-3.5 w-3.5 ml-1 text-muted-foreground" strokeWidth={1.25} />;
     }
     if (sortDirection === "desc") {
-      return <ArrowDown className="h-3 w-3 ml-1" strokeWidth={1.5} />;
+      return <ArrowDown className="h-3.5 w-3.5 ml-1 text-muted-foreground" strokeWidth={1.25} />;
     }
-    return <ArrowUpDown className="h-3 w-3 ml-1 opacity-40" strokeWidth={1.5} />;
+    return <ArrowUpDown className="h-3.5 w-3.5 ml-1 opacity-40 text-muted-foreground" strokeWidth={1.25} />;
   };
 
   const content = (

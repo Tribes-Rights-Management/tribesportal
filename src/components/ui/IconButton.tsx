@@ -8,9 +8,9 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   icon: React.ElementType;
   /** Accessible label for screen readers */
   "aria-label": string;
-  /** Optional custom icon size (defaults to 18) */
+  /** Optional custom icon size (defaults to 16) */
   iconSize?: number;
-  /** Optional custom stroke width (defaults to 1.5) */
+  /** Optional custom stroke width (defaults to 1.25) */
   strokeWidth?: number;
 }
 
@@ -20,7 +20,7 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
  * Features:
  * - Uses Button component with icon size variant
  * - 36x36px hit target
- * - 18px icon with 1.5 strokeWidth
+ * - 16px icon with 1.25 strokeWidth (thin institutional)
  * - Subtle hover state
  * - Focus-visible only ring (no click rings)
  */
