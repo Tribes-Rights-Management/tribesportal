@@ -62,7 +62,7 @@ export function PlatformLayout({
   return (
     <div
       className={cn("min-h-full", PADDING_MAP[padding])}
-      style={{ backgroundColor: "var(--app-bg)" }}
+      style={{ backgroundColor: "var(--page-bg)" }}
     >
       {elevated ? (
         <div 

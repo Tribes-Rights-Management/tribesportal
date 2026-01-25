@@ -24,29 +24,33 @@
 
 :root {
   /* ═══════════════════════════════════════════════════════════════════════════
-     MERCURY 3-SURFACE SYSTEM — Global Neutral Tokens (SINGLE SOURCE OF TRUTH)
+     MERCURY + STRIPE 3-SURFACE SYSTEM — Global Neutral Tokens (SINGLE SOURCE)
      
-     Canvas → Sidebar → Cards/Tables
+     Layout: Sidebar (grey) → Canvas (white) → Panels (grey) → Cards (white)
      Light, institutional, no blue accents. Focus ring is #0071E3 only.
      ═══════════════════════════════════════════════════════════════════════════ */
 
   /* ─────────────────────────────────────────────────────────────────────────
-     GLOBAL 3-SURFACE TOKENS (AUTHORITATIVE)
+     GLOBAL 4-SURFACE TOKENS (AUTHORITATIVE)
      ───────────────────────────────────────────────────────────────────────── */
   
-  /* Surface 1: Main page canvas — very light neutral gray */
-  --app-bg: #F5F5F5;
-  --app-canvas-bg: #F5F5F5;
-  
-  /* Surface 2: Sidebar — slightly different neutral tint */
+  /* Surface 1: Sidebar — light neutral grey */
   --sidebar-bg: #F2F3F5;
   --app-sidebar-bg: #F2F3F5;
   
-  /* Surface 3: Top bar/header — true white */
+  /* Surface 2: Top bar/header — true white */
   --topbar-bg: #FFFFFF;
   --app-header-bg: #FFFFFF;
   
-  /* Surface 3: Cards, tables, panels — true white */
+  /* Surface 3: Main page canvas — soft WHITE (Mercury/Stripe-like) */
+  --page-bg: #FFFFFF;
+  --app-bg: #FFFFFF;
+  --app-canvas-bg: #FFFFFF;
+  
+  /* Surface 4: Panel/section backgrounds — Stripe-like light grey */
+  --panel-bg: #F5F5F5;
+  
+  /* Surface 5: Cards, tables — true white */
   --card-bg: #FFFFFF;
   --app-surface-bg: #FFFFFF;
   
@@ -68,8 +72,8 @@
      MERCURY SHELL TOKENS — Neutral Navigation States
      ───────────────────────────────────────────────────────────────────────── */
   
-  /* Shell background: Matches global canvas */
-  --tribes-shell-bg: var(--app-bg);
+  /* Shell background: White canvas */
+  --tribes-shell-bg: var(--page-bg);
   
   /* Mercury sidebar: Uses global sidebar token */
   --tribes-sidebar-bg-mercury: var(--sidebar-bg);
@@ -90,12 +94,12 @@
   --tribes-focus-ring-neutral: rgba(17, 24, 39, 0.25);
   
   /* ─────────────────────────────────────────────────────────────────────────
-     LEGACY TOKENS — Mapped to global 3-surface system
+     LEGACY TOKENS — Mapped to global surface system
      ───────────────────────────────────────────────────────────────────────── */
   
-  /* Page background: Uses global canvas token */
-  --tribes-bg: var(--app-bg);
-  --tribes-bg-page: var(--app-bg);
+  /* Page background: Uses white canvas token */
+  --tribes-bg: var(--page-bg);
+  --tribes-bg-page: var(--page-bg);
   
   /* Header/sidebar: Uses global tokens */
   --tribes-header-bg: var(--topbar-bg);

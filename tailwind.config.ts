@@ -58,6 +58,12 @@ export default {
           "border-strong": "var(--tribes-border-strong)",
         },
         
+        /* Mercury/Stripe 4-surface system tokens */
+        "page-bg": "var(--page-bg)",
+        "panel-bg": "var(--panel-bg)",
+        "sidebar-bg": "var(--sidebar-bg)",
+        "card-bg": "var(--card-bg)",
+        
         /* Shadcn semantic tokens */
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
