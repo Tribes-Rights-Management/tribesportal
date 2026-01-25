@@ -2,8 +2,8 @@ import { MessageAIInsights } from '@/components/help/MessageAIInsights';
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
-import { X, ChevronRight, AlertCircle, RefreshCw, Search } from "lucide-react";
-import { AppButton } from "@/components/app-ui";
+import { X, ChevronRight, AlertCircle, RefreshCw } from "lucide-react";
+import { AppButton, AppSearchInput } from "@/components/app-ui";
 
 /**
  * HELP MESSAGES PAGE — INSTITUTIONAL DESIGN
@@ -182,14 +182,11 @@ export default function HelpMessagesPage() {
       </div>
 
       {/* Search */}
-      <div className="mb-6 max-w-md relative">
-        <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/50" strokeWidth={1} />
-        <input
-          type="search"
-          placeholder="Search messages..."
+      <div className="mb-6 max-w-md">
+        <AppSearchInput
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full h-9 pl-7 pr-3 bg-transparent border-0 border-b border-border text-[12px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-ring"
+          onChange={setSearch}
+          placeholder="Search messages..."
         />
       </div>
 

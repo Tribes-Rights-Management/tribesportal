@@ -1,18 +1,13 @@
+import { useState } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BackButton } from "@/components/ui/back-button";
-import { Input } from "@/components/ui/input";
-import { 
-  Plus,
-  DollarSign,
-  Check,
-  X,
-  MoreHorizontal
-} from "lucide-react";
+import { Plus, Check } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
+import { AppSearchInput } from "@/components/app-ui";
 
 /**
  * SYSTEM CONSOLE — PLANS & PRICING
@@ -22,6 +17,7 @@ import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
  */
 
 export default function PlansConfigurationPage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const { canConfigurePricing } = useBillingAuthority();
 
   if (!canConfigurePricing) {
@@ -45,8 +41,10 @@ export default function PlansConfigurationPage() {
       </div>
 
       <div className="flex items-center justify-between">
-        <Input 
-          placeholder="Search plans..." 
+        <AppSearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Search plans..."
           className="max-w-sm"
         />
         <Button disabled>

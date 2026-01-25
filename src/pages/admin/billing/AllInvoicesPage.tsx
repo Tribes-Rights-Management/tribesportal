@@ -1,17 +1,13 @@
+import { useState } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BackButton } from "@/components/ui/back-button";
-import { Input } from "@/components/ui/input";
-import { 
-  FileText,
-  Download,
-  Search,
-  Filter
-} from "lucide-react";
+import { Download, Filter } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
+import { AppSearchInput } from "@/components/app-ui";
 import { 
   Table, 
   TableBody, 
@@ -29,6 +25,7 @@ import {
  */
 
 export default function AllInvoicesPage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const { canViewAllInvoices } = useBillingAuthority();
 
   if (!canViewAllInvoices) {
@@ -52,13 +49,12 @@ export default function AllInvoicesPage() {
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search invoices..." 
-            className="pl-9"
-          />
-        </div>
+        <AppSearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Search invoices..."
+          className="flex-1 max-w-sm"
+        />
         <Button variant="outline" disabled>
           <Filter className="h-4 w-4 mr-2" />
           Filters

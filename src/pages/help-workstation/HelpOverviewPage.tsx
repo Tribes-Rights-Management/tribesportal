@@ -161,7 +161,6 @@ export default function HelpOverviewPage() {
           onChange={setSearchQuery}
           onSubmit={handleSearch}
           placeholder="Search articles..."
-          variant="underline"
         />
       </div>
 

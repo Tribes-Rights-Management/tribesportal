@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, Trash2, Edit } from "lucide-react";
+import { Plus, Trash2, Edit } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Input } from "@/components/ui/input";
+import { AppSearchInput } from "@/components/app-ui";
 import {
   Select,
   SelectContent,
@@ -162,26 +162,15 @@ export default function HelpCenterArticles() {
 
           {/* Filters */}
           <div className="flex flex-col md:flex-row gap-3 mb-6">
-            <div className="relative flex-1">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
-                style={{ color: "var(--platform-text-muted)" }}
-              />
-              <Input
-                placeholder="Search articles..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(0);
-                }}
-                className="pl-9"
-                style={{
-                  backgroundColor: "rgba(255,255,255,0.02)",
-                  borderColor: "var(--platform-border)",
-                  color: "var(--platform-text)",
-                }}
-              />
-            </div>
+            <AppSearchInput
+              value={search}
+              onChange={(v) => {
+                setSearch(v);
+                setPage(0);
+              }}
+              placeholder="Search articles..."
+              className="flex-1"
+            />
             <Select
               value={categoryFilter}
               onValueChange={(v) => {

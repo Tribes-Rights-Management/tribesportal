@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, Search, AlertCircle, RefreshCw, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus, AlertCircle, RefreshCw, ChevronUp, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { useHelpManagement, HelpArticle, HelpArticleStatus } from "@/hooks/useHelpManagement";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -150,20 +150,16 @@ export default function HelpArticlesListPage() {
 
       {/* Filters */}
       <div className="flex items-center gap-4 mb-6">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
-          <input
-            type="text"
-            placeholder="Search articles..."
-            value={searchQuery}
-            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-            className="w-full h-10 pl-10 pr-4 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-          />
-        </div>
+        <AppSearchInput
+          value={searchQuery}
+          onChange={(v) => { setSearchQuery(v); setCurrentPage(1); }}
+          placeholder="Search articles..."
+          className="flex-1 max-w-sm"
+        />
         <select
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-          className="h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+          className="h-9 px-3 bg-muted/40 border border-transparent hover:border-border rounded-md text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2"
         >
           {STATUS_OPTIONS.map(opt => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
