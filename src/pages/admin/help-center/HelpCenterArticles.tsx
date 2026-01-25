@@ -152,7 +152,7 @@ export default function HelpCenterArticles() {
               </p>
             </div>
             <AppButton
-              intent="primary"
+              intent="secondary"
               onClick={() => navigate("/admin/help-center/articles/new")}
             >
               <Plus className="h-4 w-4 mr-2" />

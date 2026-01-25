@@ -128,8 +128,8 @@ export default function HelpArticlesListPage() {
           <h1 className="text-[20px] font-medium text-foreground mb-1">Articles</h1>
           <p className="text-[13px] text-muted-foreground">{filteredArticles.length} articles</p>
         </div>
-        <AppButton intent="primary" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
-          <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
+        <AppButton intent="secondary" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
+          <Plus className="h-4 w-4 mr-2" />
           New Article
         </AppButton>
       </div>
