@@ -28,7 +28,7 @@ export function TenantSelector() {
       value={activeTenant?.tenant_id ?? ""}
       onValueChange={setActiveTenant}
     >
-      <SelectTrigger className="w-auto min-w-[160px] h-8 border-border bg-white text-[12px] gap-1.5">
+      <SelectTrigger className="w-auto min-w-[160px] h-8 border-border bg-card text-foreground text-[12px] gap-1.5">
         <div className="flex items-center gap-2">
           <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
           <SelectValue placeholder={NAV_LABELS.SELECT_WORKSPACE} />

@@ -1,5 +1,10 @@
-import { InstitutionalEmptyPanel } from "@/components/ui/institutional-states";
-import { PageHeader } from "@/components/ui/page-header";
+import { PageContainer } from "@/components/ui/page-container";
+import {
+  AppPageHeader,
+  AppCard,
+  AppCardBody,
+  AppEmptyState,
+} from "@/components/app-ui";
 
 /**
  * CLIENT PORTAL MODULE — AGREEMENTS
@@ -9,18 +14,24 @@ import { PageHeader } from "@/components/ui/page-header";
  */
 export default function PortalAgreementsPage() {
   return (
-    <div className="p-6 md:p-8 max-w-[1040px] mx-auto">
-      <PageHeader 
-        title="Agreements"
-        description="Your active agreements and contracts"
-      />
-      
-      <div className="mt-8">
-        <InstitutionalEmptyPanel
-          title="No agreements available"
-          description="Your agreements will appear once they are established."
-        />
-      </div>
-    </div>
+    <PageContainer maxWidth="wide">
+      <AppCard>
+        <AppCardBody className="p-6 md:p-8">
+          <AppPageHeader 
+            eyebrow="PORTAL"
+            title="Agreements"
+            description="Your active agreements and contracts"
+          />
+          
+          <div className="mt-8">
+            <AppEmptyState
+              icon="file"
+              message="No agreements available"
+              description="Your agreements will appear once they are established."
+            />
+          </div>
+        </AppCardBody>
+      </AppCard>
+    </PageContainer>
   );
 }
