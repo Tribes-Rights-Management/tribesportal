@@ -150,7 +150,7 @@ export default function InviteAcceptPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--app-bg)' }}>
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -159,7 +159,7 @@ export default function InviteAcceptPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: 'var(--app-bg)' }}>
         <div className="max-w-md w-full text-center">
-          <XCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <XCircle className="h-7 w-7 text-destructive mx-auto mb-4" strokeWidth={1.25} />
           <h1 className="text-[24px] font-semibold mb-2">Invalid invitation</h1>
           <p className="text-muted-foreground mb-6">{error}</p>
           <Button variant="outline" onClick={() => navigate("/workspaces")}>
@@ -175,7 +175,7 @@ export default function InviteAcceptPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: 'var(--app-bg)' }}>
         <div className="max-w-md w-full text-center">
-          <XCircle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+          <XCircle className="h-7 w-7 text-amber-500 mx-auto mb-4" strokeWidth={1.25} />
           <h1 className="text-[24px] font-semibold mb-2">Wrong account</h1>
           <p className="text-muted-foreground mb-2">
             This invitation was sent to <strong>{invitation.invited_email}</strong>
@@ -195,7 +195,7 @@ export default function InviteAcceptPage() {
     <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: 'var(--app-bg)' }}>
       <div className="max-w-md w-full">
         <div className="bg-white rounded-xl border p-6 shadow-sm">
-          <CheckCircle className="h-10 w-10 text-emerald-500 mx-auto mb-4" />
+          <CheckCircle className="h-7 w-7 text-emerald-500 mx-auto mb-4" strokeWidth={1.25} />
           <h1 className="text-[22px] font-semibold text-center mb-2">
             You're invited
           </h1>

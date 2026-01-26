@@ -50,9 +50,9 @@ export function WorkspaceCard({
     >
       {/* Top row: Icon (no background) + Chevron/Lock */}
       <div className="flex items-start justify-between shrink-0">
-        {/* Icon directly on card surface - no grey background */}
+        {/* Icon directly on card surface - lg size (20px MAX) */}
         <Icon
-          className="h-6 w-6 shrink-0"
+          className="h-5 w-5 shrink-0"
           strokeWidth={1.5}
           style={{ color: "var(--text-muted)" }}
         />

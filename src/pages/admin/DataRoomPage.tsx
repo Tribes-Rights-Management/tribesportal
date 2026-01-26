@@ -337,7 +337,7 @@ export default function DataRoomPage() {
                 <TableRow>
                   <TableCell colSpan={7}>
                     <div className="text-center py-8">
-                      <FileArchive className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                      <FileArchive className="h-6 w-6 text-muted-foreground mx-auto mb-2" strokeWidth={1.0} />
                       <p className="text-[13px] text-muted-foreground">
                         No exports created yet
                       </p>

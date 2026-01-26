@@ -265,12 +265,12 @@ function ImageDialog({ isOpen, onClose, onInsert }: ImageDialogProps) {
               >
                 {uploading ? (
                   <>
-                    <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
+                    <Loader2 className="h-6 w-6 text-muted-foreground animate-spin" />
                     <span className="text-[13px] text-muted-foreground">Uploading...</span>
                   </>
                 ) : (
                   <>
-                    <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                    <ImageIcon className="h-6 w-6 text-muted-foreground" strokeWidth={1.25} />
                     <span className="text-[13px] text-muted-foreground">
                       Click to select or drag an image here
                     </span>
@@ -855,7 +855,7 @@ export function RichTextEditor({
       {isDragging && (
         <div className="absolute inset-0 bg-card/90 flex items-center justify-center pointer-events-none z-10">
           <div className="text-center">
-            <ImageIcon className="h-12 w-12 text-blue-400 mx-auto mb-2" />
+            <ImageIcon className="h-7 w-7 text-muted-foreground mx-auto mb-2" strokeWidth={1.0} />
             <p className="text-[14px] text-foreground">Drop image to upload</p>
           </div>
         </div>
@@ -865,7 +865,7 @@ export function RichTextEditor({
       {isUploading && (
         <div className="absolute inset-0 bg-card/90 flex items-center justify-center z-10">
           <div className="text-center">
-            <Loader2 className="h-8 w-8 text-blue-400 mx-auto mb-2 animate-spin" />
+            <Loader2 className="h-6 w-6 text-muted-foreground mx-auto mb-2 animate-spin" />
             <p className="text-[14px] text-foreground">Uploading image...</p>
           </div>
         </div>
