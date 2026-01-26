@@ -25,7 +25,24 @@ export default function WorkstationsHomePage() {
     canAccessHelpWorkstation,
     canAccessTribesLicensing,
     canAccessTribesAdmin,
+    isLoading,
   } = useModuleAccess();
+
+  // Show loading state while checking module access
+  if (isLoading) {
+    return (
+      <HeaderOnlyLayout>
+        <div 
+          className="min-h-[calc(100vh-56px)] px-6 flex items-center justify-center"
+          style={{ backgroundColor: 'var(--app-bg)' }}
+        >
+          <p className="text-[14px]" style={{ color: 'var(--text-muted)' }}>
+            Loading workspaces...
+          </p>
+        </div>
+      </HeaderOnlyLayout>
+    );
+  }
 
   // All modules with access flags
   const allModules = [
