@@ -10,11 +10,16 @@ export default function RootRedirect() {
   const { accessState, activeContext, isPlatformAdmin } = useAuth();
   const { isExternalAuditor } = useRoleAccess();
 
-  // Loading — predictable, not fast
+  // SAFETY: Loading — ALWAYS render something, never return null
   if (accessState === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-[14px] text-muted-foreground">Loading data</p>
+      <div 
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--app-bg)' }}
+      >
+        <p className="text-[14px]" style={{ color: 'var(--text-muted)' }}>
+          Loading data
+        </p>
       </div>
     );
   }
