@@ -356,12 +356,9 @@ export default function SecurityVerificationPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [selectedExceptionId, setSelectedExceptionId] = useState<string | null>(null);
 
+  // Deterministic back navigation - always go to module root
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/admin");
-    }
+    navigate("/console");
   };
   
   const [checks, setChecks] = useState<CheckResult[]>([
