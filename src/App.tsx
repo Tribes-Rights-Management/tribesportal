@@ -3,7 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import RoleProtectedRoute from "@/components/RoleProtectedRoute";
+import { ConsoleProtectedRoute } from "@/components/console/ConsoleProtectedRoute";
+import { AuditorProtectedRoute } from "@/components/auditor/AuditorProtectedRoute";
 import { SessionGuard } from "@/components/session";
 import { AppProtectedRoute } from "@/components/app/AppProtectedRoute";
 import { AppLayout } from "@/layouts/AppLayout";
@@ -239,7 +240,7 @@ const App = () => (
             Permission: licensing.view, licensing.manage, licensing.approve
         ═══════════════════════════════════════════════════════════════════════ */}
         <Route path="/licensing" element={
-          <ModuleProtectedRoute requiredPermission="licensing.view">
+          <ModuleProtectedRoute requiredModule="licensing">
             <ModuleLayout />
           </ModuleProtectedRoute>
         }>
@@ -259,7 +260,7 @@ const App = () => (
             Permission: portal.view, portal.download, portal.submit
         ═══════════════════════════════════════════════════════════════════════ */}
         <Route path="/admin" element={
-          <ModuleProtectedRoute requiredPermission="portal.view">
+          <ModuleProtectedRoute requiredModule="admin">
             <ModuleLayout />
           </ModuleProtectedRoute>
         }>
@@ -314,7 +315,7 @@ const App = () => (
             Scope: governance, audit oversight, compliance, security
             NO product navigation, NO workspace selector
         ═══════════════════════════════════════════════════════════════════════ */}
-        <Route path="/console" element={<RoleProtectedRoute allowedRoles={["admin"]}><SystemConsoleLayout /></RoleProtectedRoute>}>
+        <Route path="/console" element={<ConsoleProtectedRoute><SystemConsoleLayout /></ConsoleProtectedRoute>}>
           <Route index element={<AdminDashboard />} />
           <Route path="approvals" element={<ApprovalsPage />} />
           <Route path="tenants" element={<TenantsPage />} />
@@ -360,11 +361,11 @@ const App = () => (
             EXTERNAL AUDITOR ROUTES (/auditor)
             Permission: external_auditor role - read-only access
         ═══════════════════════════════════════════════════════════════════════ */}
-        <Route path="/auditor" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorLanding /></RoleProtectedRoute>} />
-        <Route path="/auditor/activity" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorActivityLogPage /></RoleProtectedRoute>} />
-        <Route path="/auditor/licensing" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorLicensingPage /></RoleProtectedRoute>} />
-        <Route path="/auditor/access" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorAccessLogPage /></RoleProtectedRoute>} />
-        <Route path="/auditor/chain" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorChainPage /></RoleProtectedRoute>} />
+        <Route path="/auditor" element={<AuditorProtectedRoute><AuditorLanding /></AuditorProtectedRoute>} />
+        <Route path="/auditor/activity" element={<AuditorProtectedRoute><AuditorActivityLogPage /></AuditorProtectedRoute>} />
+        <Route path="/auditor/licensing" element={<AuditorProtectedRoute><AuditorLicensingPage /></AuditorProtectedRoute>} />
+        <Route path="/auditor/access" element={<AuditorProtectedRoute><AuditorAccessLogPage /></AuditorProtectedRoute>} />
+        <Route path="/auditor/chain" element={<AuditorProtectedRoute><AuditorChainPage /></AuditorProtectedRoute>} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
             HELP WORKSTATION (/help) — FIRST-CLASS WORKSTATION
