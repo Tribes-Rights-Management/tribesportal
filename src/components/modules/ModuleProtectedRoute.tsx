@@ -1,51 +1,65 @@
 import { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRoleAccess, Permission } from "@/hooks/useRoleAccess";
-import { InstitutionalLoadingState, AccessRestrictedState } from "@/components/ui/institutional-states";
+import { useUserModuleAccess } from "@/hooks/useUserModuleAccess";
+import { 
+  isPlatformOwner, 
+  canAccessOrgModule,
+  hasAdminModuleAccess,
+  hasLicensingModuleAccess 
+} from "@/lib/permissions";
+import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
+import type { Database } from "@/integrations/supabase/types";
+
+type ModuleType = Database["public"]["Enums"]["module_type"];
 
 /**
- * MODULE PROTECTED ROUTE — DEFAULT DENY ACCESS CONTROL
+ * MODULE PROTECTED ROUTE — UNIFIED ACCESS CONTROL
  * 
- * Purpose: Gate access to first-class modules (Licensing, Portal)
- * based on explicit permission checks.
+ * Purpose: Gate access to first-class modules (Licensing, Admin)
+ * based on module_access table and centralized permission helpers.
+ * 
+ * Access hierarchy:
+ * 1. Platform admins: Full access to everything
+ * 2. Module access grants: From module_access table (org-scoped)
  * 
  * If user lacks permission:
  * - Surface is NOT rendered
- * - Redirect to appropriate page
- * - No "request access" prompts
+ * - Redirect to /workspaces
  */
 
 interface ModuleProtectedRouteProps {
   children: ReactNode;
-  requiredPermission: Permission;
+  /** The module to check access for */
+  requiredModule: ModuleType;
+  /** Optional fallback path (defaults to /workspaces) */
   fallbackPath?: string;
 }
 
 export function ModuleProtectedRoute({ 
   children, 
-  requiredPermission,
-  fallbackPath = "/auth/unauthorized"
+  requiredModule,
+  fallbackPath = "/workspaces"
 }: ModuleProtectedRouteProps) {
-  const { accessState, isPlatformAdmin } = useAuth();
-  const { hasPermission } = useRoleAccess();
+  const { accessState, profile, activeTenant } = useAuth();
+  const { moduleAccessRecords, isLoading } = useUserModuleAccess();
   const location = useLocation();
 
   // Loading state
-  if (accessState === "loading") {
+  if (accessState === "loading" || isLoading) {
     return (
       <div 
         className="min-h-screen flex items-center justify-center"
         style={{ backgroundColor: 'var(--platform-canvas)' }}
       >
-        <InstitutionalLoadingState message="Loading data" />
+        <InstitutionalLoadingState message="Verifying access" />
       </div>
     );
   }
 
   // Unauthenticated - redirect to sign in
   if (accessState === "unauthenticated") {
-    return <Navigate to="/auth/sign-in" state={{ from: location }} replace />;
+    return <Navigate to="/sign-in" state={{ from: location }} replace />;
   }
 
   // No profile or suspended - redirect to error
@@ -58,8 +72,8 @@ export function ModuleProtectedRoute({
     return <Navigate to="/app/suspended" replace />;
   }
 
-  // Platform admins have full access
-  if (isPlatformAdmin) {
+  // Platform admins have full access to all modules
+  if (isPlatformOwner(profile)) {
     return <>{children}</>;
   }
 
@@ -68,8 +82,35 @@ export function ModuleProtectedRoute({
     return <Navigate to="/auth/unauthorized" replace />;
   }
 
-  // Check specific permission - DEFAULT DENY
-  if (!hasPermission(requiredPermission)) {
+  // Check module access based on active org context
+  const moduleAccessForCheck = moduleAccessRecords.map(r => ({
+    organization_id: r.organization_id,
+    module: r.module,
+    access_level: r.access_level,
+    revoked_at: r.revoked_at,
+  }));
+
+  // If no active tenant, check if user has ANY access to this module
+  if (!activeTenant) {
+    const hasAnyAccess = requiredModule === "admin" 
+      ? hasAdminModuleAccess(profile, moduleAccessForCheck)
+      : hasLicensingModuleAccess(profile, moduleAccessForCheck);
+    
+    if (!hasAnyAccess) {
+      return <Navigate to={fallbackPath} replace />;
+    }
+    return <>{children}</>;
+  }
+
+  // Check specific org + module access - DEFAULT DENY
+  const hasAccess = canAccessOrgModule(
+    profile,
+    moduleAccessForCheck,
+    activeTenant.tenant_id,
+    requiredModule
+  );
+
+  if (!hasAccess) {
     return <Navigate to={fallbackPath} replace />;
   }
 
