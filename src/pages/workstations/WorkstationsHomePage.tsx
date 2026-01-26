@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  * Single entry point for all authenticated users after login.
  * Displays a compact 2x2 grid of module tiles based on user permissions.
+ * Stripe-level design: tight, calm, deliberate.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -32,25 +33,26 @@ function ModuleTile({ title, description, icon: Icon, href, disabled = false }: 
   const content = (
     <div
       className={cn(
-        "group relative flex flex-col h-[168px] p-5 rounded-xl",
+        // Fixed height, overflow protection, padding
+        "group relative flex flex-col h-[156px] p-[18px] rounded-2xl overflow-hidden",
         "border transition-all duration-150",
         disabled 
           ? "opacity-60 cursor-not-allowed border-[var(--border-subtle)]" 
-          : "cursor-pointer border-[var(--border-subtle)] hover:border-[var(--text-muted)]/30 hover:bg-[var(--muted-wash)]"
+          : "cursor-pointer border-[var(--border-subtle)] hover:border-[#D1D5DB] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
       )}
       style={{
-        backgroundColor: disabled ? 'var(--card-bg)' : 'var(--card-bg)',
+        backgroundColor: 'var(--card-bg)',
       }}
     >
       {/* Top row: Icon chip + Chevron/Lock */}
-      <div className="flex items-start justify-between">
-        {/* Icon chip */}
+      <div className="flex items-start justify-between shrink-0">
+        {/* Icon container: 40px, soft gray, radius 12px */}
         <div 
-          className="flex items-center justify-center w-8 h-8 rounded-lg"
+          className="flex items-center justify-center w-10 h-10 rounded-xl shrink-0"
           style={{ backgroundColor: 'var(--muted-wash)' }}
         >
           <Icon 
-            className="h-[18px] w-[18px]" 
+            className="h-5 w-5 shrink-0" 
             strokeWidth={1.5}
             style={{ color: 'var(--text-muted)' }}
           />
@@ -59,14 +61,14 @@ function ModuleTile({ title, description, icon: Icon, href, disabled = false }: 
         {/* Chevron or Lock */}
         {disabled ? (
           <Lock 
-            className="h-4 w-4" 
+            className="h-[18px] w-[18px] shrink-0" 
             strokeWidth={1.5}
             style={{ color: 'var(--text-muted)' }}
           />
         ) : (
           <ChevronRight 
             className={cn(
-              "h-4 w-4 transition-transform duration-150",
+              "h-[18px] w-[18px] shrink-0 transition-transform duration-150",
               "group-hover:translate-x-0.5"
             )}
             strokeWidth={1.5}
@@ -75,16 +77,16 @@ function ModuleTile({ title, description, icon: Icon, href, disabled = false }: 
         )}
       </div>
 
-      {/* Content: Title + Description */}
-      <div className="flex-1 flex flex-col justify-center mt-4">
+      {/* Content: Title + Description — with overflow protection */}
+      <div className="flex-1 flex flex-col justify-end min-w-0 mt-3">
         <h3 
-          className="text-[16px] font-semibold leading-tight"
+          className="text-[16px] font-semibold leading-tight truncate"
           style={{ color: 'var(--text)' }}
         >
           {title}
         </h3>
         <p 
-          className="text-[13px] leading-snug mt-1.5 line-clamp-2"
+          className="text-[13px] leading-snug mt-1 line-clamp-2 break-words"
           style={{ color: 'var(--text-muted)' }}
         >
           {description}
@@ -100,7 +102,7 @@ function ModuleTile({ title, description, icon: Icon, href, disabled = false }: 
   return (
     <Link
       to={href}
-      className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2 rounded-xl"
+      className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2 rounded-2xl"
     >
       {content}
     </Link>
@@ -163,8 +165,8 @@ export default function WorkstationsHomePage() {
       >
         {/* Centered content container */}
         <div className="mx-auto w-full max-w-[640px] pt-8 pb-12">
-          {/* Header — left-aligned with grid */}
-          <div className="mb-5">
+          {/* Header — left-aligned with grid, tighter spacing */}
+          <div className="mb-4">
             <h1 
               className="text-[24px] font-semibold leading-tight"
               style={{ color: 'var(--text)' }}
@@ -182,7 +184,7 @@ export default function WorkstationsHomePage() {
           {/* Module Grid */}
           {hasNoAccess ? (
             <div 
-              className="p-6 rounded-xl"
+              className="p-5 rounded-2xl overflow-hidden"
               style={{ 
                 backgroundColor: 'var(--card-bg)',
                 border: '1px solid var(--border-subtle)',
@@ -204,7 +206,7 @@ export default function WorkstationsHomePage() {
           ) : (
             <div 
               className={cn(
-                "grid gap-6 w-full",
+                "grid gap-4 w-full",
                 "grid-cols-1 sm:grid-cols-2"
               )}
             >
