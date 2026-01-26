@@ -3,13 +3,12 @@ import { Outlet, useNavigate, useLocation, NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { AppSearchInput } from "@/components/app-ui";
 import { useAuth } from "@/contexts/AuthContext";
-import { ProfileDropdown } from "@/components/ui/profile-dropdown";
+import { WorkspaceSwitcher } from "@/components/app/WorkspaceSwitcher";
+import { UserAvatar, getInitialsFromProfile } from "@/components/ui/user-avatar";
 import { GlobalSearchDialog } from "@/components/search/GlobalSearchDialog";
 import { 
-  ArrowLeft, 
   Menu,
   X,
-  ChevronDown,
   LayoutDashboard,
   Users,
   FolderOpen,
@@ -20,15 +19,14 @@ import {
   Settings2,
   type LucideIcon
 } from "lucide-react";
-import { NAV_LABELS } from "@/styles/tokens";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
  * HELP WORKSTATION LAYOUT — STRIPE-LIKE SHELL WITH SIDEBAR + GLOBAL SEARCH
  * 
  * Matches the unified AppShell pattern:
- * - Left sidebar with navigation
- * - Top bar with global search + profile
+ * - Left sidebar with WorkspaceSwitcher + navigation
+ * - Top bar with global search + profile avatar
  * - Mercury-inspired light theme
  */
 
@@ -50,54 +48,6 @@ const NAV_ITEMS: NavItem[] = [
   { path: "/help/analytics", label: "Analytics", icon: BarChart3, section: 'analytics' },
   { path: "/help/settings", label: "Settings", icon: Settings2, section: 'settings' },
 ];
-
-function WorkspaceSelector() {
-  return (
-    <button
-      className={cn(
-        "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg",
-        "transition-colors duration-150",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-      )}
-      style={{
-        // @ts-ignore
-        '--tw-ring-color': 'var(--tribes-focus-ring-neutral)',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = 'var(--tribes-nav-hover)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = 'transparent';
-      }}
-    >
-      {/* Avatar */}
-      <div 
-        className="h-7 w-7 rounded-md flex items-center justify-center text-[11px] font-semibold shrink-0"
-        style={{ 
-          backgroundColor: '#E5E7EB',
-          color: 'var(--tribes-text)',
-        }}
-      >
-        T
-      </div>
-      
-      {/* Text */}
-      <span 
-        className="flex-1 text-left text-sm font-medium truncate"
-        style={{ color: 'var(--tribes-text)' }}
-      >
-        Tribes Rights
-      </span>
-      
-      {/* Chevron */}
-      <ChevronDown 
-        className="h-4 w-4 shrink-0"
-        strokeWidth={1.5}
-        style={{ color: 'var(--tribes-text-muted)' }}
-      />
-    </button>
-  );
-}
 
 function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const location = useLocation();
@@ -150,9 +100,9 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <nav className="flex flex-col py-2 px-2">
-      {/* Workspace Selector */}
+      {/* Workspace Switcher - uses shared component */}
       <div className="mb-3">
-        <WorkspaceSelector />
+        <WorkspaceSwitcher />
       </div>
 
       {/* Main Navigation — tighter vertical rhythm */}
@@ -205,8 +155,11 @@ function HeaderSearch({ onOpenSearch }: { onOpenSearch: () => void }) {
 export function HelpWorkstationLayout() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { profile } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  
+  const initials = getInitialsFromProfile(profile);
 
   return (
     <div 
@@ -251,16 +204,22 @@ export function HelpWorkstationLayout() {
                 {mobileNavOpen ? <X className="h-5 w-5" strokeWidth={1.5} /> : <Menu className="h-5 w-5" strokeWidth={1.5} />}
               </button>
               
-              <button
-                onClick={() => navigate("/help")}
-                className="font-medium uppercase tracking-wider text-[11px] focus:outline-none"
+              <span
+                className="font-semibold uppercase tracking-wider text-[11px]"
                 style={{ color: 'var(--tribes-text)' }}
               >
-                {NAV_LABELS.BRAND_WORDMARK}
-              </button>
+                Tribes
+              </span>
             </div>
 
-            <ProfileDropdown avatarVariant="light" contextLabel="Help Workstation" />
+            {/* Right: Avatar */}
+            <button
+              onClick={() => navigate("/account")}
+              className="focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-full"
+              aria-label="Account"
+            >
+              <UserAvatar initials={initials} size="md" variant="light" />
+            </button>
           </div>
         ) : (
           /* Desktop Header — 3-column grid */
@@ -268,46 +227,9 @@ export function HelpWorkstationLayout() {
             className="h-full grid items-center gap-4"
             style={{ gridTemplateColumns: '1fr minmax(420px, 680px) 1fr' }}
           >
-            {/* Left: Back to Modules + Wordmark */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => navigate("/workspaces")}
-                className={cn(
-                  "flex items-center justify-center rounded-lg h-9 w-9",
-                  "transition-colors duration-150",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                )}
-                style={{ 
-                  color: 'var(--tribes-text-muted)',
-                  // @ts-ignore
-                  '--tw-ring-color': 'var(--tribes-focus-ring-neutral)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--tribes-nav-hover)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-                aria-label="Back to Modules"
-                title="Back to Modules"
-              >
-                <ArrowLeft className="h-5 w-5" strokeWidth={1.5} />
-              </button>
-              
-              <button
-                onClick={() => navigate("/help")}
-                className={cn(
-                  "text-sm font-medium uppercase tracking-wider",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded"
-                )}
-                style={{ 
-                  color: 'var(--tribes-text)',
-                  // @ts-ignore
-                  '--tw-ring-color': 'var(--tribes-focus-ring-neutral)',
-                }}
-              >
-                {NAV_LABELS.BRAND_WORDMARK}
-              </button>
+            {/* Left: WorkspaceSwitcher */}
+            <div className="flex items-center">
+              <WorkspaceSwitcher />
             </div>
 
             {/* Center: Search */}
@@ -315,9 +237,15 @@ export function HelpWorkstationLayout() {
               <HeaderSearch onOpenSearch={() => setSearchOpen(true)} />
             </div>
 
-            {/* Right: Account */}
+            {/* Right: Avatar */}
             <div className="flex items-center justify-end">
-              <ProfileDropdown avatarVariant="light" contextLabel="Help Workstation" />
+              <button
+                onClick={() => navigate("/account")}
+                className="focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-full"
+                aria-label="Account"
+              >
+                <UserAvatar initials={initials} size="sm" variant="light" />
+              </button>
             </div>
           </div>
         )}

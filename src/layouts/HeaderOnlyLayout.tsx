@@ -1,13 +1,15 @@
 import { ReactNode } from "react";
-import { Link } from "react-router-dom";
-import { ProfileDropdown } from "@/components/ui/profile-dropdown";
+import { useNavigate } from "react-router-dom";
+import { WorkspaceSwitcher } from "@/components/app/WorkspaceSwitcher";
+import { UserAvatar, getInitialsFromProfile } from "@/components/ui/user-avatar";
+import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * HEADER-ONLY LAYOUT — NO SIDEBAR
  * 
  * ═══════════════════════════════════════════════════════════════════════════
- * Used for the Modules Home page (/workstations) where no sidebar is needed.
- * Clean header with logo + user avatar only.
+ * Used for the Modules Home page (/workspaces) where no sidebar is needed.
+ * Clean header with WorkspaceSwitcher (left) + user avatar (right).
  * 
  * Header: 56px height, avatar 28px (desktop) / 32px (mobile)
  * ═══════════════════════════════════════════════════════════════════════════
@@ -20,6 +22,10 @@ interface HeaderOnlyLayoutProps {
 }
 
 export function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
+  const navigate = useNavigate();
+  const { profile } = useAuth();
+  const initials = getInitialsFromProfile(profile);
+
   return (
     <div 
       className="min-h-screen flex flex-col w-full"
@@ -34,21 +40,17 @@ export function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
           borderBottom: '1px solid var(--border-subtle)',
         }}
       >
-        {/* Left: Logo/Wordmark */}
-        <Link 
-          to="/workspaces"
-          className="flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded"
-        >
-          <span 
-            className="text-[13px] font-semibold tracking-wide uppercase"
-            style={{ color: 'var(--text)' }}
-          >
-            TRIBES
-          </span>
-        </Link>
+        {/* Left: WorkspaceSwitcher */}
+        <WorkspaceSwitcher />
 
-        {/* Right: User Avatar/Menu - using shared ProfileDropdown */}
-        <ProfileDropdown avatarVariant="default" />
+        {/* Right: User Avatar (navigates to account) */}
+        <button
+          onClick={() => navigate("/account")}
+          className="focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-full"
+          aria-label="Account"
+        >
+          <UserAvatar initials={initials} size="sm" variant="light" />
+        </button>
       </header>
 
       {/* Main content */}
