@@ -6,7 +6,8 @@ import {
   HelpCircle, 
   FileText, 
   LayoutDashboard,
-  ArrowRight,
+  ChevronRight,
+  Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +16,7 @@ import { cn } from "@/lib/utils";
  * 
  * ═══════════════════════════════════════════════════════════════════════════
  * Single entry point for all authenticated users after login.
- * Displays a 2x2 grid of module tiles based on user permissions.
+ * Displays a compact 2x2 grid of module tiles based on user permissions.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -24,61 +25,84 @@ interface ModuleTileProps {
   description: string;
   icon: React.ElementType;
   href: string;
+  disabled?: boolean;
 }
 
-function ModuleTile({ title, description, icon: Icon, href }: ModuleTileProps) {
-  return (
-    <Link
-      to={href}
+function ModuleTile({ title, description, icon: Icon, href, disabled = false }: ModuleTileProps) {
+  const content = (
+    <div
       className={cn(
-        "group relative flex flex-col justify-between p-6 rounded-lg",
-        "transition-all duration-200 ease-out",
-        "hover:shadow-md hover:scale-[1.01]",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        "group relative flex flex-col h-[168px] p-5 rounded-xl",
+        "border transition-all duration-150",
+        disabled 
+          ? "opacity-60 cursor-not-allowed border-[var(--border-subtle)]" 
+          : "cursor-pointer border-[var(--border-subtle)] hover:border-[var(--text-muted)]/30 hover:bg-[var(--muted-wash)]"
       )}
       style={{
-        backgroundColor: 'var(--card-bg)',
-        border: '1px solid var(--border-subtle)',
-        // @ts-ignore
-        '--tw-ring-color': '#0071E3',
+        backgroundColor: disabled ? 'var(--card-bg)' : 'var(--card-bg)',
       }}
     >
-      {/* Icon */}
-      <div 
-        className="flex items-center justify-center w-10 h-10 rounded-lg mb-4"
-        style={{ backgroundColor: 'var(--muted-wash)' }}
-      >
-        <Icon 
-          className="h-5 w-5" 
-          strokeWidth={1.5}
-          style={{ color: 'var(--text-muted)' }}
-        />
+      {/* Top row: Icon chip + Chevron/Lock */}
+      <div className="flex items-start justify-between">
+        {/* Icon chip */}
+        <div 
+          className="flex items-center justify-center w-8 h-8 rounded-lg"
+          style={{ backgroundColor: 'var(--muted-wash)' }}
+        >
+          <Icon 
+            className="h-[18px] w-[18px]" 
+            strokeWidth={1.5}
+            style={{ color: 'var(--text-muted)' }}
+          />
+        </div>
+
+        {/* Chevron or Lock */}
+        {disabled ? (
+          <Lock 
+            className="h-4 w-4" 
+            strokeWidth={1.5}
+            style={{ color: 'var(--text-muted)' }}
+          />
+        ) : (
+          <ChevronRight 
+            className={cn(
+              "h-4 w-4 transition-transform duration-150",
+              "group-hover:translate-x-0.5"
+            )}
+            strokeWidth={1.5}
+            style={{ color: 'var(--text-muted)' }}
+          />
+        )}
       </div>
 
-      {/* Content */}
-      <div className="flex-1">
+      {/* Content: Title + Description */}
+      <div className="flex-1 flex flex-col justify-center mt-4">
         <h3 
-          className="text-[15px] font-medium mb-1"
+          className="text-[16px] font-semibold leading-tight"
           style={{ color: 'var(--text)' }}
         >
           {title}
         </h3>
         <p 
-          className="text-[13px] leading-relaxed"
+          className="text-[13px] leading-snug mt-1.5 line-clamp-2"
           style={{ color: 'var(--text-muted)' }}
         >
           {description}
         </p>
       </div>
+    </div>
+  );
 
-      {/* Enter affordance */}
-      <div 
-        className="flex items-center gap-1 mt-4 text-[13px] font-medium group-hover:gap-2 transition-all"
-        style={{ color: 'var(--text-muted)' }}
-      >
-        Enter
-        <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
-      </div>
+  if (disabled) {
+    return content;
+  }
+
+  return (
+    <Link
+      to={href}
+      className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2 rounded-xl"
+    >
+      {content}
     </Link>
   );
 }
@@ -91,64 +115,62 @@ export default function WorkstationsHomePage() {
     canAccessTribesAdmin,
   } = useModuleAccess();
 
-  // Build visible modules based on permissions
-  const modules: ModuleTileProps[] = [];
-
-  if (canAccessSystemConsole) {
-    modules.push({
+  // All modules with access flags
+  const allModules = [
+    {
       title: "System Console",
       description: "Platform governance, user management, security oversight, and compliance.",
       icon: Settings,
       href: "/console",
-    });
-  }
-
-  if (canAccessHelpWorkstation) {
-    modules.push({
+      hasAccess: canAccessSystemConsole,
+    },
+    {
       title: "Help Workstation",
       description: "Manage help articles, categories, audiences, and support messages.",
       icon: HelpCircle,
       href: "/help",
-    });
-  }
-
-  if (canAccessTribesLicensing) {
-    modules.push({
+      hasAccess: canAccessHelpWorkstation,
+    },
+    {
       title: "Tribes Licensing",
       description: "License requests, agreements, payments, and catalog management.",
       icon: FileText,
       href: "/licensing",
-    });
-  }
-
-  if (canAccessTribesAdmin) {
-    modules.push({
+      hasAccess: canAccessTribesLicensing,
+    },
+    {
       title: "Tribes Admin",
       description: "Statements, documents, invoices, and payment management.",
       icon: LayoutDashboard,
       href: "/admin",
-    });
-  }
+      hasAccess: canAccessTribesAdmin,
+    },
+  ];
 
-  // If no modules are accessible, show a message
-  const hasNoAccess = modules.length === 0;
+  // Show all modules (accessible ones first, then disabled ones)
+  const accessibleModules = allModules.filter(m => m.hasAccess);
+  const disabledModules = allModules.filter(m => !m.hasAccess);
+  const sortedModules = [...accessibleModules, ...disabledModules];
+
+  // If no modules at all, show empty state
+  const hasNoAccess = accessibleModules.length === 0;
 
   return (
     <HeaderOnlyLayout>
       <div 
-        className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] px-6 py-12"
+        className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] px-6 py-8"
         style={{ backgroundColor: 'var(--app-bg)' }}
       >
         {/* Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <h1 
-            className="text-[24px] font-semibold mb-2"
+            className="text-[22px] font-semibold mb-1"
             style={{ color: 'var(--text)' }}
           >
             Welcome to TRIBES
           </h1>
           <p 
-            className="text-[14px]"
+            className="text-[13px]"
             style={{ color: 'var(--text-muted)' }}
           >
             Select a module to get started
@@ -158,14 +180,14 @@ export default function WorkstationsHomePage() {
         {/* Module Grid */}
         {hasNoAccess ? (
           <div 
-            className="text-center p-8 rounded-lg max-w-md"
+            className="text-center p-6 rounded-xl max-w-sm"
             style={{ 
               backgroundColor: 'var(--card-bg)',
               border: '1px solid var(--border-subtle)',
             }}
           >
             <p 
-              className="text-[14px] mb-2"
+              className="text-[14px] mb-1"
               style={{ color: 'var(--text)' }}
             >
               No modules available
@@ -180,15 +202,19 @@ export default function WorkstationsHomePage() {
         ) : (
           <div 
             className={cn(
-              "grid gap-4 w-full max-w-2xl",
-              modules.length === 1 && "grid-cols-1 max-w-sm",
-              modules.length === 2 && "grid-cols-1 sm:grid-cols-2",
-              modules.length === 3 && "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
-              modules.length >= 4 && "grid-cols-1 sm:grid-cols-2",
+              "grid gap-6 w-full max-w-[640px]",
+              "grid-cols-1 sm:grid-cols-2"
             )}
           >
-            {modules.map((module) => (
-              <ModuleTile key={module.href} {...module} />
+            {sortedModules.map((module) => (
+              <ModuleTile 
+                key={module.href} 
+                title={module.title}
+                description={module.description}
+                icon={module.icon}
+                href={module.href}
+                disabled={!module.hasAccess}
+              />
             ))}
           </div>
         )}
