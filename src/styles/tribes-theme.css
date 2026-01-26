@@ -185,6 +185,7 @@
   /* Primary text: Near-black for excellent readability */
   --tribes-fg: #111827;
   --tribes-text: #111827;
+  --text: #111827;
 
   /* Secondary text: Medium gray */
   --tribes-fg-secondary: #6B7280;
@@ -193,6 +194,7 @@
   /* Muted text: Light gray for labels, captions */
   --tribes-fg-muted: #9CA3AF;
   --tribes-text-muted: #9CA3AF;
+  --text-muted: #9CA3AF;
 
   /* ─────────────────────────────────────────────────────────────────────────
      SURFACE SYSTEM — Uses global 3-surface tokens
@@ -280,10 +282,12 @@
   /* Text hierarchy */
   --tribes-fg: #FFFFFF;
   --tribes-text: #FFFFFF;
+  --text: #FFFFFF;
   --tribes-fg-secondary: #AAAAAA;
   --tribes-text-secondary: #AAAAAA;
   --tribes-fg-muted: #717171;
   --tribes-text-muted: #717171;
+  --text-muted: #717171;
 
   /* Surface system */
   --tribes-card: #212121;
