@@ -1077,6 +1077,87 @@ export type Database = {
           },
         ]
       }
+      invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by_user_id: string | null
+          admin_access_level: Database["public"]["Enums"]["access_level"] | null
+          created_at: string
+          expires_at: string
+          grant_admin_module: boolean
+          grant_licensing_module: boolean
+          id: string
+          invited_by_user_id: string
+          invited_email: string
+          licensing_access_level:
+            | Database["public"]["Enums"]["access_level"]
+            | null
+          org_role: Database["public"]["Enums"]["org_role"]
+          organization_id: string
+          revoked_at: string | null
+          revoked_by: string | null
+          status: Database["public"]["Enums"]["invitation_status"]
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by_user_id?: string | null
+          admin_access_level?:
+            | Database["public"]["Enums"]["access_level"]
+            | null
+          created_at?: string
+          expires_at: string
+          grant_admin_module?: boolean
+          grant_licensing_module?: boolean
+          id?: string
+          invited_by_user_id: string
+          invited_email: string
+          licensing_access_level?:
+            | Database["public"]["Enums"]["access_level"]
+            | null
+          org_role?: Database["public"]["Enums"]["org_role"]
+          organization_id: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          status?: Database["public"]["Enums"]["invitation_status"]
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by_user_id?: string | null
+          admin_access_level?:
+            | Database["public"]["Enums"]["access_level"]
+            | null
+          created_at?: string
+          expires_at?: string
+          grant_admin_module?: boolean
+          grant_licensing_module?: boolean
+          id?: string
+          invited_by_user_id?: string
+          invited_email?: string
+          licensing_access_level?:
+            | Database["public"]["Enums"]["access_level"]
+            | null
+          org_role?: Database["public"]["Enums"]["org_role"]
+          organization_id?: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          status?: Database["public"]["Enums"]["invitation_status"]
+          token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_line_items: {
         Row: {
           amount: number
@@ -1365,6 +1446,53 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      module_access: {
+        Row: {
+          access_level: Database["public"]["Enums"]["access_level"]
+          created_at: string
+          granted_at: string
+          granted_by: string | null
+          id: string
+          module: Database["public"]["Enums"]["module_type"]
+          organization_id: string
+          revoked_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_level?: Database["public"]["Enums"]["access_level"]
+          created_at?: string
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          module: Database["public"]["Enums"]["module_type"]
+          organization_id: string
+          revoked_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_level?: Database["public"]["Enums"]["access_level"]
+          created_at?: string
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          module?: Database["public"]["Enums"]["module_type"]
+          organization_id?: string
+          revoked_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "module_access_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notification_archive: {
         Row: {
@@ -2021,6 +2149,7 @@ export type Database = {
           created_at: string
           default_context: Database["public"]["Enums"]["portal_context"] | null
           id: string
+          org_role: Database["public"]["Enums"]["org_role"] | null
           role: Database["public"]["Enums"]["portal_role"]
           status: Database["public"]["Enums"]["membership_status"]
           tenant_id: string
@@ -2032,6 +2161,7 @@ export type Database = {
           created_at?: string
           default_context?: Database["public"]["Enums"]["portal_context"] | null
           id?: string
+          org_role?: Database["public"]["Enums"]["org_role"] | null
           role?: Database["public"]["Enums"]["portal_role"]
           status?: Database["public"]["Enums"]["membership_status"]
           tenant_id: string
@@ -2043,6 +2173,7 @@ export type Database = {
           created_at?: string
           default_context?: Database["public"]["Enums"]["portal_context"] | null
           id?: string
+          org_role?: Database["public"]["Enums"]["org_role"] | null
           role?: Database["public"]["Enums"]["portal_role"]
           status?: Database["public"]["Enums"]["membership_status"]
           tenant_id?: string
@@ -2403,12 +2534,47 @@ export type Database = {
         Args: { _tenant_id: string; _user_id: string }
         Returns: Database["public"]["Enums"]["portal_context"][]
       }
+      get_user_organizations: {
+        Args: { _user_id: string }
+        Returns: {
+          has_admin_module: boolean
+          has_licensing_module: boolean
+          org_id: string
+          org_name: string
+          org_slug: string
+          user_org_role: Database["public"]["Enums"]["org_role"]
+        }[]
+      }
       has_active_membership: { Args: { _user_id: string }; Returns: boolean }
+      has_module_access: {
+        Args: {
+          _module: Database["public"]["Enums"]["module_type"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      has_module_access_level: {
+        Args: {
+          _level: Database["public"]["Enums"]["access_level"]
+          _module: Database["public"]["Enums"]["module_type"]
+          _org_id: string
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_active_member: {
         Args: { _tenant_id: string; _user_id: string }
         Returns: boolean
       }
       is_external_auditor: { Args: { _user_id: string }; Returns: boolean }
+      is_org_admin: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_org_owner: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_platform_admin: { Args: { _user_id: string }; Returns: boolean }
       is_tenant_admin: {
         Args: { _tenant_id: string; _user_id: string }
@@ -2475,6 +2641,7 @@ export type Database = {
       }
     }
     Enums: {
+      access_level: "viewer" | "editor" | "manager" | "approver"
       access_request_status: "pending" | "processed"
       agreement_status: "draft" | "active" | "expired" | "terminated"
       api_token_scope: "platform_read" | "organization_read"
@@ -2507,6 +2674,7 @@ export type Database = {
       escalation_status: "pending" | "escalated" | "resolved" | "expired"
       help_article_status: "draft" | "internal" | "published" | "archived"
       help_visibility: "public" | "internal"
+      invitation_status: "pending" | "accepted" | "expired" | "revoked"
       invoice_status: "draft" | "open" | "paid" | "void" | "uncollectible"
       licensing_request_status:
         | "draft"
@@ -2521,6 +2689,7 @@ export type Database = {
         | "denied"
         | "revoked"
         | "suspended"
+      module_type: "admin" | "licensing"
       notification_priority: "low" | "normal" | "high" | "critical"
       notification_resolution_type:
         | "approved"
@@ -2537,6 +2706,7 @@ export type Database = {
         | "security_event"
         | "export_completed"
         | "membership_change"
+      org_role: "org_owner" | "org_admin" | "org_staff" | "org_client"
       payment_status:
         | "pending"
         | "processing"
@@ -2689,6 +2859,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      access_level: ["viewer", "editor", "manager", "approver"],
       access_request_status: ["pending", "processed"],
       agreement_status: ["draft", "active", "expired", "terminated"],
       api_token_scope: ["platform_read", "organization_read"],
@@ -2724,6 +2895,7 @@ export const Constants = {
       escalation_status: ["pending", "escalated", "resolved", "expired"],
       help_article_status: ["draft", "internal", "published", "archived"],
       help_visibility: ["public", "internal"],
+      invitation_status: ["pending", "accepted", "expired", "revoked"],
       invoice_status: ["draft", "open", "paid", "void", "uncollectible"],
       licensing_request_status: [
         "draft",
@@ -2740,6 +2912,7 @@ export const Constants = {
         "revoked",
         "suspended",
       ],
+      module_type: ["admin", "licensing"],
       notification_priority: ["low", "normal", "high", "critical"],
       notification_resolution_type: [
         "approved",
@@ -2758,6 +2931,7 @@ export const Constants = {
         "export_completed",
         "membership_change",
       ],
+      org_role: ["org_owner", "org_admin", "org_staff", "org_client"],
       payment_status: [
         "pending",
         "processing",
