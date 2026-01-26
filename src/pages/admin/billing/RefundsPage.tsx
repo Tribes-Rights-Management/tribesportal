@@ -95,7 +95,7 @@ export default function RefundsPage() {
     return (
       <div className="p-6 max-w-4xl mx-auto">
         <div className="text-center py-12">
-          <AlertTriangle className="h-8 w-8 mx-auto mb-4 text-muted-foreground" />
+          <AlertTriangle className="h-6 w-6 mx-auto mb-4 text-muted-foreground" strokeWidth={1.25} />
           <p className="text-muted-foreground">
             Refund authority is restricted to Platform Executives
           </p>

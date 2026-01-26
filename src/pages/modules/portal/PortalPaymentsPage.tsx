@@ -60,8 +60,8 @@ export default function PortalPaymentsPage() {
           <AppCard className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
             <AppCardBody className="p-6">
               <div className="flex items-start gap-4">
-                <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-muted-foreground" />
+                <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+                  <FileText className="h-[18px] w-[18px] text-muted-foreground" strokeWidth={1.5} />
                 </div>
                 <div>
                   <h3 className="text-[14px] font-medium text-foreground mb-1">Invoices</h3>
@@ -77,8 +77,8 @@ export default function PortalPaymentsPage() {
             <AppCard className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
               <AppCardBody className="p-6">
                 <div className="flex items-start gap-4">
-                  <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
-                    <CreditCard className="h-5 w-5 text-muted-foreground" />
+                  <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+                    <CreditCard className="h-[18px] w-[18px] text-muted-foreground" strokeWidth={1.5} />
                   </div>
                   <div>
                     <h3 className="text-[14px] font-medium text-foreground mb-1">Payment Methods</h3>
@@ -95,8 +95,8 @@ export default function PortalPaymentsPage() {
             <AppCard className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
               <AppCardBody className="p-6">
                 <div className="flex items-start gap-4">
-                  <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
-                    <Clock className="h-5 w-5 text-muted-foreground" />
+                  <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+                    <Clock className="h-[18px] w-[18px] text-muted-foreground" strokeWidth={1.5} />
                   </div>
                   <div>
                     <h3 className="text-[14px] font-medium text-foreground mb-1">Payment History</h3>

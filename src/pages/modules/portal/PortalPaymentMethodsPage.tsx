@@ -80,7 +80,7 @@ export default function PortalPaymentMethodsPage() {
         <AppCardBody>
           <div className="flex items-center justify-between p-4 rounded-lg border border-border">
             <div className="flex items-center gap-4">
-              <CreditCard className="h-8 w-8 text-muted-foreground" />
+              <CreditCard className="h-5 w-5 text-muted-foreground" strokeWidth={1.5} />
               <div>
                 <p className="font-medium flex items-center gap-2">
                   •••• •••• •••• 4242

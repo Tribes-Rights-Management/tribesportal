@@ -156,7 +156,7 @@ export default function ContractsPage() {
                 <TableRow>
                   <TableCell colSpan={7}>
                     <div className="text-center py-8">
-                      <FileText className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                      <FileText className="h-6 w-6 text-muted-foreground mx-auto mb-2" strokeWidth={1.0} />
                       <p className="text-[13px] text-muted-foreground">
                         {searchQuery || statusFilter !== "all" 
                           ? "No contracts match your filters"

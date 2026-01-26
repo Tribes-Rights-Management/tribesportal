@@ -187,8 +187,8 @@ export default function AccessRequestsPage() {
       ) : pendingRequests?.length === 0 ? (
         <div className="border border-border rounded-lg p-12 text-center">
           <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-              <Check className="h-6 w-6 text-muted-foreground" />
+            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+              <Check className="h-5 w-5 text-muted-foreground" strokeWidth={1.5} />
             </div>
           </div>
           <p className="text-[15px] text-foreground font-medium">

@@ -454,17 +454,44 @@ export const TABLE_ROW_HEIGHT = 44;
 /** Icon button size */
 export const ICON_BUTTON_SIZE = 36;
 
+/** 
+ * ICON SIZING TOKENS — STRIPE-GRADE (LOCKED)
+ * 
+ * CANONICAL SIZES:
+ * - xs (14px): Dense tables, chips, compact UI
+ * - sm (16px): Dropdowns, table actions, form icons (DEFAULT)
+ * - md (18px): Sidebar nav, page actions, header icons
+ * - lg (20px): Module cards, feature tiles (MAX ALLOWED)
+ * 
+ * NEVER use icons larger than 20px in standard UI.
+ * For empty states, use EMPTY_STATE_ICON sizes from Icon.tsx
+ * 
+ * Prefer using the Icon wrapper: import { Icon } from "@/components/ui/Icon"
+ */
+
+/** Extra small icon size (14px for chips, table sort) */
+export const ICON_SIZE_XS = 14;
+
 /** Standard icon size (16px default) */
 export const ICON_SIZE = 16;
 
-/** Small icon size (14px for inputs, chips, table sort) */
+/** Small icon size (14px for inputs, chips, table sort) - alias for XS */
 export const ICON_SIZE_SM = 14;
+
+/** Medium icon size (18px for nav, headers) */
+export const ICON_SIZE_MD = 18;
+
+/** Large icon size (20px MAX for cards/tiles) */
+export const ICON_SIZE_LG = 20;
 
 /** Icon stroke width (thin institutional) */
 export const ICON_STROKE = 1.25;
 
 /** Light stroke width (for empty states only) */
 export const ICON_STROKE_LIGHT = 1.0;
+
+/** Medium stroke width (for navigation emphasis) */
+export const ICON_STROKE_MEDIUM = 1.5;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SPACING — INSTITUTIONAL DENSITY

@@ -65,22 +65,24 @@ export function AppEmptyState({
 }: AppEmptyStateProps) {
   const Icon = iconMap[icon];
 
+  // Reduced empty state icon sizes for Stripe-grade restraint
+  // Max icon size: 28px (lg), not 32px
   const sizeClasses = {
     sm: {
       wrapper: "py-6",
-      icon: "h-6 w-6",
+      icon: "h-5 w-5",      // 20px (was h-6 = 24px)
       message: "text-[12px]",
       description: "text-[11px]",
     },
     md: {
       wrapper: "py-10",
-      icon: "h-7 w-7",
+      icon: "h-6 w-6",      // 24px (was h-7 = 28px)
       message: "text-[13px]",
       description: "text-[12px]",
     },
     lg: {
       wrapper: "py-16",
-      icon: "h-8 w-8",
+      icon: "h-7 w-7",      // 28px (was h-8 = 32px)
       message: "text-[14px]",
       description: "text-[13px]",
     },
