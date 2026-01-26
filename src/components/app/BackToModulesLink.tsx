@@ -18,7 +18,7 @@ interface BackToModulesLinkProps {
 export function BackToModulesLink({ iconOnly = false, className }: BackToModulesLinkProps) {
   return (
     <Link
-      to="/workstations"
+      to="/workspaces"
       className={cn(
         "inline-flex items-center gap-1.5 rounded-md transition-colors",
         "text-muted-foreground hover:text-foreground",

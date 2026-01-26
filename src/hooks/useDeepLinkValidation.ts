@@ -119,7 +119,7 @@ export function useDeepLinkValidation(
         return {
           isValid: false,
           invalidReason: "Authentication required",
-          redirectPath: "/auth/sign-in",
+          redirectPath: "/sign-in",
           scope,
           isRegistered,
         };

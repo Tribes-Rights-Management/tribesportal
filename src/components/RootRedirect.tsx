@@ -21,7 +21,7 @@ export default function RootRedirect() {
 
   // Not authenticated
   if (accessState === "unauthenticated") {
-    return <Navigate to="/auth/sign-in" replace />;
+    return <Navigate to="/sign-in" replace />;
   }
 
   // No profile or suspended profile
@@ -45,8 +45,8 @@ export default function RootRedirect() {
       return <Navigate to="/app/suspended" replace />;
     case "active":
       // All users land on Modules Home
-      return <Navigate to="/workstations" replace />;
+      return <Navigate to="/workspaces" replace />;
     default:
-      return <Navigate to="/auth/sign-in" replace />;
+      return <Navigate to="/sign-in" replace />;
   }
 }

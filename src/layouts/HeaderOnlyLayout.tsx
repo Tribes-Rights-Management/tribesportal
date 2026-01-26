@@ -59,7 +59,7 @@ export function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
       >
         {/* Left: Logo/Wordmark */}
         <Link 
-          to="/workstations" 
+          to="/workspaces"
           className="flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity"
         >
           <span 

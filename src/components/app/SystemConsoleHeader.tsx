@@ -49,7 +49,7 @@ function ConsoleAccountMenu() {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/auth/sign-in");
+    navigate("/sign-in");
   };
 
   const getInitials = () => {
@@ -149,7 +149,7 @@ export function SystemConsoleHeader() {
   const [workspaceModalOpen, setWorkspaceModalOpen] = useState(false);
 
   const handleLogoClick = () => {
-    navigate("/admin");
+    navigate("/console");
   };
 
   // Show "Enter Workspace" only if user has accessible workspaces
@@ -210,7 +210,7 @@ export function SystemConsoleHeader() {
         <div className="flex items-center gap-3 shrink-0">
           {/* Back to Modules */}
           <button
-            onClick={() => navigate("/workstations")}
+            onClick={() => navigate("/workspaces")}
             className={cn(
               "flex items-center gap-1.5 rounded transition-colors duration-150",
               "hover:bg-muted/50",
