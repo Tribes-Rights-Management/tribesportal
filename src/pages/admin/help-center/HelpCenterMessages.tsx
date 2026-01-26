@@ -287,7 +287,7 @@ export default function HelpCenterMessages() {
                       </td>
                       <td className="py-3">
                         <button
-                          className="p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/5"
+                          className="p-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[var(--muted-wash)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
                           style={{ color: "var(--platform-text-muted)" }}
                         >
                           <ExternalLink className="h-4 w-4" />

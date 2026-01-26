@@ -34,6 +34,8 @@
 
   /* ─────────────────────────────────────────────────────────────────────────
      GLOBAL SURFACE TOKENS (AUTHORITATIVE — STRIPE/MERCURY PRECISE)
+     
+     User request: Exact neutral values, NO blue tint anywhere.
      ───────────────────────────────────────────────────────────────────────── */
   
   /* Layer 0: App canvas — overall app background behind everything */
@@ -45,21 +47,21 @@
   /* Layer 1: Content area — main content region (off-white, not pure white) */
   --content-bg: #FAFAFA;
   
-  /* Layer 2: Sidebar — Mercury-like neutral grey (R=G=B, NO blue tint) */
-  --sidebar-bg: #F2F3F5;
-  --app-sidebar-bg: #F2F3F5;
+  /* Layer 2: Sidebar — Mercury-like neutral grey (R≈G≈B, NO blue tint) */
+  --sidebar-bg: #EEF0F2;
+  --app-sidebar-bg: #EEF0F2;
   
-  /* Layer 3: Top bar/header — true white */
-  --topbar-bg: #FFFFFF;
-  --app-header-bg: #FFFFFF;
+  /* Layer 3: Top bar/header — one notch off white */
+  --topbar-bg: #FCFCFD;
+  --app-header-bg: #FCFCFD;
   
-  /* Layer 4: Cards, tables, panels — true white surfaces */
-  --card-bg: #FFFFFF;
-  --panel-bg: #FFFFFF;
-  --app-surface-bg: #FFFFFF;
+  /* Layer 4: Cards, tables, panels — one notch off white (NOT pure white) */
+  --card-bg: #FCFCFD;
+  --panel-bg: #FCFCFD;
+  --app-surface-bg: #FCFCFD;
   
   /* Muted wash — for active pills, hover backgrounds */
-  --muted-wash: #F3F4F6;
+  --muted-wash: #F2F3F5;
   
   /* ─────────────────────────────────────────────────────────────────────────
      BORDER TOKENS — Two-tier system
@@ -69,34 +71,33 @@
   --app-surface-border: #E6E8EC;
   --app-chrome-border: #E6E8EC;
   
-  /* Radius: Stripe-like restraint (10-12px) */
-  --app-radius: 10px;
-  --app-radius-sm: 8px;
+  /* Radius: Stripe-like restraint (6-10px) */
+  --app-radius: 8px;
+  --app-radius-sm: 6px;
   
   /* Focus ring: Brand blue for accessibility — THE ONLY BLUE IN THE SYSTEM */
   --app-focus: #0071E3;
 
   /* ─────────────────────────────────────────────────────────────────────────
-     BUTTON TOKENS — Mercury-like Neutral Surface Buttons (NO BLACK)
+     BUTTON TOKENS — Mercury/Stripe Neutral Surface (NO BLACK, NO BLUE)
      
-     Primary buttons use light neutral fill with subtle border.
-     This ensures buttons are VISIBLE on grey backgrounds.
-     
-     CRITICAL: Buttons must NOT disappear into grey backgrounds.
+     Default/secondary buttons use light neutral grey fill.
+     Visible on BOTH grey canvas (#F3F4F6) and white cards.
+     NO heavy borders — Mercury-like transparent/subtle.
      ───────────────────────────────────────────────────────────────────────── */
-  --btn-bg: #EEF0F3;
-  --btn-bg-hover: #E7E9ED;
-  --btn-bg-active: #DFE2E7;
+  --btn-bg: #F1F3F5;
+  --btn-bg-hover: #E9ECEF;
+  --btn-bg-active: #E1E4E8;
   --btn-border: transparent;
   --btn-border-hover: transparent;
   --btn-text: #1F2937;
   --btn-text-muted: #6B7280;
-  --btn-disabled-opacity: 0.55;
+  --btn-disabled-opacity: 0.5;
   
-  /* Outline variant (for secondary actions) */
+  /* Outline variant (for secondary actions) — subtle border */
   --btn-outline-bg: transparent;
   --btn-outline-border: var(--border-subtle);
-  --btn-outline-hover-bg: #F2F3F5;
+  --btn-outline-hover-bg: #F5F6F8;
 
   /* ─────────────────────────────────────────────────────────────────────────
      ALERT/NOTICE TOKENS — Neutral-first with semantic variants
