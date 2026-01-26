@@ -93,9 +93,239 @@ export const routeRegistry: Record<string, RouteDefinition> = {
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // SYSTEM CONSOLE ROUTES (Scope: system)
+  // SYSTEM CONSOLE ROUTES — /console (CANONICAL)
   // Company-level governance only
   // Access: platform_admin, external_auditor (read-only)
+  // NOTE: /admin routes are legacy and redirect to /console
+  // ═══════════════════════════════════════════════════════════════════════════
+  "/console": { 
+    scope: "system", 
+    parentPath: null, 
+    label: "System Console",
+    requiredRoles: ["admin", "auditor"],
+    breadcrumbs: ["System Console"]
+  },
+  "/console/approvals": { 
+    scope: "system", 
+    parentPath: "/console", 
+    label: "Approvals",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Approvals"]
+  },
+  "/console/tenants": { 
+    scope: "system", 
+    parentPath: "/console", 
+    label: "Workspaces",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Workspaces"]
+  },
+  "/console/users": { 
+    scope: "system", 
+    parentPath: "/console", 
+    label: "Active Users",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Active Users"]
+  },
+  "/console/users/:userId": { 
+    scope: "system", 
+    parentPath: "/console/users", 
+    label: "Member Details",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Active Users", "Member Details"]
+  },
+  "/console/users/:userId/permissions": { 
+    scope: "system", 
+    parentPath: "/console/users/:userId", 
+    label: "Permissions",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Active Users", "Member Details", "Permissions"]
+  },
+  "/console/users/:userId/authority": { 
+    scope: "system", 
+    parentPath: "/console/users/:userId", 
+    label: "Authority Record",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Active Users", "Member Details", "Authority Record"]
+  },
+  "/console/settings": { 
+    scope: "system", 
+    parentPath: "/console", 
+    label: "Settings",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Settings"]
+  },
+  "/console/rls-audit": { 
+    scope: "system", 
+    parentPath: "/console", 
+    label: "RLS Audit",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "RLS Audit"]
+  },
+  "/console/security": { 
+    scope: "system", 
+    parentPath: "/console", 
+    label: "Security",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Security"]
+  },
+  "/console/security/rls": { 
+    scope: "system", 
+    parentPath: "/console/security", 
+    label: "RLS Policies",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Security", "RLS Policies"]
+  },
+  "/console/security/auth": { 
+    scope: "system", 
+    parentPath: "/console/security", 
+    label: "Auth Review",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Security", "Auth Review"]
+  },
+  "/console/security/sessions": { 
+    scope: "system", 
+    parentPath: "/console/security", 
+    label: "Sessions",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Security", "Sessions"]
+  },
+  "/console/disclosures": { 
+    scope: "system", 
+    parentPath: "/console", 
+    label: "Disclosures",
+    requiredRoles: ["admin", "auditor"],
+    breadcrumbs: ["System Console", "Disclosures"]
+  },
+  "/console/chain": { 
+    scope: "system", 
+    parentPath: "/console", 
+    label: "Correlation Chain",
+    requiredRoles: ["admin", "auditor"],
+    breadcrumbs: ["System Console", "Correlation Chain"]
+  },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // SYSTEM CONSOLE — FINANCIAL GOVERNANCE (Scope: system)
+  // Access: platform_admin only
+  // ─────────────────────────────────────────────────────────────────────────
+  "/console/billing": { 
+    scope: "system", 
+    parentPath: "/console", 
+    label: "Financial Governance",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Financial Governance"],
+    isGovernancePage: true
+  },
+  "/console/billing/revenue": { 
+    scope: "system", 
+    parentPath: "/console/billing", 
+    label: "Revenue Overview",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Financial Governance", "Revenue Overview"]
+  },
+  "/console/billing/plans": { 
+    scope: "system", 
+    parentPath: "/console/billing", 
+    label: "Plans & Pricing",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Financial Governance", "Plans & Pricing"],
+    isGovernancePage: true
+  },
+  "/console/billing/invoices": { 
+    scope: "system", 
+    parentPath: "/console/billing", 
+    label: "Invoice Ledger",
+    requiredRoles: ["admin", "auditor"],
+    breadcrumbs: ["System Console", "Financial Governance", "Invoice Ledger"]
+  },
+  "/console/billing/providers": { 
+    scope: "system", 
+    parentPath: "/console/billing", 
+    label: "Payment Providers",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Financial Governance", "Payment Providers"],
+    isGovernancePage: true
+  },
+  "/console/billing/refunds": { 
+    scope: "system", 
+    parentPath: "/console/billing", 
+    label: "Refunds",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["System Console", "Financial Governance", "Refunds"],
+    isGovernancePage: true
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HELP WORKSTATION ROUTES (Scope: system)
+  // Access: platform_admin
+  // ═══════════════════════════════════════════════════════════════════════════
+  "/help": { 
+    scope: "system", 
+    parentPath: null, 
+    label: "Help Workstation",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["Help Workstation"]
+  },
+  "/help/articles": { 
+    scope: "system", 
+    parentPath: "/help", 
+    label: "Articles",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["Help Workstation", "Articles"]
+  },
+  "/help/articles/:articleId": { 
+    scope: "system", 
+    parentPath: "/help/articles", 
+    label: "Edit Article",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["Help Workstation", "Articles", "Edit"]
+  },
+  "/help/categories": { 
+    scope: "system", 
+    parentPath: "/help", 
+    label: "Categories",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["Help Workstation", "Categories"]
+  },
+  "/help/tags": { 
+    scope: "system", 
+    parentPath: "/help", 
+    label: "Tags",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["Help Workstation", "Tags"]
+  },
+  "/help/audiences": { 
+    scope: "system", 
+    parentPath: "/help", 
+    label: "Audiences",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["Help Workstation", "Audiences"]
+  },
+  "/help/messages": { 
+    scope: "system", 
+    parentPath: "/help", 
+    label: "Messages",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["Help Workstation", "Messages"]
+  },
+  "/help/analytics": { 
+    scope: "system", 
+    parentPath: "/help", 
+    label: "Analytics",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["Help Workstation", "Analytics"]
+  },
+  "/help/settings": { 
+    scope: "system", 
+    parentPath: "/help", 
+    label: "Settings",
+    requiredRoles: ["admin"],
+    breadcrumbs: ["Help Workstation", "Settings"]
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // LEGACY /admin ROUTES — redirect to /console equivalents
+  // These are kept for backward compatibility
   // ═══════════════════════════════════════════════════════════════════════════
   "/admin": { 
     scope: "system", 
@@ -204,8 +434,7 @@ export const routeRegistry: Record<string, RouteDefinition> = {
   },
 
   // ─────────────────────────────────────────────────────────────────────────
-  // SYSTEM CONSOLE — FINANCIAL GOVERNANCE (Scope: system)
-  // Access: platform_admin only
+  // LEGACY /admin — FINANCIAL GOVERNANCE (Scope: system)
   // ─────────────────────────────────────────────────────────────────────────
   "/admin/billing": { 
     scope: "system", 
@@ -680,7 +909,9 @@ export function getNearestValidParent(pathname: string): string {
     }
   }
   
-  // Default fallbacks by prefix
+  // Default fallbacks by prefix — use canonical module roots
+  if (pathname.startsWith("/console")) return "/console";
+  if (pathname.startsWith("/help")) return "/help";
   if (pathname.startsWith("/admin")) return "/admin";
   if (pathname.startsWith("/auditor")) return "/auditor";
   if (pathname.startsWith("/licensing")) return "/licensing";
@@ -689,6 +920,7 @@ export function getNearestValidParent(pathname: string): string {
   if (pathname.startsWith("/app/publishing")) return "/app/publishing";
   if (pathname.startsWith("/app")) return "/app";
   if (pathname.startsWith("/account")) return "/account";
+  if (pathname.startsWith("/workspaces")) return "/workspaces";
   
   // Ultimate fallback
   return "/";

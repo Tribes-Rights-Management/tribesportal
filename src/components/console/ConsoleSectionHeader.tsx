@@ -12,17 +12,22 @@ import { ConsoleButton } from "./ConsoleButton";
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * FEATURES:
- * - Optional back button with navigate(-1) + fallback logic
+ * - Optional back button with deterministic routing (always to module root)
  * - Title + subtitle area
  * - Actions slot (right-aligned, for ConsoleButtons)
  * - Meta slot (e.g., "Last run: 5 minutes ago")
+ * 
+ * BACK NAVIGATION:
+ * - NEVER uses navigate(-1) or browser history
+ * - Always navigates to explicit backFallback (default: /console)
+ * - This ensures predictable behavior for deep links and cross-tab navigation
  * 
  * USAGE:
  * <ConsoleSectionHeader
  *   title="Security Verification"
  *   subtitle="Live security posture checks"
  *   showBack
- *   backFallback="/admin"
+ *   backFallback="/console"
  *   actions={<ConsoleButton>Run checks</ConsoleButton>}
  *   meta="Last run: 5 minutes ago"
  * />
@@ -52,7 +57,7 @@ export function ConsoleSectionHeader({
   title,
   subtitle,
   showBack = false,
-  backFallback = "/admin",
+  backFallback = "/console",  // FIXED: Use /console as canonical root
   onBack,
   actions,
   meta,
@@ -60,16 +65,15 @@ export function ConsoleSectionHeader({
 }: ConsoleSectionHeaderProps) {
   const navigate = useNavigate();
 
+  // Deterministic back navigation - always go to module root, not browser history
   const handleBack = () => {
     if (onBack) {
       onBack();
       return;
     }
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate(backFallback);
-    }
+    // Always navigate to the fallback route (module root)
+    // Never use navigate(-1) as it's unpredictable
+    navigate(backFallback);
   };
 
   return (
