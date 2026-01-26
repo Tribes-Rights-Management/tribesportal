@@ -99,7 +99,7 @@ export default function WorkstationsHomePage() {
       title: "System Console",
       description: "Platform governance, user management, security oversight, and compliance.",
       icon: Settings,
-      href: "/admin",
+      href: "/console",
     });
   }
 
@@ -108,7 +108,7 @@ export default function WorkstationsHomePage() {
       title: "Help Workstation",
       description: "Manage help articles, categories, audiences, and support messages.",
       icon: HelpCircle,
-      href: "/help-workstation",
+      href: "/help",
     });
   }
 
@@ -126,7 +126,7 @@ export default function WorkstationsHomePage() {
       title: "Tribes Admin",
       description: "Statements, documents, invoices, and payment management.",
       icon: LayoutDashboard,
-      href: "/portal",
+      href: "/admin",
     });
   }
 

@@ -130,23 +130,23 @@ export default function AdminDashboard() {
           ───────────────────────────────────────────────────────────────── */}
           <AdminSection label="Governance Overview">
             <AdminMetricRow
-              to="/admin/tenants"
+              to="/console/tenants"
               label="Active workspaces"
               value={loading ? "—" : metrics.activeWorkspaces.toString()}
             />
             <AdminMetricRow
-              to="/admin/users"
+              to="/console/users"
               label="Active users"
               value={loading ? "—" : metrics.activeUsers.toString()}
             />
             <AdminMetricRow
-              to="/admin/approvals"
+              to="/console/approvals"
               label="Pending access requests"
               value={loading ? "—" : metrics.pendingAccessRequests.toString()}
               highlight={metrics.pendingAccessRequests > 0}
             />
             <AdminMetricRow
-              to="/admin/security"
+              to="/console/security"
               label="Open exceptions"
               value={loading ? "—" : metrics.openExceptions === 0 ? "None" : metrics.openExceptions.toString()}
             />
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
           ───────────────────────────────────────────────────────────────── */}
           <AdminSection label="Workstations">
             <AdminListRow
-              to="/help-workstation"
+              to="/help"
               title="Help Workstation"
               description="Manage public Help articles, categories, messages, and analytics"
             />
@@ -171,17 +171,17 @@ export default function AdminDashboard() {
           ───────────────────────────────────────────────────────────────── */}
           <AdminSection label="Audit & Activity">
             <AdminListRow
-              to="/admin/approvals"
+              to="/console/approvals"
               title="Activity Log"
               description="Chronological record of system events including user actions, access changes, and data modifications"
             />
             <AdminListRow
-              to="/admin/chain"
+              to="/console/chain"
               title="Correlation Viewer"
               description="Cross-workspace request tracing for end-to-end audit visibility"
             />
             <AdminListRow
-              to="/admin/approvals"
+              to="/console/approvals"
               title="Approval History"
               description="Access grants and permission changes with full audit trail"
             />
@@ -193,12 +193,12 @@ export default function AdminDashboard() {
           ───────────────────────────────────────────────────────────────── */}
           <AdminSection label="Regulatory & Disclosures">
             <AdminListRow
-              to="/admin/disclosures"
+              to="/console/disclosures"
               title="Disclosure Exports"
               description="Generate regulatory disclosure packs for compliance and legal requests"
             />
             <AdminListRow
-              to="/admin/disclosures"
+              to="/console/disclosures"
               title="Export History"
               description="Previously generated disclosure records with timestamps and integrity verification"
             />
@@ -210,22 +210,22 @@ export default function AdminDashboard() {
           ───────────────────────────────────────────────────────────────── */}
           <AdminSection label="Financial Governance">
             <AdminListRow
-              to="/admin/billing"
+              to="/console/billing"
               title="Billing Overview"
               description="Plans, pricing, and financial configuration governance"
             />
             <AdminListRow
-              to="/admin/billing/revenue"
+              to="/console/billing/revenue"
               title="Revenue Overview"
               description="Aggregate revenue metrics across all organizations"
             />
             <AdminListRow
-              to="/admin/billing/invoices"
+              to="/console/billing/invoices"
               title="Invoice Ledger"
-              description="Read-only view of all invoices across organizations"
+              description="Read-only view of all invoices across all organizations"
             />
             <AdminListRow
-              to="/admin/billing/refunds"
+              to="/console/billing/refunds"
               title="Refunds"
               description="Issue and track refunds for completed transactions"
             />
@@ -237,17 +237,17 @@ export default function AdminDashboard() {
           ───────────────────────────────────────────────────────────────── */}
           <AdminSection label="Security & Integrity">
             <AdminListRow
-              to="/admin/users"
+              to="/console/users"
               title="Access Roles"
               description="Member directory and permissions management across all workspaces"
             />
             <AdminListRow
-              to="/admin/security"
+              to="/console/security"
               title="Session Integrity"
               description="Authentication and session configuration for secure access"
             />
             <AdminListRow
-              to="/admin/rls-audit"
+              to="/console/rls-audit"
               title="Security Events"
               description="RLS verification and access controls with real-time monitoring"
             />

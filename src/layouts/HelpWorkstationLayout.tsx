@@ -54,14 +54,14 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { path: "/help-workstation", label: "Overview", icon: LayoutDashboard, exact: true, section: 'main' },
-  { path: "/help-workstation/audiences", label: "Audiences", icon: Users, section: 'main' },
-  { path: "/help-workstation/categories", label: "Categories", icon: FolderOpen, section: 'main' },
-  { path: "/help-workstation/articles", label: "Articles", icon: FileText, section: 'main' },
-  { path: "/help-workstation/tags", label: "Tags", icon: Tag, section: 'main' },
-  { path: "/help-workstation/messages", label: "Messages", icon: MessageSquare, section: 'main' },
-  { path: "/help-workstation/analytics", label: "Analytics", icon: BarChart3, section: 'analytics' },
-  { path: "/help-workstation/settings", label: "Settings", icon: Settings2, section: 'settings' },
+  { path: "/help", label: "Overview", icon: LayoutDashboard, exact: true, section: 'main' },
+  { path: "/help/audiences", label: "Audiences", icon: Users, section: 'main' },
+  { path: "/help/categories", label: "Categories", icon: FolderOpen, section: 'main' },
+  { path: "/help/articles", label: "Articles", icon: FileText, section: 'main' },
+  { path: "/help/tags", label: "Tags", icon: Tag, section: 'main' },
+  { path: "/help/messages", label: "Messages", icon: MessageSquare, section: 'main' },
+  { path: "/help/analytics", label: "Analytics", icon: BarChart3, section: 'analytics' },
+  { path: "/help/settings", label: "Settings", icon: Settings2, section: 'settings' },
 ];
 
 function HelpAccountMenu() {
@@ -70,7 +70,7 @@ function HelpAccountMenu() {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/auth/sign-in");
+    navigate("/sign-in");
   };
 
   const getInitials = () => {
@@ -357,7 +357,7 @@ export function HelpWorkstationLayout() {
               </button>
               
               <button
-                onClick={() => navigate("/help-workstation")}
+                onClick={() => navigate("/help")}
                 className="font-medium uppercase tracking-wider text-[11px] focus:outline-none"
                 style={{ color: 'var(--tribes-text)' }}
               >
@@ -376,7 +376,7 @@ export function HelpWorkstationLayout() {
             {/* Left: Back to Modules + Wordmark */}
             <div className="flex items-center gap-2">
               <button
-                onClick={() => navigate("/workstations")}
+                onClick={() => navigate("/workspaces")}
                 className={cn(
                   "flex items-center justify-center rounded-lg h-9 w-9",
                   "transition-colors duration-150",
@@ -400,7 +400,7 @@ export function HelpWorkstationLayout() {
               </button>
               
               <button
-                onClick={() => navigate("/help-workstation")}
+                onClick={() => navigate("/help")}
                 className={cn(
                   "text-sm font-medium uppercase tracking-wider",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded"

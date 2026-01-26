@@ -200,11 +200,11 @@ export function useScopeTransition(): ScopeTransitionState & ScopeTransitionActi
   
   const enterSystemConsole = useCallback(() => {
     // Set explicit intent
-    setEntryIntent("system", "/admin");
+    setEntryIntent("system", "/console");
     
     // Reset scroll and navigate
     window.scrollTo(0, 0);
-    navigate("/admin", { replace: false });
+    navigate("/console", { replace: false });
   }, [navigate, setEntryIntent]);
   
   const enterOrganization = useCallback((path: string = "/app") => {

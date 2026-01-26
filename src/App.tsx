@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import RoleProtectedRoute from "@/components/RoleProtectedRoute";
 import { SessionGuard } from "@/components/session";
 import { AppProtectedRoute } from "@/components/app/AppProtectedRoute";
@@ -50,8 +50,7 @@ import LicensingPaymentsPage from "@/pages/modules/licensing/LicensingPaymentsPa
 import LicensingFeesPage from "@/pages/modules/licensing/LicensingFeesPage";
 import LicensingReceiptsPage from "@/pages/modules/licensing/LicensingReceiptsPage";
 
-// First-class module pages - Tribes Admin (/portal) - ORGANIZATION-SCOPED
-// (Renamed from "Client Portal" to "Tribes Admin")
+// First-class module pages - Tribes Admin (/admin) - ORGANIZATION-SCOPED
 import PortalOverview from "@/pages/modules/portal/PortalOverview";
 import PortalAgreementsPage from "@/pages/modules/portal/PortalAgreementsPage";
 import PortalStatementsPage from "@/pages/modules/portal/PortalStatementsPage";
@@ -148,6 +147,17 @@ import WorkstationsHomePage from "@/pages/workstations/WorkstationsHomePage";
 
 const queryClient = new QueryClient();
 
+/**
+ * PATH PRESERVING REDIRECT COMPONENT
+ * Redirects from legacy paths while preserving sub-paths
+ * e.g., /help-workstation/articles → /help/articles
+ */
+function PathPreservingRedirect({ from, to }: { from: string; to: string }) {
+  const location = useLocation();
+  const subPath = location.pathname.replace(from, "");
+  return <Navigate to={`${to}${subPath}`} replace />;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -173,24 +183,37 @@ const App = () => (
         {/* Root redirect */}
         <Route path="/" element={<RootRedirect />} />
 
-        {/* Auth routes */}
-        <Route path="/auth" element={<Navigate to="/auth/sign-in" replace />} />
-        <Route path="/auth/sign-in" element={<SignInPage />} />
-        <Route path="/auth/check-email" element={<CheckEmailPage />} />
+        {/* ═══════════════════════════════════════════════════════════════════════
+            CANONICAL AUTH ROUTES (/sign-in)
+        ═══════════════════════════════════════════════════════════════════════ */}
+        <Route path="/sign-in" element={<SignInPage />} />
+        <Route path="/check-email" element={<CheckEmailPage />} />
+        
+        {/* Legacy auth redirects → /sign-in */}
+        <Route path="/auth" element={<Navigate to="/sign-in" replace />} />
+        <Route path="/auth/sign-in" element={<Navigate to="/sign-in" replace />} />
+        <Route path="/auth/login" element={<Navigate to="/sign-in" replace />} />
+        <Route path="/login" element={<Navigate to="/sign-in" replace />} />
+        <Route path="/auth/check-email" element={<Navigate to="/check-email" replace />} />
         <Route path="/auth/error" element={<AuthErrorPage />} />
         <Route path="/auth/link-expired" element={<LinkExpiredPage />} />
         <Route path="/auth/unauthorized" element={<UnauthorizedPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
-            MODULES HOME (/workstations) — LANDING PAGE FOR ALL AUTHENTICATED USERS
+            MODULES HOME (/workspaces) — LANDING PAGE FOR ALL AUTHENTICATED USERS
             Shows module tiles based on user permissions
         ═══════════════════════════════════════════════════════════════════════ */}
-        <Route path="/workstations" element={
+        <Route path="/workspaces" element={
           <AppProtectedRoute>
             <WorkstationsHomePage />
           </AppProtectedRoute>
         } />
+        
+        {/* Legacy redirects → /workspaces */}
+        <Route path="/workstations" element={<Navigate to="/workspaces" replace />} />
+        <Route path="/home" element={<Navigate to="/workspaces" replace />} />
+        <Route path="/dashboard" element={<Navigate to="/workspaces" replace />} />
 
         {/* App access state pages (outside protected layout) */}
         <Route path="/app/pending" element={<PendingApprovalPage />} />
@@ -214,13 +237,15 @@ const App = () => (
           <Route path="payments/fees" element={<LicensingFeesPage />} />
           <Route path="payments/receipts" element={<LicensingReceiptsPage />} />
         </Route>
+        
+        {/* Legacy licensing redirects */}
+        <Route path="/tribes-licensing/*" element={<PathPreservingRedirect from="/tribes-licensing" to="/licensing" />} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
-            FIRST-CLASS MODULE: TRIBES ADMIN (/portal) — ORGANIZATION-SCOPED
-            (Renamed from "Client Portal")
+            FIRST-CLASS MODULE: TRIBES ADMIN (/admin) — ORGANIZATION-SCOPED
             Permission: portal.view, portal.download, portal.submit
         ═══════════════════════════════════════════════════════════════════════ */}
-        <Route path="/portal" element={
+        <Route path="/admin" element={
           <ModuleProtectedRoute requiredPermission="portal.view">
             <ModuleLayout />
           </ModuleProtectedRoute>
@@ -234,6 +259,10 @@ const App = () => (
           <Route path="payments/methods" element={<PortalPaymentMethodsPage />} />
           <Route path="payments/history" element={<PortalPaymentHistoryPage />} />
         </Route>
+        
+        {/* Legacy Tribes Admin redirects */}
+        <Route path="/tribes-admin/*" element={<PathPreservingRedirect from="/tribes-admin" to="/admin" />} />
+        <Route path="/portal/*" element={<PathPreservingRedirect from="/portal" to="/admin" />} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
             LEGACY APP ROUTES (/app)
@@ -266,12 +295,12 @@ const App = () => (
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
-            SYSTEM CONSOLE (/admin) — COMPANY-LEVEL GOVERNANCE
+            SYSTEM CONSOLE (/console) — COMPANY-LEVEL GOVERNANCE
             Access: platform_admin only (executive roles)
             Scope: governance, audit oversight, compliance, security
             NO product navigation, NO workspace selector
         ═══════════════════════════════════════════════════════════════════════ */}
-        <Route path="/admin" element={<RoleProtectedRoute allowedRoles={["admin"]}><SystemConsoleLayout /></RoleProtectedRoute>}>
+        <Route path="/console" element={<RoleProtectedRoute allowedRoles={["admin"]}><SystemConsoleLayout /></RoleProtectedRoute>}>
           <Route index element={<AdminDashboard />} />
           <Route path="approvals" element={<ApprovalsPage />} />
           <Route path="tenants" element={<TenantsPage />} />
@@ -306,6 +335,11 @@ const App = () => (
           <Route path="help-center/messages" element={<HelpCenterMessages />} />
           <Route path="help-center/analytics" element={<HelpCenterAnalytics />} />
         </Route>
+        
+        {/* Legacy System Console redirects → /console */}
+        <Route path="/system-console/*" element={<PathPreservingRedirect from="/system-console" to="/console" />} />
+        <Route path="/system_console/*" element={<PathPreservingRedirect from="/system_console" to="/console" />} />
+        <Route path="/systemconsole/*" element={<PathPreservingRedirect from="/systemconsole" to="/console" />} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
             EXTERNAL AUDITOR ROUTES (/auditor)
@@ -318,12 +352,12 @@ const App = () => (
         <Route path="/auditor/chain" element={<RoleProtectedRoute allowedRoles={["auditor"]}><AuditorChainPage /></RoleProtectedRoute>} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
-            HELP WORKSTATION (/help-workstation) — FIRST-CLASS WORKSTATION
+            HELP WORKSTATION (/help) — FIRST-CLASS WORKSTATION
             Permission: platform_admin OR (platform_user + can_manage_help)
             NOT accessible to external auditors, licensing, or portal users
             Has its own layout, sidebar nav, and full management capabilities
         ═══════════════════════════════════════════════════════════════════════ */}
-        <Route path="/help-workstation" element={<HelpProtectedRoute><HelpWorkstationLayout /></HelpProtectedRoute>}>
+        <Route path="/help" element={<HelpProtectedRoute><HelpWorkstationLayout /></HelpProtectedRoute>}>
           <Route index element={<HelpOverviewPage />} />
           <Route path="audiences" element={<HelpAudiencesPage />} />
           <Route path="categories" element={<HelpWorkstationCategoriesPage />} />
@@ -335,6 +369,11 @@ const App = () => (
           <Route path="analytics" element={<HelpAnalyticsPage />} />
           <Route path="settings" element={<HelpSettingsPage />} />
         </Route>
+        
+        {/* Legacy Help Workstation redirects → /help */}
+        <Route path="/help-workstation/*" element={<PathPreservingRedirect from="/help-workstation" to="/help" />} />
+        <Route path="/help_workstation/*" element={<PathPreservingRedirect from="/help_workstation" to="/help" />} />
+        <Route path="/helpcenter/*" element={<PathPreservingRedirect from="/helpcenter" to="/help" />} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
             ACCOUNT SETTINGS HUB (/account)

@@ -7,20 +7,24 @@ import { LOGOUT_REASONS } from "@/constants/session-timeout";
 /**
  * SignInPage - Entry point for authentication
  * Handles auth state checks and redirects, renders AuthSurface
+ * 
+ * CANONICAL ROUTE: /sign-in
  */
 export default function SignInPage() {
   const { user, profile, loading } = useAuth();
   const [searchParams] = useSearchParams();
   const logoutReason = searchParams.get("reason");
+  const returnTo = searchParams.get("returnTo");
 
-  // If already authenticated with valid profile, redirect to Modules Home
+  // If already authenticated with valid profile, redirect to Modules Home (or returnTo)
   if (!loading && user && profile) {
     if (profile.status !== "active") {
       return <Navigate to="/auth/error" replace />;
     }
     
-    // All authenticated users go to Modules Home
-    return <Navigate to="/workstations" replace />;
+    // Redirect to returnTo if provided and valid, otherwise to Modules Home
+    const redirectPath = returnTo && returnTo.startsWith("/") ? returnTo : "/workspaces";
+    return <Navigate to={redirectPath} replace />;
   }
 
   if (loading) {
