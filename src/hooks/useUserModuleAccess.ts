@@ -36,6 +36,9 @@ interface UserModuleAccessResult {
 /**
  * Hook to fetch and check user's module_access records from the database.
  * This is the source of truth for organization-scoped module permissions.
+ * 
+ * SAFETY: This hook never throws - it returns safe defaults when user is not authenticated
+ * or when the query fails, preventing blank screen crashes.
  */
 export function useUserModuleAccess(): UserModuleAccessResult {
   const { user, activeTenant } = useAuth();
@@ -43,21 +46,31 @@ export function useUserModuleAccess(): UserModuleAccessResult {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["user-module-access", user?.id],
     queryFn: async () => {
+      // Safety: if no user, return empty array (don't throw)
       if (!user?.id) return [];
 
-      const { data, error } = await supabase
-        .from("module_access")
-        .select("id, module, access_level, organization_id, user_id, granted_at, revoked_at")
-        .eq("user_id", user.id)
-        .is("revoked_at", null);
+      try {
+        const { data, error } = await supabase
+          .from("module_access")
+          .select("id, module, access_level, organization_id, user_id, granted_at, revoked_at")
+          .eq("user_id", user.id)
+          .is("revoked_at", null);
 
-      if (error) throw error;
-      return (data || []) as ModuleAccessRecord[];
+        if (error) {
+          console.error("[useUserModuleAccess] Query error:", error);
+          return []; // Return empty array on error, don't crash
+        }
+        return (data || []) as ModuleAccessRecord[];
+      } catch (err) {
+        console.error("[useUserModuleAccess] Unexpected error:", err);
+        return []; // Return empty array on exception, don't crash
+      }
     },
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
+  // Always provide safe defaults
   const moduleAccessRecords = data || [];
 
   // Check if user has any active admin module access
