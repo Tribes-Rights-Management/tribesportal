@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { AppSearchInput } from "@/components/app-ui";
 import { useAuth } from "@/contexts/AuthContext";
 import { ProfileDropdown } from "@/components/ui/profile-dropdown";
+import { GlobalSearchDialog } from "@/components/search/GlobalSearchDialog";
 import { 
   ArrowLeft, 
   Menu,
@@ -23,17 +24,12 @@ import { NAV_LABELS } from "@/styles/tokens";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
- * HELP WORKSTATION LAYOUT — Mercury-like Design
+ * HELP WORKSTATION LAYOUT — STRIPE-LIKE SHELL WITH SIDEBAR + GLOBAL SEARCH
  * 
- * Light shell background, white header, soft-gray sidebar.
- * No blue accents - neutral focus rings and hover states.
- * 
- * Design principles:
- * - Shell bg: #F6F7F9 (Mercury canvas)
- * - Header: White with subtle bottom border
- * - Sidebar: Soft gray (#F4F5F7) with pill active items
- * - Icons: 16px with 1.5 stroke width
- * - Focus: Blue ring for accessibility
+ * Matches the unified AppShell pattern:
+ * - Left sidebar with navigation
+ * - Top bar with global search + profile
+ * - Mercury-inspired light theme
  */
 
 interface NavItem {
@@ -187,18 +183,21 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-function HeaderSearch() {
+function HeaderSearch({ onOpenSearch }: { onOpenSearch: () => void }) {
   const [searchValue, setSearchValue] = useState("");
   
   return (
     <div className="w-full max-w-[680px]">
-      <AppSearchInput
-        value={searchValue}
-        onChange={setSearchValue}
-        placeholder="Search for anything"
-        rightHint="⌘ K"
-        size="md"
-      />
+      <button onClick={onOpenSearch} className="w-full">
+        <AppSearchInput
+          value={searchValue}
+          onChange={setSearchValue}
+          placeholder="Search for anything"
+          rightHint="⌘ K"
+          size="md"
+          className="pointer-events-none"
+        />
+      </button>
     </div>
   );
 }
@@ -207,6 +206,7 @@ export function HelpWorkstationLayout() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <div 
@@ -312,7 +312,7 @@ export function HelpWorkstationLayout() {
 
             {/* Center: Search */}
             <div className="flex justify-center">
-              <HeaderSearch />
+              <HeaderSearch onOpenSearch={() => setSearchOpen(true)} />
             </div>
 
             {/* Right: Account */}
@@ -361,6 +361,9 @@ export function HelpWorkstationLayout() {
           <Outlet />
         </main>
       </div>
+
+      {/* Global search dialog */}
+      <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
   );
 }

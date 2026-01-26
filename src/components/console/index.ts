@@ -31,3 +31,4 @@ export {
   ConsoleCardFooter,
 } from "./ConsoleCard";
 export { ConsoleSectionHeader } from "./ConsoleSectionHeader";
+export { ConsoleNav } from "./ConsoleNav";
