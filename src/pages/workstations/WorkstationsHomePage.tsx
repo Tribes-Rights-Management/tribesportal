@@ -158,66 +158,69 @@ export default function WorkstationsHomePage() {
   return (
     <HeaderOnlyLayout>
       <div 
-        className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] px-6 py-8"
+        className="min-h-[calc(100vh-56px)] px-6"
         style={{ backgroundColor: 'var(--app-bg)' }}
       >
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 
-            className="text-[22px] font-semibold mb-1"
-            style={{ color: 'var(--text)' }}
-          >
-            Welcome to TRIBES
-          </h1>
-          <p 
-            className="text-[13px]"
-            style={{ color: 'var(--text-muted)' }}
-          >
-            Select a module to get started
-          </p>
-        </div>
-
-        {/* Module Grid */}
-        {hasNoAccess ? (
-          <div 
-            className="text-center p-6 rounded-xl max-w-sm"
-            style={{ 
-              backgroundColor: 'var(--card-bg)',
-              border: '1px solid var(--border-subtle)',
-            }}
-          >
-            <p 
-              className="text-[14px] mb-1"
+        {/* Centered content container */}
+        <div className="mx-auto w-full max-w-[640px] pt-8 pb-12">
+          {/* Header — left-aligned with grid */}
+          <div className="mb-5">
+            <h1 
+              className="text-[24px] font-semibold leading-tight"
               style={{ color: 'var(--text)' }}
             >
-              No modules available
-            </p>
+              Workspaces
+            </h1>
             <p 
-              className="text-[13px]"
+              className="text-[14px] mt-1"
               style={{ color: 'var(--text-muted)' }}
             >
-              Contact your administrator to request access.
+              Select a module to continue.
             </p>
           </div>
-        ) : (
-          <div 
-            className={cn(
-              "grid gap-6 w-full max-w-[640px]",
-              "grid-cols-1 sm:grid-cols-2"
-            )}
-          >
-            {sortedModules.map((module) => (
-              <ModuleTile 
-                key={module.href} 
-                title={module.title}
-                description={module.description}
-                icon={module.icon}
-                href={module.href}
-                disabled={!module.hasAccess}
-              />
-            ))}
-          </div>
-        )}
+
+          {/* Module Grid */}
+          {hasNoAccess ? (
+            <div 
+              className="p-6 rounded-xl"
+              style={{ 
+                backgroundColor: 'var(--card-bg)',
+                border: '1px solid var(--border-subtle)',
+              }}
+            >
+              <p 
+                className="text-[14px] mb-1"
+                style={{ color: 'var(--text)' }}
+              >
+                No modules available
+              </p>
+              <p 
+                className="text-[13px]"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                Contact your administrator to request access.
+              </p>
+            </div>
+          ) : (
+            <div 
+              className={cn(
+                "grid gap-6 w-full",
+                "grid-cols-1 sm:grid-cols-2"
+              )}
+            >
+              {sortedModules.map((module) => (
+                <ModuleTile 
+                  key={module.href} 
+                  title={module.title}
+                  description={module.description}
+                  icon={module.icon}
+                  href={module.href}
+                  disabled={!module.hasAccess}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </HeaderOnlyLayout>
   );
