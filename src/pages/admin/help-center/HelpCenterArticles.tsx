@@ -308,14 +308,14 @@ export default function HelpCenterArticles() {
                             onClick={() =>
                               navigate(`/admin/help-center/articles/${article.id}/edit`)
                             }
-                            className="p-2 rounded hover:bg-white/5"
+                            className="p-2 rounded-md hover:bg-[var(--muted-wash)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
                             style={{ color: "var(--platform-text-muted)" }}
                           >
                             <Edit className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => setDeleteId(article.id)}
-                            className="p-2 rounded hover:bg-white/5"
+                            className="p-2 rounded-md hover:bg-[var(--muted-wash)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
                             style={{ color: "var(--platform-text-muted)" }}
                           >
                             <Trash2 className="h-4 w-4" />

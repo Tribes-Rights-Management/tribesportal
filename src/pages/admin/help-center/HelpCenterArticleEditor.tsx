@@ -252,7 +252,7 @@ export default function HelpCenterArticleEditor() {
             <button
               type="button"
               onClick={() => navigate("/admin/help-center/articles")}
-              className="p-2 rounded hover:bg-white/5"
+              className="p-2 rounded-md hover:bg-[var(--muted-wash)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
               style={{ color: "var(--platform-text-muted)" }}
             >
               <ArrowLeft className="h-5 w-5" />

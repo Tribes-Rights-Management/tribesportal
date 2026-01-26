@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { X, ChevronRight, AlertCircle, RefreshCw } from "lucide-react";
 import { AppButton, AppSearchInput } from "@/components/app-ui";
+import { cn } from "@/lib/utils";
 
 /**
  * HELP MESSAGES PAGE — INSTITUTIONAL DESIGN
@@ -167,14 +168,16 @@ export default function HelpMessagesPage() {
           <button
             key={tab.value}
             onClick={() => setStatusFilter(tab.value)}
-            className={`px-4 py-2.5 text-[12px] border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] ${
+            className={cn(
+              "px-4 py-2.5 text-[12px] border-b-2 transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]",
               statusFilter === tab.value 
-                ? 'text-foreground border-foreground' 
+                ? 'text-foreground font-medium border-foreground' 
                 : 'text-muted-foreground hover:text-foreground border-transparent'
-            }`}
+            )}
           >
             {tab.label}
-            <span className={`ml-2 text-[11px] ${statusFilter === tab.value ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
+            <span className="ml-2 text-[11px] text-muted-foreground">
               {statusCounts[tab.value]}
             </span>
           </button>

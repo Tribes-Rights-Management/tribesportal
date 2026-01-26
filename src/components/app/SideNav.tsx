@@ -32,6 +32,7 @@ interface SideNavProps {
 /**
  * Side navigation link - Console Light styling
  * Active state: muted wash, weight emphasis
+ * TIGHTER: 16px icons, reduced padding, smaller gap
  */
 function SideNavLink({ 
   to, 
@@ -45,8 +46,8 @@ function SideNavLink({
       end={exact}
       className={({ isActive }) =>
         cn(
-          // Base: flat, functional, minimal
-          "flex items-center gap-2.5 px-3 py-2 text-[13px] rounded-lg",
+          // Tighter spacing: 16px icons, reduced gaps
+          "flex items-center gap-2 px-2.5 py-1.5 text-[13px] rounded-md",
           // Transition: only essential feedback
           "transition-colors duration-150",
           // Focus ring: brand blue
@@ -58,7 +59,7 @@ function SideNavLink({
         )
       }
     >
-      <Icon className="h-4 w-4 shrink-0 opacity-60" strokeWidth={1.25} />
+      <Icon className="h-4 w-4 shrink-0 opacity-60" strokeWidth={1.5} />
       <span className="truncate">{label}</span>
     </NavLink>
   );
@@ -88,10 +89,10 @@ export function SideNav({ items, settingsItems }: SideNavProps) {
         backgroundColor: 'var(--sidebar-bg)',
       }}
     >
-      {/* Main navigation - functional grouping */}
+      {/* Main navigation - functional grouping, tighter vertical rhythm */}
       {visibleItems.length > 0 && (
-        <div className="flex-1 py-4 overflow-y-auto">
-          <div className="px-3 space-y-0.5">
+        <div className="flex-1 py-3 overflow-y-auto">
+          <div className="px-2 space-y-px">
             {visibleItems.map((item) => (
               <SideNavLink key={item.to} {...item} />
             ))}
@@ -102,10 +103,10 @@ export function SideNav({ items, settingsItems }: SideNavProps) {
       {/* Settings at bottom - separated by hairline */}
       {visibleSettingsItems && visibleSettingsItems.length > 0 && (
         <div 
-          className="py-3 shrink-0"
+          className="py-2 shrink-0"
           style={{ borderTop: '1px solid var(--border-subtle)' }}
         >
-          <div className="px-3 space-y-0.5">
+          <div className="px-2 space-y-px">
             {visibleSettingsItems.map((item) => (
               <SideNavLink key={item.to} {...item} />
             ))}

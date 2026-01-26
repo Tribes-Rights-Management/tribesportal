@@ -228,15 +228,14 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
         to={item.path}
         onClick={onNavigate}
         className={cn(
-          "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium",
+          // Tighter spacing: reduced padding, smaller gap
+          "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] font-medium",
           "transition-colors duration-150",
-          "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2"
         )}
         style={{
           backgroundColor: isActive ? 'var(--tribes-nav-active)' : 'transparent',
           color: isActive ? 'var(--tribes-text)' : 'var(--tribes-text-muted)',
-          // @ts-ignore
-          '--tw-ring-color': 'var(--tribes-focus-ring-neutral)',
         }}
         onMouseEnter={(e) => {
           if (!isActive) {
@@ -250,7 +249,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
         }}
       >
         <Icon 
-          className="h-[18px] w-[18px] shrink-0" 
+          className="h-4 w-4 shrink-0" 
           strokeWidth={1.5}
         />
         {item.label}
@@ -259,33 +258,33 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   };
 
   return (
-    <nav className="flex flex-col py-3 px-3">
+    <nav className="flex flex-col py-2 px-2">
       {/* Workspace Selector */}
-      <div className="mb-4">
+      <div className="mb-3">
         <WorkspaceSelector />
       </div>
 
-      {/* Main Navigation */}
-      <div className="space-y-0.5">
+      {/* Main Navigation — tighter vertical rhythm */}
+      <div className="space-y-px">
         {mainItems.map(renderNavItem)}
       </div>
 
       {/* Analytics Section */}
       <div 
-        className="mt-6 pt-4"
+        className="mt-4 pt-3"
         style={{ borderTop: '1px solid var(--tribes-border-subtle)' }}
       >
-        <div className="space-y-0.5">
+        <div className="space-y-px">
           {analyticsItems.map(renderNavItem)}
         </div>
       </div>
 
       {/* Settings Section */}
       <div 
-        className="mt-6 pt-4"
+        className="mt-4 pt-3"
         style={{ borderTop: '1px solid var(--tribes-border-subtle)' }}
       >
-        <div className="space-y-0.5">
+        <div className="space-y-px">
           {settingsItems.map(renderNavItem)}
         </div>
       </div>
@@ -429,12 +428,12 @@ export function HelpWorkstationLayout() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Desktop Sidebar — Mercury-like */}
+        {/* Desktop Sidebar — Stripe-like tighter width */}
         {!isMobile && (
           <aside 
-            className="w-[260px] shrink-0 overflow-y-auto"
+            className="w-[220px] shrink-0 overflow-y-auto"
             style={{
-              backgroundColor: 'var(--tribes-sidebar-bg-mercury)',
+              backgroundColor: 'var(--sidebar-bg)',
               borderRight: '1px solid var(--tribes-border-subtle)',
             }}
           >
