@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { LayoutGrid, HelpCircle, Bell, Settings } from "lucide-react";
 import { AppSearchInput } from "@/components/app-ui/AppSearchInput";
-import { NotificationCenter } from "@/components/app/NotificationCenter";
 import { GlobalSearchDialog } from "@/components/search/GlobalSearchDialog";
 import { SidebarHeader, ContentHeader } from "@/components/app/AppShell";
 import { WorkspaceSwitcher } from "@/components/app/WorkspaceSwitcher";
-import { UserAvatar, getInitialsFromProfile } from "@/components/ui/user-avatar";
+import { HeaderIconButton } from "@/components/app/HeaderIconButton";
+import { HelpDrawer } from "@/components/app/HelpDrawer";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useAuth } from "@/contexts/AuthContext";
+import { useUnreadNotificationCount } from "@/hooks/useNotifications";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 /**
  * MODULE HEADER — UNIFIED STRIPE-LIKE HEADER (CANONICAL)
@@ -19,14 +25,19 @@ import { useAuth } from "@/contexts/AuthContext";
  * Layout:
  * - Desktop with sidebar: 2-column grid (sidebar column + content column)
  *   - Left column: WorkspaceSwitcher in sidebar-colored region
- *   - Right column: Global search (center) + avatar (right)
- * - Mobile: Full-width header with WorkspaceSwitcher + avatar
+ *   - Right column: Search (left-aligned), header icons (right)
+ * - Mobile: Full-width header with WorkspaceSwitcher + icons
+ * 
+ * HEADER ICONS (right side, replacing avatar):
+ * - Workspaces (grid icon) → /workspaces
+ * - Help (help circle) → opens HelpDrawer
+ * - Notifications (bell) → opens placeholder dropdown
+ * - Settings (gear) → /account (or fallback)
  * 
  * STRICT INVARIANTS:
- * - WorkspaceSwitcher placement: always top-left (sidebar header area on desktop)
- * - Global search: always center of content header
- * - User avatar: always top-right, links to /account
- * - Icon sizes: 18px for header icons, 16px for dropdown icons
+ * - Header icons: 18px (inside HeaderIconButton)
+ * - Dropdown icons: 16px
+ * - Search: consistent Stripe-like pill
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -40,31 +51,58 @@ export function ModuleHeader({
 }: ModuleHeaderProps) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { profile } = useAuth();
   const [searchValue, setSearchValue] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   
-  const initials = getInitialsFromProfile(profile);
+  const { data: unreadCount = 0 } = useUnreadNotificationCount();
 
-  // Mobile header - compact with WorkspaceSwitcher + avatar
+  // Mobile header - compact with WorkspaceSwitcher + icons
   if (isMobile) {
     return (
-      <div className="w-full h-full flex items-center justify-between px-4">
-        {/* Left: Workspace switcher (compact) */}
-        <WorkspaceSwitcher />
+      <>
+        <div className="w-full h-full flex items-center justify-between px-4">
+          {/* Left: Workspace switcher (compact) */}
+          <WorkspaceSwitcher />
 
-        {/* Right: Notifications + Avatar (navigates to account) */}
-        <div className="flex items-center gap-2 shrink-0">
-          <NotificationCenter />
-          <button
-            onClick={() => navigate("/account")}
-            className="focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-full"
-            aria-label="Account"
-          >
-            <UserAvatar initials={initials} size="md" variant="light" />
-          </button>
+          {/* Right: Header icons */}
+          <div className="flex items-center gap-1 shrink-0">
+            <HeaderIconButton
+              icon={LayoutGrid}
+              aria-label="Workspaces"
+              onClick={() => navigate("/workspaces")}
+            />
+            <HeaderIconButton
+              icon={HelpCircle}
+              aria-label="Help"
+              onClick={() => setHelpOpen(true)}
+            />
+            <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
+              <PopoverTrigger asChild>
+                <HeaderIconButton
+                  icon={Bell}
+                  aria-label="Notifications"
+                  badgeCount={unreadCount}
+                />
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-72 p-4">
+                <p className="text-[13px] text-muted-foreground text-center py-6">
+                  No notifications yet
+                </p>
+              </PopoverContent>
+            </Popover>
+            <HeaderIconButton
+              icon={Settings}
+              aria-label="Settings"
+              onClick={() => navigate("/account")}
+            />
+          </div>
         </div>
-      </div>
+        
+        {/* Help Drawer */}
+        <HelpDrawer open={helpOpen} onOpenChange={setHelpOpen} />
+      </>
     );
   }
 
@@ -77,16 +115,13 @@ export function ModuleHeader({
           logo={<WorkspaceSwitcher />}
         />
 
-        {/* Right column: Search + account actions */}
+        {/* Right column: Search + header icons */}
         <ContentHeader>
-          {/* Left spacer for balance */}
-          <div className="w-8" />
-          
-          {/* Center: Global search trigger */}
-          <div className="flex-1 flex items-center justify-center max-w-xl">
+          {/* Left: Search trigger (left-aligned, not centered) */}
+          <div className="flex items-center">
             <button
               onClick={() => setSearchOpen(true)}
-              className="w-full max-w-[400px]"
+              className="w-[320px]"
             >
               <AppSearchInput
                 value={searchValue}
@@ -99,62 +134,112 @@ export function ModuleHeader({
             </button>
           </div>
 
-          {/* Right: Notifications + Avatar */}
-          <div className="flex items-center gap-2">
-            <NotificationCenter />
-            <button
+          {/* Right: Header icons (replacing avatar) */}
+          <div className="flex items-center gap-1">
+            <HeaderIconButton
+              icon={LayoutGrid}
+              aria-label="Workspaces"
+              onClick={() => navigate("/workspaces")}
+            />
+            <HeaderIconButton
+              icon={HelpCircle}
+              aria-label="Help"
+              onClick={() => setHelpOpen(true)}
+            />
+            <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
+              <PopoverTrigger asChild>
+                <HeaderIconButton
+                  icon={Bell}
+                  aria-label="Notifications"
+                  badgeCount={unreadCount}
+                />
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-72 p-4">
+                <p className="text-[13px] text-muted-foreground text-center py-6">
+                  No notifications yet
+                </p>
+              </PopoverContent>
+            </Popover>
+            <HeaderIconButton
+              icon={Settings}
+              aria-label="Settings"
               onClick={() => navigate("/account")}
-              className="focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-full"
-              aria-label="Account"
-            >
-              <UserAvatar initials={initials} size="sm" variant="light" />
-            </button>
+            />
           </div>
         </ContentHeader>
 
         {/* Global search dialog */}
         <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
+        
+        {/* Help Drawer */}
+        <HelpDrawer open={helpOpen} onOpenChange={setHelpOpen} />
       </>
     );
   }
 
   // Desktop without sidebar (uses WorkspaceSwitcher as well)
   return (
-    <div className="w-full h-full flex items-center justify-between px-6">
-      {/* Left: Workspace switcher */}
-      <WorkspaceSwitcher />
+    <>
+      <div className="w-full h-full flex items-center justify-between px-6">
+        {/* Left: Workspace switcher */}
+        <WorkspaceSwitcher />
 
-      {/* Center: Search trigger */}
-      <div className="flex-1 flex items-center justify-center max-w-xl mx-6">
-        <button
-          onClick={() => setSearchOpen(true)}
-          className="w-full max-w-[400px]"
-        >
-          <AppSearchInput
-            value={searchValue}
-            onChange={setSearchValue}
-            placeholder="Search..."
-            rightHint="⌘ K"
-            size="sm"
-            className="w-full pointer-events-none"
+        {/* Center/Left: Search trigger */}
+        <div className="flex-1 flex items-center ml-6 max-w-md">
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="w-full max-w-[320px]"
+          >
+            <AppSearchInput
+              value={searchValue}
+              onChange={setSearchValue}
+              placeholder="Search..."
+              rightHint="⌘ K"
+              size="sm"
+              className="w-full pointer-events-none"
+            />
+          </button>
+        </div>
+
+        {/* Right: Header icons */}
+        <div className="flex items-center gap-1">
+          <HeaderIconButton
+            icon={LayoutGrid}
+            aria-label="Workspaces"
+            onClick={() => navigate("/workspaces")}
           />
-        </button>
-      </div>
-
-      {/* Right: Notifications + Avatar */}
-      <div className="flex items-center gap-2">
-        <NotificationCenter />
-        <button
-          onClick={() => navigate("/account")}
-          className="focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-full"
-          aria-label="Account"
-        >
-          <UserAvatar initials={initials} size="sm" variant="light" />
-        </button>
+          <HeaderIconButton
+            icon={HelpCircle}
+            aria-label="Help"
+            onClick={() => setHelpOpen(true)}
+          />
+          <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
+            <PopoverTrigger asChild>
+              <HeaderIconButton
+                icon={Bell}
+                aria-label="Notifications"
+                badgeCount={unreadCount}
+              />
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-72 p-4">
+              <p className="text-[13px] text-muted-foreground text-center py-6">
+                No notifications yet
+              </p>
+            </PopoverContent>
+          </Popover>
+          <HeaderIconButton
+            icon={Settings}
+            aria-label="Settings"
+            onClick={() => navigate("/account")}
+          />
+        </div>
       </div>
 
       {/* Global search dialog */}
       <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
-    </div>
+      
+      {/* Help Drawer */}
+      <HelpDrawer open={helpOpen} onOpenChange={setHelpOpen} />
+    </>
   );
 }

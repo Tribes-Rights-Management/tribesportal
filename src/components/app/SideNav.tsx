@@ -14,11 +14,12 @@ import { useRoleAccess, Permission } from "@/hooks/useRoleAccess";
  * - Sidebar width: 200px (controlled by AppShell)
  * - Icon size: 16px (h-4 w-4)
  * - Icon stroke: 1.5
- * - Row padding: px-2.5 py-1.5
+ * - Row padding: px-3 py-2
  * - Font size: 13px
  * - Active state: bg-muted, font-medium
  * - Hover state: bg-muted/50
  * - Focus ring: brand blue (#0071E3)
+ * - LEFT ALIGNED: icon + label must be left-aligned, never centered
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -37,8 +38,12 @@ interface SideNavProps {
 }
 
 /**
- * Side navigation link - Unified Stripe-like styling
- * INVARIANTS: 16px icons, 13px text, reduced padding
+ * SIDE NAV LINK — STRIPE-LIKE LEFT-ALIGNED ROWS (CANONICAL)
+ * 
+ * ICON SIZE: 16px (h-4 w-4) — HARD RULE
+ * ALIGNMENT: flex items-center justify-start (left-aligned)
+ * GAP: gap-3 between icon and text
+ * TEXT: 13px, left-aligned
  */
 function SideNavLink({ 
   to, 
@@ -52,21 +57,22 @@ function SideNavLink({
       end={exact}
       className={({ isActive }) =>
         cn(
-          // Standardized spacing: 16px icons, 13px text
-          "flex items-center gap-2 px-2.5 py-1.5 text-[13px] rounded-md",
+          // Left-aligned row with proper gap
+          "flex items-center justify-start gap-3 px-3 py-2 text-[13px] rounded-md text-left w-full",
           // Transition
           "transition-colors duration-150",
           // Focus ring: brand blue
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]",
-          // Active/hover states
+          // Active/hover states - subtle pill background
           isActive
             ? "font-medium text-foreground bg-muted"
             : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
         )
       }
     >
-      <Icon className="h-4 w-4 shrink-0 opacity-60" strokeWidth={1.5} />
-      <span className="truncate">{label}</span>
+      {/* Icon: 16px (h-4 w-4) — STRICT */}
+      <Icon className="h-4 w-4 shrink-0 opacity-70" strokeWidth={1.5} />
+      <span className="truncate text-left">{label}</span>
     </NavLink>
   );
 }
