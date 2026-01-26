@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 /**
- * PUBLISHING NAVIGATION
+ * PUBLISHING NAVIGATION (Legacy /app/publishing routes)
  * 
  * Navigation Rules:
  * - Functional, not expressive
@@ -20,19 +20,16 @@ import {
  */
 
 const navItems = [
-  { to: "/app/publishing", label: "Overview", icon: LayoutDashboard, exact: true },
-  { to: "/app/publishing/works", label: "Works", icon: Music },
-  { to: "/app/publishing/splits", label: "Splits & Ownership", icon: GitBranch },
-  { to: "/app/publishing/registrations", label: "Registrations", icon: FileCheck },
-  { to: "/app/publishing/statements", label: "Statements", icon: Receipt },
-  { to: "/app/publishing/payments", label: "Payments", icon: CreditCard },
-  { to: "/app/publishing/documents", label: "Documents", icon: FolderOpen },
-];
-
-const settingsItems = [
-  { to: "/app/publishing/settings", label: "Configuration", icon: Settings },
+  { to: "/app/publishing", label: "Overview", icon: LayoutDashboard, exact: true, section: "main" as const },
+  { to: "/app/publishing/works", label: "Works", icon: Music, section: "main" as const },
+  { to: "/app/publishing/splits", label: "Splits & Ownership", icon: GitBranch, section: "main" as const },
+  { to: "/app/publishing/registrations", label: "Registrations", icon: FileCheck, section: "main" as const },
+  { to: "/app/publishing/statements", label: "Statements", icon: Receipt, section: "main" as const },
+  { to: "/app/publishing/payments", label: "Payments", icon: CreditCard, section: "main" as const },
+  { to: "/app/publishing/documents", label: "Documents", icon: FolderOpen, section: "main" as const },
+  { to: "/app/publishing/settings", label: "Configuration", icon: Settings, section: "settings" as const },
 ];
 
 export function PublishingNav() {
-  return <SideNav items={navItems} settingsItems={settingsItems} />;
+  return <SideNav items={navItems} />;
 }

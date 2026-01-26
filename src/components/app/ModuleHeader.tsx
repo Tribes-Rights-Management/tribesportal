@@ -10,29 +10,29 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
 
 /**
- * MODULE HEADER — STRIPE-LIKE UNIFIED HEADER
+ * MODULE HEADER — UNIFIED STRIPE-LIKE HEADER (CANONICAL)
  * 
- * Provides consistent header across all modules:
- * - Left: WorkspaceSwitcher (Tribes + workspace name dropdown)
- * - Center: Global search input
- * - Right: Notifications + profile avatar (simplified)
+ * ═══════════════════════════════════════════════════════════════════════════
+ * This is the SINGLE header component used across ALL modules:
+ * - /console, /admin, /licensing, /help
  * 
- * Used by SystemConsoleLayout, ModuleLayout, HelpWorkstationLayout
+ * Layout:
+ * - Desktop with sidebar: 2-column grid (sidebar column + content column)
+ *   - Left column: WorkspaceSwitcher in sidebar-colored region
+ *   - Right column: Global search (center) + avatar (right)
+ * - Mobile: Full-width header with WorkspaceSwitcher + avatar
+ * 
+ * STRICT INVARIANTS:
+ * - WorkspaceSwitcher placement: always top-left (sidebar header area on desktop)
+ * - Global search: always center of content header
+ * - User avatar: always top-right, links to /account
+ * - Icon sizes: 18px for header icons, 16px for dropdown icons
+ * ═══════════════════════════════════════════════════════════════════════════
  */
 
 interface ModuleHeaderProps {
-  /** Show "Back to Modules" button - DEPRECATED, handled by WorkspaceSwitcher */
-  showBackToModules?: boolean;
-  /** Custom context label for dropdown - DEPRECATED */
-  contextLabel?: string;
-  /** Whether we're in a sidebar layout (show split header) */
+  /** Whether we're in a sidebar layout (show split 2-column header) */
   showSidebarLogo?: boolean;
-  /** Logo click destination - DEPRECATED */
-  logoDestination?: string;
-  /** Show return to console in dropdown - DEPRECATED */
-  showReturnToConsole?: boolean;
-  /** Show system console in dropdown - DEPRECATED */
-  showSystemConsole?: boolean;
 }
 
 export function ModuleHeader({
@@ -46,16 +46,14 @@ export function ModuleHeader({
   
   const initials = getInitialsFromProfile(profile);
 
-  // Mobile header
+  // Mobile header - compact with WorkspaceSwitcher + avatar
   if (isMobile) {
     return (
-      <div 
-        className="w-full h-full flex items-center justify-between px-4"
-      >
+      <div className="w-full h-full flex items-center justify-between px-4">
         {/* Left: Workspace switcher (compact) */}
         <WorkspaceSwitcher />
 
-        {/* Right: Notifications + Avatar (just navigates to account) */}
+        {/* Right: Notifications + Avatar (navigates to account) */}
         <div className="flex items-center gap-2 shrink-0">
           <NotificationCenter />
           <button
@@ -70,7 +68,7 @@ export function ModuleHeader({
     );
   }
 
-  // Desktop with sidebar: 2-column header
+  // Desktop with sidebar: 2-column header grid
   if (showSidebarLogo) {
     return (
       <>
@@ -81,7 +79,7 @@ export function ModuleHeader({
 
         {/* Right column: Search + account actions */}
         <ContentHeader>
-          {/* Left spacer */}
+          {/* Left spacer for balance */}
           <div className="w-8" />
           
           {/* Center: Global search trigger */}
@@ -101,7 +99,7 @@ export function ModuleHeader({
             </button>
           </div>
 
-          {/* Right: Notifications + Avatar (simplified - main nav is in WorkspaceSwitcher) */}
+          {/* Right: Notifications + Avatar */}
           <div className="flex items-center gap-2">
             <NotificationCenter />
             <button
@@ -122,9 +120,7 @@ export function ModuleHeader({
 
   // Desktop without sidebar (uses WorkspaceSwitcher as well)
   return (
-    <div 
-      className="w-full h-full flex items-center justify-between px-6"
-    >
+    <div className="w-full h-full flex items-center justify-between px-6">
       {/* Left: Workspace switcher */}
       <WorkspaceSwitcher />
 

@@ -1,20 +1,20 @@
 import { Outlet } from "react-router-dom";
 import { AppShell } from "@/components/app/AppShell";
-import { AppHeader } from "@/components/app/AppHeader";
+import { ModuleHeader } from "@/components/app/ModuleHeader";
 
 /**
- * ADMIN LAYOUT — STRIPE-LIKE SHELL (NO SIDEBAR)
+ * ADMIN LAYOUT — UNIFIED APPSHELL (NO SIDEBAR)
  * 
  * Layout Rules:
  * - Light canvas with white surfaces
  * - No sidebar (admin dashboard is full-width)
- * - Institutional command center aesthetic
+ * - Uses unified ModuleHeader for consistency
  */
 export function AdminLayout() {
   return (
     <AppShell
       showSidebar={false}
-      headerContent={<AppHeader showSidebarLogo={false} />}
+      headerContent={<ModuleHeader showSidebarLogo={false} />}
     >
       <Outlet />
     </AppShell>

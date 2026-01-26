@@ -39,14 +39,7 @@ export function SystemConsoleLayout() {
   return (
     <AppShell
       showSidebar={showSidebar}
-      headerContent={
-        <ModuleHeader 
-          showSidebarLogo={showSidebar}
-          showBackToModules={true}
-          contextLabel="System Console"
-          logoDestination="/console"
-        />
-      }
+      headerContent={<ModuleHeader showSidebarLogo={showSidebar} />}
       sidebarContent={<ConsoleNav />}
     >
       <Outlet />
