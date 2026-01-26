@@ -20,18 +20,22 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * WORKSPACE SWITCHER — STRIPE-STYLE TOP-LEFT DROPDOWN
+ * WORKSPACE SWITCHER — STRIPE-STYLE TOP-LEFT DROPDOWN (CANONICAL)
  * 
+ * ═══════════════════════════════════════════════════════════════════════════
  * Displays:
  * - "Tribes" (bold) + active workspace name underneath
  * - Dropdown with: Settings, Available Modules, Sign out
  * 
- * Icon sizes: 16px for dropdown items, 18px max for chevron
+ * ICON SIZES (HARD RULES):
+ * - Dropdown menu icons: 16px (h-4 w-4)
+ * - Chevron: 16px (h-4 w-4)
+ * ═══════════════════════════════════════════════════════════════════════════
  */
 
 export function WorkspaceSwitcher() {
   const navigate = useNavigate();
-  const { profile, activeTenant, signOut } = useAuth();
+  const { profile, activeTenant, tenantMemberships, signOut } = useAuth();
   const {
     canAccessSystemConsole,
     canAccessHelpWorkstation,
@@ -41,13 +45,26 @@ export function WorkspaceSwitcher() {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/auth/sign-in");
+    navigate("/sign-in");
   };
 
   // Determine the workspace name to display
-  const workspaceName = activeTenant?.tenant_name || "No workspace";
+  // Priority: activeTenant > first available membership > "No workspace"
+  const getWorkspaceName = (): string => {
+    if (activeTenant?.tenant_name) {
+      return activeTenant.tenant_name;
+    }
+    // Fallback to first available membership if activeTenant is null but memberships exist
+    if (tenantMemberships.length > 0 && tenantMemberships[0].tenant_name) {
+      return tenantMemberships[0].tenant_name;
+    }
+    return "No workspace";
+  };
 
-  // Build list of accessible modules
+  const workspaceName = getWorkspaceName();
+  const hasNoWorkspace = workspaceName === "No workspace";
+
+  // Build list of accessible modules - same source of truth as /workspaces
   const accessibleModules = [
     {
       label: "System Console",
@@ -75,10 +92,18 @@ export function WorkspaceSwitcher() {
     },
   ].filter(m => m.hasAccess);
 
+  // Handle click when no workspace - route to /workspaces
+  const handleTriggerClick = () => {
+    if (hasNoWorkspace) {
+      navigate("/workspaces");
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
+          onClick={hasNoWorkspace ? handleTriggerClick : undefined}
           className={cn(
             "flex items-center gap-2 px-3 py-2 w-full rounded-md",
             "transition-colors duration-150",
@@ -95,15 +120,18 @@ export function WorkspaceSwitcher() {
               Tribes
             </span>
             <span 
-              className="text-[12px] font-normal leading-tight truncate text-muted-foreground"
+              className={cn(
+                "text-[12px] font-normal leading-tight truncate",
+                hasNoWorkspace ? "text-destructive" : "text-muted-foreground"
+              )}
             >
               {workspaceName}
             </span>
           </div>
 
-          {/* Chevron */}
+          {/* Chevron - 16px */}
           <ChevronDown 
-            className="h-[18px] w-[18px] shrink-0 opacity-50" 
+            className="h-4 w-4 shrink-0 opacity-50" 
             strokeWidth={1.5} 
           />
         </button>
@@ -119,7 +147,7 @@ export function WorkspaceSwitcher() {
           onClick={() => navigate("/account")}
           className="px-3 py-2 text-[13px] gap-2"
         >
-          <Settings className="h-4 w-4 opacity-50" strokeWidth={1.5} />
+          <Settings className="h-4 w-4 opacity-60" strokeWidth={1.5} />
           Settings
         </DropdownMenuItem>
 
@@ -138,7 +166,7 @@ export function WorkspaceSwitcher() {
                 onClick={() => navigate(module.href)}
                 className="px-3 py-2 text-[13px] gap-2"
               >
-                <module.icon className="h-4 w-4 opacity-50" strokeWidth={1.5} />
+                <module.icon className="h-4 w-4 opacity-60" strokeWidth={1.5} />
                 {module.label}
               </DropdownMenuItem>
             ))}
@@ -151,7 +179,7 @@ export function WorkspaceSwitcher() {
           onClick={handleSignOut}
           className="px-3 py-2 text-[13px] gap-2 text-foreground hover:text-destructive focus:text-destructive"
         >
-          <LogOut className="h-4 w-4 opacity-50" strokeWidth={1.5} />
+          <LogOut className="h-4 w-4 opacity-60" strokeWidth={1.5} />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
