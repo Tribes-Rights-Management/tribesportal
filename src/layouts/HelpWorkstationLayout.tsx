@@ -3,20 +3,11 @@ import { Outlet, useNavigate, useLocation, NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { AppSearchInput } from "@/components/app-ui";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ProfileDropdown } from "@/components/ui/profile-dropdown";
 import { 
-  LogOut, 
-  Settings, 
   ArrowLeft, 
   Menu,
   X,
-  Search,
   ChevronDown,
   LayoutDashboard,
   Users,
@@ -28,7 +19,7 @@ import {
   Settings2,
   type LucideIcon
 } from "lucide-react";
-import { NAV_LABELS, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } from "@/styles/tokens";
+import { NAV_LABELS } from "@/styles/tokens";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
@@ -41,8 +32,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
  * - Shell bg: #F6F7F9 (Mercury canvas)
  * - Header: White with subtle bottom border
  * - Sidebar: Soft gray (#F4F5F7) with pill active items
- * - Icons: 18px with 1.5 stroke width
- * - Focus: Neutral ring (no blue)
+ * - Icons: 16px with 1.5 stroke width
+ * - Focus: Blue ring for accessibility
  */
 
 interface NavItem {
@@ -63,102 +54,6 @@ const NAV_ITEMS: NavItem[] = [
   { path: "/help/analytics", label: "Analytics", icon: BarChart3, section: 'analytics' },
   { path: "/help/settings", label: "Settings", icon: Settings2, section: 'settings' },
 ];
-
-function HelpAccountMenu() {
-  const { profile, signOut } = useAuth();
-  const navigate = useNavigate();
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/sign-in");
-  };
-
-  const getInitials = () => {
-    if (profile?.full_name) {
-      const parts = profile.full_name.trim().split(/\s+/);
-      if (parts.length >= 2) {
-        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-      }
-      return parts[0].slice(0, 2).toUpperCase();
-    }
-    if (profile?.email) {
-      return profile.email.slice(0, 2).toUpperCase();
-    }
-    return "U";
-  };
-
-  const isMobileView = useIsMobile();
-  const avatarSize = isMobileView ? 32 : PORTAL_AVATAR.sizeDesktop;
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          className={cn(
-            "rounded-full shrink-0 inline-flex items-center justify-center",
-            "text-[10px] font-medium uppercase",
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-            "transition-colors duration-150"
-          )}
-          style={{
-            height: avatarSize,
-            width: avatarSize,
-            minHeight: avatarSize,
-            minWidth: avatarSize,
-            backgroundColor: '#E5E7EB',
-            color: '#374151',
-            // Neutral focus ring
-            // @ts-ignore
-            '--tw-ring-color': 'var(--tribes-focus-ring-neutral)',
-          }}
-          aria-label="Account menu"
-        >
-          {getInitials()}
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end" 
-        className="w-56 rounded-lg bg-white border-[var(--tribes-border-subtle)]"
-        sideOffset={8}
-      >
-        <div className="px-3 py-2.5">
-          <p 
-            className="text-[13px] font-medium truncate"
-            style={{ color: 'var(--tribes-text)' }}
-          >
-            {profile?.full_name || profile?.email}
-          </p>
-          <p 
-            className="text-[10px] uppercase tracking-wider mt-1"
-            style={{ color: 'var(--tribes-text-muted)' }}
-          >
-            Help Workstation
-          </p>
-        </div>
-        
-        <DropdownMenuSeparator className="bg-[var(--tribes-border-subtle)]" />
-        
-        <DropdownMenuItem
-          onClick={() => navigate("/account")}
-          className="text-[13px] py-2 focus:bg-[var(--tribes-nav-hover)]"
-          style={{ color: 'var(--tribes-text-muted)' }}
-        >
-          <Settings size={16} strokeWidth={1.5} className="mr-2 opacity-70" />
-          {NAV_LABELS.ACCOUNT_SETTINGS}
-        </DropdownMenuItem>
-        
-        <DropdownMenuSeparator className="bg-[var(--tribes-border-subtle)]" />
-        <DropdownMenuItem
-          onClick={handleSignOut}
-          className="text-[13px] py-2 text-red-600 focus:bg-red-50"
-        >
-          <LogOut size={16} strokeWidth={1.5} className="mr-2" />
-          Sign out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
 
 function WorkspaceSelector() {
   return (
@@ -365,7 +260,7 @@ export function HelpWorkstationLayout() {
               </button>
             </div>
 
-            <HelpAccountMenu />
+            <ProfileDropdown avatarVariant="light" contextLabel="Help Workstation" />
           </div>
         ) : (
           /* Desktop Header — 3-column grid */
@@ -422,7 +317,7 @@ export function HelpWorkstationLayout() {
 
             {/* Right: Account */}
             <div className="flex items-center justify-end">
-              <HelpAccountMenu />
+              <ProfileDropdown avatarVariant="light" contextLabel="Help Workstation" />
             </div>
           </div>
         )}

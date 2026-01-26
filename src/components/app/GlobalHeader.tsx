@@ -1,5 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
+import { ProfileDropdown } from "@/components/ui/profile-dropdown";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,13 +15,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LogOut, Settings, Shield, ChevronDown, ArrowLeft, Moon, Sun } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { NAV_LABELS, ICON_SIZE, ICON_STROKE, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } from "@/styles/tokens";
+import { NAV_LABELS, PORTAL_TYPOGRAPHY } from "@/styles/tokens";
 import { NotificationCenter } from "./NotificationCenter";
-import { useTheme } from "@/contexts/ThemeContext";
 
 /**
  * GLOBAL HEADER — ORGANIZATION WORKSPACE NAVIGATION
@@ -183,149 +183,19 @@ function WorkspaceSelector() {
   );
 }
 
-// Account menu - institutional, dark theme
+// Account menu wrapper - uses shared ProfileDropdown with dark theme for GlobalHeader
 function AccountMenu() {
-  const { 
-    profile, 
-    signOut, 
-    isPlatformAdmin,
-  } = useAuth();
-  const navigate = useNavigate();
+  const { isPlatformAdmin } = useAuth();
   const currentMode = useCurrentMode();
-  const { theme, toggleTheme } = useTheme();
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/auth/sign-in");
-  };
-
-  const getInitials = () => {
-    if (profile?.full_name) {
-      const parts = profile.full_name.trim().split(/\s+/);
-      if (parts.length >= 2) {
-        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-      }
-      return parts[0].slice(0, 2).toUpperCase();
-    }
-    if (profile?.email) {
-      return profile.email.slice(0, 2).toUpperCase();
-    }
-    return "U";
-  };
-
-  // Show "Return to System Console" when in a workspace (not admin mode)
   const showReturnToConsole = isPlatformAdmin && currentMode !== "admin";
-
-  const isMobileView = useIsMobile();
-  // Mobile: 32px avatar, Desktop: 28px
-  const avatarSize = isMobileView ? 32 : PORTAL_AVATAR.sizeDesktop;
-
+  const showSystemConsole = isPlatformAdmin && currentMode === "admin";
+  
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          className={cn(
-            "rounded-full shrink-0 inline-flex items-center justify-center",
-            "text-[10px] font-medium uppercase",
-            "focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
-          )}
-          style={{
-            height: avatarSize,
-            width: avatarSize,
-            minHeight: avatarSize,
-            minWidth: avatarSize,
-            backgroundColor: PORTAL_AVATAR.bgColor,
-            color: PORTAL_AVATAR.textColor,
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = PORTAL_AVATAR.bgColorHover}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = PORTAL_AVATAR.bgColor}
-          aria-label="Account menu"
-        >
-          {getInitials()}
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end" 
-        className="w-56 rounded-lg"
-        style={{
-          backgroundColor: 'var(--tribes-header-bg)',
-          borderColor: 'var(--tribes-border)',
-        }}
-        sideOffset={8}
-      >
-        <div className="px-3 py-2.5">
-          <p className="text-[13px] font-medium truncate" style={{ color: 'var(--tribes-text)' }}>
-            {profile?.full_name || profile?.email}
-          </p>
-          {profile?.email && profile?.full_name && (
-            <p className="text-[11px] truncate mt-0.5" style={{ color: 'var(--tribes-text-muted)' }}>
-              {profile.email}
-            </p>
-          )}
-        </div>
-        
-        <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
-        
-        {/* Return to System Console - shown when in workspace */}
-        {showReturnToConsole && (
-          <>
-            <DropdownMenuItem
-              onClick={() => navigate("/admin")}
-              className="text-[13px] py-2 focus:bg-white/5"
-              style={{ color: 'var(--tribes-text-secondary)' }}
-            >
-              <ArrowLeft size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
-              Return to System Console
-            </DropdownMenuItem>
-            <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
-          </>
-        )}
-        
-        {/* System Console link - only in admin mode for completeness */}
-        {isPlatformAdmin && currentMode === "admin" && (
-          <DropdownMenuItem
-            onClick={() => navigate("/admin")}
-            className="text-[13px] py-2 focus:bg-white/5 bg-white/[0.02]"
-            style={{ color: 'var(--tribes-text-secondary)' }}
-          >
-            <Shield size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
-            {NAV_LABELS.SYSTEM_CONSOLE}
-          </DropdownMenuItem>
-        )}
-        
-        <DropdownMenuItem
-          onClick={() => navigate("/account")}
-          className="text-[13px] py-2 focus:bg-white/5"
-          style={{ color: 'var(--tribes-text-secondary)' }}
-        >
-          <Settings size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
-          {NAV_LABELS.ACCOUNT_SETTINGS}
-        </DropdownMenuItem>
-        
-        {/* Theme toggle */}
-        <DropdownMenuItem
-          onClick={toggleTheme}
-          className="text-[13px] py-2 focus:bg-white/5"
-          style={{ color: 'var(--tribes-text-secondary)' }}
-        >
-          {theme === 'dark' ? (
-            <Sun size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
-          ) : (
-            <Moon size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2 opacity-70" />
-          )}
-          {theme === 'dark' ? 'Light mode' : 'Dark mode'}
-        </DropdownMenuItem>
-        
-        <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
-        <DropdownMenuItem
-          onClick={handleSignOut}
-          className="text-[13px] py-2 text-red-400 focus:bg-white/5 focus:text-red-300"
-        >
-          <LogOut size={ICON_SIZE} strokeWidth={ICON_STROKE} className="mr-2" />
-          Sign out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <ProfileDropdown
+      avatarVariant="dark"
+      showReturnToConsole={showReturnToConsole}
+      showSystemConsole={showSystemConsole}
+    />
   );
 }
 
