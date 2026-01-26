@@ -21,7 +21,7 @@ import { NAV_LABELS } from "@/styles/tokens";
  * 
  * Specs:
  * - Menu width: ~260px
- * - Icon size: 14px (h-3.5 w-3.5), left-aligned
+ * - Icon size: 16px (h-4 w-4), left-aligned
  * - Text: text-[13px]
  * - Padding: container py-2, items px-3 py-2, gap-2
  * - Sign out: neutral by default, red on hover
@@ -101,7 +101,7 @@ export function ProfileDropdown({
               onClick={() => navigate("/admin")}
               className="px-3 py-2 text-[13px] gap-2"
             >
-              <ArrowLeft className="h-3.5 w-3.5 opacity-50" strokeWidth={1.5} />
+              <ArrowLeft className="h-4 w-4 opacity-50" strokeWidth={1.5} />
               Return to System Console
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -114,7 +114,7 @@ export function ProfileDropdown({
             onClick={() => navigate("/admin")}
             className="px-3 py-2 text-[13px] gap-2"
           >
-            <Shield className="h-3.5 w-3.5 opacity-50" strokeWidth={1.5} />
+            <Shield className="h-4 w-4 opacity-50" strokeWidth={1.5} />
             {NAV_LABELS.SYSTEM_CONSOLE}
           </DropdownMenuItem>
         )}
@@ -124,7 +124,7 @@ export function ProfileDropdown({
           onClick={() => navigate("/account")}
           className="px-3 py-2 text-[13px] gap-2"
         >
-          <Settings className="h-3.5 w-3.5 opacity-50" strokeWidth={1.5} />
+          <Settings className="h-4 w-4 opacity-50" strokeWidth={1.5} />
           {NAV_LABELS.ACCOUNT_SETTINGS}
         </DropdownMenuItem>
 
@@ -134,9 +134,9 @@ export function ProfileDropdown({
           className="px-3 py-2 text-[13px] gap-2"
         >
           {theme === "dark" ? (
-            <Sun className="h-3.5 w-3.5 opacity-50" strokeWidth={1.5} />
+            <Sun className="h-4 w-4 opacity-50" strokeWidth={1.5} />
           ) : (
-            <Moon className="h-3.5 w-3.5 opacity-50" strokeWidth={1.5} />
+            <Moon className="h-4 w-4 opacity-50" strokeWidth={1.5} />
           )}
           {theme === "dark" ? "Light mode" : "Dark mode"}
         </DropdownMenuItem>
@@ -148,7 +148,7 @@ export function ProfileDropdown({
           onClick={handleSignOut}
           className="px-3 py-2 text-[13px] gap-2 text-foreground hover:text-destructive focus:text-destructive"
         >
-          <LogOut className="h-3.5 w-3.5 opacity-50" strokeWidth={1.5} />
+          <LogOut className="h-4 w-4 opacity-50" strokeWidth={1.5} />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
