@@ -37,8 +37,8 @@ export function WorkspaceCard({
   const cardContent = (
     <div
       className={cn(
-        // More generous padding for breathing room: p-6 mobile, p-7 desktop
-        "group relative flex flex-col h-[180px] p-6 md:p-7 rounded-xl overflow-hidden",
+        // Institutional-grade padding: p-7 mobile, p-8 desktop for premium breathing room
+        "group relative flex flex-col h-[200px] p-7 md:p-8 rounded-xl overflow-hidden",
         "border transition-all duration-150",
         disabled
           ? "opacity-60 cursor-not-allowed border-[var(--border-subtle)]"
@@ -76,8 +76,8 @@ export function WorkspaceCard({
         )}
       </div>
 
-      {/* Content: Title + Description with proper spacing */}
-      <div className="flex-1 flex flex-col justify-end min-w-0 mt-4">
+      {/* Content: Title + Description with generous spacing */}
+      <div className="flex-1 flex flex-col justify-end min-w-0 mt-5">
         <h3
           className="text-[15px] font-semibold leading-tight truncate"
           style={{ color: "var(--text)" }}
@@ -85,7 +85,7 @@ export function WorkspaceCard({
           {title}
         </h3>
         <p
-          className="text-[13px] leading-relaxed mt-2 line-clamp-2 break-words"
+          className="text-[13px] leading-relaxed mt-2.5 line-clamp-2 break-words"
           style={{ color: "var(--text-muted)" }}
         >
           {description}
