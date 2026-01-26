@@ -34,11 +34,7 @@ export default function RootRedirect() {
     return <Navigate to="/auditor" replace />;
   }
 
-  // Platform admin goes to admin dashboard
-  if (isPlatformAdmin) {
-    return <Navigate to="/admin" replace />;
-  }
-
+  // All authenticated users (admin or not) go to Modules Home
   // Route based on access state
   switch (accessState) {
     case "no-access-request":
@@ -48,12 +44,8 @@ export default function RootRedirect() {
     case "suspended-access":
       return <Navigate to="/app/suspended" replace />;
     case "active":
-      // Redirect to active context dashboard
-      if (activeContext) {
-        return <Navigate to={`/app/${activeContext}`} replace />;
-      }
-      // Fallback
-      return <Navigate to="/app/licensing" replace />;
+      // All users land on Modules Home
+      return <Navigate to="/workstations" replace />;
     default:
       return <Navigate to="/auth/sign-in" replace />;
   }
