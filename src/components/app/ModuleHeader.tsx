@@ -1,53 +1,50 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { AppSearchInput } from "@/components/app-ui/AppSearchInput";
-import { ProfileDropdown } from "@/components/ui/profile-dropdown";
 import { NotificationCenter } from "@/components/app/NotificationCenter";
 import { GlobalSearchDialog } from "@/components/search/GlobalSearchDialog";
 import { SidebarHeader, ContentHeader } from "@/components/app/AppShell";
-import { NAV_LABELS, PORTAL_TYPOGRAPHY } from "@/styles/tokens";
+import { WorkspaceSwitcher } from "@/components/app/WorkspaceSwitcher";
+import { UserAvatar, getInitialsFromProfile } from "@/components/ui/user-avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * MODULE HEADER — STRIPE-LIKE UNIFIED HEADER
  * 
  * Provides consistent header across all modules:
- * - Left: Logo in sidebar column + back link
+ * - Left: WorkspaceSwitcher (Tribes + workspace name dropdown)
  * - Center: Global search input
- * - Right: Notifications + profile dropdown
+ * - Right: Notifications + profile avatar (simplified)
  * 
  * Used by SystemConsoleLayout, ModuleLayout, HelpWorkstationLayout
  */
 
 interface ModuleHeaderProps {
-  /** Show "Back to Modules" button */
+  /** Show "Back to Modules" button - DEPRECATED, handled by WorkspaceSwitcher */
   showBackToModules?: boolean;
-  /** Custom context label for dropdown */
+  /** Custom context label for dropdown - DEPRECATED */
   contextLabel?: string;
   /** Whether we're in a sidebar layout (show split header) */
   showSidebarLogo?: boolean;
-  /** Logo click destination */
+  /** Logo click destination - DEPRECATED */
   logoDestination?: string;
-  /** Show return to console in dropdown */
+  /** Show return to console in dropdown - DEPRECATED */
   showReturnToConsole?: boolean;
-  /** Show system console in dropdown */
+  /** Show system console in dropdown - DEPRECATED */
   showSystemConsole?: boolean;
 }
 
 export function ModuleHeader({
-  showBackToModules = true,
-  contextLabel,
   showSidebarLogo = true,
-  logoDestination = "/workspaces",
-  showReturnToConsole = false,
-  showSystemConsole = false,
 }: ModuleHeaderProps) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { profile } = useAuth();
   const [searchValue, setSearchValue] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  
+  const initials = getInitialsFromProfile(profile);
 
   // Mobile header
   if (isMobile) {
@@ -55,28 +52,19 @@ export function ModuleHeader({
       <div 
         className="w-full h-full flex items-center justify-between px-4"
       >
-        {/* Left: Logo */}
-        <button
-          onClick={() => navigate(logoDestination)}
-          className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded uppercase shrink-0"
-          style={{
-            fontSize: '11px',
-            letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-            color: 'var(--foreground)',
-          }}
-        >
-          {NAV_LABELS.BRAND_WORDMARK}
-        </button>
+        {/* Left: Workspace switcher (compact) */}
+        <WorkspaceSwitcher />
 
-        {/* Right: Notifications + Avatar */}
+        {/* Right: Notifications + Avatar (just navigates to account) */}
         <div className="flex items-center gap-2 shrink-0">
           <NotificationCenter />
-          <ProfileDropdown 
-            avatarVariant="light" 
-            contextLabel={contextLabel}
-            showReturnToConsole={showReturnToConsole}
-            showSystemConsole={showSystemConsole}
-          />
+          <button
+            onClick={() => navigate("/account")}
+            className="focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-full"
+            aria-label="Account"
+          >
+            <UserAvatar initials={initials} size="md" variant="light" />
+          </button>
         </div>
       </div>
     );
@@ -86,38 +74,9 @@ export function ModuleHeader({
   if (showSidebarLogo) {
     return (
       <>
-        {/* Left column: Sidebar-colored logo area */}
+        {/* Left column: Sidebar-colored workspace switcher area */}
         <SidebarHeader
-          logo={
-            <div className="flex items-center gap-2">
-              {showBackToModules && (
-                <button
-                  onClick={() => navigate("/workspaces")}
-                  className={cn(
-                    "flex items-center justify-center rounded-lg h-8 w-8",
-                    "transition-colors duration-150",
-                    "hover:bg-[var(--muted-wash)]",
-                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
-                  )}
-                  aria-label="Back to Modules"
-                  title="Back to Modules"
-                >
-                  <ArrowLeft className="h-4 w-4 opacity-60" strokeWidth={1.5} />
-                </button>
-              )}
-              <button
-                onClick={() => navigate(logoDestination)}
-                className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded uppercase"
-                style={{
-                  fontSize: PORTAL_TYPOGRAPHY.brandWordmark.size,
-                  letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-                  color: 'var(--foreground)',
-                }}
-              >
-                {NAV_LABELS.BRAND_WORDMARK}
-              </button>
-            </div>
-          }
+          logo={<WorkspaceSwitcher />}
         />
 
         {/* Right column: Search + account actions */}
@@ -142,15 +101,16 @@ export function ModuleHeader({
             </button>
           </div>
 
-          {/* Right: Notifications + Account */}
+          {/* Right: Notifications + Avatar (simplified - main nav is in WorkspaceSwitcher) */}
           <div className="flex items-center gap-2">
             <NotificationCenter />
-            <ProfileDropdown 
-              avatarVariant="light" 
-              contextLabel={contextLabel}
-              showReturnToConsole={showReturnToConsole}
-              showSystemConsole={showSystemConsole}
-            />
+            <button
+              onClick={() => navigate("/account")}
+              className="focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-full"
+              aria-label="Account"
+            >
+              <UserAvatar initials={initials} size="sm" variant="light" />
+            </button>
           </div>
         </ContentHeader>
 
@@ -160,23 +120,13 @@ export function ModuleHeader({
     );
   }
 
-  // Desktop without sidebar
+  // Desktop without sidebar (uses WorkspaceSwitcher as well)
   return (
     <div 
       className="w-full h-full flex items-center justify-between px-6"
     >
-      {/* Left: Logo */}
-      <button
-        onClick={() => navigate(logoDestination)}
-        className="font-semibold hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded uppercase"
-        style={{
-          fontSize: PORTAL_TYPOGRAPHY.brandWordmark.size,
-          letterSpacing: `${PORTAL_TYPOGRAPHY.brandWordmark.tracking}em`,
-          color: 'var(--foreground)',
-        }}
-      >
-        {NAV_LABELS.BRAND_WORDMARK}
-      </button>
+      {/* Left: Workspace switcher */}
+      <WorkspaceSwitcher />
 
       {/* Center: Search trigger */}
       <div className="flex-1 flex items-center justify-center max-w-xl mx-6">
@@ -195,15 +145,16 @@ export function ModuleHeader({
         </button>
       </div>
 
-      {/* Right: Account */}
+      {/* Right: Notifications + Avatar */}
       <div className="flex items-center gap-2">
         <NotificationCenter />
-        <ProfileDropdown
-          avatarVariant="light" 
-          contextLabel={contextLabel}
-          showReturnToConsole={showReturnToConsole}
-          showSystemConsole={showSystemConsole}
-        />
+        <button
+          onClick={() => navigate("/account")}
+          className="focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-full"
+          aria-label="Account"
+        >
+          <UserAvatar initials={initials} size="sm" variant="light" />
+        </button>
       </div>
 
       {/* Global search dialog */}
