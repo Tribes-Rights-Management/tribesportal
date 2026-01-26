@@ -13,18 +13,14 @@ export default function SignInPage() {
   const [searchParams] = useSearchParams();
   const logoutReason = searchParams.get("reason");
 
-  // If already authenticated with valid profile, redirect to appropriate dashboard
+  // If already authenticated with valid profile, redirect to Modules Home
   if (!loading && user && profile) {
     if (profile.status !== "active") {
       return <Navigate to="/auth/error" replace />;
     }
     
-    // Platform admins go to admin, everyone else goes to app
-    if (profile.platform_role === "platform_admin") {
-      return <Navigate to="/admin" replace />;
-    }
-    
-    return <Navigate to="/app" replace />;
+    // All authenticated users go to Modules Home
+    return <Navigate to="/workstations" replace />;
   }
 
   if (loading) {

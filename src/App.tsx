@@ -143,6 +143,9 @@ import NotFoundPage from "@/pages/NotFoundPage";
 // Root redirect component
 import RootRedirect from "@/components/RootRedirect";
 
+// Modules Home — landing page for all authenticated users
+import WorkstationsHomePage from "@/pages/workstations/WorkstationsHomePage";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -178,6 +181,16 @@ const App = () => (
         <Route path="/auth/link-expired" element={<LinkExpiredPage />} />
         <Route path="/auth/unauthorized" element={<UnauthorizedPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
+
+        {/* ═══════════════════════════════════════════════════════════════════════
+            MODULES HOME (/workstations) — LANDING PAGE FOR ALL AUTHENTICATED USERS
+            Shows module tiles based on user permissions
+        ═══════════════════════════════════════════════════════════════════════ */}
+        <Route path="/workstations" element={
+          <AppProtectedRoute>
+            <WorkstationsHomePage />
+          </AppProtectedRoute>
+        } />
 
         {/* App access state pages (outside protected layout) */}
         <Route path="/app/pending" element={<PendingApprovalPage />} />

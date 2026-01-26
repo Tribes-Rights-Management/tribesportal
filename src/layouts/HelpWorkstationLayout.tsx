@@ -373,10 +373,10 @@ export function HelpWorkstationLayout() {
             className="h-full grid items-center gap-4"
             style={{ gridTemplateColumns: '1fr minmax(420px, 680px) 1fr' }}
           >
-            {/* Left: Back + Wordmark */}
+            {/* Left: Back to Modules + Wordmark */}
             <div className="flex items-center gap-2">
               <button
-                onClick={() => navigate("/admin")}
+                onClick={() => navigate("/workstations")}
                 className={cn(
                   "flex items-center justify-center rounded-lg h-9 w-9",
                   "transition-colors duration-150",
@@ -393,7 +393,8 @@ export function HelpWorkstationLayout() {
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
                 }}
-                aria-label="Back to System Console"
+                aria-label="Back to Modules"
+                title="Back to Modules"
               >
                 <ArrowLeft className="h-5 w-5" strokeWidth={1.5} />
               </button>

@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, Eye, ArrowRight } from "lucide-react";
+import { LogOut, Settings, Eye, ArrowRight, LayoutGrid } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { NAV_LABELS, ICON_SIZE, ICON_STROKE, PORTAL_TYPOGRAPHY, PORTAL_AVATAR } from "@/styles/tokens";
@@ -206,8 +206,25 @@ export function SystemConsoleHeader() {
           )}
         </div>
 
-        {/* Right: Enter Workspace button + Account */}
+        {/* Right: Back to Modules + Enter Workspace button + Account */}
         <div className="flex items-center gap-3 shrink-0">
+          {/* Back to Modules */}
+          <button
+            onClick={() => navigate("/workstations")}
+            className={cn(
+              "flex items-center gap-1.5 rounded transition-colors duration-150",
+              "hover:bg-muted/50",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]",
+              isMobile ? "h-8 w-8 justify-center" : "px-3 py-1.5 text-[12px] font-medium"
+            )}
+            style={{ color: 'var(--tribes-fg-secondary)' }}
+            aria-label="Back to Modules"
+            title="Back to Modules"
+          >
+            <LayoutGrid className={isMobile ? "h-4 w-4" : "h-3.5 w-3.5"} />
+            {!isMobile && <span>Modules</span>}
+          </button>
+          
           {hasWorkspaces && (
             <button
               onClick={() => setWorkspaceModalOpen(true)}
