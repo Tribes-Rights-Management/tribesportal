@@ -150,6 +150,7 @@ import InviteAcceptPage from "@/pages/invite/InviteAcceptPage";
 
 // Organization management pages
 import OrganizationUsersPage from "@/pages/admin/OrganizationUsersPage";
+import OrgUsersPage from "@/pages/admin/OrgUsersPage";
 
 const queryClient = new QueryClient();
 
@@ -270,6 +271,7 @@ const App = () => (
           <Route path="payments/invoices" element={<PortalInvoicesPage />} />
           <Route path="payments/methods" element={<PortalPaymentMethodsPage />} />
           <Route path="payments/history" element={<PortalPaymentHistoryPage />} />
+          <Route path="users" element={<OrgUsersPage />} />
         </Route>
         
         {/* Legacy Tribes Admin redirects */}

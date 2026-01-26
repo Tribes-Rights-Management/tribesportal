@@ -1,61 +1,62 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { useRoleAccess } from "@/hooks/useRoleAccess";
-import { useUserModuleAccess } from "@/hooks/useUserModuleAccess";
+import { useUserModuleAccess } from "./useUserModuleAccess";
+import { 
+  canAccessConsole, 
+  canManageHelp,
+} from "@/lib/permissions";
 
 /**
- * MODULE ACCESS HELPERS — CENTRALIZED PERMISSION CHECKS
+ * MODULE ACCESS HOOK — WORKSPACE TILE GATING
  * 
- * ═══════════════════════════════════════════════════════════════════════════
- * Single source of truth for module visibility on Modules Home.
- * These helpers determine which tiles are shown to each user.
+ * Determines which workstations/modules are visible to the current user.
+ * Uses the centralized permission helpers from lib/permissions.ts.
  * 
- * PERMISSION HIERARCHY:
- * 1. Platform admins → full access to all modules
- * 2. Module access records → explicit grants via invitations
- * 3. Legacy role-based access → fallback for existing users
- * ═══════════════════════════════════════════════════════════════════════════
+ * Access hierarchy:
+ * 1. Platform admins (platform_owner): Access to everything
+ * 2. Module access grants: From module_access table (organization-scoped)
+ * 3. Legacy role-based: Fallback for backward compatibility
  */
 
-export interface ModuleAccess {
-  /** System Console — platform_admin only */
+interface ModuleAccess {
   canAccessSystemConsole: boolean;
-  /** Help Workstation — platform_admin OR (platform_user + can_manage_help) */
   canAccessHelpWorkstation: boolean;
-  /** Tribes Licensing — platform_admin OR users with licensing module access */
   canAccessTribesLicensing: boolean;
-  /** Tribes Admin — platform_admin OR users with admin module access */
   canAccessTribesAdmin: boolean;
-  /** Whether access data is still loading */
   isLoading: boolean;
 }
 
 export function useModuleAccess(): ModuleAccess {
-  const { profile, isPlatformAdmin } = useAuth();
-  const { 
-    canAccessAdmin,
-    canAccessHelp,
-    canAccessLicensing,
-    canAccessPortal,
-    isExternalAuditor,
-  } = useRoleAccess();
+  const { profile, isPlatformAdmin, activeTenant } = useAuth();
   
   // Check module_access table for explicit grants
-  const { hasAdminAccess, hasLicensingAccess, isLoading } = useUserModuleAccess();
+  const { hasAdminAccess, hasLicensingAccess, moduleAccessRecords, isLoading } = useUserModuleAccess();
 
-  // System Console: Only platform admins (external auditors have their own /auditor route)
-  const canAccessSystemConsole = (canAccessAdmin && !isExternalAuditor) || isPlatformAdmin;
+  // For org-scoped modules, check if user has access for the ACTIVE organization
+  const hasAdminForActiveOrg = moduleAccessRecords.some(
+    (record) => 
+      record.module === "admin" && 
+      !record.revoked_at &&
+      (activeTenant ? record.organization_id === activeTenant.tenant_id : true)
+  );
+
+  const hasLicensingForActiveOrg = moduleAccessRecords.some(
+    (record) => 
+      record.module === "licensing" && 
+      !record.revoked_at &&
+      (activeTenant ? record.organization_id === activeTenant.tenant_id : true)
+  );
+
+  // System Console: Only platform admins (platform owner)
+  const canAccessSystemConsole = canAccessConsole(profile);
 
   // Help Workstation: Platform admins OR platform_user with can_manage_help capability
-  const canAccessHelpWorkstation = isPlatformAdmin || 
-    (profile?.platform_role === 'platform_user' && profile?.can_manage_help === true);
+  const canAccessHelpWorkstation = canManageHelp(profile);
 
-  // Tribes Licensing: Platform admins OR users with licensing module access (from module_access table)
-  // Falls back to legacy role-based check if no explicit module_access records
-  const canAccessTribesLicensing = isPlatformAdmin || hasLicensingAccess || canAccessLicensing;
+  // Tribes Licensing: Platform admins OR users with licensing module access for active org
+  const canAccessTribesLicensing = isPlatformAdmin || hasLicensingForActiveOrg || hasLicensingAccess;
 
-  // Tribes Admin: Platform admins OR users with admin module access (from module_access table)
-  // Falls back to legacy role-based check if no explicit module_access records
-  const canAccessTribesAdmin = isPlatformAdmin || hasAdminAccess || canAccessPortal;
+  // Tribes Admin: Platform admins OR users with admin module access for active org
+  const canAccessTribesAdmin = isPlatformAdmin || hasAdminForActiveOrg || hasAdminAccess;
 
   return {
     canAccessSystemConsole,

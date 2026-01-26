@@ -13,6 +13,7 @@ import {
   FileCheck,
   Receipt,
   CreditCard,
+  Users,
 } from "lucide-react";
 import type { NavItem } from "@/components/app/SideNav";
 
@@ -35,21 +36,22 @@ const licensingNavItems: NavItem[] = [
   { to: "/licensing/payments", label: "Payments", icon: CreditCard },
 ];
 
-// Tribes Admin module navigation (renamed from "Client Portal")
-const portalNavItems: NavItem[] = [
-  { to: "/portal", label: "Overview", icon: LayoutDashboard, exact: true },
-  { to: "/portal/agreements", label: "Agreements", icon: FileCheck },
-  { to: "/portal/statements", label: "Statements", icon: Receipt },
-  { to: "/portal/documents", label: "Documents", icon: FolderOpen },
-  { to: "/portal/payments", label: "Payments", icon: CreditCard },
+// Tribes Admin module navigation — ORGANIZATION-SCOPED
+const adminNavItems: NavItem[] = [
+  { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
+  { to: "/admin/agreements", label: "Agreements", icon: FileCheck },
+  { to: "/admin/statements", label: "Statements", icon: Receipt },
+  { to: "/admin/documents", label: "Documents", icon: FolderOpen },
+  { to: "/admin/payments", label: "Payments", icon: CreditCard },
+  { to: "/admin/users", label: "Users", icon: Users },
 ];
 
 function getNavItemsForPath(pathname: string): NavItem[] {
   if (pathname.startsWith("/licensing")) {
     return licensingNavItems;
   }
-  if (pathname.startsWith("/portal")) {
-    return portalNavItems;
+  if (pathname.startsWith("/admin")) {
+    return adminNavItems;
   }
   return [];
 }
