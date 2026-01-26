@@ -1,22 +1,25 @@
 import { useRef, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { AppShell } from "@/components/app/AppShell";
-import { SystemConsoleHeader } from "@/components/app/SystemConsoleHeader";
+import { ModuleHeader } from "@/components/app/ModuleHeader";
+import { ConsoleNav } from "@/components/console/ConsoleNav";
 import { useScrollReset } from "@/hooks/useScrollReset";
 import { useScopeTransition } from "@/hooks/useScopeTransition";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
- * SYSTEM CONSOLE LAYOUT — STRIPE-LIKE SHELL (NO SIDEBAR)
+ * SYSTEM CONSOLE LAYOUT — STRIPE-LIKE SHELL WITH SIDEBAR
  * 
  * ═══════════════════════════════════════════════════════════════════════════
- * System Console is NOT a workspace. It is company-level governance.
- * Uses a simple full-width layout without sidebar.
+ * System Console is company-level governance with a persistent left sidebar.
+ * Uses the unified AppShell with ConsoleNav for navigation.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 export function SystemConsoleLayout() {
   const mainRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const { canAccessScope } = useScopeTransition();
   const { isPlatformAdmin, isExternalAuditor } = useRoleAccess();
   
@@ -30,10 +33,21 @@ export function SystemConsoleLayout() {
     }
   }, [canAccessScope, isPlatformAdmin, isExternalAuditor, navigate]);
 
+  // Show sidebar on desktop
+  const showSidebar = !isMobile;
+
   return (
     <AppShell
-      showSidebar={false}
-      headerContent={<SystemConsoleHeader />}
+      showSidebar={showSidebar}
+      headerContent={
+        <ModuleHeader 
+          showSidebarLogo={showSidebar}
+          showBackToModules={true}
+          contextLabel="System Console"
+          logoDestination="/console"
+        />
+      }
+      sidebarContent={<ConsoleNav />}
     >
       <Outlet />
     </AppShell>

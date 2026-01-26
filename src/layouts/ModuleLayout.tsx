@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { AppShell } from "@/components/app/AppShell";
-import { AppHeader } from "@/components/app/AppHeader";
+import { ModuleHeader } from "@/components/app/ModuleHeader";
 import { SideNav } from "@/components/app/SideNav";
 import { useScrollReset } from "@/hooks/useScrollReset";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -18,12 +18,12 @@ import {
 import type { NavItem } from "@/components/app/SideNav";
 
 /**
- * MODULE LAYOUT — STRIPE-LIKE GRID SHELL (CANONICAL)
+ * MODULE LAYOUT — STRIPE-LIKE GRID SHELL WITH SIDEBAR + GLOBAL SEARCH
  * 
  * Layout Rules:
  * - Desktop: 2-column CSS Grid (sidebar + content)
  * - Sidebar starts at y=0 (full viewport height)
- * - Header spans full width with logo in sidebar column
+ * - Header spans full width with logo in sidebar column + global search in content column
  * - Mobile: stacked layout (header above content)
  * - Module-specific side navigation
  */
@@ -56,9 +56,31 @@ function getNavItemsForPath(pathname: string): NavItem[] {
   return [];
 }
 
+function getContextLabel(pathname: string): string {
+  if (pathname.startsWith("/licensing")) {
+    return "Licensing";
+  }
+  if (pathname.startsWith("/admin")) {
+    return "Tribes Admin";
+  }
+  return "";
+}
+
+function getLogoDestination(pathname: string): string {
+  if (pathname.startsWith("/licensing")) {
+    return "/licensing";
+  }
+  if (pathname.startsWith("/admin")) {
+    return "/admin";
+  }
+  return "/workspaces";
+}
+
 export function ModuleLayout() {
   const location = useLocation();
   const navItems = getNavItemsForPath(location.pathname);
+  const contextLabel = getContextLabel(location.pathname);
+  const logoDestination = getLogoDestination(location.pathname);
   const mainRef = useRef<HTMLElement>(null);
   const isMobile = useIsMobile();
   
@@ -70,7 +92,14 @@ export function ModuleLayout() {
   return (
     <AppShell
       showSidebar={showSidebar}
-      headerContent={<AppHeader showSidebarLogo={showSidebar} />}
+      headerContent={
+        <ModuleHeader 
+          showSidebarLogo={showSidebar}
+          showBackToModules={true}
+          contextLabel={contextLabel}
+          logoDestination={logoDestination}
+        />
+      }
       sidebarContent={<SideNav items={navItems} />}
     >
       <Outlet />
