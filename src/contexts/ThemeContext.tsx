@@ -4,12 +4,12 @@
  * ═══════════════════════════════════════════════════════════════════════════════
  * 
  * Manages application theme state with:
- * - localStorage persistence
- * - System preference detection (prefers-color-scheme)
+ * - localStorage persistence for user preference
+ * - Default: LIGHT mode (system preference detection DISABLED)
  * - Real-time toggle without page refresh
  * 
- * Default: Light mode
- * Auth pages: Always dark (override via AuthLayout)
+ * DESIGN SPEC: Stripe-grade light theme is the standard.
+ * Auth pages use dark via CSS variables (no class toggle needed).
  */
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
@@ -29,19 +29,16 @@ const THEME_STORAGE_KEY = 'tribes-theme-preference';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
-    // Check localStorage first
+    // Check localStorage for user preference
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem(THEME_STORAGE_KEY);
       if (stored === 'light' || stored === 'dark') {
         return stored;
       }
-      // Fall back to system preference, defaulting to light
-      // Note: We default to light even if no system preference
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-      }
     }
-    return 'light'; // Default to light mode
+    // ALWAYS default to light mode - ignore system preference
+    // Per design spec: Stripe-grade light theme is the standard
+    return 'light';
   });
 
   // Apply theme class to document
@@ -60,21 +57,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
 
-  // Listen for system preference changes
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      // Only auto-switch if user hasn't explicitly set a preference
-      const stored = localStorage.getItem(THEME_STORAGE_KEY);
-      if (!stored) {
-        setThemeState(e.matches ? 'dark' : 'light');
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  // NOTE: System preference detection disabled
+  // We always default to light mode per design spec
+  // Users can manually toggle to dark if they prefer
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
