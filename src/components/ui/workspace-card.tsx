@@ -37,8 +37,8 @@ export function WorkspaceCard({
   const cardContent = (
     <div
       className={cn(
-        // Institutional-grade padding with explicit gap for symmetric spacing
-        "group relative flex flex-col gap-5 h-[200px] p-7 md:p-8 rounded-xl overflow-hidden",
+        // Symmetric padding: justify-center centers entire content block (icon + text) as a unit
+        "group relative flex flex-col justify-center gap-4 h-[200px] p-7 md:p-8 rounded-xl overflow-hidden",
         "border transition-all duration-150",
         disabled
           ? "opacity-60 cursor-not-allowed border-[var(--border-subtle)]"
