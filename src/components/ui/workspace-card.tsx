@@ -76,8 +76,8 @@ export function WorkspaceCard({
         )}
       </div>
 
-      {/* Content: Title + Description with generous spacing */}
-      <div className="flex-1 flex flex-col justify-end min-w-0 mt-5">
+      {/* Content: Title + Description - centered vertically for balanced spacing */}
+      <div className="flex-1 flex flex-col justify-center min-w-0">
         <h3
           className="text-[15px] font-semibold leading-tight truncate"
           style={{ color: "var(--text)" }}
