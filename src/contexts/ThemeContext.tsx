@@ -28,33 +28,38 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const THEME_STORAGE_KEY = 'tribes-theme-preference';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  // LIGHT-LOCK GUARDRAIL: Always force light theme
+  // This runs synchronously before first render to prevent flicker
   const [theme, setThemeState] = useState<Theme>(() => {
-    // Check localStorage for user preference
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem(THEME_STORAGE_KEY);
-      if (stored === 'light' || stored === 'dark') {
-        return stored;
+      
+      // ONE-TIME MIGRATION: If stored value is not "light", fix it
+      if (stored !== 'light') {
+        localStorage.setItem(THEME_STORAGE_KEY, 'light');
       }
+      
+      // Immediately clean up any dark class that might be on <html>
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+      document.documentElement.setAttribute('data-theme', 'light');
     }
-    // ALWAYS default to light mode - ignore system preference
-    // Per design spec: Stripe-grade light theme is the standard
+    
+    // ALWAYS return light - ignore stored value, ignore system preference
     return 'light';
   });
 
-  // Apply theme class to document
+  // Apply theme class to document (reinforces light theme)
   useEffect(() => {
     const root = document.documentElement;
     
-    if (theme === 'dark') {
-      root.classList.add('dark');
-      root.setAttribute('data-theme', 'dark');
-    } else {
-      root.classList.remove('dark');
-      root.setAttribute('data-theme', 'light');
-    }
+    // GUARDRAIL: Always enforce light theme, even if state somehow changed
+    root.classList.remove('dark');
+    root.classList.add('light');
+    root.setAttribute('data-theme', 'light');
     
-    // Persist to localStorage
-    localStorage.setItem(THEME_STORAGE_KEY, theme);
+    // Persist light to localStorage (ensures consistency)
+    localStorage.setItem(THEME_STORAGE_KEY, 'light');
   }, [theme]);
 
   // NOTE: System preference detection disabled
@@ -96,18 +101,17 @@ export function useTheme() {
 export function useForceDarkTheme() {
   useEffect(() => {
     const root = document.documentElement;
-    const previousTheme = root.getAttribute('data-theme');
     
-    // Force dark
+    // Force dark for this layout (e.g., auth pages)
+    root.classList.remove('light');
     root.classList.add('dark');
     root.setAttribute('data-theme', 'dark');
     
-    // Restore on unmount
+    // Restore light on unmount (light-lock guardrail)
     return () => {
-      if (previousTheme === 'light') {
-        root.classList.remove('dark');
-        root.setAttribute('data-theme', 'light');
-      }
+      root.classList.remove('dark');
+      root.classList.add('light');
+      root.setAttribute('data-theme', 'light');
     };
   }, []);
 }
