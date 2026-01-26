@@ -145,6 +145,12 @@ import RootRedirect from "@/components/RootRedirect";
 // Modules Home — landing page for all authenticated users
 import WorkstationsHomePage from "@/pages/workstations/WorkstationsHomePage";
 
+// Invitation acceptance page
+import InviteAcceptPage from "@/pages/invite/InviteAcceptPage";
+
+// Organization management pages
+import OrganizationUsersPage from "@/pages/admin/OrganizationUsersPage";
+
 const queryClient = new QueryClient();
 
 /**
@@ -199,6 +205,12 @@ const App = () => (
         <Route path="/auth/link-expired" element={<LinkExpiredPage />} />
         <Route path="/auth/unauthorized" element={<UnauthorizedPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
+
+        {/* ═══════════════════════════════════════════════════════════════════════
+            INVITATION ACCEPTANCE (/invite/accept)
+            Public route - validates token and accepts invitation
+        ═══════════════════════════════════════════════════════════════════════ */}
+        <Route path="/invite/accept" element={<InviteAcceptPage />} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
             MODULES HOME (/workspaces) — LANDING PAGE FOR ALL AUTHENTICATED USERS
@@ -304,6 +316,7 @@ const App = () => (
           <Route index element={<AdminDashboard />} />
           <Route path="approvals" element={<ApprovalsPage />} />
           <Route path="tenants" element={<TenantsPage />} />
+          <Route path="tenants/:tenantId/users" element={<OrganizationUsersPage />} />
           <Route path="users" element={<UserDirectoryPage />} />
           <Route path="users/:userId/permissions" element={<PermissionsPage />} />
           <Route path="settings" element={<AccountSettingsPage />} />
