@@ -37,8 +37,8 @@ export function WorkspaceCard({
   const cardContent = (
     <div
       className={cn(
-        // Fixed height, overflow protection, padding
-        "group relative flex flex-col h-[156px] p-5 rounded-xl overflow-hidden",
+        // More generous padding for breathing room: p-6 mobile, p-7 desktop
+        "group relative flex flex-col h-[180px] p-6 md:p-7 rounded-xl overflow-hidden",
         "border transition-all duration-150",
         disabled
           ? "opacity-60 cursor-not-allowed border-[var(--border-subtle)]"
@@ -48,21 +48,16 @@ export function WorkspaceCard({
         backgroundColor: "var(--card-bg)",
       }}
     >
-      {/* Top row: Icon chip + Chevron/Lock */}
+      {/* Top row: Icon (no background) + Chevron/Lock */}
       <div className="flex items-start justify-between shrink-0">
-        {/* Icon container: 40px, soft gray, radius 12px */}
-        <div
-          className="flex items-center justify-center w-10 h-10 rounded-xl shrink-0"
-          style={{ backgroundColor: "var(--muted-wash)" }}
-        >
-          <Icon
-            className="h-5 w-5 shrink-0"
-            strokeWidth={1.5}
-            style={{ color: "var(--text-muted)" }}
-          />
-        </div>
+        {/* Icon directly on card surface - no grey background */}
+        <Icon
+          className="h-6 w-6 shrink-0"
+          strokeWidth={1.5}
+          style={{ color: "var(--text-muted)" }}
+        />
 
-        {/* Chevron or Lock */}
+        {/* Chevron or Lock with comfortable right position */}
         {disabled ? (
           <Lock
             className="h-4 w-4 shrink-0"
@@ -81,16 +76,16 @@ export function WorkspaceCard({
         )}
       </div>
 
-      {/* Content: Title + Description — with overflow protection */}
-      <div className="flex-1 flex flex-col justify-end min-w-0 mt-3">
+      {/* Content: Title + Description with proper spacing */}
+      <div className="flex-1 flex flex-col justify-end min-w-0 mt-4">
         <h3
-          className="text-base font-semibold leading-tight truncate"
+          className="text-[15px] font-semibold leading-tight truncate"
           style={{ color: "var(--text)" }}
         >
           {title}
         </h3>
         <p
-          className="text-[13px] leading-snug mt-1.5 line-clamp-2 break-words min-h-[2.5em]"
+          className="text-[13px] leading-relaxed mt-2 line-clamp-2 break-words"
           style={{ color: "var(--text-muted)" }}
         >
           {description}

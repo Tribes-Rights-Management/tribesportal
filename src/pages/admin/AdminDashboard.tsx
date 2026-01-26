@@ -15,16 +15,15 @@ import { AdminListRow, AdminMetricRow, AdminSection } from "@/components/admin/A
  * INFORMATION ARCHITECTURE (REVISED):
  * 
  * 1. GOVERNANCE OVERVIEW — Stats only (metrics that answer "is the system healthy?")
- * 2. WORKSTATIONS — Navigation to sub-applications (Help Workstation lives here ONLY)
- * 3. AUDIT & ACTIVITY — Logs, trails, correlation
- * 4. REGULATORY & DISCLOSURES — Compliance exports
- * 5. FINANCIAL GOVERNANCE — Billing, revenue, invoices
- * 6. SECURITY & INTEGRITY — Access, sessions, RLS
+ * 2. AUDIT & ACTIVITY — Logs, trails, correlation
+ * 3. REGULATORY & DISCLOSURES — Compliance exports
+ * 4. FINANCIAL GOVERNANCE — Billing, revenue, invoices
+ * 5. SECURITY & INTEGRITY — Access, sessions, RLS
  * 
  * KEY ARCHITECTURAL DECISIONS:
  * - Stats (AdminMetricRow) live ONLY in Governance Overview
  * - Navigation items (AdminListRow) are separate from stats
- * - Help Workstation appears ONCE in Workstations section (not duplicated)
+ * - Help Workstation is now a standalone module (not in console)
  * - Removed redundant "Help Center Management" section — that content is
  *   accessible through Help Workstation's internal navigation
  * 
@@ -153,17 +152,10 @@ export default function AdminDashboard() {
           </AdminSection>
 
           {/* ─────────────────────────────────────────────────────────────────
-              SECTION 2: WORKSTATIONS
-              Purpose: Navigation to sub-applications within System Console
-              Note: Help Workstation lives here ONLY — not duplicated elsewhere
+              SECTION 2: WORKSTATIONS (REMOVED)
+              Help Workstation is now a standalone module accessible via /workspaces
+              Not shown in System Console anymore
           ───────────────────────────────────────────────────────────────── */}
-          <AdminSection label="Workstations">
-            <AdminListRow
-              to="/help"
-              title="Help Workstation"
-              description="Manage public Help articles, categories, messages, and analytics"
-            />
-          </AdminSection>
 
           {/* ─────────────────────────────────────────────────────────────────
               SECTION 3: AUDIT & ACTIVITY
