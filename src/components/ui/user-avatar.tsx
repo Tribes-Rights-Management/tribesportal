@@ -15,13 +15,14 @@ import { cva, type VariantProps } from "class-variance-authority";
  */
 
 const userAvatarVariants = cva(
-  "rounded-full shrink-0 inline-flex items-center justify-center font-medium uppercase focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] transition-colors duration-150",
+  // Enforce perfect circle: rounded-full + overflow-hidden + fixed dimensions
+  "rounded-full overflow-hidden shrink-0 inline-flex items-center justify-center font-medium uppercase focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] transition-colors duration-150",
   {
     variants: {
       size: {
-        sm: "h-7 w-7 text-[10px]",
-        md: "h-8 w-8 text-[10px]",
-        lg: "h-10 w-10 text-[11px]",
+        sm: "h-8 w-8 text-[10px]",  // 32px - consistent circle
+        md: "h-9 w-9 text-[10px]",  // 36px - slightly larger for mobile
+        lg: "h-10 w-10 text-[11px]", // 40px - profile pages
       },
       variant: {
         default: "",
