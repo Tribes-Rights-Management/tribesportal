@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 /**
- * LICENSING NAVIGATION
+ * LICENSING NAVIGATION (Legacy /app/licensing routes)
  * 
  * Navigation Rules:
  * - Functional, not expressive
@@ -18,17 +18,14 @@ import {
  */
 
 const navItems = [
-  { to: "/app/licensing", label: "Overview", icon: LayoutDashboard, exact: true },
-  { to: "/app/licensing/catalog", label: "Catalog", icon: Library },
-  { to: "/app/licensing/requests", label: "License Requests", icon: FileText },
-  { to: "/app/licensing/licenses", label: "Agreements", icon: Scale },
-  { to: "/app/licensing/documents", label: "Documents", icon: FolderOpen },
-];
-
-const settingsItems = [
-  { to: "/app/licensing/settings", label: "Configuration", icon: Settings },
+  { to: "/app/licensing", label: "Overview", icon: LayoutDashboard, exact: true, section: "main" as const },
+  { to: "/app/licensing/catalog", label: "Catalog", icon: Library, section: "main" as const },
+  { to: "/app/licensing/requests", label: "License Requests", icon: FileText, section: "main" as const },
+  { to: "/app/licensing/licenses", label: "Agreements", icon: Scale, section: "main" as const },
+  { to: "/app/licensing/documents", label: "Documents", icon: FolderOpen, section: "main" as const },
+  { to: "/app/licensing/settings", label: "Configuration", icon: Settings, section: "settings" as const },
 ];
 
 export function LicensingNav() {
-  return <SideNav items={navItems} settingsItems={settingsItems} />;
+  return <SideNav items={navItems} />;
 }

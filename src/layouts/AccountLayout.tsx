@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { AppShell } from "@/components/app/AppShell";
-import { AppHeader } from "@/components/app/AppHeader";
+import { ModuleHeader } from "@/components/app/ModuleHeader";
 import { useScrollReset } from "@/hooks/useScrollReset";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { User, Shield, Sliders, ChevronRight } from "lucide-react";
@@ -187,7 +187,7 @@ export default function AccountLayout() {
     return (
       <AppShell
         showSidebar={false}
-        headerContent={<AppHeader showSidebarLogo={false} />}
+        headerContent={<ModuleHeader showSidebarLogo={false} />}
       >
         <div className="flex-1 flex items-center justify-center">
           <p className="text-[14px] text-muted-foreground">
@@ -224,7 +224,7 @@ export default function AccountLayout() {
     return (
       <AppShell
         showSidebar={false}
-        headerContent={<AppHeader showSidebarLogo={false} />}
+        headerContent={<ModuleHeader showSidebarLogo={false} />}
       >
         {content}
       </AppShell>
@@ -235,7 +235,7 @@ export default function AccountLayout() {
   return (
     <AppShell
       showSidebar={true}
-      headerContent={<AppHeader showSidebarLogo={true} />}
+      headerContent={<ModuleHeader showSidebarLogo={true} />}
       sidebarContent={<AccountNav />}
     >
       {content}
