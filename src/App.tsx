@@ -13,7 +13,7 @@ import { ModuleLayout } from "@/layouts/ModuleLayout";
 import { ModuleProtectedRoute } from "@/components/modules/ModuleProtectedRoute";
 import { AppIndexRedirect } from "@/components/app/AppIndexRedirect";
 import AppUiBoot from "@/components/AppUiBoot";
-
+import { AppErrorBoundary } from "@/components/AppErrorBoundary";
 // Auth pages
 import SignInPage from "@/pages/auth/SignInPage";
 import CheckEmailPage from "@/pages/auth/CheckEmailPage";
@@ -187,6 +187,7 @@ const App = () => (
       <AppUiBoot />
       {/* Session timeout guard - manages inactivity logout, warning modal, cross-tab sync */}
       <SessionGuard>
+      <AppErrorBoundary>
       <Routes>
         {/* Root redirect */}
         <Route path="/" element={<RootRedirect />} />
@@ -408,6 +409,7 @@ const App = () => (
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      </AppErrorBoundary>
       </SessionGuard>
     </TooltipProvider>
   </QueryClientProvider>
