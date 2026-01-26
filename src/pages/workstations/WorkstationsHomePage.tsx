@@ -41,11 +41,57 @@ export default function WorkstationsHomePage() {
   } = useModuleAccess();
 
   const {
+    user,
+    profile,
     tenantMemberships,
     activeTenant,
     loading: authLoading,
     isPlatformAdmin,
   } = useAuth();
+
+  /**
+   * Derive the user's first name for a personalized greeting.
+   * Priority order:
+   *   1) profile.full_name → first token
+   *   2) user.user_metadata.first_name
+   *   3) user.user_metadata.full_name → first token
+   *   4) user.email → local part before "@", title-cased
+   *   5) Fallback: "there"
+   */
+  const getDisplayFirstName = (): string => {
+    // 1) Check profile.full_name
+    if (profile?.full_name) {
+      const firstName = profile.full_name.trim().split(/\s+/)[0];
+      if (firstName) return firstName;
+    }
+
+    // 2) Check user metadata first_name
+    const metaFirstName = user?.user_metadata?.first_name;
+    if (typeof metaFirstName === "string" && metaFirstName.trim()) {
+      return metaFirstName.trim();
+    }
+
+    // 3) Check user metadata full_name
+    const metaFullName = user?.user_metadata?.full_name;
+    if (typeof metaFullName === "string" && metaFullName.trim()) {
+      const firstName = metaFullName.trim().split(/\s+/)[0];
+      if (firstName) return firstName;
+    }
+
+    // 4) Derive from email local part
+    const email = user?.email || profile?.email;
+    if (email) {
+      const localPart = email.split("@")[0];
+      if (localPart) {
+        // Title-case the local part (e.g., "john.doe" → "John")
+        const namePart = localPart.split(/[._-]/)[0];
+        return namePart.charAt(0).toUpperCase() + namePart.slice(1).toLowerCase();
+      }
+    }
+
+    // 5) Fallback
+    return "there";
+  };
 
   // Determine view state
   const getViewState = (): ViewState => {
@@ -129,13 +175,13 @@ export default function WorkstationsHomePage() {
               className="text-[24px] font-semibold leading-tight"
               style={{ color: 'var(--text)' }}
             >
-              Workspaces
+              Welcome, {getDisplayFirstName()}
             </h1>
             <p 
               className="text-[14px] mt-1"
               style={{ color: 'var(--text-muted)' }}
             >
-              Select a module to continue.
+              Choose your destination.
             </p>
           </div>
 
