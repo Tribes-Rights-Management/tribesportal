@@ -49,22 +49,22 @@ export default function WorkstationsHomePage() {
 
   // Determine view state
   const getViewState = (): ViewState => {
-    // Still loading auth or module access
+    // SAFETY: Still loading auth or module access - ALWAYS render loading state
     if (authLoading || moduleLoading) {
       return "loading";
     }
 
-    // Query failed but we can still show something
+    // SAFETY: Query failed but we MUST still show something (never blank)
     if (hasError) {
       return "error";
     }
 
-    // User has multiple orgs but no active selection
+    // SAFETY: User has multiple orgs but no active selection - show picker
     if (tenantMemberships.length > 1 && !activeTenant) {
       return "org-picker";
     }
 
-    // User has no org memberships (but might be platform admin)
+    // SAFETY: User has no org memberships (but might be platform admin)
     if (tenantMemberships.length === 0 && !isPlatformAdmin) {
       return "no-orgs";
     }
@@ -74,7 +74,7 @@ export default function WorkstationsHomePage() {
 
   const viewState = getViewState();
 
-  // All modules with access flags
+  // SAFETY: Always define all modules, even if user has no access
   const allModules = [
     {
       title: "System Console",

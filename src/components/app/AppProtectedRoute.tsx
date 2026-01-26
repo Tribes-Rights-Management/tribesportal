@@ -46,11 +46,16 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
     hasAutoSwitched.current = false;
   }, [location.pathname]);
 
-  // Handle loading state — predictable, not fast
+  // Handle loading state — ALWAYS render something, never return null
   if (accessState === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-[14px] text-muted-foreground">Loading data</p>
+      <div 
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--app-bg)' }}
+      >
+        <p className="text-[14px]" style={{ color: 'var(--text-muted)' }}>
+          Loading data
+        </p>
       </div>
     );
   }
