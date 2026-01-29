@@ -21,7 +21,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -56,7 +55,6 @@ const CATEGORIES = [
 const SUPPORT_EMAIL = "support@mail.tribesassets.com";
 
 export function HelpAssistantLauncher() {
-  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<ViewState>("home");
   const [searchQuery, setSearchQuery] = useState("");
@@ -105,31 +103,28 @@ export function HelpAssistantLauncher() {
 
     const categoryLabel = CATEGORIES.find(c => c.value === category)?.label || category;
     const moduleName = getCurrentModuleName();
-    const userEmail = user?.email || "anonymous@unknown.com";
 
     try {
-      // Get current session for auth header
+      // Get current session for auth header and user info
       const { data: { session } } = await supabase.auth.getSession();
       
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      
-      // Add auth header if session exists
-      if (session?.access_token) {
-        headers["Authorization"] = `Bearer ${session.access_token}`;
-      }
+      const userEmail = session?.user?.email || "anonymous@unknown.com";
+      const userName = session?.user?.user_metadata?.full_name || session?.user?.email?.split("@")[0];
 
       const response = await fetch(
         "https://rsdjfnsbimcdrxlhognv.supabase.co/functions/v1/support-form",
         {
           method: "POST",
-          headers,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`,
+            "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzZGpmbnNiaW1jZHJ4bGhvZ252Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwNzkyNDYsImV4cCI6MjA4MzY1NTI0Nn0.GKH6n-FRQENIeijikbF6nzBkiKmPddA-A9_X9wXJH1I",
+          },
           body: JSON.stringify({
             category: categoryLabel,
             message: description,
             userEmail: userEmail,
-            userName: user?.email?.split("@")[0] || undefined,
+            userName: userName,
             workspace: moduleName,
           }),
         }
