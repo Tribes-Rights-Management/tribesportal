@@ -105,10 +105,11 @@ export function WorkspaceSwitcher() {
         <button
           onClick={hasNoWorkspace ? handleTriggerClick : undefined}
           className={cn(
-            "flex items-center gap-2 px-3 py-2 w-full rounded-md",
+            "flex items-center gap-2 px-3 py-2 rounded-md",
             "transition-colors duration-150",
             "hover:bg-muted/50",
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
+            // Stripe-grade: no default blue outline, subtle neutral focus ring only
+            "focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-muted-foreground/20 focus-visible:ring-offset-0"
           )}
         >
           {/* Text stack: Tribes + Workspace name */}
