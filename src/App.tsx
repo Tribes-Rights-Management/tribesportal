@@ -14,6 +14,7 @@ import { ModuleProtectedRoute } from "@/components/modules/ModuleProtectedRoute"
 import { AppIndexRedirect } from "@/components/app/AppIndexRedirect";
 import AppUiBoot from "@/components/AppUiBoot";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
+import { HelpAssistantLauncher } from "@/components/app/HelpAssistantLauncher";
 // Auth pages
 import SignInPage from "@/pages/auth/SignInPage";
 import CheckEmailPage from "@/pages/auth/CheckEmailPage";
@@ -409,6 +410,8 @@ const App = () => (
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      {/* Global Help Assistant - floating button on all authenticated pages */}
+      <HelpAssistantLauncher />
       </AppErrorBoundary>
       </SessionGuard>
     </TooltipProvider>

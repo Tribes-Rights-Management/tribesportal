@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { HelpCircle, Bell, Settings } from "lucide-react";
+import { Bell, Settings } from "lucide-react";
 import { AppSearchInput } from "@/components/app-ui/AppSearchInput";
 import { GlobalSearchDialog } from "@/components/search/GlobalSearchDialog";
 import { SidebarHeader, ContentHeader } from "@/components/app/AppShell";
 import { WorkspaceSwitcher } from "@/components/app/WorkspaceSwitcher";
 
 import { HeaderIconButton } from "@/components/app/HeaderIconButton";
-import { HelpDrawer } from "@/components/app/HelpDrawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUnreadNotificationCount } from "@/hooks/useNotifications";
 import {
@@ -27,10 +26,11 @@ import {
  * - Mobile: Full-width header with WorkspaceSwitcher + icons
  * 
  * HEADER ICONS (right side):
- * - Modules (grid icon) → opens ModuleLauncherPopover
- * - Help (help circle) → opens HelpDrawer
  * - Notifications (bell) → opens placeholder dropdown
  * - Settings (gear) → /account
+ * 
+ * NOTE: Help icon removed. Help is now accessed via the global floating
+ * HelpAssistantLauncher mounted in App.tsx.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -43,7 +43,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
   const isMobile = useIsMobile();
   const [searchValue, setSearchValue] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
-  const [helpOpen, setHelpOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
@@ -56,11 +55,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
           <WorkspaceSwitcher />
 
           <div className="flex items-center gap-1 shrink-0">
-            <HeaderIconButton
-              icon={HelpCircle}
-              aria-label="Help"
-              onClick={() => setHelpOpen(true)}
-            />
             <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
               <PopoverTrigger asChild>
                 <HeaderIconButton
@@ -82,8 +76,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
             />
           </div>
         </div>
-        
-        <HelpDrawer open={helpOpen} onOpenChange={setHelpOpen} />
       </>
     );
   }
@@ -114,11 +106,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
 
           {/* Right: Header icons */}
           <div className="flex items-center gap-1">
-            <HeaderIconButton
-              icon={HelpCircle}
-              aria-label="Help"
-              onClick={() => setHelpOpen(true)}
-            />
             <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
               <PopoverTrigger asChild>
                 <HeaderIconButton
@@ -142,7 +129,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
         </ContentHeader>
 
         <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
-        <HelpDrawer open={helpOpen} onOpenChange={setHelpOpen} />
       </>
     );
   }
@@ -170,11 +156,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
         </div>
 
         <div className="flex items-center gap-1">
-          <HeaderIconButton
-            icon={HelpCircle}
-            aria-label="Help"
-            onClick={() => setHelpOpen(true)}
-          />
           <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
             <PopoverTrigger asChild>
               <HeaderIconButton
@@ -198,7 +179,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
       </div>
 
       <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
-      <HelpDrawer open={helpOpen} onOpenChange={setHelpOpen} />
     </>
   );
 }
