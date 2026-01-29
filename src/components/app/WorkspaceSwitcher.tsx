@@ -100,22 +100,14 @@ export function WorkspaceSwitcher() {
     }
   };
 
-  // Get initial for badge
-  const getInitial = (): string => {
-    if (activeTenant?.tenant_name) {
-      return activeTenant.tenant_name.charAt(0).toUpperCase();
-    }
-    return "T";
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
           onClick={hasNoWorkspace ? handleTriggerClick : undefined}
           className={cn(
-            // Stripe-like compact pill trigger
-            "flex items-center gap-3 h-10 px-3 py-2 rounded-lg",
+            // Stripe-like compact pill trigger - no badge, just text + chevron
+            "flex items-center gap-2 h-10 px-3 py-2 rounded-lg",
             "transition-colors duration-150",
             "hover:bg-muted/40",
             // Stripe-grade focus: no blue, subtle neutral ring only
@@ -123,27 +115,14 @@ export function WorkspaceSwitcher() {
             "focus-visible:ring-2 focus-visible:ring-muted-foreground/20 focus-visible:ring-offset-0"
           )}
         >
-          {/* Left: Small badge with initial */}
-          <div 
-            className="flex items-center justify-center w-7 h-7 rounded-md shrink-0"
-            style={{ backgroundColor: 'var(--muted)' }}
-          >
-            <span className="text-[11px] font-semibold text-muted-foreground">
-              {getInitial()}
-            </span>
-          </div>
-
-          {/* Middle: Text stack (Tribes + Workspace name) */}
+          {/* Text stack (Tribes + Workspace name) - no badge */}
           <div className="flex flex-col items-start min-w-0">
-            <span 
-              className="text-[13px] font-semibold leading-tight truncate"
-              style={{ color: 'var(--foreground)' }}
-            >
+            <span className="text-[13px] font-semibold leading-tight text-foreground">
               Tribes
             </span>
             <span 
               className={cn(
-                "text-[12px] font-normal leading-tight truncate",
+                "text-[12px] leading-tight truncate max-w-[160px]",
                 hasNoWorkspace ? "text-destructive" : "text-muted-foreground"
               )}
             >
@@ -151,9 +130,9 @@ export function WorkspaceSwitcher() {
             </span>
           </div>
 
-          {/* Right: Chevron inside trigger - 16px, tight */}
+          {/* Chevron inside trigger - 16px, tight, vertically centered */}
           <ChevronDown 
-            className="h-4 w-4 shrink-0 text-muted-foreground/60" 
+            className="h-4 w-4 shrink-0 text-muted-foreground/50 ml-0.5" 
             strokeWidth={1.5} 
           />
         </button>
@@ -162,50 +141,41 @@ export function WorkspaceSwitcher() {
       <DropdownMenuContent
         align="start"
         sideOffset={6}
-        className="w-80 rounded-xl p-0 overflow-hidden"
+        className="w-[280px] rounded-xl p-0 overflow-hidden shadow-lg"
       >
-        {/* A) TOP IDENTITY BLOCK - Stripe pattern */}
-        <div className="flex flex-col items-center py-5 px-5">
-          {/* Larger centered badge */}
-          <div 
-            className="flex items-center justify-center w-12 h-12 rounded-lg mb-3"
-            style={{ backgroundColor: 'var(--muted)' }}
-          >
-            <span className="text-base font-semibold text-muted-foreground">
-              {getInitial()}
-            </span>
-          </div>
+        {/* A) TOP IDENTITY BLOCK - text only, no badge */}
+        <div className="flex flex-col items-center py-4 px-4">
           <span className="text-[14px] font-semibold text-foreground">
             Tribes
           </span>
           <span className={cn(
-            "text-[13px] mt-0.5",
+            "text-[12px] mt-0.5",
             hasNoWorkspace ? "text-destructive" : "text-muted-foreground"
           )}>
             {workspaceName}
           </span>
         </div>
 
-        <Separator />
+        <Separator className="my-0" />
 
-        {/* B) PRIMARY ACTIONS */}
+        {/* B) PRIMARY ACTIONS - tighter rows */}
         <div className="py-1">
           <DropdownMenuItem
             onClick={() => navigate("/account")}
-            className="h-11 px-5 text-[13px] gap-3 rounded-none"
+            className="h-10 px-4 text-[13px] gap-2.5 rounded-none cursor-pointer"
           >
-            <Settings className="h-4 w-4 opacity-60" strokeWidth={1.5} />
+            <Settings className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
             Settings
           </DropdownMenuItem>
         </div>
 
-        {/* C) MODULES LIST */}
+        {/* C) MODULES LIST - tight density */}
         {accessibleModules.length > 0 && (
           <>
-            <Separator />
-            <div className="py-2">
-              <div className="px-5 py-1.5">
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+            <Separator className="my-0" />
+            <div className="py-1">
+              <div className="px-4 py-1.5">
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
                   Modules
                 </span>
               </div>
@@ -213,9 +183,9 @@ export function WorkspaceSwitcher() {
                 <DropdownMenuItem
                   key={module.href}
                   onClick={() => navigate(module.href)}
-                  className="h-11 px-5 text-[13px] gap-3 rounded-none"
+                  className="h-10 px-4 text-[13px] gap-2.5 rounded-none cursor-pointer"
                 >
-                  <module.icon className="h-4 w-4 opacity-60" strokeWidth={1.5} />
+                  <module.icon className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
                   {module.label}
                 </DropdownMenuItem>
               ))}
@@ -224,13 +194,13 @@ export function WorkspaceSwitcher() {
         )}
 
         {/* D) FOOTER ACTIONS */}
-        <Separator />
+        <Separator className="my-0" />
         <div className="py-1">
           <DropdownMenuItem
             onClick={handleSignOut}
-            className="h-11 px-5 text-[13px] gap-3 rounded-none text-foreground hover:text-destructive focus:text-destructive"
+            className="h-10 px-4 text-[13px] gap-2.5 rounded-none cursor-pointer text-foreground hover:text-destructive focus:text-destructive"
           >
-            <LogOut className="h-4 w-4 opacity-60" strokeWidth={1.5} />
+            <LogOut className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
             Sign out
           </DropdownMenuItem>
         </div>
