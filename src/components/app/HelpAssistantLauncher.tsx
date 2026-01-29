@@ -106,10 +106,17 @@ export function HelpAssistantLauncher() {
 
     try {
       // Get current session for auth header and user info
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      const userEmail = session?.user?.email || "anonymous@unknown.com";
-      const userName = session?.user?.user_metadata?.full_name || session?.user?.email?.split("@")[0];
+      if (sessionError || !session?.access_token) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in again to contact support.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
 
       const response = await fetch(
         "https://rsdjfnsbimcdrxlhognv.supabase.co/functions/v1/support-form",
@@ -117,14 +124,14 @@ export function HelpAssistantLauncher() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${session?.access_token}`,
+            "Authorization": `Bearer ${session.access_token}`,
             "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzZGpmbnNiaW1jZHJ4bGhvZ252Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwNzkyNDYsImV4cCI6MjA4MzY1NTI0Nn0.GKH6n-FRQENIeijikbF6nzBkiKmPddA-A9_X9wXJH1I",
           },
           body: JSON.stringify({
             category: categoryLabel,
             message: description,
-            userEmail: userEmail,
-            userName: userName,
+            userEmail: session.user?.email,
+            userName: session.user?.user_metadata?.full_name || session.user?.email,
             workspace: moduleName,
           }),
         }
@@ -132,12 +139,12 @@ export function HelpAssistantLauncher() {
 
       const result = await response.json();
 
-      if (result.success) {
+      if (response.ok && result.success) {
         toast({
           title: "Request submitted!",
           description: `Your ticket ID is ${result.ticketId}. We'll get back to you soon.`,
         });
-        // Reset and close
+        // Reset form and return to home view
         setCategory("");
         setDescription("");
         setView("home");
@@ -145,7 +152,7 @@ export function HelpAssistantLauncher() {
       } else {
         toast({
           title: "Failed to submit",
-          description: result.error || "Please try again.",
+          description: result?.error || "Please try again.",
           variant: "destructive",
         });
       }
