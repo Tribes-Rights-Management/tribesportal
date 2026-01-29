@@ -1,7 +1,8 @@
 import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutGrid, HelpCircle, Bell, Settings } from "lucide-react";
+import { HelpCircle, Bell, Settings } from "lucide-react";
 import { WorkspaceSwitcher } from "@/components/app/WorkspaceSwitcher";
+import { ModuleLauncherPopover } from "@/components/app/ModuleLauncherPopover";
 import { HeaderIconButton } from "@/components/app/HeaderIconButton";
 import { HelpDrawer } from "@/components/app/HelpDrawer";
 import { useUnreadNotificationCount } from "@/hooks/useNotifications";
@@ -32,6 +33,7 @@ export function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
   const navigate = useNavigate();
   const [helpOpen, setHelpOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [modulesOpen, setModulesOpen] = useState(false);
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
 
   return (
@@ -51,13 +53,9 @@ export function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
         {/* Left: WorkspaceSwitcher */}
         <WorkspaceSwitcher />
 
-        {/* Right: Header icons (same as ModuleHeader) */}
+        {/* Right: Header icons */}
         <div className="flex items-center gap-1">
-          <HeaderIconButton
-            icon={LayoutGrid}
-            aria-label="Workspaces"
-            onClick={() => navigate("/workspaces")}
-          />
+          <ModuleLauncherPopover open={modulesOpen} onOpenChange={setModulesOpen} />
           <HeaderIconButton
             icon={HelpCircle}
             aria-label="Help"
