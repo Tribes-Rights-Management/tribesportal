@@ -163,7 +163,45 @@ ${message}`;
       console.error("Mailgun error:", error);
       // Don't fail - ticket already created in database
     } else {
-      console.log("Email sent successfully via Mailgun");
+      console.log("Email sent to support inbox via Mailgun");
+    }
+
+    // Send confirmation email to user (Mercury-style institutional language)
+    const confirmationSubject = `Your Support Request (${ticketId})`;
+    const confirmationBody = `Your request (${ticketId}) has been received and is being reviewed by our team. To add additional comments, please reply to this email.
+
+We'll follow up within a couple of business days.
+
+You may also visit our Help Center at help.tribesassets.com for additional information.
+
+—
+Tribes Rights Management`;
+
+    const confirmationFormData = new FormData();
+    confirmationFormData.append("from", `Tribes Support <support@${MAILGUN_DOMAIN}>`);
+    confirmationFormData.append("to", authedEmail);
+    confirmationFormData.append("subject", confirmationSubject);
+    confirmationFormData.append("text", confirmationBody);
+    confirmationFormData.append("h:Reply-To", SUPPORT_EMAIL);
+    confirmationFormData.append("h:X-Ticket-ID", ticketId);
+
+    const confirmationResponse = await fetch(
+      `https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${btoa(`api:${MAILGUN_API_KEY}`)}`,
+        },
+        body: confirmationFormData,
+      }
+    );
+
+    if (!confirmationResponse.ok) {
+      const error = await confirmationResponse.text();
+      console.error("Confirmation email error:", error);
+      // Don't fail - ticket already created
+    } else {
+      console.log("Confirmation email sent to user:", authedEmail);
     }
 
     console.log("Support form submitted successfully:", { ticketId, category, authedEmail });
