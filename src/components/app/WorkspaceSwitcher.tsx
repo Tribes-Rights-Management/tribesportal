@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
@@ -11,6 +11,7 @@ import {
   ChevronDown, 
   Settings, 
   LogOut,
+  LayoutGrid,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { iconClass, iconStroke } from "@/components/ui/Icon";
@@ -22,48 +23,58 @@ import { iconClass, iconStroke } from "@/components/ui/Icon";
  * PURPOSE: Workspace/account context ONLY — NOT for module navigation.
  * 
  * Displays:
- * - "Tribes" (bold) + active workspace name underneath
- * - Dropdown with: Settings, Sign out
+ * - "Tribes" (bold) + current module name underneath (red)
+ * - Dropdown with: Workspaces, Settings, Sign out
  * 
  * Module navigation is handled by ModuleLauncherPopover (top-right 4-squares).
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
+/**
+ * SINGLE SOURCE OF TRUTH: Route → Current Area Label
+ * Used by header trigger subline and dropdown identity block
+ */
+function useCurrentAreaLabel(): string {
+  const location = useLocation();
+  const pathname = location.pathname;
+
+  if (pathname === "/workspaces" || pathname === "/") {
+    return "Workspaces";
+  }
+  if (pathname.startsWith("/console")) {
+    return "System Console";
+  }
+  if (pathname.startsWith("/help")) {
+    return "Help Workstation";
+  }
+  if (pathname.startsWith("/licensing")) {
+    return "Tribes Licensing";
+  }
+  if (pathname.startsWith("/admin")) {
+    return "Tribes Admin";
+  }
+  if (pathname.startsWith("/account")) {
+    return "Account Settings";
+  }
+  
+  // Default fallback
+  return "Workspaces";
+}
+
 export function WorkspaceSwitcher() {
   const navigate = useNavigate();
-  const { activeTenant, tenantMemberships, signOut } = useAuth();
+  const { signOut } = useAuth();
+  const currentAreaLabel = useCurrentAreaLabel();
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/sign-in");
   };
 
-  // Determine the workspace name to display
-  const getWorkspaceName = (): string => {
-    if (activeTenant?.tenant_name) {
-      return activeTenant.tenant_name;
-    }
-    if (tenantMemberships.length > 0 && tenantMemberships[0].tenant_name) {
-      return tenantMemberships[0].tenant_name;
-    }
-    return "No workspace";
-  };
-
-  const workspaceName = getWorkspaceName();
-  const hasNoWorkspace = workspaceName === "No workspace";
-
-  // Handle click when no workspace - route to /workspaces
-  const handleTriggerClick = () => {
-    if (hasNoWorkspace) {
-      navigate("/workspaces");
-    }
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          onClick={hasNoWorkspace ? handleTriggerClick : undefined}
           className={cn(
             // Stripe-like compact pill trigger
             "flex items-center gap-2 h-10 px-3 py-2 rounded-lg",
@@ -75,18 +86,13 @@ export function WorkspaceSwitcher() {
             "border-0"
           )}
         >
-          {/* Text stack (Tribes + Workspace name) */}
+          {/* Text stack (Tribes + Current Area) */}
           <div className="flex flex-col items-start min-w-0">
             <span className="text-[13px] font-semibold leading-tight text-foreground">
               Tribes
             </span>
-            <span 
-              className={cn(
-                "text-[12px] leading-tight truncate max-w-[160px]",
-                hasNoWorkspace ? "text-destructive" : "text-muted-foreground"
-              )}
-            >
-              {workspaceName}
+            <span className="text-[12px] leading-tight truncate max-w-[160px] text-destructive">
+              {currentAreaLabel}
             </span>
           </div>
 
@@ -111,12 +117,25 @@ export function WorkspaceSwitcher() {
           <span className="text-[14px] font-semibold text-foreground">
             Tribes
           </span>
-          <span className={cn(
-            "text-[12px] mt-0.5",
-            hasNoWorkspace ? "text-destructive" : "text-muted-foreground"
-          )}>
-            {workspaceName}
+          <span className="text-[12px] mt-0.5 text-destructive">
+            {currentAreaLabel}
           </span>
+        </div>
+
+        <Separator className="my-0" />
+
+        {/* WORKSPACES */}
+        <div className="py-1">
+          <DropdownMenuItem
+            onClick={() => navigate("/workspaces")}
+            className="h-10 px-4 text-sm gap-3 rounded-none cursor-pointer"
+          >
+            <LayoutGrid
+              className={cn(iconClass("xs"), "text-muted-foreground")}
+              strokeWidth={iconStroke("default")}
+            />
+            Workspaces
+          </DropdownMenuItem>
         </div>
 
         <Separator className="my-0" />
