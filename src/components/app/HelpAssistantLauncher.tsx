@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CircleHelp, X, Search, ExternalLink, FileText, MessageSquare, ArrowLeft, Check } from "lucide-react";
+import { CircleHelp, X, Search, ExternalLink, FileText, MessageSquare, ArrowLeft, Check, AlertCircle } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -20,7 +20,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -64,6 +63,7 @@ export function HelpAssistantLauncher() {
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ticketId, setTicketId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const canSubmit = category && description.trim().length > 0;
 
@@ -81,6 +81,7 @@ export function HelpAssistantLauncher() {
     // Reset form state
     setCategory("");
     setDescription("");
+    setError(null);
   };
 
   const handleArticleClick = (articleId: string) => {
@@ -101,6 +102,7 @@ export function HelpAssistantLauncher() {
   const handleSubmitContact = async () => {
     if (!canSubmit) return;
     setIsSubmitting(true);
+    setError(null);
 
     const categoryLabel = CATEGORIES.find(c => c.value === category)?.label || category;
     const moduleName = getCurrentModuleName();
@@ -110,11 +112,7 @@ export function HelpAssistantLauncher() {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !session?.access_token) {
-        toast({
-          title: "Authentication required",
-          description: "Please sign in again to contact support.",
-          variant: "destructive",
-        });
+        setError("Please sign in again to contact support.");
         setIsSubmitting(false);
         return;
       }
@@ -146,23 +144,27 @@ export function HelpAssistantLauncher() {
         // Reset form fields (but keep success view open)
         setCategory("");
         setDescription("");
+        setError(null);
       } else {
-        toast({
-          title: "Failed to submit",
-          description: result?.error || "Please try again.",
-          variant: "destructive",
-        });
+        setError("Unable to submit request. Please try again.");
       }
-    } catch (error) {
-      console.error("Support form submission error:", error);
-      toast({
-        title: "Failed to submit",
-        description: "Please try again later.",
-        variant: "destructive",
-      });
+    } catch (err) {
+      console.error("Support form submission error:", err);
+      setError("Unable to submit request. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Clear error when user interacts with form
+  const handleCategoryChange = (value: string) => {
+    setCategory(value);
+    setError(null);
+  };
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(e.target.value);
+    setError(null);
   };
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -174,6 +176,7 @@ export function HelpAssistantLauncher() {
       setDescription("");
       setSearchQuery("");
       setTicketId(null);
+      setError(null);
     }
   };
 
@@ -386,7 +389,7 @@ export function HelpAssistantLauncher() {
                 <label className="text-[13px] font-medium text-foreground">
                   Category
                 </label>
-                <Select value={category} onValueChange={setCategory}>
+                <Select value={category} onValueChange={handleCategoryChange}>
                   <SelectTrigger 
                     className={cn(
                       "h-10 text-sm",
@@ -413,7 +416,7 @@ export function HelpAssistantLauncher() {
                 </label>
                 <Textarea
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={handleDescriptionChange}
                   placeholder="E.g., My payout is missing…"
                   className={cn(
                     "min-h-[100px] text-sm resize-none",
@@ -426,16 +429,26 @@ export function HelpAssistantLauncher() {
 
             </div>
 
-            {/* Footer action */}
-            <div className="px-5 py-4 border-t border-border/60 shrink-0 flex items-center justify-end">
-              <Button
-                onClick={handleSubmitContact}
-                disabled={!canSubmit || isSubmitting}
-                variant="default"
-                size="sm"
-              >
-                Send message
-              </Button>
+            {/* Footer action with inline error */}
+            <div className="px-5 py-4 border-t border-border/60 shrink-0">
+              {error && (
+                <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-[#FEF2F2] border border-[#FECACA] rounded">
+                  <AlertCircle className="h-3.5 w-3.5 text-[#DC2626] shrink-0" strokeWidth={1.5} />
+                  <p className="text-[12px] text-[#7F1D1D]">
+                    {error}
+                  </p>
+                </div>
+              )}
+              <div className="flex items-center justify-end">
+                <Button
+                  onClick={handleSubmitContact}
+                  disabled={!canSubmit || isSubmitting}
+                  variant="default"
+                  size="sm"
+                >
+                  Send message
+                </Button>
+              </div>
             </div>
           </>
         ) : (
