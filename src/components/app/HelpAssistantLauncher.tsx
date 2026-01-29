@@ -130,8 +130,6 @@ export function HelpAssistantLauncher() {
           body: JSON.stringify({
             category: categoryLabel,
             message: description,
-            userEmail: session.user?.email,
-            userName: session.user?.user_metadata?.full_name || session.user?.email,
             workspace: moduleName,
           }),
         }
