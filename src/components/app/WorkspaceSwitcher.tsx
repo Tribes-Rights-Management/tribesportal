@@ -20,13 +20,13 @@ import { iconClass, iconStroke } from "@/components/ui/Icon";
  * WORKSPACE SWITCHER — STRIPE-STYLE TOP-LEFT DROPDOWN (CANONICAL)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
- * PURPOSE: Workspace/account context ONLY — NOT for module navigation.
+ * PURPOSE: Workspace/account context + module switching entry point.
  * 
  * Displays:
- * - "Tribes" (bold) + current module name underneath (red)
+ * - "Tribes" (bold) + current area name underneath (red)
  * - Dropdown with: Workspaces, Settings, Sign out
  * 
- * Module navigation is handled by ModuleLauncherPopover (top-right 4-squares).
+ * The ONLY module switching entry point in the app header.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -45,13 +45,13 @@ function useCurrentAreaLabel(): string {
     return "System Console";
   }
   if (pathname.startsWith("/help")) {
-    return "Help Workstation";
+    return "Help";
   }
   if (pathname.startsWith("/licensing")) {
-    return "Tribes Licensing";
+    return "Licensing";
   }
   if (pathname.startsWith("/admin")) {
-    return "Tribes Admin";
+    return "Admin";
   }
   if (pathname.startsWith("/account")) {
     return "Account Settings";
