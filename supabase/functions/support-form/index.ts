@@ -16,7 +16,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 interface FormSubmission {
   category: string;
   message: string;
-  userEmail: string;
+  userEmail?: string;
   userName?: string;
   workspace?: string;
 }
@@ -28,16 +28,54 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const body: FormSubmission = await req.json();
-    const { category, message, userEmail, userName, workspace } = body;
+    // Extract and validate Bearer token
+    const authHeader = req.headers.get("Authorization") || "";
+    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
 
-    console.log("Received support form submission:", { category, userEmail, workspace });
+    if (!token) {
+      return new Response(
+        JSON.stringify({ error: "Missing Authorization Bearer token" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate user session
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+
+    if (userError || !user) {
+      console.error("Auth error:", userError);
+      return new Response(
+        JSON.stringify({ error: "Invalid or expired session" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Source of truth - prevents spoofing
+    const authedEmail = user.email!;
+    const authedName =
+      (user.user_metadata?.full_name as string) ||
+      (user.user_metadata?.name as string) ||
+      authedEmail.split("@")[0];
+
+    const body: FormSubmission = await req.json();
+    const { category, message, userEmail, workspace } = body;
+
+    // Optional: Detect spoofing attempts
+    if (userEmail && userEmail !== authedEmail) {
+      console.warn("Spoofing attempt detected:", { provided: userEmail, actual: authedEmail });
+      return new Response(
+        JSON.stringify({ error: "userEmail does not match authenticated user" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log("Received support form submission:", { category, authedEmail, workspace });
 
     // Validate required fields
-    if (!category || !message || !userEmail) {
+    if (!category || !message) {
       console.error("Missing required fields");
       return new Response(
-        JSON.stringify({ error: "Missing required fields: category, message, userEmail" }),
+        JSON.stringify({ error: "Missing required fields: category, message" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -51,8 +89,8 @@ Deno.serve(async (req) => {
 
     // Structured body for AI parsing
     const structuredBody = `Category: ${category}
-User: ${userEmail}
-Name: ${userName || "Not provided"}
+User: ${authedEmail}
+Name: ${authedName}
 Workspace: ${workspace || "Not specified"}
 Ticket ID: ${ticketId}
 Source: In-App Form
@@ -64,8 +102,9 @@ ${message}`;
     const { data: ticket, error: ticketError } = await supabase
       .from("support_tickets")
       .insert({
-        from_email: userEmail,
-        from_name: userName || userEmail.split("@")[0],
+        from_email: authedEmail,
+        from_name: authedName,
+        user_id: user.id,
         subject: subject,
         body: message,
         status: "open",
@@ -100,12 +139,13 @@ ${message}`;
 
     // Send email to support inbox (triggers AI agent)
     const formData = new FormData();
-    formData.append("from", `${userName || "Tribes User"} <${userEmail}>`);
+    formData.append("from", `${authedName} <${authedEmail}>`);
     formData.append("to", SUPPORT_EMAIL);
     formData.append("subject", subject);
     formData.append("text", structuredBody);
     formData.append("h:X-Ticket-ID", ticketId);
     formData.append("h:X-Source", "in_app_form");
+    formData.append("h:X-User-ID", user.id);
 
     const mailgunResponse = await fetch(
       `https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages`,
@@ -126,7 +166,7 @@ ${message}`;
       console.log("Email sent successfully via Mailgun");
     }
 
-    console.log("Support form submitted successfully:", { ticketId, category, userEmail });
+    console.log("Support form submitted successfully:", { ticketId, category, authedEmail });
 
     return new Response(
       JSON.stringify({
