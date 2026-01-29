@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CircleHelp, X, Search, ExternalLink, FileText, MessageSquare, ArrowLeft } from "lucide-react";
+import { CircleHelp, X, Search, ExternalLink, FileText, MessageSquare, ArrowLeft, Check } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -440,35 +440,43 @@ export function HelpAssistantLauncher() {
           </>
         ) : (
           /* ═══════════════════════════════════════════════════════════════
-             SUCCESS VIEW - Mercury-style minimal confirmation
+             SUCCESS VIEW - Mercury/institutional confirmation
              ═══════════════════════════════════════════════════════════════ */
-          <>
-            {/* Centered content */}
-            <div className="flex-1 flex flex-col items-center justify-center px-6 py-10">
-              <h2 className="text-base font-medium text-foreground">
-                Message sent
-              </h2>
-              <p className="mt-1.5 text-sm text-muted-foreground">
-                We'll respond in 1–3 business days
-              </p>
-              {ticketId && (
-                <p className="mt-3 text-xs text-muted-foreground/70">
-                  Reference: {ticketId}
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="max-w-sm text-center space-y-4">
+              {/* Subtle checkmark */}
+              <div className="flex justify-center">
+                <div className="h-10 w-10 rounded-full bg-[#F0FDF4] border border-[#BBF7D0] flex items-center justify-center">
+                  <Check className="h-4 w-4 text-[#16A34A]" strokeWidth={1.5} />
+                </div>
+              </div>
+              
+              {/* Confirmation text */}
+              <div className="space-y-1">
+                <p className="text-[14px] font-medium text-[#1A1A1A]">
+                  Request submitted
                 </p>
-              )}
-            </div>
-
-            {/* Footer action */}
-            <div className="px-5 py-4 border-t border-border/60 shrink-0 flex items-center justify-end">
-              <Button
-                onClick={handleDone}
-                className="bg-foreground text-background hover:bg-foreground/90"
-                size="sm"
+                {ticketId && (
+                  <p className="text-[12px] text-[#6B6B6B] font-mono tracking-wide">
+                    {ticketId}
+                  </p>
+                )}
+              </div>
+              
+              {/* SLA commitment */}
+              <p className="text-[11px] text-[#8F8F8F]">
+                We'll respond within 24 hours.
+              </p>
+              
+              {/* Return action */}
+              <button 
+                onClick={handleBackToHome}
+                className="text-[12px] text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors mt-2"
               >
-                Done
-              </Button>
+                Submit another request
+              </button>
             </div>
-          </>
+          </div>
         )}
       </PopoverContent>
     </Popover>
