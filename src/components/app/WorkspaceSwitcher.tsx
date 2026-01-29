@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 import { 
   ChevronDown, 
   Settings, 
@@ -99,21 +100,41 @@ export function WorkspaceSwitcher() {
     }
   };
 
+  // Get initial for badge
+  const getInitial = (): string => {
+    if (activeTenant?.tenant_name) {
+      return activeTenant.tenant_name.charAt(0).toUpperCase();
+    }
+    return "T";
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
           onClick={hasNoWorkspace ? handleTriggerClick : undefined}
           className={cn(
-            "flex items-center gap-2 px-3 py-2 rounded-md",
+            // Stripe-like compact pill trigger
+            "flex items-center gap-3 h-10 px-3 py-2 rounded-lg",
             "transition-colors duration-150",
-            "hover:bg-muted/50",
-            // Stripe-grade: no default blue outline, subtle neutral focus ring only
-            "focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-muted-foreground/20 focus-visible:ring-offset-0"
+            "hover:bg-muted/40",
+            // Stripe-grade focus: no blue, subtle neutral ring only
+            "focus:outline-none focus-visible:outline-none",
+            "focus-visible:ring-2 focus-visible:ring-muted-foreground/20 focus-visible:ring-offset-0"
           )}
         >
-          {/* Text stack: Tribes + Workspace name */}
-          <div className="flex flex-col items-start flex-1 min-w-0">
+          {/* Left: Small badge with initial */}
+          <div 
+            className="flex items-center justify-center w-7 h-7 rounded-md shrink-0"
+            style={{ backgroundColor: 'var(--muted)' }}
+          >
+            <span className="text-[11px] font-semibold text-muted-foreground">
+              {getInitial()}
+            </span>
+          </div>
+
+          {/* Middle: Text stack (Tribes + Workspace name) */}
+          <div className="flex flex-col items-start min-w-0">
             <span 
               className="text-[13px] font-semibold leading-tight truncate"
               style={{ color: 'var(--foreground)' }}
@@ -130,9 +151,9 @@ export function WorkspaceSwitcher() {
             </span>
           </div>
 
-          {/* Chevron - 16px */}
+          {/* Right: Chevron inside trigger - 16px, tight */}
           <ChevronDown 
-            className="h-4 w-4 shrink-0 opacity-50" 
+            className="h-4 w-4 shrink-0 text-muted-foreground/60" 
             strokeWidth={1.5} 
           />
         </button>
@@ -140,49 +161,79 @@ export function WorkspaceSwitcher() {
 
       <DropdownMenuContent
         align="start"
-        sideOffset={4}
-        className="w-56 rounded-lg"
+        sideOffset={6}
+        className="w-80 rounded-xl p-0 overflow-hidden"
       >
-        {/* Settings Section */}
-        <DropdownMenuItem
-          onClick={() => navigate("/account")}
-          className="px-3 py-2 text-[13px] gap-2"
-        >
-          <Settings className="h-4 w-4 opacity-60" strokeWidth={1.5} />
-          Settings
-        </DropdownMenuItem>
+        {/* A) TOP IDENTITY BLOCK - Stripe pattern */}
+        <div className="flex flex-col items-center py-5 px-5">
+          {/* Larger centered badge */}
+          <div 
+            className="flex items-center justify-center w-12 h-12 rounded-lg mb-3"
+            style={{ backgroundColor: 'var(--muted)' }}
+          >
+            <span className="text-base font-semibold text-muted-foreground">
+              {getInitial()}
+            </span>
+          </div>
+          <span className="text-[14px] font-semibold text-foreground">
+            Tribes
+          </span>
+          <span className={cn(
+            "text-[13px] mt-0.5",
+            hasNoWorkspace ? "text-destructive" : "text-muted-foreground"
+          )}>
+            {workspaceName}
+          </span>
+        </div>
 
-        {/* Modules Section */}
+        <Separator />
+
+        {/* B) PRIMARY ACTIONS */}
+        <div className="py-1">
+          <DropdownMenuItem
+            onClick={() => navigate("/account")}
+            className="h-11 px-5 text-[13px] gap-3 rounded-none"
+          >
+            <Settings className="h-4 w-4 opacity-60" strokeWidth={1.5} />
+            Settings
+          </DropdownMenuItem>
+        </div>
+
+        {/* C) MODULES LIST */}
         {accessibleModules.length > 0 && (
           <>
-            <DropdownMenuSeparator />
-            <div className="px-3 py-1.5">
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-                Modules
-              </span>
+            <Separator />
+            <div className="py-2">
+              <div className="px-5 py-1.5">
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+                  Modules
+                </span>
+              </div>
+              {accessibleModules.map((module) => (
+                <DropdownMenuItem
+                  key={module.href}
+                  onClick={() => navigate(module.href)}
+                  className="h-11 px-5 text-[13px] gap-3 rounded-none"
+                >
+                  <module.icon className="h-4 w-4 opacity-60" strokeWidth={1.5} />
+                  {module.label}
+                </DropdownMenuItem>
+              ))}
             </div>
-            {accessibleModules.map((module) => (
-              <DropdownMenuItem
-                key={module.href}
-                onClick={() => navigate(module.href)}
-                className="px-3 py-2 text-[13px] gap-2"
-              >
-                <module.icon className="h-4 w-4 opacity-60" strokeWidth={1.5} />
-                {module.label}
-              </DropdownMenuItem>
-            ))}
           </>
         )}
 
-        {/* Sign out */}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={handleSignOut}
-          className="px-3 py-2 text-[13px] gap-2 text-foreground hover:text-destructive focus:text-destructive"
-        >
-          <LogOut className="h-4 w-4 opacity-60" strokeWidth={1.5} />
-          Sign out
-        </DropdownMenuItem>
+        {/* D) FOOTER ACTIONS */}
+        <Separator />
+        <div className="py-1">
+          <DropdownMenuItem
+            onClick={handleSignOut}
+            className="h-11 px-5 text-[13px] gap-3 rounded-none text-foreground hover:text-destructive focus:text-destructive"
+          >
+            <LogOut className="h-4 w-4 opacity-60" strokeWidth={1.5} />
+            Sign out
+          </DropdownMenuItem>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );
