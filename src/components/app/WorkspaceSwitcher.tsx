@@ -5,7 +5,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
@@ -19,6 +18,7 @@ import {
   Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { iconClass, iconStroke } from "@/components/ui/Icon";
 
 /**
  * WORKSPACE SWITCHER — STRIPE-STYLE TOP-LEFT DROPDOWN (CANONICAL)
@@ -132,9 +132,9 @@ export function WorkspaceSwitcher() {
           </div>
 
           {/* Chevron inside trigger - 16px, tight, vertically centered */}
-          <ChevronDown 
-            className="h-4 w-4 shrink-0 text-muted-foreground/50 ml-0.5" 
-            strokeWidth={1.5} 
+          <ChevronDown
+            className={cn(iconClass("xs"), "block text-muted-foreground/50 ml-0.5")}
+            strokeWidth={iconStroke("default")}
           />
         </button>
       </DropdownMenuTrigger>
@@ -142,7 +142,11 @@ export function WorkspaceSwitcher() {
       <DropdownMenuContent
         align="start"
         sideOffset={6}
-        className="w-[280px] rounded-xl p-0 overflow-hidden shadow-lg"
+        className={cn(
+          "w-[280px] rounded-xl p-0 overflow-hidden shadow-lg",
+          // Hard-enforce small, institutional SVGs inside this menu (prevents regressions)
+          "[&_svg]:shrink-0 [&_svg]:h-3.5 [&_svg]:w-3.5 [&_svg]:[stroke-width:1.25]"
+        )}
       >
         {/* A) TOP IDENTITY BLOCK - text only, no badge */}
         <div className="flex flex-col items-center py-4 px-4">
@@ -163,9 +167,12 @@ export function WorkspaceSwitcher() {
         <div className="py-1">
           <DropdownMenuItem
             onClick={() => navigate("/account")}
-            className="h-10 px-4 text-[13px] gap-2.5 rounded-none cursor-pointer"
+            className="h-10 px-4 text-sm gap-3 rounded-none cursor-pointer"
           >
-            <Settings className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
+            <Settings
+              className={cn(iconClass("xs"), "text-muted-foreground")}
+              strokeWidth={iconStroke("default")}
+            />
             Settings
           </DropdownMenuItem>
         </div>
@@ -184,9 +191,12 @@ export function WorkspaceSwitcher() {
                 <DropdownMenuItem
                   key={module.href}
                   onClick={() => navigate(module.href)}
-                  className="h-10 px-4 text-[13px] gap-2.5 rounded-none cursor-pointer"
+                  className="h-10 px-4 text-sm gap-3 rounded-none cursor-pointer"
                 >
-                  <module.icon className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
+                  <module.icon
+                    className={cn(iconClass("xs"), "text-muted-foreground")}
+                    strokeWidth={iconStroke("default")}
+                  />
                   {module.label}
                 </DropdownMenuItem>
               ))}
@@ -199,9 +209,12 @@ export function WorkspaceSwitcher() {
         <div className="py-1">
           <DropdownMenuItem
             onClick={handleSignOut}
-            className="h-10 px-4 text-[13px] gap-2.5 rounded-none cursor-pointer text-foreground hover:text-destructive focus:text-destructive"
+            className="h-10 px-4 text-sm gap-3 rounded-none cursor-pointer text-foreground hover:text-destructive focus:text-destructive"
           >
-            <LogOut className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
+            <LogOut
+              className={cn(iconClass("xs"), "text-muted-foreground")}
+              strokeWidth={iconStroke("default")}
+            />
             Sign out
           </DropdownMenuItem>
         </div>
