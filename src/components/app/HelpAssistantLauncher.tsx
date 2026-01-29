@@ -122,6 +122,7 @@ export function HelpAssistantLauncher() {
         "https://rsdjfnsbimcdrxlhognv.supabase.co/functions/v1/support-form",
         {
           method: "POST",
+          credentials: "omit",
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session.access_token}`,
