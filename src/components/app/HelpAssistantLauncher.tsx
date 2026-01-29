@@ -126,6 +126,7 @@ export function HelpAssistantLauncher() {
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session.access_token}`,
+            "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzZGpmbnNiaW1jZHJ4bGhvZ252Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwNzkyNDYsImV4cCI6MjA4MzY1NTI0Nn0.GKH6n-FRQENIeijikbF6nzBkiKmPddA-A9_X9wXJH1I",
           },
           body: JSON.stringify({
             category: categoryLabel,
@@ -427,11 +428,8 @@ export function HelpAssistantLauncher() {
               <Button
                 onClick={handleSubmitContact}
                 disabled={!canSubmit || isSubmitting}
-                className={cn(
-                  "h-9 px-4 text-sm font-medium rounded-lg",
-                  "bg-foreground text-background hover:opacity-90",
-                  "disabled:opacity-50 disabled:cursor-not-allowed"
-                )}
+                variant="default"
+                size="sm"
               >
                 Send message
               </Button>
