@@ -5,7 +5,7 @@ import { AppSearchInput } from "@/components/app-ui/AppSearchInput";
 import { GlobalSearchDialog } from "@/components/search/GlobalSearchDialog";
 import { SidebarHeader, ContentHeader } from "@/components/app/AppShell";
 import { WorkspaceSwitcher } from "@/components/app/WorkspaceSwitcher";
-import { ModuleLauncherPopover } from "@/components/app/ModuleLauncherPopover";
+
 import { HeaderIconButton } from "@/components/app/HeaderIconButton";
 import { HelpDrawer } from "@/components/app/HelpDrawer";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -45,7 +45,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [modulesOpen, setModulesOpen] = useState(false);
   
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
 
@@ -57,7 +56,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
           <WorkspaceSwitcher />
 
           <div className="flex items-center gap-1 shrink-0">
-            <ModuleLauncherPopover open={modulesOpen} onOpenChange={setModulesOpen} />
             <HeaderIconButton
               icon={HelpCircle}
               aria-label="Help"
@@ -116,7 +114,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
 
           {/* Right: Header icons */}
           <div className="flex items-center gap-1">
-            <ModuleLauncherPopover open={modulesOpen} onOpenChange={setModulesOpen} />
             <HeaderIconButton
               icon={HelpCircle}
               aria-label="Help"
@@ -173,7 +170,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
         </div>
 
         <div className="flex items-center gap-1">
-          <ModuleLauncherPopover open={modulesOpen} onOpenChange={setModulesOpen} />
           <HeaderIconButton
             icon={HelpCircle}
             aria-label="Help"
