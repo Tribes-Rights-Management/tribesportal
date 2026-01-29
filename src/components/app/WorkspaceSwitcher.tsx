@@ -110,9 +110,10 @@ export function WorkspaceSwitcher() {
             "flex items-center gap-2 h-10 px-3 py-2 rounded-lg",
             "transition-colors duration-150",
             "hover:bg-muted/40",
-            // Stripe-grade focus: no blue, subtle neutral ring only
-            "focus:outline-none focus-visible:outline-none",
-            "focus-visible:ring-2 focus-visible:ring-muted-foreground/20 focus-visible:ring-offset-0"
+            // No ring/outline/border in ANY state (idle, hover, focus, active)
+            "outline-none focus:outline-none focus-visible:outline-none",
+            "ring-0 focus:ring-0 focus-visible:ring-0",
+            "border-0"
           )}
         >
           {/* Text stack (Tribes + Workspace name) - no badge */}
