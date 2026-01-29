@@ -98,43 +98,61 @@ export function HelpAssistantLauncher() {
     return "App";
   };
 
-  const handleSubmitContact = () => {
+  const handleSubmitContact = async () => {
     if (!canSubmit) return;
     setIsSubmitting(true);
 
     const categoryLabel = CATEGORIES.find(c => c.value === category)?.label || category;
     const moduleName = getCurrentModuleName();
-    const pageUrl = window.location.href;
-    const userEmail = user?.email || "Not logged in";
+    const userEmail = user?.email || "anonymous@unknown.com";
 
-    // Build mailto link
-    const subject = encodeURIComponent(`Tribes Support — ${categoryLabel}`);
-    const body = encodeURIComponent(
-      `Page URL: ${pageUrl}\n` +
-      `Module: ${moduleName}\n` +
-      `User Email: ${userEmail}\n` +
-      `Category: ${categoryLabel}\n\n` +
-      `Description:\n${description}`
-    );
+    try {
+      const response = await fetch(
+        "https://rsdjfnsbimcdrxlhognv.supabase.co/functions/v1/support-form",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            category: categoryLabel,
+            message: description,
+            userEmail: userEmail,
+            userName: user?.email?.split("@")[0] || undefined,
+            workspace: moduleName,
+          }),
+        }
+      );
 
-    const mailtoLink = `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
+      const result = await response.json();
 
-    // Open mail client
-    window.location.href = mailtoLink;
-
-    toast({
-      title: "Opening your email client…",
-      description: "Complete the email to send your support request.",
-    });
-
-    // Reset and close
-    setTimeout(() => {
-      setCategory("");
-      setDescription("");
+      if (result.success) {
+        toast({
+          title: "Request submitted!",
+          description: `Your ticket ID is ${result.ticketId}. We'll get back to you soon.`,
+        });
+        // Reset and close
+        setCategory("");
+        setDescription("");
+        setView("home");
+        setOpen(false);
+      } else {
+        toast({
+          title: "Failed to submit",
+          description: result.error || "Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Support form submission error:", error);
+      toast({
+        title: "Failed to submit",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
       setIsSubmitting(false);
-      setView("home");
-      setOpen(false);
-    }, 500);
+    }
   };
 
   const handleOpenChange = (newOpen: boolean) => {
