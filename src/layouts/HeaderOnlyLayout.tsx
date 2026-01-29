@@ -1,9 +1,8 @@
 import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { HelpCircle, Bell, Settings } from "lucide-react";
+import { Bell, Settings } from "lucide-react";
 import { WorkspaceSwitcher } from "@/components/app/WorkspaceSwitcher";
 import { HeaderIconButton } from "@/components/app/HeaderIconButton";
-import { HelpDrawer } from "@/components/app/HelpDrawer";
 import { useUnreadNotificationCount } from "@/hooks/useNotifications";
 import {
   Popover,
@@ -19,6 +18,9 @@ import {
  * Uses the same header pattern as ModuleHeader for consistency.
  * 
  * Header: 56px height with WorkspaceSwitcher (left) + icon buttons (right)
+ * 
+ * NOTE: Help icon removed. Help is now accessed via the global floating
+ * HelpAssistantLauncher mounted in App.tsx.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -30,7 +32,6 @@ interface HeaderOnlyLayoutProps {
 
 export function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
   const navigate = useNavigate();
-  const [helpOpen, setHelpOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
 
@@ -51,13 +52,8 @@ export function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
         {/* Left: WorkspaceSwitcher */}
         <WorkspaceSwitcher />
 
-        {/* Right: Header icons */}
+        {/* Right: Header icons (Help removed - now global floating button) */}
         <div className="flex items-center gap-1">
-          <HeaderIconButton
-            icon={HelpCircle}
-            aria-label="Help"
-            onClick={() => setHelpOpen(true)}
-          />
           <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
             <PopoverTrigger asChild>
               <HeaderIconButton
@@ -84,9 +80,6 @@ export function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
       <main className="flex-1 overflow-y-auto">
         {children}
       </main>
-      
-      {/* Help Drawer */}
-      <HelpDrawer open={helpOpen} onOpenChange={setHelpOpen} />
     </div>
   );
 }
