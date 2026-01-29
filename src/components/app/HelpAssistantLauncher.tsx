@@ -108,41 +108,33 @@ export function HelpAssistantLauncher() {
           )}
         </Tooltip>
 
-        {/* Popover panel - Mercury-like anchoring */}
+        {/* Popover panel - Mercury-like anchoring with max-height */}
         <PopoverContent
           side="top"
           align="end"
           sideOffset={12}
+          alignOffset={0}
           className={cn(
             "w-[420px] max-sm:w-[calc(100vw-40px)] max-sm:max-w-[420px]",
             "p-0 rounded-2xl",
             "border border-border/60",
             "shadow-lg",
-            "bg-white"
+            "bg-white",
+            // Flex layout for fixed header/footer + scrollable content
+            "flex flex-col overflow-hidden",
+            // Max height to never touch top of screen
+            "max-h-[calc(100vh-140px)]"
           )}
         >
-          {/* Header */}
-          <div className="px-5 py-4 border-b border-[var(--border-subtle)]">
-            <div className="flex items-center justify-between">
-              <h2 className="text-[15px] font-medium text-foreground">
-                How can we help?
-              </h2>
-              <button
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "h-7 w-7 flex items-center justify-center rounded-md",
-                  "text-muted-foreground hover:text-foreground hover:bg-muted/50",
-                  "transition-colors"
-                )}
-                aria-label="Close"
-              >
-                <X className="h-4 w-4" strokeWidth={1.5} />
-              </button>
-            </div>
+          {/* Header - fixed, always visible */}
+          <div className="px-5 pt-5 pb-3 border-b border-border/60 shrink-0">
+            <h2 className="text-base font-medium text-foreground">
+              How can we help?
+            </h2>
           </div>
 
-          {/* Search - smaller icon (14px) Mercury-like */}
-          <div className="px-5 py-3">
+          {/* Search - fixed */}
+          <div className="px-5 py-3 shrink-0">
             <div className="relative">
               <Search
                 className={cn(
@@ -168,8 +160,8 @@ export function HelpAssistantLauncher() {
             </div>
           </div>
 
-          {/* Suggested articles - 14px icons, tighter rhythm */}
-          <div className="px-2 pb-2">
+          {/* Suggested articles - scrollable region */}
+          <div className="flex-1 overflow-auto px-2 pb-2">
             <div className="px-3 py-1.5">
               <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                 Suggested articles
@@ -213,8 +205,8 @@ export function HelpAssistantLauncher() {
             </div>
           </div>
 
-          {/* Footer actions - Mercury-like subtle styling */}
-          <div className="px-5 py-4 border-t border-[var(--border-subtle)] flex items-center justify-between">
+          {/* Footer actions - fixed, Mercury-like subtle styling */}
+          <div className="px-5 py-4 border-t border-border/60 shrink-0 flex items-center justify-between">
             <button
               onClick={handleContactUs}
               className={cn(
