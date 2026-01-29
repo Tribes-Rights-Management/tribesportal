@@ -52,7 +52,7 @@ const CATEGORIES = [
   { value: "other", label: "Other" },
 ];
 
-const SUPPORT_EMAIL = "support@mail.tribesassets.com";
+
 
 export function HelpAssistantLauncher() {
   const [open, setOpen] = useState(false);
@@ -125,7 +125,6 @@ export function HelpAssistantLauncher() {
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session.access_token}`,
-            "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzZGpmbnNiaW1jZHJ4bGhvZ252Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwNzkyNDYsImV4cCI6MjA4MzY1NTI0Nn0.GKH6n-FRQENIeijikbF6nzBkiKmPddA-A9_X9wXJH1I",
           },
           body: JSON.stringify({
             category: categoryLabel,
@@ -420,10 +419,6 @@ export function HelpAssistantLauncher() {
                 />
               </div>
 
-              {/* Helper text */}
-              <p className="text-[11px] text-muted-foreground">
-                {SUPPORT_EMAIL}
-              </p>
             </div>
 
             {/* Footer action */}
