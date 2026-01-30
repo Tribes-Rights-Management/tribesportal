@@ -49,7 +49,7 @@ export function WorkspaceCard({
       }}
     >
       {/* Top row: Icon (no background) + Chevron/Lock */}
-      <div className="flex items-start justify-between shrink-0">
+      <div className="flex items-center justify-between shrink-0">
         {/* Icon directly on card surface - lg size (20px MAX) */}
         <Icon
           className="h-5 w-5 shrink-0"
@@ -60,18 +60,16 @@ export function WorkspaceCard({
         {/* Chevron or Lock with comfortable right position */}
         {disabled ? (
           <Lock
-            className="h-3.5 w-3.5 shrink-0"
+            className="h-3.5 w-3.5 shrink-0 text-[#9CA3AF]"
             strokeWidth={1.5}
-            style={{ color: "var(--text-muted)" }}
           />
         ) : (
           <ChevronRight
             className={cn(
-              "h-3.5 w-3.5 shrink-0 transition-transform duration-150",
+              "h-3.5 w-3.5 shrink-0 text-[#9CA3AF] transition-transform duration-150",
               "group-hover:translate-x-0.5"
             )}
             strokeWidth={1.5}
-            style={{ color: "var(--text-muted)" }}
           />
         )}
       </div>
