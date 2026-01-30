@@ -24,7 +24,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 /**
  * HELP ASSISTANT LAUNCHER — MERCURY-STYLE FLOATING BUTTON + POPOVER
- * 
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  * A globally-mounted floating button in the bottom-right corner.
  * Opens a compact popover panel (not a drawer) with:
