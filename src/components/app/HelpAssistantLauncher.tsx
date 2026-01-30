@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CircleHelp, X, Search, ExternalLink, FileText, MessageSquare, ArrowLeft, Check, AlertCircle, Copy } from "lucide-react";
 import {
   Popover,
@@ -29,18 +29,19 @@ import { supabase } from "@/integrations/supabase/client";
  * A globally-mounted floating button in the bottom-right corner.
  * Opens a compact popover panel (not a drawer) with:
  * - Home view: search + suggested articles + contact/help actions
+ * - Article view: inline article content with back navigation
  * - Contact view: in-panel form with back navigation (no modal)
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-type ViewState = "home" | "contact" | "success";
+type ViewState = "home" | "article" | "contact" | "success";
 
-const SUGGESTED_ARTICLES = [
-  { id: "1", title: "Getting started with Tribes", excerpt: "Learn the basics of navigating the platform" },
-  { id: "2", title: "Managing payments & royalties", excerpt: "Understand how payments are processed" },
-  { id: "3", title: "Permissions & access levels", excerpt: "Configure user roles and capabilities" },
-  { id: "4", title: "API access & integrations", excerpt: "Connect external services to your account" },
-];
+interface Article {
+  id: string;
+  title: string;
+  content: string;
+  slug: string;
+}
 
 const CATEGORIES = [
   { value: "account", label: "Account" },
@@ -51,12 +52,15 @@ const CATEGORIES = [
   { value: "other", label: "Other" },
 ];
 
-
-
 export function HelpAssistantLauncher() {
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<ViewState>("home");
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // Articles state
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [isLoadingArticles, setIsLoadingArticles] = useState(false);
   
   // Contact form state
   const [category, setCategory] = useState("");
@@ -66,6 +70,33 @@ export function HelpAssistantLauncher() {
   const [error, setError] = useState<string | null>(null);
 
   const canSubmit = category && description.trim().length > 0;
+
+  // Fetch articles on mount
+  useEffect(() => {
+    const fetchArticles = async () => {
+      setIsLoadingArticles(true);
+      try {
+        const { data, error } = await supabase
+          .from("help_articles")
+          .select("id, title, content, slug")
+          .eq("status", "published")
+          .limit(6);
+        
+        if (error) throw error;
+        setArticles(data || []);
+      } catch (err) {
+        console.error("Failed to fetch help articles:", err);
+        // Fallback to empty array
+        setArticles([]);
+      } finally {
+        setIsLoadingArticles(false);
+      }
+    };
+    
+    if (open) {
+      fetchArticles();
+    }
+  }, [open]);
 
   const handleViewHelpCenter = () => {
     window.open("/help", "_blank");
@@ -78,15 +109,16 @@ export function HelpAssistantLauncher() {
 
   const handleBackToHome = () => {
     setView("home");
+    setSelectedArticle(null);
     // Reset form state
     setCategory("");
     setDescription("");
     setError(null);
   };
 
-  const handleArticleClick = (articleId: string) => {
-    window.open(`/help?article=${articleId}`, "_blank");
-    setOpen(false);
+  const handleArticleClick = (article: Article) => {
+    setSelectedArticle(article);
+    setView("article");
   };
 
   const getCurrentModuleName = (): string => {
@@ -185,12 +217,12 @@ export function HelpAssistantLauncher() {
   };
 
   const filteredArticles = searchQuery
-    ? SUGGESTED_ARTICLES.filter(
+    ? articles.filter(
         (a) =>
           a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          a.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
+          a.content.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : SUGGESTED_ARTICLES;
+    : articles;
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
@@ -291,11 +323,15 @@ export function HelpAssistantLauncher() {
                 </span>
               </div>
               <div className="space-y-0">
-                {filteredArticles.length > 0 ? (
+                {isLoadingArticles ? (
+                  <div className="px-3 py-4 text-center">
+                    <p className="text-sm text-muted-foreground">Loading articles...</p>
+                  </div>
+                ) : filteredArticles.length > 0 ? (
                   filteredArticles.map((article) => (
                     <button
                       key={article.id}
-                      onClick={() => handleArticleClick(article.id)}
+                      onClick={() => handleArticleClick(article)}
                       className={cn(
                         "w-full px-4 py-2.5 rounded-lg",
                         "flex items-start gap-3",
@@ -312,8 +348,8 @@ export function HelpAssistantLauncher() {
                         <p className="text-sm font-medium text-foreground truncate">
                           {article.title}
                         </p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {article.excerpt}
+                        <p className="text-xs text-muted-foreground line-clamp-1">
+                          {article.content.replace(/<[^>]*>/g, '').slice(0, 80)}...
                         </p>
                       </div>
                     </button>
@@ -321,7 +357,7 @@ export function HelpAssistantLauncher() {
                 ) : (
                   <div className="px-3 py-4 text-center">
                     <p className="text-sm text-muted-foreground">
-                      No articles found for "{searchQuery}"
+                      {searchQuery ? `No articles found for "${searchQuery}"` : "No articles available"}
                     </p>
                   </div>
                 )}
@@ -357,6 +393,55 @@ export function HelpAssistantLauncher() {
               </button>
             </div>
           </>
+        ) : view === "article" && selectedArticle ? (
+          /* ═══════════════════════════════════════════════════════════════
+             ARTICLE VIEW - Inline article content with back navigation
+             ═══════════════════════════════════════════════════════════════ */
+          <div className="flex flex-col h-full">
+            {/* Header with back button */}
+            <div className="px-5 pt-4 pb-3 border-b border-border/60 shrink-0">
+              <button
+                onClick={handleBackToHome}
+                className="flex items-center gap-1.5 text-[13px] text-[#666666] hover:text-[#1A1A1A] transition-colors"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.5} />
+                Back
+              </button>
+            </div>
+            
+            {/* Article content - scrollable */}
+            <div className="flex-1 overflow-auto px-5 py-4">
+              <h2 className="text-[15px] font-medium text-[#1A1A1A] mb-3">
+                {selectedArticle.title}
+              </h2>
+              
+              <div 
+                className="text-[13px] text-[#666666] leading-relaxed prose prose-sm max-w-none
+                  prose-headings:text-[#1A1A1A] prose-headings:font-medium prose-headings:text-sm
+                  prose-p:text-[#666666] prose-p:leading-relaxed
+                  prose-a:text-[#666666] prose-a:underline hover:prose-a:text-[#1A1A1A]
+                  prose-ul:text-[#666666] prose-ol:text-[#666666]
+                  prose-li:text-[#666666]"
+                dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+              />
+            </div>
+            
+            {/* Footer with link to full article */}
+            <div className="px-5 py-3 border-t border-border/60 shrink-0">
+              <button
+                onClick={handleViewHelpCenter}
+                className={cn(
+                  "w-full h-9 rounded-lg text-[13px]",
+                  "flex items-center justify-center gap-1.5",
+                  "text-[#666666] hover:text-[#1A1A1A] hover:bg-muted/40",
+                  "transition-colors"
+                )}
+              >
+                View in Help Center
+                <ExternalLink className="h-3 w-3" strokeWidth={1.5} />
+              </button>
+            </div>
+          </div>
         ) : view === "contact" ? (
           /* ═══════════════════════════════════════════════════════════════
              CONTACT VIEW - In-panel form with back navigation
