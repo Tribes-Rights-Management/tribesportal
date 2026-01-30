@@ -290,14 +290,14 @@ export function HelpAssistantLauncher() {
                   Suggested articles
                 </span>
               </div>
-              <div className="space-y-0.5">
+              <div className="space-y-0">
                 {filteredArticles.length > 0 ? (
                   filteredArticles.map((article) => (
                     <button
                       key={article.id}
                       onClick={() => handleArticleClick(article.id)}
                       className={cn(
-                        "w-full px-4 py-3 rounded-lg",
+                        "w-full px-4 py-2.5 rounded-lg",
                         "flex items-start gap-3",
                         "text-left",
                         "hover:bg-muted/40",
@@ -481,7 +481,7 @@ export function HelpAssistantLauncher() {
                     </span>
                     <button
                       onClick={() => navigator.clipboard.writeText(ticketId)}
-                      className="text-[#8F8F8F] hover:text-[#1A1A1A] transition-colors"
+                      className="text-[#AAAAAA] hover:text-[#666666] transition-colors"
                       title="Copy reference number"
                     >
                       <Copy className="h-3 w-3" strokeWidth={1.5} />
