@@ -163,21 +163,42 @@ export default function WorkstationsHomePage() {
   const disabledModules = allModules.filter(m => !m.hasAccess);
   const sortedModules = [...accessibleModules, ...disabledModules];
 
+  // Alert message templates with proper pluralization
+  const alertTemplates = {
+    escalated_tickets: (count: number) => 
+      `${count} escalated support ticket${count > 1 ? 's' : ''} need${count === 1 ? 's' : ''} attention`,
+    
+    pending_payouts: (count: number) => 
+      `${count} payout${count > 1 ? 's' : ''} awaiting approval`,
+    
+    pending_licenses: (count: number) => 
+      `${count} license request${count > 1 ? 's' : ''} pending approval`,
+    
+    unsigned_agreements: (count: number) => 
+      `${count} agreement${count > 1 ? 's' : ''} awaiting your signature`,
+    
+    open_tickets: (count: number) => 
+      `${count} open support ticket${count > 1 ? 's' : ''} assigned to you`,
+  };
+
   // Pending items notification (hardcoded sample data for now)
   // Later this will pull from actual pending counts via API
   const pendingItems = [
     { 
+      type: 'pending_licenses' as const,
       count: 2, 
-      label: "pending license approvals", 
       href: "/licensing",
       hasAccess: canAccessTribesLicensing 
     },
   ];
   
   // Filter to only show items user has access to and have counts > 0
-  const activePendingItems = pendingItems.filter(
-    item => item.hasAccess && item.count > 0
-  );
+  const activePendingItems = pendingItems
+    .filter(item => item.hasAccess && item.count > 0)
+    .map(item => ({
+      ...item,
+      message: alertTemplates[item.type](item.count),
+    }));
 
   // Render page shell (always visible)
   const renderPageShell = (content: React.ReactNode) => (
@@ -358,7 +379,7 @@ export default function WorkstationsHomePage() {
             className="flex items-center justify-center gap-2 py-3 px-4 bg-[#FAFAFA] border border-[#E5E5E5] rounded-lg mb-4 hover:bg-[#F5F5F5] transition-colors"
           >
             <span className="text-[13px] text-[#666666]">
-              You have {activePendingItems[0].count} {activePendingItems[0].label}
+              {activePendingItems[0].message}
             </span>
             <ChevronRight className="h-3 w-3 text-[#999999]" />
           </Link>
