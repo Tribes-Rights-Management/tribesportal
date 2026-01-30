@@ -272,7 +272,7 @@ export function HelpAssistantLauncher() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search"
                   className={cn(
-                    "w-full h-10 pl-9 pr-4 text-sm",
+                    "w-full h-10 pl-10 pr-4 text-sm",
                     "rounded-lg bg-muted/40",
                     "border border-[var(--border-subtle)]",
                     "placeholder:text-muted-foreground/60",
