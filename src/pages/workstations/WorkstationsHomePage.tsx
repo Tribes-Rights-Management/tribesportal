@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { HeaderOnlyLayout } from "@/layouts/HeaderOnlyLayout";
 import { WorkspaceCard } from "@/components/ui/workspace-card";
 import { OrganizationSwitcher } from "@/components/app/OrganizationSwitcher";
+import { Link } from "react-router-dom";
 import { 
   Settings, 
   HelpCircle, 
@@ -10,6 +11,7 @@ import {
   LayoutDashboard,
   AlertCircle,
   Building2,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -160,6 +162,22 @@ export default function WorkstationsHomePage() {
   const accessibleModules = allModules.filter(m => m.hasAccess);
   const disabledModules = allModules.filter(m => !m.hasAccess);
   const sortedModules = [...accessibleModules, ...disabledModules];
+
+  // Pending items notification (hardcoded sample data for now)
+  // Later this will pull from actual pending counts via API
+  const pendingItems = [
+    { 
+      count: 2, 
+      label: "pending license approvals", 
+      href: "/licensing",
+      hasAccess: canAccessTribesLicensing 
+    },
+  ];
+  
+  // Filter to only show items user has access to and have counts > 0
+  const activePendingItems = pendingItems.filter(
+    item => item.hasAccess && item.count > 0
+  );
 
   // Render page shell (always visible)
   const renderPageShell = (content: React.ReactNode) => (
@@ -332,18 +350,33 @@ export default function WorkstationsHomePage() {
         </p>
       </div>
     ) : (
-      <div className={cn("grid gap-4 w-full", "grid-cols-1 sm:grid-cols-2")}>
-        {sortedModules.map((module) => (
-          <WorkspaceCard 
-            key={module.href} 
-            title={module.title}
-            description={module.description}
-            icon={module.icon}
-            href={module.href}
-            disabled={!module.hasAccess}
-          />
-        ))}
-      </div>
+      <>
+        {/* Pending items notification row */}
+        {activePendingItems.length > 0 && (
+          <Link
+            to={activePendingItems[0].href}
+            className="flex items-center justify-center gap-2 py-3 px-4 bg-[#FAFAFA] border border-[#E5E5E5] rounded-lg mb-4 hover:bg-[#F5F5F5] transition-colors"
+          >
+            <span className="text-[13px] text-[#666666]">
+              You have {activePendingItems[0].count} {activePendingItems[0].label}
+            </span>
+            <ChevronRight className="h-3 w-3 text-[#999999]" />
+          </Link>
+        )}
+        
+        <div className={cn("grid gap-4 w-full", "grid-cols-1 sm:grid-cols-2")}>
+          {sortedModules.map((module) => (
+            <WorkspaceCard 
+              key={module.href} 
+              title={module.title}
+              description={module.description}
+              icon={module.icon}
+              href={module.href}
+              disabled={!module.hasAccess}
+            />
+          ))}
+        </div>
+      </>
     )
   );
 }
