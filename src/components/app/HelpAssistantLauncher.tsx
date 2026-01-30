@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CircleHelp, X, Search, ExternalLink, FileText, MessageSquare, ArrowLeft, Check, AlertCircle } from "lucide-react";
+import { CircleHelp, X, Search, ExternalLink, FileText, MessageSquare, ArrowLeft, Check, AlertCircle, Copy } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -475,9 +475,18 @@ export function HelpAssistantLauncher() {
                   We'll respond within a couple of business days.
                 </p>
                 {ticketId && (
-                  <p className="text-[11px] text-[#8F8F8F]">
-                    Your reference number is {ticketId}
-                  </p>
+                  <div className="flex items-center justify-center gap-1.5">
+                    <span className="text-[11px] text-[#8F8F8F]">
+                      Your reference number is {ticketId}
+                    </span>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(ticketId)}
+                      className="text-[#8F8F8F] hover:text-[#1A1A1A] transition-colors"
+                      title="Copy reference number"
+                    >
+                      <Copy className="h-3 w-3" strokeWidth={1.5} />
+                    </button>
+                  </div>
                 )}
               </div>
               
