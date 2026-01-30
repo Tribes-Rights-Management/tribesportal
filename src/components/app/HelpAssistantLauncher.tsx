@@ -484,7 +484,7 @@ export function HelpAssistantLauncher() {
                       className="text-[#AAAAAA] hover:text-[#666666] transition-colors"
                       title="Copy reference number"
                     >
-                      <Copy className="h-3 w-3" strokeWidth={1.5} />
+                      <Copy className="h-2.5 w-2.5" strokeWidth={1.5} />
                     </button>
                   </div>
                 )}
