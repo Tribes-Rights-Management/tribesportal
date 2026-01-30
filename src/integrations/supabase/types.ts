@@ -2114,6 +2114,7 @@ export type Database = {
           status: string | null
           subject: string | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           body: string
@@ -2127,6 +2128,7 @@ export type Database = {
           status?: string | null
           subject?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           body?: string
@@ -2140,6 +2142,7 @@ export type Database = {
           status?: string | null
           subject?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -2249,6 +2252,7 @@ export type Database = {
           created_at: string | null
           id: string
           mailgun_message_id: string | null
+          metadata: Json | null
           role: string
           ticket_id: string | null
         }
@@ -2257,6 +2261,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           mailgun_message_id?: string | null
+          metadata?: Json | null
           role: string
           ticket_id?: string | null
         }
@@ -2265,6 +2270,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           mailgun_message_id?: string | null
+          metadata?: Json | null
           role?: string
           ticket_id?: string | null
         }

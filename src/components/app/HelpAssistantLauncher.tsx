@@ -250,14 +250,14 @@ export function HelpAssistantLauncher() {
              ═══════════════════════════════════════════════════════════════ */
           <>
             {/* Header - fixed, always visible */}
-            <div className="px-5 pt-5 pb-3 border-b border-border/60 shrink-0">
+            <div className="px-5 pt-4 pb-2 border-b border-border/60 shrink-0">
               <h2 className="text-base font-medium text-foreground">
                 How can we help?
               </h2>
             </div>
 
             {/* Search - fixed */}
-            <div className="px-5 py-3 shrink-0">
+            <div className="px-5 py-2.5 shrink-0">
               <div className="relative">
                 <Search
                   className={cn(
@@ -329,7 +329,7 @@ export function HelpAssistantLauncher() {
             </div>
 
             {/* Footer actions - fixed */}
-            <div className="px-5 py-4 border-t border-border/60 shrink-0 flex items-center justify-between">
+            <div className="px-5 py-3 border-t border-border/60 shrink-0 flex items-center justify-between">
               <button
                 onClick={handleContactUs}
                 className={cn(
@@ -455,8 +455,8 @@ export function HelpAssistantLauncher() {
           /* ═══════════════════════════════════════════════════════════════
              SUCCESS VIEW - Mercury/institutional confirmation
              ═══════════════════════════════════════════════════════════════ */
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="max-w-sm text-center space-y-4">
+          <div className="flex flex-col items-center justify-center py-10">
+            <div className="max-w-sm text-center space-y-3">
               {/* Subtle checkmark */}
               <div className="flex justify-center">
                 <div className="h-10 w-10 rounded-full bg-[#F0FDF4] border border-[#BBF7D0] flex items-center justify-center">
@@ -465,26 +465,26 @@ export function HelpAssistantLauncher() {
               </div>
               
               {/* Confirmation text */}
+              <p className="text-[14px] font-medium text-[#1A1A1A]">
+                Request submitted
+              </p>
+              
+              {/* SLA commitment + reference number */}
               <div className="space-y-1">
-                <p className="text-[14px] font-medium text-[#1A1A1A]">
-                  Request submitted
+                <p className="text-[12px] text-[#6B6B6B]">
+                  We'll respond within a couple of business days.
                 </p>
                 {ticketId && (
-                  <p className="text-[12px] text-[#6B6B6B] font-mono tracking-wide">
-                    {ticketId}
+                  <p className="text-[11px] text-[#8F8F8F]">
+                    Your reference number is {ticketId}
                   </p>
                 )}
               </div>
               
-              {/* SLA commitment */}
-              <p className="text-[11px] text-[#8F8F8F]">
-                We'll respond within 24 hours.
-              </p>
-              
               {/* Return action */}
               <button 
                 onClick={handleBackToHome}
-                className="text-[12px] text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors mt-2"
+                className="text-[12px] text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors mt-1"
               >
                 Submit another request
               </button>
