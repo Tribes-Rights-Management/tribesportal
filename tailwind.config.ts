@@ -23,15 +23,16 @@ export default {
       // NOTE: Custom spacing removed to restore Tailwind defaults
       // (h-4 = 16px, not 32px). Add only NEW custom values if needed.
       fontSize: {
-        /* Marketing site alignment: base 16px, institutional scale */
-        "xs": ["12px", { lineHeight: "1.4", fontWeight: "400" }],
-        "sm": ["14px", { lineHeight: "1.5", fontWeight: "400" }],
-        "base": ["16px", { lineHeight: "1.5", fontWeight: "400" }],
-        "lg": ["17px", { lineHeight: "1.4", fontWeight: "500" }],
-        "xl": ["20px", { lineHeight: "1.35", fontWeight: "500" }],
-        "2xl": ["24px", { lineHeight: "1.2", fontWeight: "600" }],
-        "3xl": ["32px", { lineHeight: "1.125", fontWeight: "700" }],
-        "4xl": ["40px", { lineHeight: "1.1", fontWeight: "700" }],
+        /* Institutional typography scale — Apple/Bloomberg density */
+        "2xs": ["10px", { lineHeight: "1.3" }],
+        "xs": ["11px", { lineHeight: "1.35" }],
+        "sm": ["13px", { lineHeight: "1.4" }],
+        "base": ["14px", { lineHeight: "1.4" }],
+        "lg": ["15px", { lineHeight: "1.35" }],
+        "xl": ["17px", { lineHeight: "1.3" }],
+        "2xl": ["20px", { lineHeight: "1.2" }],
+        "3xl": ["26px", { lineHeight: "1.15" }],
+        "4xl": ["32px", { lineHeight: "1.1" }],
       },
       colors: {
         /* ═══════════════════════════════════════════════════════════════════════

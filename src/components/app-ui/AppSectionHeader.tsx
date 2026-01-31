@@ -66,26 +66,26 @@ export function AppSectionHeader({
       )}
 
       {/* Header row */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         {/* Title block */}
-        <div className="space-y-1 min-w-0">
-          <h1 className="text-xl font-semibold text-foreground tracking-tight">
+        <div className="space-y-0.5 min-w-0">
+          <h1 className="text-lg font-medium text-foreground">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-sm text-muted-foreground">{subtitle}</p>
+            <p className="text-xs text-muted-foreground">{subtitle}</p>
           )}
         </div>
 
         {/* Actions */}
         {actions && (
-          <div className="flex items-center gap-3 shrink-0">{actions}</div>
+          <div className="flex items-center gap-2 shrink-0">{actions}</div>
         )}
       </div>
 
       {/* Meta row */}
       {meta && (
-        <div className="flex items-center gap-4 text-[13px] text-muted-foreground">
+        <div className="flex items-center gap-3 text-xs text-muted-foreground">
           {meta}
         </div>
       )}

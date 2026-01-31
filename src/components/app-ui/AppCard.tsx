@@ -37,10 +37,10 @@ export function AppCard({
   return (
     <div
       className={cn(
-        "rounded-[var(--app-radius)]",
+        "rounded-lg",
         transparent 
           ? "bg-transparent" 
-          : "bg-[var(--app-surface-bg)] border border-[var(--app-surface-border)]",
+          : "bg-[var(--app-surface-bg)] border border-[var(--app-surface-border)]/60",
         className
       )}
       {...props}
@@ -64,8 +64,8 @@ export function AppCardHeader({
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-4",
-        "px-5 py-4 border-b border-[var(--app-surface-border)]",
+        "flex items-center justify-between gap-3",
+        "px-4 py-3 border-b border-[var(--app-surface-border)]/60",
         className
       )}
       {...props}
@@ -83,7 +83,7 @@ export function AppCardTitle({
   return (
     <h3
       className={cn(
-        "text-[15px] font-semibold text-foreground tracking-tight",
+        "text-sm font-medium text-foreground",
         className
       )}
       {...props}
@@ -97,7 +97,7 @@ export function AppCardDescription({
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
-      className={cn("text-[13px] text-muted-foreground mt-0.5", className)}
+      className={cn("text-xs text-muted-foreground mt-0.5", className)}
       {...props}
     />
   );
@@ -107,7 +107,7 @@ export function AppCardBody({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("px-5 py-4", className)} {...props} />;
+  return <div className={cn("px-4 py-3", className)} {...props} />;
 }
 
 export function AppCardFooter({
@@ -117,8 +117,8 @@ export function AppCardFooter({
   return (
     <div
       className={cn(
-        "flex items-center justify-end gap-3",
-        "px-5 py-4 border-t border-[var(--app-surface-border)]",
+        "flex items-center justify-end gap-2",
+        "px-4 py-3 border-t border-[var(--app-surface-border)]/60",
         className
       )}
       {...props}

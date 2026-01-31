@@ -13,15 +13,15 @@ import { cn } from "@/lib/utils";
  * - Minimal visual weight
  */
 const badgeVariants = cva(
-  "inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded px-1.5 py-0.5 text-2xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
-        default: "border-border bg-muted text-foreground",
-        secondary: "border-border bg-muted/50 text-muted-foreground",
-        destructive: "border-destructive/30 bg-destructive/10 text-destructive",
-        outline: "border-border text-muted-foreground",
-        success: "border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400",
+        default: "bg-muted/60 text-muted-foreground",
+        secondary: "bg-muted/40 text-muted-foreground",
+        destructive: "bg-destructive/10 text-destructive",
+        outline: "border border-border/60 text-muted-foreground bg-transparent",
+        success: "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400",
       },
     },
     defaultVariants: {

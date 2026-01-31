@@ -111,23 +111,23 @@ export function AppPanel({
         aria-labelledby="panel-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border/60">
           <div>
             <h2
               id="panel-title"
-              className="text-[15px] font-semibold text-foreground"
+              className="text-sm font-medium text-foreground"
             >
               {title}
             </h2>
             {description && (
-              <p className="text-[12px] text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 {description}
               </p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-[6px] hover:bg-[var(--muted-wash)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
+            className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Close panel"
           >
             <X className="h-4 w-4" strokeWidth={1.5} />
@@ -135,13 +135,13 @@ export function AppPanel({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="flex-1 overflow-y-auto px-5 py-4">
           {children}
         </div>
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-3 px-6 py-5 border-t border-border">
+          <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-border/60">
             {footer}
           </div>
         )}

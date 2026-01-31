@@ -55,16 +55,16 @@ export function AppListCard({
       )}
     >
       {(title || action) && (
-        <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-4 shrink-0">
+        <div className="px-4 py-3 border-b border-border/60 flex items-center justify-between gap-3 shrink-0">
           {title && (
-            <h3 className="text-[14px] font-semibold text-foreground">
+            <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               {title}
             </h3>
           )}
           {action && <div className="shrink-0">{action}</div>}
         </div>
       )}
-      <div className="divide-y divide-border/50 flex-1">
+      <div className="divide-y divide-border/40 flex-1">
         {children}
       </div>
     </div>
@@ -129,9 +129,9 @@ export function AppListRow({
     <div
       onClick={onClick}
       className={cn(
-        "px-5 py-4 flex items-center gap-4",
+        "px-4 py-2.5 flex items-center gap-3",
         "transition-colors duration-150",
-        isClickable && "cursor-pointer hover:bg-accent/50",
+        isClickable && "cursor-pointer hover:bg-accent/40",
         className
       )}
       role={isClickable ? "button" : undefined}
@@ -140,19 +140,19 @@ export function AppListRow({
     >
       {left && <div className="shrink-0">{left}</div>}
       
-      <div className="flex-1 min-w-0">
-        <p className="text-[14px] font-medium text-foreground truncate">
+      <div className="flex-1 min-w-0 space-y-0.5">
+        <p className="text-sm font-medium text-foreground truncate">
           {title}
         </p>
         {subtitle && (
-          <p className="text-[12px] text-muted-foreground mt-0.5 truncate">
+          <p className="text-xs text-muted-foreground truncate">
             {subtitle}
           </p>
         )}
       </div>
 
       {value && (
-        <div className="shrink-0 text-[14px] text-muted-foreground">
+        <div className="shrink-0 text-xs text-muted-foreground">
           {value}
         </div>
       )}

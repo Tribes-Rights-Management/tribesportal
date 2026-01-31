@@ -57,23 +57,23 @@ export function AppStatCard({
     <div
       onClick={onClick}
       className={cn(
-        "bg-card border border-border rounded-[var(--surface-radius-sm)] p-5",
+        "bg-card border border-border/60 rounded-lg p-4",
         "transition-colors duration-150",
-        isClickable && "cursor-pointer hover:bg-accent/50",
+        isClickable && "cursor-pointer hover:bg-accent/40",
         className
       )}
       role={isClickable ? "button" : undefined}
       tabIndex={isClickable ? 0 : undefined}
       onKeyDown={isClickable ? (e) => e.key === "Enter" && onClick?.() : undefined}
     >
-      <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mb-2">
+      <p className="text-2xs uppercase tracking-wider font-medium text-muted-foreground mb-1.5">
         {label}
       </p>
-      <p className="text-[28px] font-semibold text-foreground leading-none">
+      <p className="text-2xl font-semibold text-foreground leading-none">
         {loading ? "—" : value}
       </p>
       {subtitle && (
-        <p className="text-[11px] text-muted-foreground mt-2">
+        <p className="text-xs text-muted-foreground mt-1.5">
           {subtitle}
         </p>
       )}
