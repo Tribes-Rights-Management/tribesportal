@@ -1,12 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
 import { Plus, Trash2, X, AlertCircle, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
-import { useHelpManagement, HelpCategory } from "@/hooks/useHelpManagement";
-import { AppButton } from "@/components/app-ui";
+import { useHelpManagement, HelpCategory, HelpAudience } from "@/hooks/useHelpManagement";
+import { useCategoryAudiences } from "@/hooks/useCategoryAudiences";
+import { supabase } from "@/integrations/supabase/client";
+import { AppButton, AppChip } from "@/components/app-ui";
 
 /**
  * HELP CATEGORIES PAGE — INSTITUTIONAL DESIGN
- * Simplified to match actual database schema.
+ * With audience assignment support via help_category_audiences junction table.
  */
 
 function slugify(text: string): string {
@@ -18,8 +20,9 @@ function slugify(text: string): string {
     .trim();
 }
 
-interface CategoryWithCount extends HelpCategory {
+interface CategoryWithMeta extends HelpCategory {
   article_count: number;
+  audienceIds: string[];
 }
 
 export default function HelpCategoriesPage() {
@@ -31,16 +34,23 @@ export default function HelpCategoriesPage() {
     createCategory,
     updateCategory,
     deleteCategory,
+    audiences,
+    fetchAudiences,
   } = useHelpManagement();
+
+  const { fetchAudiencesForCategory, syncCategoryAudiences } = useCategoryAudiences();
 
   const [panelOpen, setPanelOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editing, setEditing] = useState<HelpCategory | null>(null);
-  const [deleting, setDeleting] = useState<CategoryWithCount | null>(null);
+  const [deleting, setDeleting] = useState<CategoryWithMeta | null>(null);
   const [saving, setSaving] = useState(false);
   const [articleCounts] = useState<Record<string, number>>({});
   const [error, setError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Category-audience mappings for display
+  const [categoryAudienceMap, setCategoryAudienceMap] = useState<Record<string, string[]>>({});
 
   // Form state
   const [name, setName] = useState("");
@@ -48,17 +58,46 @@ export default function HelpCategoriesPage() {
   const [slugManual, setSlugManual] = useState(false);
   const [description, setDescription] = useState("");
   const [icon, setIcon] = useState("");
+  const [selectedAudienceIds, setSelectedAudienceIds] = useState<string[]>([]);
 
   useEffect(() => {
     fetchCategories();
-  }, [fetchCategories]);
+    fetchAudiences();
+  }, [fetchCategories, fetchAudiences]);
 
-  const categoriesWithCounts: CategoryWithCount[] = useMemo(() => {
+  // Fetch all category-audience relationships for display
+  useEffect(() => {
+    async function loadCategoryAudiences() {
+      const { data, error } = await supabase
+        .from("help_category_audiences")
+        .select("category_id, audience_id");
+
+      if (!error && data) {
+        const map: Record<string, string[]> = {};
+        data.forEach(row => {
+          if (!map[row.category_id]) {
+            map[row.category_id] = [];
+          }
+          map[row.category_id].push(row.audience_id);
+        });
+        setCategoryAudienceMap(map);
+      }
+    }
+    loadCategoryAudiences();
+  }, [categories]);
+
+  const categoriesWithMeta: CategoryWithMeta[] = useMemo(() => {
     return categories.map(cat => ({
       ...cat,
       article_count: articleCounts[cat.id] || 0,
+      audienceIds: categoryAudienceMap[cat.id] || [],
     }));
-  }, [categories, articleCounts]);
+  }, [categories, articleCounts, categoryAudienceMap]);
+
+  // Get audience name by ID
+  const getAudienceName = (audienceId: string) => {
+    return audiences.find(a => a.id === audienceId)?.name || "Unknown";
+  };
 
   useEffect(() => {
     if (!slugManual && name) {
@@ -73,11 +112,12 @@ export default function HelpCategoriesPage() {
     setSlugManual(false);
     setDescription("");
     setIcon("");
+    setSelectedAudienceIds([]);
     setFormError(null);
     setPanelOpen(true);
   };
 
-  const handleEdit = (cat: HelpCategory) => {
+  const handleEdit = async (cat: HelpCategory) => {
     setEditing(cat);
     setName(cat.name);
     setSlug(cat.slug);
@@ -85,7 +125,22 @@ export default function HelpCategoriesPage() {
     setDescription(cat.description || "");
     setIcon(cat.icon || "");
     setFormError(null);
+
+    // Fetch existing audience links
+    const audienceIds = await fetchAudiencesForCategory(cat.id);
+    setSelectedAudienceIds(audienceIds);
+
     setPanelOpen(true);
+  };
+
+  const handleAudienceToggle = (audienceId: string) => {
+    setSelectedAudienceIds(prev => {
+      if (prev.includes(audienceId)) {
+        return prev.filter(id => id !== audienceId);
+      } else {
+        return [...prev, audienceId];
+      }
+    });
   };
 
   const handleSave = async () => {
@@ -94,10 +149,17 @@ export default function HelpCategoriesPage() {
       return;
     }
 
+    if (selectedAudienceIds.length === 0) {
+      setFormError("Select at least one audience");
+      return;
+    }
+
     setSaving(true);
     setFormError(null);
 
     try {
+      let categoryId: string | null = null;
+
       if (editing) {
         const result = await updateCategory(editing.id, {
           name: name.trim(),
@@ -106,8 +168,7 @@ export default function HelpCategoriesPage() {
           icon: icon.trim() || undefined,
         });
         if (result) {
-          fetchCategories();
-          setPanelOpen(false);
+          categoryId = result.id;
         }
       } else {
         const result = await createCategory({
@@ -117,9 +178,24 @@ export default function HelpCategoriesPage() {
           icon: icon.trim() || undefined,
         });
         if (result) {
-          fetchCategories();
-          setPanelOpen(false);
+          categoryId = result.id;
         }
+      }
+
+      // Sync audience relationships
+      if (categoryId) {
+        await syncCategoryAudiences(categoryId, selectedAudienceIds);
+        
+        // Refresh data
+        fetchCategories();
+        
+        // Update local map
+        setCategoryAudienceMap(prev => ({
+          ...prev,
+          [categoryId!]: selectedAudienceIds,
+        }));
+        
+        setPanelOpen(false);
       }
     } catch (err) {
       setFormError("Unable to save category");
@@ -128,7 +204,7 @@ export default function HelpCategoriesPage() {
     setSaving(false);
   };
 
-  const handleDeleteClick = (cat: CategoryWithCount) => {
+  const handleDeleteClick = (cat: CategoryWithMeta) => {
     setDeleting(cat);
     setDeleteDialogOpen(true);
   };
@@ -152,6 +228,7 @@ export default function HelpCategoriesPage() {
   };
 
   const isLoading = categoriesLoading;
+  const activeAudiences = audiences.filter(a => a.is_active);
 
   return (
     <div className="flex-1 p-8">
@@ -192,10 +269,10 @@ export default function HelpCategoriesPage() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[30%]">Name</th>
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[25%]">Slug</th>
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[15%]">Icon</th>
-              <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[20%]">Updated</th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[25%]">Name</th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[20%]">Slug</th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[30%]">Audiences</th>
+              <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[15%]">Updated</th>
               <th className="w-[50px]"></th>
             </tr>
           </thead>
@@ -206,14 +283,14 @@ export default function HelpCategoriesPage() {
                   <p className="text-[13px] text-muted-foreground">Loading categories...</p>
                 </td>
               </tr>
-            ) : categoriesWithCounts.length === 0 ? (
+            ) : categoriesWithMeta.length === 0 ? (
               <tr>
                 <td colSpan={5} className="text-center py-20">
                   <p className="text-[13px] text-muted-foreground">No categories configured yet</p>
                 </td>
               </tr>
             ) : (
-              categoriesWithCounts.map(cat => (
+              categoriesWithMeta.map(cat => (
                 <tr
                   key={cat.id}
                   onClick={() => handleEdit(cat)}
@@ -221,7 +298,22 @@ export default function HelpCategoriesPage() {
                 >
                   <td className="py-3 px-4 text-[13px] text-foreground">{cat.name}</td>
                   <td className="py-3 px-4 text-[12px] text-muted-foreground font-mono">{cat.slug}</td>
-                  <td className="py-3 px-4 text-[12px] text-muted-foreground">{cat.icon || "—"}</td>
+                  <td className="py-3 px-4">
+                    <div className="flex flex-wrap gap-1.5">
+                      {cat.audienceIds.length === 0 ? (
+                        <span className="text-[11px] text-muted-foreground italic">No audiences</span>
+                      ) : (
+                        cat.audienceIds.map(audienceId => (
+                          <span
+                            key={audienceId}
+                            className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary"
+                          >
+                            {getAudienceName(audienceId)}
+                          </span>
+                        ))
+                      )}
+                    </div>
+                  </td>
                   <td className="py-3 px-4 text-right text-[12px] text-muted-foreground">
                     {format(new Date(cat.updated_at), "MMM d, yyyy")}
                   </td>
@@ -320,6 +412,41 @@ export default function HelpCategoriesPage() {
                   className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
                 />
               </div>
+
+              {/* Audience Visibility Section */}
+              <div className="pt-2 border-t border-border">
+                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
+                  Audience Visibility *
+                </label>
+                <p className="text-[11px] text-muted-foreground mb-4">
+                  Select which audiences can see this category
+                </p>
+                <div className="space-y-2">
+                  {activeAudiences.length === 0 ? (
+                    <p className="text-[12px] text-muted-foreground italic">No audiences available</p>
+                  ) : (
+                    activeAudiences.map(audience => (
+                      <label
+                        key={audience.id}
+                        className="flex items-center gap-3 p-3 bg-card border border-border rounded cursor-pointer hover:border-primary/50 transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedAudienceIds.includes(audience.id)}
+                          onChange={() => handleAudienceToggle(audience.id)}
+                          className="h-4 w-4 rounded border-border text-primary focus:ring-primary focus:ring-offset-0"
+                        />
+                        <div className="flex-1">
+                          <p className="text-[13px] text-foreground">{audience.name}</p>
+                          {audience.description && (
+                            <p className="text-[11px] text-muted-foreground mt-0.5">{audience.description}</p>
+                          )}
+                        </div>
+                      </label>
+                    ))
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Panel Footer */}
@@ -328,13 +455,13 @@ export default function HelpCategoriesPage() {
                 {editing && (
                   <button
                     onClick={() => {
-                      const catWithCount = categoriesWithCounts.find(c => c.id === editing.id);
-                      if (catWithCount) {
-                        handleDeleteClick(catWithCount);
+                      const catWithMeta = categoriesWithMeta.find(c => c.id === editing.id);
+                      if (catWithMeta) {
+                        handleDeleteClick(catWithMeta);
                         setPanelOpen(false);
                       }
                     }}
-                    disabled={categoriesWithCounts.find(c => c.id === editing.id)?.article_count !== 0}
+                    disabled={categoriesWithMeta.find(c => c.id === editing.id)?.article_count !== 0}
                     className="text-[12px] text-destructive hover:text-destructive/80 disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
                   >
                     Delete category
