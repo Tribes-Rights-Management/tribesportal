@@ -182,6 +182,7 @@ interface CreateArticleInput {
 
 interface CreateVersionInput {
   title: string;
+  slug?: string;
   summary?: string;
   body_md: string;
   category_id?: string | null;
@@ -378,13 +379,20 @@ export function useHelpManagement(): UseHelpManagementResult {
 
   // Create version (simplified - just update the article)
   const createVersion = useCallback(async (articleId: string, content: CreateVersionInput): Promise<string | null> => {
+    const updateData: Record<string, unknown> = {
+      title: content.title,
+      content: content.body_md,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Update slug if provided
+    if (content.slug) {
+      updateData.slug = content.slug;
+    }
+
     const { data, error } = await supabase
       .from("help_articles")
-      .update({
-        title: content.title,
-        content: content.body_md,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq("id", articleId)
       .select()
       .single();
