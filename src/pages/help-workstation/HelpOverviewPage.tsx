@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, FileText, ChevronRight, TrendingUp, Eye } from "lucide-react";
+import { Plus, FileText, TrendingUp, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppPageHeader } from "@/components/app-ui/AppPageHeader";
 import { AppButton } from "@/components/app-ui/AppButton";
 import { AppStatCard, AppStatCardGrid } from "@/components/app-ui/AppStatCard";
-import { AppListCard, AppListAction, AppListItem } from "@/components/app-ui/AppListCard";
+import { AppListCard, AppListAction, AppListRow } from "@/components/app-ui/AppListCard";
 import { AppSectionGrid } from "@/components/app-ui/AppSectionGrid";
 import { AppAlert } from "@/components/app-ui/AppAlert";
 
@@ -79,15 +79,17 @@ export default function HelpOverviewPage() {
           title,
           status,
           view_count,
-          updated_at,
-          category:help_categories(name)
+          updated_at
         `)
         .eq("status", "published")
         .order("view_count", { ascending: false })
         .limit(5);
       
       if (topError) throw topError;
-      setTopArticles(topData ?? []);
+      setTopArticles((topData ?? []).map(a => ({
+        ...a,
+        category: undefined
+      })));
 
       // Draft articles for review
       const { data: draftData, error: draftError } = await supabase
@@ -203,33 +205,14 @@ export default function HelpOverviewPage() {
           ) : (
             <div className="divide-y divide-border">
               {topArticles.map((article) => (
-                <AppListItem
+                <AppListRow
                   key={article.id}
-                  onClick={() => navigate(`/help-workstation/articles/${article.id}/edit`)}
-                >
-                  <div className="flex items-start justify-between gap-3 py-2.5">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-medium text-foreground truncate">
-                        {article.title}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[12px] text-muted-foreground flex items-center gap-1">
-                          <Eye className="h-3 w-3" strokeWidth={1.5} />
-                          {formatViewCount(article.view_count || 0)} views
-                        </span>
-                        {article.category?.name && (
-                          <>
-                            <span className="text-muted-foreground/50">·</span>
-                            <span className="text-[12px] text-muted-foreground">
-                              {article.category.name}
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground/50 shrink-0 mt-0.5" strokeWidth={1.5} />
-                  </div>
-                </AppListItem>
+                  title={article.title}
+                  subtitle={`${formatViewCount(article.view_count || 0)} views`}
+                  left={<Eye className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />}
+                  onClick={() => navigate(`/help/articles/${article.id}/edit`)}
+                  showChevron
+                />
               ))}
             </div>
           )}
@@ -252,22 +235,13 @@ export default function HelpOverviewPage() {
           ) : (
             <div className="divide-y divide-border">
               {draftArticles.map((article) => (
-                <AppListItem
+                <AppListRow
                   key={article.id}
-                  onClick={() => navigate(`/help-workstation/articles/${article.id}/edit`)}
-                >
-                  <div className="flex items-start justify-between gap-3 py-2.5">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-medium text-foreground truncate">
-                        {article.title}
-                      </p>
-                      <p className="text-[12px] text-muted-foreground mt-1">
-                        Updated {formatDate(article.updated_at)}
-                      </p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground/50 shrink-0 mt-0.5" strokeWidth={1.5} />
-                  </div>
-                </AppListItem>
+                  title={article.title}
+                  subtitle={`Updated ${formatDate(article.updated_at)}`}
+                  onClick={() => navigate(`/help/articles/${article.id}/edit`)}
+                  showChevron
+                />
               ))}
             </div>
           )}
