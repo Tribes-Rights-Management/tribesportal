@@ -35,8 +35,8 @@ import { cn } from "@/lib/utils";
  */
 
 const buttonVariants = cva(
-  // Base: Institutional button system - Mercury/Stripe neutrals, no blue fills, NO BLACK
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 font-medium",
+  // Base: Institutional button system - Mercury/Stripe neutrals
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-[13px] font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -54,16 +54,13 @@ const buttonVariants = cva(
         link: "bg-transparent text-muted-foreground hover:text-foreground hover:underline underline-offset-4",
       },
       size: {
-        // Stripe-like compact sizing: 36px default, proportional padding
-        default: "h-9 px-4 rounded-md text-[13px]",
-        sm: "h-8 px-3 rounded-md text-[12px]",
-        lg: "h-10 px-6 rounded-md text-[14px]",
-        xs: "h-7 px-2.5 rounded-md text-[11px]",
-        icon: "h-9 w-9 rounded-md",
-        "icon-sm": "h-8 w-8 rounded-md",
-        // Internal form button sizes
-        "internal": "h-9 px-4 rounded-md text-[13px]",
-        "internal-sm": "h-8 px-3 rounded-md text-[12px]",
+        // Stripe-like compact sizing
+        default: "h-9 px-4 py-2",
+        sm: "h-8 px-3 text-[12px]",
+        lg: "h-10 px-6",
+        xs: "h-7 px-2.5 text-[11px]",
+        icon: "h-9 w-9",
+        "icon-sm": "h-8 w-8",
       },
     },
     defaultVariants: {
