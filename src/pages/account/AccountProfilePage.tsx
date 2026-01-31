@@ -4,10 +4,10 @@ import { User, Mail, Shield, Building2 } from "lucide-react";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { DisplayNameEditSheet } from "@/components/settings/DisplayNameEditSheet";
 import {
-  SettingsRow,
-  SettingsSectionCard,
-  SettingsFooterNotice,
-} from "@/components/ui/settings-row";
+  AppDetailRow,
+  AppSettingsCard,
+  AppSettingsFooter,
+} from "@/components/app-ui";
 
 /**
  * ACCOUNT PROFILE PAGE
@@ -41,19 +41,19 @@ export default function AccountProfilePage() {
   return (
     <>
       {/* Section 1: Account Identity (Governed) */}
-      <SettingsSectionCard
+      <AppSettingsCard
         title="Account Identity"
         description="Managed by workspace policy"
         className="mb-4 md:mb-6"
       >
-        <SettingsRow
+        <AppDetailRow
           icon={Mail}
           label="Email address"
           value={profile?.email}
           variant="copyable"
           helperText="Primary authentication identifier"
         />
-        <SettingsRow
+        <AppDetailRow
           icon={Shield}
           label="Authority role"
           value={roleDisplay}
@@ -61,7 +61,7 @@ export default function AccountProfilePage() {
           locked
           lockReason="Managed by workspace policy"
         />
-        <SettingsRow
+        <AppDetailRow
           icon={Building2}
           label="Workspace"
           value={activeTenant?.tenant_name}
@@ -69,14 +69,14 @@ export default function AccountProfilePage() {
           locked
           lockReason="Managed by workspace policy"
         />
-      </SettingsSectionCard>
+      </AppSettingsCard>
 
       {/* Section 2: Display Preferences (User-editable) */}
-      <SettingsSectionCard
+      <AppSettingsCard
         title="Display Preferences"
         description="Shown in activity logs and collaboration surfaces"
       >
-        <SettingsRow
+        <AppDetailRow
           icon={User}
           label="Display name"
           value={displayName}
@@ -85,12 +85,12 @@ export default function AccountProfilePage() {
           onCta={() => setShowDisplayNameSheet(true)}
           helperText="How your name appears to others"
         />
-      </SettingsSectionCard>
+      </AppSettingsCard>
 
-      <SettingsFooterNotice>
+      <AppSettingsFooter>
         Account identity is governed by workspace policies. Contact your administrator for
         access-related changes.
-      </SettingsFooterNotice>
+      </AppSettingsFooter>
 
       {/* Display Name Edit Sheet */}
       <DisplayNameEditSheet

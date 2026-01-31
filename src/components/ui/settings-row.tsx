@@ -1,3 +1,22 @@
+/**
+ * @deprecated — LEGACY SETTINGS ROW COMPONENTS
+ *
+ * These components are DEPRECATED. Use app-ui components instead:
+ * - SettingsRow → AppDetailRow from @/components/app-ui
+ * - SettingsSectionCard → AppSettingsCard from @/components/app-ui
+ * - SettingsFooterNotice → AppSettingsFooter from @/components/app-ui
+ *
+ * MIGRATION:
+ *   // Before (deprecated):
+ *   import { SettingsRow, SettingsSectionCard } from "@/components/ui/settings-row";
+ *
+ *   // After (correct):
+ *   import { AppDetailRow, AppSettingsCard, AppSettingsFooter } from "@/components/app-ui";
+ *
+ * These exports are preserved for backward compatibility only.
+ * All new code MUST use app-ui components.
+ */
+
 import * as React from "react";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,20 +25,14 @@ import { CopyButton } from "@/components/ui/copy-button";
 import { Switch } from "@/components/ui/switch";
 
 /**
- * SETTINGS ROW — Universal Settings Row Component
- *
+ * @deprecated Use AppDetailRow from @/components/app-ui instead.
+ * 
  * Variants:
  * - readonly: label + single-line value + optional helper text
  * - editable: label + value + CTA like "Edit" / "Change"
  * - select: label + current selection + chevron (opens picker/modal)
  * - copyable: label + single-line value + copy icon
  * - toggle: label + description + iOS-style switch
- *
- * Identifiers (emails, IDs) never wrap - enforced via truncation.
- * Mobile: single-column stacked layout with full-width values.
- *
- * NOTE: Safe-area padding is handled by PageContainer in the parent layout.
- * This component provides internal card padding only.
  */
 
 export type SettingsRowVariant = "readonly" | "editable" | "select" | "copyable" | "toggle";
@@ -251,10 +264,8 @@ export function SettingsRow({
 }
 
 /**
+ * @deprecated Use AppSettingsCard from @/components/app-ui instead.
  * Settings Section Card — Container for SettingsRow items
- *
- * NOTE: Safe-area padding is handled by PageContainer in the parent layout.
- * This component provides internal card padding only.
  */
 interface SettingsSectionCardProps {
   /** Section title */
@@ -347,6 +358,7 @@ export function SettingsPageHeader({ title, description }: SettingsPageHeaderPro
 }
 
 /**
+ * @deprecated Use AppSettingsFooter from @/components/app-ui instead.
  * Settings Footer Notice — Policy/governance notice at bottom of settings pages
  */
 interface SettingsFooterNoticeProps {

@@ -3,12 +3,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Monitor, Clock, KeyRound, ShieldCheck, Timer } from "lucide-react";
 import { useUserPreferences, INACTIVITY_TIMEOUT_OPTIONS } from "@/hooks/useUserPreferences";
 import { EditSelectSheet } from "@/components/edit";
-import { AppButton } from "@/components/app-ui";
 import {
-  SettingsRow,
-  SettingsSectionCard,
-  SettingsFooterNotice,
-} from "@/components/ui/settings-row";
+  AppButton,
+  AppDetailRow,
+  AppSettingsCard,
+  AppSettingsFooter,
+} from "@/components/app-ui";
 
 /**
  * ACCOUNT SECURITY PAGE
@@ -51,34 +51,34 @@ export default function AccountSecurityPage() {
   return (
     <>
       {/* Authentication Method */}
-      <SettingsSectionCard
+      <AppSettingsCard
         title="Authentication"
         description="How you sign in to the platform"
         className="mb-4 md:mb-6"
       >
-        <SettingsRow
+        <AppDetailRow
           icon={KeyRound}
           label="Magic Link"
           value="Active"
           variant="readonly"
           helperText="Authentication via secure email verification"
         />
-        <SettingsRow
+        <AppDetailRow
           icon={ShieldCheck}
           label="Two-Factor Authentication"
           value="Not configured"
           variant="readonly"
           helperText="Additional security layer for account access"
         />
-      </SettingsSectionCard>
+      </AppSettingsCard>
 
       {/* Session Settings */}
-      <SettingsSectionCard
+      <AppSettingsCard
         title="Session"
         description="Session behavior and timeout settings"
         className="mb-4 md:mb-6"
       >
-        <SettingsRow
+        <AppDetailRow
           icon={Timer}
           label="Auto-logout after inactivity"
           value={getInactivityTimeoutLabel(preferences.inactivity_timeout_minutes)}
@@ -88,23 +88,23 @@ export default function AccountSecurityPage() {
           lockReason="Enforced by workspace policy"
           helperText={!isTimeoutLocked ? "For security, sessions expire after inactivity" : undefined}
         />
-        <SettingsRow
+        <AppDetailRow
           icon={Monitor}
           label="Current session"
           value="Active"
           variant="readonly"
           helperText="This device is currently active"
         />
-        <SettingsRow
+        <AppDetailRow
           icon={Clock}
           label="Session status"
           value="Your session will remain active until you sign out"
           variant="readonly"
         />
-      </SettingsSectionCard>
+      </AppSettingsCard>
 
       {/* Session Actions */}
-      <SettingsSectionCard
+      <AppSettingsCard
         title="Session Actions"
         description="Manage your active sessions"
       >
@@ -123,12 +123,12 @@ export default function AccountSecurityPage() {
             This will sign you out from all devices and require re-authentication.
           </p>
         </div>
-      </SettingsSectionCard>
+      </AppSettingsCard>
 
-      <SettingsFooterNotice>
+      <AppSettingsFooter>
         Security settings may be governed by workspace policies.
         Contact your administrator for policy changes.
-      </SettingsFooterNotice>
+      </AppSettingsFooter>
 
       {/* Inactivity Timeout Selection Sheet */}
       <EditSelectSheet
