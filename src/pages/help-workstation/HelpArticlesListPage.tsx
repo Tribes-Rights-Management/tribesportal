@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, AlertCircle, RefreshCw, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus, AlertCircle, RefreshCw, ChevronUp, ChevronDown, Search } from "lucide-react";
 import { format } from "date-fns";
 import {
   DndContext,
@@ -20,7 +20,7 @@ import {
 import { useHelpManagement, HelpArticle, HelpArticleStatus } from "@/hooks/useHelpManagement";
 import { useArticleOrderByCategory } from "@/hooks/useArticleOrderByCategory";
 import { useDebounce } from "@/hooks/useDebounce";
-import { AppButton, AppChip, AppSearchInput, AppSelect } from "@/components/app-ui";
+import { AppButton, AppChip } from "@/components/app-ui";
 import { SortableArticleCard } from "@/components/help/SortableArticleCard";
 import {
   Select,
@@ -32,21 +32,14 @@ import {
 
 /**
  * HELP ARTICLES LIST — INSTITUTIONAL DESIGN
- * Simplified to match actual database schema.
+ * Single filter row with search, category, and status dropdowns.
+ * Selecting a specific category switches to drag-drop reorder view.
  */
-
-const STATUS_OPTIONS = [
-  { value: "all", label: "All statuses" },
-  { value: "draft", label: "Draft" },
-  { value: "published", label: "Published" },
-  { value: "archived", label: "Archived" },
-];
 
 const PAGE_SIZE = 20;
 
 type SortField = "title" | "updated_at";
 type SortOrder = "asc" | "desc";
-type ViewMode = "all" | "byCategory";
 
 export default function HelpArticlesListPage() {
   const navigate = useNavigate();
@@ -69,13 +62,12 @@ export default function HelpArticlesListPage() {
     updatePositions,
   } = useArticleOrderByCategory();
 
-  // View mode and category filter
-  const [viewMode, setViewMode] = useState<ViewMode>("all");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
-
+  // Filters - category "all" = table view, specific category = drag-drop view
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const debouncedSearch = useDebounce(searchQuery, 300);
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  
   const [sortField, setSortField] = useState<SortField>("updated_at");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [currentPage, setCurrentPage] = useState(1);
@@ -88,26 +80,20 @@ export default function HelpArticlesListPage() {
     })
   );
 
-  const selectedCategory = categories.find(c => c.id === selectedCategoryId);
+  const selectedCategory = categories.find(c => c.id === categoryFilter);
+  const isTableView = categoryFilter === "all";
 
   useEffect(() => {
     fetchArticles();
     fetchCategories();
   }, [fetchArticles, fetchCategories]);
 
-  // Set default category when categories load and switching to byCategory view
+  // Load articles when a specific category is selected
   useEffect(() => {
-    if (viewMode === "byCategory" && !selectedCategoryId && categories.length > 0) {
-      setSelectedCategoryId(categories[0].id);
+    if (categoryFilter !== "all") {
+      fetchArticlesForCategory(categoryFilter);
     }
-  }, [viewMode, selectedCategoryId, categories]);
-
-  // Load articles when category filter changes
-  useEffect(() => {
-    if (viewMode === "byCategory" && selectedCategoryId) {
-      fetchArticlesForCategory(selectedCategoryId);
-    }
-  }, [viewMode, selectedCategoryId, fetchArticlesForCategory]);
+  }, [categoryFilter, fetchArticlesForCategory]);
 
   // Filter and sort articles
   const filteredArticles = useMemo(() => {
@@ -167,22 +153,20 @@ export default function HelpArticlesListPage() {
     }
   };
 
-  const handleViewModeChange = (mode: ViewMode) => {
-    setViewMode(mode);
-    if (mode === "byCategory" && categories.length > 0 && !selectedCategoryId) {
-      setSelectedCategoryId(categories[0].id);
-    }
+  const handleCategoryChange = (value: string) => {
+    setCategoryFilter(value);
+    setCurrentPage(1);
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (over && active.id !== over.id && selectedCategoryId) {
+    if (over && active.id !== over.id && categoryFilter !== "all") {
       const oldIndex = orderedArticles.findIndex(a => a.id === active.id);
       const newIndex = orderedArticles.findIndex(a => a.id === over.id);
 
       const reordered = arrayMove(orderedArticles, oldIndex, newIndex);
-      await updatePositions(selectedCategoryId, reordered);
+      await updatePositions(categoryFilter, reordered);
     }
   };
 
@@ -199,8 +183,8 @@ export default function HelpArticlesListPage() {
     }
   };
 
-  const isLoading = articlesLoading || (viewMode === "byCategory" && orderLoading);
-  const linkedArticleCount = viewMode === "byCategory" ? orderedArticles.length : filteredArticles.length;
+  const isLoading = articlesLoading || (!isTableView && orderLoading);
+  const displayCount = isTableView ? filteredArticles.length : orderedArticles.length;
 
   return (
     <div className="flex-1 p-8">
@@ -212,9 +196,9 @@ export default function HelpArticlesListPage() {
           </p>
           <h1 className="text-[20px] font-medium text-foreground mb-1">Articles</h1>
           <p className="text-[13px] text-muted-foreground">
-            {viewMode === "byCategory" && selectedCategory
-              ? `${linkedArticleCount} articles in ${selectedCategory.name}`
-              : `${filteredArticles.length} articles`
+            {selectedCategory
+              ? `${displayCount} articles in ${selectedCategory.name}`
+              : `${displayCount} articles`
             }
           </p>
         </div>
@@ -243,82 +227,54 @@ export default function HelpArticlesListPage() {
         </div>
       )}
 
-      {/* View Toggle */}
-      <div className="flex items-center gap-4 mt-4 mb-4">
-        <span className="text-[12px] text-muted-foreground">View:</span>
-        
-        <label className="flex items-center gap-1.5 cursor-pointer">
+      {/* Single Filter Row */}
+      <div className="flex items-center gap-3 mb-6">
+        {/* Search input */}
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
-            type="radio"
-            name="viewMode"
-            checked={viewMode === "all"}
-            onChange={() => handleViewModeChange("all")}
-            className="w-3.5 h-3.5"
+            type="text"
+            placeholder="Search articles..."
+            value={searchQuery}
+            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+            className="h-10 w-full pl-9 pr-3 text-[14px] bg-card border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
           />
-          <span className="text-[13px] text-foreground">All Articles</span>
-        </label>
+        </div>
 
-        <label className="flex items-center gap-1.5 cursor-pointer">
-          <input
-            type="radio"
-            name="viewMode"
-            checked={viewMode === "byCategory"}
-            onChange={() => handleViewModeChange("byCategory")}
-            className="w-3.5 h-3.5"
-          />
-          <span className="text-[13px] text-foreground">By Category:</span>
-        </label>
-
-        <Select
-          value={selectedCategoryId}
-          onValueChange={setSelectedCategoryId}
-          disabled={viewMode !== "byCategory"}
-        >
-          <SelectTrigger
-            className={
-              "h-10 w-[200px] text-sm border-border bg-transparent focus:ring-2 focus:ring-muted-foreground/20 focus:ring-offset-0 disabled:opacity-40"
-            }
-          >
-            <SelectValue placeholder="Select category..." />
+        {/* Category filter */}
+        <Select value={categoryFilter} onValueChange={handleCategoryChange}>
+          <SelectTrigger className="h-10 w-[180px] text-[14px] border-border bg-card">
+            <SelectValue placeholder="All categories" />
           </SelectTrigger>
           <SelectContent>
-            {categories.map((category) => (
-              <SelectItem 
-                key={category.id} 
-                value={category.id}
-                className="text-sm"
-              >
-                {category.name}
-              </SelectItem>
+            <SelectItem value="all">All categories</SelectItem>
+            {categories.map((cat) => (
+              <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-      </div>
 
-      {/* Filters (only shown in All Articles view) */}
-      {viewMode === "all" && (
-        <div className="flex items-center gap-4 mb-6">
-          <AppSearchInput
-            value={searchQuery}
-            onChange={(v) => { setSearchQuery(v); setCurrentPage(1); }}
-            placeholder="Search articles..."
-            className="flex-1 max-w-sm"
-          />
-          <AppSelect
-            value={statusFilter}
-            onChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}
-            options={STATUS_OPTIONS}
-          />
-        </div>
-      )}
+        {/* Status filter */}
+        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
+          <SelectTrigger className="h-10 w-[160px] text-[14px] border-border bg-card">
+            <SelectValue placeholder="All statuses" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="published">Published</SelectItem>
+            <SelectItem value="archived">Archived</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       {/* Content */}
       {isLoading ? (
         <div className="text-center py-20">
           <p className="text-[13px] text-muted-foreground">Loading articles...</p>
         </div>
-      ) : viewMode === "byCategory" ? (
-        /* By Category View - Sortable Cards */
+      ) : !isTableView ? (
+        /* Category View - Sortable Cards */
         orderedArticles.length === 0 ? (
           <div className="text-center py-20 bg-card border border-border rounded">
             <p className="text-[13px] text-muted-foreground">
@@ -352,103 +308,96 @@ export default function HelpArticlesListPage() {
       ) : (
         /* All Articles View - Table */
         <>
-      {/* Table */}
-      <div className="bg-card border border-border rounded">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-border">
-              <th
-                className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium cursor-pointer hover:text-foreground"
-                onClick={() => handleSort("title")}
-              >
-                <div className="flex items-center gap-1">
-                  Title
-                  {sortField === "title" && (
-                    sortOrder === "asc" ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
-                  )}
-                </div>
-              </th>
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[120px]">
-                Status
-              </th>
-              <th
-                className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[150px] cursor-pointer hover:text-foreground"
-                onClick={() => handleSort("updated_at")}
-              >
-                <div className="flex items-center justify-end gap-1">
-                  Updated
-                  {sortField === "updated_at" && (
-                    sortOrder === "asc" ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
-                  )}
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {articlesLoading ? (
-              <tr>
-                <td colSpan={3} className="text-center py-20">
-                  <p className="text-[13px] text-muted-foreground">Loading articles...</p>
-                </td>
-              </tr>
-            ) : paginatedArticles.length === 0 ? (
-              <tr>
-                <td colSpan={3} className="text-center py-20">
-                  <p className="text-[13px] text-muted-foreground">
-                    {debouncedSearch || statusFilter !== "all" ? "No articles match your filters" : "No articles yet"}
-                  </p>
-                </td>
-              </tr>
-            ) : (
-              paginatedArticles.map(article => (
-                <tr
-                  key={article.id}
-                  onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
-                  className="border-b border-border/30 row-hover"
-                >
-                  <td className="py-3 px-4">
-                    <p className="text-[13px] text-foreground">{article.title || "Untitled"}</p>
-                    <p className="text-[11px] text-muted-foreground font-mono mt-0.5">/{article.slug}</p>
-                  </td>
-                  <td className="py-3 px-4">
-                    {getStatusChip(article.status)}
-                  </td>
-                  <td className="py-3 px-4 text-right text-[12px] text-muted-foreground">
-                    {format(new Date(article.updated_at), "MMM d, yyyy")}
-                  </td>
+          <div className="bg-card border border-border rounded">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border">
+                  <th
+                    className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium cursor-pointer hover:text-foreground"
+                    onClick={() => handleSort("title")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Title
+                      {sortField === "title" && (
+                        sortOrder === "asc" ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
+                      )}
+                    </div>
+                  </th>
+                  <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[120px]">
+                    Status
+                  </th>
+                  <th
+                    className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[150px] cursor-pointer hover:text-foreground"
+                    onClick={() => handleSort("updated_at")}
+                  >
+                    <div className="flex items-center justify-end gap-1">
+                      Updated
+                      {sortField === "updated_at" && (
+                        sortOrder === "asc" ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
+                      )}
+                    </div>
+                  </th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4">
-          <p className="text-[12px] text-muted-foreground">
-            Page {currentPage} of {totalPages}
-          </p>
-          <div className="flex items-center gap-2">
-            <AppButton
-              intent="secondary"
-              size="sm"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(p => p - 1)}
-            >
-              Previous
-            </AppButton>
-            <AppButton
-              intent="secondary"
-              size="sm"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(p => p + 1)}
-            >
-              Next
-            </AppButton>
+              </thead>
+              <tbody>
+                {paginatedArticles.length === 0 ? (
+                  <tr>
+                    <td colSpan={3} className="text-center py-20">
+                      <p className="text-[13px] text-muted-foreground">
+                        {debouncedSearch || statusFilter !== "all" ? "No articles match your filters" : "No articles yet"}
+                      </p>
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedArticles.map(article => (
+                    <tr
+                      key={article.id}
+                      onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
+                      className="border-b border-border/30 row-hover cursor-pointer"
+                    >
+                      <td className="py-3 px-4">
+                        <p className="text-[13px] text-foreground">{article.title || "Untitled"}</p>
+                        <p className="text-[11px] text-muted-foreground font-mono mt-0.5">/{article.slug}</p>
+                      </td>
+                      <td className="py-3 px-4">
+                        {getStatusChip(article.status)}
+                      </td>
+                      <td className="py-3 px-4 text-right text-[12px] text-muted-foreground">
+                        {format(new Date(article.updated_at), "MMM d, yyyy")}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
-        </div>
-      )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4">
+              <p className="text-[12px] text-muted-foreground">
+                Page {currentPage} of {totalPages}
+              </p>
+              <div className="flex items-center gap-2">
+                <AppButton
+                  intent="secondary"
+                  size="sm"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(p => p - 1)}
+                >
+                  Previous
+                </AppButton>
+                <AppButton
+                  intent="secondary"
+                  size="sm"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(p => p + 1)}
+                >
+                  Next
+                </AppButton>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
