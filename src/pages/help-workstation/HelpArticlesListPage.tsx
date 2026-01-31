@@ -243,10 +243,10 @@ export default function HelpArticlesListPage() {
 
         {/* Category filter */}
         <Select value={categoryFilter} onValueChange={handleCategoryChange}>
-          <SelectTrigger className="h-10 w-[180px] text-[14px] border-border bg-card">
+          <SelectTrigger className="h-10 w-[200px] text-[14px] border-border bg-card">
             <SelectValue placeholder="All categories" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="min-w-[200px]">
             <SelectItem value="all">All categories</SelectItem>
             {categories.map((cat) => (
               <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
@@ -259,7 +259,7 @@ export default function HelpArticlesListPage() {
           <SelectTrigger className="h-10 w-[160px] text-[14px] border-border bg-card">
             <SelectValue placeholder="All statuses" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="min-w-[160px]">
             <SelectItem value="all">All statuses</SelectItem>
             <SelectItem value="draft">Draft</SelectItem>
             <SelectItem value="published">Published</SelectItem>
