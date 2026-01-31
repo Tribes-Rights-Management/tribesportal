@@ -107,7 +107,8 @@ export function AppSearchInput({
       {/* Search Icon - 16px, strokeWidth 1.5, vertically centered */}
       <Search
         className={cn(
-          "absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none transition-colors duration-150",
+          // NOTE: Tailwind spacing scale is customized in this project; use explicit px sizing.
+          "absolute left-3.5 top-1/2 -translate-y-1/2 h-[16px] w-[16px] pointer-events-none transition-colors duration-150",
           isFocused ? "text-[#374151]" : "text-[#9CA3AF]"
         )}
         strokeWidth={1.5}
