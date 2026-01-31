@@ -243,7 +243,7 @@ export default function HelpArticlesListPage() {
   const displayCount = isTableView ? filteredArticles.length : orderedArticles.length;
 
   return (
-    <div className="flex-1 p-6">
+    <div className="flex-1 p-4 sm:p-6">
       {/* Page Header */}
       <AppPageHeader
         eyebrow="Help Workstation"
@@ -272,41 +272,44 @@ export default function HelpArticlesListPage() {
         </div>
       )}
 
-      {/* Single Filter Row */}
-      <div className="flex items-center gap-3 mb-6">
+      {/* Single Filter Row - responsive stacking */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
         {/* Search input - standardized component */}
         <SearchInput
           placeholder="Search articles..."
           value={searchQuery}
           onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-          wrapperClassName="flex-1 max-w-xs"
+          wrapperClassName="w-full sm:flex-1 sm:max-w-xs"
         />
 
-        {/* Category filter */}
-        <Select value={categoryFilter} onValueChange={handleCategoryChange}>
-          <SelectTrigger className="h-9 w-[180px] text-[13px]">
-            <SelectValue placeholder="All categories" />
-          </SelectTrigger>
-          <SelectContent className="min-w-[180px]">
-            <SelectItem value="all">All categories</SelectItem>
-            {categories.map((cat) => (
-              <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {/* Filters row on mobile */}
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          {/* Category filter */}
+          <Select value={categoryFilter} onValueChange={handleCategoryChange}>
+            <SelectTrigger className="h-9 flex-1 sm:flex-none sm:w-[180px] text-[13px]">
+              <SelectValue placeholder="All categories" />
+            </SelectTrigger>
+            <SelectContent className="min-w-[180px]">
+              <SelectItem value="all">All categories</SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        {/* Status filter */}
-        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
-          <SelectTrigger className="h-9 w-[180px] text-[13px]">
-            <SelectValue placeholder="All statuses" />
-          </SelectTrigger>
-          <SelectContent className="min-w-[180px]">
-            <SelectItem value="all">All statuses</SelectItem>
-            <SelectItem value="draft">Draft</SelectItem>
-            <SelectItem value="published">Published</SelectItem>
-            <SelectItem value="archived">Archived</SelectItem>
-          </SelectContent>
-        </Select>
+          {/* Status filter */}
+          <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
+            <SelectTrigger className="h-9 flex-1 sm:flex-none sm:w-[180px] text-[13px]">
+              <SelectValue placeholder="All statuses" />
+            </SelectTrigger>
+            <SelectContent className="min-w-[180px]">
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="published">Published</SelectItem>
+              <SelectItem value="archived">Archived</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Content */}
@@ -345,62 +348,65 @@ export default function HelpArticlesListPage() {
       ) : (
         /* All Articles View - Table */
         <>
-          <AppTable columns="name-meta-status-date">
-            <AppTableHeader>
-              <AppTableRow header>
-                <AppTableHead
-                  sortable
-                  sortDirection={sortField === "title" ? sortOrder : null}
-                  onSort={() => handleSort("title")}
-                >
-                  Title
-                </AppTableHead>
-                <AppTableHead>Audiences</AppTableHead>
-                <AppTableHead>Status</AppTableHead>
-                <AppTableHead
-                  align="right"
-                  sortable
-                  sortDirection={sortField === "updated_at" ? sortOrder : null}
-                  onSort={() => handleSort("updated_at")}
-                >
-                  Updated
-                </AppTableHead>
-              </AppTableRow>
-            </AppTableHeader>
-            <AppTableBody>
-              {paginatedArticles.length === 0 ? (
-                <AppTableEmpty colSpan={4}>
-                  <p className="text-[13px] text-muted-foreground">
-                    {debouncedSearch || statusFilter !== "all" ? "No articles match your filters" : "No articles yet"}
-                  </p>
-                </AppTableEmpty>
-              ) : (
-                paginatedArticles.map(article => (
-                  <AppTableRow
-                    key={article.id}
-                    clickable
-                    onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
-                  >
-                    <AppTableCell>{article.title || "Untitled"}
-                    </AppTableCell>
-                    <AppTableCell muted>
-                      {getArticleAudiences(article.id) || <span className="italic">No audiences</span>}
-                    </AppTableCell>
-                    <AppTableCell>
-                      {getStatusChip(article.status)}
-                    </AppTableCell>
-                    <AppTableCell align="right" muted>
-                      {format(new Date(article.updated_at), "MMM d, yyyy")}
-                    </AppTableCell>
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <div className="min-w-[600px] px-4 sm:px-0">
+              <AppTable columns="name-meta-status-date">
+                <AppTableHeader>
+                  <AppTableRow header>
+                    <AppTableHead
+                      sortable
+                      sortDirection={sortField === "title" ? sortOrder : null}
+                      onSort={() => handleSort("title")}
+                    >
+                      Title
+                    </AppTableHead>
+                    <AppTableHead className="hidden sm:table-cell">Audiences</AppTableHead>
+                    <AppTableHead>Status</AppTableHead>
+                    <AppTableHead
+                      align="right"
+                      sortable
+                      sortDirection={sortField === "updated_at" ? sortOrder : null}
+                      onSort={() => handleSort("updated_at")}
+                    >
+                      Updated
+                    </AppTableHead>
                   </AppTableRow>
-                ))
-              )}
-            </AppTableBody>
-          </AppTable>
+                </AppTableHeader>
+                <AppTableBody>
+                  {paginatedArticles.length === 0 ? (
+                    <AppTableEmpty colSpan={4}>
+                      <p className="text-[13px] text-muted-foreground">
+                        {debouncedSearch || statusFilter !== "all" ? "No articles match your filters" : "No articles yet"}
+                      </p>
+                    </AppTableEmpty>
+                  ) : (
+                    paginatedArticles.map(article => (
+                      <AppTableRow
+                        key={article.id}
+                        clickable
+                        onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
+                      >
+                        <AppTableCell>{article.title || "Untitled"}</AppTableCell>
+                        <AppTableCell muted className="hidden sm:table-cell">
+                          {getArticleAudiences(article.id) || <span className="italic">No audiences</span>}
+                        </AppTableCell>
+                        <AppTableCell>
+                          {getStatusChip(article.status)}
+                        </AppTableCell>
+                        <AppTableCell align="right" muted>
+                          {format(new Date(article.updated_at), "MMM d, yyyy")}
+                        </AppTableCell>
+                      </AppTableRow>
+                    ))
+                  )}
+                </AppTableBody>
+              </AppTable>
+            </div>
+          </div>
 
-          {/* Pagination */}
+          {/* Pagination - responsive */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4">
               <p className="text-[12px] text-muted-foreground">
                 Page {currentPage} of {totalPages}
               </p>
@@ -410,6 +416,7 @@ export default function HelpArticlesListPage() {
                   size="sm"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(p => p - 1)}
+                  className="flex-1 sm:flex-none"
                 >
                   Previous
                 </AppButton>
@@ -418,6 +425,7 @@ export default function HelpArticlesListPage() {
                   size="sm"
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(p => p + 1)}
+                  className="flex-1 sm:flex-none"
                 >
                   Next
                 </AppButton>

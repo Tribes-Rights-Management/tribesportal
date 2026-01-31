@@ -313,7 +313,7 @@ export default function HelpCategoriesPage() {
   const linkedCategoryCount = selectedAudienceId ? orderedCategories.length : categories.length;
 
   return (
-    <div className="flex-1 p-6">
+    <div className="flex-1 p-4 sm:p-6">
       {/* Page Header */}
       <AppPageHeader
         eyebrow="Help Workstation"
@@ -342,14 +342,14 @@ export default function HelpCategoriesPage() {
         </div>
       )}
 
-      {/* Audience Filter */}
-      <div className="flex items-center gap-3 mt-4 mb-4">
+      {/* Audience Filter - responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-4 mb-4">
         <span className="text-[12px] text-muted-foreground">Audience:</span>
         <Select
           value={selectedAudienceId || "all"}
           onValueChange={(value) => setSelectedAudienceId(value === "all" ? "" : value)}
         >
-          <SelectTrigger className="h-10 w-[200px] text-sm border-border bg-transparent focus:ring-2 focus:ring-muted-foreground/20 focus:ring-offset-0">
+          <SelectTrigger className="h-10 w-full sm:w-[200px] text-sm border-border bg-transparent focus:ring-2 focus:ring-muted-foreground/20 focus:ring-offset-0">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
           <SelectContent>
@@ -368,7 +368,7 @@ export default function HelpCategoriesPage() {
           </SelectContent>
         </Select>
         {selectedAudienceId && (
-          <span className="text-[11px] text-muted-foreground italic">
+          <span className="text-[11px] text-muted-foreground italic hidden sm:inline">
             Drag to reorder categories for this audience
           </span>
         )}
@@ -409,55 +409,58 @@ export default function HelpCategoriesPage() {
         )
       ) : (
         /* All Categories View - Table */
-        <AppTable columns={["30%", "40%", "20%", "10%"]}>
-          <AppTableHeader>
-            <AppTableRow header>
-              <AppTableHead>Name</AppTableHead>
-              <AppTableHead>Audiences</AppTableHead>
-              <AppTableHead align="right">Updated</AppTableHead>
-              <AppTableHead></AppTableHead>
-            </AppTableRow>
-          </AppTableHeader>
-          <AppTableBody>
-            {categoriesWithMeta.length === 0 ? (
-              <AppTableEmpty colSpan={4}>
-                <p className="text-[13px] text-muted-foreground">No categories configured yet</p>
-              </AppTableEmpty>
-            ) : (
-              categoriesWithMeta.map(cat => (
-                <AppTableRow
-                  key={cat.id}
-                  clickable
-                  onClick={() => handleEdit(cat)}
-                  className="group"
-                >
-                  <AppTableCell>{cat.name}</AppTableCell>
-                  <AppTableCell muted>
-                    {cat.audienceIds.length === 0 ? (
-                      <span className="italic">No audiences</span>
-                    ) : (
-                      cat.audienceIds.map(id => getAudienceName(id)).join(", ")
-                    )}
-                  </AppTableCell>
-                  <AppTableCell align="right" muted>
-                    {format(new Date(cat.updated_at), "MMM d, yyyy")}
-                  </AppTableCell>
-                  <AppTableCell align="right">
-                    {cat.article_count === 0 && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleDeleteClick(cat); }}
-                        className="p-1 text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
-                        title="Delete category"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
-                      </button>
-                    )}
-                  </AppTableCell>
+        <div className="overflow-x-auto -mx-4 sm:mx-0">
+          <div className="min-w-[500px] px-4 sm:px-0">
+            <AppTable columns={["40%", "35%", "25%"]}>
+              <AppTableHeader>
+                <AppTableRow header>
+                  <AppTableHead>Name</AppTableHead>
+                  <AppTableHead className="hidden sm:table-cell">Audiences</AppTableHead>
+                  <AppTableHead align="right">Updated</AppTableHead>
                 </AppTableRow>
-              ))
-            )}
-          </AppTableBody>
-        </AppTable>
+              </AppTableHeader>
+              <AppTableBody>
+                {categoriesWithMeta.length === 0 ? (
+                  <AppTableEmpty colSpan={3}>
+                    <p className="text-[13px] text-muted-foreground">No categories configured yet</p>
+                  </AppTableEmpty>
+                ) : (
+                  categoriesWithMeta.map(cat => (
+                    <AppTableRow
+                      key={cat.id}
+                      clickable
+                      onClick={() => handleEdit(cat)}
+                      className="group"
+                    >
+                      <AppTableCell>{cat.name}</AppTableCell>
+                      <AppTableCell muted className="hidden sm:table-cell">
+                        {cat.audienceIds.length === 0 ? (
+                          <span className="italic">No audiences</span>
+                        ) : (
+                          cat.audienceIds.map(id => getAudienceName(id)).join(", ")
+                        )}
+                      </AppTableCell>
+                      <AppTableCell align="right" muted>
+                        <div className="flex items-center justify-end gap-2">
+                          <span>{format(new Date(cat.updated_at), "MMM d, yyyy")}</span>
+                          {cat.article_count === 0 && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleDeleteClick(cat); }}
+                              className="p-1 text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
+                              title="Delete category"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
+                            </button>
+                          )}
+                        </div>
+                      </AppTableCell>
+                    </AppTableRow>
+                  ))
+                )}
+              </AppTableBody>
+            </AppTable>
+          </div>
+        </div>
       )}
 
       {/* Right-side Panel */}

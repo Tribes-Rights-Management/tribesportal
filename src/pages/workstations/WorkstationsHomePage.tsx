@@ -204,20 +204,20 @@ export default function WorkstationsHomePage() {
   const renderPageShell = (content: React.ReactNode) => (
     <HeaderOnlyLayout>
       <div 
-        className="min-h-[calc(100vh-56px)] px-6"
+        className="min-h-[calc(100vh-56px)] px-4 sm:px-6"
         style={{ backgroundColor: 'var(--app-bg)' }}
       >
-        <div className="mx-auto w-full max-w-[640px] pt-8 pb-12">
+        <div className="mx-auto w-full max-w-[640px] pt-6 sm:pt-8 pb-12">
           {/* Header — always visible */}
           <div className="mb-5">
             <h1 
-              className="text-[24px] font-semibold leading-tight"
+              className="text-[20px] sm:text-[24px] font-semibold leading-tight"
               style={{ color: 'var(--text)' }}
             >
               Welcome, {getDisplayFirstName()}
             </h1>
             <p 
-              className="text-[14px] mt-1"
+              className="text-[13px] sm:text-[14px] mt-1"
               style={{ color: 'var(--text-muted)' }}
             >
               Choose your destination.
@@ -376,12 +376,12 @@ export default function WorkstationsHomePage() {
         {activePendingItems.length > 0 && (
           <Link
             to={activePendingItems[0].href}
-            className="flex items-center justify-center gap-2 py-3 px-4 bg-[#FAFAFA] border border-[#E5E5E5] rounded-lg mb-4 hover:bg-[#F5F5F5] transition-colors"
+            className="flex items-center justify-center gap-2 py-3 px-4 bg-card border border-border rounded-lg mb-4 hover:bg-accent/40 transition-colors"
           >
-            <span className="text-[13px] text-[#666666]">
+            <span className="text-[12px] sm:text-[13px] text-muted-foreground text-center">
               {activePendingItems[0].message}
             </span>
-            <ChevronRight className="h-3 w-3 text-[#999999]" />
+            <ChevronRight className="h-3 w-3 text-muted-foreground/50 shrink-0" />
           </Link>
         )}
         

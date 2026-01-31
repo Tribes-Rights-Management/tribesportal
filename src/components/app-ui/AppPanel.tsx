@@ -82,10 +82,11 @@ export function AppPanel({
 
   if (!open) return null;
 
+  // Responsive width classes: full width on mobile, constrained on larger screens
   const widthClasses = {
-    sm: "w-[400px]",
-    md: "w-[500px]",
-    lg: "w-[600px]",
+    sm: "w-full sm:w-[400px] sm:max-w-[calc(100vw-2rem)]",
+    md: "w-full sm:w-[500px] sm:max-w-[calc(100vw-2rem)]",
+    lg: "w-full sm:w-[600px] sm:max-w-[calc(100vw-2rem)]",
   };
 
   return (
@@ -102,7 +103,7 @@ export function AppPanel({
         className={cn(
           "fixed inset-y-0 right-0 z-50",
           "flex flex-col",
-          "bg-card border-l border-border rounded-l-lg shadow-2xl",
+          "bg-card border-l border-border sm:rounded-l-lg shadow-2xl",
           "animate-in slide-in-from-right duration-300",
           widthClasses[width]
         )}

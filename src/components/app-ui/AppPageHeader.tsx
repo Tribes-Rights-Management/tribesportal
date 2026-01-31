@@ -49,14 +49,14 @@ export function AppPageHeader({
   className,
 }: AppPageHeaderProps) {
   return (
-    <div className={cn("flex items-start justify-between gap-4 mb-8", className)}>
+    <div className={cn("flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-6 sm:mb-8", className)}>
       <div className="min-w-0 flex-1">
         {eyebrow && (
           <p className="text-[10px] uppercase tracking-wider font-medium mb-2 text-muted-foreground">
             {eyebrow}
           </p>
         )}
-        <h1 className="text-[20px] font-semibold text-foreground leading-tight">
+        <h1 className="text-[18px] sm:text-[20px] font-semibold text-foreground leading-tight">
           {title}
         </h1>
         {description && (
@@ -65,7 +65,7 @@ export function AppPageHeader({
           </p>
         )}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {action && <div className="shrink-0 self-start">{action}</div>}
     </div>
   );
 }
