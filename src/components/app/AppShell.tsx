@@ -56,12 +56,12 @@ export function AppShell({
     // No sidebar: simple stacked layout
     return (
       <div 
-        className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
+        className="min-h-screen flex flex-col w-full max-w-full overflow-hidden"
         style={{ backgroundColor: 'var(--page-bg)' }}
       >
         {/* Header — full width */}
         <header 
-          className="shrink-0 sticky top-0 z-40 flex items-center"
+          className="shrink-0 sticky top-0 z-40 flex items-center w-full max-w-full overflow-hidden"
           style={{ 
             height: HEADER_HEIGHT,
             backgroundColor: 'var(--topbar-bg)',
@@ -72,7 +72,7 @@ export function AppShell({
         </header>
         
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto overflow-x-clip flex flex-col min-w-0 w-full max-w-full">
+        <main className="flex-1 min-w-0 w-full max-w-full overflow-y-auto overflow-x-hidden flex flex-col">
           <div className="flex-1 min-w-0 w-full max-w-full">
             {children}
           </div>
@@ -85,7 +85,7 @@ export function AppShell({
   // With sidebar: CSS Grid layout (Stripe-like)
   return (
     <div 
-      className="min-h-screen w-full max-w-full overflow-x-clip"
+      className="min-h-screen w-full max-w-full overflow-hidden"
       style={{ 
         display: 'grid',
         gridTemplateColumns: `${SIDEBAR_WIDTH} 1fr`,
@@ -95,7 +95,7 @@ export function AppShell({
     >
       {/* Header — spans full width (both columns) */}
       <header 
-        className="sticky top-0 z-40 flex items-center"
+        className="sticky top-0 z-40 flex items-center w-full max-w-full overflow-hidden"
         style={{ 
           gridColumn: '1 / -1',
           gridRow: '1',
@@ -105,7 +105,7 @@ export function AppShell({
       >
         {/* Header uses internal 2-column layout to align with grid */}
         <div 
-          className="w-full h-full grid items-center"
+          className="w-full h-full grid items-center max-w-full overflow-hidden"
           style={{ 
             gridTemplateColumns: `${SIDEBAR_WIDTH} 1fr`,
           }}
@@ -129,7 +129,7 @@ export function AppShell({
       
       {/* Main content area */}
       <main 
-        className="overflow-y-auto overflow-x-clip flex flex-col min-w-0"
+        className="min-w-0 overflow-y-auto overflow-x-hidden flex flex-col"
         style={{ 
           gridColumn: '2',
           gridRow: '2',

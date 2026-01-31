@@ -90,8 +90,8 @@ export function PageContainer({
   return (
     <div
       className={cn(
-        // Core overflow protection
-        "w-full max-w-full overflow-x-clip",
+        // Core overflow protection - use hidden for max compatibility
+        "w-full max-w-full overflow-x-hidden",
         // Flex child protection
         "min-w-0",
         // Fill available vertical space
