@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, AlertCircle } from "lucide-react";
+import { ArrowLeft, AlertCircle, Check } from "lucide-react";
 import { useHelpManagement, HelpArticle } from "@/hooks/useHelpManagement";
-import { useArticleAudience } from "@/hooks/useArticleAudience";
 import { useCategoriesByAudience, CategoryForAudience } from "@/hooks/useCategoriesByAudience";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { AppButton, AppChip, AppSelect } from "@/components/app-ui";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
- * HELP ARTICLE EDITOR — Compact Layout
+ * HELP ARTICLE EDITOR — Multi-Audience Support
  */
 
 function slugify(text: string): string {
@@ -30,15 +30,11 @@ export default function HelpArticleEditorPage() {
     restoreArticle,
     audiences,
     fetchAudiences,
+    categories,
+    fetchCategories,
   } = useHelpManagement();
 
-  const { 
-    fetchAssignment, 
-    saveAssignment,
-  } = useArticleAudience();
-
   const {
-    categories: audienceCategories,
     fetchCategoriesByAudience,
   } = useCategoriesByAudience();
 
@@ -57,20 +53,52 @@ export default function HelpArticleEditorPage() {
   // Derive slug from title (always auto-generated)
   const slug = title ? slugify(title) : "untitled";
 
-  const [selectedAudienceId, setSelectedAudienceId] = useState<string>("");
+  // Multi-audience selection
+  const [selectedAudienceIds, setSelectedAudienceIds] = useState<string[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
-  const [position, setPosition] = useState<number>(0);
-  const [categoriesForAudience, setCategoriesForAudience] = useState<CategoryForAudience[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<CategoryForAudience[]>([]);
 
   // Derived state for publish readiness
-  const canPublish = Boolean(selectedAudienceId && selectedCategoryId);
+  const canPublish = Boolean(selectedAudienceIds.length > 0 && selectedCategoryId);
 
   const activeAudiences = audiences.filter(a => a.is_active);
-  const selectedAudience = activeAudiences.find(a => a.id === selectedAudienceId);
 
   useEffect(() => {
     fetchAudiences();
-  }, [fetchAudiences]);
+    fetchCategories();
+  }, [fetchAudiences, fetchCategories]);
+
+  // Update available categories when selected audiences change
+  useEffect(() => {
+    async function loadCategoriesForAudiences() {
+      if (selectedAudienceIds.length === 0) {
+        setAvailableCategories([]);
+        return;
+      }
+
+      // Fetch categories for each selected audience and merge unique ones
+      const allCats: CategoryForAudience[] = [];
+      const seenIds = new Set<string>();
+
+      for (const audId of selectedAudienceIds) {
+        const cats = await fetchCategoriesByAudience(audId);
+        for (const cat of cats) {
+          if (!seenIds.has(cat.id)) {
+            seenIds.add(cat.id);
+            allCats.push(cat);
+          }
+        }
+      }
+
+      setAvailableCategories(allCats);
+
+      // Clear category if it's no longer available
+      if (selectedCategoryId && !seenIds.has(selectedCategoryId)) {
+        setSelectedCategoryId("");
+      }
+    }
+    loadCategoriesForAudiences();
+  }, [selectedAudienceIds, fetchCategoriesByAudience, selectedCategoryId]);
 
   useEffect(() => {
     async function loadArticle() {
@@ -90,30 +118,29 @@ export default function HelpArticleEditorPage() {
       setBodyMd(art.content || "");
       setStatus(art.status);
 
-      const assignment = await fetchAssignment(id!);
-      if (assignment) {
-        setSelectedAudienceId(assignment.audience_id);
-        setSelectedCategoryId(assignment.category_id);
-        setPosition(assignment.position);
-        const cats = await fetchCategoriesByAudience(assignment.audience_id);
-        setCategoriesForAudience(cats);
+      // Load audience assignments for this article
+      const { data: assignments } = await supabase
+        .from("help_article_audiences")
+        .select("audience_id, category_id")
+        .eq("article_id", id!);
+
+      if (assignments && assignments.length > 0) {
+        const audIds = [...new Set(assignments.map(a => a.audience_id))];
+        setSelectedAudienceIds(audIds);
+        // Use the first assignment's category (they should all be the same)
+        setSelectedCategoryId(assignments[0].category_id);
       }
 
       setLoading(false);
     }
     loadArticle();
-  }, [id, isNew, fetchArticleWithVersion, fetchAssignment, fetchCategoriesByAudience]);
+  }, [id, isNew, fetchArticleWithVersion]);
 
-
-  const handleAudienceChange = async (audienceId: string) => {
-    setSelectedAudienceId(audienceId);
-    setSelectedCategoryId("");
-    
-    if (audienceId) {
-      const cats = await fetchCategoriesByAudience(audienceId);
-      setCategoriesForAudience(cats);
+  const handleAudienceToggle = (audienceId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedAudienceIds(prev => [...prev, audienceId]);
     } else {
-      setCategoriesForAudience([]);
+      setSelectedAudienceIds(prev => prev.filter(id => id !== audienceId));
     }
   };
 
@@ -148,8 +175,25 @@ export default function HelpArticleEditorPage() {
       }
     }
 
-    if (articleId && selectedAudienceId && selectedCategoryId) {
-      await saveAssignment(articleId, selectedAudienceId, selectedCategoryId, position);
+    // Save multi-audience assignments
+    if (articleId && selectedAudienceIds.length > 0 && selectedCategoryId) {
+      // Clear existing audience associations
+      await supabase
+        .from("help_article_audiences")
+        .delete()
+        .eq("article_id", articleId);
+
+      // Create new audience associations
+      const audienceInserts = selectedAudienceIds.map(audienceId => ({
+        article_id: articleId,
+        audience_id: audienceId,
+        category_id: selectedCategoryId,
+        position: 0, // Position managed via drag-drop on list page
+      }));
+
+      await supabase
+        .from("help_article_audiences")
+        .insert(audienceInserts);
     }
 
     setSaving(false);
@@ -168,7 +212,23 @@ export default function HelpArticleEditorPage() {
     }
 
     setPublishing(true);
-    await saveAssignment(article.id, selectedAudienceId, selectedCategoryId, position);
+
+    // Save multi-audience assignments before publishing
+    await supabase
+      .from("help_article_audiences")
+      .delete()
+      .eq("article_id", article.id);
+
+    const audienceInserts = selectedAudienceIds.map(audienceId => ({
+      article_id: article.id,
+      audience_id: audienceId,
+      category_id: selectedCategoryId,
+      position: 0,
+    }));
+
+    await supabase
+      .from("help_article_audiences")
+      .insert(audienceInserts);
 
     const success = await publishVersion(article.id, article.id);
     if (success) {
@@ -301,76 +361,82 @@ export default function HelpArticleEditorPage() {
           {/* Slug Row - Read-only helper text */}
           <div className="px-1">
             <span className="text-[12px] text-muted-foreground">
-              URL: /hc/{selectedAudience?.slug || "[audience]"}/articles/{slug || "article-slug"}
+              URL: /hc/[audience]/articles/{slug || "article-slug"}
             </span>
           </div>
 
-          {/* Publishing Settings - Horizontal compact row */}
+          {/* Publishing Settings */}
           <div className={cn(
-            "flex flex-col gap-3 px-4 py-3 bg-muted/30 border rounded md:flex-row md:items-end",
-            showPublishValidation && (!selectedAudienceId || !selectedCategoryId) 
+            "flex flex-col gap-4 px-4 py-4 bg-muted/30 border rounded",
+            showPublishValidation && (selectedAudienceIds.length === 0 || !selectedCategoryId) 
               ? "border-destructive" 
               : "border-border"
           )}>
-            <div className="flex-1">
-              <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
-                Audience
-              </label>
-              <AppSelect
-                value={selectedAudienceId}
-                onChange={handleAudienceChange}
-                fullWidth
-                placeholder="Select audience"
-                options={activeAudiences.map(a => ({ value: a.id, label: a.name }))}
-                className={cn(
-                  showPublishValidation && !selectedAudienceId && "border-destructive focus:ring-destructive"
-                )}
-              />
-              {showPublishValidation && !selectedAudienceId && (
-                <p className="text-[11px] text-destructive mt-1">Required</p>
-              )}
-            </div>
-
-            <div className="flex-1">
-              <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
-                Category
-              </label>
-              {selectedAudienceId && categoriesForAudience.length === 0 ? (
-                <div className="h-9 flex items-center text-[12px] text-muted-foreground">
-                  None available.{" "}
-                  <Link to="/help/categories" className="text-primary hover:underline ml-1">
-                    Create →
-                  </Link>
+            <div className="flex flex-col gap-4 md:flex-row">
+              {/* Audience Visibility - Checkbox group */}
+              <div className="flex-1">
+                <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
+                  Audience Visibility *
+                </label>
+                <div className="space-y-2">
+                  {activeAudiences.map((audience) => (
+                    <label
+                      key={audience.id}
+                      className={cn(
+                        "flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors",
+                        selectedAudienceIds.includes(audience.id)
+                          ? "border-primary bg-primary/5"
+                          : "border-border hover:border-muted-foreground/30"
+                      )}
+                    >
+                      <div className={cn(
+                        "h-4 w-4 rounded border flex items-center justify-center transition-colors",
+                        selectedAudienceIds.includes(audience.id)
+                          ? "bg-primary border-primary"
+                          : "border-muted-foreground/40"
+                      )}>
+                        {selectedAudienceIds.includes(audience.id) && (
+                          <Check className="h-3 w-3 text-primary-foreground" strokeWidth={2.5} />
+                        )}
+                      </div>
+                      <span className="text-[13px]">{audience.name}</span>
+                    </label>
+                  ))}
                 </div>
-              ) : (
-                <AppSelect
-                  value={selectedCategoryId}
-                  onChange={setSelectedCategoryId}
-                  disabled={!selectedAudienceId}
-                  fullWidth
-                  placeholder={selectedAudienceId ? "Select category" : "Select audience first"}
-                  options={categoriesForAudience.map(c => ({ value: c.id, label: c.name }))}
-                  className={cn(
-                    showPublishValidation && !selectedCategoryId && "border-destructive focus:ring-destructive"
-                  )}
-                />
-              )}
-              {showPublishValidation && !selectedCategoryId && (
-                <p className="text-[11px] text-destructive mt-1">Required</p>
-              )}
-            </div>
+                {showPublishValidation && selectedAudienceIds.length === 0 && (
+                  <p className="text-[11px] text-destructive mt-2">Select at least one audience</p>
+                )}
+              </div>
 
-            <div className="w-full md:w-20">
-              <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
-                Order
-              </label>
-              <input
-                type="number"
-                value={position}
-                onChange={(e) => setPosition(parseInt(e.target.value) || 0)}
-                min={0}
-                className="w-full h-9 px-3 bg-card border border-border rounded text-[13px] text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-              />
+              {/* Category */}
+              <div className="flex-1">
+                <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
+                  Category *
+                </label>
+                {selectedAudienceIds.length > 0 && availableCategories.length === 0 ? (
+                  <div className="h-9 flex items-center text-[12px] text-muted-foreground">
+                    None available.{" "}
+                    <Link to="/help/categories" className="text-primary hover:underline ml-1">
+                      Create →
+                    </Link>
+                  </div>
+                ) : (
+                  <AppSelect
+                    value={selectedCategoryId}
+                    onChange={setSelectedCategoryId}
+                    disabled={selectedAudienceIds.length === 0}
+                    fullWidth
+                    placeholder={selectedAudienceIds.length > 0 ? "Select category" : "Select audiences first"}
+                    options={availableCategories.map(c => ({ value: c.id, label: c.name }))}
+                    className={cn(
+                      showPublishValidation && !selectedCategoryId && "border-destructive focus:ring-destructive"
+                    )}
+                  />
+                )}
+                {showPublishValidation && !selectedCategoryId && (
+                  <p className="text-[11px] text-destructive mt-1">Required</p>
+                )}
+              </div>
             </div>
           </div>
 
