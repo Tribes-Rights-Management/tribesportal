@@ -32,6 +32,7 @@ import {
   AppTableEmpty,
   AppCheckboxGroup,
   AppPageHeader,
+  AppPageContainer,
   AppAlert,
   AppEmptyState,
   AppPanel,
@@ -313,7 +314,7 @@ export default function HelpCategoriesPage() {
   const linkedCategoryCount = selectedAudienceId ? orderedCategories.length : categories.length;
 
   return (
-    <div className="flex-1 p-4 sm:p-6">
+    <AppPageContainer maxWidth="xl">
       {/* Page Header */}
       <AppPageHeader
         backLink={{ to: "/help", label: "Overview" }}
@@ -556,6 +557,6 @@ export default function HelpCategoriesPage() {
           )}
         </p>
       </AppPanel>
-    </div>
+    </AppPageContainer>
   );
 }

@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import {
   AppButton,
   AppPageHeader,
+  AppPageContainer,
   AppStatCard,
   AppStatCardGrid,
   AppListCard,
@@ -16,6 +17,7 @@ import {
   AppEmptyState,
   AppAlert,
   AppSectionGrid,
+  AppSection,
 } from "@/components/app-ui";
 
 /**
@@ -131,7 +133,7 @@ export default function HelpOverviewPage() {
 
 
   return (
-    <div className="flex-1 p-4 sm:p-6 lg:p-8">
+    <AppPageContainer maxWidth="xl">
       {/* Page Header */}
       <AppPageHeader
         eyebrow="Help Workstation"
@@ -160,9 +162,8 @@ export default function HelpOverviewPage() {
         </div>
       )}
 
-
       {/* Stats Cards */}
-      <div className="mb-8">
+      <AppSection spacing="md">
         <AppStatCardGrid columns={3}>
           <AppStatCard
             label="Articles"
@@ -184,7 +185,7 @@ export default function HelpOverviewPage() {
             onClick={() => navigate("/help/audiences")}
           />
         </AppStatCardGrid>
-      </div>
+      </AppSection>
 
       {/* Recent Articles & Drafts */}
       <AppSectionGrid columns={2}>
@@ -244,6 +245,6 @@ export default function HelpOverviewPage() {
           )}
         </AppListCard>
       </AppSectionGrid>
-    </div>
+    </AppPageContainer>
   );
 }
