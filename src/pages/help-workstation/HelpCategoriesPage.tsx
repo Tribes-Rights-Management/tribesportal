@@ -1,23 +1,40 @@
 import { useState, useEffect, useMemo } from "react";
-import { Plus, Trash2, X, AlertCircle, RefreshCw } from "lucide-react";
+import { Plus, Trash2, X, AlertCircle, RefreshCw, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { useHelpManagement, HelpCategory, HelpAudience } from "@/hooks/useHelpManagement";
 import { useCategoryAudiences } from "@/hooks/useCategoryAudiences";
+import { useCategoryOrderByAudience, CategoryWithPosition } from "@/hooks/useCategoryOrderByAudience";
+import { SortableCategoryRow } from "@/components/help/SortableCategoryRow";
 import { supabase } from "@/integrations/supabase/client";
-import { AppButton, AppChip } from "@/components/app-ui";
+import { AppButton } from "@/components/app-ui";
 
 /**
  * HELP CATEGORIES PAGE — INSTITUTIONAL DESIGN
- * With audience assignment support via help_category_audiences junction table.
+ * With audience-based filtering and drag-and-drop reordering.
  */
 
 function slugify(text: string): string {
   return text
     .toLowerCase()
-    .replace(/[^\w\s-]/g, "")   // Remove special characters
-    .replace(/\s+/g, "-")        // Replace spaces with dashes
-    .replace(/-+/g, "-")         // Replace multiple dashes with single dash
-    .replace(/^-|-$/g, "");      // Trim dashes from start/end
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 interface CategoryWithMeta extends HelpCategory {
@@ -39,7 +56,18 @@ export default function HelpCategoriesPage() {
   } = useHelpManagement();
 
   const { fetchAudiencesForCategory, syncCategoryAudiences } = useCategoryAudiences();
+  const {
+    categories: orderedCategories,
+    loading: orderLoading,
+    fetchCategoriesForAudience,
+    updatePositions,
+  } = useCategoryOrderByAudience();
 
+  // Audience filter state
+  const [selectedAudienceId, setSelectedAudienceId] = useState<string | null>(null);
+  const [audienceDropdownOpen, setAudienceDropdownOpen] = useState(false);
+
+  // Panel/modal state
   const [panelOpen, setPanelOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editing, setEditing] = useState<HelpCategory | null>(null);
@@ -56,6 +84,14 @@ export default function HelpCategoriesPage() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [selectedAudienceIds, setSelectedAudienceIds] = useState<string[]>([]);
+
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     fetchCategories();
@@ -83,6 +119,13 @@ export default function HelpCategoriesPage() {
     loadCategoryAudiences();
   }, [categories]);
 
+  // Load categories when audience filter changes
+  useEffect(() => {
+    if (selectedAudienceId) {
+      fetchCategoriesForAudience(selectedAudienceId);
+    }
+  }, [selectedAudienceId, fetchCategoriesForAudience]);
+
   const categoriesWithMeta: CategoryWithMeta[] = useMemo(() => {
     return categories.map(cat => ({
       ...cat,
@@ -90,6 +133,9 @@ export default function HelpCategoriesPage() {
       audienceIds: categoryAudienceMap[cat.id] || [],
     }));
   }, [categories, articleCounts, categoryAudienceMap]);
+
+  const activeAudiences = audiences.filter(a => a.is_active);
+  const selectedAudience = audiences.find(a => a.id === selectedAudienceId);
 
   // Get audience name by ID
   const getAudienceName = (audienceId: string) => {
@@ -111,14 +157,16 @@ export default function HelpCategoriesPage() {
     setPanelOpen(true);
   };
 
-  const handleEdit = async (cat: HelpCategory) => {
-    setEditing(cat);
-    setName(cat.name);
-    setSlug(cat.slug);
+  const handleEdit = async (cat: HelpCategory | CategoryWithPosition) => {
+    const fullCategory = categories.find(c => c.id === cat.id);
+    if (!fullCategory) return;
+
+    setEditing(fullCategory);
+    setName(fullCategory.name);
+    setSlug(fullCategory.slug);
     setFormError(null);
 
-    // Fetch existing audience links
-    const audienceIds = await fetchAudiencesForCategory(cat.id);
+    const audienceIds = await fetchAudiencesForCategory(fullCategory.id);
     setSelectedAudienceIds(audienceIds);
 
     setPanelOpen(true);
@@ -169,19 +217,21 @@ export default function HelpCategoriesPage() {
         }
       }
 
-      // Sync audience relationships
       if (categoryId) {
         await syncCategoryAudiences(categoryId, selectedAudienceIds);
-        
-        // Refresh data
+
         fetchCategories();
-        
-        // Update local map
+
         setCategoryAudienceMap(prev => ({
           ...prev,
           [categoryId!]: selectedAudienceIds,
         }));
-        
+
+        // Refresh ordered list if filtering by audience
+        if (selectedAudienceId) {
+          fetchCategoriesForAudience(selectedAudienceId);
+        }
+
         setPanelOpen(false);
       }
     } catch (err) {
@@ -191,9 +241,12 @@ export default function HelpCategoriesPage() {
     setSaving(false);
   };
 
-  const handleDeleteClick = (cat: CategoryWithMeta) => {
-    setDeleting(cat);
-    setDeleteDialogOpen(true);
+  const handleDeleteClick = (cat: CategoryWithMeta | CategoryWithPosition) => {
+    const catWithMeta = categoriesWithMeta.find(c => c.id === cat.id);
+    if (catWithMeta) {
+      setDeleting(catWithMeta);
+      setDeleteDialogOpen(true);
+    }
   };
 
   const handleDelete = async () => {
@@ -209,13 +262,27 @@ export default function HelpCategoriesPage() {
     const success = await deleteCategory(deleting.id);
     if (success) {
       fetchCategories();
+      if (selectedAudienceId) {
+        fetchCategoriesForAudience(selectedAudienceId);
+      }
     }
     setDeleteDialogOpen(false);
     setDeleting(null);
   };
 
-  const isLoading = categoriesLoading;
-  const activeAudiences = audiences.filter(a => a.is_active);
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id && selectedAudienceId) {
+      const oldIndex = orderedCategories.findIndex(c => c.id === active.id);
+      const newIndex = orderedCategories.findIndex(c => c.id === over.id);
+
+      const reordered = arrayMove(orderedCategories, oldIndex, newIndex);
+      await updatePositions(selectedAudienceId, reordered);
+    }
+  };
+
+  const isLoading = categoriesLoading || orderLoading;
 
   return (
     <div className="flex-1 p-8">
@@ -251,63 +318,153 @@ export default function HelpCategoriesPage() {
         </div>
       )}
 
+      {/* Audience Filter Dropdown */}
+      <div className="mb-6">
+        <div className="relative inline-block">
+          <button
+            onClick={() => setAudienceDropdownOpen(!audienceDropdownOpen)}
+            className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded text-[13px] text-foreground hover:border-primary/50 transition-colors"
+          >
+            <span>{selectedAudience ? selectedAudience.name : "All Categories"}</span>
+            <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${audienceDropdownOpen ? 'rotate-180' : ''}`} strokeWidth={1.5} />
+          </button>
+
+          {audienceDropdownOpen && (
+            <>
+              <div className="fixed inset-0 z-30" onClick={() => setAudienceDropdownOpen(false)} />
+              <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded shadow-lg z-40 min-w-[200px]">
+                <button
+                  onClick={() => {
+                    setSelectedAudienceId(null);
+                    setAudienceDropdownOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-2.5 text-[13px] hover:bg-muted/50 transition-colors ${
+                    !selectedAudienceId ? 'bg-primary/10 text-primary' : 'text-foreground'
+                  }`}
+                >
+                  All Categories
+                </button>
+                {activeAudiences.map(audience => (
+                  <button
+                    key={audience.id}
+                    onClick={() => {
+                      setSelectedAudienceId(audience.id);
+                      setAudienceDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-[13px] hover:bg-muted/50 transition-colors ${
+                      selectedAudienceId === audience.id ? 'bg-primary/10 text-primary' : 'text-foreground'
+                    }`}
+                  >
+                    {audience.name}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        {selectedAudienceId && (
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Drag categories to reorder for "{selectedAudience?.name}"
+          </p>
+        )}
+      </div>
+
       {/* Table */}
       <div className="bg-card border border-border rounded">
         <table className="w-full">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[25%]">Name</th>
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[20%]">Slug</th>
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[30%]">Audiences</th>
-              <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[15%]">Updated</th>
+              {selectedAudienceId && (
+                <th className="w-10 px-2"></th>
+              )}
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Name</th>
+              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Slug</th>
+              {!selectedAudienceId && (
+                <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Audiences</th>
+              )}
+              <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Updated</th>
               <th className="w-[50px]"></th>
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={5} className="text-center py-20">
+                <td colSpan={selectedAudienceId ? 5 : 5} className="text-center py-20">
                   <p className="text-[13px] text-muted-foreground">Loading categories...</p>
                 </td>
               </tr>
-            ) : categoriesWithMeta.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="text-center py-20">
-                  <p className="text-[13px] text-muted-foreground">No categories configured yet</p>
-                </td>
-              </tr>
-            ) : (
-              categoriesWithMeta.map(cat => (
-                <tr
-                  key={cat.id}
-                  onClick={() => handleEdit(cat)}
-                  className="border-b border-border/30 row-hover group"
-                >
-                  <td className="py-3 px-4 text-[13px] text-foreground">{cat.name}</td>
-                  <td className="py-3 px-4 text-[12px] text-muted-foreground font-mono">{cat.slug}</td>
-                  <td className="py-3 px-4 text-[13px] text-muted-foreground">
-                    {cat.audienceIds.length === 0 ? (
-                      <span className="italic">No audiences</span>
-                    ) : (
-                      cat.audienceIds.map(id => getAudienceName(id)).join(", ")
-                    )}
-                  </td>
-                  <td className="py-3 px-4 text-right text-[12px] text-muted-foreground">
-                    {format(new Date(cat.updated_at), "MMM d, yyyy")}
-                  </td>
-                  <td className="py-3 px-4 text-right">
-                    {cat.article_count === 0 && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleDeleteClick(cat); }}
-                        className="p-1 text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
-                        title="Delete category"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
-                      </button>
-                    )}
+            ) : selectedAudienceId ? (
+              // Sortable list when audience is selected
+              orderedCategories.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-20">
+                    <p className="text-[13px] text-muted-foreground">No categories for this audience</p>
                   </td>
                 </tr>
-              ))
+              ) : (
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={orderedCategories.map(c => c.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {orderedCategories.map(cat => (
+                      <SortableCategoryRow
+                        key={cat.id}
+                        category={cat}
+                        onEdit={handleEdit}
+                        onDelete={handleDeleteClick}
+                        canDelete={true}
+                      />
+                    ))}
+                  </SortableContext>
+                </DndContext>
+              )
+            ) : (
+              // Standard list when no audience filter
+              categoriesWithMeta.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-20">
+                    <p className="text-[13px] text-muted-foreground">No categories configured yet</p>
+                  </td>
+                </tr>
+              ) : (
+                categoriesWithMeta.map(cat => (
+                  <tr
+                    key={cat.id}
+                    onClick={() => handleEdit(cat)}
+                    className="border-b border-border/30 row-hover group cursor-pointer"
+                  >
+                    <td className="py-3 px-4 text-[13px] text-foreground">{cat.name}</td>
+                    <td className="py-3 px-4 text-[12px] text-muted-foreground font-mono">{cat.slug}</td>
+                    <td className="py-3 px-4 text-[13px] text-muted-foreground">
+                      {cat.audienceIds.length === 0 ? (
+                        <span className="italic">No audiences</span>
+                      ) : (
+                        cat.audienceIds.map(id => getAudienceName(id)).join(", ")
+                      )}
+                    </td>
+                    <td className="py-3 px-4 text-right text-[12px] text-muted-foreground">
+                      {format(new Date(cat.updated_at), "MMM d, yyyy")}
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      {cat.article_count === 0 && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDeleteClick(cat); }}
+                          className="p-1 text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
+                          title="Delete category"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )
             )}
           </tbody>
         </table>
@@ -318,7 +475,6 @@ export default function HelpCategoriesPage() {
         <>
           <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setPanelOpen(false)} />
           <div className="fixed inset-y-0 right-0 w-[500px] bg-background border-l border-border shadow-2xl z-50 flex flex-col">
-            {/* Panel Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-border">
               <div>
                 <h2 className="text-[15px] font-medium text-foreground">
@@ -328,16 +484,15 @@ export default function HelpCategoriesPage() {
                   {editing ? "Update category details" : "Create a new category"}
                 </p>
               </div>
-              <AppButton 
-                intent="ghost" 
-                size="sm" 
+              <AppButton
+                intent="ghost"
+                size="sm"
                 onClick={() => setPanelOpen(false)}
               >
                 <X className="h-4 w-4" strokeWidth={1.5} />
               </AppButton>
             </div>
 
-            {/* Panel Content */}
             <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
               {formError && (
                 <div className="flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
@@ -362,7 +517,6 @@ export default function HelpCategoriesPage() {
                 </p>
               </div>
 
-              {/* Audience Visibility Section */}
               <div>
                 <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
                   Audience Visibility *
@@ -390,7 +544,6 @@ export default function HelpCategoriesPage() {
               </div>
             </div>
 
-            {/* Panel Footer */}
             <div className="flex items-center justify-between px-6 py-5 border-t border-border">
               <div>
                 {editing && (
@@ -427,9 +580,9 @@ export default function HelpCategoriesPage() {
           <div className="fixed inset-y-0 right-0 w-[400px] bg-background border-l border-border shadow-2xl z-50 flex flex-col">
             <div className="flex items-center justify-between px-6 py-5 border-b border-border">
               <h2 className="text-[15px] font-medium text-foreground">Delete category?</h2>
-              <AppButton 
-                intent="ghost" 
-                size="sm" 
+              <AppButton
+                intent="ghost"
+                size="sm"
                 onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }}
               >
                 <X className="h-4 w-4" strokeWidth={1.5} />
