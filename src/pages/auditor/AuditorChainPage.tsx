@@ -217,6 +217,7 @@ export default function AuditorChainPage() {
             </h3>
           </div>
 
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -281,6 +282,7 @@ export default function AuditorChainPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         </>
       )}
     </PlatformLayout>

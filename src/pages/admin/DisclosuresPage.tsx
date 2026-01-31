@@ -379,7 +379,7 @@ export default function DisclosuresPage() {
             Generate Disclosure Export
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             <div>
               <Label 
                 htmlFor="export-type" 
@@ -481,6 +481,7 @@ export default function DisclosuresPage() {
         </h3>
       </div>
 
+      <div className="overflow-x-auto">
       <Table density="compact">
         <TableHeader>
           <TableRow>
@@ -583,6 +584,7 @@ export default function DisclosuresPage() {
           )}
         </TableBody>
       </Table>
+      </div>
 
       {/* Audit Notice */}
       <div 

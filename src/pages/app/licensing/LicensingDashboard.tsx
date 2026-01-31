@@ -29,7 +29,7 @@ export default function LicensingDashboard() {
         />
 
         {/* Status indicators - operational state */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <StatusIndicator 
             label={DASHBOARD_LABELS.ACTIVE_LICENSES} 
             count={0} 

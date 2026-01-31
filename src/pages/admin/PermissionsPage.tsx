@@ -423,13 +423,13 @@ export default function PermissionsPage() {
             User Identity
           </h2>
           <div 
-            className="rounded p-6"
+            className="rounded p-4 sm:p-6"
             style={{ 
               backgroundColor: 'var(--platform-surface)',
               border: '1px solid var(--platform-border)'
             }}
           >
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <p 
                   className="text-[11px] font-medium uppercase tracking-[0.04em] mb-1"

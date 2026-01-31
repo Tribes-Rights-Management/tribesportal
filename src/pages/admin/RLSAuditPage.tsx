@@ -94,16 +94,16 @@ export default function RLSAuditPage() {
   const unsafeCount = RLS_COVERAGE.filter(r => r.status === "unsafe").length;
 
   return (
-    <div className="min-h-screen bg-muted/30 p-6">
+    <div className="min-h-screen bg-muted/30 p-4 sm:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <Link to="/console" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-4 w-4" />
             Back
           </Link>
           <div>
-            <h1 className="text-xl font-medium flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-medium flex items-center gap-2">
               <Shield className="h-5 w-5" />
               RLS Coverage Audit
             </h1>
@@ -113,8 +113,8 @@ export default function RLSAuditPage() {
           </div>
         </div>
 
-        {/* Summary Stats */}
-        <div className="grid grid-cols-3 gap-4">
+        {/* Summary Stats - responsive grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <ConsoleCard>
             <ConsoleCardBody>
               <div className="flex items-center gap-3">
@@ -156,14 +156,14 @@ export default function RLSAuditPage() {
           </ConsoleCard>
         </div>
 
-        {/* RLS Coverage Table */}
+        {/* RLS Coverage Table - with overflow scroll for mobile */}
         <ConsoleCard>
           <ConsoleCardHeader 
             title="Policy Coverage Inventory"
             description="Audit of RLS status, policy counts, and tenant isolation for all tables in public schema"
           />
           <ConsoleCardBody>
-            <div className="border rounded-lg overflow-hidden">
+            <div className="border rounded-lg overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/50">

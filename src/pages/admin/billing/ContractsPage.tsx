@@ -139,6 +139,7 @@ export default function ContractsPage() {
             <InstitutionalLoadingState message="Loading contracts..." />
           </div>
         ) : (
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -220,6 +221,7 @@ export default function ContractsPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         )}
       </div>
     </div>
