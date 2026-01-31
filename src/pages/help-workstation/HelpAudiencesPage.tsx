@@ -231,7 +231,7 @@ export default function HelpAudiencesPage() {
   };
 
   return (
-    <div className="flex-1 p-6">
+    <div className="flex-1 p-4 sm:p-6">
       {/* Page Header */}
       <AppPageHeader
         eyebrow="Help Workstation"
@@ -281,15 +281,15 @@ export default function HelpAudiencesPage() {
                 cursor-grab active:cursor-grabbing transition-colors
               `}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-start sm:items-center gap-3">
                 {/* Drag handle */}
-                <div className="text-muted-foreground hover:text-foreground transition-colors">
+                <div className="text-muted-foreground hover:text-foreground transition-colors mt-0.5 sm:mt-0">
                   <GripVertical className="h-4 w-4" strokeWidth={1.5} />
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-medium text-foreground">{audience.name}</span>
                     {!audience.is_active && (
                       <span className="text-2xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground uppercase">
@@ -298,12 +298,12 @@ export default function HelpAudiencesPage() {
                     )}
                   </div>
                   {audience.description && (
-                    <p className="text-xs text-muted-foreground mt-0.5">{audience.description}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{audience.description}</p>
                   )}
                 </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-2">
+                {/* Actions - stack on mobile */}
+                <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 shrink-0">
                   <button
                     onClick={(e) => { e.stopPropagation(); handleToggleActive(audience); }}
                     className={`

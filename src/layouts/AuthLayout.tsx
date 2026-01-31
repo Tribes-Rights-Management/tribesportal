@@ -40,7 +40,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         Width constrained, left-aligned text, embedded in dark canvas
       */}
       <div 
-        className="w-full"
+        className="w-full px-4 sm:px-0"
         style={{ 
           maxWidth: 'var(--auth-content-width)',
           // Anchor slightly above center
