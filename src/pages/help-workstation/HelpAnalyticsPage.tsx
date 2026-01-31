@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AlertCircle, RefreshCw } from "lucide-react";
+import { AppPageHeader } from "@/components/app-ui";
 import {
   Select,
   SelectContent,
@@ -131,27 +132,25 @@ export default function HelpAnalyticsPage() {
 
   return (
     <div className="flex-1 p-4 sm:p-6 lg:p-8">
-      {/* Header - responsive layout */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 sm:mb-8">
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
-            HELP WORKSTATION
-          </p>
-          <h1 className="text-lg sm:text-[20px] font-medium text-foreground mb-1">Analytics</h1>
-          <p className="text-[13px] text-muted-foreground">Help content performance and trends</p>
-        </div>
-        
-        <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
-          <SelectTrigger className="h-10 w-full sm:w-[140px] px-3 text-[14px] bg-card border border-border rounded-lg">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="7">Last 7 days</SelectItem>
-            <SelectItem value="30">Last 30 days</SelectItem>
-            <SelectItem value="90">Last 90 days</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      {/* Header - using AppPageHeader with back link */}
+      <AppPageHeader
+        backLink={{ to: "/help", label: "Overview" }}
+        eyebrow="Help Workstation"
+        title="Analytics"
+        description="Help content performance and trends"
+        action={
+          <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
+            <SelectTrigger className="h-10 w-full sm:w-[140px] px-3 text-[14px] bg-card border border-border rounded-lg">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7">Last 7 days</SelectItem>
+              <SelectItem value="30">Last 30 days</SelectItem>
+              <SelectItem value="90">Last 90 days</SelectItem>
+            </SelectContent>
+          </Select>
+        }
+      />
 
       {/* Inline Error */}
       {error && (

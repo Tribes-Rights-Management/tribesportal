@@ -316,6 +316,7 @@ export default function HelpCategoriesPage() {
     <div className="flex-1 p-4 sm:p-6">
       {/* Page Header */}
       <AppPageHeader
+        backLink={{ to: "/help", label: "Overview" }}
         eyebrow="Help Workstation"
         title="Categories"
         description={
