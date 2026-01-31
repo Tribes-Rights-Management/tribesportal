@@ -16,10 +16,10 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useHelpManagement, HelpCategory, HelpAudience } from "@/hooks/useHelpManagement";
+import { useHelpManagement, HelpCategory } from "@/hooks/useHelpManagement";
 import { useCategoryAudiences } from "@/hooks/useCategoryAudiences";
 import { useCategoryOrderByAudience, CategoryWithPosition } from "@/hooks/useCategoryOrderByAudience";
-import { SortableCategoryRow } from "@/components/help/SortableCategoryRow";
+import { SortableCategoryCard } from "@/components/help/SortableCategoryCard";
 import { supabase } from "@/integrations/supabase/client";
 import { AppButton } from "@/components/app-ui";
 
@@ -42,6 +42,8 @@ interface CategoryWithMeta extends HelpCategory {
   audienceIds: string[];
 }
 
+type ViewMode = 'all' | 'byAudience';
+
 export default function HelpCategoriesPage() {
   const {
     categories,
@@ -63,8 +65,9 @@ export default function HelpCategoriesPage() {
     updatePositions,
   } = useCategoryOrderByAudience();
 
-  // Audience filter state
-  const [selectedAudienceId, setSelectedAudienceId] = useState<string | null>(null);
+  // View mode and audience filter
+  const [viewMode, setViewMode] = useState<ViewMode>('all');
+  const [selectedAudienceId, setSelectedAudienceId] = useState<string>('');
   const [audienceDropdownOpen, setAudienceDropdownOpen] = useState(false);
 
   // Panel/modal state
@@ -93,10 +96,24 @@ export default function HelpCategoriesPage() {
     })
   );
 
+  const activeAudiences = useMemo(() => 
+    audiences.filter(a => a.is_active).sort((a, b) => a.name.localeCompare(b.name)),
+    [audiences]
+  );
+
+  const selectedAudience = audiences.find(a => a.id === selectedAudienceId);
+
   useEffect(() => {
     fetchCategories();
     fetchAudiences();
   }, [fetchCategories, fetchAudiences]);
+
+  // Set default audience when audiences load and switching to byAudience view
+  useEffect(() => {
+    if (viewMode === 'byAudience' && !selectedAudienceId && activeAudiences.length > 0) {
+      setSelectedAudienceId(activeAudiences[0].id);
+    }
+  }, [viewMode, selectedAudienceId, activeAudiences]);
 
   // Fetch all category-audience relationships for display
   useEffect(() => {
@@ -121,10 +138,10 @@ export default function HelpCategoriesPage() {
 
   // Load categories when audience filter changes
   useEffect(() => {
-    if (selectedAudienceId) {
+    if (viewMode === 'byAudience' && selectedAudienceId) {
       fetchCategoriesForAudience(selectedAudienceId);
     }
-  }, [selectedAudienceId, fetchCategoriesForAudience]);
+  }, [viewMode, selectedAudienceId, fetchCategoriesForAudience]);
 
   const categoriesWithMeta: CategoryWithMeta[] = useMemo(() => {
     return categories.map(cat => ({
@@ -133,9 +150,6 @@ export default function HelpCategoriesPage() {
       audienceIds: categoryAudienceMap[cat.id] || [],
     }));
   }, [categories, articleCounts, categoryAudienceMap]);
-
-  const activeAudiences = audiences.filter(a => a.is_active);
-  const selectedAudience = audiences.find(a => a.id === selectedAudienceId);
 
   // Get audience name by ID
   const getAudienceName = (audienceId: string) => {
@@ -227,8 +241,7 @@ export default function HelpCategoriesPage() {
           [categoryId!]: selectedAudienceIds,
         }));
 
-        // Refresh ordered list if filtering by audience
-        if (selectedAudienceId) {
+        if (viewMode === 'byAudience' && selectedAudienceId) {
           fetchCategoriesForAudience(selectedAudienceId);
         }
 
@@ -262,7 +275,7 @@ export default function HelpCategoriesPage() {
     const success = await deleteCategory(deleting.id);
     if (success) {
       fetchCategories();
-      if (selectedAudienceId) {
+      if (viewMode === 'byAudience' && selectedAudienceId) {
         fetchCategoriesForAudience(selectedAudienceId);
       }
     }
@@ -282,18 +295,33 @@ export default function HelpCategoriesPage() {
     }
   };
 
-  const isLoading = categoriesLoading || orderLoading;
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode);
+    if (mode === 'byAudience' && activeAudiences.length > 0 && !selectedAudienceId) {
+      setSelectedAudienceId(activeAudiences[0].id);
+    }
+  };
+
+  const isLoading = categoriesLoading || (viewMode === 'byAudience' && orderLoading);
+
+  // Count categories for selected audience
+  const linkedCategoryCount = viewMode === 'byAudience' ? orderedCategories.length : categories.length;
 
   return (
     <div className="flex-1 p-8">
       {/* Header */}
-      <div className="flex items-start justify-between mb-8">
+      <div className="flex items-start justify-between mb-6">
         <div>
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
             HELP WORKSTATION
           </p>
           <h1 className="text-[20px] font-medium text-foreground mb-1">Categories</h1>
-          <p className="text-[13px] text-muted-foreground">{categories.length} categories</p>
+          <p className="text-[13px] text-muted-foreground">
+            {viewMode === 'byAudience' && selectedAudience 
+              ? `${linkedCategoryCount} categories linked to ${selectedAudience.name}`
+              : `${categories.length} categories`
+            }
+          </p>
         </div>
         <AppButton intent="primary" size="sm" onClick={handleCreate}>
           <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
@@ -318,115 +346,127 @@ export default function HelpCategoriesPage() {
         </div>
       )}
 
-      {/* Audience Filter Dropdown */}
-      <div className="mb-6">
-        <div className="relative inline-block">
-          <button
-            onClick={() => setAudienceDropdownOpen(!audienceDropdownOpen)}
-            className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded text-[13px] text-foreground hover:border-primary/50 transition-colors"
-          >
-            <span>{selectedAudience ? selectedAudience.name : "All Categories"}</span>
-            <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${audienceDropdownOpen ? 'rotate-180' : ''}`} strokeWidth={1.5} />
-          </button>
+      {/* View Toggle */}
+      <div className="mb-6 p-4 bg-card border border-border rounded">
+        <div className="flex items-center gap-6">
+          <span className="text-[12px] text-muted-foreground font-medium">View:</span>
+          
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="viewMode"
+              checked={viewMode === 'all'}
+              onChange={() => handleViewModeChange('all')}
+              className="h-4 w-4 text-primary focus:ring-primary focus:ring-offset-0"
+            />
+            <span className="text-[13px] text-foreground">All Categories</span>
+          </label>
 
-          {audienceDropdownOpen && (
-            <>
-              <div className="fixed inset-0 z-30" onClick={() => setAudienceDropdownOpen(false)} />
-              <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded shadow-lg z-40 min-w-[200px]">
-                <button
-                  onClick={() => {
-                    setSelectedAudienceId(null);
-                    setAudienceDropdownOpen(false);
-                  }}
-                  className={`w-full text-left px-4 py-2.5 text-[13px] hover:bg-muted/50 transition-colors ${
-                    !selectedAudienceId ? 'bg-primary/10 text-primary' : 'text-foreground'
-                  }`}
-                >
-                  All Categories
-                </button>
-                {activeAudiences.map(audience => (
-                  <button
-                    key={audience.id}
-                    onClick={() => {
-                      setSelectedAudienceId(audience.id);
-                      setAudienceDropdownOpen(false);
-                    }}
-                    className={`w-full text-left px-4 py-2.5 text-[13px] hover:bg-muted/50 transition-colors ${
-                      selectedAudienceId === audience.id ? 'bg-primary/10 text-primary' : 'text-foreground'
-                    }`}
-                  >
-                    {audience.name}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
+          <div className="flex items-center gap-2">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="viewMode"
+                checked={viewMode === 'byAudience'}
+                onChange={() => handleViewModeChange('byAudience')}
+                className="h-4 w-4 text-primary focus:ring-primary focus:ring-offset-0"
+              />
+              <span className="text-[13px] text-foreground">By Audience:</span>
+            </label>
+
+            {/* Audience Dropdown - only enabled when byAudience is selected */}
+            <div className="relative">
+              <button
+                onClick={() => viewMode === 'byAudience' && setAudienceDropdownOpen(!audienceDropdownOpen)}
+                disabled={viewMode !== 'byAudience'}
+                className={`flex items-center gap-2 px-3 py-1.5 border rounded text-[13px] transition-colors ${
+                  viewMode === 'byAudience'
+                    ? 'bg-background border-border text-foreground hover:border-primary/50 cursor-pointer'
+                    : 'bg-muted/50 border-border/50 text-muted-foreground cursor-not-allowed'
+                }`}
+              >
+                <span>{selectedAudience?.name || "Select..."}</span>
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform ${audienceDropdownOpen ? 'rotate-180' : ''}`} strokeWidth={1.5} />
+              </button>
+
+              {audienceDropdownOpen && viewMode === 'byAudience' && (
+                <>
+                  <div className="fixed inset-0 z-30" onClick={() => setAudienceDropdownOpen(false)} />
+                  <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded shadow-lg z-40 min-w-[180px]">
+                    {activeAudiences.map(audience => (
+                      <button
+                        key={audience.id}
+                        onClick={() => {
+                          setSelectedAudienceId(audience.id);
+                          setAudienceDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-2.5 text-[13px] hover:bg-muted/50 transition-colors ${
+                          selectedAudienceId === audience.id ? 'bg-primary/10 text-primary' : 'text-foreground'
+                        }`}
+                      >
+                        {audience.name}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
         </div>
-
-        {selectedAudienceId && (
-          <p className="mt-2 text-[11px] text-muted-foreground">
-            Drag categories to reorder for "{selectedAudience?.name}"
-          </p>
-        )}
       </div>
 
-      {/* Table */}
-      <div className="bg-card border border-border rounded">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-border">
-              {selectedAudienceId && (
-                <th className="w-10 px-2"></th>
-              )}
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Name</th>
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Slug</th>
-              {!selectedAudienceId && (
+      {/* Content */}
+      {isLoading ? (
+        <div className="text-center py-20">
+          <p className="text-[13px] text-muted-foreground">Loading categories...</p>
+        </div>
+      ) : viewMode === 'byAudience' ? (
+        /* By Audience View - Sortable Cards */
+        orderedCategories.length === 0 ? (
+          <div className="text-center py-20 bg-card border border-border rounded">
+            <p className="text-[13px] text-muted-foreground">
+              No categories linked to {selectedAudience?.name || "this audience"}.
+            </p>
+            <p className="text-[12px] text-muted-foreground mt-1">
+              Create a category and assign it to this audience.
+            </p>
+          </div>
+        ) : (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={orderedCategories.map(c => c.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {orderedCategories.map((cat, index) => (
+                <SortableCategoryCard
+                  key={cat.id}
+                  category={cat}
+                  index={index}
+                  onEdit={handleEdit}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+        )
+      ) : (
+        /* All Categories View - Table */
+        <div className="bg-card border border-border rounded">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Name</th>
+                <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Slug</th>
                 <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Audiences</th>
-              )}
-              <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Updated</th>
-              <th className="w-[50px]"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan={selectedAudienceId ? 5 : 5} className="text-center py-20">
-                  <p className="text-[13px] text-muted-foreground">Loading categories...</p>
-                </td>
+                <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Updated</th>
+                <th className="w-[50px]"></th>
               </tr>
-            ) : selectedAudienceId ? (
-              // Sortable list when audience is selected
-              orderedCategories.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="text-center py-20">
-                    <p className="text-[13px] text-muted-foreground">No categories for this audience</p>
-                  </td>
-                </tr>
-              ) : (
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext
-                    items={orderedCategories.map(c => c.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {orderedCategories.map(cat => (
-                      <SortableCategoryRow
-                        key={cat.id}
-                        category={cat}
-                        onEdit={handleEdit}
-                        onDelete={handleDeleteClick}
-                        canDelete={true}
-                      />
-                    ))}
-                  </SortableContext>
-                </DndContext>
-              )
-            ) : (
-              // Standard list when no audience filter
-              categoriesWithMeta.length === 0 ? (
+            </thead>
+            <tbody>
+              {categoriesWithMeta.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="text-center py-20">
                     <p className="text-[13px] text-muted-foreground">No categories configured yet</p>
@@ -464,11 +504,11 @@ export default function HelpCategoriesPage() {
                     </td>
                   </tr>
                 ))
-              )
-            )}
-          </tbody>
-        </table>
-      </div>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Right-side Panel */}
       {panelOpen && (
