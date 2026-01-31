@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 export default {
+  darkMode: ['class'],
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
@@ -115,12 +116,11 @@ export default {
         },
       },
       borderRadius: {
-        /* Marketing site alignment */
-        lg: "16px",
-        md: "12px",
-        sm: "8px",
+        // Only add custom keys, don't override Tailwind defaults (lg/md/sm)
         input: "14px",
         button: "16px",
+        "xl": "16px",
+        "2xl": "20px",
       },
       fontFamily: {
         sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
