@@ -14,23 +14,33 @@
 html {
   width: 100%;
   max-width: 100%;
-  overflow-x: clip;
+  overflow-x: hidden; /* Fallback for older browsers */
+  overflow-x: clip;   /* Modern override - clips without scrollbars */
+  overscroll-behavior-x: none;
   -webkit-overflow-scrolling: touch;
 }
 
 body {
   width: 100%;
   max-width: 100%;
+  overflow-x: hidden;
   overflow-x: clip;
+  overscroll-behavior-x: none;
   min-height: 100dvh;
+  /* Prevent iOS rubber-banding from revealing overflow */
+  position: relative;
 }
 
 /* App root container overflow clamp */
 #root {
   width: 100%;
   max-width: 100%;
+  overflow-x: hidden;
   overflow-x: clip;
   min-height: 100dvh;
+  /* Flex container to constrain children */
+  display: flex;
+  flex-direction: column;
 }
 
 
