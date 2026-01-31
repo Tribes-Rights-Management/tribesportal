@@ -17,6 +17,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { supabase } from "@/integrations/supabase/client";
 import { useHelpManagement, HelpArticle, HelpArticleStatus } from "@/hooks/useHelpManagement";
 import { useArticleOrderByCategory } from "@/hooks/useArticleOrderByCategory";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -54,6 +55,8 @@ export default function HelpArticlesListPage() {
     fetchArticles,
     categories,
     fetchCategories,
+    audiences,
+    fetchAudiences,
   } = useHelpManagement();
 
   const {
@@ -72,6 +75,9 @@ export default function HelpArticlesListPage() {
   const [sortField, setSortField] = useState<SortField>("updated_at");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [currentPage, setCurrentPage] = useState(1);
+  
+  // Article-audience mappings for display
+  const [articleAudienceMap, setArticleAudienceMap] = useState<Record<string, string[]>>({});
 
   // DnD sensors
   const sensors = useSensors(
@@ -87,7 +93,31 @@ export default function HelpArticlesListPage() {
   useEffect(() => {
     fetchArticles();
     fetchCategories();
-  }, [fetchArticles, fetchCategories]);
+    fetchAudiences();
+  }, [fetchArticles, fetchCategories, fetchAudiences]);
+
+  // Fetch all article-audience relationships for display
+  useEffect(() => {
+    async function loadArticleAudiences() {
+      const { data, error } = await supabase
+        .from("help_article_audiences")
+        .select("article_id, audience_id");
+
+      if (!error && data) {
+        const map: Record<string, string[]> = {};
+        data.forEach(row => {
+          if (!map[row.article_id]) {
+            map[row.article_id] = [];
+          }
+          if (!map[row.article_id].includes(row.audience_id)) {
+            map[row.article_id].push(row.audience_id);
+          }
+        });
+        setArticleAudienceMap(map);
+      }
+    }
+    loadArticleAudiences();
+  }, [articles]);
 
   // Load articles when a specific category is selected
   useEffect(() => {
@@ -182,6 +212,18 @@ export default function HelpArticlesListPage() {
       default:
         return <AppChip status="pending" label={status} />;
     }
+  };
+
+  // Get audience name by ID
+  const getAudienceName = (audienceId: string) => {
+    return audiences.find(a => a.id === audienceId)?.name || "Unknown";
+  };
+
+  // Get audience names for an article
+  const getArticleAudiences = (articleId: string): string => {
+    const audienceIds = articleAudienceMap[articleId] || [];
+    if (audienceIds.length === 0) return "";
+    return audienceIds.map(id => getAudienceName(id)).join(", ");
   };
 
   const isLoading = articlesLoading || (!isTableView && orderLoading);
@@ -320,6 +362,9 @@ export default function HelpArticlesListPage() {
                       )}
                     </div>
                   </th>
+                  <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[200px]">
+                    Audiences
+                  </th>
                   <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[120px]">
                     Status
                   </th>
@@ -339,7 +384,7 @@ export default function HelpArticlesListPage() {
               <tbody>
                 {paginatedArticles.length === 0 ? (
                   <tr>
-                    <td colSpan={3} className="text-center py-20">
+                    <td colSpan={4} className="text-center py-20">
                       <p className="text-[13px] text-muted-foreground">
                         {debouncedSearch || statusFilter !== "all" ? "No articles match your filters" : "No articles yet"}
                       </p>
@@ -355,6 +400,9 @@ export default function HelpArticlesListPage() {
                       <td className="py-3 px-4">
                         <p className="text-[13px] text-foreground">{article.title || "Untitled"}</p>
                         <p className="text-[11px] text-muted-foreground font-mono mt-0.5">/{article.slug}</p>
+                      </td>
+                      <td className="py-3 px-4 text-[12px] text-muted-foreground">
+                        {getArticleAudiences(article.id) || <span className="italic">No audiences</span>}
                       </td>
                       <td className="py-3 px-4">
                         {getStatusChip(article.status)}
