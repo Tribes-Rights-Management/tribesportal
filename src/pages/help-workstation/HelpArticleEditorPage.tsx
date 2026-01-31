@@ -379,7 +379,11 @@ export default function HelpArticleEditorPage() {
                 {activeAudiences.map((audience) => (
                   <label
                     key={audience.id}
-                    className="flex items-center gap-2 cursor-pointer"
+                    className="flex items-center gap-2 cursor-pointer select-none"
+                    onClick={() => handleAudienceToggle(
+                      audience.id, 
+                      !selectedAudienceIds.includes(audience.id)
+                    )}
                   >
                     <div className={cn(
                       "h-4 w-4 rounded border flex items-center justify-center transition-colors",
