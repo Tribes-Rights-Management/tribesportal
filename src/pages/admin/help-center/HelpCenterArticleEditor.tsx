@@ -372,11 +372,11 @@ export default function HelpCenterArticleEditor() {
       <form onSubmit={handleSubmit(onSubmit)} className="flex-1 px-4 md:px-6 py-5">
         <div className="max-w-[1200px] mx-auto space-y-4">
           {/* HEADER ROW - Title + Status */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
             <Input
               {...register("title", { required: true })}
               placeholder="Article title"
-              className="flex-1 text-[18px] font-medium h-11"
+              className="w-full md:flex-1 text-[18px] font-medium h-11"
               style={{
                 backgroundColor: "var(--platform-surface)",
                 borderColor: "var(--platform-border)",
@@ -473,15 +473,15 @@ export default function HelpCenterArticleEditor() {
             )}
           </div>
 
-          {/* PUBLISHING SETTINGS - Horizontal compact row */}
+          {/* PUBLISHING SETTINGS - Vertical on mobile, horizontal on desktop */}
           <div
-            className="flex flex-col md:flex-row items-stretch md:items-end gap-3 px-4 py-3 rounded"
+            className="flex flex-col gap-3 px-4 py-3 rounded md:flex-row md:items-end"
             style={{
               backgroundColor: "rgba(0, 0, 0, 0.02)",
               border: "1px solid var(--platform-border)",
             }}
           >
-            <div className="flex-1">
+            <div className="w-full md:flex-1">
               <Label
                 className="text-[10px] uppercase tracking-wider mb-1 block font-medium"
                 style={{ color: "var(--platform-text-muted)" }}
@@ -515,7 +515,7 @@ export default function HelpCenterArticleEditor() {
               </Select>
             </div>
 
-            <div className="flex-1">
+            <div className="w-full md:flex-1">
               <Label
                 className="text-[10px] uppercase tracking-wider mb-1 block font-medium"
                 style={{ color: "var(--platform-text-muted)" }}
@@ -592,6 +592,12 @@ export default function HelpCenterArticleEditor() {
               />
             </div>
           </div>
+
+          {/* Mobile separator before content */}
+          <div
+            className="md:hidden h-px"
+            style={{ backgroundColor: "var(--platform-border)" }}
+          />
 
           {/* CONTENT - Main editor */}
           <div className="flex-1">
