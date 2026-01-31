@@ -23,7 +23,9 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
     return (
       <div className={cn("relative", wrapperClassName)}>
         <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none"
+          // NOTE: This project customizes Tailwind spacing (theme.extend.spacing),
+          // so h-4/w-4 may NOT equal 16px. Use explicit px sizing for icon consistency.
+          className="absolute left-3 top-1/2 -translate-y-1/2 h-[16px] w-[16px] text-muted-foreground pointer-events-none"
           strokeWidth={1.5}
         />
         <input
