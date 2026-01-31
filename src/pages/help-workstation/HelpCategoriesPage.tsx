@@ -56,8 +56,6 @@ export default function HelpCategoriesPage() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [slugManual, setSlugManual] = useState(false);
-  const [description, setDescription] = useState("");
-  const [icon, setIcon] = useState("");
   const [selectedAudienceIds, setSelectedAudienceIds] = useState<string[]>([]);
 
   useEffect(() => {
@@ -110,8 +108,6 @@ export default function HelpCategoriesPage() {
     setName("");
     setSlug("");
     setSlugManual(false);
-    setDescription("");
-    setIcon("");
     setSelectedAudienceIds([]);
     setFormError(null);
     setPanelOpen(true);
@@ -122,8 +118,6 @@ export default function HelpCategoriesPage() {
     setName(cat.name);
     setSlug(cat.slug);
     setSlugManual(true);
-    setDescription(cat.description || "");
-    setIcon(cat.icon || "");
     setFormError(null);
 
     // Fetch existing audience links
@@ -164,8 +158,6 @@ export default function HelpCategoriesPage() {
         const result = await updateCategory(editing.id, {
           name: name.trim(),
           slug: slug.trim(),
-          description: description.trim() || undefined,
-          icon: icon.trim() || undefined,
         });
         if (result) {
           categoryId = result.id;
@@ -174,8 +166,6 @@ export default function HelpCategoriesPage() {
         const result = await createCategory({
           name: name.trim(),
           slug: slug.trim(),
-          description: description.trim() || undefined,
-          icon: icon.trim() || undefined,
         });
         if (result) {
           categoryId = result.id;
@@ -391,36 +381,11 @@ export default function HelpCategoriesPage() {
                 <p className="text-[11px] text-muted-foreground mt-2">URL-friendly identifier</p>
               </div>
 
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">Description</label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Brief description"
-                  rows={3}
-                  className="w-full px-3 py-2 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors resize-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">Icon (Lucide name)</label>
-                <input
-                  type="text"
-                  value={icon}
-                  onChange={(e) => setIcon(e.target.value)}
-                  placeholder="e.g., CheckCircle, CreditCard"
-                  className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
-                />
-              </div>
-
               {/* Audience Visibility Section */}
-              <div className="pt-2 border-t border-border">
+              <div>
                 <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
                   Audience Visibility *
                 </label>
-                <p className="text-[11px] text-muted-foreground mb-4">
-                  Select which audiences can see this category
-                </p>
                 <div className="space-y-2">
                   {activeAudiences.length === 0 ? (
                     <p className="text-[12px] text-muted-foreground italic">No audiences available</p>
@@ -436,12 +401,7 @@ export default function HelpCategoriesPage() {
                           onChange={() => handleAudienceToggle(audience.id)}
                           className="h-4 w-4 rounded border-border text-primary focus:ring-primary focus:ring-offset-0"
                         />
-                        <div className="flex-1">
-                          <p className="text-[13px] text-foreground">{audience.name}</p>
-                          {audience.description && (
-                            <p className="text-[11px] text-muted-foreground mt-0.5">{audience.description}</p>
-                          )}
-                        </div>
+                        <span className="text-[13px] text-foreground">{audience.name}</span>
                       </label>
                     ))
                   )}
