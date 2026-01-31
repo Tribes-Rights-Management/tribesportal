@@ -349,6 +349,12 @@ export default function HelpArticlesListPage() {
         <>
           <div className="bg-card border border-border rounded">
             <table className="w-full">
+              <colgroup>
+                <col className="w-[35%]" />
+                <col className="w-[35%]" />
+                <col className="w-[15%]" />
+                <col className="w-[15%]" />
+              </colgroup>
               <thead>
                 <tr className="border-b border-border">
                   <th
@@ -362,14 +368,14 @@ export default function HelpArticlesListPage() {
                       )}
                     </div>
                   </th>
-                  <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[200px]">
+                  <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
                     Audiences
                   </th>
-                  <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[120px]">
+                  <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
                     Status
                   </th>
                   <th
-                    className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[150px] cursor-pointer hover:text-foreground"
+                    className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium cursor-pointer hover:text-foreground"
                     onClick={() => handleSort("updated_at")}
                   >
                     <div className="flex items-center justify-end gap-1">
