@@ -347,7 +347,6 @@ export default function HelpArticleEditorPage() {
               <AppSelect
                 value={selectedAudienceId}
                 onChange={handleAudienceChange}
-                variant="compact"
                 fullWidth
                 placeholder="Select audience"
                 options={activeAudiences.map(a => ({ value: a.id, label: a.name }))}
@@ -370,7 +369,6 @@ export default function HelpArticleEditorPage() {
                   value={selectedCategoryId}
                   onChange={setSelectedCategoryId}
                   disabled={!selectedAudienceId}
-                  variant="compact"
                   fullWidth
                   placeholder={selectedAudienceId ? "Select category" : "Select audience first"}
                   options={categoriesForAudience.map(c => ({ value: c.id, label: c.name }))}

@@ -375,7 +375,6 @@ export default function HelpCategoriesPage() {
           value={selectedAudienceId}
           onChange={setSelectedAudienceId}
           disabled={viewMode !== 'byAudience'}
-          variant="compact"
           placeholder="Select audience..."
           options={activeAudiences.map(a => ({ value: a.id, label: a.name }))}
         />

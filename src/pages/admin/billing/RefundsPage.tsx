@@ -13,7 +13,7 @@ import {
   User,
   FileText
 } from "lucide-react";
-import { AppSearchInput } from "@/components/app-ui";
+import { AppSearchInput, AppSelect } from "@/components/app-ui";
 import { Input } from "@/components/ui/input";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
@@ -87,6 +87,7 @@ export default function RefundsPage() {
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
   const [refundAmount, setRefundAmount] = useState("");
   const [refundReason, setRefundReason] = useState("");
+  const [refundType, setRefundType] = useState("full");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -260,31 +261,30 @@ export default function RefundsPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="refundType">Refund Type</Label>
-                <select
-                  id="refundType"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  <option value="full">Full refund</option>
-                  <option value="partial">Partial refund</option>
-                </select>
+                <AppSelect
+                  value={refundType}
+                  onChange={setRefundType}
+                  fullWidth
+                  options={[
+                    { value: "full", label: "Full refund" },
+                    { value: "partial", label: "Partial refund" },
+                  ]}
+                />
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="reasonCode">Reason Code</Label>
-              <select
-                id="reasonCode"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              <AppSelect
                 value={refundReason}
-                onChange={(e) => setRefundReason(e.target.value)}
-              >
-                <option value="">Select a reason...</option>
-                {REFUND_REASON_CODES.map((reason) => (
-                  <option key={reason.code} value={reason.code}>
-                    {reason.label}
-                  </option>
-                ))}
-              </select>
+                onChange={setRefundReason}
+                fullWidth
+                placeholder="Select a reason..."
+                options={REFUND_REASON_CODES.map(reason => ({
+                  value: reason.code,
+                  label: reason.label,
+                }))}
+              />
             </div>
 
             <div className="space-y-2">

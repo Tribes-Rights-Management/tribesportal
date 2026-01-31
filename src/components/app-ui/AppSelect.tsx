@@ -1,6 +1,7 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { forwardRef } from "react";
 import { ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 /**
  * APP SELECT — GLOBAL UI KIT (SINGLE SOURCE OF TRUTH)
@@ -9,10 +10,11 @@ import { ChevronDown } from "lucide-react";
  * CANONICAL SELECT/DROPDOWN COMPONENT (LOCKED)
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * Consistent select/dropdown styling with:
- * - Standard height (40px) and border-radius (8px)
- * - Custom chevron icon (h-5 w-5)
- * - Theme-aware colors
+ * Standard styling:
+ * - Height: 40px (h-10)
+ * - Border radius: 8px (rounded-lg)
+ * - Font size: 14px
+ * - Chevron: 20x20px (h-5 w-5)
  * 
  * USAGE:
  *   <AppSelect
@@ -30,7 +32,7 @@ import { ChevronDown } from "lucide-react";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface SelectOption {
+interface AppSelectOption {
   value: string;
   label: string;
 }
@@ -41,9 +43,7 @@ interface AppSelectProps {
   /** Change handler */
   onChange: (value: string) => void;
   /** Options list */
-  options: SelectOption[];
-  /** Visual variant */
-  variant?: "default" | "compact";
+  options: AppSelectOption[];
   /** Placeholder when no value selected */
   placeholder?: string;
   /** Disabled state */
@@ -54,60 +54,36 @@ interface AppSelectProps {
   className?: string;
 }
 
-export function AppSelect({
-  value,
-  onChange,
-  options,
-  variant = "default",
-  placeholder,
-  disabled = false,
-  fullWidth = false,
-  className,
-}: AppSelectProps) {
-  const isCompact = variant === "compact";
-  
-  const selectClasses = cn(
-    // Base styles
-    "bg-card border border-border appearance-none cursor-pointer",
-    "text-foreground transition-colors duration-150",
-    "focus:outline-none focus:ring-1 focus:ring-ring",
-    "disabled:opacity-50 disabled:cursor-not-allowed",
-    // Size variants
-    isCompact 
-      ? "h-9 px-3 pr-8 text-[13px] rounded" 
-      : "h-10 px-3 pr-10 text-[14px] rounded-lg",
-    // Width
-    fullWidth ? "w-full" : "w-auto"
-  );
+export const AppSelect = forwardRef<HTMLDivElement, AppSelectProps>(
+  ({ value, onChange, options, placeholder = "Select...", disabled = false, fullWidth = false, className }, ref) => {
+    return (
+      <div ref={ref} className={cn("relative", fullWidth && "w-full", className)}>
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          className={cn(
+            "h-10 px-3 pr-10 text-[14px] bg-card border border-border rounded-lg",
+            "appearance-none cursor-pointer transition-colors duration-150",
+            "focus:outline-none focus:ring-1 focus:ring-ring",
+            "disabled:opacity-50 disabled:cursor-not-allowed",
+            fullWidth ? "w-full" : "w-auto"
+          )}
+        >
+          <option value="">{placeholder}</option>
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        <ChevronDown 
+          className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" 
+          strokeWidth={1.5}
+        />
+      </div>
+    );
+  }
+);
 
-  const chevronClasses = cn(
-    "absolute top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none",
-    isCompact ? "right-2 h-4 w-4" : "right-3 h-5 w-5"
-  );
-
-  return (
-    <div className={cn("relative", fullWidth && "w-full", className)}>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={disabled}
-        className={selectClasses}
-      >
-        {placeholder && (
-          <option value="">
-            {placeholder}
-          </option>
-        )}
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <ChevronDown
-        className={chevronClasses}
-        strokeWidth={1.5}
-      />
-    </div>
-  );
-}
+AppSelect.displayName = "AppSelect";
