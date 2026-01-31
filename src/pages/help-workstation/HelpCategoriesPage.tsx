@@ -21,7 +21,14 @@ import { useCategoryAudiences } from "@/hooks/useCategoryAudiences";
 import { useCategoryOrderByAudience, CategoryWithPosition } from "@/hooks/useCategoryOrderByAudience";
 import { SortableCategoryCard } from "@/components/help/SortableCategoryCard";
 import { supabase } from "@/integrations/supabase/client";
-import { AppButton, AppSelect } from "@/components/app-ui";
+import { AppButton } from "@/components/app-ui";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 /**
  * HELP CATEGORIES PAGE — INSTITUTIONAL DESIGN
@@ -371,13 +378,26 @@ export default function HelpCategoriesPage() {
           <span className="text-[13px] text-foreground">By Audience:</span>
         </label>
 
-        <AppSelect
+        <Select
           value={selectedAudienceId}
-          onChange={setSelectedAudienceId}
+          onValueChange={setSelectedAudienceId}
           disabled={viewMode !== 'byAudience'}
-          placeholder="Select audience..."
-          options={activeAudiences.map(a => ({ value: a.id, label: a.name }))}
-        />
+        >
+          <SelectTrigger className="h-10 w-[200px] px-3 text-[14px] bg-card border border-border rounded-lg disabled:opacity-40">
+            <SelectValue placeholder="Select audience..." />
+          </SelectTrigger>
+          <SelectContent className="bg-card border border-border rounded-lg shadow-lg">
+            {activeAudiences.map((audience) => (
+              <SelectItem 
+                key={audience.id} 
+                value={audience.id}
+                className="px-3 py-2 text-[14px] cursor-pointer"
+              >
+                {audience.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Content */}
