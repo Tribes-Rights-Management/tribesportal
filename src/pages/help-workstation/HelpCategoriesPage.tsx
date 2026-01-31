@@ -49,8 +49,6 @@ interface CategoryWithMeta extends HelpCategory {
   audienceIds: string[];
 }
 
-type ViewMode = 'all' | 'byAudience';
-
 export default function HelpCategoriesPage() {
   const {
     categories,
@@ -72,9 +70,8 @@ export default function HelpCategoriesPage() {
     updatePositions,
   } = useCategoryOrderByAudience();
 
-  // View mode and audience filter
-  const [viewMode, setViewMode] = useState<ViewMode>('all');
-  const [selectedAudienceId, setSelectedAudienceId] = useState<string>('');
+  // Audience filter: empty string = "All Categories" view, selected = audience view with drag-drop
+  const [selectedAudienceId, setSelectedAudienceId] = useState<string>("");
 
   // Panel/modal state
   const [panelOpen, setPanelOpen] = useState(false);
@@ -108,18 +105,12 @@ export default function HelpCategoriesPage() {
   );
 
   const selectedAudience = audiences.find(a => a.id === selectedAudienceId);
+  const isTableView = selectedAudienceId === "";
 
   useEffect(() => {
     fetchCategories();
     fetchAudiences();
   }, [fetchCategories, fetchAudiences]);
-
-  // Set default audience when audiences load and switching to byAudience view
-  useEffect(() => {
-    if (viewMode === 'byAudience' && !selectedAudienceId && activeAudiences.length > 0) {
-      setSelectedAudienceId(activeAudiences[0].id);
-    }
-  }, [viewMode, selectedAudienceId, activeAudiences]);
 
   // Fetch all category-audience relationships for display
   useEffect(() => {
@@ -144,10 +135,10 @@ export default function HelpCategoriesPage() {
 
   // Load categories when audience filter changes
   useEffect(() => {
-    if (viewMode === 'byAudience' && selectedAudienceId) {
+    if (selectedAudienceId) {
       fetchCategoriesForAudience(selectedAudienceId);
     }
-  }, [viewMode, selectedAudienceId, fetchCategoriesForAudience]);
+  }, [selectedAudienceId, fetchCategoriesForAudience]);
 
   const categoriesWithMeta: CategoryWithMeta[] = useMemo(() => {
     return categories.map(cat => ({
@@ -247,7 +238,7 @@ export default function HelpCategoriesPage() {
           [categoryId!]: selectedAudienceIds,
         }));
 
-        if (viewMode === 'byAudience' && selectedAudienceId) {
+        if (selectedAudienceId) {
           fetchCategoriesForAudience(selectedAudienceId);
         }
 
@@ -281,7 +272,7 @@ export default function HelpCategoriesPage() {
     const success = await deleteCategory(deleting.id);
     if (success) {
       fetchCategories();
-      if (viewMode === 'byAudience' && selectedAudienceId) {
+      if (selectedAudienceId) {
         fetchCategoriesForAudience(selectedAudienceId);
       }
     }
@@ -301,17 +292,10 @@ export default function HelpCategoriesPage() {
     }
   };
 
-  const handleViewModeChange = (mode: ViewMode) => {
-    setViewMode(mode);
-    if (mode === 'byAudience' && activeAudiences.length > 0 && !selectedAudienceId) {
-      setSelectedAudienceId(activeAudiences[0].id);
-    }
-  };
-
-  const isLoading = categoriesLoading || (viewMode === 'byAudience' && orderLoading);
+  const isLoading = categoriesLoading || (selectedAudienceId && orderLoading);
 
   // Count categories for selected audience
-  const linkedCategoryCount = viewMode === 'byAudience' ? orderedCategories.length : categories.length;
+  const linkedCategoryCount = selectedAudienceId ? orderedCategories.length : categories.length;
 
   return (
     <div className="flex-1 p-8">
@@ -323,7 +307,7 @@ export default function HelpCategoriesPage() {
           </p>
           <h1 className="text-[20px] font-medium text-foreground mb-1">Categories</h1>
           <p className="text-[13px] text-muted-foreground">
-            {viewMode === 'byAudience' && selectedAudience 
+            {selectedAudienceId && selectedAudience 
               ? `${linkedCategoryCount} categories linked to ${selectedAudience.name}`
               : `${categories.length} categories`
             }
@@ -352,45 +336,20 @@ export default function HelpCategoriesPage() {
         </div>
       )}
 
-      {/* View Toggle */}
-      <div className="flex items-center gap-4 mt-4 mb-4">
-        <span className="text-[12px] text-muted-foreground">View:</span>
-        
-        <label className="flex items-center gap-1.5 cursor-pointer">
-          <input
-            type="radio"
-            name="viewMode"
-            checked={viewMode === 'all'}
-            onChange={() => handleViewModeChange('all')}
-            className="w-3.5 h-3.5"
-          />
-          <span className="text-[13px] text-foreground">All Categories</span>
-        </label>
-
-        <label className="flex items-center gap-1.5 cursor-pointer">
-          <input
-            type="radio"
-            name="viewMode"
-            checked={viewMode === 'byAudience'}
-            onChange={() => handleViewModeChange('byAudience')}
-            className="w-3.5 h-3.5"
-          />
-          <span className="text-[13px] text-foreground">By Audience:</span>
-        </label>
-
+      {/* Audience Filter */}
+      <div className="flex items-center gap-3 mt-4 mb-4">
+        <span className="text-[12px] text-muted-foreground">Audience:</span>
         <Select
-          value={selectedAudienceId}
-          onValueChange={setSelectedAudienceId}
-          disabled={viewMode !== 'byAudience'}
+          value={selectedAudienceId || "all"}
+          onValueChange={(value) => setSelectedAudienceId(value === "all" ? "" : value)}
         >
-          <SelectTrigger
-            className={
-              "h-10 w-[200px] text-sm border-border bg-transparent focus:ring-2 focus:ring-muted-foreground/20 focus:ring-offset-0 disabled:opacity-40"
-            }
-          >
-            <SelectValue placeholder="Select audience..." />
+          <SelectTrigger className="h-10 w-[200px] text-sm border-border bg-transparent focus:ring-2 focus:ring-muted-foreground/20 focus:ring-offset-0">
+            <SelectValue placeholder="All Categories" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="all" className="text-sm">
+              All Categories
+            </SelectItem>
             {activeAudiences.map((audience) => (
               <SelectItem 
                 key={audience.id} 
@@ -402,6 +361,11 @@ export default function HelpCategoriesPage() {
             ))}
           </SelectContent>
         </Select>
+        {selectedAudienceId && (
+          <span className="text-[11px] text-muted-foreground italic">
+            Drag to reorder categories for this audience
+          </span>
+        )}
       </div>
 
       {/* Content */}
@@ -409,7 +373,7 @@ export default function HelpCategoriesPage() {
         <div className="text-center py-20">
           <p className="text-[13px] text-muted-foreground">Loading categories...</p>
         </div>
-      ) : viewMode === 'byAudience' ? (
+      ) : selectedAudienceId ? (
         /* By Audience View - Sortable Cards */
         orderedCategories.length === 0 ? (
           <div className="text-center py-20 bg-card border border-border rounded">
