@@ -91,7 +91,7 @@ DialogContent.displayName = DialogPrimitive.Content.displayName;
  */
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div 
-    className={cn("flex flex-col space-y-1.5 px-5 pt-5 pb-4 text-left", className)} 
+    className={cn("flex flex-col space-y-1 px-4 pt-4 pb-3 text-left", className)} 
     style={{ borderBottom: '1px solid var(--platform-border)' }}
     {...props} 
   />
@@ -108,10 +108,10 @@ DialogHeader.displayName = "DialogHeader";
  */
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div 
-    className={cn("flex flex-col gap-3 px-5 pt-4 pb-5 sm:flex-row-reverse sm:gap-2", className)} 
+    className={cn("flex flex-col gap-2 px-4 pt-3 pb-4 sm:flex-row-reverse sm:gap-2", className)} 
     style={{ 
       borderTop: '1px solid var(--platform-border)',
-      paddingBottom: 'max(20px, env(safe-area-inset-bottom, 20px))',
+      paddingBottom: 'max(16px, env(safe-area-inset-bottom, 16px))',
     }}
     {...props} 
   />
@@ -131,7 +131,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn("text-[17px] sm:text-[16px] font-semibold leading-tight", className)}
+    className={cn("text-[16px] sm:text-[15px] font-semibold leading-tight", className)}
     style={{ color: 'var(--platform-text)' }}
     {...props}
   />
@@ -151,7 +151,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description 
     ref={ref} 
-    className={cn("text-[14px] sm:text-[13px] leading-normal mt-1", className)} 
+    className={cn("text-[13px] sm:text-[12px] leading-normal mt-0.5", className)} 
     style={{ color: 'var(--platform-text-secondary)' }}
     {...props} 
   />
@@ -167,7 +167,7 @@ DialogDescription.displayName = DialogPrimitive.Description.displayName;
  */
 const DialogBody = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div 
-    className={cn("flex-1 overflow-y-auto min-h-0 px-5 py-5", className)} 
+    className={cn("flex-1 overflow-y-auto min-h-0 px-4 py-4", className)} 
     {...props} 
   />
 );
