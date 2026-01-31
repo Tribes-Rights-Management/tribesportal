@@ -331,8 +331,8 @@ export default function HelpArticleEditorPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-5">
-        <div className="max-w-4xl space-y-4">
+      <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div className="max-w-4xl space-y-3">
           {/* Validation Error */}
           {validationError && (
             <div className="flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
@@ -342,13 +342,13 @@ export default function HelpArticleEditorPage() {
           )}
 
           {/* Title + Status Row */}
-          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
+          <div className="flex items-center gap-3">
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Article title"
-              className="flex-1 h-11 px-4 bg-card border border-border rounded text-[16px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="flex-1 h-9 px-3 bg-card border border-border rounded-lg text-[15px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             />
             {!isNew && (
               <AppChip 
@@ -358,94 +358,85 @@ export default function HelpArticleEditorPage() {
             )}
           </div>
 
-          {/* Slug Row - Read-only helper text */}
-          <div className="px-1">
-            <span className="text-[12px] text-muted-foreground">
-              URL: /hc/[audience]/articles/{slug || "article-slug"}
-            </span>
-          </div>
+          {/* URL preview */}
+          <p className="text-[12px] text-muted-foreground">
+            URL: /hc/[audience]/articles/{slug || "untitled"}
+          </p>
 
-          {/* Publishing Settings */}
+          {/* Metadata Row - Compact */}
           <div className={cn(
-            "flex flex-col gap-4 px-4 py-4 bg-muted/30 border rounded",
+            "flex items-start gap-6 p-4 border rounded-lg",
             showPublishValidation && (selectedAudienceIds.length === 0 || !selectedCategoryId) 
-              ? "border-destructive" 
-              : "border-border"
+              ? "border-destructive bg-destructive/5" 
+              : "border-border bg-muted/30"
           )}>
-            <div className="flex flex-col gap-4 md:flex-row">
-              {/* Audience Visibility - Checkbox group */}
-              <div className="flex-1">
-                <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
-                  Audience Visibility *
-                </label>
-                <div className="space-y-2">
-                  {activeAudiences.map((audience) => (
-                    <label
-                      key={audience.id}
-                      className={cn(
-                        "flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors",
-                        selectedAudienceIds.includes(audience.id)
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-muted-foreground/30"
+            {/* Audiences - Inline checkboxes */}
+            <div className="flex-1">
+              <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
+                Audiences *
+              </label>
+              <div className="flex flex-wrap items-center gap-4">
+                {activeAudiences.map((audience) => (
+                  <label
+                    key={audience.id}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <div className={cn(
+                      "h-4 w-4 rounded border flex items-center justify-center transition-colors",
+                      selectedAudienceIds.includes(audience.id)
+                        ? "bg-primary border-primary"
+                        : "border-muted-foreground/40 hover:border-muted-foreground"
+                    )}>
+                      {selectedAudienceIds.includes(audience.id) && (
+                        <Check className="h-3 w-3 text-primary-foreground" strokeWidth={2.5} />
                       )}
-                    >
-                      <div className={cn(
-                        "h-4 w-4 rounded border flex items-center justify-center transition-colors",
-                        selectedAudienceIds.includes(audience.id)
-                          ? "bg-primary border-primary"
-                          : "border-muted-foreground/40"
-                      )}>
-                        {selectedAudienceIds.includes(audience.id) && (
-                          <Check className="h-3 w-3 text-primary-foreground" strokeWidth={2.5} />
-                        )}
-                      </div>
-                      <span className="text-[13px]">{audience.name}</span>
-                    </label>
-                  ))}
-                </div>
-                {showPublishValidation && selectedAudienceIds.length === 0 && (
-                  <p className="text-[11px] text-destructive mt-2">Select at least one audience</p>
-                )}
+                    </div>
+                    <span className="text-[13px]">{audience.name}</span>
+                  </label>
+                ))}
               </div>
+              {showPublishValidation && selectedAudienceIds.length === 0 && (
+                <p className="text-[11px] text-destructive mt-1.5">Required</p>
+              )}
+            </div>
 
-              {/* Category */}
-              <div className="flex-1">
-                <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
-                  Category *
-                </label>
-                {selectedAudienceIds.length > 0 && availableCategories.length === 0 ? (
-                  <div className="h-9 flex items-center text-[12px] text-muted-foreground">
-                    None available.{" "}
-                    <Link to="/help/categories" className="text-primary hover:underline ml-1">
-                      Create →
-                    </Link>
-                  </div>
-                ) : (
-                  <AppSelect
-                    value={selectedCategoryId}
-                    onChange={setSelectedCategoryId}
-                    disabled={selectedAudienceIds.length === 0}
-                    fullWidth
-                    placeholder={selectedAudienceIds.length > 0 ? "Select category" : "Select audiences first"}
-                    options={availableCategories.map(c => ({ value: c.id, label: c.name }))}
-                    className={cn(
-                      showPublishValidation && !selectedCategoryId && "border-destructive focus:ring-destructive"
-                    )}
-                  />
-                )}
-                {showPublishValidation && !selectedCategoryId && (
-                  <p className="text-[11px] text-destructive mt-1">Required</p>
-                )}
-              </div>
+            {/* Category dropdown */}
+            <div className="w-[200px] shrink-0">
+              <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
+                Category *
+              </label>
+              {selectedAudienceIds.length > 0 && availableCategories.length === 0 ? (
+                <div className="h-9 flex items-center text-[12px] text-muted-foreground">
+                  None available.{" "}
+                  <Link to="/help/categories" className="text-primary hover:underline ml-1">
+                    Create →
+                  </Link>
+                </div>
+              ) : (
+                <AppSelect
+                  value={selectedCategoryId}
+                  onChange={setSelectedCategoryId}
+                  disabled={selectedAudienceIds.length === 0}
+                  fullWidth
+                  placeholder={selectedAudienceIds.length > 0 ? "Select category" : "Select audiences first"}
+                  options={availableCategories.map(c => ({ value: c.id, label: c.name }))}
+                  className={cn(
+                    showPublishValidation && !selectedCategoryId && "border-destructive"
+                  )}
+                />
+              )}
+              {showPublishValidation && !selectedCategoryId && (
+                <p className="text-[11px] text-destructive mt-1">Required</p>
+              )}
             </div>
           </div>
 
           {/* Content Editor */}
           <div>
-            <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
+            <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
               Content
             </label>
-            <div className="bg-card border border-border rounded min-h-[400px]">
+            <div className="bg-card border border-border rounded-lg min-h-[400px]">
               <RichTextEditor content={bodyMd} onChange={setBodyMd} />
             </div>
           </div>
