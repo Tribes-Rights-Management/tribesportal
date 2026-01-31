@@ -125,7 +125,7 @@ export default function HelpOverviewPage() {
           <AppButton
             intent="secondary"
             size="sm"
-            onClick={() => navigate("/help-workstation/articles/new")}
+            onClick={() => navigate("/help/articles/new")}
           >
             <Plus className="h-4 w-4" />
             New Article
@@ -147,31 +147,25 @@ export default function HelpOverviewPage() {
 
       {/* Stats Cards */}
       <div className="mb-8">
-        <AppStatCardGrid columns={4}>
+        <AppStatCardGrid columns={3}>
           <AppStatCard
             label="Articles"
             value={articleStats.total}
             subtitle={`${articleStats.published} published, ${articleStats.draft} draft`}
             loading={loading}
-            onClick={() => navigate("/help-workstation/articles")}
+            onClick={() => navigate("/help/articles")}
           />
           <AppStatCard
             label="Categories"
             value={categoryCount}
             loading={loading}
-            onClick={() => navigate("/help-workstation/categories")}
+            onClick={() => navigate("/help/categories")}
           />
           <AppStatCard
             label="Audiences"
             value={audienceCount}
             loading={loading}
-            onClick={() => navigate("/help-workstation/audiences")}
-          />
-          <AppStatCard
-            label="Messages"
-            value="—"
-            loading={loading}
-            onClick={() => navigate("/help-workstation/messages")}
+            onClick={() => navigate("/help/audiences")}
           />
         </AppStatCardGrid>
       </div>
@@ -182,7 +176,7 @@ export default function HelpOverviewPage() {
         <AppListCard
           title="Recent Articles"
           action={
-            <AppListAction onClick={() => navigate("/help-workstation/articles")}>
+            <AppListAction onClick={() => navigate("/help/articles")}>
               View all
             </AppListAction>
           }
@@ -199,7 +193,7 @@ export default function HelpOverviewPage() {
                 key={article.id}
                 title={article.title}
                 subtitle={format(new Date(article.updated_at), "MMM d, yyyy")}
-                onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
+                onClick={() => navigate(`/help/articles/${article.id}`)}
               />
             ))
           )}
@@ -219,7 +213,7 @@ export default function HelpOverviewPage() {
                 key={article.id}
                 title={article.title}
                 subtitle={format(new Date(article.updated_at), "MMM d, yyyy")}
-                onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
+                onClick={() => navigate(`/help/articles/${article.id}`)}
               />
             ))
           )}
