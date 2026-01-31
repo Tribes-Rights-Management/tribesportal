@@ -161,15 +161,11 @@ export default function HelpArticlesListPage() {
           placeholder="Search articles..."
           className="flex-1 max-w-sm"
         />
-        <select
+        <AppSelect
           value={statusFilter}
-          onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-          className="h-9 px-3 bg-muted/40 border border-transparent hover:border-border rounded-md text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:ring-offset-2"
-        >
-          {STATUS_OPTIONS.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
+          onChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}
+          options={STATUS_OPTIONS}
+        />
       </div>
 
       {/* Table */}
