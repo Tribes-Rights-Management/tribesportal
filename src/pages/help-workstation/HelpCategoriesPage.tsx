@@ -55,7 +55,6 @@ export default function HelpCategoriesPage() {
   // Form state
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [slugManual, setSlugManual] = useState(false);
   const [selectedAudienceIds, setSelectedAudienceIds] = useState<string[]>([]);
 
   useEffect(() => {
@@ -97,24 +96,16 @@ export default function HelpCategoriesPage() {
     return audiences.find(a => a.id === audienceId)?.name || "Unknown";
   };
 
-  // Auto-generate slug from name (inline handler instead of useEffect for immediate feedback)
+  // Auto-generate slug from name
   const handleNameChange = (value: string) => {
     setName(value);
-    if (!slugManual) {
-      setSlug(slugify(value));
-    }
-  };
-
-  const handleSlugChange = (value: string) => {
-    setSlug(value);
-    setSlugManual(true); // Mark as manually edited
+    setSlug(slugify(value));
   };
 
   const handleCreate = () => {
     setEditing(null);
     setName("");
     setSlug("");
-    setSlugManual(false);
     setSelectedAudienceIds([]);
     setFormError(null);
     setPanelOpen(true);
@@ -124,7 +115,6 @@ export default function HelpCategoriesPage() {
     setEditing(cat);
     setName(cat.name);
     setSlug(cat.slug);
-    setSlugManual(true);
     setFormError(null);
 
     // Fetch existing audience links
@@ -377,15 +367,12 @@ export default function HelpCategoriesPage() {
               </div>
 
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">Slug *</label>
-                <input
-                  type="text"
-                  value={slug}
-                  onChange={(e) => handleSlugChange(e.target.value)}
-                  placeholder="category-slug"
-                  className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors font-mono"
-                />
-                <p className="text-[11px] text-muted-foreground mt-2">Auto-generated from name</p>
+                <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+                  URL Slug
+                </label>
+                <div className="px-3 py-2 bg-muted/50 border border-border rounded text-[13px] text-muted-foreground font-mono">
+                  {slug || "auto-generated-from-name"}
+                </div>
               </div>
 
               {/* Audience Visibility Section */}
