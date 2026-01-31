@@ -122,8 +122,8 @@ export function AppDetailRow({
     return (
       <div
         className={cn(
-          "px-4 py-4",
-          "flex items-center justify-between gap-4",
+          "px-4 py-2.5",
+          "flex items-center justify-between gap-3",
           "w-full max-w-full min-w-0",
           className
         )}
@@ -131,21 +131,19 @@ export function AppDetailRow({
         {/* Left side: Icon + Label + Helper */}
         <div className="flex items-start gap-3 min-w-0 flex-1">
           {Icon && (
-            <div className="h-8 w-8 rounded flex items-center justify-center shrink-0 mt-0.5 bg-muted/50">
-              <Icon className="h-4 w-4 text-muted-foreground" />
-            </div>
+            <Icon className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
           )}
           <div className="min-w-0 flex-1">
             <span
               className={cn(
-                "text-[13px] font-medium block",
+                "text-sm font-medium block",
                 locked ? "text-muted-foreground" : "text-foreground"
               )}
             >
               {label}
             </span>
             {effectiveHelperText && (
-              <span className="text-[12px] block mt-0.5 text-muted-foreground">
+              <span className="text-xs block mt-0.5 text-muted-foreground">
                 {effectiveHelperText}
               </span>
             )}
@@ -166,10 +164,10 @@ export function AppDetailRow({
   return (
     <div
       className={cn(
-        "px-4 py-4",
-        "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
+        "px-4 py-2.5",
+        "flex items-center gap-3",
         "w-full max-w-full min-w-0",
-        isInteractive && "cursor-pointer hover:bg-muted/30 transition-colors",
+        isInteractive && "cursor-pointer hover:bg-accent/40 transition-colors duration-150",
         className
       )}
       onClick={isInteractive ? handleRowActivate : undefined}
@@ -186,24 +184,22 @@ export function AppDetailRow({
       {/* Left side: Icon + Label */}
       <div className="flex items-center gap-3 shrink-0 min-w-0">
         {Icon && (
-          <div className="h-8 w-8 rounded flex items-center justify-center shrink-0 bg-muted/50">
-            <Icon className="h-4 w-4 text-muted-foreground" />
-          </div>
+          <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
         )}
-        <span className="text-[13px] font-medium truncate text-foreground">
+        <span className="text-sm font-medium truncate text-foreground">
           {label}
         </span>
       </div>
 
       {/* Right side: Value + Actions */}
-      <div className="flex items-center gap-2 min-w-0 sm:justify-end w-full sm:w-auto">
+      <div className="flex items-center gap-2 min-w-0 flex-1 justify-end">
         {/* Value container */}
-        <div className="min-w-0 flex-1 sm:flex-initial sm:text-right">
+        <div className="min-w-0 text-right">
           <span
             className={cn(
-              "text-[13px] block",
+              "text-xs block",
               isStringValue && "truncate",
-              locked ? "text-muted-foreground/70" : "text-muted-foreground"
+              locked ? "text-muted-foreground/60" : "text-muted-foreground"
             )}
             title={isStringValue && hasValue ? (value as string) : undefined}
           >
@@ -212,7 +208,7 @@ export function AppDetailRow({
 
           {/* Helper text */}
           {effectiveHelperText && (
-            <span className="text-[11px] block mt-0.5 line-clamp-2 text-muted-foreground/70">
+            <span className="text-[11px] block mt-0.5 truncate text-muted-foreground/60">
               {effectiveHelperText}
             </span>
           )}
@@ -231,7 +227,7 @@ export function AppDetailRow({
               e.stopPropagation();
               onCta();
             }}
-            className="shrink-0 text-[13px] font-medium px-3 py-2 rounded transition-colors hover:bg-muted/50 min-h-[36px] text-foreground"
+            className="shrink-0 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             {ctaLabel}
           </button>
@@ -239,7 +235,7 @@ export function AppDetailRow({
 
         {/* Select: Chevron */}
         {variant === "select" && !locked && (
-          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50" strokeWidth={1.5} />
         )}
       </div>
     </div>

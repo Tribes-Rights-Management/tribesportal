@@ -49,24 +49,26 @@ export function AppSettingsCard({
     <div
       className={cn(
         "rounded-lg overflow-hidden w-full max-w-full",
-        "bg-card border border-border",
+        "bg-card border border-border/60",
         className
       )}
     >
-      {/* Header */}
-      <div className="px-4 py-4 border-b border-border">
-        <h2 className="text-[15px] font-medium text-foreground">
-          {title}
-        </h2>
-        {description && (
-          <p className="text-[13px] mt-0.5 line-clamp-2 text-muted-foreground">
-            {description}
-          </p>
-        )}
+      {/* Header — matches AppListCard styling */}
+      <div className="px-4 py-3 border-b border-border/60 flex items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            {title}
+          </h2>
+          {description && (
+            <p className="text-xs mt-1 text-muted-foreground/70">
+              {description}
+            </p>
+          )}
+        </div>
       </div>
 
-      {/* Content with auto-dividers */}
-      <div className="w-full max-w-full min-w-0 divide-y divide-border">
+      {/* Content with subtle auto-dividers */}
+      <div className="w-full max-w-full min-w-0 divide-y divide-border/40">
         {children}
       </div>
     </div>
