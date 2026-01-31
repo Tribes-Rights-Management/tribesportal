@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Save, Archive } from "lucide-react";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { ArrowLeft, Save, Archive, Pencil } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -59,6 +59,7 @@ export default function HelpCenterArticleEditor() {
   const [articleMeta, setArticleMeta] = useState<ArticleMeta>({ created_at: null, updated_at: null });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [slugEditable, setSlugEditable] = useState(false);
 
   const { fetchAssignment, saveAssignment } = useArticleAudience();
   const { categories: audienceCategories, fetchCategoriesByAudience } = useCategoriesByAudience();
@@ -82,18 +83,19 @@ export default function HelpCenterArticleEditor() {
   });
 
   const title = watch("title");
+  const slug = watch("slug");
   const published = watch("published");
 
-  // Generate slug from title
+  // Generate slug from title (only when not manually editing)
   useEffect(() => {
-    if (!isEditing && title) {
-      const slug = title
+    if (!isEditing && !slugEditable && title) {
+      const generatedSlug = title
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
-      setValue("slug", slug);
+      setValue("slug", generatedSlug);
     }
-  }, [title, isEditing, setValue]);
+  }, [title, isEditing, slugEditable, setValue]);
 
   // Load categories (legacy)
   useEffect(() => {
@@ -159,6 +161,7 @@ export default function HelpCenterArticleEditor() {
       }
 
       setLoading(true);
+      setSlugEditable(true); // When editing, slug was already set
       const { data, error } = await supabase
         .from("articles")
         .select("*")
@@ -338,9 +341,9 @@ export default function HelpCenterArticleEditor() {
     >
       {/* Top Bar */}
       <div
-        className="sticky top-0 z-10 px-6 py-4"
+        className="sticky top-0 z-10 px-4 md:px-6 py-3"
         style={{
-          backgroundColor: "var(--platform-canvas)",
+          backgroundColor: "var(--platform-surface)",
           borderBottom: "1px solid var(--platform-border)",
         }}
       >
@@ -348,14 +351,14 @@ export default function HelpCenterArticleEditor() {
           <button
             type="button"
             onClick={() => navigate("/admin/help-center/articles")}
-            className="flex items-center gap-2 text-[13px] hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded"
+            className="flex items-center gap-1.5 text-[13px] hover:opacity-70 transition-opacity"
             style={{ color: "var(--platform-text-muted)" }}
           >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Articles
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Articles
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <AppButton
               type="button"
               intent="secondary"
@@ -363,8 +366,8 @@ export default function HelpCenterArticleEditor() {
               onClick={handleSaveDraft}
               disabled={saving}
             >
-              <Archive className="h-4 w-4 mr-1.5" />
-              Save Draft
+              <Archive className="h-3.5 w-3.5 mr-1.5" />
+              Draft
             </AppButton>
             <AppButton
               type="button"
@@ -373,7 +376,7 @@ export default function HelpCenterArticleEditor() {
               onClick={handleSubmit(onSubmit)}
               disabled={saving}
             >
-              <Save className="h-4 w-4 mr-1.5" />
+              <Save className="h-3.5 w-3.5 mr-1.5" />
               {published ? "Publish" : "Save"}
             </AppButton>
           </div>
@@ -381,17 +384,23 @@ export default function HelpCenterArticleEditor() {
       </div>
 
       {/* Main Content */}
-      <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="px-4 md:px-6 py-6">
         <div className="max-w-[1400px] mx-auto">
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col lg:flex-row gap-6">
             {/* LEFT COLUMN - Content Editing */}
-            <div className="flex-1 lg:w-[65%] space-y-6">
-              {/* Title Row with Status */}
-              <div className="flex items-start gap-4">
-                <div className="flex-1">
+            <div className="flex-1 lg:w-[65%]">
+              <div
+                className="rounded-lg p-5"
+                style={{
+                  backgroundColor: "var(--platform-surface)",
+                  border: "1px solid var(--platform-border)",
+                }}
+              >
+                {/* Title */}
+                <div className="mb-4">
                   <Label
                     htmlFor="title"
-                    className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
+                    className="text-[11px] uppercase tracking-wider mb-1.5 block font-medium"
                     style={{ color: "var(--platform-text-muted)" }}
                   >
                     Title
@@ -400,121 +409,154 @@ export default function HelpCenterArticleEditor() {
                     id="title"
                     {...register("title", { required: true })}
                     placeholder="Article title"
-                    className="text-[16px]"
+                    className="text-[15px] font-medium"
                     style={{
-                      backgroundColor: "var(--platform-surface)",
+                      backgroundColor: "var(--platform-canvas)",
                       borderColor: "var(--platform-border)",
                       color: "var(--platform-text)",
                     }}
                   />
                 </div>
-                <div className="pt-7">
-                  <span
-                    className="inline-flex items-center px-2.5 py-1 rounded text-[11px] font-medium uppercase tracking-wide"
+
+                {/* Slug */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <Label
+                      htmlFor="slug"
+                      className="text-[11px] uppercase tracking-wider font-medium"
+                      style={{ color: "var(--platform-text-muted)" }}
+                    >
+                      Slug
+                    </Label>
+                    {!slugEditable && !isEditing && (
+                      <button
+                        type="button"
+                        onClick={() => setSlugEditable(true)}
+                        className="flex items-center gap-1 text-[11px] hover:opacity-70 transition-opacity"
+                        style={{ color: "var(--platform-accent)" }}
+                      >
+                        <Pencil className="h-3 w-3" />
+                        Edit
+                      </button>
+                    )}
+                  </div>
+                  <Input
+                    id="slug"
+                    {...register("slug", { required: true })}
+                    placeholder="article-slug"
+                    disabled={!slugEditable && !isEditing}
                     style={{
-                      backgroundColor: published
-                        ? "rgba(34, 197, 94, 0.1)"
-                        : "rgba(156, 163, 175, 0.1)",
-                      color: published ? "#16a34a" : "var(--platform-text-muted)",
+                      backgroundColor: slugEditable || isEditing ? "var(--platform-canvas)" : "var(--platform-border-subtle)",
+                      borderColor: "var(--platform-border)",
+                      color: "var(--platform-text)",
+                      opacity: slugEditable || isEditing ? 1 : 0.7,
                     }}
-                  >
-                    {published ? "Published" : "Draft"}
-                  </span>
+                  />
+                  {!slugEditable && !isEditing && (
+                    <p
+                      className="text-[11px] mt-1"
+                      style={{ color: "var(--platform-text-muted)" }}
+                    >
+                      Auto-generated from title
+                    </p>
+                  )}
                 </div>
-              </div>
 
-              {/* Slug */}
-              <div>
-                <Label
-                  htmlFor="slug"
-                  className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
-                  style={{ color: "var(--platform-text-muted)" }}
-                >
-                  Slug
-                </Label>
-                <Input
-                  id="slug"
-                  {...register("slug", { required: true })}
-                  placeholder="article-slug"
-                  style={{
-                    backgroundColor: "var(--platform-surface)",
-                    borderColor: "var(--platform-border)",
-                    color: "var(--platform-text)",
-                  }}
-                />
-              </div>
+                {/* Meta Description */}
+                <div className="mb-4">
+                  <Label
+                    htmlFor="meta_description"
+                    className="text-[11px] uppercase tracking-wider mb-1.5 block font-medium"
+                    style={{ color: "var(--platform-text-muted)" }}
+                  >
+                    Meta Description
+                  </Label>
+                  <Textarea
+                    id="meta_description"
+                    {...register("meta_description")}
+                    placeholder="Brief description for search results"
+                    rows={2}
+                    style={{
+                      backgroundColor: "var(--platform-canvas)",
+                      borderColor: "var(--platform-border)",
+                      color: "var(--platform-text)",
+                    }}
+                  />
+                </div>
 
-              {/* Meta Description */}
-              <div>
-                <Label
-                  htmlFor="meta_description"
-                  className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
-                  style={{ color: "var(--platform-text-muted)" }}
-                >
-                  Meta Description
-                </Label>
-                <Textarea
-                  id="meta_description"
-                  {...register("meta_description")}
-                  placeholder="Brief description for search results"
-                  rows={2}
-                  style={{
-                    backgroundColor: "var(--platform-surface)",
-                    borderColor: "var(--platform-border)",
-                    color: "var(--platform-text)",
-                  }}
+                {/* Separator on mobile */}
+                <div
+                  className="my-4 lg:hidden"
+                  style={{ borderTop: "1px solid var(--platform-border)" }}
                 />
-              </div>
 
-              {/* Content */}
-              <div>
-                <Label
-                  htmlFor="body"
-                  className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
-                  style={{ color: "var(--platform-text-muted)" }}
-                >
-                  Content
-                </Label>
-                <Textarea
-                  id="body"
-                  {...register("body", { required: true })}
-                  placeholder="Article content (supports Markdown)"
-                  rows={20}
-                  className="font-mono text-[13px]"
-                  style={{
-                    backgroundColor: "var(--platform-surface)",
-                    borderColor: "var(--platform-border)",
-                    color: "var(--platform-text)",
-                    minHeight: "400px",
-                  }}
-                />
+                {/* Content */}
+                <div>
+                  <Label
+                    htmlFor="body"
+                    className="text-[11px] uppercase tracking-wider mb-1.5 block font-medium"
+                    style={{ color: "var(--platform-text-muted)" }}
+                  >
+                    Content
+                  </Label>
+                  <Textarea
+                    id="body"
+                    {...register("body", { required: true })}
+                    placeholder="Article content (supports Markdown)"
+                    rows={18}
+                    className="font-mono text-[13px]"
+                    style={{
+                      backgroundColor: "var(--platform-canvas)",
+                      borderColor: "var(--platform-border)",
+                      color: "var(--platform-text)",
+                      minHeight: "360px",
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
             {/* RIGHT COLUMN - Metadata Sidebar */}
             <div className="lg:w-[35%]">
-              <div className="lg:sticky lg:top-24 space-y-6">
+              <div className="lg:sticky lg:top-20 space-y-4">
                 {/* Publishing Settings Card */}
                 <div
-                  className="rounded-lg p-5"
+                  className="rounded-lg"
                   style={{
                     backgroundColor: "var(--platform-surface)",
                     border: "1px solid var(--platform-border)",
                   }}
                 >
-                  <h3
-                    className="text-[12px] uppercase tracking-wider font-medium mb-4"
-                    style={{ color: "var(--platform-text-muted)" }}
+                  {/* Header with Status */}
+                  <div
+                    className="px-4 py-3 flex items-center justify-between"
+                    style={{ borderBottom: "1px solid var(--platform-border)" }}
                   >
-                    Publishing Settings
-                  </h3>
+                    <h3
+                      className="text-[12px] uppercase tracking-wider font-medium"
+                      style={{ color: "var(--platform-text-muted)" }}
+                    >
+                      Publishing
+                    </h3>
+                    <span
+                      className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide"
+                      style={{
+                        backgroundColor: published
+                          ? "rgba(34, 197, 94, 0.1)"
+                          : "rgba(156, 163, 175, 0.15)",
+                        color: published ? "#16a34a" : "var(--platform-text-muted)",
+                      }}
+                    >
+                      {published ? "Published" : "Draft"}
+                    </span>
+                  </div>
 
-                  <div className="space-y-4">
+                  <div className="p-4 space-y-4">
                     {/* Audience */}
                     <div>
                       <Label
                         htmlFor="audience"
-                        className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
+                        className="text-[11px] uppercase tracking-wider mb-1.5 block font-medium"
                         style={{ color: "var(--platform-text-muted)" }}
                       >
                         Audience
@@ -527,7 +569,7 @@ export default function HelpCenterArticleEditor() {
                         }}
                       >
                         <SelectTrigger
-                          className="w-full"
+                          className="w-full h-9"
                           style={{
                             backgroundColor: "var(--platform-canvas)",
                             borderColor: "var(--platform-border)",
@@ -550,51 +592,69 @@ export default function HelpCenterArticleEditor() {
                     <div>
                       <Label
                         htmlFor="audienceCategory"
-                        className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
+                        className="text-[11px] uppercase tracking-wider mb-1.5 block font-medium"
                         style={{ color: "var(--platform-text-muted)" }}
                       >
                         Category
                       </Label>
-                      <Select
-                        value={selectedCategoryId}
-                        onValueChange={setSelectedCategoryId}
-                        disabled={!selectedAudienceId}
-                      >
-                        <SelectTrigger
-                          className="w-full"
+                      {selectedAudienceId && audienceCategories.length === 0 ? (
+                        <div
+                          className="text-[12px] py-2 px-3 rounded"
                           style={{
                             backgroundColor: "var(--platform-canvas)",
-                            borderColor: "var(--platform-border)",
-                            color: !selectedAudienceId
-                              ? "var(--platform-text-muted)"
-                              : "var(--platform-text)",
+                            border: "1px solid var(--platform-border)",
+                            color: "var(--platform-text-muted)",
                           }}
                         >
-                          <SelectValue
-                            placeholder={
-                              !selectedAudienceId
-                                ? "Select audience first"
-                                : audienceCategories.length === 0
-                                ? "No categories available"
-                                : "Select category"
-                            }
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {audienceCategories.map((c) => (
-                            <SelectItem key={c.id} value={c.id}>
-                              {c.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                          No categories available.{" "}
+                          <Link
+                            to="/help/categories"
+                            className="hover:underline"
+                            style={{ color: "var(--platform-accent)" }}
+                          >
+                            Create one →
+                          </Link>
+                        </div>
+                      ) : (
+                        <Select
+                          value={selectedCategoryId}
+                          onValueChange={setSelectedCategoryId}
+                          disabled={!selectedAudienceId}
+                        >
+                          <SelectTrigger
+                            className="w-full h-9"
+                            style={{
+                              backgroundColor: "var(--platform-canvas)",
+                              borderColor: "var(--platform-border)",
+                              color: !selectedAudienceId
+                                ? "var(--platform-text-muted)"
+                                : "var(--platform-text)",
+                            }}
+                          >
+                            <SelectValue
+                              placeholder={
+                                !selectedAudienceId
+                                  ? "Select audience first"
+                                  : "Select category"
+                              }
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {audienceCategories.map((c) => (
+                              <SelectItem key={c.id} value={c.id}>
+                                {c.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
                     </div>
 
                     {/* Display Order */}
                     <div>
                       <Label
                         htmlFor="displayOrder"
-                        className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
+                        className="text-[11px] uppercase tracking-wider mb-1.5 block font-medium"
                         style={{ color: "var(--platform-text-muted)" }}
                       >
                         Display Order
@@ -605,7 +665,7 @@ export default function HelpCenterArticleEditor() {
                         min={0}
                         value={displayOrder}
                         onChange={(e) => setDisplayOrder(parseInt(e.target.value) || 0)}
-                        className="w-24"
+                        className="w-20 h-9"
                         style={{
                           backgroundColor: "var(--platform-canvas)",
                           borderColor: "var(--platform-border)",
@@ -616,29 +676,31 @@ export default function HelpCenterArticleEditor() {
 
                     {/* Status Toggle */}
                     <div
-                      className="pt-4 mt-4"
+                      className="pt-3"
                       style={{ borderTop: "1px solid var(--platform-border)" }}
                     >
                       <div className="flex items-center justify-between">
-                        <Label
-                          htmlFor="published"
-                          className="text-[13px] font-medium"
-                          style={{ color: "var(--platform-text)" }}
-                        >
-                          Published
-                        </Label>
+                        <div>
+                          <Label
+                            htmlFor="published"
+                            className="text-[13px] font-medium block"
+                            style={{ color: "var(--platform-text)" }}
+                          >
+                            Publish Article
+                          </Label>
+                          <p
+                            className="text-[11px]"
+                            style={{ color: "var(--platform-text-muted)" }}
+                          >
+                            Make visible in Help Center
+                          </p>
+                        </div>
                         <Switch
                           id="published"
                           checked={published}
                           onCheckedChange={(v) => setValue("published", v)}
                         />
                       </div>
-                      <p
-                        className="text-[12px] mt-1"
-                        style={{ color: "var(--platform-text-muted)" }}
-                      >
-                        Make this article visible in the Help Center
-                      </p>
                     </div>
                   </div>
                 </div>
@@ -646,43 +708,43 @@ export default function HelpCenterArticleEditor() {
                 {/* Article Info Card */}
                 {isEditing && (
                   <div
-                    className="rounded-lg p-5"
+                    className="rounded-lg p-4"
                     style={{
                       backgroundColor: "var(--platform-surface)",
                       border: "1px solid var(--platform-border)",
                     }}
                   >
                     <h3
-                      className="text-[12px] uppercase tracking-wider font-medium mb-4"
+                      className="text-[11px] uppercase tracking-wider font-medium mb-3"
                       style={{ color: "var(--platform-text-muted)" }}
                     >
                       Article Info
                     </h3>
 
-                    <div className="space-y-3">
-                      <div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
                         <span
-                          className="text-[12px] block"
+                          className="text-[12px]"
                           style={{ color: "var(--platform-text-muted)" }}
                         >
                           Created
                         </span>
                         <span
-                          className="text-[13px]"
+                          className="text-[12px]"
                           style={{ color: "var(--platform-text)" }}
                         >
                           {formatDate(articleMeta.created_at)}
                         </span>
                       </div>
-                      <div>
+                      <div className="flex items-center justify-between">
                         <span
-                          className="text-[12px] block"
+                          className="text-[12px]"
                           style={{ color: "var(--platform-text-muted)" }}
                         >
-                          Last Updated
+                          Updated
                         </span>
                         <span
-                          className="text-[13px]"
+                          className="text-[12px]"
                           style={{ color: "var(--platform-text)" }}
                         >
                           {formatDate(articleMeta.updated_at)}
@@ -691,14 +753,6 @@ export default function HelpCenterArticleEditor() {
                     </div>
                   </div>
                 )}
-
-                {/* Help Text */}
-                <p
-                  className="text-[12px] px-1"
-                  style={{ color: "var(--platform-text-muted)" }}
-                >
-                  Assign an audience and category for this article to appear in the public Help Center.
-                </p>
               </div>
             </div>
           </div>
