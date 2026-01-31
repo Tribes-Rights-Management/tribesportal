@@ -113,7 +113,7 @@ export function AppSectionGrid({
   };
 
   return (
-    <div className={cn("grid", colClasses[columns], gapClasses[gap], className)}>
+    <div className={cn("grid items-stretch", colClasses[columns], gapClasses[gap], className)}>
       {children}
     </div>
   );
