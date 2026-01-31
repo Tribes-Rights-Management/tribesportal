@@ -1,4 +1,6 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -9,6 +11,7 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * Standardized page header with:
+ * - Optional back link (for child pages)
  * - Optional eyebrow label (e.g., "HELP WORKSTATION")
  * - Title (required)
  * - Optional description
@@ -16,6 +19,7 @@ import { cn } from "@/lib/utils";
  * 
  * USAGE:
  *   <AppPageHeader
+ *     backLink={{ to: "/help", label: "Overview" }}
  *     eyebrow="SYSTEM CONSOLE"
  *     title="Governance Overview"
  *     description="Company-wide compliance and oversight"
@@ -28,7 +32,14 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
+interface BackLinkProps {
+  to: string;
+  label: string;
+}
+
 interface AppPageHeaderProps {
+  /** Back link to parent page */
+  backLink?: BackLinkProps;
   /** Small uppercase label above title */
   eyebrow?: string;
   /** Main page title */
@@ -42,6 +53,7 @@ interface AppPageHeaderProps {
 }
 
 export function AppPageHeader({
+  backLink,
   eyebrow,
   title,
   description,
@@ -55,6 +67,15 @@ export function AppPageHeader({
           <p className="text-[10px] uppercase tracking-wider font-medium mb-2 text-muted-foreground">
             {eyebrow}
           </p>
+        )}
+        {backLink && (
+          <Link 
+            to={backLink.to} 
+            className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground transition-colors mb-2 min-h-[44px] sm:min-h-0 py-2 sm:py-0"
+          >
+            <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
+            <span>{backLink.label}</span>
+          </Link>
         )}
         <h1 className="text-[18px] sm:text-[20px] font-semibold text-foreground leading-tight">
           {title}

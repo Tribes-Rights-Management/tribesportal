@@ -246,6 +246,7 @@ export default function HelpArticlesListPage() {
     <div className="flex-1 p-4 sm:p-6">
       {/* Page Header */}
       <AppPageHeader
+        backLink={{ to: "/help", label: "Overview" }}
         eyebrow="Help Workstation"
         title="Articles"
         description={
@@ -254,7 +255,7 @@ export default function HelpArticlesListPage() {
             : `${displayCount} articles`
         }
         action={
-          <AppButton intent="primary" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
+          <AppButton intent="primary" size="sm" onClick={() => navigate("/help/articles/new")}>
             <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
             New Article
           </AppButton>
@@ -339,7 +340,7 @@ export default function HelpArticlesListPage() {
                   key={article.id}
                   article={article}
                   index={index}
-                  onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
+                  onClick={() => navigate(`/help/articles/${article.id}`)}
                 />
               ))}
             </SortableContext>
@@ -384,7 +385,7 @@ export default function HelpArticlesListPage() {
                       <AppTableRow
                         key={article.id}
                         clickable
-                        onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
+                        onClick={() => navigate(`/help/articles/${article.id}`)}
                       >
                         <AppTableCell>{article.title || "Untitled"}</AppTableCell>
                         <AppTableCell muted className="hidden sm:table-cell">

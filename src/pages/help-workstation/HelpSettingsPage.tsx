@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ExternalLink, AlertCircle } from "lucide-react";
-import { AppButton } from "@/components/app-ui";
+import { AppButton, AppPageHeader } from "@/components/app-ui";
 
 /**
  * HELP SETTINGS PAGE — INSTITUTIONAL DESIGN
@@ -30,16 +30,14 @@ export default function HelpSettingsPage() {
   };
 
   return (
-    <div className="flex-1 p-8">
-      {/* Header */}
-      <div className="mb-8">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
-          HELP WORKSTATION
-        </p>
-        <h1 className="text-[20px] font-medium text-foreground mb-1">Settings</h1>
-        <p className="text-[13px] text-muted-foreground">Configure Help Center behavior</p>
-      </div>
-
+    <div className="flex-1 p-4 sm:p-6 lg:p-8">
+      {/* Header with back link */}
+      <AppPageHeader
+        backLink={{ to: "/help", label: "Overview" }}
+        eyebrow="Help Workstation"
+        title="Settings"
+        description="Configure Help Center behavior"
+      />
       <div className="space-y-6 max-w-3xl">
         {/* Public Help Center */}
         <div className="bg-card border border-border rounded p-5">
