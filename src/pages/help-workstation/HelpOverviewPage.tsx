@@ -191,6 +191,7 @@ export default function HelpOverviewPage() {
         {/* Top Performing Articles */}
         <AppListCard
           title="Top Performing Articles"
+          className="h-full"
           action={
             <AppListAction onClick={() => navigate("/help/articles")}>
               View all
@@ -216,7 +217,7 @@ export default function HelpOverviewPage() {
         </AppListCard>
 
         {/* Drafts to Review */}
-        <AppListCard title="Drafts to Review">
+        <AppListCard title="Drafts to Review" className="h-full">
           {draftsToReview.length === 0 ? (
             <AppEmptyState
               icon="file"
