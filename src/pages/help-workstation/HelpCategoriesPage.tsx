@@ -356,23 +356,19 @@ export default function HelpCategoriesPage() {
               )}
 
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">Name *</label>
+                <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+                  Name *
+                </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => handleNameChange(e.target.value)}
                   placeholder="Category name"
-                  className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
+                  className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                 />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
-                  URL Slug
-                </label>
-                <div className="px-3 py-2 bg-muted/50 border border-border rounded text-[13px] text-muted-foreground font-mono">
-                  {slug || "auto-generated-from-name"}
-                </div>
+                <p className="mt-1.5 text-[11px] text-muted-foreground">
+                  {name ? `Slug: ${slugify(name)}` : "URL slug will be auto-generated from name"}
+                </p>
               </div>
 
               {/* Audience Visibility Section */}
