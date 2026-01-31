@@ -119,6 +119,18 @@ export function HelpAssistantLauncher() {
   const handleArticleClick = (article: Article) => {
     setSelectedArticle(article);
     setView("article");
+    
+    // Track article view after 2 second delay (filters quick bounces)
+    setTimeout(async () => {
+      try {
+        await supabase.rpc("increment_article_view", { 
+          article_id: article.id 
+        });
+      } catch (error) {
+        // Silent fail - view tracking is non-critical
+        console.error("Failed to track article view:", error);
+      }
+    }, 2000);
   };
 
   const getCurrentModuleName = (): string => {
