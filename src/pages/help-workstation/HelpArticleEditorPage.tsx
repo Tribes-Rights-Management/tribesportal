@@ -561,8 +561,8 @@ export default function HelpArticleEditorPage() {
             </div>
           )}
 
-          {/* Title + Status Row */}
-          <div className="flex items-center gap-3">
+          {/* Title + Status Row - stacks on mobile */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <input
               type="text"
               value={title}
@@ -574,6 +574,7 @@ export default function HelpArticleEditorPage() {
               <AppChip 
                 status={status === "published" ? "pass" : status === "archived" ? "fail" : "pending"}
                 label={status.toUpperCase()}
+                className="self-start sm:self-auto"
               />
             )}
           </div>

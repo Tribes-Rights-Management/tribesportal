@@ -81,16 +81,19 @@ export function AppTable({ children, columns, className }: AppTableProps) {
         className
       )}
     >
-      <table className="w-full">
-        {columnWidths && (
-          <colgroup>
-            {columnWidths.map((width, i) => (
-              <col key={i} style={{ width }} />
-            ))}
-          </colgroup>
-        )}
-        {children}
-      </table>
+      {/* Horizontal scroll wrapper for mobile */}
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[500px]">
+          {columnWidths && (
+            <colgroup>
+              {columnWidths.map((width, i) => (
+                <col key={i} style={{ width }} />
+              ))}
+            </colgroup>
+          )}
+          {children}
+        </table>
+      </div>
     </div>
   );
 }
