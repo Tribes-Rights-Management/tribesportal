@@ -383,15 +383,19 @@ export default function HelpCategoriesPage() {
           onValueChange={setSelectedAudienceId}
           disabled={viewMode !== 'byAudience'}
         >
-          <SelectTrigger className="h-10 w-[200px] px-3 text-[14px] bg-card border border-border rounded-lg disabled:opacity-40">
+          <SelectTrigger
+            className={
+              "h-10 w-[200px] text-sm border-border bg-transparent focus:ring-2 focus:ring-muted-foreground/20 focus:ring-offset-0 disabled:opacity-40"
+            }
+          >
             <SelectValue placeholder="Select audience..." />
           </SelectTrigger>
-          <SelectContent className="bg-card border border-border rounded-lg shadow-lg">
+          <SelectContent>
             {activeAudiences.map((audience) => (
               <SelectItem 
                 key={audience.id} 
                 value={audience.id}
-                className="px-3 py-2 text-[14px] cursor-pointer"
+                className="text-sm"
               >
                 {audience.name}
               </SelectItem>

@@ -73,7 +73,8 @@ const SelectContent = React.forwardRef<
       className={cn(
         // Institutional dropdown: white bg, subtle border, no heavy shadows
         // min-w-[180px] ensures dropdown is never too narrow
-        "relative z-50 max-h-96 min-w-[180px] overflow-hidden rounded-md border border-border bg-background text-foreground shadow-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        // width matches trigger, but never below 180px
+        "relative z-50 max-h-96 min-w-[180px] w-[var(--radix-select-trigger-width)] overflow-hidden rounded-md border border-border bg-background text-foreground shadow-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className,
@@ -112,14 +113,14 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-10 pr-4 text-[15px] outline-none transition-colors duration-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 focus:bg-muted",
+      "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-10 pr-4 text-[14px] outline-none transition-colors duration-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 focus:bg-muted",
       className,
     )}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="absolute left-3 flex h-4 w-4 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-3.5 w-3.5" strokeWidth={1.5} />
+        <Check className="h-4 w-4" strokeWidth={1.5} />
       </SelectPrimitive.ItemIndicator>
     </span>
 
