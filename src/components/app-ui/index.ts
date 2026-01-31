@@ -63,8 +63,10 @@ export { AppListCard, AppListRow, AppListAction } from "./AppListCard";
 // PAGE STRUCTURE
 // ─────────────────────────────────────────────────────────────────────────────
 export { AppPageHeader } from "./AppPageHeader";
+export { AppPageContainer } from "./AppPageContainer";
 export { AppSectionHeader } from "./AppSectionHeader";
 export { AppSection, AppSectionGrid } from "./AppSection";
+export { AppDetailRow, AppDetailRowGroup } from "./AppDetailRow";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // INPUTS
