@@ -237,16 +237,16 @@ export default function HelpArticlesListPage() {
             placeholder="Search articles..."
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-            className="h-10 w-full pl-9 pr-3 text-[14px] bg-card border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
+            className="h-9 w-full pl-9 pr-3 text-[13px] bg-card border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring"
           />
         </div>
 
         {/* Category filter */}
         <Select value={categoryFilter} onValueChange={handleCategoryChange}>
-          <SelectTrigger className="h-10 w-[200px] text-[14px] border-border bg-card">
+          <SelectTrigger className="h-9 w-[180px] text-[13px]">
             <SelectValue placeholder="All categories" />
           </SelectTrigger>
-          <SelectContent className="min-w-[200px]">
+          <SelectContent className="min-w-[180px]">
             <SelectItem value="all">All categories</SelectItem>
             {categories.map((cat) => (
               <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
@@ -256,10 +256,10 @@ export default function HelpArticlesListPage() {
 
         {/* Status filter */}
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
-          <SelectTrigger className="h-10 w-[160px] text-[14px] border-border bg-card">
+          <SelectTrigger className="h-9 w-[180px] text-[13px]">
             <SelectValue placeholder="All statuses" />
           </SelectTrigger>
-          <SelectContent className="min-w-[160px]">
+          <SelectContent className="min-w-[180px]">
             <SelectItem value="all">All statuses</SelectItem>
             <SelectItem value="draft">Draft</SelectItem>
             <SelectItem value="published">Published</SelectItem>
