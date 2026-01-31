@@ -3,7 +3,17 @@ import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { X, ChevronRight, AlertCircle, RefreshCw } from "lucide-react";
-import { AppButton, AppSearchInput } from "@/components/app-ui";
+import {
+  AppButton,
+  AppSearchInput,
+  AppTable,
+  AppTableHeader,
+  AppTableBody,
+  AppTableRow,
+  AppTableHead,
+  AppTableCell,
+  AppTableEmpty,
+} from "@/components/app-ui";
 import { cn } from "@/lib/utils";
 
 /**
@@ -194,58 +204,52 @@ export default function HelpMessagesPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-card border border-border rounded">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-border">
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[25%]">Sender</th>
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[35%]">Subject</th>
-              <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[15%]">Status</th>
-              <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium w-[25%]">Received</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={4} className="text-center py-20">
-                  <p className="text-[13px] text-muted-foreground">Loading messages...</p>
-                </td>
-              </tr>
-            ) : filteredMessages.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="text-center py-20">
-                  <p className="text-[14px] text-muted-foreground mb-2">No messages yet</p>
-                  <p className="text-[12px] text-muted-foreground">Messages from public Help Center will appear here</p>
-                </td>
-              </tr>
-            ) : (
-              filteredMessages.map(msg => (
-                <tr 
-                  key={msg.id}
-                  onClick={() => setSelectedMessage(msg)}
-                  className="border-b border-border/30 row-hover"
-                >
-                  <td className="py-3 px-4">
-                    <p className="text-[13px] text-foreground">{msg.name}</p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">{msg.email}</p>
-                  </td>
-                  <td className="py-3 px-4 text-[13px] text-foreground">
-                    {msg.subject || msg.message.slice(0, 60) + (msg.message.length > 60 ? "..." : "")}
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className={`text-[11px] px-2 py-1 rounded ${getStatusStyle(msg.status)}`}>
-                      {(msg.status || "new")}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-right text-[12px] text-muted-foreground">
-                    {format(new Date(msg.created_at), "MMM d, yyyy")}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <AppTable columns={["25%", "40%", "15%", "20%"]}>
+        <AppTableHeader>
+          <AppTableRow header>
+            <AppTableHead>Sender</AppTableHead>
+            <AppTableHead>Subject</AppTableHead>
+            <AppTableHead>Status</AppTableHead>
+            <AppTableHead align="right">Received</AppTableHead>
+          </AppTableRow>
+        </AppTableHeader>
+        <AppTableBody>
+          {loading ? (
+            <AppTableEmpty colSpan={4}>
+              <p className="text-[13px] text-muted-foreground">Loading messages...</p>
+            </AppTableEmpty>
+          ) : filteredMessages.length === 0 ? (
+            <AppTableEmpty colSpan={4}>
+              <p className="text-[14px] text-muted-foreground mb-2">No messages yet</p>
+              <p className="text-[12px] text-muted-foreground">Messages from public Help Center will appear here</p>
+            </AppTableEmpty>
+          ) : (
+            filteredMessages.map(msg => (
+              <AppTableRow
+                key={msg.id}
+                clickable
+                onClick={() => setSelectedMessage(msg)}
+              >
+                <AppTableCell>
+                  <p className="text-[13px] text-foreground">{msg.name}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">{msg.email}</p>
+                </AppTableCell>
+                <AppTableCell>
+                  {msg.subject || msg.message.slice(0, 60) + (msg.message.length > 60 ? "..." : "")}
+                </AppTableCell>
+                <AppTableCell>
+                  <span className={`text-[11px] px-2 py-1 rounded ${getStatusStyle(msg.status)}`}>
+                    {(msg.status || "new")}
+                  </span>
+                </AppTableCell>
+                <AppTableCell align="right" muted>
+                  {format(new Date(msg.created_at), "MMM d, yyyy")}
+                </AppTableCell>
+              </AppTableRow>
+            ))
+          )}
+        </AppTableBody>
+      </AppTable>
 
       {/* Right-side Detail Panel */}
       {selectedMessage && (
