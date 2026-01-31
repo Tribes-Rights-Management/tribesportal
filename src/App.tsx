@@ -93,7 +93,6 @@ import {
   HelpArticlesListPage,
   HelpArticleEditorPage as HelpWorkstationArticleEditorPage,
   HelpCategoriesPage as HelpWorkstationCategoriesPage,
-  HelpTagsPage,
   HelpMessagesPage,
   HelpAnalyticsPage,
   HelpSettingsPage,
@@ -365,7 +364,7 @@ const App = () => (
           <Route path="articles" element={<HelpArticlesListPage />} />
           <Route path="articles/new" element={<HelpWorkstationArticleEditorPage />} />
           <Route path="articles/:id" element={<HelpWorkstationArticleEditorPage />} />
-          <Route path="tags" element={<HelpTagsPage />} />
+          
           <Route path="messages" element={<HelpMessagesPage />} />
           <Route path="analytics" element={<HelpAnalyticsPage />} />
           <Route path="settings" element={<HelpSettingsPage />} />

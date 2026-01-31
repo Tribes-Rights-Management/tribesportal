@@ -13,7 +13,6 @@ import {
   BarChart3,
   Link2,
   MessageSquare,
-  Tag,
   Settings2,
   type LucideIcon
 } from "lucide-react";
@@ -84,7 +83,6 @@ const helpNav: NavItem[] = [
   { to: "/help/audiences", label: "Audiences", icon: Users, section: "main" },
   { to: "/help/categories", label: "Categories", icon: FolderOpen, section: "main" },
   { to: "/help/articles", label: "Articles", icon: FileText, section: "main" },
-  { to: "/help/tags", label: "Tags", icon: Tag, section: "main" },
   { to: "/help/messages", label: "Messages", icon: MessageSquare, section: "main" },
   { to: "/help/analytics", label: "Analytics", icon: BarChart3, section: "secondary" },
   { to: "/help/settings", label: "Settings", icon: Settings2, section: "settings" },

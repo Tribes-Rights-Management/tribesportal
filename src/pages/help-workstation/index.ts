@@ -9,7 +9,6 @@
  * - Audiences (manage audience segments)
  * - Categories (CRUD, reorder, audience assignments)
  * - Articles (CRUD, audience/category assignments)
- * - Tags (CRUD)
  * - Messages (support inquiries)
  * - Analytics (search trends, performance)
  * - Settings (configuration)
@@ -20,7 +19,6 @@ export { default as HelpAudiencesPage } from "./HelpAudiencesPage";
 export { default as HelpArticlesListPage } from "./HelpArticlesListPage";
 export { default as HelpArticleEditorPage } from "./HelpArticleEditorPage";
 export { default as HelpCategoriesPage } from "./HelpCategoriesPage";
-export { default as HelpTagsPage } from "./HelpTagsPage";
 export { default as HelpMessagesPage } from "./HelpMessagesPage";
 export { default as HelpAnalyticsPage } from "./HelpAnalyticsPage";
 export { default as HelpSettingsPage } from "./HelpSettingsPage";
