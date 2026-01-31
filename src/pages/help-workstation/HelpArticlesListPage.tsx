@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, AlertCircle, RefreshCw, ChevronUp, ChevronDown, Search } from "lucide-react";
+import { Plus, AlertCircle, RefreshCw, ChevronUp, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import {
   DndContext,
@@ -22,6 +22,7 @@ import { useArticleOrderByCategory } from "@/hooks/useArticleOrderByCategory";
 import { useDebounce } from "@/hooks/useDebounce";
 import { AppButton, AppChip } from "@/components/app-ui";
 import { SortableArticleCard } from "@/components/help/SortableArticleCard";
+import { SearchInput } from "@/components/ui/search-input";
 import {
   Select,
   SelectContent,
@@ -229,17 +230,13 @@ export default function HelpArticlesListPage() {
 
       {/* Single Filter Row */}
       <div className="flex items-center gap-3 mb-6">
-        {/* Search input */}
-        <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search articles..."
-            value={searchQuery}
-            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-            className="h-9 w-full pl-9 pr-3 text-[13px] bg-card border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring"
-          />
-        </div>
+        {/* Search input - standardized component */}
+        <SearchInput
+          placeholder="Search articles..."
+          value={searchQuery}
+          onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+          wrapperClassName="flex-1 max-w-xs"
+        />
 
         {/* Category filter */}
         <Select value={categoryFilter} onValueChange={handleCategoryChange}>
