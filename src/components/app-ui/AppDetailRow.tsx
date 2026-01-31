@@ -161,11 +161,11 @@ export function AppDetailRow({
     );
   }
 
+  // Standard stacked layout - clean vertical flow
   return (
     <div
       className={cn(
-        "px-4 py-2.5",
-        "flex items-center gap-3",
+        "px-4 py-3",
         "w-full max-w-full min-w-0",
         isInteractive && "cursor-pointer hover:bg-accent/40 transition-colors duration-150",
         className
@@ -181,45 +181,12 @@ export function AppDetailRow({
         }
       }}
     >
-      {/* Left side: Icon + Label */}
-      <div className="flex items-center gap-3 shrink-0 min-w-0">
-        {Icon && (
-          <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
-        )}
-        <span className="text-sm font-medium truncate text-foreground">
-          {label}
-        </span>
-      </div>
-
-      {/* Right side: Value + Actions */}
-      <div className="flex items-center gap-2 min-w-0 flex-1 justify-end">
-        {/* Value container */}
-        <div className="min-w-0 text-right">
-          <span
-            className={cn(
-              "text-xs block",
-              isStringValue && "truncate",
-              locked ? "text-muted-foreground/60" : "text-muted-foreground"
-            )}
-            title={isStringValue && hasValue ? (value as string) : undefined}
-          >
-            {displayValue}
-          </span>
-
-          {/* Helper text */}
-          {effectiveHelperText && (
-            <span className="text-[11px] block mt-0.5 truncate text-muted-foreground/60">
-              {effectiveHelperText}
-            </span>
-          )}
-        </div>
-
-        {/* Copyable: Copy button */}
-        {variant === "copyable" && hasValue && isStringValue && (
-          <CopyButton value={value as string} size="sm" label={`Copy ${label}`} />
-        )}
-
-        {/* Editable: CTA button */}
+      {/* Line 1: Icon + Label */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        {Icon && <Icon className="h-4 w-4 shrink-0" />}
+        <span>{label}</span>
+        
+        {/* Action buttons inline with label */}
         {variant === "editable" && !locked && onCta && (
           <button
             type="button"
@@ -227,17 +194,39 @@ export function AppDetailRow({
               e.stopPropagation();
               onCta();
             }}
-            className="shrink-0 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             {ctaLabel}
           </button>
         )}
-
-        {/* Select: Chevron */}
+        
         {variant === "select" && !locked && (
-          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50" strokeWidth={1.5} />
+          <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground/50" strokeWidth={1.5} />
+        )}
+        
+        {variant === "copyable" && hasValue && isStringValue && (
+          <div className="ml-auto">
+            <CopyButton value={value as string} size="sm" label={`Copy ${label}`} />
+          </div>
         )}
       </div>
+      
+      {/* Line 2: Value */}
+      <div 
+        className={cn(
+          "text-sm font-medium mt-1",
+          locked ? "text-muted-foreground" : "text-foreground"
+        )}
+      >
+        {displayValue}
+      </div>
+      
+      {/* Line 3: Helper text (if any) */}
+      {effectiveHelperText && (
+        <div className="text-xs text-muted-foreground mt-0.5">
+          {effectiveHelperText}
+        </div>
+      )}
     </div>
   );
 }
