@@ -19,16 +19,8 @@ export default {
       },
     },
     extend: {
-      spacing: {
-        "0.5": "4px",
-        "1": "8px",
-        "1.5": "12px",
-        "2": "16px",
-        "3": "24px",
-        "4": "32px",
-        "6": "48px",
-        "8": "64px",
-      },
+      // NOTE: Custom spacing removed to restore Tailwind defaults
+      // (h-4 = 16px, not 32px). Add only NEW custom values if needed.
       fontSize: {
         /* Marketing site alignment: base 16px, institutional scale */
         "xs": ["12px", { lineHeight: "1.4", fontWeight: "400" }],
