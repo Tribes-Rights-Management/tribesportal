@@ -240,7 +240,7 @@ export function AppTableHead({
         <button
           onClick={onSort}
           className={cn(
-            "flex items-center hover:text-foreground transition-colors",
+            "flex items-center hover:text-foreground transition-colors uppercase",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded",
             align === "right" && "ml-auto"
           )}
