@@ -57,7 +57,6 @@ export interface HelpArticle {
   // For UI compatibility
   body_md?: string;
   visibility?: HelpVisibility;
-  tags?: string[];
   category_id?: string | null;
   category?: Pick<HelpCategory, 'id' | 'name' | 'slug'>;
   // Audience assignments
@@ -111,7 +110,6 @@ export interface HelpArticleVersion {
   body_md: string;
   category_id: string | null;
   visibility: HelpVisibility;
-  tags: string[];
   status: HelpArticleStatus;
   created_at: string;
   created_by: string | null;
@@ -176,7 +174,6 @@ interface CreateArticleInput {
   summary?: string;
   body_md: string;
   category_id?: string;
-  tags?: string[];
   visibility?: HelpVisibility;
 }
 
@@ -187,7 +184,6 @@ interface CreateVersionInput {
   body_md: string;
   category_id?: string | null;
   visibility?: HelpVisibility;
-  tags?: string[];
 }
 
 interface UpdateArticleInput {
@@ -196,7 +192,6 @@ interface UpdateArticleInput {
   summary?: string;
   body_md?: string;
   category_id?: string | null;
-  tags?: string[];
   status?: HelpArticleStatus;
   visibility?: HelpVisibility;
 }
@@ -302,7 +297,6 @@ export function useHelpManagement(): UseHelpManagementResult {
       // Compatibility fields
       body_md: a.content,
       visibility: "public" as HelpVisibility,
-      tags: [],
     }));
 
     // Apply search filter
