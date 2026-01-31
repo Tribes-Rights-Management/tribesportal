@@ -32,29 +32,28 @@ export function SortableCategoryCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 px-4 py-3 bg-card border rounded mb-2 ${
+      className={`flex items-center gap-3 px-4 py-2.5 bg-card border rounded mb-2 hover:border-muted-foreground/30 ${
         isDragging ? 'opacity-50 border-primary' : 'border-border'
       }`}
     >
       {/* Drag handle */}
-      <button
+      <div
         {...attributes}
         {...listeners}
-        className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing transition-colors"
-        title="Drag to reorder"
+        className="text-muted-foreground cursor-grab active:cursor-grabbing"
       >
         <GripVertical className="h-4 w-4" strokeWidth={1.5} />
-      </button>
+      </div>
       
       {/* Position number */}
-      <span className="text-[12px] text-muted-foreground w-6 text-center">
+      <span className="text-[12px] text-muted-foreground w-5 text-center">
         {index + 1}
       </span>
       
-      {/* Category name */}
+      {/* Category name - LEFT aligned */}
       <button
         onClick={() => onEdit(category)}
-        className="text-[14px] text-foreground font-medium hover:text-primary transition-colors text-left flex-1"
+        className="text-[14px] text-foreground hover:text-primary transition-colors text-left flex-1"
       >
         {category.name}
       </button>

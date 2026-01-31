@@ -346,7 +346,7 @@ export default function HelpCategoriesPage() {
       )}
 
       {/* View Toggle */}
-      <div className="flex items-center gap-4 px-4 py-2 mb-4">
+      <div className="flex items-center gap-4 mt-4 mb-4">
         <span className="text-[12px] text-muted-foreground">View:</span>
         
         <label className="flex items-center gap-1.5 cursor-pointer">
@@ -371,17 +371,20 @@ export default function HelpCategoriesPage() {
           <span className="text-[13px] text-foreground">By Audience:</span>
         </label>
 
-        <select
-          value={selectedAudienceId}
-          onChange={(e) => setSelectedAudienceId(e.target.value)}
-          disabled={viewMode !== 'byAudience'}
-          className="h-8 px-2 text-[13px] bg-card border border-border rounded disabled:opacity-50"
-        >
-          <option value="">Select...</option>
-          {activeAudiences.map(a => (
-            <option key={a.id} value={a.id}>{a.name}</option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            value={selectedAudienceId}
+            onChange={(e) => setSelectedAudienceId(e.target.value)}
+            disabled={viewMode !== 'byAudience'}
+            className="h-9 px-3 pr-8 text-[13px] bg-card border border-border rounded appearance-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-ring"
+          >
+            <option value="">Select audience...</option>
+            {activeAudiences.map(a => (
+              <option key={a.id} value={a.id}>{a.name}</option>
+            ))}
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" strokeWidth={1.5} />
+        </div>
       </div>
 
       {/* Content */}
