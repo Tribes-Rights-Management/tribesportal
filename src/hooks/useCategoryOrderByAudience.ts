@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 /**
  * HOOK: useCategoryOrderByAudience
@@ -13,7 +14,7 @@ export interface CategoryWithPosition {
   name: string;
   slug: string;
   updated_at: string;
-  linkId: string; // help_category_audiences.id
+  linkId: string;
   position: number;
 }
 
@@ -30,9 +31,6 @@ export function useCategoryOrderByAudience(): UseCategoryOrderByAudienceResult {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Fetch all categories linked to a specific audience, ordered by position
-   */
   const fetchCategoriesForAudience = useCallback(async (audienceId: string): Promise<void> => {
     if (!audienceId) {
       setCategories([]);
@@ -80,24 +78,24 @@ export function useCategoryOrderByAudience(): UseCategoryOrderByAudienceResult {
     setLoading(false);
   }, []);
 
-  /**
-   * Update positions for all categories in the given order
-   */
   const updatePositions = useCallback(async (
     audienceId: string,
     orderedCategories: CategoryWithPosition[]
   ): Promise<boolean> => {
     if (!audienceId || orderedCategories.length === 0) return false;
 
-    setLoading(true);
-    setError(null);
+    // Optimistically update local state
+    setCategories(orderedCategories.map((cat, index) => ({
+      ...cat,
+      position: index + 1,
+    })));
 
     try {
-      // Update each link's position
+      // Batch update all positions
       const updates = orderedCategories.map((cat, index) => 
         supabase
           .from("help_category_audiences")
-          .update({ position: index })
+          .update({ position: index + 1 })
           .eq("id", cat.linkId)
       );
 
@@ -108,21 +106,17 @@ export function useCategoryOrderByAudience(): UseCategoryOrderByAudienceResult {
         throw new Error("Failed to update some positions");
       }
 
-      // Update local state with new positions
-      setCategories(orderedCategories.map((cat, index) => ({
-        ...cat,
-        position: index,
-      })));
-
-      setLoading(false);
+      toast.success("Saved", { duration: 1500 });
       return true;
     } catch (err) {
       console.error("Error updating category positions:", err);
       setError("Unable to save order");
-      setLoading(false);
+      toast.error("Failed to save order");
+      // Refetch to restore correct state
+      await fetchCategoriesForAudience(audienceId);
       return false;
     }
-  }, []);
+  }, [fetchCategoriesForAudience]);
 
   return {
     categories,
