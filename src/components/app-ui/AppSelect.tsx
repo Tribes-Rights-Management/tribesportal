@@ -79,12 +79,12 @@ export const AppSelect = forwardRef<HTMLButtonElement, AppSelectProps>(
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent className="bg-card border border-border rounded-lg shadow-lg">
+        <SelectContent>
           {options.map((opt) => (
             <SelectItem 
               key={opt.value} 
               value={opt.value}
-              className="px-3 py-2 text-[14px] cursor-pointer"
+              className="text-[14px]"
             >
               {opt.label}
             </SelectItem>

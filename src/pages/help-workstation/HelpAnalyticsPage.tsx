@@ -145,10 +145,10 @@ export default function HelpAnalyticsPage() {
           <SelectTrigger className="h-10 w-[140px] px-3 text-[14px] bg-card border border-border rounded-lg">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-card border border-border rounded-lg shadow-lg">
-            <SelectItem value="7" className="px-3 py-2 text-[14px] cursor-pointer">Last 7 days</SelectItem>
-            <SelectItem value="30" className="px-3 py-2 text-[14px] cursor-pointer">Last 30 days</SelectItem>
-            <SelectItem value="90" className="px-3 py-2 text-[14px] cursor-pointer">Last 90 days</SelectItem>
+          <SelectContent>
+            <SelectItem value="7">Last 7 days</SelectItem>
+            <SelectItem value="30">Last 30 days</SelectItem>
+            <SelectItem value="90">Last 90 days</SelectItem>
           </SelectContent>
         </Select>
       </div>
