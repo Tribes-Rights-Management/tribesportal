@@ -36,6 +36,7 @@ export default function HelpArticleEditorPage() {
     createVersion,
     publishVersion,
     archiveArticle,
+    restoreArticle,
     audiences,
     fetchAudiences,
   } = useHelpManagement();
@@ -200,6 +201,15 @@ export default function HelpArticleEditorPage() {
     }
   };
 
+  const handleRestore = async () => {
+    if (!article) return;
+    const success = await restoreArticle(article.id);
+    if (success) {
+      const art = await fetchArticleWithVersion(article.id);
+      if (art) { setArticle(art); setStatus(art.status); }
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex-1 p-8">
@@ -242,7 +252,11 @@ export default function HelpArticleEditorPage() {
           Back to Articles
         </AppButton>
         <div className="flex items-center gap-2">
-          {!isNew && status !== "archived" && (
+          {!isNew && status === "archived" ? (
+            <AppButton intent="ghost" size="sm" onClick={handleRestore}>
+              Restore
+            </AppButton>
+          ) : !isNew && (
             <AppButton intent="ghost" size="sm" onClick={handleArchive}>
               Archive
             </AppButton>
