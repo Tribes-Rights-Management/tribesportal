@@ -9,10 +9,10 @@ import {
 } from "@/hooks/useUserPreferences";
 import { EditSelectSheet } from "@/components/edit";
 import {
-  SettingsRow,
-  SettingsSectionCard,
-  SettingsFooterNotice,
-} from "@/components/ui/settings-row";
+  AppDetailRow,
+  AppSettingsCard,
+  AppSettingsFooter,
+} from "@/components/app-ui";
 
 /**
  * ACCOUNT PREFERENCES PAGE
@@ -57,12 +57,12 @@ export default function AccountPreferencesPage() {
   return (
     <>
       {/* Interface */}
-      <SettingsSectionCard
+      <AppSettingsCard
         title="Interface"
         description="Visual density and interaction preferences"
         className="mb-4 md:mb-6"
       >
-        <SettingsRow
+        <AppDetailRow
           icon={SlidersHorizontal}
           label="Information density"
           value={getUiDensityLabel(preferences.ui_density_mode)}
@@ -70,15 +70,15 @@ export default function AccountPreferencesPage() {
           onSelect={() => setActiveModal("uiDensity")}
           locked={isLocked("ui_density_mode")}
         />
-      </SettingsSectionCard>
+      </AppSettingsCard>
 
       {/* Notifications */}
-      <SettingsSectionCard
+      <AppSettingsCard
         title="Notifications"
         description="How you receive updates"
         className="mb-4 md:mb-6"
       >
-        <SettingsRow
+        <AppDetailRow
           icon={Bell}
           label="Email notifications"
           value="Enabled"
@@ -86,11 +86,11 @@ export default function AccountPreferencesPage() {
           locked
           lockReason="Enforced by workspace policy"
         />
-      </SettingsSectionCard>
+      </AppSettingsCard>
 
       {/* Regional Settings */}
-      <SettingsSectionCard title="Regional" description="Time and date display preferences">
-        <SettingsRow
+      <AppSettingsCard title="Regional" description="Time and date display preferences">
+        <AppDetailRow
           icon={Globe}
           label="Time zone"
           value={getTimezoneLabel(preferences.timezone)}
@@ -98,7 +98,7 @@ export default function AccountPreferencesPage() {
           onSelect={() => setActiveModal("timezone")}
           locked={isLocked("timezone")}
         />
-        <SettingsRow
+        <AppDetailRow
           icon={Calendar}
           label="Date format"
           value={getDateFormatLabel(preferences.date_format)}
@@ -106,7 +106,7 @@ export default function AccountPreferencesPage() {
           onSelect={() => setActiveModal("dateFormat")}
           locked={isLocked("date_format")}
         />
-        <SettingsRow
+        <AppDetailRow
           icon={Clock}
           label="Time format"
           value={getTimeFormatLabel(preferences.time_format)}
@@ -114,9 +114,9 @@ export default function AccountPreferencesPage() {
           onSelect={() => setActiveModal("timeFormat")}
           locked={isLocked("time_format")}
         />
-      </SettingsSectionCard>
+      </AppSettingsCard>
 
-      <SettingsFooterNotice>Some preferences may be enforced by workspace policies.</SettingsFooterNotice>
+      <AppSettingsFooter>Some preferences may be enforced by workspace policies.</AppSettingsFooter>
 
       {/* UI Density Selection Sheet */}
       <EditSelectSheet
