@@ -417,11 +417,10 @@ export default function HelpCategoriesPage() {
         )
       ) : (
         /* All Categories View - Table */
-        <AppTable columns={["25%", "20%", "30%", "15%", "10%"]}>
+        <AppTable columns={["30%", "40%", "20%", "10%"]}>
           <AppTableHeader>
             <AppTableRow header>
               <AppTableHead>Name</AppTableHead>
-              <AppTableHead>Slug</AppTableHead>
               <AppTableHead>Audiences</AppTableHead>
               <AppTableHead align="right">Updated</AppTableHead>
               <AppTableHead></AppTableHead>
@@ -429,7 +428,7 @@ export default function HelpCategoriesPage() {
           </AppTableHeader>
           <AppTableBody>
             {categoriesWithMeta.length === 0 ? (
-              <AppTableEmpty colSpan={5}>
+              <AppTableEmpty colSpan={4}>
                 <p className="text-[13px] text-muted-foreground">No categories configured yet</p>
               </AppTableEmpty>
             ) : (
@@ -441,7 +440,6 @@ export default function HelpCategoriesPage() {
                   className="group"
                 >
                   <AppTableCell>{cat.name}</AppTableCell>
-                  <AppTableCell mono muted>{cat.slug}</AppTableCell>
                   <AppTableCell muted>
                     {cat.audienceIds.length === 0 ? (
                       <span className="italic">No audiences</span>
