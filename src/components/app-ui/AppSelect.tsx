@@ -10,8 +10,8 @@ import { ChevronDown } from "lucide-react";
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * Consistent select/dropdown styling with:
- * - Two variants: underline (minimal) and boxed (standard)
- * - Custom chevron icon
+ * - Standard height (40px) and border-radius (8px)
+ * - Custom chevron icon (h-5 w-5)
  * - Theme-aware colors
  * 
  * USAGE:
@@ -43,11 +43,13 @@ interface AppSelectProps {
   /** Options list */
   options: SelectOption[];
   /** Visual variant */
-  variant?: "underline" | "boxed";
+  variant?: "default" | "compact";
   /** Placeholder when no value selected */
   placeholder?: string;
   /** Disabled state */
   disabled?: boolean;
+  /** Full width */
+  fullWidth?: boolean;
   /** Additional className */
   className?: string;
 }
@@ -56,41 +58,43 @@ export function AppSelect({
   value,
   onChange,
   options,
-  variant = "underline",
+  variant = "default",
   placeholder,
   disabled = false,
+  fullWidth = false,
   className,
 }: AppSelectProps) {
-  const baseClasses = cn(
-    "text-[13px] text-foreground bg-transparent",
-    "focus:outline-none transition-colors duration-150",
-    "appearance-none cursor-pointer pr-8",
-    disabled && "opacity-50 cursor-not-allowed"
+  const isCompact = variant === "compact";
+  
+  const selectClasses = cn(
+    // Base styles
+    "bg-card border border-border appearance-none cursor-pointer",
+    "text-foreground transition-colors duration-150",
+    "focus:outline-none focus:ring-1 focus:ring-ring",
+    "disabled:opacity-50 disabled:cursor-not-allowed",
+    // Size variants
+    isCompact 
+      ? "h-9 px-3 pr-8 text-[13px] rounded" 
+      : "h-10 px-3 pr-10 text-[14px] rounded-lg",
+    // Width
+    fullWidth ? "w-full" : "w-auto"
   );
 
-  const variantClasses = {
-    underline: cn(
-      "h-9 pl-3",
-      "border-0 border-b border-border",
-      "focus:border-muted-foreground"
-    ),
-    boxed: cn(
-      "h-10 pl-3 rounded-[var(--control-radius)]",
-      "border border-border bg-card",
-      "focus:border-muted-foreground focus:ring-1 focus:ring-ring"
-    ),
-  };
+  const chevronClasses = cn(
+    "absolute top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none",
+    isCompact ? "right-2 h-4 w-4" : "right-3 h-5 w-5"
+  );
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative", fullWidth && "w-full", className)}>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className={cn(baseClasses, variantClasses[variant])}
+        className={selectClasses}
       >
         {placeholder && (
-          <option value="" disabled>
+          <option value="">
             {placeholder}
           </option>
         )}
@@ -101,10 +105,7 @@ export function AppSelect({
         ))}
       </select>
       <ChevronDown
-        className={cn(
-          "absolute right-2 top-1/2 -translate-y-1/2",
-          "h-4 w-4 text-muted-foreground pointer-events-none"
-        )}
+        className={chevronClasses}
         strokeWidth={1.5}
       />
     </div>
