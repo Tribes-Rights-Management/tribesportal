@@ -99,15 +99,6 @@ import {
   HelpSettingsPage,
 } from "@/pages/help-workstation";
 
-// System Console - Help Center Management
-import {
-  HelpCenterOverview,
-  HelpCenterArticles,
-  HelpCenterArticleEditor,
-  HelpCenterCategories,
-  HelpCenterMessages,
-  HelpCenterAnalytics,
-} from "@/pages/admin/help-center";
 
 // System Console - Executive Reporting (Platform Executives only)
 import ExecutiveReportingPage from "@/pages/admin/reporting/ExecutiveReportingPage";
@@ -344,14 +335,6 @@ const App = () => (
           <Route path="billing/invoices" element={<AllInvoicesPage />} />
           <Route path="billing/providers" element={<PaymentProvidersPage />} />
           <Route path="billing/refunds" element={<RefundsPage />} />
-          {/* Help Center Management Routes */}
-          <Route path="help-center" element={<HelpCenterOverview />} />
-          <Route path="help-center/articles" element={<HelpCenterArticles />} />
-          <Route path="help-center/articles/new" element={<HelpCenterArticleEditor />} />
-          <Route path="help-center/articles/:id/edit" element={<HelpCenterArticleEditor />} />
-          <Route path="help-center/categories" element={<HelpCenterCategories />} />
-          <Route path="help-center/messages" element={<HelpCenterMessages />} />
-          <Route path="help-center/analytics" element={<HelpCenterAnalytics />} />
         </Route>
         
         {/* Legacy System Console redirects → /console */}
