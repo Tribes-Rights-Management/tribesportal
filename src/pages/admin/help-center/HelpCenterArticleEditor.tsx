@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Save, Eye } from "lucide-react";
+import { ArrowLeft, Save, Archive } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,7 @@ import { AppButton } from "@/components/app-ui";
 import { toast } from "sonner";
 import { useArticleAudience } from "@/hooks/useArticleAudience";
 import { useCategoriesByAudience } from "@/hooks/useCategoriesByAudience";
+import { format } from "date-fns";
 
 interface Category {
   id: string;
@@ -38,6 +39,11 @@ interface ArticleForm {
   published: boolean;
 }
 
+interface ArticleMeta {
+  created_at: string | null;
+  updated_at: string | null;
+}
+
 const AUTOSAVE_KEY = "help-article-draft";
 
 export default function HelpCenterArticleEditor() {
@@ -49,6 +55,8 @@ export default function HelpCenterArticleEditor() {
   const [audiences, setAudiences] = useState<Audience[]>([]);
   const [selectedAudienceId, setSelectedAudienceId] = useState<string>("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [displayOrder, setDisplayOrder] = useState<number>(0);
+  const [articleMeta, setArticleMeta] = useState<ArticleMeta>({ created_at: null, updated_at: null });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -127,6 +135,7 @@ export default function HelpCenterArticleEditor() {
         if (assignment) {
           setSelectedAudienceId(assignment.audience_id);
           setSelectedCategoryId(assignment.category_id);
+          setDisplayOrder(assignment.position);
         }
       }
     }
@@ -137,7 +146,6 @@ export default function HelpCenterArticleEditor() {
   useEffect(() => {
     async function fetchArticle() {
       if (!isEditing) {
-        // Check for autosaved draft
         const saved = localStorage.getItem(AUTOSAVE_KEY);
         if (saved) {
           try {
@@ -170,6 +178,10 @@ export default function HelpCenterArticleEditor() {
         meta_description: data.meta_description ?? "",
         category_id: data.category_id ?? "",
         published: data.published ?? false,
+      });
+      setArticleMeta({
+        created_at: data.created_at,
+        updated_at: data.updated_at,
       });
       setLoading(false);
     }
@@ -233,7 +245,7 @@ export default function HelpCenterArticleEditor() {
 
     // Save audience/category assignment if selected
     if (articleId && selectedAudienceId && selectedCategoryId) {
-      const saved = await saveAssignment(articleId, selectedAudienceId, selectedCategoryId, 0);
+      const saved = await saveAssignment(articleId, selectedAudienceId, selectedCategoryId, displayOrder);
       if (!saved) {
         toast.error("Article saved but audience assignment failed");
         setSaving(false);
@@ -260,6 +272,8 @@ export default function HelpCenterArticleEditor() {
       published: false,
     };
 
+    let articleId = id;
+
     if (isEditing) {
       const { error } = await supabase
         .from("articles")
@@ -272,20 +286,39 @@ export default function HelpCenterArticleEditor() {
         return;
       }
     } else {
-      const { error } = await supabase.from("articles").insert(payload);
+      const { data: insertedData, error } = await supabase
+        .from("articles")
+        .insert(payload)
+        .select("id")
+        .single();
 
-      if (error) {
+      if (error || !insertedData) {
         toast.error("Failed to save draft");
         setSaving(false);
         return;
       }
+      articleId = insertedData.id;
       localStorage.removeItem(AUTOSAVE_KEY);
+    }
+
+    // Save audience/category assignment if selected
+    if (articleId && selectedAudienceId && selectedCategoryId) {
+      await saveAssignment(articleId, selectedAudienceId, selectedCategoryId, displayOrder);
     }
 
     toast.success("Draft saved");
     setSaving(false);
     navigate("/admin/help-center/articles");
   }
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "—";
+    try {
+      return format(new Date(dateString), "MMM d, yyyy 'at' h:mm a");
+    } catch {
+      return "—";
+    }
+  };
 
   if (loading) {
     return (
@@ -300,282 +333,377 @@ export default function HelpCenterArticleEditor() {
 
   return (
     <div
-      className="min-h-full py-12 md:py-16 px-4 md:px-6"
+      className="min-h-full"
       style={{ backgroundColor: "var(--platform-canvas)" }}
     >
+      {/* Top Bar */}
       <div
-        className="max-w-[760px] mx-auto rounded-lg"
+        className="sticky top-0 z-10 px-6 py-4"
         style={{
-          backgroundColor: "var(--platform-surface)",
-          border: "1px solid var(--platform-border)",
+          backgroundColor: "var(--platform-canvas)",
+          borderBottom: "1px solid var(--platform-border)",
         }}
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8">
-          {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
-            <button
-              type="button"
-              onClick={() => navigate("/admin/help-center/articles")}
-              className="p-2 rounded-md hover:bg-[var(--muted-wash)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
-              style={{ color: "var(--platform-text-muted)" }}
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </button>
-            <h1
-              className="text-[20px] font-medium"
-              style={{ color: "var(--platform-text)" }}
-            >
-              {isEditing ? "Edit Article" : "New Article"}
-            </h1>
-          </div>
-
-          {/* Form fields */}
-          <div className="space-y-6">
-            <div>
-              <Label
-                htmlFor="title"
-                className="text-[12px] uppercase tracking-wide mb-2 block"
-                style={{ color: "var(--platform-text-muted)" }}
-              >
-                Title
-              </Label>
-              <Input
-                id="title"
-                {...register("title", { required: true })}
-                placeholder="Article title"
-                style={{
-                  backgroundColor: "rgba(255,255,255,0.02)",
-                  borderColor: "var(--platform-border)",
-                  color: "var(--platform-text)",
-                }}
-              />
-            </div>
-
-            <div>
-              <Label
-                htmlFor="slug"
-                className="text-[12px] uppercase tracking-wide mb-2 block"
-                style={{ color: "var(--platform-text-muted)" }}
-              >
-                Slug
-              </Label>
-              <Input
-                id="slug"
-                {...register("slug", { required: true })}
-                placeholder="article-slug"
-                style={{
-                  backgroundColor: "rgba(255,255,255,0.02)",
-                  borderColor: "var(--platform-border)",
-                  color: "var(--platform-text)",
-                }}
-              />
-            </div>
-
-            <div>
-              <Label
-                htmlFor="category"
-                className="text-[12px] uppercase tracking-wide mb-2 block"
-                style={{ color: "var(--platform-text-muted)" }}
-              >
-                Category
-              </Label>
-              <Select
-                value={watch("category_id")}
-                onValueChange={(v) => setValue("category_id", v)}
-              >
-                <SelectTrigger
-                  style={{
-                    backgroundColor: "rgba(255,255,255,0.02)",
-                    borderColor: "var(--platform-border)",
-                    color: "var(--platform-text)",
-                  }}
-                >
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label
-                htmlFor="meta_description"
-                className="text-[12px] uppercase tracking-wide mb-2 block"
-                style={{ color: "var(--platform-text-muted)" }}
-              >
-                Meta Description
-              </Label>
-              <Textarea
-                id="meta_description"
-                {...register("meta_description")}
-                placeholder="Brief description for search results"
-                rows={2}
-                style={{
-                  backgroundColor: "rgba(255,255,255,0.02)",
-                  borderColor: "var(--platform-border)",
-                  color: "var(--platform-text)",
-                }}
-              />
-            </div>
-
-            <div>
-              <Label
-                htmlFor="body"
-                className="text-[12px] uppercase tracking-wide mb-2 block"
-                style={{ color: "var(--platform-text-muted)" }}
-              >
-                Content
-              </Label>
-              <Textarea
-                id="body"
-                {...register("body", { required: true })}
-                placeholder="Article content (supports Markdown)"
-                rows={16}
-                className="font-mono text-[13px]"
-                style={{
-                  backgroundColor: "rgba(255,255,255,0.02)",
-                  borderColor: "var(--platform-border)",
-                  color: "var(--platform-text)",
-                }}
-              />
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Switch
-                id="published"
-                checked={published}
-                onCheckedChange={(v) => setValue("published", v)}
-              />
-              <Label
-                htmlFor="published"
-                className="text-[13px]"
-                style={{ color: "var(--platform-text)" }}
-              >
-                Published
-              </Label>
-            </div>
-
-            {/* Publishing Settings Section */}
-            <div
-              className="mt-8 pt-6"
-              style={{ borderTop: "1px solid var(--platform-border)" }}
-            >
-              <h3
-                className="text-[13px] uppercase tracking-wider font-medium mb-4"
-                style={{ color: "var(--platform-text-muted)" }}
-              >
-                Publishing Settings
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label
-                    htmlFor="audience"
-                    className="text-[13px] uppercase tracking-wider mb-2 block"
-                    style={{ color: "var(--platform-text-muted)" }}
-                  >
-                    Audience
-                  </Label>
-                  <Select
-                    value={selectedAudienceId}
-                    onValueChange={(v) => {
-                      setSelectedAudienceId(v);
-                      setSelectedCategoryId("");
-                    }}
-                  >
-                    <SelectTrigger
-                      style={{
-                        backgroundColor: "rgba(255,255,255,0.02)",
-                        borderColor: "var(--platform-border)",
-                        color: "var(--platform-text)",
-                      }}
-                    >
-                      <SelectValue placeholder="Select audience" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {audiences.map((a) => (
-                        <SelectItem key={a.id} value={a.id}>
-                          {a.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label
-                    htmlFor="audienceCategory"
-                    className="text-[13px] uppercase tracking-wider mb-2 block"
-                    style={{ color: "var(--platform-text-muted)" }}
-                  >
-                    Category
-                  </Label>
-                  <Select
-                    value={selectedCategoryId}
-                    onValueChange={setSelectedCategoryId}
-                    disabled={!selectedAudienceId}
-                  >
-                    <SelectTrigger
-                      style={{
-                        backgroundColor: "rgba(255,255,255,0.02)",
-                        borderColor: "var(--platform-border)",
-                        color: !selectedAudienceId ? "var(--platform-text-muted)" : "var(--platform-text)",
-                      }}
-                    >
-                      <SelectValue 
-                        placeholder={
-                          !selectedAudienceId 
-                            ? "Select audience first" 
-                            : audienceCategories.length === 0 
-                              ? "No categories available" 
-                              : "Select category"
-                        } 
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {audienceCategories.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>
-                          {c.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <p
-                className="text-[12px] mt-2"
-                style={{ color: "var(--platform-text-muted)" }}
-              >
-                Assign an audience and category for this article to appear in the Help Center.
-              </p>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div
-            className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 mt-10 pt-6"
-            style={{ borderTop: "1px solid var(--platform-border)" }}
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => navigate("/admin/help-center/articles")}
+            className="flex items-center gap-2 text-[13px] hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded"
+            style={{ color: "var(--platform-text-muted)" }}
           >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Articles
+          </button>
+
+          <div className="flex items-center gap-3">
             <AppButton
               type="button"
               intent="secondary"
+              size="sm"
               onClick={handleSaveDraft}
               disabled={saving}
             >
-              <Save className="h-4 w-4 mr-2" />
+              <Archive className="h-4 w-4 mr-1.5" />
               Save Draft
             </AppButton>
-            <AppButton type="submit" intent="primary" disabled={saving}>
-              <Eye className="h-4 w-4 mr-2" />
+            <AppButton
+              type="button"
+              intent="primary"
+              size="sm"
+              onClick={handleSubmit(onSubmit)}
+              disabled={saving}
+            >
+              <Save className="h-4 w-4 mr-1.5" />
               {published ? "Publish" : "Save"}
             </AppButton>
           </div>
-        </form>
+        </div>
       </div>
+
+      {/* Main Content */}
+      <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-8">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* LEFT COLUMN - Content Editing */}
+            <div className="flex-1 lg:w-[65%] space-y-6">
+              {/* Title Row with Status */}
+              <div className="flex items-start gap-4">
+                <div className="flex-1">
+                  <Label
+                    htmlFor="title"
+                    className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
+                    style={{ color: "var(--platform-text-muted)" }}
+                  >
+                    Title
+                  </Label>
+                  <Input
+                    id="title"
+                    {...register("title", { required: true })}
+                    placeholder="Article title"
+                    className="text-[16px]"
+                    style={{
+                      backgroundColor: "var(--platform-surface)",
+                      borderColor: "var(--platform-border)",
+                      color: "var(--platform-text)",
+                    }}
+                  />
+                </div>
+                <div className="pt-7">
+                  <span
+                    className="inline-flex items-center px-2.5 py-1 rounded text-[11px] font-medium uppercase tracking-wide"
+                    style={{
+                      backgroundColor: published
+                        ? "rgba(34, 197, 94, 0.1)"
+                        : "rgba(156, 163, 175, 0.1)",
+                      color: published ? "#16a34a" : "var(--platform-text-muted)",
+                    }}
+                  >
+                    {published ? "Published" : "Draft"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Slug */}
+              <div>
+                <Label
+                  htmlFor="slug"
+                  className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
+                  style={{ color: "var(--platform-text-muted)" }}
+                >
+                  Slug
+                </Label>
+                <Input
+                  id="slug"
+                  {...register("slug", { required: true })}
+                  placeholder="article-slug"
+                  style={{
+                    backgroundColor: "var(--platform-surface)",
+                    borderColor: "var(--platform-border)",
+                    color: "var(--platform-text)",
+                  }}
+                />
+              </div>
+
+              {/* Meta Description */}
+              <div>
+                <Label
+                  htmlFor="meta_description"
+                  className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
+                  style={{ color: "var(--platform-text-muted)" }}
+                >
+                  Meta Description
+                </Label>
+                <Textarea
+                  id="meta_description"
+                  {...register("meta_description")}
+                  placeholder="Brief description for search results"
+                  rows={2}
+                  style={{
+                    backgroundColor: "var(--platform-surface)",
+                    borderColor: "var(--platform-border)",
+                    color: "var(--platform-text)",
+                  }}
+                />
+              </div>
+
+              {/* Content */}
+              <div>
+                <Label
+                  htmlFor="body"
+                  className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
+                  style={{ color: "var(--platform-text-muted)" }}
+                >
+                  Content
+                </Label>
+                <Textarea
+                  id="body"
+                  {...register("body", { required: true })}
+                  placeholder="Article content (supports Markdown)"
+                  rows={20}
+                  className="font-mono text-[13px]"
+                  style={{
+                    backgroundColor: "var(--platform-surface)",
+                    borderColor: "var(--platform-border)",
+                    color: "var(--platform-text)",
+                    minHeight: "400px",
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN - Metadata Sidebar */}
+            <div className="lg:w-[35%]">
+              <div className="lg:sticky lg:top-24 space-y-6">
+                {/* Publishing Settings Card */}
+                <div
+                  className="rounded-lg p-5"
+                  style={{
+                    backgroundColor: "var(--platform-surface)",
+                    border: "1px solid var(--platform-border)",
+                  }}
+                >
+                  <h3
+                    className="text-[12px] uppercase tracking-wider font-medium mb-4"
+                    style={{ color: "var(--platform-text-muted)" }}
+                  >
+                    Publishing Settings
+                  </h3>
+
+                  <div className="space-y-4">
+                    {/* Audience */}
+                    <div>
+                      <Label
+                        htmlFor="audience"
+                        className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
+                        style={{ color: "var(--platform-text-muted)" }}
+                      >
+                        Audience
+                      </Label>
+                      <Select
+                        value={selectedAudienceId}
+                        onValueChange={(v) => {
+                          setSelectedAudienceId(v);
+                          setSelectedCategoryId("");
+                        }}
+                      >
+                        <SelectTrigger
+                          className="w-full"
+                          style={{
+                            backgroundColor: "var(--platform-canvas)",
+                            borderColor: "var(--platform-border)",
+                            color: "var(--platform-text)",
+                          }}
+                        >
+                          <SelectValue placeholder="Select audience" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {audiences.map((a) => (
+                            <SelectItem key={a.id} value={a.id}>
+                              {a.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Category */}
+                    <div>
+                      <Label
+                        htmlFor="audienceCategory"
+                        className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
+                        style={{ color: "var(--platform-text-muted)" }}
+                      >
+                        Category
+                      </Label>
+                      <Select
+                        value={selectedCategoryId}
+                        onValueChange={setSelectedCategoryId}
+                        disabled={!selectedAudienceId}
+                      >
+                        <SelectTrigger
+                          className="w-full"
+                          style={{
+                            backgroundColor: "var(--platform-canvas)",
+                            borderColor: "var(--platform-border)",
+                            color: !selectedAudienceId
+                              ? "var(--platform-text-muted)"
+                              : "var(--platform-text)",
+                          }}
+                        >
+                          <SelectValue
+                            placeholder={
+                              !selectedAudienceId
+                                ? "Select audience first"
+                                : audienceCategories.length === 0
+                                ? "No categories available"
+                                : "Select category"
+                            }
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {audienceCategories.map((c) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              {c.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Display Order */}
+                    <div>
+                      <Label
+                        htmlFor="displayOrder"
+                        className="text-[12px] uppercase tracking-wider mb-2 block font-medium"
+                        style={{ color: "var(--platform-text-muted)" }}
+                      >
+                        Display Order
+                      </Label>
+                      <Input
+                        id="displayOrder"
+                        type="number"
+                        min={0}
+                        value={displayOrder}
+                        onChange={(e) => setDisplayOrder(parseInt(e.target.value) || 0)}
+                        className="w-24"
+                        style={{
+                          backgroundColor: "var(--platform-canvas)",
+                          borderColor: "var(--platform-border)",
+                          color: "var(--platform-text)",
+                        }}
+                      />
+                    </div>
+
+                    {/* Status Toggle */}
+                    <div
+                      className="pt-4 mt-4"
+                      style={{ borderTop: "1px solid var(--platform-border)" }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <Label
+                          htmlFor="published"
+                          className="text-[13px] font-medium"
+                          style={{ color: "var(--platform-text)" }}
+                        >
+                          Published
+                        </Label>
+                        <Switch
+                          id="published"
+                          checked={published}
+                          onCheckedChange={(v) => setValue("published", v)}
+                        />
+                      </div>
+                      <p
+                        className="text-[12px] mt-1"
+                        style={{ color: "var(--platform-text-muted)" }}
+                      >
+                        Make this article visible in the Help Center
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Article Info Card */}
+                {isEditing && (
+                  <div
+                    className="rounded-lg p-5"
+                    style={{
+                      backgroundColor: "var(--platform-surface)",
+                      border: "1px solid var(--platform-border)",
+                    }}
+                  >
+                    <h3
+                      className="text-[12px] uppercase tracking-wider font-medium mb-4"
+                      style={{ color: "var(--platform-text-muted)" }}
+                    >
+                      Article Info
+                    </h3>
+
+                    <div className="space-y-3">
+                      <div>
+                        <span
+                          className="text-[12px] block"
+                          style={{ color: "var(--platform-text-muted)" }}
+                        >
+                          Created
+                        </span>
+                        <span
+                          className="text-[13px]"
+                          style={{ color: "var(--platform-text)" }}
+                        >
+                          {formatDate(articleMeta.created_at)}
+                        </span>
+                      </div>
+                      <div>
+                        <span
+                          className="text-[12px] block"
+                          style={{ color: "var(--platform-text-muted)" }}
+                        >
+                          Last Updated
+                        </span>
+                        <span
+                          className="text-[13px]"
+                          style={{ color: "var(--platform-text)" }}
+                        >
+                          {formatDate(articleMeta.updated_at)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Help Text */}
+                <p
+                  className="text-[12px] px-1"
+                  style={{ color: "var(--platform-text-muted)" }}
+                >
+                  Assign an audience and category for this article to appear in the public Help Center.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
   );
 }
