@@ -50,12 +50,12 @@ export function AppListCard({
     <div
       className={cn(
         "bg-card border border-border rounded-[var(--surface-radius)]",
-        "overflow-hidden",
+        "overflow-hidden flex flex-col",
         className
       )}
     >
       {(title || action) && (
-        <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-4">
+        <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-4 shrink-0">
           {title && (
             <h3 className="text-[14px] font-semibold text-foreground">
               {title}
@@ -64,7 +64,7 @@ export function AppListCard({
           {action && <div className="shrink-0">{action}</div>}
         </div>
       )}
-      <div className="divide-y divide-border/50">
+      <div className="divide-y divide-border/50 flex-1">
         {children}
       </div>
     </div>
