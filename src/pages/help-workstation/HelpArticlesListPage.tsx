@@ -31,6 +31,9 @@ import {
   AppTableHead,
   AppTableCell,
   AppTableEmpty,
+  AppPageHeader,
+  AppAlert,
+  AppEmptyState,
 } from "@/components/app-ui";
 import { SortableArticleCard } from "@/components/help/SortableArticleCard";
 import { SearchInput } from "@/components/ui/search-input";
@@ -240,43 +243,32 @@ export default function HelpArticlesListPage() {
   const displayCount = isTableView ? filteredArticles.length : orderedArticles.length;
 
   return (
-    <div className="flex-1 p-8">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
-            HELP WORKSTATION
-          </p>
-          <h1 className="text-[20px] font-medium text-foreground mb-1">Articles</h1>
-          <p className="text-[13px] text-muted-foreground">
-            {selectedCategory
-              ? `${displayCount} articles in ${selectedCategory.name}`
-              : `${displayCount} articles`
-            }
-          </p>
-        </div>
-        <AppButton intent="primary" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
-          <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
-          New Article
-        </AppButton>
-      </div>
+    <div className="flex-1 p-6">
+      {/* Page Header */}
+      <AppPageHeader
+        eyebrow="Help Workstation"
+        title="Articles"
+        description={
+          selectedCategory
+            ? `${displayCount} articles in ${selectedCategory.name}`
+            : `${displayCount} articles`
+        }
+        action={
+          <AppButton intent="primary" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
+            <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
+            New Article
+          </AppButton>
+        }
+      />
 
       {/* Error */}
       {articlesError && (
-        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
-          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
-          <div className="flex-1">
-            <p className="text-[12px] text-foreground">{articlesError}</p>
-            <AppButton 
-              intent="tertiary" 
-              size="xs"
-              onClick={() => fetchArticles()} 
-              className="text-[11px] text-destructive hover:text-destructive/80 mt-1"
-              icon={<RefreshCw className="h-3 w-3" strokeWidth={1.5} />}
-            >
-              Try again
-            </AppButton>
-          </div>
+        <div className="mb-6">
+          <AppAlert
+            variant="error"
+            message={articlesError}
+            onRetry={() => fetchArticles()}
+          />
         </div>
       )}
 
@@ -319,20 +311,16 @@ export default function HelpArticlesListPage() {
 
       {/* Content */}
       {isLoading ? (
-        <div className="text-center py-20">
-          <p className="text-[13px] text-muted-foreground">Loading articles...</p>
-        </div>
+        <AppEmptyState message="Loading articles..." size="lg" />
       ) : !isTableView ? (
         /* Category View - Sortable Cards */
         orderedArticles.length === 0 ? (
-          <div className="text-center py-20 bg-card border border-border rounded">
-            <p className="text-[13px] text-muted-foreground">
-              No articles in {selectedCategory?.name || "this category"} yet.
-            </p>
-            <p className="text-[12px] text-muted-foreground mt-1">
-              Create an article and assign it to this category.
-            </p>
-          </div>
+          <AppEmptyState
+            icon="file"
+            message={`No articles in ${selectedCategory?.name || "this category"} yet.`}
+            description="Create an article and assign it to this category."
+            size="lg"
+          />
         ) : (
           <DndContext
             sensors={sensors}

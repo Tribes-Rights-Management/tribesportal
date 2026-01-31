@@ -1,16 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
-import { Plus, GripVertical, X, AlertCircle, RefreshCw } from "lucide-react";
-import { AppButton } from "@/components/app-ui";
+import { Plus, GripVertical } from "lucide-react";
+import {
+  AppButton,
+  AppPageHeader,
+  AppAlert,
+  AppEmptyState,
+  AppPanel,
+  AppPanelFooter,
+  AppListCard,
+  AppListRow,
+} from "@/components/app-ui";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
- * HELP AUDIENCES PAGE — INSTITUTIONAL DESIGN
- * 
- * Manage top-level audience segments for Help Center.
- * Drag to reorder, toggle active, edit/create audiences.
- * 
- * Typography: text-[20px] title, text-[13px] body, text-[10px] headers
- * All icons: strokeWidth={1.5}
+ * HELP AUDIENCES PAGE — Uses app-ui components consistently
  */
 
 interface HelpAudience {
@@ -228,52 +231,41 @@ export default function HelpAudiencesPage() {
   };
 
   return (
-    <div className="flex-1 p-8">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-8">
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
-            HELP WORKSTATION
-          </p>
-          <h1 className="text-[20px] font-medium text-foreground mb-1">Audiences</h1>
-          <p className="text-[13px] text-muted-foreground">{audiences.length} audience segments</p>
-          <p className="text-[12px] text-muted-foreground mt-1">
-            Drag to reorder. This controls the header tab order on the public Help Center.
-          </p>
-        </div>
-        <AppButton intent="primary" size="sm" onClick={handleCreate}>
-          <Plus className="h-2 w-2" strokeWidth={1} />
-          New Audience
-        </AppButton>
-      </div>
+    <div className="flex-1 p-6">
+      {/* Page Header */}
+      <AppPageHeader
+        eyebrow="Help Workstation"
+        title="Audiences"
+        description={`${audiences.length} audience segments. Drag to reorder header tab order.`}
+        action={
+          <AppButton intent="primary" size="sm" onClick={handleCreate}>
+            <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
+            New Audience
+          </AppButton>
+        }
+      />
 
       {/* Error */}
       {error && (
-        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
-          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
-          <div className="flex-1">
-            <p className="text-[12px] text-foreground">{error}</p>
-            <button
-              onClick={() => { setError(null); fetchAudiences(); }}
-              className="text-[11px] text-destructive hover:text-destructive/80 underline mt-1 flex items-center gap-1"
-            >
-              <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
-              Try again
-            </button>
-          </div>
+        <div className="mb-6">
+          <AppAlert
+            variant="error"
+            message={error}
+            onRetry={() => { setError(null); fetchAudiences(); }}
+          />
         </div>
       )}
 
       {/* Audience List */}
       <div className="space-y-2">
         {loading ? (
-          <div className="py-20 text-center">
-            <p className="text-[13px] text-muted-foreground">Loading audiences...</p>
-          </div>
+          <AppEmptyState message="Loading audiences..." size="lg" />
         ) : audiences.length === 0 ? (
-          <div className="py-20 text-center">
-            <p className="text-[13px] text-muted-foreground">No audiences configured yet</p>
-          </div>
+          <AppEmptyState
+            icon="users"
+            message="No audiences configured yet"
+            size="lg"
+          />
         ) : (
           audiences.map((audience, index) => (
             <div
@@ -283,13 +275,13 @@ export default function HelpAudiencesPage() {
               onDragOver={(e) => handleDragOver(e, index)}
               onDragEnd={handleDragEnd}
               className={`
-                bg-card border border-border rounded p-4 row-hover
+                bg-card border border-border/60 rounded-lg p-3
                 ${draggedIndex === index ? "opacity-50" : ""}
                 ${dragOverIndex === index ? "border-ring" : ""}
-                cursor-grab active:cursor-grabbing
+                cursor-grab active:cursor-grabbing transition-colors
               `}
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 {/* Drag handle */}
                 <div className="text-muted-foreground hover:text-foreground transition-colors">
                   <GripVertical className="h-4 w-4" strokeWidth={1.5} />
@@ -298,15 +290,15 @@ export default function HelpAudiencesPage() {
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-[14px] font-medium text-foreground">{audience.name}</h3>
+                    <span className="text-sm font-medium text-foreground">{audience.name}</span>
                     {!audience.is_active && (
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-muted text-muted-foreground">
-                        INACTIVE
+                      <span className="text-2xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground uppercase">
+                        Inactive
                       </span>
                     )}
                   </div>
                   {audience.description && (
-                    <p className="text-[12px] text-muted-foreground mt-1">{audience.description}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{audience.description}</p>
                   )}
                 </div>
 
@@ -315,10 +307,10 @@ export default function HelpAudiencesPage() {
                   <button
                     onClick={(e) => { e.stopPropagation(); handleToggleActive(audience); }}
                     className={`
-                      text-[11px] px-3 py-1.5 rounded border transition-colors
+                      text-xs px-2 py-1 rounded border transition-colors
                       ${audience.is_active
-                        ? "border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
-                        : "border-border text-muted-foreground hover:bg-white/5"
+                        ? "border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
+                        : "border-border text-muted-foreground hover:bg-accent/40"
                       }
                     `}
                   >
@@ -328,7 +320,6 @@ export default function HelpAudiencesPage() {
                     intent="ghost"
                     size="sm"
                     onClick={(e) => { e.stopPropagation(); handleEdit(audience); }}
-                    className="text-[12px] text-muted-foreground hover:text-foreground"
                   >
                     Edit
                   </AppButton>
@@ -340,106 +331,77 @@ export default function HelpAudiencesPage() {
       </div>
 
       {/* Right-side Panel */}
-      {panelOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/50 z-40"
-            onClick={() => setPanelOpen(false)}
+      <AppPanel
+        open={panelOpen}
+        onClose={() => setPanelOpen(false)}
+        title={editing ? "Edit audience" : "New audience"}
+        description={editing ? "Update audience details" : "Create a new audience segment"}
+        footer={
+          <AppPanelFooter
+            left={
+              editing && (
+                <button
+                  onClick={handleDelete}
+                  disabled={saving}
+                  className="text-xs text-destructive hover:text-destructive/80 disabled:text-muted-foreground transition-colors"
+                >
+                  Delete audience
+                </button>
+              )
+            }
+            onCancel={() => setPanelOpen(false)}
+            onSubmit={handleSave}
+            submitLabel={editing ? "Save Changes" : "Create Audience"}
+            submitting={saving}
           />
-          <div className="fixed inset-y-0 right-0 w-[500px] bg-background border-l border-border shadow-2xl z-50 flex flex-col">
-            {/* Panel Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-border">
-              <div>
-                <h2 className="text-[15px] font-medium text-foreground">
-                  {editing ? "Edit audience" : "New audience"}
-                </h2>
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  {editing ? "Update audience details" : "Create a new audience segment"}
-                </p>
-              </div>
-              <button
-                onClick={() => setPanelOpen(false)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <X className="h-4 w-4" strokeWidth={1.5} />
-              </button>
-            </div>
+        }
+      >
+        <div className="space-y-4">
+          {/* Form Error */}
+          {formError && (
+            <AppAlert variant="error" message={formError} />
+          )}
 
-            {/* Panel Content */}
-            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-              {/* Form Error */}
-              {formError && (
-                <div className="flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
-                  <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
-                  <p className="text-[12px] text-foreground">{formError}</p>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
-                  Name *
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g., Publishers"
-                  className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
-                  Slug * (URL-friendly, lowercase)
-                </label>
-                <input
-                  type="text"
-                  value={slug}
-                  onChange={(e) => { setSlug(e.target.value); setSlugManual(true); }}
-                  placeholder="publishers"
-                  className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors font-mono"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
-                  Description (internal use)
-                </label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Help content for music publishers"
-                  rows={3}
-                  className="w-full px-3 py-2 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors resize-none"
-                />
-              </div>
-            </div>
-
-            {/* Panel Footer */}
-            <div className="flex items-center justify-between px-6 py-5 border-t border-border">
-              <div>
-                {editing && (
-                  <button
-                    onClick={handleDelete}
-                    disabled={saving}
-                    className="text-[12px] text-destructive hover:text-destructive/80 disabled:text-muted-foreground transition-colors"
-                  >
-                    Delete audience
-                  </button>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <AppButton intent="secondary" size="sm" onClick={() => setPanelOpen(false)}>
-                  Cancel
-                </AppButton>
-                <AppButton intent="primary" size="sm" onClick={handleSave} disabled={saving}>
-                  {saving ? "Saving..." : editing ? "Save Changes" : "Create Audience"}
-                </AppButton>
-              </div>
-            </div>
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+              Name *
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g., Publishers"
+              className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
+            />
           </div>
-        </>
-      )}
+
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+              Slug * (URL-friendly, lowercase)
+            </label>
+            <input
+              type="text"
+              value={slug}
+              onChange={(e) => { setSlug(e.target.value); setSlugManual(true); }}
+              placeholder="publishers"
+              className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors font-mono"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+              Description (internal use)
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Help content for music publishers"
+              rows={3}
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors resize-none"
+            />
+          </div>
+        </div>
+      </AppPanel>
     </div>
   );
 }

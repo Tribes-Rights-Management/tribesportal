@@ -31,6 +31,11 @@ import {
   AppTableCell,
   AppTableEmpty,
   AppCheckboxGroup,
+  AppPageHeader,
+  AppAlert,
+  AppEmptyState,
+  AppPanel,
+  AppPanelFooter,
 } from "@/components/app-ui";
 import {
   Select,
@@ -308,41 +313,32 @@ export default function HelpCategoriesPage() {
   const linkedCategoryCount = selectedAudienceId ? orderedCategories.length : categories.length;
 
   return (
-    <div className="flex-1 p-8">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
-            HELP WORKSTATION
-          </p>
-          <h1 className="text-[20px] font-medium text-foreground mb-1">Categories</h1>
-          <p className="text-[13px] text-muted-foreground">
-            {selectedAudienceId && selectedAudience 
-              ? `${linkedCategoryCount} categories linked to ${selectedAudience.name}`
-              : `${categories.length} categories`
-            }
-          </p>
-        </div>
-        <AppButton intent="primary" size="sm" onClick={handleCreate}>
-          <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
-          New Category
-        </AppButton>
-      </div>
+    <div className="flex-1 p-6">
+      {/* Page Header */}
+      <AppPageHeader
+        eyebrow="Help Workstation"
+        title="Categories"
+        description={
+          selectedAudienceId && selectedAudience 
+            ? `${linkedCategoryCount} categories linked to ${selectedAudience.name}`
+            : `${categories.length} categories`
+        }
+        action={
+          <AppButton intent="primary" size="sm" onClick={handleCreate}>
+            <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
+            New Category
+          </AppButton>
+        }
+      />
 
       {/* Error */}
       {(error || categoriesError) && (
-        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
-          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
-          <div className="flex-1">
-            <p className="text-[12px] text-foreground">{error || categoriesError}</p>
-            <button
-              onClick={() => { setError(null); fetchCategories(); }}
-              className="text-[11px] text-destructive hover:text-destructive/80 underline mt-1 flex items-center gap-1"
-            >
-              <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
-              Try again
-            </button>
-          </div>
+        <div className="mb-6">
+          <AppAlert
+            variant="error"
+            message={error || categoriesError || ""}
+            onRetry={() => { setError(null); fetchCategories(); }}
+          />
         </div>
       )}
 
@@ -380,20 +376,16 @@ export default function HelpCategoriesPage() {
 
       {/* Content */}
       {isLoading ? (
-        <div className="text-center py-20">
-          <p className="text-[13px] text-muted-foreground">Loading categories...</p>
-        </div>
+        <AppEmptyState message="Loading categories..." size="lg" />
       ) : selectedAudienceId ? (
         /* By Audience View - Sortable Cards */
         orderedCategories.length === 0 ? (
-          <div className="text-center py-20 bg-card border border-border rounded">
-            <p className="text-[13px] text-muted-foreground">
-              No categories linked to {selectedAudience?.name || "this audience"}.
-            </p>
-            <p className="text-[12px] text-muted-foreground mt-1">
-              Create a category and assign it to this audience.
-            </p>
-          </div>
+          <AppEmptyState
+            icon="folder"
+            message={`No categories linked to ${selectedAudience?.name || "this audience"}.`}
+            description="Create a category and assign it to this audience."
+            size="lg"
+          />
         ) : (
           <DndContext
             sensors={sensors}
@@ -469,131 +461,97 @@ export default function HelpCategoriesPage() {
       )}
 
       {/* Right-side Panel */}
-      {panelOpen && (
-        <>
-          <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setPanelOpen(false)} />
-          <div className="fixed inset-y-0 right-0 w-[500px] bg-background border-l border-border shadow-2xl z-50 flex flex-col">
-            <div className="flex items-center justify-between px-6 py-5 border-b border-border">
-              <div>
-                <h2 className="text-[15px] font-medium text-foreground">
-                  {editing ? "Edit category" : "New category"}
-                </h2>
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  {editing ? "Update category details" : "Create a new category"}
-                </p>
-              </div>
-              <AppButton
-                intent="ghost"
-                size="sm"
-                onClick={() => setPanelOpen(false)}
-              >
-                <X className="h-4 w-4" strokeWidth={1.5} />
-              </AppButton>
-            </div>
+      <AppPanel
+        open={panelOpen}
+        onClose={() => setPanelOpen(false)}
+        title={editing ? "Edit category" : "New category"}
+        description={editing ? "Update category details" : "Create a new category"}
+        footer={
+          <AppPanelFooter
+            left={
+              editing && (
+                <button
+                  onClick={() => {
+                    const catWithMeta = categoriesWithMeta.find(c => c.id === editing.id);
+                    if (catWithMeta) {
+                      handleDeleteClick(catWithMeta);
+                      setPanelOpen(false);
+                    }
+                  }}
+                  disabled={categoriesWithMeta.find(c => c.id === editing.id)?.article_count !== 0}
+                  className="text-xs text-destructive hover:text-destructive/80 disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
+                >
+                  Delete category
+                </button>
+              )
+            }
+            onCancel={() => setPanelOpen(false)}
+            onSubmit={handleSave}
+            submitLabel={editing ? "Save Changes" : "Create"}
+            submitting={saving}
+          />
+        }
+      >
+        <div className="space-y-4">
+          {formError && (
+            <AppAlert variant="error" message={formError} />
+          )}
 
-            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-              {formError && (
-                <div className="flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
-                  <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
-                  <p className="text-[12px] text-foreground">{formError}</p>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
-                  Name *
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => handleNameChange(e.target.value)}
-                  placeholder="Category name"
-                  className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                />
-                <p className="mt-1.5 text-[11px] text-muted-foreground">
-                  {name ? `Slug: ${slugify(name)}` : "URL slug will be auto-generated from name"}
-                </p>
-              </div>
-
-              <AppCheckboxGroup
-                label="Audience Visibility"
-                required
-                options={activeAudiences.map(a => ({ id: a.id, label: a.name }))}
-                selected={selectedAudienceIds}
-                onChange={setSelectedAudienceIds}
-                direction="vertical"
-              />
-            </div>
-
-            <div className="flex items-center justify-between px-6 py-5 border-t border-border">
-              <div>
-                {editing && (
-                  <button
-                    onClick={() => {
-                      const catWithMeta = categoriesWithMeta.find(c => c.id === editing.id);
-                      if (catWithMeta) {
-                        handleDeleteClick(catWithMeta);
-                        setPanelOpen(false);
-                      }
-                    }}
-                    disabled={categoriesWithMeta.find(c => c.id === editing.id)?.article_count !== 0}
-                    className="text-[12px] text-destructive hover:text-destructive/80 disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
-                  >
-                    Delete category
-                  </button>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <AppButton intent="secondary" size="sm" onClick={() => setPanelOpen(false)}>Cancel</AppButton>
-                <AppButton intent="primary" size="sm" onClick={handleSave} disabled={saving}>
-                  {saving ? "Saving..." : editing ? "Save Changes" : "Create"}
-                </AppButton>
-              </div>
-            </div>
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+              Name *
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => handleNameChange(e.target.value)}
+              placeholder="Category name"
+              className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              {name ? `Slug: ${slugify(name)}` : "URL slug will be auto-generated from name"}
+            </p>
           </div>
-        </>
-      )}
+
+          <AppCheckboxGroup
+            label="Audience Visibility"
+            required
+            options={activeAudiences.map(a => ({ id: a.id, label: a.name }))}
+            selected={selectedAudienceIds}
+            onChange={setSelectedAudienceIds}
+            direction="vertical"
+          />
+        </div>
+      </AppPanel>
 
       {/* Delete Confirmation */}
-      {deleteDialogOpen && deleting && (
-        <>
-          <div className="fixed inset-0 bg-black/50 z-40" onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }} />
-          <div className="fixed inset-y-0 right-0 w-[400px] bg-background border-l border-border shadow-2xl z-50 flex flex-col">
-            <div className="flex items-center justify-between px-6 py-5 border-b border-border">
-              <h2 className="text-[15px] font-medium text-foreground">Delete category?</h2>
-              <AppButton
-                intent="ghost"
-                size="sm"
-                onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }}
-              >
-                <X className="h-4 w-4" strokeWidth={1.5} />
-              </AppButton>
-            </div>
-
-            <div className="flex-1 px-6 py-6">
-              <p className="text-[13px] text-muted-foreground">
-                {deleting.article_count > 0 ? (
-                  <>
-                    This category has <strong className="text-foreground">{deleting.article_count} article{deleting.article_count > 1 ? 's' : ''}</strong>.
-                    You must reassign or delete them first.
-                  </>
-                ) : (
-                  <>This will permanently delete "{deleting.name}". This action cannot be undone.</>
-                )}
-              </p>
-            </div>
-
-            <div className="flex items-center justify-end gap-2 px-6 py-5 border-t border-border">
-              <AppButton intent="secondary" size="sm" onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }}>
-                Cancel
-              </AppButton>
-              <AppButton intent="danger" size="sm" onClick={handleDelete} disabled={deleting.article_count > 0}>
-                Delete
-              </AppButton>
-            </div>
+      <AppPanel
+        open={deleteDialogOpen && !!deleting}
+        onClose={() => { setDeleteDialogOpen(false); setDeleting(null); }}
+        title="Delete category?"
+        width="sm"
+        footer={
+          <div className="flex items-center justify-end gap-2 w-full">
+            <AppButton intent="secondary" size="sm" onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }}>
+              Cancel
+            </AppButton>
+            <AppButton intent="danger" size="sm" onClick={handleDelete} disabled={deleting?.article_count !== undefined && deleting.article_count > 0}>
+              Delete
+            </AppButton>
           </div>
-        </>
-      )}
+        }
+      >
+        <p className="text-sm text-muted-foreground">
+          {deleting?.article_count && deleting.article_count > 0 ? (
+            <>
+              This category has <strong className="text-foreground">{deleting.article_count} article{deleting.article_count > 1 ? 's' : ''}</strong>.
+              You must reassign or delete them first.
+            </>
+          ) : (
+            <>This will permanently delete "{deleting?.name}". This action cannot be undone.</>
+          )}
+        </p>
+      </AppPanel>
     </div>
   );
 }
