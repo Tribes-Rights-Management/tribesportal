@@ -6,16 +6,7 @@ import { useArticleAudience } from "@/hooks/useArticleAudience";
 import { useCategoriesByAudience, CategoryForAudience } from "@/hooks/useCategoriesByAudience";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { AppButton, AppChip, AppSelect } from "@/components/app-ui";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { cn } from "@/lib/utils";
 
 /**
  * HELP ARTICLE EDITOR — Compact Layout
@@ -57,7 +48,7 @@ export default function HelpArticleEditorPage() {
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
-  const [publishDialogOpen, setPublishDialogOpen] = useState(false);
+  const [showPublishValidation, setShowPublishValidation] = useState(false);
 
   const [title, setTitle] = useState("");
   const [bodyMd, setBodyMd] = useState("");
@@ -70,6 +61,9 @@ export default function HelpArticleEditorPage() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [position, setPosition] = useState<number>(0);
   const [categoriesForAudience, setCategoriesForAudience] = useState<CategoryForAudience[]>([]);
+
+  // Derived state for publish readiness
+  const canPublish = Boolean(selectedAudienceId && selectedCategoryId);
 
   const activeAudiences = audiences.filter(a => a.is_active);
   const selectedAudience = activeAudiences.find(a => a.id === selectedAudienceId);
@@ -168,9 +162,8 @@ export default function HelpArticleEditorPage() {
   const handlePublish = async () => {
     if (!article) return;
 
-    if (!selectedAudienceId || !selectedCategoryId) {
-      setValidationError("Select an audience and category before publishing");
-      setPublishDialogOpen(false);
+    if (!canPublish) {
+      setShowPublishValidation(true);
       return;
     }
 
@@ -183,8 +176,14 @@ export default function HelpArticleEditorPage() {
       if (art) { setArticle(art); setStatus(art.status); }
     }
     setPublishing(false);
-    setPublishDialogOpen(false);
   };
+
+  // Clear publish validation when fields are filled
+  useEffect(() => {
+    if (canPublish) {
+      setShowPublishValidation(false);
+    }
+  }, [canPublish]);
 
   const handleArchive = async () => {
     if (!article) return;
@@ -256,8 +255,13 @@ export default function HelpArticleEditorPage() {
             </AppButton>
           )}
           {!isNew && status === "draft" && (
-            <AppButton intent="secondary" size="sm" onClick={() => setPublishDialogOpen(true)}>
-              Publish
+            <AppButton 
+              intent="secondary" 
+              size="sm" 
+              onClick={handlePublish}
+              disabled={publishing}
+            >
+              {publishing ? "Publishing..." : "Publish"}
             </AppButton>
           )}
           <AppButton intent="primary" size="sm" onClick={handleSave} disabled={saving}>
@@ -302,7 +306,12 @@ export default function HelpArticleEditorPage() {
           </div>
 
           {/* Publishing Settings - Horizontal compact row */}
-          <div className="flex flex-col gap-3 px-4 py-3 bg-muted/30 border border-border rounded md:flex-row md:items-end">
+          <div className={cn(
+            "flex flex-col gap-3 px-4 py-3 bg-muted/30 border rounded md:flex-row md:items-end",
+            showPublishValidation && (!selectedAudienceId || !selectedCategoryId) 
+              ? "border-destructive" 
+              : "border-border"
+          )}>
             <div className="flex-1">
               <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
                 Audience
@@ -313,7 +322,13 @@ export default function HelpArticleEditorPage() {
                 fullWidth
                 placeholder="Select audience"
                 options={activeAudiences.map(a => ({ value: a.id, label: a.name }))}
+                className={cn(
+                  showPublishValidation && !selectedAudienceId && "border-destructive focus:ring-destructive"
+                )}
               />
+              {showPublishValidation && !selectedAudienceId && (
+                <p className="text-[11px] text-destructive mt-1">Required</p>
+              )}
             </div>
 
             <div className="flex-1">
@@ -335,7 +350,13 @@ export default function HelpArticleEditorPage() {
                   fullWidth
                   placeholder={selectedAudienceId ? "Select category" : "Select audience first"}
                   options={categoriesForAudience.map(c => ({ value: c.id, label: c.name }))}
+                  className={cn(
+                    showPublishValidation && !selectedCategoryId && "border-destructive focus:ring-destructive"
+                  )}
                 />
+              )}
+              {showPublishValidation && !selectedCategoryId && (
+                <p className="text-[11px] text-destructive mt-1">Required</p>
               )}
             </div>
 
@@ -365,32 +386,6 @@ export default function HelpArticleEditorPage() {
         </div>
       </div>
 
-      {/* Publish Dialog */}
-      <AlertDialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen}>
-        <AlertDialogContent className="bg-background border-border">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground">Publish Article?</AlertDialogTitle>
-            <AlertDialogDescription className="text-muted-foreground">
-              {!selectedAudienceId || !selectedCategoryId ? (
-                <span className="text-destructive">
-                  You must select an audience and category before publishing.
-                </span>
-              ) : (
-                "This will make the article visible on the public Help Center."
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="bg-transparent border-border text-muted-foreground">Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handlePublish} 
-              disabled={publishing || !selectedAudienceId || !selectedCategoryId}
-            >
-              {publishing ? "Publishing..." : "Publish"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
