@@ -117,46 +117,36 @@ export function AppDetailRow({
     if (isCopyRow) return handleCopy();
   };
 
-  // Toggle variant has its own layout
+  // Toggle variant - same py-3 as standard rows for consistency
   if (isToggleRow) {
     return (
       <div
         className={cn(
-          "px-4 py-2.5",
-          "flex items-center justify-between gap-3",
+          "px-4 py-3",
           "w-full max-w-full min-w-0",
           className
         )}
       >
-        {/* Left side: Icon + Label + Helper */}
-        <div className="flex items-start gap-3 min-w-0 flex-1">
-          {Icon && (
-            <Icon className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
-          )}
-          <div className="min-w-0 flex-1">
-            <span
-              className={cn(
-                "text-sm font-medium block",
-                locked ? "text-muted-foreground" : "text-foreground"
-              )}
-            >
-              {label}
-            </span>
-            {effectiveHelperText && (
-              <span className="text-xs block mt-0.5 text-muted-foreground">
-                {effectiveHelperText}
-              </span>
-            )}
+        {/* Label row with switch on right */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            {Icon && <Icon className="h-4 w-4 shrink-0" />}
+            <span>{label}</span>
           </div>
+          <Switch
+            checked={checked ?? false}
+            onCheckedChange={onCheckedChange}
+            disabled={locked}
+            aria-label={label}
+          />
         </div>
-
-        {/* Right side: Switch */}
-        <Switch
-          checked={checked ?? false}
-          onCheckedChange={onCheckedChange}
-          disabled={locked}
-          aria-label={label}
-        />
+        
+        {/* Helper text - same mt-0.5 spacing */}
+        {effectiveHelperText && (
+          <div className="text-xs text-muted-foreground mt-1">
+            {effectiveHelperText}
+          </div>
+        )}
       </div>
     );
   }
