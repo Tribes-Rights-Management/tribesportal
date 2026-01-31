@@ -145,10 +145,13 @@ export default function HelpArticleEditorPage() {
   };
 
 
-  const handleSave = async () => {
+  // Save as draft - only requires title
+  const handleSaveDraft = async () => {
     setValidationError(null);
-    if (!title.trim()) { setValidationError("Title is required"); return; }
-    if (!bodyMd.trim()) { setValidationError("Content is required"); return; }
+    if (!title.trim()) { 
+      setValidationError("Title is required"); 
+      return; 
+    }
 
     setSaving(true);
     
@@ -164,32 +167,36 @@ export default function HelpArticleEditorPage() {
         articleId = result.id;
       }
     } else {
-      const versionId = await createVersion(id!, {
-        title: title.trim(),
-        slug: slug.trim(),
-        body_md: bodyMd,
-      });
-      if (versionId) {
+      // For existing articles, update without changing status
+      const { error } = await supabase
+        .from("help_articles")
+        .update({
+          title: title.trim(),
+          slug: slug.trim(),
+          content: bodyMd,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id!);
+
+      if (!error) {
         articleId = id!;
         const art = await fetchArticleWithVersion(id!);
         if (art) setArticle(art);
       }
     }
 
-    // Save multi-audience assignments
+    // Save multi-audience assignments if selected
     if (articleId && selectedAudienceIds.length > 0 && selectedCategoryId) {
-      // Clear existing audience associations
       await supabase
         .from("help_article_audiences")
         .delete()
         .eq("article_id", articleId);
 
-      // Create new audience associations
       const audienceInserts = selectedAudienceIds.map(audienceId => ({
         article_id: articleId,
         audience_id: audienceId,
         category_id: selectedCategoryId,
-        position: 0, // Position managed via drag-drop on list page
+        position: 0,
       }));
 
       await supabase
@@ -202,6 +209,86 @@ export default function HelpArticleEditorPage() {
     if (isNew && articleId) {
       navigate(`/help/articles/${articleId}`);
     }
+  };
+
+  // Save and keep published status (for already published articles)
+  const handleSavePublished = async () => {
+    setValidationError(null);
+    if (!title.trim()) { 
+      setValidationError("Title is required"); 
+      return; 
+    }
+    if (!bodyMd.trim()) { 
+      setValidationError("Content is required to keep published"); 
+      return; 
+    }
+
+    if (!canPublish) {
+      setShowPublishValidation(true);
+      return;
+    }
+
+    setSaving(true);
+    
+    const { error } = await supabase
+      .from("help_articles")
+      .update({
+        title: title.trim(),
+        slug: slug.trim(),
+        content: bodyMd,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id!);
+
+    if (!error) {
+      // Update audience assignments
+      await supabase
+        .from("help_article_audiences")
+        .delete()
+        .eq("article_id", id!);
+
+      const audienceInserts = selectedAudienceIds.map(audienceId => ({
+        article_id: id!,
+        audience_id: audienceId,
+        category_id: selectedCategoryId,
+        position: 0,
+      }));
+
+      await supabase
+        .from("help_article_audiences")
+        .insert(audienceInserts);
+
+      const art = await fetchArticleWithVersion(id!);
+      if (art) setArticle(art);
+    }
+
+    setSaving(false);
+  };
+
+  // Unpublish - revert to draft
+  const handleUnpublish = async () => {
+    if (!article) return;
+    
+    setSaving(true);
+    
+    const { error } = await supabase
+      .from("help_articles")
+      .update({
+        status: "draft",
+        published_at: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", article.id);
+
+    if (!error) {
+      const art = await fetchArticleWithVersion(article.id);
+      if (art) { 
+        setArticle(art); 
+        setStatus(art.status); 
+      }
+    }
+
+    setSaving(false);
   };
 
   const handlePublish = async () => {
@@ -306,28 +393,82 @@ export default function HelpArticleEditorPage() {
           Back to Articles
         </AppButton>
         <div className="flex items-center gap-2">
+          {/* Archive/Restore actions */}
           {!isNew && status === "archived" ? (
             <AppButton intent="ghost" size="sm" onClick={handleRestore}>
               Restore
             </AppButton>
-          ) : !isNew && (
+          ) : !isNew && status !== "archived" && (
             <AppButton intent="ghost" size="sm" onClick={handleArchive}>
               Archive
             </AppButton>
           )}
-          {!isNew && status === "draft" && (
-            <AppButton 
-              intent="secondary" 
-              size="sm" 
-              onClick={handlePublish}
-              disabled={publishing}
-            >
-              {publishing ? "Publishing..." : "Publish"}
-            </AppButton>
+
+          {/* Draft articles: Save Draft + Publish */}
+          {(isNew || status === "draft") && (
+            <>
+              <AppButton 
+                intent="secondary" 
+                size="sm" 
+                onClick={handleSaveDraft}
+                disabled={saving || !title.trim()}
+              >
+                {saving ? "Saving..." : "Save Draft"}
+              </AppButton>
+              <AppButton 
+                intent="primary" 
+                size="sm" 
+                onClick={handlePublish}
+                disabled={publishing || !title.trim() || !bodyMd.trim()}
+              >
+                {publishing ? "Publishing..." : "Publish"}
+              </AppButton>
+            </>
           )}
-          <AppButton intent="primary" size="sm" onClick={handleSave} disabled={saving}>
-            {saving ? "Saving..." : "Save"}
-          </AppButton>
+
+          {/* Published articles: Save + Unpublish */}
+          {!isNew && status === "published" && (
+            <>
+              <AppButton 
+                intent="ghost" 
+                size="sm" 
+                onClick={handleUnpublish}
+                disabled={saving}
+              >
+                Unpublish
+              </AppButton>
+              <AppButton 
+                intent="primary" 
+                size="sm" 
+                onClick={handleSavePublished}
+                disabled={saving || !title.trim() || !bodyMd.trim()}
+              >
+                {saving ? "Saving..." : "Save"}
+              </AppButton>
+            </>
+          )}
+
+          {/* Internal articles: Save Draft + Publish */}
+          {!isNew && status === "internal" && (
+            <>
+              <AppButton 
+                intent="secondary" 
+                size="sm" 
+                onClick={handleSaveDraft}
+                disabled={saving || !title.trim()}
+              >
+                {saving ? "Saving..." : "Save Draft"}
+              </AppButton>
+              <AppButton 
+                intent="primary" 
+                size="sm" 
+                onClick={handlePublish}
+                disabled={publishing || !title.trim() || !bodyMd.trim()}
+              >
+                {publishing ? "Publishing..." : "Publish"}
+              </AppButton>
+            </>
+          )}
         </div>
       </div>
 
