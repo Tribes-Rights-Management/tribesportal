@@ -14,12 +14,41 @@ import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
  * - Subtle header (no heavy background)
  * - Light row hover (muted/30)
  * - Consistent density across all tables
+ * - BALANCED COLUMN WIDTHS via columns prop
  * 
  * ENFORCEMENT:
  * - All data tables must use these components
  * - No hardcoded table styling
+ * - Use columns prop for consistent proportions
  * ═══════════════════════════════════════════════════════════════════════════
  */
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLUMN WIDTH PRESETS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Predefined column width patterns for common table layouts.
+ * Use these to ensure consistent proportions across tables.
+ */
+export const TABLE_COLUMN_PRESETS = {
+  // 4-column layouts (most common)
+  "name-meta-status-date": ["35%", "35%", "15%", "15%"],      // Categories, Articles with audiences
+  "name-slug-meta-date": ["25%", "25%", "30%", "20%"],        // Categories with slug
+  "title-status-date": ["60%", "20%", "20%"],                  // Simple 3-column
+  "name-description-date": ["30%", "50%", "20%"],             // With description
+  
+  // 5-column layouts
+  "name-slug-meta-status-date": ["20%", "20%", "30%", "15%", "15%"],
+  
+  // Equal distribution helpers
+  "equal-2": ["50%", "50%"],
+  "equal-3": ["33.33%", "33.33%", "33.33%"],
+  "equal-4": ["25%", "25%", "25%", "25%"],
+  "equal-5": ["20%", "20%", "20%", "20%", "20%"],
+} as const;
+
+export type ColumnPreset = keyof typeof TABLE_COLUMN_PRESETS;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TABLE CONTAINER
@@ -27,10 +56,23 @@ import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 interface AppTableProps {
   children: React.ReactNode;
+  /** 
+   * Column widths - can be:
+   * - A preset name: "name-meta-status-date"
+   * - An array of widths: ["35%", "35%", "15%", "15%"]
+   */
+  columns?: ColumnPreset | string[];
   className?: string;
 }
 
-export function AppTable({ children, className }: AppTableProps) {
+export function AppTable({ children, columns, className }: AppTableProps) {
+  // Resolve column widths from preset or direct array
+  const columnWidths = columns
+    ? typeof columns === "string"
+      ? TABLE_COLUMN_PRESETS[columns]
+      : columns
+    : undefined;
+
   return (
     <div
       className={cn(
@@ -39,7 +81,16 @@ export function AppTable({ children, className }: AppTableProps) {
         className
       )}
     >
-      <table className="w-full">{children}</table>
+      <table className="w-full">
+        {columnWidths && (
+          <colgroup>
+            {columnWidths.map((width, i) => (
+              <col key={i} style={{ width }} />
+            ))}
+          </colgroup>
+        )}
+        {children}
+      </table>
     </div>
   );
 }
@@ -137,7 +188,7 @@ interface AppTableHeadProps {
   onSort?: () => void;
   /** Text alignment */
   align?: "left" | "center" | "right";
-  /** Width */
+  /** Width (use columns prop on AppTable instead for consistency) */
   width?: string;
   className?: string;
 }
@@ -190,7 +241,7 @@ export function AppTableHead({
           onClick={onSort}
           className={cn(
             "flex items-center hover:text-foreground transition-colors",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded",
             align === "right" && "ml-auto"
           )}
         >
@@ -213,6 +264,8 @@ interface AppTableCellProps {
   align?: "left" | "center" | "right";
   /** Muted text color */
   muted?: boolean;
+  /** Monospace font (for slugs, codes, etc.) */
+  mono?: boolean;
   className?: string;
 }
 
@@ -220,6 +273,7 @@ export function AppTableCell({
   children,
   align = "left",
   muted = false,
+  mono = false,
   className,
 }: AppTableCellProps) {
   const alignClasses = {
@@ -233,6 +287,7 @@ export function AppTableCell({
       className={cn(
         "py-3 px-4 text-[13px]",
         muted ? "text-muted-foreground" : "text-foreground",
+        mono && "font-mono text-[12px]",
         alignClasses[align],
         className
       )}
