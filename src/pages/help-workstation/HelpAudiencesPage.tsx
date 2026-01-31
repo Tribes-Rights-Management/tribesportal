@@ -3,6 +3,7 @@ import { Plus, GripVertical } from "lucide-react";
 import {
   AppButton,
   AppPageHeader,
+  AppPageContainer,
   AppAlert,
   AppEmptyState,
   AppPanel,
@@ -231,7 +232,7 @@ export default function HelpAudiencesPage() {
   };
 
   return (
-    <div className="flex-1 p-4 sm:p-6">
+    <AppPageContainer maxWidth="lg">
       {/* Page Header */}
       <AppPageHeader
         backLink={{ to: "/help", label: "Overview" }}
@@ -403,6 +404,6 @@ export default function HelpAudiencesPage() {
           </div>
         </div>
       </AppPanel>
-    </div>
+    </AppPageContainer>
   );
 }

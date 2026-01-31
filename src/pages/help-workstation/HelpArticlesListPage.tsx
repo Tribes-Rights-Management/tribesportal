@@ -32,6 +32,7 @@ import {
   AppTableCell,
   AppTableEmpty,
   AppPageHeader,
+  AppPageContainer,
   AppAlert,
   AppEmptyState,
 } from "@/components/app-ui";
@@ -243,7 +244,7 @@ export default function HelpArticlesListPage() {
   const displayCount = isTableView ? filteredArticles.length : orderedArticles.length;
 
   return (
-    <div className="flex-1 p-4 sm:p-6">
+    <AppPageContainer maxWidth="xl">
       {/* Page Header */}
       <AppPageHeader
         backLink={{ to: "/help", label: "Overview" }}
@@ -435,6 +436,6 @@ export default function HelpArticlesListPage() {
           )}
         </>
       )}
-    </div>
+    </AppPageContainer>
   );
 }

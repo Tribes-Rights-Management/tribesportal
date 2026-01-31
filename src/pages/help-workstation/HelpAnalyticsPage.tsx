@@ -1,7 +1,20 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { AlertCircle, RefreshCw } from "lucide-react";
-import { AppPageHeader } from "@/components/app-ui";
+import { RefreshCw } from "lucide-react";
+import {
+  AppPageHeader,
+  AppPageContainer,
+  AppStatCard,
+  AppStatCardGrid,
+  AppCard,
+  AppCardHeader,
+  AppCardTitle,
+  AppCardBody,
+  AppListRow,
+  AppEmptyState,
+  AppAlert,
+  AppSection,
+} from "@/components/app-ui";
 import {
   Select,
   SelectContent,
@@ -11,12 +24,9 @@ import {
 } from "@/components/ui/select";
 
 /**
- * HELP ANALYTICS PAGE — INSTITUTIONAL DESIGN
+ * HELP ANALYTICS PAGE — DESIGN SYSTEM COMPLIANT
  * 
- * No decorative icons
- * Text-only empty states
- * Inline errors
- * All icons: strokeWidth={1.5}
+ * Uses canonical app-ui components for consistency.
  */
 
 interface SearchStat {
@@ -131,8 +141,8 @@ export default function HelpAnalyticsPage() {
   const totalViews = topArticles.reduce((sum, a) => sum + a.view_count, 0);
 
   return (
-    <div className="flex-1 p-4 sm:p-6 lg:p-8">
-      {/* Header - using AppPageHeader with back link */}
+    <AppPageContainer maxWidth="xl">
+      {/* Header */}
       <AppPageHeader
         backLink={{ to: "/help", label: "Overview" }}
         eyebrow="Help Workstation"
@@ -152,20 +162,14 @@ export default function HelpAnalyticsPage() {
         }
       />
 
-      {/* Inline Error */}
+      {/* Error */}
       {error && (
-        <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
-          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
-          <div className="flex-1">
-            <p className="text-[12px] text-foreground">{error}</p>
-            <button 
-              onClick={fetchAnalytics} 
-              className="text-[11px] text-destructive hover:text-destructive/80 underline mt-1 flex items-center gap-1"
-            >
-              <RefreshCw className="h-3 w-3" strokeWidth={1.5} />
-              Try again
-            </button>
-          </div>
+        <div className="mb-6">
+          <AppAlert
+            variant="error"
+            message={error}
+            onRetry={fetchAnalytics}
+          />
         </div>
       )}
 
@@ -174,101 +178,107 @@ export default function HelpAnalyticsPage() {
           <p className="text-[13px] text-muted-foreground">Loading analytics...</p>
         </div>
       ) : !hasData ? (
-        <div className="bg-card border border-border rounded py-16 text-center px-4">
-          <p className="text-[14px] text-muted-foreground mb-2">No analytics data yet</p>
-          <p className="text-[12px] text-muted-foreground max-w-md mx-auto">
-            Analytics data will appear here once users start searching and viewing Help articles.
-            Make sure tracking is enabled in Settings.
-          </p>
-        </div>
+        <AppCard>
+          <AppCardBody className="py-16">
+            <AppEmptyState
+              icon="search"
+              message="No analytics data yet"
+              description="Analytics data will appear here once users start searching and viewing Help articles."
+            />
+          </AppCardBody>
+        </AppCard>
       ) : (
-        <div className="space-y-6">
-          {/* Summary Stats - responsive grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-card border border-border rounded p-4">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Total Searches</p>
-              <p className="text-2xl sm:text-[28px] font-medium text-foreground tabular-nums">{totalSearches}</p>
-              <p className="text-[11px] text-muted-foreground mt-1.5">Last {dateRange} days</p>
-            </div>
-            
-            <div className="bg-card border border-border rounded p-4">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Article Views</p>
-              <p className="text-2xl sm:text-[28px] font-medium text-foreground tabular-nums">{totalViews}</p>
-              <p className="text-[11px] text-muted-foreground mt-1.5">All time</p>
-            </div>
-            
-            <div className="bg-card border border-border rounded p-4">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Messages</p>
-              <p className="text-2xl sm:text-[28px] font-medium text-foreground tabular-nums">{messageVolume.total}</p>
-              <p className="text-[11px] text-muted-foreground mt-1.5">{messageVolume.resolved} resolved</p>
-            </div>
-          </div>
+        <>
+          {/* Summary Stats */}
+          <AppSection spacing="md">
+            <AppStatCardGrid columns={3}>
+              <AppStatCard
+                label="Total Searches"
+                value={totalSearches}
+                subtitle={`Last ${dateRange} days`}
+              />
+              <AppStatCard
+                label="Article Views"
+                value={totalViews}
+                subtitle="All time"
+              />
+              <AppStatCard
+                label="Messages"
+                value={messageVolume.total}
+                subtitle={`${messageVolume.resolved} resolved`}
+              />
+            </AppStatCardGrid>
+          </AppSection>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Top Searches */}
-            <div className="bg-card border border-border rounded p-5">
-              <h3 className="text-[15px] font-medium text-foreground mb-4">Top Search Queries</h3>
-              
-              {topSearches.length === 0 ? (
-                <p className="text-[12px] text-muted-foreground py-6 text-center">No search data available</p>
-              ) : (
-                <div className="space-y-0">
-                  {topSearches.map((item, index) => (
-                    <div 
-                      key={item.query}
-                      className="flex items-center justify-between py-2 border-b border-border/30 last:border-0"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-[12px] w-5 text-muted-foreground">{index + 1}.</span>
-                        <span className="text-[13px] text-muted-foreground truncate">"{item.query}"</span>
-                      </div>
-                      <span className="text-[13px] font-medium text-foreground tabular-nums">{item.count}</span>
+          {/* Top Searches & Articles */}
+          <AppSection spacing="md">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Top Searches */}
+              <AppCard>
+                <AppCardHeader>
+                  <AppCardTitle>Top Search Queries</AppCardTitle>
+                </AppCardHeader>
+                <AppCardBody className="p-0">
+                  {topSearches.length === 0 ? (
+                    <div className="py-6 px-4">
+                      <p className="text-[12px] text-muted-foreground text-center">No search data available</p>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            
-            {/* Top Articles */}
-            <div className="bg-card border border-border rounded p-5">
-              <h3 className="text-[15px] font-medium text-foreground mb-4">Most Viewed Articles</h3>
-              
-              {topArticles.filter(a => a.view_count > 0).length === 0 ? (
-                <p className="text-[12px] text-muted-foreground py-6 text-center">No view data available</p>
-              ) : (
-                <div className="space-y-0">
-                  {topArticles.filter(a => a.view_count > 0).map((article, index) => (
-                    <div 
-                      key={article.id}
-                      className="flex items-center justify-between py-2 border-b border-border/30 last:border-0"
-                    >
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <span className="text-[12px] w-5 text-muted-foreground">{index + 1}.</span>
-                        <span className="text-[13px] text-muted-foreground truncate">{article.title}</span>
-                      </div>
-                      <div className="flex items-center gap-4 shrink-0">
-                        <span className="text-[13px] font-medium text-foreground tabular-nums">{article.view_count}</span>
-                        {article.helpful_ratio > 0 && (
-                          <span className="text-[11px] text-muted-foreground">{article.helpful_ratio}%</span>
-                        )}
-                      </div>
+                  ) : (
+                    <div className="divide-y divide-border/40">
+                      {topSearches.map((item, index) => (
+                        <AppListRow
+                          key={item.query}
+                          title={`${index + 1}. "${item.query}"`}
+                          value={<span className="font-medium tabular-nums">{item.count}</span>}
+                        />
+                      ))}
                     </div>
-                  ))}
-                </div>
-              )}
+                  )}
+                </AppCardBody>
+              </AppCard>
+              
+              {/* Top Articles */}
+              <AppCard>
+                <AppCardHeader>
+                  <AppCardTitle>Most Viewed Articles</AppCardTitle>
+                </AppCardHeader>
+                <AppCardBody className="p-0">
+                  {topArticles.filter(a => a.view_count > 0).length === 0 ? (
+                    <div className="py-6 px-4">
+                      <p className="text-[12px] text-muted-foreground text-center">No view data available</p>
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-border/40">
+                      {topArticles.filter(a => a.view_count > 0).map((article, index) => (
+                        <AppListRow
+                          key={article.id}
+                          title={`${index + 1}. ${article.title}`}
+                          value={
+                            <div className="flex items-center gap-3">
+                              <span className="font-medium tabular-nums">{article.view_count}</span>
+                              {article.helpful_ratio > 0 && (
+                                <span className="text-[11px] text-muted-foreground">{article.helpful_ratio}%</span>
+                              )}
+                            </div>
+                          }
+                        />
+                      ))}
+                    </div>
+                  )}
+                </AppCardBody>
+              </AppCard>
             </div>
-          </div>
+          </AppSection>
 
           {/* Note */}
-          <div className="p-4 bg-muted border border-border rounded">
-            <p className="text-[13px] text-muted-foreground font-medium">Analytics data collection</p>
-            <p className="text-[11px] text-muted-foreground mt-1">
-              Search queries and article views are tracked when users interact with the public Help Center.
-              Ensure the Help Center is properly instrumented to capture complete analytics.
-            </p>
-          </div>
-        </div>
+          <AppSection spacing="none">
+            <AppAlert
+              variant="info"
+              message="Search queries and article views are tracked when users interact with the public Help Center."
+            />
+          </AppSection>
+        </>
       )}
-    </div>
+    </AppPageContainer>
   );
 }

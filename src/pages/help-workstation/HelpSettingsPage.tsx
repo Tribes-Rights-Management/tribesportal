@@ -1,15 +1,51 @@
 import { useState } from "react";
-import { ExternalLink, AlertCircle } from "lucide-react";
-import { AppButton, AppPageHeader } from "@/components/app-ui";
+import { ExternalLink } from "lucide-react";
+import {
+  AppButton,
+  AppPageHeader,
+  AppPageContainer,
+  AppCard,
+  AppCardHeader,
+  AppCardTitle,
+  AppCardDescription,
+  AppCardBody,
+  AppSection,
+  AppAlert,
+} from "@/components/app-ui";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 /**
- * HELP SETTINGS PAGE — INSTITUTIONAL DESIGN
+ * HELP SETTINGS PAGE — DESIGN SYSTEM COMPLIANT
  * 
- * Text toggles instead of iOS switches
- * Checkboxes for boolean settings
- * Inline errors (not toasts)
- * All icons: strokeWidth={1.5}
+ * Uses canonical app-ui components for consistency.
  */
+
+interface SettingToggleProps {
+  id: string;
+  label: string;
+  description: string;
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+}
+
+function SettingToggle({ id, label, description, checked, onCheckedChange }: SettingToggleProps) {
+  return (
+    <div className="flex items-center justify-between py-3 border-b border-border/40 last:border-0">
+      <div className="flex-1 min-w-0 pr-4">
+        <Label htmlFor={id} className="text-[13px] font-medium text-foreground cursor-pointer">
+          {label}
+        </Label>
+        <p className="text-[11px] text-muted-foreground mt-0.5">{description}</p>
+      </div>
+      <Checkbox
+        id={id}
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+      />
+    </div>
+  );
+}
 
 export default function HelpSettingsPage() {
   const [publicHelpEnabled, setPublicHelpEnabled] = useState(true);
@@ -30,141 +66,125 @@ export default function HelpSettingsPage() {
   };
 
   return (
-    <div className="flex-1 p-4 sm:p-6 lg:p-8">
-      {/* Header with back link */}
+    <AppPageContainer maxWidth="lg">
+      {/* Header */}
       <AppPageHeader
         backLink={{ to: "/help", label: "Overview" }}
         eyebrow="Help Workstation"
         title="Settings"
         description="Configure Help Center behavior"
       />
-      <div className="space-y-6 max-w-3xl">
-        {/* Public Help Center */}
-        <div className="bg-card border border-border rounded p-5">
-          <h3 className="text-[14px] font-medium text-foreground mb-4">Public Help Center</h3>
-          
-          <div className="space-y-3">
-            <label className="flex items-center justify-between py-2.5 border-b border-border/30">
-              <div>
-                <p className="text-[13px] text-foreground">Enable public Help Center</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Make published articles accessible at /help</p>
-              </div>
-              <input 
-                type="checkbox" 
-                checked={publicHelpEnabled} 
-                onChange={(e) => setPublicHelpEnabled(e.target.checked)} 
-                className="h-4 w-4 rounded border-ring bg-transparent checked:bg-white checked:border-white focus:ring-0 focus:ring-offset-0"
-              />
-            </label>
-            
-            <label className="flex items-center justify-between py-2.5 border-b border-border/30">
-              <div>
-                <p className="text-[13px] text-foreground">Enable search</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Allow visitors to search articles</p>
-              </div>
-              <input 
-                type="checkbox" 
-                checked={searchEnabled} 
-                onChange={(e) => setSearchEnabled(e.target.checked)} 
-                className="h-4 w-4 rounded border-ring bg-transparent checked:bg-white checked:border-white focus:ring-0 focus:ring-offset-0"
-              />
-            </label>
-            
-            <label className="flex items-center justify-between py-2.5">
-              <div>
-                <p className="text-[13px] text-foreground">Enable article feedback</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Show "Was this helpful?" on articles</p>
-              </div>
-              <input 
-                type="checkbox" 
-                checked={feedbackEnabled} 
-                onChange={(e) => setFeedbackEnabled(e.target.checked)} 
-                className="h-4 w-4 rounded border-ring bg-transparent checked:bg-white checked:border-white focus:ring-0 focus:ring-offset-0"
-              />
-            </label>
-          </div>
-          
-          <div className="mt-4 pt-4 border-t border-border">
-            <a 
-              href="/help" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-[12px] text-muted-foreground hover:text-foreground flex items-center gap-1.5"
-            >
-              View Public Help Center
-              <ExternalLink className="h-3 w-3" strokeWidth={1.5} />
-            </a>
-          </div>
-        </div>
 
-        {/* Analytics */}
-        <div className="bg-card border border-border rounded p-5">
-          <h3 className="text-[14px] font-medium text-foreground mb-4">Analytics</h3>
-          
-          <div className="space-y-3">
-            <label className="flex items-center justify-between py-2.5 border-b border-border/30">
-              <div>
-                <p className="text-[13px] text-foreground">Track article views</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Record when articles are viewed</p>
-              </div>
-              <input 
-                type="checkbox" 
-                checked={trackViews} 
-                onChange={(e) => setTrackViews(e.target.checked)} 
-                className="h-4 w-4 rounded border-ring bg-transparent checked:bg-white checked:border-white focus:ring-0 focus:ring-offset-0"
-              />
-            </label>
+      {/* Public Help Center */}
+      <AppSection spacing="md">
+        <AppCard>
+          <AppCardHeader>
+            <AppCardTitle>Public Help Center</AppCardTitle>
+            <AppCardDescription>Control public access and features</AppCardDescription>
+          </AppCardHeader>
+          <AppCardBody>
+            <SettingToggle
+              id="public-help"
+              label="Enable public Help Center"
+              description="Make published articles accessible at /help"
+              checked={publicHelpEnabled}
+              onCheckedChange={setPublicHelpEnabled}
+            />
+            <SettingToggle
+              id="search"
+              label="Enable search"
+              description="Allow visitors to search articles"
+              checked={searchEnabled}
+              onCheckedChange={setSearchEnabled}
+            />
+            <SettingToggle
+              id="feedback"
+              label="Enable article feedback"
+              description='Show "Was this helpful?" on articles'
+              checked={feedbackEnabled}
+              onCheckedChange={setFeedbackEnabled}
+            />
             
-            <label className="flex items-center justify-between py-2.5">
-              <div>
-                <p className="text-[13px] text-foreground">Track search queries</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Log search terms for analytics</p>
-              </div>
-              <input 
-                type="checkbox" 
-                checked={trackSearches} 
-                onChange={(e) => setTrackSearches(e.target.checked)} 
-                className="h-4 w-4 rounded border-ring bg-transparent checked:bg-white checked:border-white focus:ring-0 focus:ring-offset-0"
-              />
-            </label>
-          </div>
-          
-          <div className="mt-4 p-3 bg-background border border-border/50 rounded">
-            <p className="text-[11px] text-muted-foreground">
-              Analytics data helps improve Help content by showing popular topics and search gaps.
-            </p>
-          </div>
-        </div>
+            <div className="mt-4 pt-4 border-t border-border/40">
+              <a 
+                href="/help" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[12px] text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
+              >
+                View Public Help Center
+                <ExternalLink className="h-3 w-3" strokeWidth={1.5} />
+              </a>
+            </div>
+          </AppCardBody>
+        </AppCard>
+      </AppSection>
 
-        {/* Permissions */}
-        <div className="bg-card border border-border rounded p-5">
-          <h3 className="text-[14px] font-medium text-foreground mb-4">Permissions</h3>
-          
-          <div className="space-y-3">
+      {/* Analytics */}
+      <AppSection spacing="md">
+        <AppCard>
+          <AppCardHeader>
+            <AppCardTitle>Analytics</AppCardTitle>
+            <AppCardDescription>Data collection preferences</AppCardDescription>
+          </AppCardHeader>
+          <AppCardBody>
+            <SettingToggle
+              id="track-views"
+              label="Track article views"
+              description="Record when articles are viewed"
+              checked={trackViews}
+              onCheckedChange={setTrackViews}
+            />
+            <SettingToggle
+              id="track-searches"
+              label="Track search queries"
+              description="Log search terms for analytics"
+              checked={trackSearches}
+              onCheckedChange={setTrackSearches}
+            />
+            
+            <div className="mt-4">
+              <AppAlert
+                variant="info"
+                message="Analytics data helps improve Help content by showing popular topics and search gaps."
+              />
+            </div>
+          </AppCardBody>
+        </AppCard>
+      </AppSection>
+
+      {/* Permissions */}
+      <AppSection spacing="md">
+        <AppCard>
+          <AppCardHeader>
+            <AppCardTitle>Permissions</AppCardTitle>
+            <AppCardDescription>Access control for Help Workstation</AppCardDescription>
+          </AppCardHeader>
+          <AppCardBody>
             <p className="text-[12px] text-muted-foreground">
               Help Workstation access is managed via platform capabilities. Users with the{" "}
-              <code className="px-1.5 py-0.5 bg-background border border-border rounded text-[11px] font-mono">
+              <code className="px-1.5 py-0.5 bg-muted border border-border rounded text-[11px] font-mono">
                 can_manage_help
               </code>{" "}
               capability or Platform Administrators can access this workstation.
             </p>
             
-            <div className="mt-4 p-3 bg-background border border-border/50 rounded">
-              <p className="text-[12px] text-foreground font-medium mb-1">Role-based access</p>
-              <p className="text-[11px] text-muted-foreground">
-                Contact a Platform Administrator to grant or revoke Help access for users.
-              </p>
+            <div className="mt-4">
+              <AppAlert
+                variant="info"
+                message="Contact a Platform Administrator to grant or revoke Help access for users."
+              />
             </div>
-          </div>
-        </div>
+          </AppCardBody>
+        </AppCard>
+      </AppSection>
 
-        {/* Save Button */}
-        <div className="flex justify-end pt-4">
-          <AppButton intent="primary" size="sm" onClick={handleSave} disabled={saving}>
-            {saving ? "Saving..." : saved ? "Saved" : "Save Settings"}
-          </AppButton>
-        </div>
+      {/* Save Button */}
+      <div className="flex justify-end pt-4">
+        <AppButton intent="primary" size="sm" onClick={handleSave} disabled={saving}>
+          {saving ? "Saving..." : saved ? "Saved" : "Save Settings"}
+        </AppButton>
       </div>
-    </div>
+    </AppPageContainer>
   );
 }
