@@ -166,6 +166,7 @@ export default function HelpArticleEditorPage() {
     } else {
       const versionId = await createVersion(id!, {
         title: title.trim(),
+        slug: slug.trim(),
         body_md: bodyMd,
       });
       if (versionId) {
