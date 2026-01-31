@@ -91,6 +91,8 @@ export {
   AppTableEmpty,
   AppTableBadge,
   AppTableTag,
+  TABLE_COLUMN_PRESETS,
+  type ColumnPreset,
 } from "./AppTable";
 
 export { AppPagination } from "./AppPagination";
