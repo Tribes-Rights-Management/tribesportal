@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, AlertCircle, Pencil, Check, X } from "lucide-react";
+import { ArrowLeft, AlertCircle } from "lucide-react";
 import { useHelpManagement, HelpArticle } from "@/hooks/useHelpManagement";
 import { useArticleAudience } from "@/hooks/useArticleAudience";
 import { useCategoriesByAudience, CategoryForAudience } from "@/hooks/useCategoriesByAudience";
@@ -60,9 +60,6 @@ export default function HelpArticleEditorPage() {
 
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [slugManual, setSlugManual] = useState(false);
-  const [slugEditing, setSlugEditing] = useState(false);
-  const [tempSlug, setTempSlug] = useState("");
   const [bodyMd, setBodyMd] = useState("");
   const [status, setStatus] = useState<"draft" | "internal" | "published" | "archived">("draft");
 
@@ -94,7 +91,6 @@ export default function HelpArticleEditorPage() {
       setArticle(art);
       setTitle(art.title || "");
       setSlug(art.slug);
-      setSlugManual(true);
       setBodyMd(art.content || "");
       setStatus(art.status);
 
@@ -112,11 +108,12 @@ export default function HelpArticleEditorPage() {
     loadArticle();
   }, [id, isNew, fetchArticleWithVersion, fetchAssignment, fetchCategoriesByAudience]);
 
+  // Auto-generate slug from title
   useEffect(() => {
-    if (!slugManual && title) {
+    if (isNew && title) {
       setSlug(slugify(title));
     }
-  }, [title, slugManual]);
+  }, [title, isNew]);
 
   const handleAudienceChange = async (audienceId: string) => {
     setSelectedAudienceId(audienceId);
@@ -130,21 +127,6 @@ export default function HelpArticleEditorPage() {
     }
   };
 
-  const startSlugEdit = () => {
-    setTempSlug(slug);
-    setSlugEditing(true);
-  };
-
-  const confirmSlugEdit = () => {
-    setSlug(tempSlug);
-    setSlugManual(true);
-    setSlugEditing(false);
-  };
-
-  const cancelSlugEdit = () => {
-    setSlugEditing(false);
-    setTempSlug("");
-  };
 
   const handleSave = async () => {
     setValidationError(null);
@@ -304,38 +286,11 @@ export default function HelpArticleEditorPage() {
             )}
           </div>
 
-          {/* Slug Row - Compact inline */}
-          <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground px-1">
-            <span className="font-medium">URL:</span>
-            <span className="opacity-70">
-              /hc/{selectedAudience?.slug || "[audience]"}/articles/
+          {/* Slug Row - Read-only helper text */}
+          <div className="px-1">
+            <span className="text-[12px] text-muted-foreground">
+              URL: /hc/{selectedAudience?.slug || "[audience]"}/articles/{slug || "article-slug"}
             </span>
-            {slugEditing ? (
-              <div className="flex items-center gap-1">
-                <input
-                  type="text"
-                  value={tempSlug}
-                  onChange={(e) => setTempSlug(e.target.value)}
-                  className="h-7 px-2 text-[12px] flex-1 max-w-[200px] bg-background border border-border rounded text-foreground focus:outline-none focus:ring-1 focus:ring-ring font-mono"
-                  autoFocus
-                />
-                <button onClick={confirmSlugEdit} className="p-1 hover:bg-muted rounded">
-                  <Check className="h-3.5 w-3.5 text-primary" />
-                </button>
-                <button onClick={cancelSlugEdit} className="p-1 hover:bg-muted rounded">
-                  <X className="h-3.5 w-3.5 text-muted-foreground" />
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1">
-                <span className="font-mono text-foreground">
-                  {slug || "article-slug"}
-                </span>
-                <button onClick={startSlugEdit} className="p-1 hover:bg-muted rounded">
-                  <Pencil className="h-3 w-3 text-muted-foreground" />
-                </button>
-              </div>
-            )}
           </div>
 
           {/* Publishing Settings - Horizontal compact row */}
