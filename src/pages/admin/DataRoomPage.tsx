@@ -139,7 +139,7 @@ function CreateExportDialog({ open, onOpenChange }: CreateExportDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="w-full max-w-lg mx-4 sm:mx-auto">
         <DialogHeader>
           <DialogTitle>Create Data Room Export</DialogTitle>
           <DialogDescription>
@@ -205,8 +205,8 @@ function CreateExportDialog({ open, onOpenChange }: CreateExportDialogProps) {
             </Select>
           </div>
           
-          {/* Date Range */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* Date Range - responsive grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Period Start</Label>
               <Input
@@ -307,7 +307,7 @@ export default function DataRoomPage() {
         </div>
       </div>
 
-      {/* Exports Table */}
+      {/* Exports Table - with horizontal scroll for mobile */}
       <div 
         className="rounded-lg overflow-hidden"
         style={{
@@ -320,7 +320,8 @@ export default function DataRoomPage() {
             <InstitutionalLoadingState message="Loading exports..." />
           </div>
         ) : (
-          <Table>
+          <div className="overflow-x-auto">
+            <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Export</TableHead>
@@ -422,6 +423,7 @@ export default function DataRoomPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         )}
       </div>
 

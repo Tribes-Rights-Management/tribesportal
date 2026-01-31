@@ -228,7 +228,8 @@ export default function CorrelationChainPage() {
             </h3>
           </div>
 
-          <Table>
+          <div className="overflow-x-auto">
+            <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Correlation ID</TableHead>
@@ -292,6 +293,7 @@ export default function CorrelationChainPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         </>
       )}
 

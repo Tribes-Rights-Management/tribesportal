@@ -130,19 +130,19 @@ export default function HelpAnalyticsPage() {
   const totalViews = topArticles.reduce((sum, a) => sum + a.view_count, 0);
 
   return (
-    <div className="flex-1 p-8">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-8">
+    <div className="flex-1 p-4 sm:p-6 lg:p-8">
+      {/* Header - responsive layout */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 sm:mb-8">
         <div>
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
             HELP WORKSTATION
           </p>
-          <h1 className="text-[20px] font-medium text-foreground mb-1">Analytics</h1>
+          <h1 className="text-lg sm:text-[20px] font-medium text-foreground mb-1">Analytics</h1>
           <p className="text-[13px] text-muted-foreground">Help content performance and trends</p>
         </div>
         
         <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
-          <SelectTrigger className="h-10 w-[140px] px-3 text-[14px] bg-card border border-border rounded-lg">
+          <SelectTrigger className="h-10 w-full sm:w-[140px] px-3 text-[14px] bg-card border border-border rounded-lg">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -175,7 +175,7 @@ export default function HelpAnalyticsPage() {
           <p className="text-[13px] text-muted-foreground">Loading analytics...</p>
         </div>
       ) : !hasData ? (
-        <div className="bg-card border border-border rounded py-16 text-center">
+        <div className="bg-card border border-border rounded py-16 text-center px-4">
           <p className="text-[14px] text-muted-foreground mb-2">No analytics data yet</p>
           <p className="text-[12px] text-muted-foreground max-w-md mx-auto">
             Analytics data will appear here once users start searching and viewing Help articles.
@@ -184,23 +184,23 @@ export default function HelpAnalyticsPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Summary Stats */}
-          <div className="grid grid-cols-3 gap-4">
+          {/* Summary Stats - responsive grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-card border border-border rounded p-4">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Total Searches</p>
-              <p className="text-[28px] font-medium text-foreground tabular-nums">{totalSearches}</p>
+              <p className="text-2xl sm:text-[28px] font-medium text-foreground tabular-nums">{totalSearches}</p>
               <p className="text-[11px] text-muted-foreground mt-1.5">Last {dateRange} days</p>
             </div>
             
             <div className="bg-card border border-border rounded p-4">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Article Views</p>
-              <p className="text-[28px] font-medium text-foreground tabular-nums">{totalViews}</p>
+              <p className="text-2xl sm:text-[28px] font-medium text-foreground tabular-nums">{totalViews}</p>
               <p className="text-[11px] text-muted-foreground mt-1.5">All time</p>
             </div>
             
             <div className="bg-card border border-border rounded p-4">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">Messages</p>
-              <p className="text-[28px] font-medium text-foreground tabular-nums">{messageVolume.total}</p>
+              <p className="text-2xl sm:text-[28px] font-medium text-foreground tabular-nums">{messageVolume.total}</p>
               <p className="text-[11px] text-muted-foreground mt-1.5">{messageVolume.resolved} resolved</p>
             </div>
           </div>

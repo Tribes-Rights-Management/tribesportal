@@ -237,17 +237,18 @@ export default function OrgUsersPage() {
         <TabsContent value="members" className="mt-4">
           <AppCard className="p-0">
             {loading ? (
-              <div className="p-8 text-center text-muted-foreground">
+              <div className="p-6 sm:p-8 text-center text-muted-foreground">
                 Loading members...
               </div>
             ) : members.length === 0 ? (
-              <div className="p-8">
+              <div className="p-6 sm:p-8">
                 <AppEmptyState
                   message="No members yet"
                   description="Invite users to grant them access to this organization."
                 />
               </div>
             ) : (
+              <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -319,6 +320,7 @@ export default function OrgUsersPage() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             )}
           </AppCard>
         </TabsContent>
@@ -326,17 +328,18 @@ export default function OrgUsersPage() {
         <TabsContent value="invitations" className="mt-4">
           <AppCard className="p-0">
             {loading ? (
-              <div className="p-8 text-center text-muted-foreground">
+              <div className="p-6 sm:p-8 text-center text-muted-foreground">
                 Loading invitations...
               </div>
             ) : invitations.length === 0 ? (
-              <div className="p-8">
+              <div className="p-6 sm:p-8">
                 <AppEmptyState
                   message="No pending invitations"
                   description="All invitations have been accepted or expired."
                 />
               </div>
             ) : (
+              <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -414,6 +417,7 @@ export default function OrgUsersPage() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             )}
           </AppCard>
         </TabsContent>

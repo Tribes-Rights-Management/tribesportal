@@ -55,7 +55,7 @@ export default function PortalPaymentsPage() {
         <AppStatCard label="Payment Methods" value="0" subtitle="No saved methods" />
       </AppStatCardGrid>
 
-      <div className="grid gap-4 md:grid-cols-3 mb-8">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-8">
         <Link to="/portal/payments/invoices">
           <AppCard className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
             <AppCardBody className="p-6">

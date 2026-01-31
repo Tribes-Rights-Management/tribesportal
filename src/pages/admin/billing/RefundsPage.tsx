@@ -198,7 +198,7 @@ export default function RefundsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Transaction details would be displayed here */}
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div className="space-y-1">
                 <p className="text-muted-foreground flex items-center gap-1.5">
                   <FileText className="h-3.5 w-3.5" />

@@ -83,7 +83,7 @@ export default function PlansConfigurationPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Price</p>
               <p className="text-lg font-semibold">$99/month</p>
