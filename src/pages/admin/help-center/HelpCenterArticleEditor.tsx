@@ -16,8 +16,15 @@ import {
 } from "@/components/ui/select";
 import { AppButton } from "@/components/app-ui";
 import { toast } from "sonner";
+import { useArticleAudience } from "@/hooks/useArticleAudience";
+import { useCategoriesByAudience } from "@/hooks/useCategoriesByAudience";
 
 interface Category {
+  id: string;
+  name: string;
+}
+
+interface Audience {
   id: string;
   name: string;
 }
@@ -39,8 +46,14 @@ export default function HelpCenterArticleEditor() {
   const isEditing = !!id && id !== "new";
 
   const [categories, setCategories] = useState<Category[]>([]);
+  const [audiences, setAudiences] = useState<Audience[]>([]);
+  const [selectedAudienceId, setSelectedAudienceId] = useState<string>("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const { fetchAssignment, saveAssignment } = useArticleAudience();
+  const { categories: audienceCategories, fetchCategoriesByAudience } = useCategoriesByAudience();
 
   const {
     register,
@@ -74,7 +87,7 @@ export default function HelpCenterArticleEditor() {
     }
   }, [title, isEditing, setValue]);
 
-  // Load categories
+  // Load categories (legacy)
   useEffect(() => {
     async function fetchCategories() {
       const { data } = await supabase
@@ -85,6 +98,40 @@ export default function HelpCenterArticleEditor() {
     }
     fetchCategories();
   }, []);
+
+  // Load audiences
+  useEffect(() => {
+    async function fetchAudiences() {
+      const { data } = await supabase
+        .from("help_audiences")
+        .select("id, name")
+        .eq("is_active", true)
+        .order("position");
+      setAudiences(data ?? []);
+    }
+    fetchAudiences();
+  }, []);
+
+  // Load categories when audience changes
+  useEffect(() => {
+    if (selectedAudienceId) {
+      fetchCategoriesByAudience(selectedAudienceId);
+    }
+  }, [selectedAudienceId, fetchCategoriesByAudience]);
+
+  // Load existing audience assignment when editing
+  useEffect(() => {
+    async function loadAssignment() {
+      if (isEditing && id) {
+        const assignment = await fetchAssignment(id);
+        if (assignment) {
+          setSelectedAudienceId(assignment.audience_id);
+          setSelectedCategoryId(assignment.category_id);
+        }
+      }
+    }
+    loadAssignment();
+  }, [id, isEditing, fetchAssignment]);
 
   // Load article if editing
   useEffect(() => {
@@ -155,6 +202,8 @@ export default function HelpCenterArticleEditor() {
       published: data.published,
     };
 
+    let articleId = id;
+
     if (isEditing) {
       const { error } = await supabase
         .from("articles")
@@ -166,19 +215,34 @@ export default function HelpCenterArticleEditor() {
         setSaving(false);
         return;
       }
-      toast.success("Article updated");
     } else {
-      const { error } = await supabase.from("articles").insert(payload);
+      const { data: insertedData, error } = await supabase
+        .from("articles")
+        .insert(payload)
+        .select("id")
+        .single();
 
-      if (error) {
+      if (error || !insertedData) {
         toast.error("Failed to create article");
         setSaving(false);
         return;
       }
+      articleId = insertedData.id;
       localStorage.removeItem(AUTOSAVE_KEY);
-      toast.success("Article created");
     }
 
+    // Save audience/category assignment if selected
+    if (articleId && selectedAudienceId && selectedCategoryId) {
+      const saved = await saveAssignment(articleId, selectedAudienceId, selectedCategoryId, 0);
+      if (!saved) {
+        toast.error("Article saved but audience assignment failed");
+        setSaving(false);
+        navigate("/admin/help-center/articles");
+        return;
+      }
+    }
+
+    toast.success(isEditing ? "Article updated" : "Article created");
     setSaving(false);
     navigate("/admin/help-center/articles");
   }
@@ -394,6 +458,100 @@ export default function HelpCenterArticleEditor() {
               >
                 Published
               </Label>
+            </div>
+
+            {/* Publishing Settings Section */}
+            <div
+              className="mt-8 pt-6"
+              style={{ borderTop: "1px solid var(--platform-border)" }}
+            >
+              <h3
+                className="text-[13px] uppercase tracking-wider font-medium mb-4"
+                style={{ color: "var(--platform-text-muted)" }}
+              >
+                Publishing Settings
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label
+                    htmlFor="audience"
+                    className="text-[13px] uppercase tracking-wider mb-2 block"
+                    style={{ color: "var(--platform-text-muted)" }}
+                  >
+                    Audience
+                  </Label>
+                  <Select
+                    value={selectedAudienceId}
+                    onValueChange={(v) => {
+                      setSelectedAudienceId(v);
+                      setSelectedCategoryId("");
+                    }}
+                  >
+                    <SelectTrigger
+                      style={{
+                        backgroundColor: "rgba(255,255,255,0.02)",
+                        borderColor: "var(--platform-border)",
+                        color: "var(--platform-text)",
+                      }}
+                    >
+                      <SelectValue placeholder="Select audience" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {audiences.map((a) => (
+                        <SelectItem key={a.id} value={a.id}>
+                          {a.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label
+                    htmlFor="audienceCategory"
+                    className="text-[13px] uppercase tracking-wider mb-2 block"
+                    style={{ color: "var(--platform-text-muted)" }}
+                  >
+                    Category
+                  </Label>
+                  <Select
+                    value={selectedCategoryId}
+                    onValueChange={setSelectedCategoryId}
+                    disabled={!selectedAudienceId}
+                  >
+                    <SelectTrigger
+                      style={{
+                        backgroundColor: "rgba(255,255,255,0.02)",
+                        borderColor: "var(--platform-border)",
+                        color: !selectedAudienceId ? "var(--platform-text-muted)" : "var(--platform-text)",
+                      }}
+                    >
+                      <SelectValue 
+                        placeholder={
+                          !selectedAudienceId 
+                            ? "Select audience first" 
+                            : audienceCategories.length === 0 
+                              ? "No categories available" 
+                              : "Select category"
+                        } 
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {audienceCategories.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <p
+                className="text-[12px] mt-2"
+                style={{ color: "var(--platform-text-muted)" }}
+              >
+                Assign an audience and category for this article to appear in the Help Center.
+              </p>
             </div>
           </div>
 
