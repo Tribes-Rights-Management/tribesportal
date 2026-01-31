@@ -14,10 +14,10 @@ import { AppButton, AppChip } from "@/components/app-ui";
 function slugify(text: string): string {
   return text
     .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
+    .replace(/[^\w\s-]/g, "")   // Remove special characters
+    .replace(/\s+/g, "-")        // Replace spaces with dashes
+    .replace(/-+/g, "-")         // Replace multiple dashes with single dash
+    .replace(/^-|-$/g, "");      // Trim dashes from start/end
 }
 
 interface CategoryWithMeta extends HelpCategory {
@@ -97,11 +97,18 @@ export default function HelpCategoriesPage() {
     return audiences.find(a => a.id === audienceId)?.name || "Unknown";
   };
 
-  useEffect(() => {
-    if (!slugManual && name) {
-      setSlug(slugify(name));
+  // Auto-generate slug from name (inline handler instead of useEffect for immediate feedback)
+  const handleNameChange = (value: string) => {
+    setName(value);
+    if (!slugManual) {
+      setSlug(slugify(value));
     }
-  }, [name, slugManual]);
+  };
+
+  const handleSlugChange = (value: string) => {
+    setSlug(value);
+    setSlugManual(true); // Mark as manually edited
+  };
 
   const handleCreate = () => {
     setEditing(null);
@@ -363,7 +370,7 @@ export default function HelpCategoriesPage() {
                 <input
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => handleNameChange(e.target.value)}
                   placeholder="Category name"
                   className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
                 />
@@ -374,11 +381,11 @@ export default function HelpCategoriesPage() {
                 <input
                   type="text"
                   value={slug}
-                  onChange={(e) => { setSlug(e.target.value); setSlugManual(true); }}
+                  onChange={(e) => handleSlugChange(e.target.value)}
                   placeholder="category-slug"
                   className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors font-mono"
                 />
-                <p className="text-[11px] text-muted-foreground mt-2">URL-friendly identifier</p>
+                <p className="text-[11px] text-muted-foreground mt-2">Auto-generated from name</p>
               </div>
 
               {/* Audience Visibility Section */}
