@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { AlertCircle, RefreshCw, ChevronDown } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 /**
  * HELP ANALYTICS PAGE — INSTITUTIONAL DESIGN
@@ -134,18 +141,16 @@ export default function HelpAnalyticsPage() {
           <p className="text-[13px] text-muted-foreground">Help content performance and trends</p>
         </div>
         
-        <div className="relative">
-          <select
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value as DateRange)}
-            className="h-9 pl-3 pr-8 bg-transparent border-0 border-b border-border text-[12px] text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring appearance-none cursor-pointer"
-          >
-            <option value="7">Last 7 days</option>
-            <option value="30">Last 30 days</option>
-            <option value="90">Last 90 days</option>
-          </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" strokeWidth={1.5} />
-        </div>
+        <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
+          <SelectTrigger className="h-10 w-[140px] px-3 text-[14px] bg-card border border-border rounded-lg">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-card border border-border rounded-lg shadow-lg">
+            <SelectItem value="7" className="px-3 py-2 text-[14px] cursor-pointer">Last 7 days</SelectItem>
+            <SelectItem value="30" className="px-3 py-2 text-[14px] cursor-pointer">Last 30 days</SelectItem>
+            <SelectItem value="90" className="px-3 py-2 text-[14px] cursor-pointer">Last 90 days</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Inline Error */}

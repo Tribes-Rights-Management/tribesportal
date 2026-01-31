@@ -1,7 +1,13 @@
 import * as React from "react";
 import { forwardRef } from "react";
-import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 /**
  * APP SELECT — GLOBAL UI KIT (SINGLE SOURCE OF TRUTH)
@@ -10,11 +16,14 @@ import { cn } from "@/lib/utils";
  * CANONICAL SELECT/DROPDOWN COMPONENT (LOCKED)
  * ═══════════════════════════════════════════════════════════════════════════
  * 
+ * Uses shadcn Select internally for styled dropdown menus.
+ * 
  * Standard styling:
  * - Height: 40px (h-10)
  * - Border radius: 8px (rounded-lg)
  * - Font size: 14px
- * - Chevron: 20x20px (h-5 w-5)
+ * - Background: bg-card
+ * - Border: border-border
  * 
  * USAGE:
  *   <AppSelect
@@ -28,7 +37,7 @@ import { cn } from "@/lib/utils";
  * 
  * ENFORCEMENT:
  * - All filter dropdowns must use this component
- * - No hardcoded select styling
+ * - No native <select> elements in the app
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -50,38 +59,38 @@ interface AppSelectProps {
   disabled?: boolean;
   /** Full width */
   fullWidth?: boolean;
-  /** Additional className */
+  /** Additional className for the trigger */
   className?: string;
 }
 
-export const AppSelect = forwardRef<HTMLDivElement, AppSelectProps>(
+export const AppSelect = forwardRef<HTMLButtonElement, AppSelectProps>(
   ({ value, onChange, options, placeholder = "Select...", disabled = false, fullWidth = false, className }, ref) => {
     return (
-      <div ref={ref} className={cn("relative", fullWidth && "w-full", className)}>
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          disabled={disabled}
+      <Select value={value} onValueChange={onChange} disabled={disabled}>
+        <SelectTrigger 
+          ref={ref}
           className={cn(
-            "h-10 px-3 pr-10 text-[14px] bg-card border border-border rounded-lg",
-            "appearance-none cursor-pointer transition-colors duration-150",
+            "h-10 px-3 text-[14px] bg-card border border-border rounded-lg",
             "focus:outline-none focus:ring-1 focus:ring-ring",
             "disabled:opacity-50 disabled:cursor-not-allowed",
-            fullWidth ? "w-full" : "w-auto"
+            fullWidth ? "w-full" : "w-auto min-w-[160px]",
+            className
           )}
         >
-          <option value="">{placeholder}</option>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent className="bg-card border border-border rounded-lg shadow-lg">
           {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
+            <SelectItem 
+              key={opt.value} 
+              value={opt.value}
+              className="px-3 py-2 text-[14px] cursor-pointer"
+            >
               {opt.label}
-            </option>
+            </SelectItem>
           ))}
-        </select>
-        <ChevronDown 
-          className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" 
-          strokeWidth={1.5}
-        />
-      </div>
+        </SelectContent>
+      </Select>
     );
   }
 );
