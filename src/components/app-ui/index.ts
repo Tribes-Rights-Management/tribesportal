@@ -71,6 +71,7 @@ export { AppSection, AppSectionGrid } from "./AppSection";
 // ─────────────────────────────────────────────────────────────────────────────
 export { AppSearchInput } from "./AppSearchInput";
 export { AppSelect } from "./AppSelect";
+export { AppCheckboxGroup, type CheckboxOption } from "./AppCheckboxGroup";
 export { AppInput, AppTextarea } from "./AppInput";
 
 // ─────────────────────────────────────────────────────────────────────────────

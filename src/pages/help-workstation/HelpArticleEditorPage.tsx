@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, AlertCircle, Check } from "lucide-react";
+import { ArrowLeft, AlertCircle } from "lucide-react";
 import { useHelpManagement, HelpArticle } from "@/hooks/useHelpManagement";
 import { useCategoriesByAudience, CategoryForAudience } from "@/hooks/useCategoriesByAudience";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
-import { AppButton, AppChip, AppSelect } from "@/components/app-ui";
+import { AppButton, AppChip, AppSelect, AppCheckboxGroup } from "@/components/app-ui";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -373,36 +373,16 @@ export default function HelpArticleEditorPage() {
           )}>
             {/* Audiences - Inline checkboxes */}
             <div className="flex-1">
-              <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
-                Audiences *
-              </label>
-              <div className="flex flex-wrap items-center gap-4">
-                {activeAudiences.map((audience) => (
-                  <label
-                    key={audience.id}
-                    className="flex items-center gap-2 cursor-pointer select-none"
-                    onClick={() => handleAudienceToggle(
-                      audience.id, 
-                      !selectedAudienceIds.includes(audience.id)
-                    )}
-                  >
-                    <div className={cn(
-                      "h-4 w-4 rounded border flex items-center justify-center transition-colors",
-                      selectedAudienceIds.includes(audience.id)
-                        ? "bg-primary border-primary"
-                        : "border-muted-foreground/40 hover:border-muted-foreground"
-                    )}>
-                      {selectedAudienceIds.includes(audience.id) && (
-                        <Check className="h-3 w-3 text-primary-foreground" strokeWidth={2.5} />
-                      )}
-                    </div>
-                    <span className="text-[13px]">{audience.name}</span>
-                  </label>
-                ))}
-              </div>
-              {showPublishValidation && selectedAudienceIds.length === 0 && (
-                <p className="text-[11px] text-destructive mt-1.5">Required</p>
-              )}
+              <AppCheckboxGroup
+                label="Audiences"
+                required
+                options={activeAudiences.map(a => ({ id: a.id, label: a.name }))}
+                selected={selectedAudienceIds}
+                onChange={setSelectedAudienceIds}
+                direction="horizontal"
+                error={showPublishValidation && selectedAudienceIds.length === 0}
+                errorMessage="Required"
+              />
             </div>
 
             {/* Category dropdown */}

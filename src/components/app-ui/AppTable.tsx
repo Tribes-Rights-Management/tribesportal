@@ -179,7 +179,7 @@ export function AppTableRow({
 type SortDirection = "asc" | "desc" | null;
 
 interface AppTableHeadProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   /** Enable sorting */
   sortable?: boolean;
   /** Current sort direction */
