@@ -8,13 +8,8 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
       <input
         type={type}
         className={cn(
-          // Marketing site alignment:
-          // - Height: 52px, radius: 14px
-          // - Border: rgba(0,0,0,0.18)
-          // - Placeholder: rgba(11,15,20,0.35)
-          // - Focus: subtle ring with rgba(0,0,0,0.12)
-          // - Transition: 180-220ms cubic-bezier
-          "flex h-[52px] w-full rounded-[14px] border border-border bg-background px-4 py-3 text-base leading-normal text-foreground placeholder:text-muted-foreground/50 transition-all duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] focus:outline-none focus:border-foreground focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-45",
+          // Stripe-like compact input: 36px height, 6px radius
+          "flex h-9 w-full rounded-md border border-border bg-card px-3 text-[13px] leading-normal text-foreground placeholder:text-muted-foreground/60 transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-50",
           className,
         )}
         ref={ref}

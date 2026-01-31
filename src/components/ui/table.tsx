@@ -40,9 +40,9 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
         data-density={density}
         className={cn(
           "w-full caption-bottom",
-          density === "compact" ? "text-[13px]" : "text-[14px]",
+          density === "compact" ? "text-[12px]" : "text-[13px]",
           className
-        )} 
+        )}
         {...props} 
       />
     </div>
@@ -135,8 +135,8 @@ const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
       ref={ref}
       className={cn(
         // Institutional header: 12px, uppercase, +0.04em tracking, muted
-        // Height controlled for 48px default row
-        "h-12 px-5 align-middle",
+        // Height controlled for 44px compact row
+        "h-10 px-3 align-middle",
         "text-[12px] font-medium tracking-[0.04em] uppercase",
         numeric && "text-right",
         status && "text-center",
@@ -165,11 +165,11 @@ const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
     <td 
       ref={ref} 
       className={cn(
-        // 48px row height via padding (py-3.5 = 14px * 2 + 14px text ≈ 48px)
-        "px-5 py-3.5 align-middle text-[14px]",
+        // 44px row height via padding (py-2.5 = 10px * 2 + 13px text ≈ 44px)
+        "px-3 py-2.5 align-middle text-[13px]",
         numeric && "text-right tabular-nums font-medium",
         status && "text-center",
-        muted && "text-[13px]",
+        muted && "text-[12px]",
         "[&:has([role=checkbox])]:pr-0",
         className
       )}

@@ -54,16 +54,16 @@ const buttonVariants = cva(
         link: "bg-transparent text-muted-foreground hover:text-foreground hover:underline underline-offset-4",
       },
       size: {
-        // Institutional sizing: 6px radius, proportional padding
-        default: "h-10 px-5 rounded-[6px] text-[14px]",
-        sm: "h-9 px-4 rounded-[6px] text-[13px]",
-        lg: "h-11 px-6 rounded-[6px] text-[15px]",
-        xs: "h-8 px-3 rounded-[6px] text-[12px]",
-        icon: "h-10 w-10 rounded-[6px]",
-        "icon-sm": "h-8 w-8 rounded-[6px]",
+        // Stripe-like compact sizing: 36px default, proportional padding
+        default: "h-9 px-4 rounded-md text-[13px]",
+        sm: "h-8 px-3 rounded-md text-[12px]",
+        lg: "h-10 px-6 rounded-md text-[14px]",
+        xs: "h-7 px-2.5 rounded-md text-[11px]",
+        icon: "h-9 w-9 rounded-md",
+        "icon-sm": "h-8 w-8 rounded-md",
         // Internal form button sizes
-        "internal": "h-10 px-5 rounded-[6px] text-[14px]",
-        "internal-sm": "h-9 px-4 rounded-[6px] text-[13px]",
+        "internal": "h-9 px-4 rounded-md text-[13px]",
+        "internal-sm": "h-8 px-3 rounded-md text-[12px]",
       },
     },
     defaultVariants: {
