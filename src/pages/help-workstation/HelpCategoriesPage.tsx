@@ -21,7 +21,17 @@ import { useCategoryAudiences } from "@/hooks/useCategoryAudiences";
 import { useCategoryOrderByAudience, CategoryWithPosition } from "@/hooks/useCategoryOrderByAudience";
 import { SortableCategoryCard } from "@/components/help/SortableCategoryCard";
 import { supabase } from "@/integrations/supabase/client";
-import { AppButton } from "@/components/app-ui";
+import {
+  AppButton,
+  AppTable,
+  AppTableHeader,
+  AppTableBody,
+  AppTableRow,
+  AppTableHead,
+  AppTableCell,
+  AppTableEmpty,
+  AppCheckboxGroup,
+} from "@/components/app-ui";
 import {
   Select,
   SelectContent,
@@ -407,60 +417,57 @@ export default function HelpCategoriesPage() {
         )
       ) : (
         /* All Categories View - Table */
-        <div className="bg-card border border-border rounded">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Name</th>
-                <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Slug</th>
-                <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Audiences</th>
-                <th className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Updated</th>
-                <th className="w-[50px]"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {categoriesWithMeta.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="text-center py-20">
-                    <p className="text-[13px] text-muted-foreground">No categories configured yet</p>
-                  </td>
-                </tr>
-              ) : (
-                categoriesWithMeta.map(cat => (
-                  <tr
-                    key={cat.id}
-                    onClick={() => handleEdit(cat)}
-                    className="border-b border-border/30 row-hover group cursor-pointer"
-                  >
-                    <td className="py-3 px-4 text-[13px] text-foreground">{cat.name}</td>
-                    <td className="py-3 px-4 text-[12px] text-muted-foreground font-mono">{cat.slug}</td>
-                    <td className="py-3 px-4 text-[13px] text-muted-foreground">
-                      {cat.audienceIds.length === 0 ? (
-                        <span className="italic">No audiences</span>
-                      ) : (
-                        cat.audienceIds.map(id => getAudienceName(id)).join(", ")
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-right text-[12px] text-muted-foreground">
-                      {format(new Date(cat.updated_at), "MMM d, yyyy")}
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      {cat.article_count === 0 && (
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleDeleteClick(cat); }}
-                          className="p-1 text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
-                          title="Delete category"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+        <AppTable columns={["25%", "20%", "30%", "15%", "10%"]}>
+          <AppTableHeader>
+            <AppTableRow header>
+              <AppTableHead>Name</AppTableHead>
+              <AppTableHead>Slug</AppTableHead>
+              <AppTableHead>Audiences</AppTableHead>
+              <AppTableHead align="right">Updated</AppTableHead>
+              <AppTableHead></AppTableHead>
+            </AppTableRow>
+          </AppTableHeader>
+          <AppTableBody>
+            {categoriesWithMeta.length === 0 ? (
+              <AppTableEmpty colSpan={5}>
+                <p className="text-[13px] text-muted-foreground">No categories configured yet</p>
+              </AppTableEmpty>
+            ) : (
+              categoriesWithMeta.map(cat => (
+                <AppTableRow
+                  key={cat.id}
+                  clickable
+                  onClick={() => handleEdit(cat)}
+                  className="group"
+                >
+                  <AppTableCell>{cat.name}</AppTableCell>
+                  <AppTableCell mono muted>{cat.slug}</AppTableCell>
+                  <AppTableCell muted>
+                    {cat.audienceIds.length === 0 ? (
+                      <span className="italic">No audiences</span>
+                    ) : (
+                      cat.audienceIds.map(id => getAudienceName(id)).join(", ")
+                    )}
+                  </AppTableCell>
+                  <AppTableCell align="right" muted>
+                    {format(new Date(cat.updated_at), "MMM d, yyyy")}
+                  </AppTableCell>
+                  <AppTableCell align="right">
+                    {cat.article_count === 0 && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDeleteClick(cat); }}
+                        className="p-1 text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
+                        title="Delete category"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
+                      </button>
+                    )}
+                  </AppTableCell>
+                </AppTableRow>
+              ))
+            )}
+          </AppTableBody>
+        </AppTable>
       )}
 
       {/* Right-side Panel */}
@@ -510,31 +517,14 @@ export default function HelpCategoriesPage() {
                 </p>
               </div>
 
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
-                  Audience Visibility *
-                </label>
-                <div className="space-y-2">
-                  {activeAudiences.length === 0 ? (
-                    <p className="text-[12px] text-muted-foreground italic">No audiences available</p>
-                  ) : (
-                    activeAudiences.map(audience => (
-                      <label
-                        key={audience.id}
-                        className="flex items-center gap-3 p-3 bg-card border border-border rounded cursor-pointer hover:border-primary/50 transition-colors"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedAudienceIds.includes(audience.id)}
-                          onChange={() => handleAudienceToggle(audience.id)}
-                          className="h-4 w-4 rounded border-border text-primary focus:ring-primary focus:ring-offset-0"
-                        />
-                        <span className="text-[13px] text-foreground">{audience.name}</span>
-                      </label>
-                    ))
-                  )}
-                </div>
-              </div>
+              <AppCheckboxGroup
+                label="Audience Visibility"
+                required
+                options={activeAudiences.map(a => ({ id: a.id, label: a.name }))}
+                selected={selectedAudienceIds}
+                onChange={setSelectedAudienceIds}
+                direction="vertical"
+              />
             </div>
 
             <div className="flex items-center justify-between px-6 py-5 border-t border-border">

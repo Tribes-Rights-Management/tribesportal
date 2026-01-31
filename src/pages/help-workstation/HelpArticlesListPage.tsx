@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, AlertCircle, RefreshCw, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus, AlertCircle, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import {
   DndContext,
@@ -21,7 +21,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useHelpManagement, HelpArticle, HelpArticleStatus } from "@/hooks/useHelpManagement";
 import { useArticleOrderByCategory } from "@/hooks/useArticleOrderByCategory";
 import { useDebounce } from "@/hooks/useDebounce";
-import { AppButton, AppChip } from "@/components/app-ui";
+import {
+  AppButton,
+  AppChip,
+  AppTable,
+  AppTableHeader,
+  AppTableBody,
+  AppTableRow,
+  AppTableHead,
+  AppTableCell,
+  AppTableEmpty,
+} from "@/components/app-ui";
 import { SortableArticleCard } from "@/components/help/SortableArticleCard";
 import { SearchInput } from "@/components/ui/search-input";
 import {
@@ -347,81 +357,60 @@ export default function HelpArticlesListPage() {
       ) : (
         /* All Articles View - Table */
         <>
-          <div className="bg-card border border-border rounded">
-            <table className="w-full">
-              <colgroup>
-                <col className="w-[35%]" />
-                <col className="w-[35%]" />
-                <col className="w-[15%]" />
-                <col className="w-[15%]" />
-              </colgroup>
-              <thead>
-                <tr className="border-b border-border">
-                  <th
-                    className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium cursor-pointer hover:text-foreground"
-                    onClick={() => handleSort("title")}
+          <AppTable columns="name-meta-status-date">
+            <AppTableHeader>
+              <AppTableRow header>
+                <AppTableHead
+                  sortable
+                  sortDirection={sortField === "title" ? sortOrder : null}
+                  onSort={() => handleSort("title")}
+                >
+                  Title
+                </AppTableHead>
+                <AppTableHead>Audiences</AppTableHead>
+                <AppTableHead>Status</AppTableHead>
+                <AppTableHead
+                  align="right"
+                  sortable
+                  sortDirection={sortField === "updated_at" ? sortOrder : null}
+                  onSort={() => handleSort("updated_at")}
+                >
+                  Updated
+                </AppTableHead>
+              </AppTableRow>
+            </AppTableHeader>
+            <AppTableBody>
+              {paginatedArticles.length === 0 ? (
+                <AppTableEmpty colSpan={4}>
+                  <p className="text-[13px] text-muted-foreground">
+                    {debouncedSearch || statusFilter !== "all" ? "No articles match your filters" : "No articles yet"}
+                  </p>
+                </AppTableEmpty>
+              ) : (
+                paginatedArticles.map(article => (
+                  <AppTableRow
+                    key={article.id}
+                    clickable
+                    onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
                   >
-                    <div className="flex items-center gap-1">
-                      Title
-                      {sortField === "title" && (
-                        sortOrder === "asc" ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
-                      )}
-                    </div>
-                  </th>
-                  <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-                    Audiences
-                  </th>
-                  <th className="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-                    Status
-                  </th>
-                  <th
-                    className="text-right py-3 px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-medium cursor-pointer hover:text-foreground"
-                    onClick={() => handleSort("updated_at")}
-                  >
-                    <div className="flex items-center justify-end gap-1">
-                      Updated
-                      {sortField === "updated_at" && (
-                        sortOrder === "asc" ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
-                      )}
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedArticles.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="text-center py-20">
-                      <p className="text-[13px] text-muted-foreground">
-                        {debouncedSearch || statusFilter !== "all" ? "No articles match your filters" : "No articles yet"}
-                      </p>
-                    </td>
-                  </tr>
-                ) : (
-                  paginatedArticles.map(article => (
-                    <tr
-                      key={article.id}
-                      onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
-                      className="border-b border-border/30 row-hover cursor-pointer"
-                    >
-                      <td className="py-3 px-4">
-                        <p className="text-[13px] text-foreground">{article.title || "Untitled"}</p>
-                        <p className="text-[11px] text-muted-foreground font-mono mt-0.5">/{article.slug}</p>
-                      </td>
-                      <td className="py-3 px-4 text-[12px] text-muted-foreground">
-                        {getArticleAudiences(article.id) || <span className="italic">No audiences</span>}
-                      </td>
-                      <td className="py-3 px-4">
-                        {getStatusChip(article.status)}
-                      </td>
-                      <td className="py-3 px-4 text-right text-[12px] text-muted-foreground">
-                        {format(new Date(article.updated_at), "MMM d, yyyy")}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                    <AppTableCell>
+                      <p className="text-[13px] text-foreground">{article.title || "Untitled"}</p>
+                      <p className="text-[11px] text-muted-foreground font-mono mt-0.5">/{article.slug}</p>
+                    </AppTableCell>
+                    <AppTableCell muted>
+                      {getArticleAudiences(article.id) || <span className="italic">No audiences</span>}
+                    </AppTableCell>
+                    <AppTableCell>
+                      {getStatusChip(article.status)}
+                    </AppTableCell>
+                    <AppTableCell align="right" muted>
+                      {format(new Date(article.updated_at), "MMM d, yyyy")}
+                    </AppTableCell>
+                  </AppTableRow>
+                ))
+              )}
+            </AppTableBody>
+          </AppTable>
 
           {/* Pagination */}
           {totalPages > 1 && (
