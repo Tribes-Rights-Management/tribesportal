@@ -285,21 +285,12 @@ export default function HelpCategoriesPage() {
                 >
                   <td className="py-3 px-4 text-[13px] text-foreground">{cat.name}</td>
                   <td className="py-3 px-4 text-[12px] text-muted-foreground font-mono">{cat.slug}</td>
-                  <td className="py-3 px-4">
-                    <div className="flex flex-wrap gap-1.5">
-                      {cat.audienceIds.length === 0 ? (
-                        <span className="text-[11px] text-muted-foreground italic">No audiences</span>
-                      ) : (
-                        cat.audienceIds.map(audienceId => (
-                          <span
-                            key={audienceId}
-                            className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary"
-                          >
-                            {getAudienceName(audienceId)}
-                          </span>
-                        ))
-                      )}
-                    </div>
+                  <td className="py-3 px-4 text-[13px] text-muted-foreground">
+                    {cat.audienceIds.length === 0 ? (
+                      <span className="italic">No audiences</span>
+                    ) : (
+                      cat.audienceIds.map(id => getAudienceName(id)).join(", ")
+                    )}
                   </td>
                   <td className="py-3 px-4 text-right text-[12px] text-muted-foreground">
                     {format(new Date(cat.updated_at), "MMM d, yyyy")}
