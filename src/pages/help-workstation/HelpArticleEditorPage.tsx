@@ -60,9 +60,11 @@ export default function HelpArticleEditorPage() {
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
 
   const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
   const [bodyMd, setBodyMd] = useState("");
   const [status, setStatus] = useState<"draft" | "internal" | "published" | "archived">("draft");
+
+  // Derive slug from title (always auto-generated)
+  const slug = title ? slugify(title) : "untitled";
 
   const [selectedAudienceId, setSelectedAudienceId] = useState<string>("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
@@ -91,7 +93,6 @@ export default function HelpArticleEditorPage() {
       
       setArticle(art);
       setTitle(art.title || "");
-      setSlug(art.slug);
       setBodyMd(art.content || "");
       setStatus(art.status);
 
@@ -109,12 +110,6 @@ export default function HelpArticleEditorPage() {
     loadArticle();
   }, [id, isNew, fetchArticleWithVersion, fetchAssignment, fetchCategoriesByAudience]);
 
-  // Auto-generate slug from title
-  useEffect(() => {
-    if (isNew && title) {
-      setSlug(slugify(title));
-    }
-  }, [title, isNew]);
 
   const handleAudienceChange = async (audienceId: string) => {
     setSelectedAudienceId(audienceId);
@@ -132,7 +127,6 @@ export default function HelpArticleEditorPage() {
   const handleSave = async () => {
     setValidationError(null);
     if (!title.trim()) { setValidationError("Title is required"); return; }
-    if (!slug.trim()) { setValidationError("Slug is required"); return; }
     if (!bodyMd.trim()) { setValidationError("Content is required"); return; }
 
     setSaving(true);
