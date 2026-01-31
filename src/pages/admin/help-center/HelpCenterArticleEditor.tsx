@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { ArrowLeft, Save, Archive, Pencil } from "lucide-react";
+import { ArrowLeft, Save, Archive, Pencil, Check, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,6 @@ import { AppButton } from "@/components/app-ui";
 import { toast } from "sonner";
 import { useArticleAudience } from "@/hooks/useArticleAudience";
 import { useCategoriesByAudience } from "@/hooks/useCategoriesByAudience";
-import { format } from "date-fns";
 
 interface Category {
   id: string;
@@ -28,6 +27,7 @@ interface Category {
 interface Audience {
   id: string;
   name: string;
+  slug: string;
 }
 
 interface ArticleForm {
@@ -39,11 +39,6 @@ interface ArticleForm {
   published: boolean;
 }
 
-interface ArticleMeta {
-  created_at: string | null;
-  updated_at: string | null;
-}
-
 const AUTOSAVE_KEY = "help-article-draft";
 
 export default function HelpCenterArticleEditor() {
@@ -51,15 +46,14 @@ export default function HelpCenterArticleEditor() {
   const { id } = useParams();
   const isEditing = !!id && id !== "new";
 
-  const [categories, setCategories] = useState<Category[]>([]);
   const [audiences, setAudiences] = useState<Audience[]>([]);
   const [selectedAudienceId, setSelectedAudienceId] = useState<string>("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [displayOrder, setDisplayOrder] = useState<number>(0);
-  const [articleMeta, setArticleMeta] = useState<ArticleMeta>({ created_at: null, updated_at: null });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [slugEditable, setSlugEditable] = useState(false);
+  const [slugEditing, setSlugEditing] = useState(false);
+  const [tempSlug, setTempSlug] = useState("");
 
   const { fetchAssignment, saveAssignment } = useArticleAudience();
   const { categories: audienceCategories, fetchCategoriesByAudience } = useCategoriesByAudience();
@@ -86,35 +80,25 @@ export default function HelpCenterArticleEditor() {
   const slug = watch("slug");
   const published = watch("published");
 
-  // Generate slug from title (only when not manually editing)
+  const selectedAudience = audiences.find(a => a.id === selectedAudienceId);
+
+  // Generate slug from title
   useEffect(() => {
-    if (!isEditing && !slugEditable && title) {
+    if (!isEditing && title && !slugEditing) {
       const generatedSlug = title
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
       setValue("slug", generatedSlug);
     }
-  }, [title, isEditing, slugEditable, setValue]);
-
-  // Load categories (legacy)
-  useEffect(() => {
-    async function fetchCategories() {
-      const { data } = await supabase
-        .from("categories")
-        .select("id, name")
-        .order("name");
-      setCategories(data ?? []);
-    }
-    fetchCategories();
-  }, []);
+  }, [title, isEditing, slugEditing, setValue]);
 
   // Load audiences
   useEffect(() => {
     async function fetchAudiences() {
       const { data } = await supabase
         .from("help_audiences")
-        .select("id, name")
+        .select("id, name, slug")
         .eq("is_active", true)
         .order("position");
       setAudiences(data ?? []);
@@ -161,7 +145,6 @@ export default function HelpCenterArticleEditor() {
       }
 
       setLoading(true);
-      setSlugEditable(true); // When editing, slug was already set
       const { data, error } = await supabase
         .from("articles")
         .select("*")
@@ -181,10 +164,6 @@ export default function HelpCenterArticleEditor() {
         meta_description: data.meta_description ?? "",
         category_id: data.category_id ?? "",
         published: data.published ?? false,
-      });
-      setArticleMeta({
-        created_at: data.created_at,
-        updated_at: data.updated_at,
       });
       setLoading(false);
     }
@@ -314,13 +293,19 @@ export default function HelpCenterArticleEditor() {
     navigate("/admin/help-center/articles");
   }
 
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "—";
-    try {
-      return format(new Date(dateString), "MMM d, yyyy 'at' h:mm a");
-    } catch {
-      return "—";
-    }
+  const startSlugEdit = () => {
+    setTempSlug(slug);
+    setSlugEditing(true);
+  };
+
+  const confirmSlugEdit = () => {
+    setValue("slug", tempSlug);
+    setSlugEditing(false);
+  };
+
+  const cancelSlugEdit = () => {
+    setTempSlug("");
+    setSlugEditing(false);
   };
 
   if (loading) {
@@ -336,18 +321,18 @@ export default function HelpCenterArticleEditor() {
 
   return (
     <div
-      className="min-h-full"
+      className="min-h-full flex flex-col"
       style={{ backgroundColor: "var(--platform-canvas)" }}
     >
-      {/* Top Bar */}
+      {/* TOP BAR */}
       <div
-        className="sticky top-0 z-10 px-4 md:px-6 py-3"
+        className="flex-shrink-0 px-4 md:px-6 py-3"
         style={{
           backgroundColor: "var(--platform-surface)",
           borderBottom: "1px solid var(--platform-border)",
         }}
       >
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
+        <div className="max-w-[1200px] mx-auto flex items-center justify-between">
           <button
             type="button"
             onClick={() => navigate("/admin/help-center/articles")}
@@ -383,378 +368,250 @@ export default function HelpCenterArticleEditor() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <form onSubmit={handleSubmit(onSubmit)} className="px-4 md:px-6 py-6">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* LEFT COLUMN - Content Editing */}
-            <div className="flex-1 lg:w-[65%]">
-              <div
-                className="rounded-lg p-5"
+      {/* MAIN CONTENT */}
+      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 px-4 md:px-6 py-5">
+        <div className="max-w-[1200px] mx-auto space-y-4">
+          {/* HEADER ROW - Title + Status */}
+          <div className="flex items-center gap-3">
+            <Input
+              {...register("title", { required: true })}
+              placeholder="Article title"
+              className="flex-1 text-[18px] font-medium h-11"
+              style={{
+                backgroundColor: "var(--platform-surface)",
+                borderColor: "var(--platform-border)",
+                color: "var(--platform-text)",
+              }}
+            />
+            <div className="flex items-center gap-2">
+              <span
+                className="inline-flex items-center px-2.5 py-1 rounded text-[10px] font-medium uppercase tracking-wide whitespace-nowrap"
                 style={{
-                  backgroundColor: "var(--platform-surface)",
-                  border: "1px solid var(--platform-border)",
+                  backgroundColor: published
+                    ? "rgba(34, 197, 94, 0.1)"
+                    : "rgba(156, 163, 175, 0.15)",
+                  color: published ? "#16a34a" : "var(--platform-text-muted)",
                 }}
               >
-                {/* Title */}
-                <div className="mb-4">
-                  <Label
-                    htmlFor="title"
-                    className="text-[11px] uppercase tracking-wider mb-1.5 block font-medium"
-                    style={{ color: "var(--platform-text-muted)" }}
-                  >
-                    Title
-                  </Label>
-                  <Input
-                    id="title"
-                    {...register("title", { required: true })}
-                    placeholder="Article title"
-                    className="text-[15px] font-medium"
-                    style={{
-                      backgroundColor: "var(--platform-canvas)",
-                      borderColor: "var(--platform-border)",
-                      color: "var(--platform-text)",
-                    }}
-                  />
-                </div>
+                {published ? "Published" : "Draft"}
+              </span>
+              <Switch
+                checked={published}
+                onCheckedChange={(v) => setValue("published", v)}
+                className="scale-90"
+              />
+            </div>
+          </div>
 
-                {/* Slug */}
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <Label
-                      htmlFor="slug"
-                      className="text-[11px] uppercase tracking-wider font-medium"
-                      style={{ color: "var(--platform-text-muted)" }}
-                    >
-                      Slug
-                    </Label>
-                    {!slugEditable && !isEditing && (
-                      <button
-                        type="button"
-                        onClick={() => setSlugEditable(true)}
-                        className="flex items-center gap-1 text-[11px] hover:opacity-70 transition-opacity"
-                        style={{ color: "var(--platform-accent)" }}
-                      >
-                        <Pencil className="h-3 w-3" />
-                        Edit
-                      </button>
-                    )}
-                  </div>
-                  <Input
-                    id="slug"
-                    {...register("slug", { required: true })}
-                    placeholder="article-slug"
-                    disabled={!slugEditable && !isEditing}
-                    style={{
-                      backgroundColor: slugEditable || isEditing ? "var(--platform-canvas)" : "var(--platform-border-subtle)",
-                      borderColor: "var(--platform-border)",
-                      color: "var(--platform-text)",
-                      opacity: slugEditable || isEditing ? 1 : 0.7,
-                    }}
-                  />
-                  {!slugEditable && !isEditing && (
-                    <p
-                      className="text-[11px] mt-1"
-                      style={{ color: "var(--platform-text-muted)" }}
-                    >
-                      Auto-generated from title
-                    </p>
-                  )}
-                </div>
-
-                {/* Meta Description */}
-                <div className="mb-4">
-                  <Label
-                    htmlFor="meta_description"
-                    className="text-[11px] uppercase tracking-wider mb-1.5 block font-medium"
-                    style={{ color: "var(--platform-text-muted)" }}
-                  >
-                    Meta Description
-                  </Label>
-                  <Textarea
-                    id="meta_description"
-                    {...register("meta_description")}
-                    placeholder="Brief description for search results"
-                    rows={2}
-                    style={{
-                      backgroundColor: "var(--platform-canvas)",
-                      borderColor: "var(--platform-border)",
-                      color: "var(--platform-text)",
-                    }}
-                  />
-                </div>
-
-                {/* Separator on mobile */}
-                <div
-                  className="my-4 lg:hidden"
-                  style={{ borderTop: "1px solid var(--platform-border)" }}
+          {/* SLUG ROW - Compact inline */}
+          <div
+            className="flex items-center gap-2 px-3 py-2 rounded"
+            style={{
+              backgroundColor: "var(--platform-surface)",
+              border: "1px solid var(--platform-border)",
+            }}
+          >
+            <span
+              className="text-[12px] font-medium shrink-0"
+              style={{ color: "var(--platform-text-muted)" }}
+            >
+              URL:
+            </span>
+            <span
+              className="text-[12px]"
+              style={{ color: "var(--platform-text-muted)" }}
+            >
+              /help/{selectedAudience?.slug || "[audience]"}/articles/
+            </span>
+            {slugEditing ? (
+              <div className="flex items-center gap-1 flex-1">
+                <Input
+                  value={tempSlug}
+                  onChange={(e) => setTempSlug(e.target.value)}
+                  className="h-7 text-[12px] flex-1 max-w-[200px]"
+                  style={{
+                    backgroundColor: "var(--platform-canvas)",
+                    borderColor: "var(--platform-border)",
+                    color: "var(--platform-text)",
+                  }}
+                  autoFocus
                 />
-
-                {/* Content */}
-                <div>
-                  <Label
-                    htmlFor="body"
-                    className="text-[11px] uppercase tracking-wider mb-1.5 block font-medium"
-                    style={{ color: "var(--platform-text-muted)" }}
-                  >
-                    Content
-                  </Label>
-                  <Textarea
-                    id="body"
-                    {...register("body", { required: true })}
-                    placeholder="Article content (supports Markdown)"
-                    rows={18}
-                    className="font-mono text-[13px]"
-                    style={{
-                      backgroundColor: "var(--platform-canvas)",
-                      borderColor: "var(--platform-border)",
-                      color: "var(--platform-text)",
-                      minHeight: "360px",
-                    }}
-                  />
-                </div>
+                <button
+                  type="button"
+                  onClick={confirmSlugEdit}
+                  className="p-1 rounded hover:bg-[var(--platform-border)]"
+                  style={{ color: "#16a34a" }}
+                >
+                  <Check className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={cancelSlugEdit}
+                  className="p-1 rounded hover:bg-[var(--platform-border)]"
+                  style={{ color: "var(--platform-text-muted)" }}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
               </div>
+            ) : (
+              <div className="flex items-center gap-1.5 flex-1">
+                <span
+                  className="text-[12px] font-medium"
+                  style={{ color: "var(--platform-text)" }}
+                >
+                  {slug || "article-slug"}
+                </span>
+                <button
+                  type="button"
+                  onClick={startSlugEdit}
+                  className="p-0.5 rounded hover:bg-[var(--platform-border)]"
+                  style={{ color: "var(--platform-text-muted)" }}
+                >
+                  <Pencil className="h-3 w-3" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* PUBLISHING SETTINGS - Horizontal compact row */}
+          <div
+            className="flex flex-col md:flex-row items-stretch md:items-end gap-3 px-4 py-3 rounded"
+            style={{
+              backgroundColor: "rgba(0, 0, 0, 0.02)",
+              border: "1px solid var(--platform-border)",
+            }}
+          >
+            <div className="flex-1">
+              <Label
+                className="text-[10px] uppercase tracking-wider mb-1 block font-medium"
+                style={{ color: "var(--platform-text-muted)" }}
+              >
+                Audience
+              </Label>
+              <Select
+                value={selectedAudienceId}
+                onValueChange={(v) => {
+                  setSelectedAudienceId(v);
+                  setSelectedCategoryId("");
+                }}
+              >
+                <SelectTrigger
+                  className="w-full h-9"
+                  style={{
+                    backgroundColor: "var(--platform-surface)",
+                    borderColor: "var(--platform-border)",
+                    color: "var(--platform-text)",
+                  }}
+                >
+                  <SelectValue placeholder="Select audience" />
+                </SelectTrigger>
+                <SelectContent>
+                  {audiences.map((a) => (
+                    <SelectItem key={a.id} value={a.id}>
+                      {a.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            {/* RIGHT COLUMN - Metadata Sidebar */}
-            <div className="lg:w-[35%]">
-              <div className="lg:sticky lg:top-20 space-y-4">
-                {/* Publishing Settings Card */}
+            <div className="flex-1">
+              <Label
+                className="text-[10px] uppercase tracking-wider mb-1 block font-medium"
+                style={{ color: "var(--platform-text-muted)" }}
+              >
+                Category
+              </Label>
+              {selectedAudienceId && audienceCategories.length === 0 ? (
                 <div
-                  className="rounded-lg"
+                  className="text-[12px] h-9 flex items-center px-3 rounded"
                   style={{
                     backgroundColor: "var(--platform-surface)",
                     border: "1px solid var(--platform-border)",
+                    color: "var(--platform-text-muted)",
                   }}
                 >
-                  {/* Header with Status */}
-                  <div
-                    className="px-4 py-3 flex items-center justify-between"
-                    style={{ borderBottom: "1px solid var(--platform-border)" }}
+                  None available.{" "}
+                  <Link
+                    to="/help/categories"
+                    className="ml-1 hover:underline"
+                    style={{ color: "var(--platform-accent)" }}
                   >
-                    <h3
-                      className="text-[12px] uppercase tracking-wider font-medium"
-                      style={{ color: "var(--platform-text-muted)" }}
-                    >
-                      Publishing
-                    </h3>
-                    <span
-                      className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide"
-                      style={{
-                        backgroundColor: published
-                          ? "rgba(34, 197, 94, 0.1)"
-                          : "rgba(156, 163, 175, 0.15)",
-                        color: published ? "#16a34a" : "var(--platform-text-muted)",
-                      }}
-                    >
-                      {published ? "Published" : "Draft"}
-                    </span>
-                  </div>
-
-                  <div className="p-4 space-y-4">
-                    {/* Audience */}
-                    <div>
-                      <Label
-                        htmlFor="audience"
-                        className="text-[11px] uppercase tracking-wider mb-1.5 block font-medium"
-                        style={{ color: "var(--platform-text-muted)" }}
-                      >
-                        Audience
-                      </Label>
-                      <Select
-                        value={selectedAudienceId}
-                        onValueChange={(v) => {
-                          setSelectedAudienceId(v);
-                          setSelectedCategoryId("");
-                        }}
-                      >
-                        <SelectTrigger
-                          className="w-full h-9"
-                          style={{
-                            backgroundColor: "var(--platform-canvas)",
-                            borderColor: "var(--platform-border)",
-                            color: "var(--platform-text)",
-                          }}
-                        >
-                          <SelectValue placeholder="Select audience" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {audiences.map((a) => (
-                            <SelectItem key={a.id} value={a.id}>
-                              {a.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Category */}
-                    <div>
-                      <Label
-                        htmlFor="audienceCategory"
-                        className="text-[11px] uppercase tracking-wider mb-1.5 block font-medium"
-                        style={{ color: "var(--platform-text-muted)" }}
-                      >
-                        Category
-                      </Label>
-                      {selectedAudienceId && audienceCategories.length === 0 ? (
-                        <div
-                          className="text-[12px] py-2 px-3 rounded"
-                          style={{
-                            backgroundColor: "var(--platform-canvas)",
-                            border: "1px solid var(--platform-border)",
-                            color: "var(--platform-text-muted)",
-                          }}
-                        >
-                          No categories available.{" "}
-                          <Link
-                            to="/help/categories"
-                            className="hover:underline"
-                            style={{ color: "var(--platform-accent)" }}
-                          >
-                            Create one →
-                          </Link>
-                        </div>
-                      ) : (
-                        <Select
-                          value={selectedCategoryId}
-                          onValueChange={setSelectedCategoryId}
-                          disabled={!selectedAudienceId}
-                        >
-                          <SelectTrigger
-                            className="w-full h-9"
-                            style={{
-                              backgroundColor: "var(--platform-canvas)",
-                              borderColor: "var(--platform-border)",
-                              color: !selectedAudienceId
-                                ? "var(--platform-text-muted)"
-                                : "var(--platform-text)",
-                            }}
-                          >
-                            <SelectValue
-                              placeholder={
-                                !selectedAudienceId
-                                  ? "Select audience first"
-                                  : "Select category"
-                              }
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {audienceCategories.map((c) => (
-                              <SelectItem key={c.id} value={c.id}>
-                                {c.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    </div>
-
-                    {/* Display Order */}
-                    <div>
-                      <Label
-                        htmlFor="displayOrder"
-                        className="text-[11px] uppercase tracking-wider mb-1.5 block font-medium"
-                        style={{ color: "var(--platform-text-muted)" }}
-                      >
-                        Display Order
-                      </Label>
-                      <Input
-                        id="displayOrder"
-                        type="number"
-                        min={0}
-                        value={displayOrder}
-                        onChange={(e) => setDisplayOrder(parseInt(e.target.value) || 0)}
-                        className="w-20 h-9"
-                        style={{
-                          backgroundColor: "var(--platform-canvas)",
-                          borderColor: "var(--platform-border)",
-                          color: "var(--platform-text)",
-                        }}
-                      />
-                    </div>
-
-                    {/* Status Toggle */}
-                    <div
-                      className="pt-3"
-                      style={{ borderTop: "1px solid var(--platform-border)" }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label
-                            htmlFor="published"
-                            className="text-[13px] font-medium block"
-                            style={{ color: "var(--platform-text)" }}
-                          >
-                            Publish Article
-                          </Label>
-                          <p
-                            className="text-[11px]"
-                            style={{ color: "var(--platform-text-muted)" }}
-                          >
-                            Make visible in Help Center
-                          </p>
-                        </div>
-                        <Switch
-                          id="published"
-                          checked={published}
-                          onCheckedChange={(v) => setValue("published", v)}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                    Create →
+                  </Link>
                 </div>
-
-                {/* Article Info Card */}
-                {isEditing && (
-                  <div
-                    className="rounded-lg p-4"
+              ) : (
+                <Select
+                  value={selectedCategoryId}
+                  onValueChange={setSelectedCategoryId}
+                  disabled={!selectedAudienceId}
+                >
+                  <SelectTrigger
+                    className="w-full h-9"
                     style={{
                       backgroundColor: "var(--platform-surface)",
-                      border: "1px solid var(--platform-border)",
+                      borderColor: "var(--platform-border)",
+                      color: !selectedAudienceId
+                        ? "var(--platform-text-muted)"
+                        : "var(--platform-text)",
                     }}
                   >
-                    <h3
-                      className="text-[11px] uppercase tracking-wider font-medium mb-3"
-                      style={{ color: "var(--platform-text-muted)" }}
-                    >
-                      Article Info
-                    </h3>
-
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span
-                          className="text-[12px]"
-                          style={{ color: "var(--platform-text-muted)" }}
-                        >
-                          Created
-                        </span>
-                        <span
-                          className="text-[12px]"
-                          style={{ color: "var(--platform-text)" }}
-                        >
-                          {formatDate(articleMeta.created_at)}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span
-                          className="text-[12px]"
-                          style={{ color: "var(--platform-text-muted)" }}
-                        >
-                          Updated
-                        </span>
-                        <span
-                          className="text-[12px]"
-                          style={{ color: "var(--platform-text)" }}
-                        >
-                          {formatDate(articleMeta.updated_at)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
+                    <SelectValue
+                      placeholder={!selectedAudienceId ? "Select audience first" : "Select category"}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {audienceCategories.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
+
+            <div className="w-full md:w-24">
+              <Label
+                className="text-[10px] uppercase tracking-wider mb-1 block font-medium"
+                style={{ color: "var(--platform-text-muted)" }}
+              >
+                Order
+              </Label>
+              <Input
+                type="number"
+                min={0}
+                value={displayOrder}
+                onChange={(e) => setDisplayOrder(parseInt(e.target.value) || 0)}
+                className="w-full h-9"
+                style={{
+                  backgroundColor: "var(--platform-surface)",
+                  borderColor: "var(--platform-border)",
+                  color: "var(--platform-text)",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* CONTENT - Main editor */}
+          <div className="flex-1">
+            <Label
+              className="text-[10px] uppercase tracking-wider mb-1.5 block font-medium"
+              style={{ color: "var(--platform-text-muted)" }}
+            >
+              Content
+            </Label>
+            <Textarea
+              {...register("body", { required: true })}
+              placeholder="Article content (supports Markdown)"
+              className="font-mono text-[13px] w-full"
+              style={{
+                backgroundColor: "var(--platform-surface)",
+                borderColor: "var(--platform-border)",
+                color: "var(--platform-text)",
+                minHeight: "calc(100vh - 380px)",
+              }}
+            />
           </div>
         </div>
       </form>
