@@ -93,7 +93,6 @@ import {
   HelpArticlesListPage,
   HelpArticleEditorPage as HelpWorkstationArticleEditorPage,
   HelpCategoriesPage as HelpWorkstationCategoriesPage,
-  HelpMessagesPage,
   HelpAnalyticsPage,
   HelpSettingsPage,
 } from "@/pages/help-workstation";
@@ -364,8 +363,6 @@ const App = () => (
           <Route path="articles" element={<HelpArticlesListPage />} />
           <Route path="articles/new" element={<HelpWorkstationArticleEditorPage />} />
           <Route path="articles/:id" element={<HelpWorkstationArticleEditorPage />} />
-          
-          <Route path="messages" element={<HelpMessagesPage />} />
           <Route path="analytics" element={<HelpAnalyticsPage />} />
           <Route path="settings" element={<HelpSettingsPage />} />
         </Route>
