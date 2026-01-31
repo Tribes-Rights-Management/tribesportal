@@ -1,10 +1,34 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, AlertCircle, RefreshCw, ChevronUp, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { useHelpManagement, HelpArticle, HelpArticleStatus } from "@/hooks/useHelpManagement";
+import { useArticleOrderByCategory } from "@/hooks/useArticleOrderByCategory";
 import { useDebounce } from "@/hooks/useDebounce";
 import { AppButton, AppChip, AppSearchInput, AppSelect } from "@/components/app-ui";
+import { SortableArticleCard } from "@/components/help/SortableArticleCard";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 /**
  * HELP ARTICLES LIST — INSTITUTIONAL DESIGN
@@ -22,6 +46,7 @@ const PAGE_SIZE = 20;
 
 type SortField = "title" | "updated_at";
 type SortOrder = "asc" | "desc";
+type ViewMode = "all" | "byCategory";
 
 export default function HelpArticlesListPage() {
   const navigate = useNavigate();
@@ -33,7 +58,20 @@ export default function HelpArticlesListPage() {
     articlesLoading,
     articlesError,
     fetchArticles,
+    categories,
+    fetchCategories,
   } = useHelpManagement();
+
+  const {
+    articles: orderedArticles,
+    loading: orderLoading,
+    fetchArticlesForCategory,
+    updatePositions,
+  } = useArticleOrderByCategory();
+
+  // View mode and category filter
+  const [viewMode, setViewMode] = useState<ViewMode>("all");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
 
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const debouncedSearch = useDebounce(searchQuery, 300);
@@ -42,9 +80,34 @@ export default function HelpArticlesListPage() {
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [currentPage, setCurrentPage] = useState(1);
 
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const selectedCategory = categories.find(c => c.id === selectedCategoryId);
+
   useEffect(() => {
     fetchArticles();
-  }, [fetchArticles]);
+    fetchCategories();
+  }, [fetchArticles, fetchCategories]);
+
+  // Set default category when categories load and switching to byCategory view
+  useEffect(() => {
+    if (viewMode === "byCategory" && !selectedCategoryId && categories.length > 0) {
+      setSelectedCategoryId(categories[0].id);
+    }
+  }, [viewMode, selectedCategoryId, categories]);
+
+  // Load articles when category filter changes
+  useEffect(() => {
+    if (viewMode === "byCategory" && selectedCategoryId) {
+      fetchArticlesForCategory(selectedCategoryId);
+    }
+  }, [viewMode, selectedCategoryId, fetchArticlesForCategory]);
 
   // Filter and sort articles
   const filteredArticles = useMemo(() => {
@@ -104,6 +167,25 @@ export default function HelpArticlesListPage() {
     }
   };
 
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode);
+    if (mode === "byCategory" && categories.length > 0 && !selectedCategoryId) {
+      setSelectedCategoryId(categories[0].id);
+    }
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id && selectedCategoryId) {
+      const oldIndex = orderedArticles.findIndex(a => a.id === active.id);
+      const newIndex = orderedArticles.findIndex(a => a.id === over.id);
+
+      const reordered = arrayMove(orderedArticles, oldIndex, newIndex);
+      await updatePositions(selectedCategoryId, reordered);
+    }
+  };
+
   const getStatusChip = (status: HelpArticleStatus) => {
     switch (status) {
       case "published":
@@ -117,19 +199,27 @@ export default function HelpArticlesListPage() {
     }
   };
 
+  const isLoading = articlesLoading || (viewMode === "byCategory" && orderLoading);
+  const linkedArticleCount = viewMode === "byCategory" ? orderedArticles.length : filteredArticles.length;
+
   return (
     <div className="flex-1 p-8">
       {/* Header */}
-      <div className="flex items-start justify-between mb-8">
+      <div className="flex items-start justify-between mb-6">
         <div>
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
             HELP WORKSTATION
           </p>
           <h1 className="text-[20px] font-medium text-foreground mb-1">Articles</h1>
-          <p className="text-[13px] text-muted-foreground">{filteredArticles.length} articles</p>
+          <p className="text-[13px] text-muted-foreground">
+            {viewMode === "byCategory" && selectedCategory
+              ? `${linkedArticleCount} articles in ${selectedCategory.name}`
+              : `${filteredArticles.length} articles`
+            }
+          </p>
         </div>
-        <AppButton intent="secondary" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
-          <Plus className="h-4 w-4 mr-2" />
+        <AppButton intent="primary" size="sm" onClick={() => navigate("/help-workstation/articles/new")}>
+          <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
           New Article
         </AppButton>
       </div>
@@ -153,21 +243,115 @@ export default function HelpArticlesListPage() {
         </div>
       )}
 
-      {/* Filters */}
-      <div className="flex items-center gap-4 mb-6">
-        <AppSearchInput
-          value={searchQuery}
-          onChange={(v) => { setSearchQuery(v); setCurrentPage(1); }}
-          placeholder="Search articles..."
-          className="flex-1 max-w-sm"
-        />
-        <AppSelect
-          value={statusFilter}
-          onChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}
-          options={STATUS_OPTIONS}
-        />
+      {/* View Toggle */}
+      <div className="flex items-center gap-4 mt-4 mb-4">
+        <span className="text-[12px] text-muted-foreground">View:</span>
+        
+        <label className="flex items-center gap-1.5 cursor-pointer">
+          <input
+            type="radio"
+            name="viewMode"
+            checked={viewMode === "all"}
+            onChange={() => handleViewModeChange("all")}
+            className="w-3.5 h-3.5"
+          />
+          <span className="text-[13px] text-foreground">All Articles</span>
+        </label>
+
+        <label className="flex items-center gap-1.5 cursor-pointer">
+          <input
+            type="radio"
+            name="viewMode"
+            checked={viewMode === "byCategory"}
+            onChange={() => handleViewModeChange("byCategory")}
+            className="w-3.5 h-3.5"
+          />
+          <span className="text-[13px] text-foreground">By Category:</span>
+        </label>
+
+        <Select
+          value={selectedCategoryId}
+          onValueChange={setSelectedCategoryId}
+          disabled={viewMode !== "byCategory"}
+        >
+          <SelectTrigger
+            className={
+              "h-10 w-[200px] text-sm border-border bg-transparent focus:ring-2 focus:ring-muted-foreground/20 focus:ring-offset-0 disabled:opacity-40"
+            }
+          >
+            <SelectValue placeholder="Select category..." />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map((category) => (
+              <SelectItem 
+                key={category.id} 
+                value={category.id}
+                className="text-sm"
+              >
+                {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
+      {/* Filters (only shown in All Articles view) */}
+      {viewMode === "all" && (
+        <div className="flex items-center gap-4 mb-6">
+          <AppSearchInput
+            value={searchQuery}
+            onChange={(v) => { setSearchQuery(v); setCurrentPage(1); }}
+            placeholder="Search articles..."
+            className="flex-1 max-w-sm"
+          />
+          <AppSelect
+            value={statusFilter}
+            onChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}
+            options={STATUS_OPTIONS}
+          />
+        </div>
+      )}
+
+      {/* Content */}
+      {isLoading ? (
+        <div className="text-center py-20">
+          <p className="text-[13px] text-muted-foreground">Loading articles...</p>
+        </div>
+      ) : viewMode === "byCategory" ? (
+        /* By Category View - Sortable Cards */
+        orderedArticles.length === 0 ? (
+          <div className="text-center py-20 bg-card border border-border rounded">
+            <p className="text-[13px] text-muted-foreground">
+              No articles in {selectedCategory?.name || "this category"} yet.
+            </p>
+            <p className="text-[12px] text-muted-foreground mt-1">
+              Create an article and assign it to this category.
+            </p>
+          </div>
+        ) : (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={orderedArticles.map(a => a.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {orderedArticles.map((article, index) => (
+                <SortableArticleCard
+                  key={article.id}
+                  article={article}
+                  index={index}
+                  onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+        )
+      ) : (
+        /* All Articles View - Table */
+        <>
       {/* Table */}
       <div className="bg-card border border-border rounded">
         <table className="w-full">
@@ -264,6 +448,8 @@ export default function HelpArticlesListPage() {
             </AppButton>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );
