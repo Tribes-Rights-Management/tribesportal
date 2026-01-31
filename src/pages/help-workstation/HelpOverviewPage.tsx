@@ -217,7 +217,15 @@ export default function HelpOverviewPage() {
         </AppListCard>
 
         {/* Drafts to Review */}
-        <AppListCard title="Drafts to Review" className="h-full">
+        <AppListCard
+          title="Drafts to Review"
+          className="h-full"
+          action={
+            <AppListAction onClick={() => navigate("/help/articles?status=draft")}>
+              View all
+            </AppListAction>
+          }
+        >
           {draftsToReview.length === 0 ? (
             <AppEmptyState
               icon="file"
