@@ -102,7 +102,7 @@ export function AppPanel({
         className={cn(
           "fixed inset-y-0 right-0 z-50",
           "flex flex-col",
-          "bg-card border-l border-border shadow-2xl",
+          "bg-card border-l border-border rounded-l-lg shadow-2xl",
           "animate-in slide-in-from-right duration-300",
           widthClasses[width]
         )}
@@ -111,7 +111,7 @@ export function AppPanel({
         aria-labelledby="panel-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border/60">
+        <div className="flex items-center justify-between p-4 border-b border-border/60">
           <div>
             <h2
               id="panel-title"
@@ -135,13 +135,13 @@ export function AppPanel({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-5 py-4">
+        <div className="flex-1 overflow-y-auto p-4">
           {children}
         </div>
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-border/60">
+          <div className="flex items-center justify-end gap-2 p-4 border-t border-border/60">
             {footer}
           </div>
         )}

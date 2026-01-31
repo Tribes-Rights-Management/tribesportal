@@ -66,10 +66,10 @@ export function AppStatCard({
       tabIndex={isClickable ? 0 : undefined}
       onKeyDown={isClickable ? (e) => e.key === "Enter" && onClick?.() : undefined}
     >
-      <p className="text-2xs uppercase tracking-wider font-medium text-muted-foreground mb-1.5">
+      <p className="text-xs uppercase tracking-wider font-medium text-muted-foreground mb-1.5">
         {label}
       </p>
-      <p className="text-2xl font-semibold text-foreground leading-none">
+      <p className="text-3xl font-semibold text-foreground leading-none">
         {loading ? "—" : value}
       </p>
       {subtitle && (

@@ -49,7 +49,7 @@ export function AppListCard({
   return (
     <div
       className={cn(
-        "bg-card border border-border rounded-[var(--surface-radius)]",
+        "bg-card border border-border/60 rounded-lg",
         "overflow-hidden flex flex-col",
         className
       )}
