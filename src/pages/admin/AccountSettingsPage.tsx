@@ -1,5 +1,3 @@
-import { Monitor, Clock } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   AppPageContainer,
@@ -78,35 +76,16 @@ export default function AccountSettingsPage() {
         description="Authentication and session management"
         className="mb-4 md:mb-6"
       >
-        <div className="px-4 py-4 space-y-4">
-          <div className="flex items-start gap-3">
-            <div className="h-8 w-8 rounded flex items-center justify-center shrink-0 mt-0.5 bg-muted/50">
-              <Monitor className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-medium text-foreground">
-                Authentication method
-              </p>
-              <p className="text-[13px] mt-0.5 text-muted-foreground">
-                Magic Link (email verification)
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <div className="h-8 w-8 rounded flex items-center justify-center shrink-0 mt-0.5 bg-muted/50">
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-medium text-foreground">
-                Session status
-              </p>
-              <p className="text-[13px] mt-0.5 text-muted-foreground">
-                Active session on this device
-              </p>
-            </div>
-          </div>
-        </div>
+        <AppDetailRow
+          label="Authentication method"
+          value="Magic Link (email verification)"
+          variant="readonly"
+        />
+        <AppDetailRow
+          label="Session status"
+          value="Active session on this device"
+          variant="readonly"
+        />
       </AppSettingsCard>
 
       {/* Preferences */}
