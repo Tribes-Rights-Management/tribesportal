@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus } from "lucide-react";
+import { Plus, TrendingUp } from "lucide-react";
 import { format } from "date-fns";
 
 // Import from unified app-ui kit
@@ -37,7 +37,15 @@ interface RecentArticle {
   slug: string;
   status: string;
   updated_at: string;
+  view_count?: number;
 }
+
+const formatViewCount = (count: number) => {
+  if (count >= 1000) {
+    return `${(count / 1000).toFixed(1)}k`;
+  }
+  return count.toString();
+};
 
 export default function HelpOverviewPage() {
   const navigate = useNavigate();
@@ -45,7 +53,7 @@ export default function HelpOverviewPage() {
   const [articleStats, setArticleStats] = useState<ArticleStats>({ total: 0, published: 0, draft: 0 });
   const [categoryCount, setCategoryCount] = useState(0);
   const [audienceCount, setAudienceCount] = useState(0);
-  const [recentArticles, setRecentArticles] = useState<RecentArticle[]>([]);
+  const [topArticles, setTopArticles] = useState<RecentArticle[]>([]);
   const [draftsToReview, setDraftsToReview] = useState<RecentArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,19 +77,27 @@ export default function HelpOverviewPage() {
         const draft = articles.filter(a => a.status === "draft").length;
         setArticleStats({ total: articles.length, published, draft });
 
-        // Recent articles
-        const sorted = [...articles].sort((a, b) => 
-          new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime()
-        );
-        setRecentArticles(sorted.slice(0, 5).map(a => ({
+        // Top performing articles by view count
+        const { data: topData } = await supabase
+          .from("help_articles")
+          .select("id, title, slug, status, view_count, updated_at")
+          .eq("status", "published")
+          .order("view_count", { ascending: false })
+          .limit(5);
+
+        setTopArticles((topData || []).map(a => ({
           id: a.id,
           title: a.title,
           slug: a.slug,
           status: a.status,
           updated_at: a.updated_at || new Date().toISOString(),
+          view_count: a.view_count || 0,
         })));
 
         // Drafts
+        const sorted = [...articles].sort((a, b) => 
+          new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime()
+        );
         setDraftsToReview(
           sorted.filter(a => a.status === "draft").slice(0, 5).map(a => ({
             id: a.id,
@@ -172,27 +188,27 @@ export default function HelpOverviewPage() {
 
       {/* Recent Articles & Drafts */}
       <AppSectionGrid columns={2}>
-        {/* Recent Articles */}
+        {/* Top Performing Articles */}
         <AppListCard
-          title="Recent Articles"
+          title="Top Performing Articles"
           action={
             <AppListAction onClick={() => navigate("/help/articles")}>
               View all
             </AppListAction>
           }
         >
-          {recentArticles.length === 0 ? (
+          {topArticles.length === 0 ? (
             <AppEmptyState
-              icon="file"
-              message="No articles yet"
+              customIcon={<TrendingUp className="h-5 w-5" />}
+              message="No published articles yet"
               size="sm"
             />
           ) : (
-            recentArticles.map(article => (
+            topArticles.map(article => (
               <AppListRow
                 key={article.id}
                 title={article.title}
-                subtitle={format(new Date(article.updated_at), "MMM d, yyyy")}
+                subtitle={`${formatViewCount(article.view_count || 0)} views`}
                 onClick={() => navigate(`/help/articles/${article.id}`)}
               />
             ))
