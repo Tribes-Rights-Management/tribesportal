@@ -116,7 +116,7 @@ function AccountNav() {
 function AccountIndexList() {
   return (
     <div
-      className="rounded-lg overflow-hidden w-full max-w-full"
+      className="rounded-lg overflow-hidden w-full max-w-full min-w-0"
       style={{
         backgroundColor: "var(--card-bg)",
         border: "1px solid var(--border-subtle)",
@@ -126,7 +126,7 @@ function AccountIndexList() {
         <NavLink
           key={item.to}
           to={item.to}
-          className="flex items-center gap-3 px-4 py-4 transition-colors hover:bg-[var(--tribes-nav-hover)] active:bg-[var(--tribes-nav-active)] w-full min-w-0"
+          className="flex items-center gap-3 px-4 py-4 transition-colors hover:bg-[var(--tribes-nav-hover)] active:bg-[var(--tribes-nav-active)] w-full min-w-0 overflow-hidden"
           style={{
             borderBottom:
               index < accountNavItems.length - 1
@@ -143,7 +143,7 @@ function AccountIndexList() {
               style={{ color: "var(--tribes-fg-secondary)" }}
             />
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 overflow-hidden">
             <p
               className="text-[15px] font-medium truncate"
               style={{ color: "var(--tribes-fg)" }}
@@ -151,18 +151,14 @@ function AccountIndexList() {
               {item.label}
             </p>
             <p
-              className="text-[13px] mt-0.5 line-clamp-2"
-              style={{
-                color: "var(--tribes-fg-secondary)",
-                overflowWrap: "anywhere",
-                wordBreak: "break-word",
-              }}
+              className="text-[13px] mt-0.5 truncate"
+              style={{ color: "var(--tribes-fg-secondary)" }}
             >
               {item.description}
             </p>
           </div>
           <ChevronRight
-            className="h-5 w-5 shrink-0"
+            className="h-5 w-5 shrink-0 flex-none"
             style={{ color: "var(--tribes-fg-muted)" }}
           />
         </NavLink>
