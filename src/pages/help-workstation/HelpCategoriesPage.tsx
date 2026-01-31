@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Plus, Trash2, X, AlertCircle, RefreshCw, ChevronDown } from "lucide-react";
+import { Plus, Trash2, X, AlertCircle, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import {
   DndContext,
@@ -21,7 +21,7 @@ import { useCategoryAudiences } from "@/hooks/useCategoryAudiences";
 import { useCategoryOrderByAudience, CategoryWithPosition } from "@/hooks/useCategoryOrderByAudience";
 import { SortableCategoryCard } from "@/components/help/SortableCategoryCard";
 import { supabase } from "@/integrations/supabase/client";
-import { AppButton } from "@/components/app-ui";
+import { AppButton, AppSelect } from "@/components/app-ui";
 
 /**
  * HELP CATEGORIES PAGE — INSTITUTIONAL DESIGN
@@ -371,20 +371,14 @@ export default function HelpCategoriesPage() {
           <span className="text-[13px] text-foreground">By Audience:</span>
         </label>
 
-        <div className="relative">
-          <select
-            value={selectedAudienceId}
-            onChange={(e) => setSelectedAudienceId(e.target.value)}
-            disabled={viewMode !== 'byAudience'}
-            className="h-9 px-3 pr-8 text-[13px] bg-card border border-border rounded appearance-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-ring"
-          >
-            <option value="">Select audience...</option>
-            {activeAudiences.map(a => (
-              <option key={a.id} value={a.id}>{a.name}</option>
-            ))}
-          </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" strokeWidth={1.5} />
-        </div>
+        <AppSelect
+          value={selectedAudienceId}
+          onChange={setSelectedAudienceId}
+          disabled={viewMode !== 'byAudience'}
+          variant="compact"
+          placeholder="Select audience..."
+          options={activeAudiences.map(a => ({ value: a.id, label: a.name }))}
+        />
       </div>
 
       {/* Content */}

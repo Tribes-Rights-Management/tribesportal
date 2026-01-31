@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, AlertCircle, ChevronDown, Pencil, Check, X } from "lucide-react";
+import { ArrowLeft, AlertCircle, Pencil, Check, X } from "lucide-react";
 import { useHelpManagement, HelpArticle } from "@/hooks/useHelpManagement";
 import { useArticleAudience } from "@/hooks/useArticleAudience";
 import { useCategoriesByAudience, CategoryForAudience } from "@/hooks/useCategoriesByAudience";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
-import { AppButton, AppChip } from "@/components/app-ui";
+import { AppButton, AppChip, AppSelect } from "@/components/app-ui";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -344,21 +344,14 @@ export default function HelpArticleEditorPage() {
               <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
                 Audience
               </label>
-              <div className="relative">
-                <select
-                  value={selectedAudienceId}
-                  onChange={(e) => handleAudienceChange(e.target.value)}
-                  className="w-full h-9 px-3 pr-8 bg-card border border-border rounded text-[13px] text-foreground focus:outline-none focus:ring-1 focus:ring-ring appearance-none cursor-pointer"
-                >
-                  <option value="">Select audience</option>
-                  {activeAudiences.map(audience => (
-                    <option key={audience.id} value={audience.id}>
-                      {audience.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-              </div>
+              <AppSelect
+                value={selectedAudienceId}
+                onChange={handleAudienceChange}
+                variant="compact"
+                fullWidth
+                placeholder="Select audience"
+                options={activeAudiences.map(a => ({ value: a.id, label: a.name }))}
+              />
             </div>
 
             <div className="flex-1">
@@ -373,24 +366,15 @@ export default function HelpArticleEditorPage() {
                   </Link>
                 </div>
               ) : (
-                <div className="relative">
-                  <select
-                    value={selectedCategoryId}
-                    onChange={(e) => setSelectedCategoryId(e.target.value)}
-                    disabled={!selectedAudienceId}
-                    className="w-full h-9 px-3 pr-8 bg-card border border-border rounded text-[13px] text-foreground focus:outline-none focus:ring-1 focus:ring-ring appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <option value="">
-                      {selectedAudienceId ? "Select category" : "Select audience first"}
-                    </option>
-                    {categoriesForAudience.map(category => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                </div>
+                <AppSelect
+                  value={selectedCategoryId}
+                  onChange={setSelectedCategoryId}
+                  disabled={!selectedAudienceId}
+                  variant="compact"
+                  fullWidth
+                  placeholder={selectedAudienceId ? "Select category" : "Select audience first"}
+                  options={categoriesForAudience.map(c => ({ value: c.id, label: c.name }))}
+                />
               )}
             </div>
 
