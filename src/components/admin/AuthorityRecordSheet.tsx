@@ -3,10 +3,10 @@ import { ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { AppSheet, AppSheetBody } from "@/components/ui/app-sheet";
 import {
-  SettingsRow,
-  SettingsSectionCard,
-} from "@/components/ui/settings-row";
-import { AppButton } from "@/components/app-ui";
+  AppDetailRow,
+  AppSettingsCard,
+  AppButton,
+} from "@/components/app-ui";
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];
@@ -155,57 +155,38 @@ export function AuthorityRecordSheet({
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 1: USER IDENTITY SUMMARY
             ═══════════════════════════════════════════════════════════════════ */}
-        <SettingsSectionCard
+        <AppSettingsCard
           title="User Identity"
           description="Primary identification"
         >
-          <SettingsRow
+          <AppDetailRow
             label="Display Name"
             value={user.full_name || "—"}
             variant="readonly"
           />
-          <SettingsRow
+          <AppDetailRow
             label="Email"
             value={user.email}
             variant="copyable"
           />
-        </SettingsSectionCard>
+        </AppSettingsCard>
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 2: PLATFORM-LEVEL CAPABILITIES
             ═══════════════════════════════════════════════════════════════════ */}
-        <SettingsSectionCard
+        <AppSettingsCard
           title="Platform-Level Capabilities"
           description="System-wide authority derived from platform role"
         >
-          {/* Platform Role - pill display */}
-          <div 
-            className="px-4 py-4 sm:px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
-            style={{ borderBottom: '1px solid var(--platform-border)' }}
-          >
-            <span 
-              className="text-[13px]"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              Assigned Role
-            </span>
-            <span 
-              className="inline-flex items-center px-3 py-1.5 rounded-md text-[13px] font-medium self-start sm:self-auto"
-              style={{ 
-                backgroundColor: 'rgba(255,255,255,0.06)',
-                color: 'var(--platform-text)',
-              }}
-            >
-              {formatPlatformRole(user.platform_role)}
-            </span>
-          </div>
+          <AppDetailRow
+            label="Assigned Role"
+            value={formatPlatformRole(user.platform_role)}
+            variant="readonly"
+          />
 
           {/* Capabilities as wrapping chips */}
-          <div className="px-4 py-4 sm:px-6">
-            <span 
-              className="text-[11px] font-medium uppercase tracking-[0.04em] block mb-3"
-              style={{ color: 'var(--platform-text-muted)' }}
-            >
+          <div className="px-4 py-3">
+            <span className="text-xs font-medium uppercase tracking-wider block mb-2 text-muted-foreground">
               Granted Rights
             </span>
             <div className="flex flex-wrap gap-2">
@@ -214,17 +195,11 @@ export function AuthorityRecordSheet({
                 return (
                   <span
                     key={cap}
-                    className="px-2.5 py-1 text-[12px] rounded"
-                    style={{ 
-                      backgroundColor: isGranted 
-                        ? 'hsl(var(--border))' 
-                        : 'transparent',
-                      color: isGranted 
-                        ? 'var(--platform-text)' 
-                        : 'var(--platform-text-muted)',
-                      border: `1px solid ${isGranted ? 'hsl(var(--border))' : 'var(--platform-border)'}`,
-                      opacity: isGranted ? 1 : 0.5,
-                    }}
+                    className={`px-2.5 py-1 text-xs rounded border ${
+                      isGranted 
+                        ? 'bg-muted border-border text-foreground' 
+                        : 'bg-transparent border-border/40 text-muted-foreground/50'
+                    }`}
                   >
                     {cap}
                   </span>
@@ -232,7 +207,7 @@ export function AuthorityRecordSheet({
               })}
             </div>
           </div>
-        </SettingsSectionCard>
+        </AppSettingsCard>
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 3: ORGANIZATION-LEVEL CAPABILITIES
@@ -262,53 +237,22 @@ export function AuthorityRecordSheet({
               {activeMemberships.map((membership) => {
                 const tenantCaps = getTenantCapabilities(membership.role);
                 return (
-                  <SettingsSectionCard
+                  <AppSettingsCard
                     key={membership.id}
                     title={membership.tenant_name}
                     description={formatRole(membership.role)}
                   >
-                    {/* Context Scope */}
-                    <div 
-                      className="px-4 py-4 sm:px-6"
-                      style={{ borderBottom: '1px solid var(--platform-border)' }}
-                    >
-                      <span 
-                        className="text-[11px] font-medium uppercase tracking-[0.04em] block mb-2"
-                        style={{ color: 'var(--platform-text-muted)' }}
-                      >
-                        Context Scope
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {membership.allowed_contexts.length === 0 ? (
-                          <span 
-                            className="text-[12px]"
-                            style={{ color: 'var(--platform-text-muted)' }}
-                          >
-                            No contexts assigned
-                          </span>
-                        ) : (
-                          membership.allowed_contexts.map((ctx) => (
-                            <span
-                              key={ctx}
-                              className="inline-flex items-center px-2.5 py-1 rounded text-[11px]"
-                              style={{ 
-                                backgroundColor: 'rgba(255,255,255,0.06)',
-                                color: 'var(--platform-text)',
-                              }}
-                            >
-                              {ctx.charAt(0).toUpperCase() + ctx.slice(1)}
-                            </span>
-                          ))
-                        )}
-                      </div>
-                    </div>
+                    <AppDetailRow
+                      label="Context Scope"
+                      value={membership.allowed_contexts.length === 0 
+                        ? "No contexts assigned" 
+                        : membership.allowed_contexts.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(", ")}
+                      variant="readonly"
+                    />
 
                     {/* Granted Rights */}
-                    <div className="px-4 py-4 sm:px-6">
-                      <span 
-                        className="text-[11px] font-medium uppercase tracking-[0.04em] block mb-3"
-                        style={{ color: 'var(--platform-text-muted)' }}
-                      >
+                    <div className="px-4 py-3">
+                      <span className="text-xs font-medium uppercase tracking-wider block mb-2 text-muted-foreground">
                         Granted Rights
                       </span>
                       <div className="flex flex-wrap gap-2">
@@ -317,17 +261,11 @@ export function AuthorityRecordSheet({
                           return (
                             <span
                               key={`${membership.id}-${cap}`}
-                              className="px-2 py-0.5 text-[11px] rounded"
-                              style={{ 
-                                backgroundColor: isGranted 
-                                  ? 'rgba(255,255,255,0.06)' 
-                                  : 'transparent',
-                                color: isGranted 
-                                  ? 'var(--platform-text-secondary)' 
-                                  : 'var(--platform-text-muted)',
-                                border: `1px solid ${isGranted ? 'hsl(var(--border))' : 'var(--platform-border)'}`,
-                                opacity: isGranted ? 1 : 0.4,
-                              }}
+                              className={`px-2 py-0.5 text-xs rounded border ${
+                                isGranted 
+                                  ? 'bg-muted border-border text-foreground' 
+                                  : 'bg-transparent border-border/40 text-muted-foreground/40'
+                              }`}
                             >
                               {cap}
                             </span>
@@ -335,7 +273,7 @@ export function AuthorityRecordSheet({
                         })}
                       </div>
                     </div>
-                  </SettingsSectionCard>
+                  </AppSettingsCard>
                 );
               })}
             </div>
@@ -345,16 +283,16 @@ export function AuthorityRecordSheet({
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 4: AUDIT METADATA
             ═══════════════════════════════════════════════════════════════════ */}
-        <SettingsSectionCard
+        <AppSettingsCard
           title="Audit Metadata"
           description="Record creation and modification history"
         >
-          <SettingsRow
+          <AppDetailRow
             label="Record Created"
             value={formatDate(user.created_at)}
             variant="readonly"
           />
-        </SettingsSectionCard>
+        </AppSettingsCard>
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 5: GOVERNANCE NOTICE
