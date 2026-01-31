@@ -1,135 +1,118 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, FileText, TrendingUp, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { AppPageHeader } from "@/components/app-ui/AppPageHeader";
-import { AppButton } from "@/components/app-ui/AppButton";
-import { AppStatCard, AppStatCardGrid } from "@/components/app-ui/AppStatCard";
-import { AppListCard, AppListAction, AppListRow } from "@/components/app-ui/AppListCard";
-import { AppSectionGrid } from "@/components/app-ui/AppSectionGrid";
-import { AppAlert } from "@/components/app-ui/AppAlert";
+import { Plus } from "lucide-react";
+import { format } from "date-fns";
 
-interface Article {
+// Import from unified app-ui kit
+import {
+  AppButton,
+  AppPageHeader,
+  AppStatCard,
+  AppStatCardGrid,
+  AppListCard,
+  AppListRow,
+  AppListAction,
+  AppEmptyState,
+  AppAlert,
+  AppSectionGrid,
+} from "@/components/app-ui";
+
+/**
+ * HELP WORKSTATION OVERVIEW — UNIFIED DESIGN SYSTEM
+ * 
+ * Uses canonical app-ui components for consistency across the application.
+ * No hardcoded colors - all styling via CSS variables.
+ */
+
+interface ArticleStats {
+  total: number;
+  published: number;
+  draft: number;
+}
+
+interface RecentArticle {
   id: string;
   title: string;
+  slug: string;
   status: string;
-  view_count: number;
   updated_at: string;
-  category?: {
-    name: string;
-  };
 }
 
 export default function HelpOverviewPage() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
-  // Stats
-  const [articleStats, setArticleStats] = useState({ total: 0, published: 0, draft: 0 });
+
+  const [articleStats, setArticleStats] = useState<ArticleStats>({ total: 0, published: 0, draft: 0 });
   const [categoryCount, setCategoryCount] = useState(0);
   const [audienceCount, setAudienceCount] = useState(0);
-  
-  // Articles lists
-  const [topArticles, setTopArticles] = useState<Article[]>([]);
-  const [draftArticles, setDraftArticles] = useState<Article[]>([]);
+  const [recentArticles, setRecentArticles] = useState<RecentArticle[]>([]);
+  const [draftsToReview, setDraftsToReview] = useState<RecentArticle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadData();
+    loadStats();
   }, []);
 
-  const loadData = async () => {
-    setLoading(true);
-    setError(null);
-    
+  const loadStats = async () => {
     try {
-      // Article stats
-      const { data: articles, error: articlesError } = await supabase
+      setLoading(true);
+      setError(null);
+
+      // Fetch article stats
+      const { data: articles } = await supabase
         .from("help_articles")
-        .select("id, status");
-      
-      if (articlesError) throw articlesError;
-      
-      const total = articles?.length ?? 0;
-      const published = articles?.filter(a => a.status === "published").length ?? 0;
-      const draft = articles?.filter(a => a.status === "draft").length ?? 0;
-      setArticleStats({ total, published, draft });
+        .select("id, title, slug, status, updated_at");
+
+      if (articles) {
+        const published = articles.filter(a => a.status === "published").length;
+        const draft = articles.filter(a => a.status === "draft").length;
+        setArticleStats({ total: articles.length, published, draft });
+
+        // Recent articles
+        const sorted = [...articles].sort((a, b) => 
+          new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime()
+        );
+        setRecentArticles(sorted.slice(0, 5).map(a => ({
+          id: a.id,
+          title: a.title,
+          slug: a.slug,
+          status: a.status,
+          updated_at: a.updated_at || new Date().toISOString(),
+        })));
+
+        // Drafts
+        setDraftsToReview(
+          sorted.filter(a => a.status === "draft").slice(0, 5).map(a => ({
+            id: a.id,
+            title: a.title,
+            slug: a.slug,
+            status: a.status,
+            updated_at: a.updated_at || new Date().toISOString(),
+          }))
+        );
+      }
 
       // Category count
-      const { count: catCount, error: catError } = await supabase
+      const { count: catCount } = await supabase
         .from("help_categories")
         .select("*", { count: "exact", head: true });
-      
-      if (catError) throw catError;
       setCategoryCount(catCount ?? 0);
 
       // Audience count
-      const { count: audCount, error: audError } = await supabase
+      const { count: audCount } = await supabase
         .from("help_audiences")
         .select("*", { count: "exact", head: true });
-      
-      if (audError) throw audError;
       setAudienceCount(audCount ?? 0);
-
-      // Top performing articles (by view count)
-      const { data: topData, error: topError } = await supabase
-        .from("help_articles")
-        .select(`
-          id,
-          title,
-          status,
-          view_count,
-          updated_at
-        `)
-        .eq("status", "published")
-        .order("view_count", { ascending: false })
-        .limit(5);
-      
-      if (topError) throw topError;
-      setTopArticles((topData ?? []).map(a => ({
-        ...a,
-        category: undefined
-      })));
-
-      // Draft articles for review
-      const { data: draftData, error: draftError } = await supabase
-        .from("help_articles")
-        .select(`
-          id,
-          title,
-          status,
-          view_count,
-          updated_at
-        `)
-        .eq("status", "draft")
-        .order("updated_at", { ascending: false })
-        .limit(5);
-      
-      if (draftError) throw draftError;
-      setDraftArticles(draftData ?? []);
 
       setLoading(false);
     } catch (err) {
-      console.error("Error loading data:", err);
+      console.error("Error loading stats:", err);
       setError("Unable to load data");
       setLoading(false);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric"
-    });
-  };
-
-  const formatViewCount = (count: number) => {
-    if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}k`;
-    }
-    return count.toString();
-  };
 
   return (
     <div className="flex-1 p-6 md:p-8">
@@ -140,11 +123,11 @@ export default function HelpOverviewPage() {
         description="Manage Help Center content"
         action={
           <AppButton
-            variant="primary"
+            intent="secondary"
             size="sm"
-            onClick={() => navigate("/help-workstation/articles/new")}
+            onClick={() => navigate("/help/articles/new")}
           >
-            <Plus className="h-4 w-4" strokeWidth={1.5} />
+            <Plus className="h-4 w-4" />
             New Article
           </AppButton>
         }
@@ -156,12 +139,13 @@ export default function HelpOverviewPage() {
           <AppAlert
             variant="error"
             message={error}
-            onRetry={loadData}
+            onRetry={loadStats}
           />
         </div>
       )}
 
-      {/* Stats Cards - 3 columns now */}
+
+      {/* Stats Cards */}
       <div className="mb-8">
         <AppStatCardGrid columns={3}>
           <AppStatCard
@@ -169,81 +153,69 @@ export default function HelpOverviewPage() {
             value={articleStats.total}
             subtitle={`${articleStats.published} published, ${articleStats.draft} draft`}
             loading={loading}
-            onClick={() => navigate("/help-workstation/articles")}
+            onClick={() => navigate("/help/articles")}
           />
           <AppStatCard
             label="Categories"
             value={categoryCount}
             loading={loading}
-            onClick={() => navigate("/help-workstation/categories")}
+            onClick={() => navigate("/help/categories")}
           />
           <AppStatCard
             label="Audiences"
             value={audienceCount}
             loading={loading}
-            onClick={() => navigate("/help-workstation/audiences")}
+            onClick={() => navigate("/help/audiences")}
           />
         </AppStatCardGrid>
       </div>
 
-      {/* Top Articles & Drafts */}
+      {/* Recent Articles & Drafts */}
       <AppSectionGrid columns={2}>
-        {/* Top Performing Articles */}
+        {/* Recent Articles */}
         <AppListCard
-          title="Top Performing Articles"
+          title="Recent Articles"
           action={
-            <AppListAction onClick={() => navigate("/help-workstation/articles")}>
+            <AppListAction onClick={() => navigate("/help/articles")}>
               View all
             </AppListAction>
           }
         >
-          {topArticles.length === 0 ? (
-            <div className="py-8 text-center">
-              <TrendingUp className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" strokeWidth={1} />
-              <p className="text-[13px] text-muted-foreground">No published articles yet</p>
-            </div>
+          {recentArticles.length === 0 ? (
+            <AppEmptyState
+              icon="file"
+              message="No articles yet"
+              size="sm"
+            />
           ) : (
-            <div className="divide-y divide-border">
-              {topArticles.map((article) => (
-                <AppListRow
-                  key={article.id}
-                  title={article.title}
-                  subtitle={`${formatViewCount(article.view_count || 0)} views`}
-                  left={<Eye className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />}
-                  onClick={() => navigate(`/help/articles/${article.id}/edit`)}
-                  showChevron
-                />
-              ))}
-            </div>
+            recentArticles.map(article => (
+              <AppListRow
+                key={article.id}
+                title={article.title}
+                subtitle={format(new Date(article.updated_at), "MMM d, yyyy")}
+                onClick={() => navigate(`/help/articles/${article.id}`)}
+              />
+            ))
           )}
         </AppListCard>
 
         {/* Drafts to Review */}
-        <AppListCard
-          title="Drafts to Review"
-          action={
-            <AppListAction onClick={() => navigate("/help-workstation/articles?status=draft")}>
-              View all
-            </AppListAction>
-          }
-        >
-          {draftArticles.length === 0 ? (
-            <div className="py-8 text-center">
-              <FileText className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" strokeWidth={1} />
-              <p className="text-[13px] text-muted-foreground">No drafts</p>
-            </div>
+        <AppListCard title="Drafts to Review">
+          {draftsToReview.length === 0 ? (
+            <AppEmptyState
+              icon="file"
+              message="No drafts"
+              size="sm"
+            />
           ) : (
-            <div className="divide-y divide-border">
-              {draftArticles.map((article) => (
-                <AppListRow
-                  key={article.id}
-                  title={article.title}
-                  subtitle={`Updated ${formatDate(article.updated_at)}`}
-                  onClick={() => navigate(`/help/articles/${article.id}/edit`)}
-                  showChevron
-                />
-              ))}
-            </div>
+            draftsToReview.map(article => (
+              <AppListRow
+                key={article.id}
+                title={article.title}
+                subtitle={format(new Date(article.updated_at), "MMM d, yyyy")}
+                onClick={() => navigate(`/help/articles/${article.id}`)}
+              />
+            ))
           )}
         </AppListCard>
       </AppSectionGrid>
