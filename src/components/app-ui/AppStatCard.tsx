@@ -28,6 +28,8 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
+type StatCardSize = "sm" | "md" | "lg";
+
 interface AppStatCardProps {
   /** Label above the value */
   label: string;
@@ -35,6 +37,8 @@ interface AppStatCardProps {
   value: string | number;
   /** Optional subtitle below value */
   subtitle?: string;
+  /** Size variant */
+  size?: StatCardSize;
   /** Whether data is loading */
   loading?: boolean;
   /** Click handler (makes card interactive) */
@@ -43,21 +47,42 @@ interface AppStatCardProps {
   className?: string;
 }
 
+const sizeConfig: Record<StatCardSize, { padding: string; valueSize: string; labelSize: string }> = {
+  sm: {
+    padding: "p-3",
+    valueSize: "text-xl sm:text-2xl",
+    labelSize: "text-[10px]",
+  },
+  md: {
+    padding: "p-4",
+    valueSize: "text-2xl sm:text-3xl",
+    labelSize: "text-xs",
+  },
+  lg: {
+    padding: "p-5",
+    valueSize: "text-3xl sm:text-4xl",
+    labelSize: "text-xs",
+  },
+};
+
 export function AppStatCard({
   label,
   value,
   subtitle,
+  size = "md",
   loading = false,
   onClick,
   className,
 }: AppStatCardProps) {
   const isClickable = !!onClick;
+  const config = sizeConfig[size];
 
   return (
     <div
       onClick={onClick}
       className={cn(
-        "bg-card border border-border/60 rounded-lg p-4",
+        "bg-card border border-border/60 rounded-lg",
+        config.padding,
         "transition-colors duration-150",
         isClickable && "cursor-pointer hover:bg-accent/40",
         className
@@ -66,10 +91,10 @@ export function AppStatCard({
       tabIndex={isClickable ? 0 : undefined}
       onKeyDown={isClickable ? (e) => e.key === "Enter" && onClick?.() : undefined}
     >
-      <p className="text-xs uppercase tracking-wider font-medium text-muted-foreground mb-1.5">
+      <p className={cn(config.labelSize, "uppercase tracking-wider font-medium text-muted-foreground mb-1.5")}>
         {label}
       </p>
-      <p className="text-2xl sm:text-3xl font-semibold text-foreground leading-none">
+      <p className={cn(config.valueSize, "font-semibold text-foreground leading-none")}>
         {loading ? "—" : value}
       </p>
       {subtitle && (

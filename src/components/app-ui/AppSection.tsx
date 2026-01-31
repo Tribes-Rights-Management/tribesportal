@@ -37,7 +37,9 @@ interface AppSectionProps {
   /** Section content */
   children: React.ReactNode;
   /** Spacing variant */
-  spacing?: "sm" | "md" | "lg";
+  spacing?: "sm" | "md" | "lg" | "none";
+  /** Add dividers between direct children */
+  divided?: boolean;
   /** Additional className */
   className?: string;
 }
@@ -48,9 +50,11 @@ export function AppSection({
   action,
   children,
   spacing = "md",
+  divided = false,
   className,
 }: AppSectionProps) {
   const spacingClasses = {
+    none: "",
     sm: "mb-6",
     md: "mb-8",
     lg: "mb-12",
@@ -75,7 +79,9 @@ export function AppSection({
           {action && <div className="shrink-0">{action}</div>}
         </div>
       )}
-      {children}
+      <div className={cn(divided && "divide-y divide-border/60")}>
+        {children}
+      </div>
     </section>
   );
 }
