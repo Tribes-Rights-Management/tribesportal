@@ -4,11 +4,10 @@ import { format } from "date-fns";
 import { AppSheet, AppSheetBody } from "@/components/ui/app-sheet";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AuthorityRecordSheet } from "./AuthorityRecordSheet";
-import { CopyButton } from "@/components/ui/copy-button";
 import {
-  SettingsRow,
-  SettingsSectionCard,
-} from "@/components/ui/settings-row";
+  AppDetailRow,
+  AppSettingsCard,
+} from "@/components/app-ui";
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];
@@ -146,110 +145,62 @@ export function MemberDetailsSheet({
           {/* ═══════════════════════════════════════════════════════════════════
               SECTION 1: IDENTITY
               ═══════════════════════════════════════════════════════════════════ */}
-          <SettingsSectionCard
+          <AppSettingsCard
             title="Identity"
             description="Account identification and status"
           >
-            {/* Email with copy - uses canonical CopyButton */}
-            <div 
-              className="px-4 py-4 sm:px-6 flex items-center justify-between gap-2"
-              style={{ borderBottom: '1px solid var(--platform-border)' }}
-            >
-              <div className="min-w-0 flex-1">
-                <span 
-                  className="text-[12px] block mb-1"
-                  style={{ color: 'var(--platform-text-muted)' }}
-                >
-                  Email
-                </span>
-                <span 
-                  className="text-[14px] block whitespace-nowrap overflow-hidden text-ellipsis"
-                  style={{ color: 'var(--platform-text)' }}
-                  title={user.email}
-                >
+            {/* Email with copy */}
+            <AppDetailRow
+              label="Email"
+              value={
+                <>
                   {user.email}
                   {isCurrentUser && (
-                    <span 
-                      className="ml-2 text-[10px] uppercase tracking-wide"
-                      style={{ color: 'var(--platform-text-muted)' }}
-                    >
+                    <span className="ml-2 text-[10px] uppercase tracking-wide text-muted-foreground">
                       (you)
                     </span>
                   )}
-                </span>
-              </div>
-              <CopyButton value={user.email} size="md" label="Copy email address" />
-            </div>
+                </>
+              }
+              variant="copyable"
+            />
 
             {/* Account Created */}
-            <SettingsRow
+            <AppDetailRow
               label="Account Created"
               value={formatDate(user.created_at)}
               variant="readonly"
             />
 
-            {/* Account Status - pill display */}
-            <div 
-              className="px-4 py-4 sm:px-6 flex items-center justify-between gap-2"
-              style={{ borderBottom: '1px solid var(--platform-border)' }}
-            >
-              <span 
-                className="text-[13px]"
-                style={{ color: 'var(--platform-text-secondary)' }}
-              >
-                Account Status
-              </span>
-              <span 
-                className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
-                style={{ 
-                  backgroundColor: getStatusColorStyle(user.status).bg,
-                  color: getStatusColorStyle(user.status).text,
-                }}
-              >
-                {formatStatus(user.status)}
-              </span>
-            </div>
-          </SettingsSectionCard>
+            {/* Account Status */}
+            <AppDetailRow
+              label="Account Status"
+              value={formatStatus(user.status)}
+              variant="readonly"
+            />
+          </AppSettingsCard>
 
           {/* ═══════════════════════════════════════════════════════════════════
               SECTION 2: PLATFORM AUTHORITY
               ═══════════════════════════════════════════════════════════════════ */}
-          <SettingsSectionCard
+          <AppSettingsCard
             title="Platform Authority"
             description={isCurrentUser 
               ? "You cannot modify your own access" 
               : "Role determines system-wide authority level"}
           >
-            {/* Platform Role - pill display */}
-            <div 
-              className="px-4 py-4 sm:px-6 flex items-center justify-between gap-2"
-              style={{ borderBottom: '1px solid var(--platform-border)' }}
-            >
-              <span 
-                className="text-[13px]"
-                style={{ color: 'var(--platform-text-secondary)' }}
-              >
-                Platform Role
-              </span>
-              <span 
-                className="inline-flex items-center px-3 py-1.5 rounded-md text-[13px] font-medium"
-                style={{ 
-                  backgroundColor: 'rgba(255,255,255,0.06)',
-                  color: 'var(--platform-text)',
-                }}
-              >
-                {formatPlatformRole(user.platform_role)}
-              </span>
-            </div>
-
-            {/* View Authority Record */}
-            <SettingsRow
+            <AppDetailRow
+              label="Platform Role"
+              value={formatPlatformRole(user.platform_role)}
+              variant="readonly"
+            />
+            <AppDetailRow
               label="Authority & Permissions"
               value="View record"
               variant="select"
               onSelect={() => setAuthorityRecordOpen(true)}
             />
-          </SettingsSectionCard>
+          </AppSettingsCard>
 
           {/* ═══════════════════════════════════════════════════════════════════
               SECTION 3: ORGANIZATION MEMBERSHIPS
@@ -277,68 +228,24 @@ export function MemberDetailsSheet({
             ) : (
               <div className="space-y-3">
                 {user.memberships.map((membership) => (
-                  <SettingsSectionCard
+                  <AppSettingsCard
                     key={membership.id}
                     title={membership.tenant_name}
                     description={formatRole(membership.role)}
                   >
-                    {/* Context Access */}
-                    <div 
-                      className="px-4 py-3 sm:px-6"
-                      style={{ borderBottom: '1px solid var(--platform-border)' }}
-                    >
-                      <span 
-                        className="text-[11px] font-medium uppercase tracking-[0.04em] block mb-2"
-                        style={{ color: 'var(--platform-text-muted)' }}
-                      >
-                        Context Access
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {membership.allowed_contexts.length === 0 ? (
-                          <span 
-                            className="text-[12px]"
-                            style={{ color: 'var(--platform-text-muted)' }}
-                          >
-                            None
-                          </span>
-                        ) : (
-                          membership.allowed_contexts.map((ctx) => (
-                            <span
-                              key={ctx}
-                              className="inline-flex items-center px-2 py-0.5 rounded text-[11px]"
-                              style={{ 
-                                backgroundColor: 'rgba(255,255,255,0.06)',
-                                color: 'var(--platform-text-secondary)',
-                              }}
-                            >
-                              {ctx.charAt(0).toUpperCase() + ctx.slice(1)}
-                            </span>
-                          ))
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Membership Status */}
-                    <div 
-                      className="px-4 py-3 sm:px-6 flex items-center justify-between gap-2"
-                    >
-                      <span 
-                        className="text-[12px]"
-                        style={{ color: 'var(--platform-text-muted)' }}
-                      >
-                        Status
-                      </span>
-                      <span 
-                        className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium"
-                        style={{ 
-                          backgroundColor: getStatusColorStyle(membership.status).bg,
-                          color: getStatusColorStyle(membership.status).text,
-                        }}
-                      >
-                        {formatStatus(membership.status)}
-                      </span>
-                    </div>
-                  </SettingsSectionCard>
+                    <AppDetailRow
+                      label="Context Access"
+                      value={membership.allowed_contexts.length === 0 
+                        ? "None" 
+                        : membership.allowed_contexts.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(", ")}
+                      variant="readonly"
+                    />
+                    <AppDetailRow
+                      label="Status"
+                      value={formatStatus(membership.status)}
+                      variant="readonly"
+                    />
+                  </AppSettingsCard>
                 ))}
               </div>
             )}
@@ -364,16 +271,16 @@ export function MemberDetailsSheet({
               </button>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <SettingsSectionCard
+              <AppSettingsCard
                 title="Audit Metadata"
                 description="Authority changes are logged and timestamped"
               >
-                <SettingsRow
+                <AppDetailRow
                   label="Record Created"
                   value={formatDate(user.created_at)}
                   variant="readonly"
                 />
-              </SettingsSectionCard>
+              </AppSettingsCard>
             </CollapsibleContent>
           </Collapsible>
 
