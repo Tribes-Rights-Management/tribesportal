@@ -91,7 +91,7 @@ DialogContent.displayName = DialogPrimitive.Content.displayName;
  */
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div 
-    className={cn("flex flex-col space-y-1 px-4 pt-4 pb-3 text-left", className)} 
+    className={cn("flex flex-col space-y-1.5 p-4 text-left", className)} 
     style={{ borderBottom: '1px solid var(--platform-border)' }}
     {...props} 
   />
@@ -108,7 +108,7 @@ DialogHeader.displayName = "DialogHeader";
  */
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div 
-    className={cn("flex flex-col gap-2 px-4 pt-3 pb-4 sm:flex-row-reverse sm:gap-2", className)} 
+    className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 p-4 pt-0", className)} 
     style={{ 
       borderTop: '1px solid var(--platform-border)',
       paddingBottom: 'max(16px, env(safe-area-inset-bottom, 16px))',
@@ -131,7 +131,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn("text-[16px] sm:text-[15px] font-semibold leading-tight", className)}
+    className={cn("text-[16px] font-semibold leading-none tracking-tight", className)}
     style={{ color: 'var(--platform-text)' }}
     {...props}
   />

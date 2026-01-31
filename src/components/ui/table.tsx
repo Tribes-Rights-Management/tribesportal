@@ -134,10 +134,10 @@ const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
     <th
       ref={ref}
       className={cn(
-        // Institutional header: 12px, uppercase, +0.04em tracking, muted
-        // Height controlled for 44px compact row
-        "h-10 px-3 align-middle",
-        "text-[12px] font-medium tracking-[0.04em] uppercase",
+        // Institutional header: 11px, uppercase, +0.04em tracking, muted
+        // Height controlled for tight row density
+        "h-9 px-3 align-middle",
+        "text-[11px] font-medium tracking-wider uppercase",
         numeric && "text-right",
         status && "text-center",
         !numeric && !status && "text-left",
@@ -165,8 +165,8 @@ const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
     <td 
       ref={ref} 
       className={cn(
-        // 44px row height via padding (py-2.5 = 10px * 2 + 13px text ≈ 44px)
-        "px-3 py-2.5 align-middle text-[13px]",
+        // Tight row height via reduced padding
+        "px-3 py-2 align-middle text-[13px]",
         numeric && "text-right tabular-nums font-medium",
         status && "text-center",
         muted && "text-[12px]",
