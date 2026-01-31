@@ -66,7 +66,12 @@ export { AppPageHeader } from "./AppPageHeader";
 export { AppPageContainer } from "./AppPageContainer";
 export { AppSectionHeader } from "./AppSectionHeader";
 export { AppSection, AppSectionGrid } from "./AppSection";
-export { AppDetailRow, AppDetailRowGroup } from "./AppDetailRow";
+export { 
+  AppDetailRow, 
+  AppDetailRowGroup,
+  type AppDetailRowVariant,
+} from "./AppDetailRow";
+export { AppSettingsCard, AppSettingsFooter } from "./AppSettingsCard";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // INPUTS
