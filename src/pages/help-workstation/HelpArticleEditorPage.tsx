@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, AlertCircle } from "lucide-react";
+import { ArrowLeft, AlertCircle, MoreHorizontal } from "lucide-react";
 import { useHelpManagement, HelpArticle } from "@/hooks/useHelpManagement";
 import { useCategoriesByAudience, CategoryForAudience } from "@/hooks/useCategoriesByAudience";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { AppButton, AppChip, AppSelect, AppCheckboxGroup } from "@/components/app-ui";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 /**
  * HELP ARTICLE EDITOR — Multi-Audience Support
@@ -383,16 +389,29 @@ export default function HelpArticleEditorPage() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <div className="px-6 py-3 border-b border-border flex items-center justify-between">
+      <div className="px-4 sm:px-6 py-3 border-b border-border flex items-center justify-between gap-2">
+        {/* Back button - icon only on mobile, full on desktop */}
         <AppButton 
           intent="ghost" 
           size="sm" 
           onClick={() => navigate("/help/articles")}
           icon={<ArrowLeft className="h-4 w-4" strokeWidth={1.5} />}
+          className="hidden sm:inline-flex"
         >
           Back to Articles
         </AppButton>
-        <div className="flex items-center gap-2">
+        <AppButton 
+          intent="ghost" 
+          size="sm" 
+          onClick={() => navigate("/help/articles")}
+          className="sm:hidden p-2"
+          aria-label="Back to Articles"
+        >
+          <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
+        </AppButton>
+
+        {/* Desktop: Full action row */}
+        <div className="hidden sm:flex items-center gap-2">
           {/* Archive/Restore actions */}
           {!isNew && status === "archived" ? (
             <AppButton intent="ghost" size="sm" onClick={handleRestore}>
@@ -470,10 +489,69 @@ export default function HelpArticleEditorPage() {
             </>
           )}
         </div>
+
+        {/* Mobile: Primary action + overflow menu */}
+        <div className="flex sm:hidden items-center gap-2">
+          {/* Primary action button based on status */}
+          {(isNew || status === "draft" || status === "internal") && (
+            <AppButton 
+              intent="primary" 
+              size="sm" 
+              onClick={handlePublish}
+              disabled={publishing || !title.trim() || !bodyMd.trim()}
+            >
+              {publishing ? "..." : "Publish"}
+            </AppButton>
+          )}
+          {!isNew && status === "published" && (
+            <AppButton 
+              intent="primary" 
+              size="sm" 
+              onClick={handleSavePublished}
+              disabled={saving || !title.trim() || !bodyMd.trim()}
+            >
+              {saving ? "..." : "Save"}
+            </AppButton>
+          )}
+          {!isNew && status === "archived" && (
+            <AppButton intent="secondary" size="sm" onClick={handleRestore}>
+              Restore
+            </AppButton>
+          )}
+
+          {/* Overflow menu for secondary actions */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <AppButton intent="ghost" size="sm" className="p-2" aria-label="More actions">
+                <MoreHorizontal className="h-4 w-4" />
+              </AppButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-[160px]">
+              {(isNew || status === "draft" || status === "internal") && (
+                <DropdownMenuItem 
+                  onClick={handleSaveDraft}
+                  disabled={saving || !title.trim()}
+                >
+                  Save Draft
+                </DropdownMenuItem>
+              )}
+              {!isNew && status === "published" && (
+                <DropdownMenuItem onClick={handleUnpublish} disabled={saving}>
+                  Unpublish
+                </DropdownMenuItem>
+              )}
+              {!isNew && status !== "archived" && (
+                <DropdownMenuItem onClick={handleArchive}>
+                  Archive
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-4">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
         <div className="max-w-4xl space-y-3">
           {/* Validation Error */}
           {validationError && (
@@ -505,15 +583,15 @@ export default function HelpArticleEditorPage() {
             URL: /hc/[audience]/articles/{slug || "untitled"}
           </p>
 
-          {/* Metadata Row - Compact */}
+          {/* Metadata Row - Responsive: stack on mobile, row on desktop */}
           <div className={cn(
-            "flex items-start gap-6 p-4 border rounded-lg",
+            "flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 p-4 border rounded-lg",
             showPublishValidation && (selectedAudienceIds.length === 0 || !selectedCategoryId) 
               ? "border-destructive bg-destructive/5" 
               : "border-border bg-muted/30"
           )}>
             {/* Audiences - Inline checkboxes */}
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <AppCheckboxGroup
                 label="Audiences"
                 required
@@ -526,8 +604,8 @@ export default function HelpArticleEditorPage() {
               />
             </div>
 
-            {/* Category dropdown */}
-            <div className="w-[200px] shrink-0">
+            {/* Category dropdown - full width on mobile, fixed on desktop */}
+            <div className="w-full sm:w-[200px] shrink-0">
               <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
                 Category *
               </label>
