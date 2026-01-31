@@ -922,6 +922,7 @@ export type Database = {
           status: Database["public"]["Enums"]["help_article_status"]
           title: string
           updated_at: string | null
+          view_count: number | null
         }
         Insert: {
           content?: string
@@ -933,6 +934,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["help_article_status"]
           title: string
           updated_at?: string | null
+          view_count?: number | null
         }
         Update: {
           content?: string
@@ -944,6 +946,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["help_article_status"]
           title?: string
           updated_at?: string | null
+          view_count?: number | null
         }
         Relationships: []
       }
@@ -2567,6 +2570,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_article_view: {
+        Args: { article_id: string }
+        Returns: undefined
       }
       is_active_member: {
         Args: { _tenant_id: string; _user_id: string }
