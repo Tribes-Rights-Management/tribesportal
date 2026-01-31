@@ -68,7 +68,6 @@ export default function HelpCategoriesPage() {
   // View mode and audience filter
   const [viewMode, setViewMode] = useState<ViewMode>('all');
   const [selectedAudienceId, setSelectedAudienceId] = useState<string>('');
-  const [audienceDropdownOpen, setAudienceDropdownOpen] = useState(false);
 
   // Panel/modal state
   const [panelOpen, setPanelOpen] = useState(false);
@@ -347,72 +346,42 @@ export default function HelpCategoriesPage() {
       )}
 
       {/* View Toggle */}
-      <div className="mb-6 p-4 bg-card border border-border rounded">
-        <div className="flex items-center gap-6">
-          <span className="text-[12px] text-muted-foreground font-medium">View:</span>
-          
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name="viewMode"
-              checked={viewMode === 'all'}
-              onChange={() => handleViewModeChange('all')}
-              className="h-4 w-4 text-primary focus:ring-primary focus:ring-offset-0"
-            />
-            <span className="text-[13px] text-foreground">All Categories</span>
-          </label>
+      <div className="flex items-center gap-4 px-4 py-2 mb-4">
+        <span className="text-[12px] text-muted-foreground">View:</span>
+        
+        <label className="flex items-center gap-1.5 cursor-pointer">
+          <input
+            type="radio"
+            name="viewMode"
+            checked={viewMode === 'all'}
+            onChange={() => handleViewModeChange('all')}
+            className="w-3.5 h-3.5"
+          />
+          <span className="text-[13px] text-foreground">All Categories</span>
+        </label>
 
-          <div className="flex items-center gap-2">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="viewMode"
-                checked={viewMode === 'byAudience'}
-                onChange={() => handleViewModeChange('byAudience')}
-                className="h-4 w-4 text-primary focus:ring-primary focus:ring-offset-0"
-              />
-              <span className="text-[13px] text-foreground">By Audience:</span>
-            </label>
+        <label className="flex items-center gap-1.5 cursor-pointer">
+          <input
+            type="radio"
+            name="viewMode"
+            checked={viewMode === 'byAudience'}
+            onChange={() => handleViewModeChange('byAudience')}
+            className="w-3.5 h-3.5"
+          />
+          <span className="text-[13px] text-foreground">By Audience:</span>
+        </label>
 
-            {/* Audience Dropdown - only enabled when byAudience is selected */}
-            <div className="relative">
-              <button
-                onClick={() => viewMode === 'byAudience' && setAudienceDropdownOpen(!audienceDropdownOpen)}
-                disabled={viewMode !== 'byAudience'}
-                className={`flex items-center gap-2 px-3 py-1.5 border rounded text-[13px] transition-colors ${
-                  viewMode === 'byAudience'
-                    ? 'bg-background border-border text-foreground hover:border-primary/50 cursor-pointer'
-                    : 'bg-muted/50 border-border/50 text-muted-foreground cursor-not-allowed'
-                }`}
-              >
-                <span>{selectedAudience?.name || "Select..."}</span>
-                <ChevronDown className={`h-3.5 w-3.5 transition-transform ${audienceDropdownOpen ? 'rotate-180' : ''}`} strokeWidth={1.5} />
-              </button>
-
-              {audienceDropdownOpen && viewMode === 'byAudience' && (
-                <>
-                  <div className="fixed inset-0 z-30" onClick={() => setAudienceDropdownOpen(false)} />
-                  <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded shadow-lg z-40 min-w-[180px]">
-                    {activeAudiences.map(audience => (
-                      <button
-                        key={audience.id}
-                        onClick={() => {
-                          setSelectedAudienceId(audience.id);
-                          setAudienceDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-4 py-2.5 text-[13px] hover:bg-muted/50 transition-colors ${
-                          selectedAudienceId === audience.id ? 'bg-primary/10 text-primary' : 'text-foreground'
-                        }`}
-                      >
-                        {audience.name}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+        <select
+          value={selectedAudienceId}
+          onChange={(e) => setSelectedAudienceId(e.target.value)}
+          disabled={viewMode !== 'byAudience'}
+          className="h-8 px-2 text-[13px] bg-card border border-border rounded disabled:opacity-50"
+        >
+          <option value="">Select...</option>
+          {activeAudiences.map(a => (
+            <option key={a.id} value={a.id}>{a.name}</option>
+          ))}
+        </select>
       </div>
 
       {/* Content */}
