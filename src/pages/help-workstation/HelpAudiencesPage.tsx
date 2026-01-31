@@ -305,9 +305,8 @@ export default function HelpAudiencesPage() {
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-muted-foreground mt-0.5 font-mono">/{audience.slug}</p>
                   {audience.description && (
-                    <p className="text-[12px] text-muted-foreground/70 mt-1">{audience.description}</p>
+                    <p className="text-[12px] text-muted-foreground mt-1">{audience.description}</p>
                   )}
                 </div>
 

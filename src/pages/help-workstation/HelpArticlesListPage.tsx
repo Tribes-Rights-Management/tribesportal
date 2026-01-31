@@ -393,9 +393,7 @@ export default function HelpArticlesListPage() {
                     clickable
                     onClick={() => navigate(`/help-workstation/articles/${article.id}`)}
                   >
-                    <AppTableCell>
-                      <p className="text-[13px] text-foreground">{article.title || "Untitled"}</p>
-                      <p className="text-[11px] text-muted-foreground font-mono mt-0.5">/{article.slug}</p>
+                    <AppTableCell>{article.title || "Untitled"}
                     </AppTableCell>
                     <AppTableCell muted>
                       {getArticleAudiences(article.id) || <span className="italic">No audiences</span>}
