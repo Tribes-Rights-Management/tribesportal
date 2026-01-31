@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, AlertCircle, ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { ArrowLeft, AlertCircle, ChevronDown, Pencil, Check, X } from "lucide-react";
 import { useHelpManagement, HelpArticle } from "@/hooks/useHelpManagement";
 import { useArticleAudience } from "@/hooks/useArticleAudience";
 import { useCategoriesByAudience, CategoryForAudience } from "@/hooks/useCategoriesByAudience";
@@ -18,9 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 /**
- * HELP ARTICLE EDITOR — With Publishing Settings
- * 
- * Supports audience + category assignment via help_article_audiences junction table.
+ * HELP ARTICLE EDITOR — Compact Layout
  */
 
 function slugify(text: string): string {
@@ -60,27 +58,26 @@ export default function HelpArticleEditorPage() {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
 
-  // Form state
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [slugManual, setSlugManual] = useState(false);
+  const [slugEditing, setSlugEditing] = useState(false);
+  const [tempSlug, setTempSlug] = useState("");
   const [bodyMd, setBodyMd] = useState("");
   const [status, setStatus] = useState<"draft" | "internal" | "published" | "archived">("draft");
 
-  // Publishing settings state
   const [selectedAudienceId, setSelectedAudienceId] = useState<string>("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [position, setPosition] = useState<number>(0);
   const [categoriesForAudience, setCategoriesForAudience] = useState<CategoryForAudience[]>([]);
 
-  // Get active audiences
   const activeAudiences = audiences.filter(a => a.is_active);
+  const selectedAudience = activeAudiences.find(a => a.id === selectedAudienceId);
 
   useEffect(() => {
     fetchAudiences();
   }, [fetchAudiences]);
 
-  // Load article and its assignment
   useEffect(() => {
     async function loadArticle() {
       if (isNew) return;
@@ -101,14 +98,11 @@ export default function HelpArticleEditorPage() {
       setBodyMd(art.content || "");
       setStatus(art.status);
 
-      // Fetch existing audience assignment
       const assignment = await fetchAssignment(id!);
       if (assignment) {
         setSelectedAudienceId(assignment.audience_id);
         setSelectedCategoryId(assignment.category_id);
         setPosition(assignment.position);
-        
-        // Load categories for this audience
         const cats = await fetchCategoriesByAudience(assignment.audience_id);
         setCategoriesForAudience(cats);
       }
@@ -118,17 +112,15 @@ export default function HelpArticleEditorPage() {
     loadArticle();
   }, [id, isNew, fetchArticleWithVersion, fetchAssignment, fetchCategoriesByAudience]);
 
-  // Auto-generate slug from title
   useEffect(() => {
     if (!slugManual && title) {
       setSlug(slugify(title));
     }
   }, [title, slugManual]);
 
-  // Handle audience change - load categories for selected audience
   const handleAudienceChange = async (audienceId: string) => {
     setSelectedAudienceId(audienceId);
-    setSelectedCategoryId(""); // Reset category when audience changes
+    setSelectedCategoryId("");
     
     if (audienceId) {
       const cats = await fetchCategoriesByAudience(audienceId);
@@ -136,6 +128,22 @@ export default function HelpArticleEditorPage() {
     } else {
       setCategoriesForAudience([]);
     }
+  };
+
+  const startSlugEdit = () => {
+    setTempSlug(slug);
+    setSlugEditing(true);
+  };
+
+  const confirmSlugEdit = () => {
+    setSlug(tempSlug);
+    setSlugManual(true);
+    setSlugEditing(false);
+  };
+
+  const cancelSlugEdit = () => {
+    setSlugEditing(false);
+    setTempSlug("");
   };
 
   const handleSave = async () => {
@@ -169,7 +177,6 @@ export default function HelpArticleEditorPage() {
       }
     }
 
-    // Save audience assignment if both audience and category are selected
     if (articleId && selectedAudienceId && selectedCategoryId) {
       await saveAssignment(articleId, selectedAudienceId, selectedCategoryId, position);
     }
@@ -177,14 +184,13 @@ export default function HelpArticleEditorPage() {
     setSaving(false);
 
     if (isNew && articleId) {
-      navigate(`/help-workstation/articles/${articleId}`);
+      navigate(`/help/articles/${articleId}`);
     }
   };
 
   const handlePublish = async () => {
     if (!article) return;
 
-    // Validate audience and category before publishing
     if (!selectedAudienceId || !selectedCategoryId) {
       setValidationError("Select an audience and category before publishing");
       setPublishDialogOpen(false);
@@ -192,8 +198,6 @@ export default function HelpArticleEditorPage() {
     }
 
     setPublishing(true);
-
-    // Save assignment first
     await saveAssignment(article.id, selectedAudienceId, selectedCategoryId, position);
 
     const success = await publishVersion(article.id, article.id);
@@ -232,7 +236,7 @@ export default function HelpArticleEditorPage() {
             <AppButton 
               intent="tertiary" 
               size="xs"
-              onClick={() => navigate("/help-workstation/articles")} 
+              onClick={() => navigate("/help/articles")} 
               className="text-[11px] text-destructive hover:text-destructive/80 mt-1"
             >
               Back to articles
@@ -246,11 +250,11 @@ export default function HelpArticleEditorPage() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <div className="px-8 py-4 border-b border-border flex items-center justify-between">
+      <div className="px-6 py-3 border-b border-border flex items-center justify-between">
         <AppButton 
           intent="ghost" 
           size="sm" 
-          onClick={() => navigate("/help-workstation/articles")}
+          onClick={() => navigate("/help/articles")}
           icon={<ArrowLeft className="h-4 w-4" strokeWidth={1.5} />}
         >
           Back to Articles
@@ -273,99 +277,108 @@ export default function HelpArticleEditorPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-8">
-        <div className="max-w-4xl">
+      <div className="flex-1 overflow-y-auto px-6 py-5">
+        <div className="max-w-4xl space-y-4">
           {/* Validation Error */}
           {validationError && (
-            <div className="mb-6 flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
+            <div className="flex items-start gap-3 px-4 py-3 bg-destructive/10 border-l-2 border-destructive rounded-r">
               <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
               <p className="text-[12px] text-foreground">{validationError}</p>
             </div>
           )}
 
-          {/* Status Badge */}
-          {!isNew && (
-            <div className="mb-6">
-              <AppChip 
-                status={status === "published" ? "pass" : status === "archived" ? "fail" : "pending"}
-                label={status.toUpperCase()}
-              />
-            </div>
-          )}
-
-          {/* Title */}
-          <div className="mb-6">
-            <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">Title</label>
+          {/* Title + Status Row */}
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Article title"
-              className="w-full h-12 px-4 bg-card border border-border rounded text-[16px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="flex-1 h-11 px-4 bg-card border border-border rounded text-[16px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             />
+            {!isNew && (
+              <AppChip 
+                status={status === "published" ? "pass" : status === "archived" ? "fail" : "pending"}
+                label={status.toUpperCase()}
+              />
+            )}
           </div>
 
-          {/* Slug */}
-          <div className="mb-6">
-            <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">Slug</label>
-            <input
-              type="text"
-              value={slug}
-              onChange={(e) => { setSlug(e.target.value); setSlugManual(true); }}
-              placeholder="article-slug"
-              className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring font-mono"
-            />
-          </div>
-
-          {/* Content */}
-          <div className="mb-6">
-            <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">Content</label>
-            <div className="bg-card border border-border rounded min-h-[400px]">
-              <RichTextEditor content={bodyMd} onChange={setBodyMd} />
-            </div>
-          </div>
-
-          {/* Publishing Settings Section */}
-          <div className="mt-8 pt-6 border-t border-border">
-            <h3 className="text-[13px] font-medium text-foreground mb-1">Publishing Settings</h3>
-            <p className="text-[11px] text-muted-foreground mb-6">
-              Assign this article to an audience and category for public visibility
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              {/* Audience Dropdown */}
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
-                  Audience
-                </label>
-                <div className="relative">
-                  <select
-                    value={selectedAudienceId}
-                    onChange={(e) => handleAudienceChange(e.target.value)}
-                    className="w-full h-10 px-3 pr-8 bg-card border border-border rounded text-[13px] text-foreground focus:outline-none focus:ring-1 focus:ring-ring appearance-none cursor-pointer"
-                  >
-                    <option value="">Select audience</option>
-                    {activeAudiences.map(audience => (
-                      <option key={audience.id} value={audience.id}>
-                        {audience.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                </div>
+          {/* Slug Row - Compact inline */}
+          <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground px-1">
+            <span className="font-medium">URL:</span>
+            <span className="opacity-70">
+              /hc/{selectedAudience?.slug || "[audience]"}/articles/
+            </span>
+            {slugEditing ? (
+              <div className="flex items-center gap-1">
+                <input
+                  type="text"
+                  value={tempSlug}
+                  onChange={(e) => setTempSlug(e.target.value)}
+                  className="h-7 px-2 text-[12px] flex-1 max-w-[200px] bg-background border border-border rounded text-foreground focus:outline-none focus:ring-1 focus:ring-ring font-mono"
+                  autoFocus
+                />
+                <button onClick={confirmSlugEdit} className="p-1 hover:bg-muted rounded">
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                </button>
+                <button onClick={cancelSlugEdit} className="p-1 hover:bg-muted rounded">
+                  <X className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
               </div>
+            ) : (
+              <div className="flex items-center gap-1">
+                <span className="font-mono text-foreground">
+                  {slug || "article-slug"}
+                </span>
+                <button onClick={startSlugEdit} className="p-1 hover:bg-muted rounded">
+                  <Pencil className="h-3 w-3 text-muted-foreground" />
+                </button>
+              </div>
+            )}
+          </div>
 
-              {/* Category Dropdown */}
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
-                  Category
-                </label>
+          {/* Publishing Settings - Horizontal compact row */}
+          <div className="flex flex-col gap-3 px-4 py-3 bg-muted/30 border border-border rounded md:flex-row md:items-end">
+            <div className="flex-1">
+              <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+                Audience
+              </label>
+              <div className="relative">
+                <select
+                  value={selectedAudienceId}
+                  onChange={(e) => handleAudienceChange(e.target.value)}
+                  className="w-full h-9 px-3 pr-8 bg-card border border-border rounded text-[13px] text-foreground focus:outline-none focus:ring-1 focus:ring-ring appearance-none cursor-pointer"
+                >
+                  <option value="">Select audience</option>
+                  {activeAudiences.map(audience => (
+                    <option key={audience.id} value={audience.id}>
+                      {audience.name}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              </div>
+            </div>
+
+            <div className="flex-1">
+              <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+                Category
+              </label>
+              {selectedAudienceId && categoriesForAudience.length === 0 ? (
+                <div className="h-9 flex items-center text-[12px] text-muted-foreground">
+                  None available.{" "}
+                  <Link to="/help/categories" className="text-primary hover:underline ml-1">
+                    Create →
+                  </Link>
+                </div>
+              ) : (
                 <div className="relative">
                   <select
                     value={selectedCategoryId}
                     onChange={(e) => setSelectedCategoryId(e.target.value)}
                     disabled={!selectedAudienceId}
-                    className="w-full h-10 px-3 pr-8 bg-card border border-border rounded text-[13px] text-foreground focus:outline-none focus:ring-1 focus:ring-ring appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full h-9 px-3 pr-8 bg-card border border-border rounded text-[13px] text-foreground focus:outline-none focus:ring-1 focus:ring-ring appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <option value="">
                       {selectedAudienceId ? "Select category" : "Select audience first"}
@@ -376,31 +389,32 @@ export default function HelpArticleEditorPage() {
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                  <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                 </div>
-                {selectedAudienceId && categoriesForAudience.length === 0 && (
-                  <p className="text-[11px] text-muted-foreground mt-2 italic">
-                    No categories linked to this audience
-                  </p>
-                )}
-              </div>
+              )}
             </div>
 
-            {/* Position */}
-            <div className="max-w-[120px]">
-              <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
-                Display Order
+            <div className="w-full md:w-20">
+              <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+                Order
               </label>
               <input
                 type="number"
                 value={position}
                 onChange={(e) => setPosition(parseInt(e.target.value) || 0)}
                 min={0}
-                className="w-full h-10 px-3 bg-card border border-border rounded text-[13px] text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full h-9 px-3 bg-card border border-border rounded text-[13px] text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               />
-              <p className="text-[11px] text-muted-foreground mt-2">
-                Lower numbers appear first
-              </p>
+            </div>
+          </div>
+
+          {/* Content Editor */}
+          <div>
+            <label className="block text-[10px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
+              Content
+            </label>
+            <div className="bg-card border border-border rounded min-h-[400px]">
+              <RichTextEditor content={bodyMd} onChange={setBodyMd} />
             </div>
           </div>
         </div>
