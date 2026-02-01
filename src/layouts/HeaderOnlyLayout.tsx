@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Bell, Search, CircleHelp } from "lucide-react";
 import { HeaderIconButton } from "@/components/app/HeaderIconButton";
 import { UserMenuDropdown } from "@/components/app/UserMenuDropdown";
+import { HelpBottomSheet } from "@/components/app/HelpBottomSheet";
 import { GlobalSearchDialog } from "@/components/search/GlobalSearchDialog";
 import { useUnreadNotificationCount } from "@/hooks/useNotifications";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Popover,
   PopoverContent,
@@ -37,6 +39,7 @@ interface HeaderOnlyLayoutProps {
 
 export function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
@@ -96,11 +99,16 @@ export function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
             </PopoverContent>
           </Popover>
 
-          <HeaderIconButton
-            icon={CircleHelp}
-            aria-label="Help & Resources"
-            onClick={() => navigate("/help")}
-          />
+          {/* Help - use bottom sheet on mobile, direct navigation on desktop */}
+          {isMobile ? (
+            <HelpBottomSheet />
+          ) : (
+            <HeaderIconButton
+              icon={CircleHelp}
+              aria-label="Help & Resources"
+              onClick={() => navigate("/help")}
+            />
+          )}
           
           <UserMenuDropdown />
         </div>

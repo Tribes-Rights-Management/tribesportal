@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { NAV_LABELS, PORTAL_TYPOGRAPHY } from "@/styles/tokens";
 import { NotificationCenter } from "./NotificationCenter";
 import { HeaderIconButton } from "./HeaderIconButton";
+import { HelpBottomSheet } from "./HelpBottomSheet";
 import { SidebarHeader, ContentHeader } from "./AppShell";
 
 /**
@@ -332,11 +333,7 @@ export function AppHeader({ showSidebarLogo = false }: AppHeaderProps) {
           <div className="flex items-center gap-1 shrink-0">
             <MobileControls />
             <NotificationCenter />
-            <HeaderIconButton
-              icon={CircleHelp}
-              aria-label="Help & Resources"
-              onClick={() => navigate("/help")}
-            />
+            <HelpBottomSheet />
             <AccountMenu />
           </div>
         </div>
