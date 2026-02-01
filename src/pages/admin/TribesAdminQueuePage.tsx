@@ -22,6 +22,7 @@ import {
   AppFilterTrigger,
   AppPagination,
 } from "@/components/app-ui";
+import { cn } from "@/lib/utils";
 
 /**
  * TRIBES ADMIN QUEUE PAGE
@@ -32,7 +33,16 @@ import {
 const ITEMS_PER_PAGE = 50;
 
 type QueueStatus = "all" | "pending" | "review" | "approved" | "rejected";
-type SortOption = "date" | "title" | "submitter";
+type SortOption = "a-z" | "z-a" | "newest" | "oldest";
+
+const sortLabels: Record<SortOption, string> = {
+  "a-z": "A-Z",
+  "z-a": "Z-A",
+  "newest": "Newest",
+  "oldest": "Oldest",
+};
+
+const sortOrder: SortOption[] = ["a-z", "z-a", "newest", "oldest"];
 
 interface QueueSong {
   id: string;
@@ -76,22 +86,16 @@ const statusOptions: { value: QueueStatus; label: string }[] = [
   { value: "rejected", label: "Rejected" },
 ];
 
-const sortOptions: { value: SortOption; label: string }[] = [
-  { value: "date", label: "Date Submitted" },
-  { value: "title", label: "Title" },
-  { value: "submitter", label: "Submitter" },
-];
-
 export default function TribesAdminQueuePage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [filterOpen, setFilterOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState<SortOption>("a-z");
   
   const statusFilter = (searchParams.get("status") as QueueStatus) || "all";
-  const sortBy = (searchParams.get("sort") as SortOption) || "date";
 
-  const hasActiveFilters = statusFilter !== "all" || sortBy !== "date";
+  const hasActiveFilters = statusFilter !== "all";
 
   const handleStatusChange = (value: QueueStatus) => {
     if (value === "all") {
@@ -103,18 +107,14 @@ export default function TribesAdminQueuePage() {
     setCurrentPage(1);
   };
 
-  const handleSortChange = (value: SortOption) => {
-    if (value === "date") {
-      searchParams.delete("sort");
-    } else {
-      searchParams.set("sort", value);
-    }
-    setSearchParams(searchParams);
+  const handleSortToggle = () => {
+    const currentIndex = sortOrder.indexOf(sortBy);
+    const nextIndex = (currentIndex + 1) % sortOrder.length;
+    setSortBy(sortOrder[nextIndex]);
   };
 
   const handleClearFilters = () => {
     searchParams.delete("status");
-    searchParams.delete("sort");
     setSearchParams(searchParams);
     setCurrentPage(1);
   };
@@ -127,13 +127,16 @@ export default function TribesAdminQueuePage() {
   // Sort songs
   filteredSongs = [...filteredSongs].sort((a, b) => {
     switch (sortBy) {
-      case "title":
+      case "a-z":
         return a.title.localeCompare(b.title);
-      case "submitter":
-        return a.submitter.localeCompare(b.submitter);
-      case "date":
-      default:
+      case "z-a":
+        return b.title.localeCompare(a.title);
+      case "newest":
         return new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime();
+      case "oldest":
+        return new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime();
+      default:
+        return a.title.localeCompare(b.title);
     }
   });
 
@@ -169,14 +172,9 @@ export default function TribesAdminQueuePage() {
 
   return (
     <AppPageContainer maxWidth="xl">
-      {/* Header Row: Title + Count + Filter */}
+      {/* Header Row: Title + Filter */}
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <h1 className="text-lg font-semibold tracking-tight">Queue</h1>
-          <span className="text-[12px] text-muted-foreground">
-            {totalItems} {totalItems === 1 ? "submission" : "submissions"}
-          </span>
-        </div>
+        <h1 className="text-lg font-semibold tracking-tight">Queue</h1>
         <AppFilterTrigger
           onClick={() => setFilterOpen(true)}
           hasActiveFilters={hasActiveFilters}
@@ -184,6 +182,19 @@ export default function TribesAdminQueuePage() {
       </div>
 
       <AppSection spacing="none">
+        {/* Count + Sort Row */}
+        <div className="flex items-center justify-end mb-3">
+          <div className="flex items-center gap-1 text-[12px] text-muted-foreground">
+            <span>{totalItems} {totalItems === 1 ? "submission" : "submissions"}</span>
+            <span>·</span>
+            <button
+              onClick={handleSortToggle}
+              className="hover:text-foreground transition-colors"
+            >
+              {sortLabels[sortBy]} ↓
+            </button>
+          </div>
+        </div>
 
         <AppResponsiveList
           items={paginatedSongs}
@@ -263,17 +274,6 @@ export default function TribesAdminQueuePage() {
               label={opt.label}
               selected={statusFilter === opt.value}
               onClick={() => handleStatusChange(opt.value)}
-            />
-          ))}
-        </AppFilterSection>
-
-        <AppFilterSection title="Sort By">
-          {sortOptions.map((opt) => (
-            <AppFilterOption
-              key={opt.value}
-              label={opt.label}
-              selected={sortBy === opt.value}
-              onClick={() => handleSortChange(opt.value)}
             />
           ))}
         </AppFilterSection>
