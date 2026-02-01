@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, CircleHelp } from "lucide-react";
 import { GlobalSearchDialog } from "@/components/search/GlobalSearchDialog";
 import { SidebarHeader, ContentHeader } from "@/components/app/AppShell";
 import { UserMenuDropdown } from "@/components/app/UserMenuDropdown";
@@ -88,6 +88,13 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
           </p>
         </PopoverContent>
       </Popover>
+
+      {/* Help */}
+      <HeaderIconButton
+        icon={CircleHelp}
+        aria-label="Help & Resources"
+        onClick={() => navigate("/help")}
+      />
 
       {/* User menu */}
       <UserMenuDropdown />

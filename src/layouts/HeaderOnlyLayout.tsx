@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Search } from "lucide-react";
+import { Bell, Search, CircleHelp } from "lucide-react";
 import { HeaderIconButton } from "@/components/app/HeaderIconButton";
 import { UserMenuDropdown } from "@/components/app/UserMenuDropdown";
 import { GlobalSearchDialog } from "@/components/search/GlobalSearchDialog";
@@ -73,7 +73,7 @@ export function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
           />
         </button>
 
-        {/* Right: Search, Notifications, User menu */}
+        {/* Right: Search, Notifications, Help, User menu */}
         <div className="flex items-center gap-1">
           <HeaderIconButton
             icon={Search}
@@ -95,6 +95,12 @@ export function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
               </p>
             </PopoverContent>
           </Popover>
+
+          <HeaderIconButton
+            icon={CircleHelp}
+            aria-label="Help & Resources"
+            onClick={() => navigate("/help")}
+          />
           
           <UserMenuDropdown />
         </div>

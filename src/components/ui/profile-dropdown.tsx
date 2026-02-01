@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar, getInitialsFromProfile } from "@/components/ui/user-avatar";
-import { LogOut, Settings, Moon, Sun, Shield, ArrowLeft } from "lucide-react";
+import { LogOut, Settings, Moon, Sun, Shield, ArrowLeft, CircleHelp } from "lucide-react";
 import { NAV_LABELS } from "@/styles/tokens";
 
 /**
@@ -25,6 +25,7 @@ import { NAV_LABELS } from "@/styles/tokens";
  * - Text: text-[13px]
  * - Padding: container py-2, items px-3 py-2, gap-2
  * - Sign out: neutral by default, red on hover
+ * - Help: shown on mobile only (desktop uses floating button)
  */
 
 // Menu icon size constant
@@ -72,7 +73,7 @@ export function ProfileDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-64 rounded-lg"
+        className="w-64 rounded-lg z-50 bg-popover"
         sideOffset={8}
       >
         {/* User info header */}
@@ -127,6 +128,17 @@ export function ProfileDropdown({
           <Settings className="h-4 w-4 opacity-50" strokeWidth={1.5} />
           {NAV_LABELS.ACCOUNT_SETTINGS}
         </DropdownMenuItem>
+
+        {/* Help - shown on mobile only */}
+        {isMobile && (
+          <DropdownMenuItem
+            onClick={() => navigate("/help")}
+            className="px-3 py-2 text-[13px] gap-2"
+          >
+            <CircleHelp className="h-4 w-4 opacity-50" strokeWidth={1.5} />
+            Help & Resources
+          </DropdownMenuItem>
+        )}
 
         {/* Theme Toggle */}
         <DropdownMenuItem
