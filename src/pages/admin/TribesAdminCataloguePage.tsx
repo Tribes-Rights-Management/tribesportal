@@ -108,11 +108,21 @@ export default function TribesAdminCataloguePage() {
       <AppPageHeader
         title="Catalogue"
         backLink={{ to: "/admin", label: "Dashboard" }}
+        action={
+          <AppButton
+            intent="secondary"
+            size="sm"
+            onClick={() => navigate("/admin/songs/submit")}
+          >
+            <Plus className="h-4 w-4" />
+            Add Song
+          </AppButton>
+        }
       />
 
-      <AppSection spacing="md">
+      <AppSection spacing="sm">
         {/* Search Input */}
-        <div className="relative mb-4">
+        <div className="relative mb-3">
           <Search 
             className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" 
           />
@@ -131,33 +141,22 @@ export default function TribesAdminCataloguePage() {
           />
         </div>
 
-        {/* Filter Chips + Add Button Row */}
-        <div className="flex items-center justify-between gap-4 mb-4">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1">
-            {statusFilters.map((filter) => (
-              <button
-                key={filter.value}
-                onClick={() => handleStatusChange(filter.value)}
-                className={cn(
-                  "px-3 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-colors",
-                  statusFilter === filter.value
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                )}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
-          <AppButton
-            intent="secondary"
-            size="sm"
-            onClick={() => navigate("/admin/songs/submit")}
-            className="shrink-0"
-          >
-            <Plus className="h-4 w-4" />
-            Add Song
-          </AppButton>
+        {/* Filter Chips Row */}
+        <div className="flex items-center gap-1.5 mb-3">
+          {statusFilters.map((filter) => (
+            <button
+              key={filter.value}
+              onClick={() => handleStatusChange(filter.value)}
+              className={cn(
+                "px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap transition-colors",
+                statusFilter === filter.value
+                  ? "bg-muted border border-border text-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              )}
+            >
+              {filter.label}
+            </button>
+          ))}
         </div>
 
         <AppResponsiveList
