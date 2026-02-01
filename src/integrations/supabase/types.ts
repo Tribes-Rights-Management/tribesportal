@@ -595,6 +595,50 @@ export type Database = {
         }
         Relationships: []
       }
+      client_invitations: {
+        Row: {
+          accepted_at: string | null
+          client_account_id: string | null
+          created_at: string | null
+          email: string
+          expires_at: string | null
+          id: string
+          invited_by: string | null
+          role: string | null
+          token: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          client_account_id?: string | null
+          created_at?: string | null
+          email: string
+          expires_at?: string | null
+          id?: string
+          invited_by?: string | null
+          role?: string | null
+          token?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          client_account_id?: string | null
+          created_at?: string | null
+          email?: string
+          expires_at?: string | null
+          id?: string
+          invited_by?: string | null
+          role?: string | null
+          token?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_invitations_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_ipi_numbers: {
         Row: {
           client_account_id: string
@@ -1625,6 +1669,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      licensing_access_requests: {
+        Row: {
+          company_name: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          notes: string | null
+          reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          notes?: string | null
+          reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          notes?: string | null
+          reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       licensing_agreements: {
         Row: {
@@ -3192,13 +3278,8 @@ export type Database = {
         }[]
       }
       get_user_client_accounts: {
-        Args: { p_user_id: string }
-        Returns: {
-          client_account_id: string
-          client_name: string
-          is_company_user: boolean
-          role: Database["public"]["Enums"]["client_member_role"]
-        }[]
+        Args: { check_user_id: string }
+        Returns: string[]
       }
       get_user_contexts: {
         Args: { _tenant_id: string; _user_id: string }
@@ -3240,6 +3321,7 @@ export type Database = {
         Args: { _tenant_id: string; _user_id: string }
         Returns: boolean
       }
+      is_company_user: { Args: { check_user_id: string }; Returns: boolean }
       is_external_auditor: { Args: { _user_id: string }; Returns: boolean }
       is_org_admin: {
         Args: { _org_id: string; _user_id: string }
@@ -3255,6 +3337,10 @@ export type Database = {
       }
       is_platform_admin: { Args: { _user_id: string }; Returns: boolean }
       is_platform_user: { Args: { _user_id: string }; Returns: boolean }
+      is_song_visible_to_client: {
+        Args: { check_client_id: string; check_song_id: string }
+        Returns: boolean
+      }
       is_tenant_admin: {
         Args: { _tenant_id: string; _user_id: string }
         Returns: boolean
