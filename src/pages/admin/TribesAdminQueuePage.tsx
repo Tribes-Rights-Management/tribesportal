@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
 
@@ -15,16 +16,20 @@ import {
   AppTableBadge,
   AppResponsiveList,
   AppItemCard,
+  AppFilterDrawer,
+  AppFilterSection,
+  AppFilterOption,
+  AppFilterTrigger,
 } from "@/components/app-ui";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 /**
  * TRIBES ADMIN QUEUE PAGE
  * 
- * Pending song submissions with responsive table/card views.
+ * Pending song submissions with filter drawer pattern and responsive table/card views.
  */
 
 type QueueStatus = "all" | "pending" | "review" | "approved" | "rejected";
+type SortOption = "date" | "title" | "submitter";
 
 interface QueueSong {
   id: string;
@@ -59,23 +64,71 @@ const getStatusBadge = (status: QueueSong["status"]) => {
   }
 };
 
+const statusOptions: { value: QueueStatus; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "pending", label: "Pending" },
+  { value: "review", label: "In Review" },
+  { value: "approved", label: "Approved" },
+  { value: "rejected", label: "Rejected" },
+];
+
+const sortOptions: { value: SortOption; label: string }[] = [
+  { value: "date", label: "Date Submitted" },
+  { value: "title", label: "Title" },
+  { value: "submitter", label: "Submitter" },
+];
+
 export default function TribesAdminQueuePage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentFilter = (searchParams.get("filter") as QueueStatus) || "all";
+  const [filterOpen, setFilterOpen] = useState(false);
+  
+  const statusFilter = (searchParams.get("status") as QueueStatus) || "all";
+  const sortBy = (searchParams.get("sort") as SortOption) || "date";
 
-  const handleFilterChange = (value: string) => {
+  const hasActiveFilters = statusFilter !== "all" || sortBy !== "date";
+
+  const handleStatusChange = (value: QueueStatus) => {
     if (value === "all") {
-      searchParams.delete("filter");
+      searchParams.delete("status");
     } else {
-      searchParams.set("filter", value);
+      searchParams.set("status", value);
     }
     setSearchParams(searchParams);
   };
 
-  const filteredSongs = currentFilter === "all"
+  const handleSortChange = (value: SortOption) => {
+    if (value === "date") {
+      searchParams.delete("sort");
+    } else {
+      searchParams.set("sort", value);
+    }
+    setSearchParams(searchParams);
+  };
+
+  const handleClearFilters = () => {
+    searchParams.delete("status");
+    searchParams.delete("sort");
+    setSearchParams(searchParams);
+  };
+
+  // Filter songs
+  let filteredSongs = statusFilter === "all"
     ? mockQueueSongs
-    : mockQueueSongs.filter(song => song.status === currentFilter);
+    : mockQueueSongs.filter(song => song.status === statusFilter);
+
+  // Sort songs
+  filteredSongs = [...filteredSongs].sort((a, b) => {
+    switch (sortBy) {
+      case "title":
+        return a.title.localeCompare(b.title);
+      case "submitter":
+        return a.submitter.localeCompare(b.submitter);
+      case "date":
+      default:
+        return new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime();
+    }
+  });
 
   const getCounts = () => ({
     all: mockQueueSongs.length,
@@ -91,6 +144,12 @@ export default function TribesAdminQueuePage() {
     navigate(`/admin/queue/${songId}`);
   };
 
+  // Status options with counts
+  const statusOptionsWithCounts = statusOptions.map(opt => ({
+    ...opt,
+    label: `${opt.label} (${counts[opt.value]})`,
+  }));
+
   return (
     <AppPageContainer maxWidth="xl">
       <AppPageHeader
@@ -99,24 +158,18 @@ export default function TribesAdminQueuePage() {
       />
 
       <AppSection spacing="md">
-        <div className="overflow-x-auto -mx-4 sm:mx-0 mb-4">
-          <div className="px-4 sm:px-0">
-            <Tabs value={currentFilter} onValueChange={handleFilterChange}>
-              <TabsList className="w-full sm:w-auto">
-                <TabsTrigger value="all" className="text-xs sm:text-sm">All ({counts.all})</TabsTrigger>
-                <TabsTrigger value="pending" className="text-xs sm:text-sm">Pending ({counts.pending})</TabsTrigger>
-                <TabsTrigger value="review" className="text-xs sm:text-sm">Review ({counts.review})</TabsTrigger>
-                <TabsTrigger value="approved" className="text-xs sm:text-sm hidden sm:inline-flex">Approved ({counts.approved})</TabsTrigger>
-                <TabsTrigger value="rejected" className="text-xs sm:text-sm hidden sm:inline-flex">Rejected ({counts.rejected})</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
+        <div className="flex items-center justify-between mb-4">
+          <AppFilterTrigger
+            onClick={() => setFilterOpen(true)}
+            hasActiveFilters={hasActiveFilters}
+          />
+          <div /> {/* Spacer - no action button on Queue */}
         </div>
 
         <AppResponsiveList
           items={filteredSongs}
           keyExtractor={(song) => song.id}
-          emptyMessage={`No ${currentFilter === "all" ? "" : currentFilter + " "}submissions`}
+          emptyMessage={`No ${statusFilter === "all" ? "" : statusFilter + " "}submissions`}
           renderCard={(song) => (
             <AppItemCard
               title={song.title}
@@ -146,7 +199,7 @@ export default function TribesAdminQueuePage() {
                 {filteredSongs.length === 0 ? (
                   <AppTableEmpty colSpan={5}>
                     <span className="text-muted-foreground text-sm">
-                      No {currentFilter === "all" ? "" : currentFilter + " "}submissions
+                      No {statusFilter === "all" ? "" : statusFilter + " "}submissions
                     </span>
                   </AppTableEmpty>
                 ) : (
@@ -171,6 +224,35 @@ export default function TribesAdminQueuePage() {
           )}
         />
       </AppSection>
+
+      <AppFilterDrawer
+        open={filterOpen}
+        onOpenChange={setFilterOpen}
+        hasActiveFilters={hasActiveFilters}
+        onClearFilters={handleClearFilters}
+      >
+        <AppFilterSection title="Status">
+          {statusOptionsWithCounts.map((opt) => (
+            <AppFilterOption
+              key={opt.value}
+              label={opt.label}
+              selected={statusFilter === opt.value}
+              onClick={() => handleStatusChange(opt.value)}
+            />
+          ))}
+        </AppFilterSection>
+
+        <AppFilterSection title="Sort By">
+          {sortOptions.map((opt) => (
+            <AppFilterOption
+              key={opt.value}
+              label={opt.label}
+              selected={sortBy === opt.value}
+              onClick={() => handleSortChange(opt.value)}
+            />
+          ))}
+        </AppFilterSection>
+      </AppFilterDrawer>
     </AppPageContainer>
   );
 }
