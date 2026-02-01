@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { ArrowUpDown, Check } from "lucide-react";
 import { format } from "date-fns";
 
 import {
-  AppPageHeader,
   AppPageContainer,
   AppSection,
   AppTable,
@@ -32,16 +32,13 @@ const ITEMS_PER_PAGE = 50;
 
 type DocumentType = "all" | "contract" | "agreement" | "amendment" | "termination";
 type DocumentStatus = "draft" | "pending" | "active" | "expired" | "terminated";
-type SortOption = "a-z" | "z-a" | "newest" | "oldest";
+type SortOption = "a-z" | "newest" | "oldest";
 
 const sortLabels: Record<SortOption, string> = {
-  "a-z": "A-Z",
-  "z-a": "Z-A",
-  "newest": "Newest",
-  "oldest": "Oldest",
+  "a-z": "Alphabetical (A-Z)",
+  "newest": "Newest first",
+  "oldest": "Oldest first",
 };
-
-const sortOrder: SortOption[] = ["a-z", "z-a", "newest", "oldest"];
 
 interface Document {
   id: string;
@@ -115,6 +112,61 @@ const typeOptions: { value: DocumentType; label: string }[] = [
   { value: "termination", label: "Terminations" },
 ];
 
+// Sort Dropdown Component
+function SortDropdown({ 
+  value, 
+  onChange 
+}: { 
+  value: SortOption; 
+  onChange: (value: SortOption) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const options: SortOption[] = ["a-z", "newest", "oldest"];
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="p-1.5 rounded-md hover:bg-muted/50 transition-colors text-muted-foreground hover:text-foreground"
+        aria-label="Sort options"
+      >
+        <ArrowUpDown className="h-4 w-4" />
+      </button>
+
+      {isOpen && (
+        <>
+          <div 
+            className="fixed inset-0 z-40" 
+            onClick={() => setIsOpen(false)} 
+          />
+          <div className="absolute right-0 top-full mt-1 z-50 bg-background border border-border rounded-lg shadow-lg overflow-hidden min-w-[160px]">
+            {options.map((option) => (
+              <button
+                key={option}
+                onClick={() => {
+                  onChange(option);
+                  setIsOpen(false);
+                }}
+                className={cn(
+                  "w-full text-left px-3 py-2 text-[13px] flex items-center justify-between gap-2",
+                  "hover:bg-muted/50 transition-colors",
+                  value === option ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                <span>{sortLabels[option]}</span>
+                {value === option && (
+                  <Check className="h-3.5 w-3.5 text-foreground" />
+                )}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function TribesAdminDocumentsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -136,12 +188,6 @@ export default function TribesAdminDocumentsPage() {
     setCurrentPage(1);
   };
 
-  const handleSortToggle = () => {
-    const currentIndex = sortOrder.indexOf(sortBy);
-    const nextIndex = (currentIndex + 1) % sortOrder.length;
-    setSortBy(sortOrder[nextIndex]);
-  };
-
   const handleClearFilters = () => {
     searchParams.delete("type");
     setSearchParams(searchParams);
@@ -158,8 +204,6 @@ export default function TribesAdminDocumentsPage() {
     switch (sortBy) {
       case "a-z":
         return a.title.localeCompare(b.title);
-      case "z-a":
-        return b.title.localeCompare(a.title);
       case "newest":
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       case "oldest":
@@ -191,17 +235,13 @@ export default function TribesAdminDocumentsPage() {
       </div>
 
       <AppSection spacing="none">
-        {/* Count + Sort Row */}
+        {/* Sort + Count Row */}
         <div className="flex items-center justify-end mb-3">
-          <div className="flex items-center gap-1 text-[12px] text-muted-foreground">
-            <span>{totalItems} {totalItems === 1 ? "document" : "documents"}</span>
-            <span>·</span>
-            <button
-              onClick={handleSortToggle}
-              className="hover:text-foreground transition-colors"
-            >
-              {sortLabels[sortBy]} ↓
-            </button>
+          <div className="flex items-center gap-2">
+            <SortDropdown value={sortBy} onChange={setSortBy} />
+            <span className="text-[12px] text-muted-foreground">
+              {totalItems} {totalItems === 1 ? "document" : "documents"}
+            </span>
           </div>
         </div>
 
