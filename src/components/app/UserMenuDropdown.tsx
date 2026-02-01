@@ -52,17 +52,18 @@ export function UserMenuDropdown() {
         align="end"
         sideOffset={8}
         className={cn(
-          "w-[200px] rounded-xl p-0 overflow-hidden shadow-lg",
-          "bg-background border border-border"
+          "min-w-[200px] rounded-xl p-0 overflow-hidden",
+          "bg-background border border-border shadow-lg z-50"
         )}
       >
         {/* Workspaces */}
         <DropdownMenuItem
           onClick={() => navigate("/workspaces")}
           className={cn(
-            "h-11 px-4 text-[14px] font-normal text-foreground",
+            "h-12 px-4 text-[14px] font-normal text-foreground",
             "rounded-none cursor-pointer",
-            "border-b border-border/50"
+            "border-b border-border/40",
+            "focus:bg-muted/50"
           )}
         >
           Workspaces
@@ -73,9 +74,10 @@ export function UserMenuDropdown() {
           <DropdownMenuItem
             onClick={() => navigate("/console")}
             className={cn(
-              "h-11 px-4 text-[14px] font-normal text-foreground",
+              "h-12 px-4 text-[14px] font-normal text-foreground",
               "rounded-none cursor-pointer",
-              "border-b border-border/50"
+              "border-b border-border/40",
+              "focus:bg-muted/50"
             )}
           >
             System Console
@@ -86,9 +88,10 @@ export function UserMenuDropdown() {
         <DropdownMenuItem
           onClick={() => navigate("/account/settings")}
           className={cn(
-            "h-11 px-4 text-[14px] font-normal text-foreground",
+            "h-12 px-4 text-[14px] font-normal text-foreground",
             "rounded-none cursor-pointer",
-            "border-b border-border/50"
+            "border-b border-border/40",
+            "focus:bg-muted/50"
           )}
         >
           Settings
@@ -98,8 +101,9 @@ export function UserMenuDropdown() {
         <DropdownMenuItem
           onClick={handleSignOut}
           className={cn(
-            "h-11 px-4 text-[14px] font-normal text-foreground",
-            "rounded-none cursor-pointer"
+            "h-12 px-4 text-[14px] font-normal text-foreground",
+            "rounded-none cursor-pointer",
+            "focus:bg-muted/50"
           )}
         >
           Sign Out

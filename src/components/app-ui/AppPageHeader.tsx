@@ -71,7 +71,7 @@ export function AppPageHeader({
             <span>{backLink.label}</span>
           </Link>
         )}
-        <h1 className="text-[18px] sm:text-[20px] font-semibold text-foreground leading-tight">
+        <h1 className="text-lg sm:text-xl font-semibold text-foreground leading-tight tracking-tight">
           {title}
         </h1>
       </div>
