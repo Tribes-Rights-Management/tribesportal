@@ -18,14 +18,17 @@ import {
   AppTableBadge,
   AppResponsiveList,
   AppItemCard,
+  AppPagination,
 } from "@/components/app-ui";
 import { cn } from "@/lib/utils";
 
 /**
  * TRIBES ADMIN CATALOGUE PAGE
  * 
- * Song catalog with search, filter chips, and responsive table/card views.
+ * Song catalog with search, filter chips, pagination, and responsive table/card views.
  */
+
+const ITEMS_PER_PAGE = 50;
 
 type CatalogueStatus = "all" | "active" | "pending" | "inactive";
 
@@ -39,14 +42,22 @@ interface CatalogueSong {
   addedAt: string;
 }
 
-// Mock data
-const mockCatalogueSongs: CatalogueSong[] = [
-  { id: "1", title: "Midnight Dreams", artist: "Luna Wave", iswc: "T-123.456.789-0", songwriters: ["John Smith", "Jane Doe", "Mike Johnson"], status: "active", addedAt: "2026-01-15T10:00:00Z" },
-  { id: "2", title: "Electric Soul", artist: "The Frequency", iswc: "T-234.567.890-1", songwriters: ["Sarah Williams", "David Chen"], status: "active", addedAt: "2026-01-14T14:30:00Z" },
-  { id: "3", title: "Ocean Breeze", artist: "Coastal Sounds", iswc: "T-345.678.901-2", songwriters: ["Emily Rodriguez", "James Wilson", "Anna Lee", "Robert Taylor"], status: "pending", addedAt: "2026-01-13T09:15:00Z" },
-  { id: "4", title: "City Lights", artist: "Urban Echo", iswc: "T-456.789.012-3", songwriters: ["Michael Brown"], status: "active", addedAt: "2026-01-12T16:00:00Z" },
-  { id: "5", title: "Mountain High", artist: "Summit", iswc: "T-567.890.123-4", songwriters: ["Lisa Anderson", "Tom Harris", "Rachel Green", "Chris Martin", "Jennifer Lopez"], status: "inactive", addedAt: "2026-01-11T11:00:00Z" },
-];
+// Mock data - expanded for pagination demo
+const mockCatalogueSongs: CatalogueSong[] = Array.from({ length: 247 }, (_, i) => ({
+  id: String(i + 1),
+  title: ["Midnight Dreams", "Electric Soul", "Ocean Breeze", "City Lights", "Mountain High", "Sunset Boulevard", "Starlight", "Thunder Road", "Silver Moon", "Golden Hour"][i % 10],
+  artist: ["Luna Wave", "The Frequency", "Coastal Sounds", "Urban Echo", "Summit", "Horizon", "Velvet", "Chrome Hearts", "Neon Lights", "Desert Rose"][i % 10],
+  iswc: `T-${String(100 + i).padStart(3, '0')}.${String(400 + i).padStart(3, '0')}.${String(700 + i).padStart(3, '0')}-${i % 10}`,
+  songwriters: [
+    ["John Smith", "Jane Doe"],
+    ["Sarah Williams", "David Chen"],
+    ["Emily Rodriguez", "James Wilson"],
+    ["Michael Brown"],
+    ["Lisa Anderson", "Tom Harris"],
+  ][i % 5],
+  status: (["active", "active", "active", "pending", "inactive"] as const)[i % 5],
+  addedAt: new Date(2026, 0, 28 - (i % 30)).toISOString(),
+}));
 
 const getStatusText = (status: CatalogueSong["status"]) => {
   switch (status) {
@@ -72,6 +83,7 @@ export default function TribesAdminCataloguePage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   
   const statusFilter = (searchParams.get("status") as CatalogueStatus) || "all";
 
@@ -82,6 +94,7 @@ export default function TribesAdminCataloguePage() {
       searchParams.set("status", value);
     }
     setSearchParams(searchParams);
+    setCurrentPage(1); // Reset to first page on filter change
   };
 
   // Filter by status
@@ -99,8 +112,24 @@ export default function TribesAdminCataloguePage() {
     );
   }
 
+  // Pagination
+  const totalItems = filteredSongs.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedSongs = filteredSongs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  // Reset to page 1 if current page exceeds total pages
+  if (currentPage > totalPages && totalPages > 0) {
+    setCurrentPage(1);
+  }
+
   const handleSongClick = (songId: string) => {
     navigate(`/admin/catalogue/${songId}`);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page on search
   };
 
   return (
@@ -124,7 +153,7 @@ export default function TribesAdminCataloguePage() {
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             placeholder="Search by title, writer, or lyric..."
             className={cn(
               "w-full h-9 px-0",
@@ -137,26 +166,31 @@ export default function TribesAdminCataloguePage() {
           />
         </div>
 
-        {/* Filter Chips Row - minimal text styling */}
-        <div className="flex items-center gap-3 mb-3">
-          {statusFilters.map((filter) => (
-            <button
-              key={filter.value}
-              onClick={() => handleStatusChange(filter.value)}
-              className={cn(
-                "text-[12px] transition-colors pb-0.5",
-                statusFilter === filter.value
-                  ? "font-semibold text-foreground border-b border-foreground"
-                  : "font-normal text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {filter.label}
-            </button>
-          ))}
+        {/* Filter Chips Row with Count */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            {statusFilters.map((filter) => (
+              <button
+                key={filter.value}
+                onClick={() => handleStatusChange(filter.value)}
+                className={cn(
+                  "text-[12px] transition-colors pb-0.5",
+                  statusFilter === filter.value
+                    ? "font-semibold text-foreground border-b border-foreground"
+                    : "font-normal text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+          <span className="text-[12px] text-muted-foreground">
+            {totalItems} {totalItems === 1 ? "song" : "songs"}
+          </span>
         </div>
 
         <AppResponsiveList
-          items={filteredSongs}
+          items={paginatedSongs}
           keyExtractor={(song) => song.id}
           emptyMessage={searchQuery ? "No songs match your search" : "No songs in catalogue"}
           className="[&_.md\\:hidden]:space-y-2"
@@ -181,14 +215,14 @@ export default function TribesAdminCataloguePage() {
                 </AppTableRow>
               </AppTableHeader>
               <AppTableBody>
-                {filteredSongs.length === 0 ? (
+                {paginatedSongs.length === 0 ? (
                   <AppTableEmpty colSpan={5}>
                     <span className="text-muted-foreground text-sm">
                       {searchQuery ? "No songs match your search" : "No songs in catalogue"}
                     </span>
                   </AppTableEmpty>
                 ) : (
-                  filteredSongs.map(song => (
+                  paginatedSongs.map(song => (
                     <AppTableRow
                       key={song.id}
                       clickable
@@ -207,6 +241,12 @@ export default function TribesAdminCataloguePage() {
               </AppTableBody>
             </AppTable>
           )}
+        />
+
+        <AppPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
         />
       </AppSection>
     </AppPageContainer>
