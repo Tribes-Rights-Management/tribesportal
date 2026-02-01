@@ -17,12 +17,14 @@ import {
   AppTableCell,
   AppTableEmpty,
   AppTableBadge,
+  AppResponsiveList,
+  AppItemCard,
 } from "@/components/app-ui";
 
 /**
  * TRIBES ADMIN CATALOGUE PAGE
  * 
- * Song catalog with search and filtering capabilities.
+ * Song catalog with responsive table/card views.
  */
 
 interface CatalogueSong {
@@ -66,6 +68,10 @@ export default function TribesAdminCataloguePage() {
     song.iswc.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleSongClick = (songId: string) => {
+    navigate(`/admin/catalogue/${songId}`);
+  };
+
   return (
     <AppPageContainer maxWidth="xl">
       <AppPageHeader
@@ -93,42 +99,64 @@ export default function TribesAdminCataloguePage() {
           />
         </div>
 
-        <AppTable columns={["25%", "20%", "20%", "15%", "20%"]}>
-          <AppTableHeader>
-            <AppTableRow>
-              <AppTableHead>Title</AppTableHead>
-              <AppTableHead>Artist</AppTableHead>
-              <AppTableHead>ISWC</AppTableHead>
-              <AppTableHead align="center">Status</AppTableHead>
-              <AppTableHead>Added</AppTableHead>
-            </AppTableRow>
-          </AppTableHeader>
-          <AppTableBody>
-            {filteredSongs.length === 0 ? (
-              <AppTableEmpty colSpan={5}>
-                <span className="text-muted-foreground text-sm">
-                  {searchQuery ? "No songs match your search" : "No songs in catalogue"}
-                </span>
-              </AppTableEmpty>
-            ) : (
-              filteredSongs.map(song => (
-                <AppTableRow
-                  key={song.id}
-                  clickable
-                  onClick={() => navigate(`/admin/catalogue/${song.id}`)}
-                >
-                  <AppTableCell className="font-medium">{song.title}</AppTableCell>
-                  <AppTableCell muted>{song.artist}</AppTableCell>
-                  <AppTableCell muted mono>{song.iswc}</AppTableCell>
-                  <AppTableCell align="center">{getStatusBadge(song.status)}</AppTableCell>
-                  <AppTableCell muted>
-                    {format(new Date(song.addedAt), "MMM d, yyyy")}
-                  </AppTableCell>
+        <AppResponsiveList
+          items={filteredSongs}
+          keyExtractor={(song) => song.id}
+          emptyMessage={searchQuery ? "No songs match your search" : "No songs in catalogue"}
+          renderCard={(song) => (
+            <AppItemCard
+              title={song.title}
+              subtitle={song.artist}
+              meta={
+                <div className="flex items-center gap-2">
+                  <span className="font-mono">{song.iswc}</span>
+                  <span>·</span>
+                  <span>{format(new Date(song.addedAt), "MMM d, yyyy")}</span>
+                </div>
+              }
+              status={getStatusBadge(song.status)}
+              onClick={() => handleSongClick(song.id)}
+            />
+          )}
+          renderTable={() => (
+            <AppTable columns={["25%", "20%", "20%", "15%", "20%"]}>
+              <AppTableHeader>
+                <AppTableRow>
+                  <AppTableHead>Title</AppTableHead>
+                  <AppTableHead>Artist</AppTableHead>
+                  <AppTableHead>ISWC</AppTableHead>
+                  <AppTableHead align="center">Status</AppTableHead>
+                  <AppTableHead>Added</AppTableHead>
                 </AppTableRow>
-              ))
-            )}
-          </AppTableBody>
-        </AppTable>
+              </AppTableHeader>
+              <AppTableBody>
+                {filteredSongs.length === 0 ? (
+                  <AppTableEmpty colSpan={5}>
+                    <span className="text-muted-foreground text-sm">
+                      {searchQuery ? "No songs match your search" : "No songs in catalogue"}
+                    </span>
+                  </AppTableEmpty>
+                ) : (
+                  filteredSongs.map(song => (
+                    <AppTableRow
+                      key={song.id}
+                      clickable
+                      onClick={() => handleSongClick(song.id)}
+                    >
+                      <AppTableCell className="font-medium">{song.title}</AppTableCell>
+                      <AppTableCell muted>{song.artist}</AppTableCell>
+                      <AppTableCell muted mono>{song.iswc}</AppTableCell>
+                      <AppTableCell align="center">{getStatusBadge(song.status)}</AppTableCell>
+                      <AppTableCell muted>
+                        {format(new Date(song.addedAt), "MMM d, yyyy")}
+                      </AppTableCell>
+                    </AppTableRow>
+                  ))
+                )}
+              </AppTableBody>
+            </AppTable>
+          )}
+        />
       </AppSection>
     </AppPageContainer>
   );

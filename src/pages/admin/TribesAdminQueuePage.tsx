@@ -13,13 +13,15 @@ import {
   AppTableCell,
   AppTableEmpty,
   AppTableBadge,
+  AppResponsiveList,
+  AppItemCard,
 } from "@/components/app-ui";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 /**
  * TRIBES ADMIN QUEUE PAGE
  * 
- * Pending song submissions with status filtering.
+ * Pending song submissions with responsive table/card views.
  */
 
 type QueueStatus = "all" | "pending" | "review" | "approved" | "rejected";
@@ -85,6 +87,10 @@ export default function TribesAdminQueuePage() {
 
   const counts = getCounts();
 
+  const handleSongClick = (songId: string) => {
+    navigate(`/admin/queue/${songId}`);
+  };
+
   return (
     <AppPageContainer maxWidth="xl">
       <AppPageHeader
@@ -93,52 +99,77 @@ export default function TribesAdminQueuePage() {
       />
 
       <AppSection spacing="md">
-        <Tabs value={currentFilter} onValueChange={handleFilterChange} className="mb-4">
-          <TabsList>
-            <TabsTrigger value="all">All ({counts.all})</TabsTrigger>
-            <TabsTrigger value="pending">Pending ({counts.pending})</TabsTrigger>
-            <TabsTrigger value="review">In Review ({counts.review})</TabsTrigger>
-            <TabsTrigger value="approved">Approved ({counts.approved})</TabsTrigger>
-            <TabsTrigger value="rejected">Rejected ({counts.rejected})</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="overflow-x-auto -mx-4 sm:mx-0 mb-4">
+          <div className="px-4 sm:px-0">
+            <Tabs value={currentFilter} onValueChange={handleFilterChange}>
+              <TabsList className="w-full sm:w-auto">
+                <TabsTrigger value="all" className="text-xs sm:text-sm">All ({counts.all})</TabsTrigger>
+                <TabsTrigger value="pending" className="text-xs sm:text-sm">Pending ({counts.pending})</TabsTrigger>
+                <TabsTrigger value="review" className="text-xs sm:text-sm">Review ({counts.review})</TabsTrigger>
+                <TabsTrigger value="approved" className="text-xs sm:text-sm hidden sm:inline-flex">Approved ({counts.approved})</TabsTrigger>
+                <TabsTrigger value="rejected" className="text-xs sm:text-sm hidden sm:inline-flex">Rejected ({counts.rejected})</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        </div>
 
-        <AppTable columns={["20%", "20%", "25%", "15%", "20%"]}>
-          <AppTableHeader>
-            <AppTableRow>
-              <AppTableHead>Title</AppTableHead>
-              <AppTableHead>Artist</AppTableHead>
-              <AppTableHead>Submitter</AppTableHead>
-              <AppTableHead align="center">Status</AppTableHead>
-              <AppTableHead>Submitted</AppTableHead>
-            </AppTableRow>
-          </AppTableHeader>
-          <AppTableBody>
-            {filteredSongs.length === 0 ? (
-              <AppTableEmpty colSpan={5}>
-                <span className="text-muted-foreground text-sm">
-                  No {currentFilter === "all" ? "" : currentFilter + " "}submissions
-                </span>
-              </AppTableEmpty>
-            ) : (
-              filteredSongs.map(song => (
-                <AppTableRow
-                  key={song.id}
-                  clickable
-                  onClick={() => navigate(`/admin/queue/${song.id}`)}
-                >
-                  <AppTableCell className="font-medium">{song.title}</AppTableCell>
-                  <AppTableCell muted>{song.artist}</AppTableCell>
-                  <AppTableCell muted>{song.submitter}</AppTableCell>
-                  <AppTableCell align="center">{getStatusBadge(song.status)}</AppTableCell>
-                  <AppTableCell muted>
-                    {format(new Date(song.submittedAt), "MMM d, yyyy")}
-                  </AppTableCell>
+        <AppResponsiveList
+          items={filteredSongs}
+          keyExtractor={(song) => song.id}
+          emptyMessage={`No ${currentFilter === "all" ? "" : currentFilter + " "}submissions`}
+          renderCard={(song) => (
+            <AppItemCard
+              title={song.title}
+              subtitle={song.artist}
+              meta={
+                <div className="flex flex-col gap-0.5">
+                  <span className="truncate">{song.submitter}</span>
+                  <span>{format(new Date(song.submittedAt), "MMM d, yyyy")}</span>
+                </div>
+              }
+              status={getStatusBadge(song.status)}
+              onClick={() => handleSongClick(song.id)}
+            />
+          )}
+          renderTable={() => (
+            <AppTable columns={["20%", "20%", "25%", "15%", "20%"]}>
+              <AppTableHeader>
+                <AppTableRow>
+                  <AppTableHead>Title</AppTableHead>
+                  <AppTableHead>Artist</AppTableHead>
+                  <AppTableHead>Submitter</AppTableHead>
+                  <AppTableHead align="center">Status</AppTableHead>
+                  <AppTableHead>Submitted</AppTableHead>
                 </AppTableRow>
-              ))
-            )}
-          </AppTableBody>
-        </AppTable>
+              </AppTableHeader>
+              <AppTableBody>
+                {filteredSongs.length === 0 ? (
+                  <AppTableEmpty colSpan={5}>
+                    <span className="text-muted-foreground text-sm">
+                      No {currentFilter === "all" ? "" : currentFilter + " "}submissions
+                    </span>
+                  </AppTableEmpty>
+                ) : (
+                  filteredSongs.map(song => (
+                    <AppTableRow
+                      key={song.id}
+                      clickable
+                      onClick={() => handleSongClick(song.id)}
+                    >
+                      <AppTableCell className="font-medium">{song.title}</AppTableCell>
+                      <AppTableCell muted>{song.artist}</AppTableCell>
+                      <AppTableCell muted>{song.submitter}</AppTableCell>
+                      <AppTableCell align="center">{getStatusBadge(song.status)}</AppTableCell>
+                      <AppTableCell muted>
+                        {format(new Date(song.submittedAt), "MMM d, yyyy")}
+                      </AppTableCell>
+                    </AppTableRow>
+                  ))
+                )}
+              </AppTableBody>
+            </AppTable>
+          )}
+        />
       </AppSection>
     </AppPageContainer>
   );
