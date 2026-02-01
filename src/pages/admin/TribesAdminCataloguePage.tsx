@@ -78,7 +78,16 @@ export default function TribesAdminCataloguePage() {
       <AppPageHeader
         title="Catalogue"
         backLink={{ to: "/admin", label: "Dashboard" }}
-        action={
+      />
+
+      <AppSection spacing="md">
+        <div className="flex items-center gap-3 mb-4">
+          <AppSearchInput
+            placeholder="Search songs, artists..."
+            value={searchQuery}
+            onChange={setSearchQuery}
+            className="flex-1"
+          />
           <AppButton
             intent="secondary"
             size="sm"
@@ -87,17 +96,6 @@ export default function TribesAdminCataloguePage() {
             <Plus className="h-4 w-4" />
             Add Song
           </AppButton>
-        }
-      />
-
-      <AppSection spacing="md">
-        <div className="flex items-center gap-4 mb-4">
-          <AppSearchInput
-            placeholder="Search songs, artists, ISWC..."
-            value={searchQuery}
-            onChange={setSearchQuery}
-            className="max-w-sm"
-          />
         </div>
 
         <AppResponsiveList
