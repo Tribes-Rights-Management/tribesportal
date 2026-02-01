@@ -126,35 +126,31 @@ export default function WorkstationsHomePage() {
   const allModules = [
     {
       title: "Help Workstation",
-      description: "Manage help articles, categories, audiences, and support messages.",
+      description: "Manage help articles, categories, and audiences.",
       icon: HelpCircle,
       href: "/help",
       hasAccess: canAccessHelpWorkstation,
-      isPlatformOnly: false,
     },
     {
       title: "Tribes Rights",
-      description: "Client accounts, song catalog, and rights management.",
+      description: "Tribes client and rights management.",
       icon: Music,
       href: "/rights",
       hasAccess: true, // TODO: Add proper access check
-      isPlatformOnly: false,
     },
     {
       title: "Tribes Licensing",
-      description: "License requests, agreements, payments, and catalog management.",
+      description: "License requests, agreements, and payments.",
       icon: FileText,
       href: "/licensing",
       hasAccess: canAccessTribesLicensing,
-      isPlatformOnly: false,
     },
     {
       title: "Tribes Admin",
-      description: "Statements, documents, invoices, and payment management.",
+      description: "Client documents, catalog, and payments.",
       icon: LayoutDashboard,
       href: "/admin",
       hasAccess: canAccessTribesAdmin,
-      isPlatformOnly: false,
     },
   ];
 
