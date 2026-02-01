@@ -6,8 +6,6 @@ import {
   AppPageHeader,
   AppPageContainer,
   AppSection,
-  AppSearchInput,
-  AppSelect,
   AppTable,
   AppTableHeader,
   AppTableBody,
@@ -16,16 +14,21 @@ import {
   AppTableCell,
   AppTableEmpty,
   AppTableBadge,
+  AppFilterDrawer,
+  AppFilterSection,
+  AppFilterOption,
+  AppFilterTrigger,
 } from "@/components/app-ui";
 
 /**
  * TRIBES ADMIN DOCUMENTS PAGE
  * 
- * Contracts and documents management with type filtering.
+ * Contracts and documents management with filter drawer pattern.
  */
 
 type DocumentType = "all" | "contract" | "agreement" | "amendment" | "termination";
 type DocumentStatus = "draft" | "pending" | "active" | "expired" | "terminated";
+type SortOption = "date" | "title" | "party";
 
 interface Document {
   id: string;
@@ -78,7 +81,7 @@ const getTypeLabel = (type: Document["type"]) => {
   }
 };
 
-const typeOptions = [
+const typeOptions: { value: DocumentType; label: string }[] = [
   { value: "all", label: "All Types" },
   { value: "contract", label: "Contracts" },
   { value: "agreement", label: "Agreements" },
@@ -86,14 +89,23 @@ const typeOptions = [
   { value: "termination", label: "Terminations" },
 ];
 
+const sortOptions: { value: SortOption; label: string }[] = [
+  { value: "date", label: "Date Created" },
+  { value: "title", label: "Title" },
+  { value: "party", label: "Party" },
+];
+
 export default function TribesAdminDocumentsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [filterOpen, setFilterOpen] = useState(false);
   
   const typeFilter = (searchParams.get("type") as DocumentType) || "all";
+  const sortBy = (searchParams.get("sort") as SortOption) || "date";
 
-  const handleTypeChange = (value: string) => {
+  const hasActiveFilters = typeFilter !== "all" || sortBy !== "date";
+
+  const handleTypeChange = (value: DocumentType) => {
     if (value === "all") {
       searchParams.delete("type");
     } else {
@@ -102,12 +114,37 @@ export default function TribesAdminDocumentsPage() {
     setSearchParams(searchParams);
   };
 
-  const filteredDocuments = mockDocuments.filter(doc => {
-    const matchesType = typeFilter === "all" || doc.type === typeFilter;
-    const matchesSearch = 
-      doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doc.party.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesType && matchesSearch;
+  const handleSortChange = (value: SortOption) => {
+    if (value === "date") {
+      searchParams.delete("sort");
+    } else {
+      searchParams.set("sort", value);
+    }
+    setSearchParams(searchParams);
+  };
+
+  const handleClearFilters = () => {
+    searchParams.delete("type");
+    searchParams.delete("sort");
+    setSearchParams(searchParams);
+  };
+
+  // Filter documents
+  let filteredDocuments = typeFilter === "all"
+    ? mockDocuments
+    : mockDocuments.filter(doc => doc.type === typeFilter);
+
+  // Sort documents
+  filteredDocuments = [...filteredDocuments].sort((a, b) => {
+    switch (sortBy) {
+      case "title":
+        return a.title.localeCompare(b.title);
+      case "party":
+        return a.party.localeCompare(b.party);
+      case "date":
+      default:
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }
   });
 
   return (
@@ -118,19 +155,12 @@ export default function TribesAdminDocumentsPage() {
       />
 
       <AppSection spacing="md">
-        <div className="flex items-center gap-3 mb-4">
-          <AppSearchInput
-            placeholder="Search documents..."
-            value={searchQuery}
-            onChange={setSearchQuery}
-            className="flex-1"
+        <div className="flex items-center justify-between mb-4">
+          <AppFilterTrigger
+            onClick={() => setFilterOpen(true)}
+            hasActiveFilters={hasActiveFilters}
           />
-          <AppSelect
-            value={typeFilter}
-            onChange={handleTypeChange}
-            options={typeOptions}
-            className="w-40 shrink-0"
-          />
+          <div /> {/* Spacer - can add action button here if needed */}
         </div>
 
         <AppTable columns={["25%", "12%", "18%", "15%", "15%", "15%"]}>
@@ -148,7 +178,7 @@ export default function TribesAdminDocumentsPage() {
             {filteredDocuments.length === 0 ? (
               <AppTableEmpty colSpan={6}>
                 <span className="text-muted-foreground text-sm">
-                  {searchQuery || typeFilter !== "all" ? "No matching documents" : "No documents"}
+                  {typeFilter !== "all" ? "No matching documents" : "No documents"}
                 </span>
               </AppTableEmpty>
             ) : (
@@ -174,6 +204,35 @@ export default function TribesAdminDocumentsPage() {
           </AppTableBody>
         </AppTable>
       </AppSection>
+
+      <AppFilterDrawer
+        open={filterOpen}
+        onOpenChange={setFilterOpen}
+        hasActiveFilters={hasActiveFilters}
+        onClearFilters={handleClearFilters}
+      >
+        <AppFilterSection title="Type">
+          {typeOptions.map((opt) => (
+            <AppFilterOption
+              key={opt.value}
+              label={opt.label}
+              selected={typeFilter === opt.value}
+              onClick={() => handleTypeChange(opt.value)}
+            />
+          ))}
+        </AppFilterSection>
+
+        <AppFilterSection title="Sort By">
+          {sortOptions.map((opt) => (
+            <AppFilterOption
+              key={opt.value}
+              label={opt.label}
+              selected={sortBy === opt.value}
+              onClick={() => handleSortChange(opt.value)}
+            />
+          ))}
+        </AppFilterSection>
+      </AppFilterDrawer>
     </AppPageContainer>
   );
 }

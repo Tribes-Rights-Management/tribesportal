@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { format } from "date-fns";
 
@@ -7,7 +7,6 @@ import {
   AppPageHeader,
   AppPageContainer,
   AppSection,
-  AppSearchInput,
   AppButton,
   AppTable,
   AppTableHeader,
@@ -19,13 +18,20 @@ import {
   AppTableBadge,
   AppResponsiveList,
   AppItemCard,
+  AppFilterDrawer,
+  AppFilterSection,
+  AppFilterOption,
+  AppFilterTrigger,
 } from "@/components/app-ui";
 
 /**
  * TRIBES ADMIN CATALOGUE PAGE
  * 
- * Song catalog with responsive table/card views.
+ * Song catalog with filter drawer pattern and responsive table/card views.
  */
+
+type CatalogueStatus = "all" | "active" | "pending" | "inactive";
+type SortOption = "title" | "date" | "artist";
 
 interface CatalogueSong {
   id: string;
@@ -59,15 +65,70 @@ const getStatusBadge = (status: CatalogueSong["status"]) => {
   }
 };
 
+const statusOptions: { value: CatalogueStatus; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "active", label: "Active" },
+  { value: "pending", label: "Pending" },
+  { value: "inactive", label: "Inactive" },
+];
+
+const sortOptions: { value: SortOption; label: string }[] = [
+  { value: "title", label: "Title" },
+  { value: "date", label: "Date Added" },
+  { value: "artist", label: "Artist" },
+];
+
 export default function TribesAdminCataloguePage() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [filterOpen, setFilterOpen] = useState(false);
+  
+  const statusFilter = (searchParams.get("status") as CatalogueStatus) || "all";
+  const sortBy = (searchParams.get("sort") as SortOption) || "title";
 
-  const filteredSongs = mockCatalogueSongs.filter(song =>
-    song.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    song.artist.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    song.iswc.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const hasActiveFilters = statusFilter !== "all" || sortBy !== "title";
+
+  const handleStatusChange = (value: CatalogueStatus) => {
+    if (value === "all") {
+      searchParams.delete("status");
+    } else {
+      searchParams.set("status", value);
+    }
+    setSearchParams(searchParams);
+  };
+
+  const handleSortChange = (value: SortOption) => {
+    if (value === "title") {
+      searchParams.delete("sort");
+    } else {
+      searchParams.set("sort", value);
+    }
+    setSearchParams(searchParams);
+  };
+
+  const handleClearFilters = () => {
+    searchParams.delete("status");
+    searchParams.delete("sort");
+    setSearchParams(searchParams);
+  };
+
+  // Filter songs
+  let filteredSongs = statusFilter === "all"
+    ? mockCatalogueSongs
+    : mockCatalogueSongs.filter(song => song.status === statusFilter);
+
+  // Sort songs
+  filteredSongs = [...filteredSongs].sort((a, b) => {
+    switch (sortBy) {
+      case "date":
+        return new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime();
+      case "artist":
+        return a.artist.localeCompare(b.artist);
+      case "title":
+      default:
+        return a.title.localeCompare(b.title);
+    }
+  });
 
   const handleSongClick = (songId: string) => {
     navigate(`/admin/catalogue/${songId}`);
@@ -81,12 +142,10 @@ export default function TribesAdminCataloguePage() {
       />
 
       <AppSection spacing="md">
-        <div className="flex items-center gap-3 mb-4">
-          <AppSearchInput
-            placeholder="Search songs, artists..."
-            value={searchQuery}
-            onChange={setSearchQuery}
-            className="flex-1"
+        <div className="flex items-center justify-between mb-4">
+          <AppFilterTrigger
+            onClick={() => setFilterOpen(true)}
+            hasActiveFilters={hasActiveFilters}
           />
           <AppButton
             intent="secondary"
@@ -101,7 +160,7 @@ export default function TribesAdminCataloguePage() {
         <AppResponsiveList
           items={filteredSongs}
           keyExtractor={(song) => song.id}
-          emptyMessage={searchQuery ? "No songs match your search" : "No songs in catalogue"}
+          emptyMessage="No songs in catalogue"
           renderCard={(song) => (
             <AppItemCard
               title={song.title}
@@ -126,7 +185,7 @@ export default function TribesAdminCataloguePage() {
                 {filteredSongs.length === 0 ? (
                   <AppTableEmpty colSpan={5}>
                     <span className="text-muted-foreground text-sm">
-                      {searchQuery ? "No songs match your search" : "No songs in catalogue"}
+                      No songs in catalogue
                     </span>
                   </AppTableEmpty>
                 ) : (
@@ -151,6 +210,35 @@ export default function TribesAdminCataloguePage() {
           )}
         />
       </AppSection>
+
+      <AppFilterDrawer
+        open={filterOpen}
+        onOpenChange={setFilterOpen}
+        hasActiveFilters={hasActiveFilters}
+        onClearFilters={handleClearFilters}
+      >
+        <AppFilterSection title="Status">
+          {statusOptions.map((opt) => (
+            <AppFilterOption
+              key={opt.value}
+              label={opt.label}
+              selected={statusFilter === opt.value}
+              onClick={() => handleStatusChange(opt.value)}
+            />
+          ))}
+        </AppFilterSection>
+
+        <AppFilterSection title="Sort By">
+          {sortOptions.map((opt) => (
+            <AppFilterOption
+              key={opt.value}
+              label={opt.label}
+              selected={sortBy === opt.value}
+              onClick={() => handleSortChange(opt.value)}
+            />
+          ))}
+        </AppFilterSection>
+      </AppFilterDrawer>
     </AppPageContainer>
   );
 }
