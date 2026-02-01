@@ -11,3 +11,4 @@ export { default as RightsCataloguePage } from "./RightsCataloguePage";
 export { default as RightsContractsPage } from "./RightsContractsPage";
 export { default as RightsDocumentsPage } from "./RightsDocumentsPage";
 export { default as RightsSettingsPage } from "./RightsSettingsPage";
+export { default as SongSubmitPage } from "./SongSubmitPage";
