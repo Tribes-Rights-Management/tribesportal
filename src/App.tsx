@@ -284,7 +284,7 @@ const App = () => (
           <Route index element={<TribesAdminDashboard />} />
           <Route path="catalogue" element={<TribesAdminCataloguePage />} />
           <Route path="documents" element={<TribesAdminDocumentsPage />} />
-          <Route path="royalties" element={<TribesAdminRoyaltiesPage />} />
+          <Route path="payments" element={<TribesAdminRoyaltiesPage />} />
           <Route path="settings" element={<TribesAdminSettingsPage />} />
         </Route>
         
