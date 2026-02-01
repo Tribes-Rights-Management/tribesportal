@@ -31,6 +31,16 @@ import { cn } from "@/lib/utils";
 const ITEMS_PER_PAGE = 50;
 
 type CatalogueStatus = "all" | "active" | "pending" | "inactive";
+type SortOption = "a-z" | "z-a" | "newest" | "oldest";
+
+const sortLabels: Record<SortOption, string> = {
+  "a-z": "A-Z",
+  "z-a": "Z-A",
+  "newest": "Newest",
+  "oldest": "Oldest",
+};
+
+const sortOrder: SortOption[] = ["a-z", "z-a", "newest", "oldest"];
 
 interface CatalogueSong {
   id: string;
@@ -84,6 +94,7 @@ export default function TribesAdminCataloguePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState<SortOption>("a-z");
   
   const statusFilter = (searchParams.get("status") as CatalogueStatus) || "all";
 
@@ -94,7 +105,13 @@ export default function TribesAdminCataloguePage() {
       searchParams.set("status", value);
     }
     setSearchParams(searchParams);
-    setCurrentPage(1); // Reset to first page on filter change
+    setCurrentPage(1);
+  };
+
+  const handleSortToggle = () => {
+    const currentIndex = sortOrder.indexOf(sortBy);
+    const nextIndex = (currentIndex + 1) % sortOrder.length;
+    setSortBy(sortOrder[nextIndex]);
   };
 
   // Filter by status
@@ -111,6 +128,22 @@ export default function TribesAdminCataloguePage() {
       song.songwriters.some(w => w.toLowerCase().includes(query))
     );
   }
+
+  // Sort songs
+  filteredSongs = [...filteredSongs].sort((a, b) => {
+    switch (sortBy) {
+      case "a-z":
+        return a.title.localeCompare(b.title);
+      case "z-a":
+        return b.title.localeCompare(a.title);
+      case "newest":
+        return new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime();
+      case "oldest":
+        return new Date(a.addedAt).getTime() - new Date(b.addedAt).getTime();
+      default:
+        return a.title.localeCompare(b.title);
+    }
+  });
 
   // Pagination
   const totalItems = filteredSongs.length;
@@ -129,7 +162,7 @@ export default function TribesAdminCataloguePage() {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset to first page on search
+    setCurrentPage(1);
   };
 
   return (
@@ -157,7 +190,7 @@ export default function TribesAdminCataloguePage() {
             placeholder="Search by title, writer, or lyric..."
             className={cn(
               "w-full h-9 px-0",
-              "text-base sm:text-[13px]", // 16px on mobile to prevent Safari zoom
+              "text-base sm:text-[13px]",
               "bg-transparent border-b border-border/60",
               "placeholder:text-muted-foreground/40",
               "focus:outline-none focus:border-foreground/30",
@@ -166,7 +199,7 @@ export default function TribesAdminCataloguePage() {
           />
         </div>
 
-        {/* Filter Chips Row with Count */}
+        {/* Filter Chips Row with Count + Sort */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             {statusFilters.map((filter) => (
@@ -184,9 +217,16 @@ export default function TribesAdminCataloguePage() {
               </button>
             ))}
           </div>
-          <span className="text-[12px] text-muted-foreground">
-            {totalItems} {totalItems === 1 ? "song" : "songs"}
-          </span>
+          <div className="flex items-center gap-1 text-[12px] text-muted-foreground">
+            <span>{totalItems} {totalItems === 1 ? "song" : "songs"}</span>
+            <span>·</span>
+            <button
+              onClick={handleSortToggle}
+              className="hover:text-foreground transition-colors"
+            >
+              {sortLabels[sortBy]} ↓
+            </button>
+          </div>
         </div>
 
         <AppResponsiveList

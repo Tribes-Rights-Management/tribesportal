@@ -20,6 +20,7 @@ import {
   AppFilterTrigger,
   AppPagination,
 } from "@/components/app-ui";
+import { cn } from "@/lib/utils";
 
 /**
  * TRIBES ADMIN DOCUMENTS PAGE
@@ -31,7 +32,16 @@ const ITEMS_PER_PAGE = 50;
 
 type DocumentType = "all" | "contract" | "agreement" | "amendment" | "termination";
 type DocumentStatus = "draft" | "pending" | "active" | "expired" | "terminated";
-type SortOption = "date" | "title" | "party";
+type SortOption = "a-z" | "z-a" | "newest" | "oldest";
+
+const sortLabels: Record<SortOption, string> = {
+  "a-z": "A-Z",
+  "z-a": "Z-A",
+  "newest": "Newest",
+  "oldest": "Oldest",
+};
+
+const sortOrder: SortOption[] = ["a-z", "z-a", "newest", "oldest"];
 
 interface Document {
   id: string;
@@ -105,22 +115,16 @@ const typeOptions: { value: DocumentType; label: string }[] = [
   { value: "termination", label: "Terminations" },
 ];
 
-const sortOptions: { value: SortOption; label: string }[] = [
-  { value: "date", label: "Date Created" },
-  { value: "title", label: "Title" },
-  { value: "party", label: "Party" },
-];
-
 export default function TribesAdminDocumentsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [filterOpen, setFilterOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState<SortOption>("a-z");
   
   const typeFilter = (searchParams.get("type") as DocumentType) || "all";
-  const sortBy = (searchParams.get("sort") as SortOption) || "date";
 
-  const hasActiveFilters = typeFilter !== "all" || sortBy !== "date";
+  const hasActiveFilters = typeFilter !== "all";
 
   const handleTypeChange = (value: DocumentType) => {
     if (value === "all") {
@@ -132,18 +136,14 @@ export default function TribesAdminDocumentsPage() {
     setCurrentPage(1);
   };
 
-  const handleSortChange = (value: SortOption) => {
-    if (value === "date") {
-      searchParams.delete("sort");
-    } else {
-      searchParams.set("sort", value);
-    }
-    setSearchParams(searchParams);
+  const handleSortToggle = () => {
+    const currentIndex = sortOrder.indexOf(sortBy);
+    const nextIndex = (currentIndex + 1) % sortOrder.length;
+    setSortBy(sortOrder[nextIndex]);
   };
 
   const handleClearFilters = () => {
     searchParams.delete("type");
-    searchParams.delete("sort");
     setSearchParams(searchParams);
     setCurrentPage(1);
   };
@@ -156,13 +156,16 @@ export default function TribesAdminDocumentsPage() {
   // Sort documents
   filteredDocuments = [...filteredDocuments].sort((a, b) => {
     switch (sortBy) {
-      case "title":
+      case "a-z":
         return a.title.localeCompare(b.title);
-      case "party":
-        return a.party.localeCompare(b.party);
-      case "date":
-      default:
+      case "z-a":
+        return b.title.localeCompare(a.title);
+      case "newest":
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      case "oldest":
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      default:
+        return a.title.localeCompare(b.title);
     }
   });
 
@@ -178,14 +181,9 @@ export default function TribesAdminDocumentsPage() {
 
   return (
     <AppPageContainer maxWidth="xl">
-      {/* Header Row: Title + Count + Filter */}
+      {/* Header Row: Title + Filter */}
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <h1 className="text-lg font-semibold tracking-tight">Documents</h1>
-          <span className="text-[12px] text-muted-foreground">
-            {totalItems} {totalItems === 1 ? "document" : "documents"}
-          </span>
-        </div>
+        <h1 className="text-lg font-semibold tracking-tight">Documents</h1>
         <AppFilterTrigger
           onClick={() => setFilterOpen(true)}
           hasActiveFilters={hasActiveFilters}
@@ -193,6 +191,19 @@ export default function TribesAdminDocumentsPage() {
       </div>
 
       <AppSection spacing="none">
+        {/* Count + Sort Row */}
+        <div className="flex items-center justify-end mb-3">
+          <div className="flex items-center gap-1 text-[12px] text-muted-foreground">
+            <span>{totalItems} {totalItems === 1 ? "document" : "documents"}</span>
+            <span>·</span>
+            <button
+              onClick={handleSortToggle}
+              className="hover:text-foreground transition-colors"
+            >
+              {sortLabels[sortBy]} ↓
+            </button>
+          </div>
+        </div>
 
         <AppTable columns={["25%", "12%", "18%", "15%", "15%", "15%"]}>
           <AppTableHeader>
@@ -255,17 +266,6 @@ export default function TribesAdminDocumentsPage() {
               label={opt.label}
               selected={typeFilter === opt.value}
               onClick={() => handleTypeChange(opt.value)}
-            />
-          ))}
-        </AppFilterSection>
-
-        <AppFilterSection title="Sort By">
-          {sortOptions.map((opt) => (
-            <AppFilterOption
-              key={opt.value}
-              label={opt.label}
-              selected={sortBy === opt.value}
-              onClick={() => handleSortChange(opt.value)}
             />
           ))}
         </AppFilterSection>
