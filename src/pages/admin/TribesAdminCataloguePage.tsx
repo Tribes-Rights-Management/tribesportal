@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import { format } from "date-fns";
 
 import {
@@ -121,16 +121,13 @@ export default function TribesAdminCataloguePage() {
       <AppSection spacing="none">
         {/* Search Input - subtle bottom border */}
         <div className="relative mb-2">
-          <Search 
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/50 pointer-events-none" 
-          />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by title, writer, or lyric..."
             className={cn(
-              "w-full h-9 pl-8 pr-3",
+              "w-full h-9 px-0",
               "text-base sm:text-[13px]", // 16px on mobile to prevent Safari zoom
               "bg-transparent border-b border-border/60",
               "placeholder:text-muted-foreground/40",
