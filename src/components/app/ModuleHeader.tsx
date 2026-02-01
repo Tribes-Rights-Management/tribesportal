@@ -20,7 +20,7 @@ import {
  * Used across ALL workstations: /admin, /licensing, /help, /rights
  * 
  * Layout:
- * - Left: Tribes logo only (no text, no module name)
+ * - Left: Tribes wordmark logo (image, ~80-100px wide)
  * - Right: Search icon, Notifications icon, User menu icon
  * 
  * Desktop with sidebar: 2-column grid (sidebar column + content column)
@@ -28,25 +28,8 @@ import {
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-// Tribes logo SVG component
-function TribesLogo({ className }: { className?: string }) {
-  return (
-    <svg 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      className={className}
-      aria-label="Tribes"
-    >
-      <path 
-        d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" 
-        stroke="currentColor" 
-        strokeWidth="2" 
-        strokeLinecap="round" 
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+// Tribes wordmark logo URL
+const TRIBES_LOGO_URL = "https://rsdjfnsbimcdrxlhognv.supabase.co/storage/v1/object/public/Tribes%20Brand%20Files/Tribes%20-%20Wordmark%20Black%20Transparent.png";
 
 interface ModuleHeaderProps {
   showSidebarLogo?: boolean;
@@ -63,6 +46,22 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
   const handleLogoClick = () => {
     navigate("/workspaces");
   };
+
+  // Tribes wordmark logo component
+  const tribesLogo = (
+    <button
+      onClick={handleLogoClick}
+      className="flex items-center h-9 px-1 rounded-lg hover:bg-muted/50 transition-colors"
+      aria-label="Go to workspaces"
+    >
+      <img
+        src={TRIBES_LOGO_URL}
+        alt="Tribes"
+        className="h-5 w-auto dark:invert"
+        style={{ maxWidth: "90px" }}
+      />
+    </button>
+  );
 
   // Right side icons (shared between mobile and desktop)
   const rightIcons = (
@@ -101,13 +100,7 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
       <>
         <div className="w-full h-full flex items-center justify-between px-4">
           {/* Left: Logo only */}
-          <button
-            onClick={handleLogoClick}
-            className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-muted/50 transition-colors"
-            aria-label="Go to workspaces"
-          >
-            <TribesLogo className="h-5 w-5 text-foreground" />
-          </button>
+          {tribesLogo}
 
           {/* Right: Icons */}
           {rightIcons}
@@ -122,17 +115,7 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
   if (showSidebarLogo) {
     return (
       <>
-        <SidebarHeader 
-          logo={
-            <button
-              onClick={handleLogoClick}
-              className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-muted/50 transition-colors"
-              aria-label="Go to workspaces"
-            >
-              <TribesLogo className="h-5 w-5 text-foreground" />
-            </button>
-          }
-        />
+        <SidebarHeader logo={tribesLogo} />
 
         <ContentHeader>
           {/* Left: empty spacer */}
@@ -152,13 +135,7 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
     <>
       <div className="w-full h-full flex items-center justify-between px-6">
         {/* Left: Logo only */}
-        <button
-          onClick={handleLogoClick}
-          className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-muted/50 transition-colors"
-          aria-label="Go to workspaces"
-        >
-          <TribesLogo className="h-5 w-5 text-foreground" />
-        </button>
+        {tribesLogo}
 
         {/* Right: Icons */}
         {rightIcons}
