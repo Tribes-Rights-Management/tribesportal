@@ -52,10 +52,11 @@ import LicensingPaymentsPage from "@/pages/modules/licensing/LicensingPaymentsPa
 import LicensingFeesPage from "@/pages/modules/licensing/LicensingFeesPage";
 import LicensingReceiptsPage from "@/pages/modules/licensing/LicensingReceiptsPage";
 
-// First-class module pages - Rights (/rights) - CLIENT AND RIGHTS MANAGEMENT
+// First-class module pages - Rights (/rights) - STAFF WORKSTATION FOR PUBLISHING CATALOG
 import {
   RightsOverview,
   RightsClientsPage,
+  RightsCataloguePage,
   RightsContractsPage,
   RightsDocumentsPage,
   RightsSettingsPage,
@@ -69,12 +70,11 @@ import AccessSuspendedPage from "@/pages/app/AccessSuspendedPage";
 // Tribes Admin Protected Route — gates access to Tribes Admin Workstation
 import { TribesAdminProtectedRoute } from "@/components/tribes-admin/TribesAdminProtectedRoute";
 
-// Tribes Admin Workstation — FIRST-CLASS WORKSTATION (song catalog management)
+// Tribes Admin Workstation — CLIENT-FACING PORTAL
 import { TribesAdminLayout } from "@/layouts/TribesAdminLayout";
 import {
   TribesAdminDashboard,
   TribesAdminCataloguePage,
-  TribesAdminQueuePage,
   TribesAdminDocumentsPage,
   TribesAdminRoyaltiesPage,
   TribesAdminSettingsPage,
@@ -258,9 +258,9 @@ const App = () => (
         <Route path="/tribes-licensing/*" element={<PathPreservingRedirect from="/tribes-licensing" to="/licensing" />} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
-            FIRST-CLASS MODULE: RIGHTS (/rights) — CLIENT AND RIGHTS MANAGEMENT
+            FIRST-CLASS MODULE: RIGHTS (/rights) — STAFF WORKSTATION
             Permission: All authenticated users (for now)
-            Client management, contracts, documents
+            Master catalog management, client relationships, contracts, documents
         ═══════════════════════════════════════════════════════════════════════ */}
         <Route path="/rights" element={
           <AppProtectedRoute>
@@ -269,20 +269,20 @@ const App = () => (
         }>
           <Route index element={<RightsOverview />} />
           <Route path="clients" element={<RightsClientsPage />} />
+          <Route path="catalogue" element={<RightsCataloguePage />} />
           <Route path="contracts" element={<RightsContractsPage />} />
           <Route path="documents" element={<RightsDocumentsPage />} />
           <Route path="settings" element={<RightsSettingsPage />} />
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
-            FIRST-CLASS MODULE: TRIBES ADMIN (/admin) — SONG CATALOG MANAGEMENT
+            FIRST-CLASS MODULE: ADMIN (/admin) — CLIENT-FACING PORTAL
             Permission: All authenticated users (for now)
-            Song catalog management, submissions, documents, royalties
+            Clients view their catalog, documents, payments
         ═══════════════════════════════════════════════════════════════════════ */}
         <Route path="/admin" element={<TribesAdminProtectedRoute><TribesAdminLayout /></TribesAdminProtectedRoute>}>
           <Route index element={<TribesAdminDashboard />} />
           <Route path="catalogue" element={<TribesAdminCataloguePage />} />
-          <Route path="queue" element={<TribesAdminQueuePage />} />
           <Route path="documents" element={<TribesAdminDocumentsPage />} />
           <Route path="royalties" element={<TribesAdminRoyaltiesPage />} />
           <Route path="settings" element={<TribesAdminSettingsPage />} />

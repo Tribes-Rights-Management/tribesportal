@@ -54,14 +54,14 @@ const consoleNav: NavItem[] = [
 ];
 
 /**
- * Admin Module Navigation - Tribes Admin (Song Catalog Management)
+ * Admin Module Navigation - Client-Facing Portal
+ * Clients view their associated documents, catalog, messages, and payments
  */
 const adminNav: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true, section: "main" },
   { to: "/admin/catalogue", label: "Catalogue", icon: Music, section: "main" },
-  { to: "/admin/queue", label: "Queue", icon: ListTodo, section: "main" },
   { to: "/admin/documents", label: "Documents", icon: FileText, section: "main" },
-  { to: "/admin/royalties", label: "Royalties", icon: CreditCard, section: "secondary" },
+  { to: "/admin/royalties", label: "Payments", icon: CreditCard, section: "secondary" },
   { to: "/admin/settings", label: "Settings", icon: Settings2, section: "settings" },
 ];
 
@@ -76,11 +76,13 @@ const licensingNav: NavItem[] = [
 ];
 
 /**
- * Rights Module Navigation - Client and Rights Management
+ * Rights Module Navigation - Staff Workstation for Publishing Catalog
+ * Full CRUD operations for the master catalog
  */
 const rightsNav: NavItem[] = [
   { to: "/rights", label: "Overview", icon: LayoutDashboard, exact: true, section: "main" },
   { to: "/rights/clients", label: "Clients", icon: Users, section: "main" },
+  { to: "/rights/catalogue", label: "Catalogue", icon: Music, section: "main" },
   { to: "/rights/contracts", label: "Contracts", icon: Briefcase, section: "main" },
   { to: "/rights/documents", label: "Documents", icon: FileText, section: "main" },
   { to: "/rights/settings", label: "Settings", icon: Settings2, section: "settings" },
