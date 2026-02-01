@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { CircleHelp, BookOpen, MessageSquare, FileText, X } from "lucide-react";
+import { CircleHelp, BookOpen, MessageSquare, FileText, X, ChevronRight } from "lucide-react";
 import {
   Drawer,
   DrawerContent,
@@ -29,16 +29,30 @@ interface HelpLinkProps {
   icon: typeof BookOpen;
   label: string;
   description: string;
-  onClick: () => void;
+  onPress: () => void;
 }
 
-function HelpLink({ icon: Icon, label, description, onClick }: HelpLinkProps) {
+function HelpLink({ icon: Icon, label, description, onPress }: HelpLinkProps) {
+  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+    onPress();
+  };
+
   return (
-    <button
-      onClick={onClick}
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={handleClick}
+      onTouchEnd={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onPress();
+        }
+      }}
       className={cn(
-        "w-full flex items-start gap-4 p-4 rounded-xl",
-        "text-left transition-colors",
+        "w-full flex items-center gap-4 p-4 rounded-xl cursor-pointer",
+        "text-left transition-colors select-none",
         "hover:bg-muted/50 active:bg-muted"
       )}
     >
@@ -49,32 +63,36 @@ function HelpLink({ icon: Icon, label, description, onClick }: HelpLinkProps) {
         <p className="text-[15px] font-medium text-foreground">{label}</p>
         <p className="text-[13px] text-muted-foreground mt-0.5">{description}</p>
       </div>
-    </button>
+      <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+    </div>
   );
 }
 
 export function HelpBottomSheet() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
 
-  const handleNavigate = (path: string) => {
+  const handleNavigate = useCallback((path: string) => {
+    setPendingNavigation(path);
     setOpen(false);
-    // Small delay to let drawer close animation start before navigation
-    setTimeout(() => {
-      navigate(path);
-    }, 150);
-  };
+  }, []);
 
-  const handleContactSupport = () => {
-    setOpen(false);
-    setTimeout(() => {
-      // Navigate to help with contact form intent
-      navigate("/help?contact=true");
-    }, 150);
-  };
+  const handleOpenChange = useCallback((isOpen: boolean) => {
+    setOpen(isOpen);
+    
+    // When drawer closes, perform pending navigation
+    if (!isOpen && pendingNavigation) {
+      // Use requestAnimationFrame to ensure state is settled
+      requestAnimationFrame(() => {
+        navigate(pendingNavigation);
+        setPendingNavigation(null);
+      });
+    }
+  }, [pendingNavigation, navigate]);
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={handleOpenChange}>
       <DrawerTrigger asChild>
         <HeaderIconButton
           icon={CircleHelp}
@@ -82,7 +100,6 @@ export function HelpBottomSheet() {
         />
       </DrawerTrigger>
       
-      {/* Custom overlay with lighter opacity */}
       <DrawerContent 
         className="max-h-[85vh] bg-background border-t border-x border-border rounded-t-xl"
         style={{
@@ -97,6 +114,7 @@ export function HelpBottomSheet() {
             </DrawerTitle>
             <DrawerClose asChild>
               <button 
+                type="button"
                 className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
                 aria-label="Close"
               >
@@ -111,21 +129,21 @@ export function HelpBottomSheet() {
             icon={BookOpen}
             label="Help Center"
             description="Browse help articles and guides"
-            onClick={() => handleNavigate("/help")}
+            onPress={() => handleNavigate("/help")}
           />
           
           <HelpLink
             icon={MessageSquare}
             label="Contact Support"
             description="Submit a support request"
-            onClick={handleContactSupport}
+            onPress={() => handleNavigate("/help?contact=true")}
           />
           
           <HelpLink
             icon={FileText}
             label="Documentation"
             description="Technical guides and references"
-            onClick={() => handleNavigate("/help")}
+            onPress={() => handleNavigate("/help")}
           />
         </div>
         
