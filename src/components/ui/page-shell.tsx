@@ -62,7 +62,7 @@ export function PageShell({
   return (
     <div 
       className={cn(
-        "relative flex items-center gap-3 pt-6 pb-6 sm:pt-8 sm:pb-6",
+        backTo ? "page-header-with-nav" : "page-header",
         centered && "justify-between min-h-[56px]",
         className
       )}
@@ -87,10 +87,7 @@ export function PageShell({
       {/* Title block */}
       {centered ? (
         <div className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none">
-          <h1 
-            className="text-[20px] sm:text-[28px] font-semibold tracking-[-0.02em] whitespace-nowrap"
-            style={{ color: 'var(--platform-text)' }}
-          >
+          <h1 className="page-title whitespace-nowrap">
             {title}
           </h1>
           {subtitle && (
@@ -104,10 +101,7 @@ export function PageShell({
         </div>
       ) : (
         <div className="min-w-0 flex-1">
-          <h1 
-            className="text-[22px] sm:text-[28px] font-semibold tracking-[-0.02em]"
-            style={{ color: 'var(--platform-text)' }}
-          >
+          <h1 className="page-title">
             {title}
           </h1>
           {subtitle && (
