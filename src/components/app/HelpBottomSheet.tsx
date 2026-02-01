@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { 
   CircleHelp, 
   BookOpen, 
-  FileText, 
   X, 
   ChevronRight,
   Send,
@@ -162,7 +161,7 @@ export function HelpBottomSheet() {
       </DrawerTrigger>
       
       <DrawerContent 
-        className="h-[70vh] max-h-[70vh] bg-background border-t border-x border-border rounded-t-xl flex flex-col overflow-hidden"
+        className="max-h-[70vh] bg-background border-t border-x border-border rounded-t-xl flex flex-col overflow-hidden"
         style={{
           backgroundColor: 'hsl(var(--background))',
           boxShadow: '0 -8px 30px rgba(0, 0, 0, 0.25)',
@@ -283,28 +282,6 @@ export function HelpBottomSheet() {
                     <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
                   </div>
 
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => handleNavigate('/docs')}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleNavigate('/docs');
-                      }
-                    }}
-                    className={cn(
-                      "flex items-center gap-3 py-2.5 px-1 rounded-md cursor-pointer",
-                      "hover:bg-muted/40 active:bg-muted/60 transition-colors"
-                    )}
-                  >
-                    <FileText className="h-[18px] w-[18px] text-muted-foreground/70" strokeWidth={1.5} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-medium text-foreground">Documentation</p>
-                      <p className="text-[11px] text-muted-foreground">Technical guides & API</p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
-                  </div>
                 </div>
               </div>
 
