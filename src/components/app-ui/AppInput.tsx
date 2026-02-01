@@ -89,7 +89,7 @@ export function AppInput({
         className={cn(
           "w-full h-9 px-3",
           "bg-[var(--app-surface-bg)] border rounded-lg",
-          "text-[13px] text-foreground placeholder:text-muted-foreground/60",
+          "text-base sm:text-[13px] text-foreground placeholder:text-muted-foreground/60", // 16px on mobile to prevent Safari zoom
           "focus:outline-none focus:ring-2 focus:ring-[#0071E3]/20 focus:border-[#0071E3]",
           "transition-colors duration-150",
           hasError
@@ -185,7 +185,7 @@ export function AppTextarea({
         className={cn(
           "w-full px-3 py-2",
           "bg-[var(--app-surface-bg)] border rounded-lg",
-          "text-[13px] text-foreground placeholder:text-muted-foreground/60",
+          "text-base sm:text-[13px] text-foreground placeholder:text-muted-foreground/60", // 16px on mobile to prevent Safari zoom
           "focus:outline-none focus:ring-2 focus:ring-[#0071E3]/20 focus:border-[#0071E3]",
           "transition-colors duration-150",
           hasError

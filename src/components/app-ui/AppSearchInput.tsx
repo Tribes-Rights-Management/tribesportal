@@ -127,7 +127,7 @@ export function AppSearchInput({
         aria-label={ariaLabel || placeholder}
         className={cn(
           // Base styles (Stripe-like pill)
-          "w-full text-[13px] text-foreground",
+          "w-full text-base sm:text-[13px] text-foreground", // 16px on mobile to prevent Safari zoom
           // Rounded corners: 10-12px (Stripe-like, not fully rounded)
           "rounded-xl",
           heightClass,
