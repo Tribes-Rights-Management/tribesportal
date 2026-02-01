@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { AppShell } from "@/components/app/AppShell";
 import { ModuleHeader } from "@/components/app/ModuleHeader";
 import { SideNav } from "@/components/app/SideNav";
-import { MobileModuleNav } from "@/components/app/MobileModuleNav";
+import { WorkstationMobileNav } from "@/components/app/WorkstationMobileNav";
 import { useScrollReset } from "@/hooks/useScrollReset";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getNavForModule, getModuleLabel } from "@/config/moduleNav";
@@ -15,7 +15,7 @@ import { getNavForModule, getModuleLabel } from "@/config/moduleNav";
  * Uses the centralized AppShell + ModuleHeader + SideNav pattern.
  * Navigation config comes from src/config/moduleNav.ts.
  * 
- * MOBILE: Shows collapsible header nav dropdown instead of sidebar.
+ * MOBILE: Shows Apple-style collapsible nav bar below header.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -28,20 +28,19 @@ export function TribesAdminLayout() {
 
   // Get nav items from centralized config
   const navItems = getNavForModule("admin");
-  const moduleLabel = getModuleLabel("admin");
+  const moduleLabel = "Tribes Admin";
   const showSidebar = !isMobile;
 
   return (
     <AppShell
       showSidebar={showSidebar}
-      headerContent={
-        <ModuleHeader 
-          showSidebarLogo={showSidebar}
-          mobileNav={isMobile ? <MobileModuleNav moduleLabel="Admin" items={navItems} /> : undefined}
-        />
-      }
+      headerContent={<ModuleHeader showSidebarLogo={showSidebar} />}
       sidebarContent={<SideNav items={navItems} />}
     >
+      {/* Mobile navigation bar — appears below header */}
+      {isMobile && (
+        <WorkstationMobileNav moduleLabel={moduleLabel} items={navItems} />
+      )}
       <Outlet />
     </AppShell>
   );

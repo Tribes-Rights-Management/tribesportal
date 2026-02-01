@@ -1,4 +1,4 @@
-import { useState, ReactNode } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, Settings } from "lucide-react";
 import { AppSearchInput } from "@/components/app-ui/AppSearchInput";
@@ -23,24 +23,19 @@ import {
  * 
  * Layout:
  * - Desktop with sidebar: 2-column grid (sidebar column + content column)
- * - Mobile: Full-width header with optional module nav + icons
+ * - Mobile: Full-width header with workspace switcher + icons
  * 
  * HEADER ICONS (right side):
  * - Notifications (bell) → opens placeholder dropdown
  * - Settings (gear) → /account
- * 
- * MOBILE NAV: Optional mobileNav prop renders a collapsible navigation
- * dropdown in place of the hidden sidebar.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
 interface ModuleHeaderProps {
   showSidebarLogo?: boolean;
-  /** Optional mobile navigation component (replaces hidden sidebar) */
-  mobileNav?: ReactNode;
 }
 
-export function ModuleHeader({ showSidebarLogo = true, mobileNav }: ModuleHeaderProps) {
+export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [searchValue, setSearchValue] = useState("");
@@ -54,11 +49,7 @@ export function ModuleHeader({ showSidebarLogo = true, mobileNav }: ModuleHeader
     return (
       <>
         <div className="w-full h-full flex items-center justify-between px-4">
-          {/* Show mobile nav if provided, otherwise show workspace switcher */}
-          <div className="flex items-center gap-3">
-            <WorkspaceSwitcher />
-            {mobileNav}
-          </div>
+          <WorkspaceSwitcher />
 
           <div className="flex items-center gap-1 shrink-0">
             <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
