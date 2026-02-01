@@ -137,7 +137,9 @@ interface AppTableRowProps {
   /** Makes row clickable with hover state */
   clickable?: boolean;
   /** Click handler */
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLTableRowElement>) => void;
+  /** Double click handler */
+  onDoubleClick?: () => void;
   /** Header row styling */
   header?: boolean;
   className?: string;
@@ -147,12 +149,14 @@ export function AppTableRow({
   children,
   clickable = false,
   onClick,
+  onDoubleClick,
   header = false,
   className,
 }: AppTableRowProps) {
   return (
     <tr
       onClick={clickable ? onClick : undefined}
+      onDoubleClick={clickable ? onDoubleClick : undefined}
       className={cn(
         header 
           ? "border-b border-[var(--app-surface-border)]" 
@@ -165,7 +169,7 @@ export function AppTableRow({
       onKeyDown={
         clickable
           ? (e) => {
-              if (e.key === "Enter") onClick?.();
+              if (e.key === "Enter") onClick?.(e as any);
             }
           : undefined
       }

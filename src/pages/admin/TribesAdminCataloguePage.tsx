@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, ArrowUpDown, Check } from "lucide-react";
+import { Plus, ArrowUpDown, Check, Trash2 } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 import {
   AppPageContainer,
@@ -18,12 +19,24 @@ import {
   AppItemCard,
   AppPagination,
 } from "@/components/app-ui";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * TRIBES ADMIN CATALOGUE PAGE
  * 
- * Song catalog with search, filter chips, pagination, and responsive table/card views.
+ * Song catalog with search, filter chips, pagination, multi-select, and bulk delete.
  */
 
 const ITEMS_PER_PAGE = 50;
@@ -144,10 +157,19 @@ function SortDropdown({
 
 export default function TribesAdminCataloguePage() {
   const navigate = useNavigate();
+  const { isPlatformAdmin } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<SortOption>("a-z");
+  
+  // Selection state
+  const [selectedSongs, setSelectedSongs] = useState<Set<string>>(new Set());
+  const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
+  
+  // Delete dialog state
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const statusFilter = (searchParams.get("status") as CatalogueStatus) || "all";
 
@@ -201,6 +223,66 @@ export default function TribesAdminCataloguePage() {
     setCurrentPage(1);
   }
 
+  // Clear selection when filters, search, pagination, or sort changes
+  useEffect(() => {
+    setSelectedSongs(new Set());
+    setLastSelectedIndex(null);
+  }, [statusFilter, searchQuery, currentPage, sortBy]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle if not in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      
+      // Cmd/Ctrl + A: Select all
+      if ((e.metaKey || e.ctrlKey) && e.key === 'a') {
+        e.preventDefault();
+        setSelectedSongs(new Set(paginatedSongs.map(s => s.id)));
+      }
+      // Escape: Clear selection
+      if (e.key === 'Escape') {
+        setSelectedSongs(new Set());
+      }
+      // Delete/Backspace: Show delete confirmation (admin only)
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedSongs.size > 0 && isPlatformAdmin) {
+        setShowDeleteDialog(true);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [paginatedSongs, selectedSongs, isPlatformAdmin]);
+
+  const handleRowSelect = (songId: string, index: number, event: React.MouseEvent) => {
+    const newSelection = new Set(selectedSongs);
+    
+    if (event.metaKey || event.ctrlKey) {
+      // Cmd/Ctrl + Click: Toggle individual row
+      if (newSelection.has(songId)) {
+        newSelection.delete(songId);
+      } else {
+        newSelection.add(songId);
+      }
+    } else if (event.shiftKey && lastSelectedIndex !== null) {
+      // Shift + Click: Select range
+      const start = Math.min(lastSelectedIndex, index);
+      const end = Math.max(lastSelectedIndex, index);
+      for (let i = start; i <= end; i++) {
+        newSelection.add(paginatedSongs[i].id);
+      }
+    } else {
+      // Regular click: Clear selection and select only this row
+      newSelection.clear();
+      newSelection.add(songId);
+    }
+    
+    setSelectedSongs(newSelection);
+    setLastSelectedIndex(index);
+  };
+
   const handleSongClick = (songId: string) => {
     navigate(`/admin/catalogue/${songId}`);
   };
@@ -209,6 +291,33 @@ export default function TribesAdminCataloguePage() {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
   };
+
+  const handleDeleteSongs = async () => {
+    setIsDeleting(true);
+    const count = selectedSongs.size;
+    try {
+      // TODO: Replace with actual Supabase delete when using real data
+      // await supabase.from('songs').delete().in('id', Array.from(selectedSongs));
+      
+      // For now, just simulate with mock data
+      console.log('Deleting songs:', Array.from(selectedSongs));
+      
+      // Clear selection
+      setSelectedSongs(new Set());
+      setShowDeleteDialog(false);
+      
+      // Show success toast
+      toast.success(`${count} ${count === 1 ? 'song' : 'songs'} deleted`);
+    } catch (error) {
+      toast.error('Failed to delete songs');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  // Check if all visible songs are selected
+  const allSelected = paginatedSongs.length > 0 && paginatedSongs.every(s => selectedSongs.has(s.id));
+  const someSelected = paginatedSongs.some(s => selectedSongs.has(s.id)) && !allSelected;
 
   return (
     <AppPageContainer maxWidth="xl">
@@ -278,19 +387,31 @@ export default function TribesAdminCataloguePage() {
           renderCard={(song) => (
             <AppItemCard
               title={song.title}
-              subtitle={song.artist}
-              meta={song.songwriters.join(" / ")}
+              subtitle={song.songwriters.join(" / ")}
+              meta={format(new Date(song.addedAt), "MMM d, yyyy")}
               status={getStatusText(song.status)}
               onClick={() => handleSongClick(song.id)}
             />
           )}
           renderTable={() => (
-            <AppTable columns={["25%", "20%", "20%", "15%", "20%"]}>
+            <AppTable columns={["40px", "30%", "30%", "15%", "25%"]}>
               <AppTableHeader>
                 <AppTableRow>
+                  <AppTableHead>
+                    <Checkbox
+                      checked={allSelected ? true : someSelected ? "indeterminate" : false}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedSongs(new Set(paginatedSongs.map(s => s.id)));
+                        } else {
+                          setSelectedSongs(new Set());
+                        }
+                      }}
+                      aria-label="Select all songs"
+                    />
+                  </AppTableHead>
                   <AppTableHead>Title</AppTableHead>
-                  <AppTableHead>Artist</AppTableHead>
-                  <AppTableHead>ISWC</AppTableHead>
+                  <AppTableHead>Songwriters</AppTableHead>
                   <AppTableHead align="center">Status</AppTableHead>
                   <AppTableHead>Added</AppTableHead>
                 </AppTableRow>
@@ -303,15 +424,34 @@ export default function TribesAdminCataloguePage() {
                     </span>
                   </AppTableEmpty>
                 ) : (
-                  paginatedSongs.map(song => (
+                  paginatedSongs.map((song, index) => (
                     <AppTableRow
                       key={song.id}
                       clickable
-                      onClick={() => handleSongClick(song.id)}
+                      onClick={(e) => handleRowSelect(song.id, index, e)}
+                      onDoubleClick={() => handleSongClick(song.id)}
+                      className={cn(selectedSongs.has(song.id) && "bg-muted/50")}
                     >
+                      <AppTableCell>
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <Checkbox
+                            checked={selectedSongs.has(song.id)}
+                            onCheckedChange={() => {
+                              const newSelection = new Set(selectedSongs);
+                              if (newSelection.has(song.id)) {
+                                newSelection.delete(song.id);
+                              } else {
+                                newSelection.add(song.id);
+                              }
+                              setSelectedSongs(newSelection);
+                              setLastSelectedIndex(index);
+                            }}
+                            aria-label={`Select ${song.title}`}
+                          />
+                        </div>
+                      </AppTableCell>
                       <AppTableCell className="font-medium">{song.title}</AppTableCell>
-                      <AppTableCell muted>{song.artist}</AppTableCell>
-                      <AppTableCell muted mono>{song.iswc}</AppTableCell>
+                      <AppTableCell muted>{song.songwriters.join(" / ")}</AppTableCell>
                       <AppTableCell align="center">{getStatusText(song.status)}</AppTableCell>
                       <AppTableCell muted>
                         {format(new Date(song.addedAt), "MMM d, yyyy")}
@@ -329,7 +469,53 @@ export default function TribesAdminCataloguePage() {
           totalPages={totalPages}
           onPageChange={setCurrentPage}
         />
+
+        {/* Floating Action Bar - Admin Only */}
+        {selectedSongs.size > 0 && isPlatformAdmin && (
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+            <div 
+              className="flex items-center gap-4 px-4 py-2.5 rounded-lg border border-border shadow-lg"
+              style={{ backgroundColor: 'hsl(var(--background))' }}
+            >
+              <span className="text-[13px] text-muted-foreground">
+                {selectedSongs.size} {selectedSongs.size === 1 ? 'song' : 'songs'} selected
+              </span>
+              <AppButton
+                intent="destructive"
+                size="sm"
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </AppButton>
+            </div>
+          </div>
+        )}
       </AppSection>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Delete {selectedSongs.size} {selectedSongs.size === 1 ? 'song' : 'songs'}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the selected songs from the catalogue.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteSongs}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AppPageContainer>
   );
 }
