@@ -24,30 +24,21 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useHelpArticleSuggestions } from "@/hooks/useHelpArticleSuggestions";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 /**
  * HELP BOTTOM SHEET — QUICK ACTIONS DRAWER
  * 
  * ═══════════════════════════════════════════════════════════════════════════
  * A streamlined help drawer for quick actions:
- * - Search bar → results navigate to full article page
+ * - Search bar → queries help_articles table, results navigate to full article page
  * - Quick links → navigate to full pages (/help, /docs)
- * - Contact form → separate view within drawer with smart article suggestions
+ * - Contact form → calls support-form edge function with smart article suggestions
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
 type DrawerView = 'home' | 'contact';
-
-// Static articles for the home view search (quick access)
-const QUICK_SEARCH_ARTICLES = [
-  { id: 'getting-started', title: 'Getting Started', path: '/help/getting-started' },
-  { id: 'account-settings', title: 'Account Settings', path: '/help/account-settings' },
-  { id: 'managing-workspaces', title: 'Managing Workspaces', path: '/help/workspaces' },
-  { id: 'permissions', title: 'Permissions & Access', path: '/help/permissions' },
-  { id: 'billing', title: 'Billing & Payments', path: '/help/billing' },
-  { id: 'two-factor', title: 'Two-Factor Authentication', path: '/help/2fa' },
-  { id: 'inviting-members', title: 'Inviting Team Members', path: '/help/inviting-members' },
-];
 
 export function HelpBottomSheet() {
   const navigate = useNavigate();
@@ -57,16 +48,13 @@ export function HelpBottomSheet() {
   const [formData, setFormData] = useState({ subject: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submittedTicketId, setSubmittedTicketId] = useState<string | null>(null);
 
-  // Get real-time article suggestions from database based on subject input
+  // Get real-time article suggestions from database based on subject input (contact form)
   const { suggestions: articleSuggestions } = useHelpArticleSuggestions(formData.subject);
-
-  // Filter static articles for home view search
-  const searchResults = searchQuery.trim().length > 1
-    ? QUICK_SEARCH_ARTICLES.filter(article =>
-        article.title.toLowerCase().includes(searchQuery.toLowerCase())
-      ).slice(0, 5)
-    : [];
+  
+  // Get real-time article suggestions from database for home search
+  const { suggestions: searchResults, isLoading: isSearching } = useHelpArticleSuggestions(searchQuery);
 
   const handleOpenChange = useCallback((isOpen: boolean) => {
     setOpen(isOpen);
@@ -76,6 +64,7 @@ export function HelpBottomSheet() {
         setCurrentView('home');
         setSearchQuery('');
         setIsSubmitted(false);
+        setSubmittedTicketId(null);
         setFormData({ subject: '', message: '' });
       }, 300);
     }
@@ -91,6 +80,7 @@ export function HelpBottomSheet() {
   const handleBack = () => {
     setCurrentView('home');
     setIsSubmitted(false);
+    setSubmittedTicketId(null);
     setFormData({ subject: '', message: '' });
   };
 
@@ -98,11 +88,53 @@ export function HelpBottomSheet() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+    try {
+      // Get current user session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to submit a support request.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Call the existing support-form edge function
+      const { data, error } = await supabase.functions.invoke('support-form', {
+        body: {
+          category: formData.subject,
+          message: formData.message,
+          workspace: null, // Can be enhanced to pass current workspace if available
+        },
+      });
+
+      if (error) {
+        console.error('Support form error:', error);
+        toast({
+          title: "Submission failed",
+          description: error.message || "Unable to submit your request. Please try again.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Success - show confirmation with ticket ID
+      setSubmittedTicketId(data?.ticketId || null);
+      setIsSubmitted(true);
+    } catch (err) {
+      console.error('Support form error:', err);
+      toast({
+        title: "Submission failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Get header title based on current view
@@ -181,7 +213,7 @@ export function HelpBottomSheet() {
                   />
                 </div>
 
-                {/* Search Results */}
+                {/* Search Results from Database */}
                 {searchResults.length > 0 && (
                   <div className="mt-2 space-y-0.5">
                     {searchResults.map((article) => (
@@ -189,11 +221,11 @@ export function HelpBottomSheet() {
                         key={article.id}
                         role="button"
                         tabIndex={0}
-                        onClick={() => handleNavigate(article.path)}
+                        onClick={() => handleNavigate(`/help/article/${article.slug}`)}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') {
                             e.preventDefault();
-                            handleNavigate(article.path);
+                            handleNavigate(`/help/article/${article.slug}`);
                           }
                         }}
                         className={cn(
@@ -201,14 +233,19 @@ export function HelpBottomSheet() {
                           "hover:bg-muted/40 active:bg-muted/60 transition-colors"
                         )}
                       >
-                        <span className="text-[13px] text-foreground">{article.title}</span>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground/50 shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <span className="text-[13px] text-foreground block truncate">{article.title}</span>
+                          {article.category_name && (
+                            <span className="text-[10px] text-muted-foreground">{article.category_name}</span>
+                          )}
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground/50 shrink-0 ml-2" />
                       </div>
                     ))}
                   </div>
                 )}
 
-                {searchQuery.trim().length > 1 && searchResults.length === 0 && (
+                {searchQuery.trim().length >= 3 && searchResults.length === 0 && !isSearching && (
                   <p className="mt-2 text-[11px] text-muted-foreground text-center py-1">
                     No articles found for "{searchQuery}"
                   </p>
@@ -309,8 +346,13 @@ export function HelpBottomSheet() {
                   <p className="text-[15px] font-medium text-foreground mb-1">
                     Request Submitted
                   </p>
+                  {submittedTicketId && (
+                    <p className="text-[12px] font-mono text-muted-foreground mb-1">
+                      {submittedTicketId}
+                    </p>
+                  )}
                   <p className="text-[13px] text-muted-foreground mb-6">
-                    We'll respond within 24 hours.
+                    We'll follow up within a couple of business days.
                   </p>
                   <Button 
                     onClick={handleBack}
