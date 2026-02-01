@@ -1,30 +1,26 @@
 /**
- * GLOBAL SEARCH DIALOG
+ * GLOBAL SEARCH DIALOG — iOS SPOTLIGHT-STYLE
  * 
- * Scope-safe search interface that respects authority boundaries.
- * Search results never reveal records outside the user's authorized scope.
+ * Clean, minimal search interface inspired by iOS Spotlight.
+ * - Full-width on mobile with slide-down animation
+ * - Simple search with cancel button
+ * - Clean result list with icons
  */
 
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileText, CreditCard, Users, Building2, Receipt } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { AppSearchInput } from "@/components/app-ui";
-import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useSearch, SearchEntityType, SearchScopeType, SearchResult } from "@/hooks/useSearch";
-import { format } from "date-fns";
+import { 
+  Search, 
+  FileText, 
+  CreditCard, 
+  Users, 
+  Building2, 
+  Receipt,
+  Clock,
+  X,
+} from "lucide-react";
+import { useSearch, SearchEntityType, SearchResult } from "@/hooks/useSearch";
+import { cn } from "@/lib/utils";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -36,7 +32,7 @@ interface GlobalSearchDialogProps {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// ENTITY ICONS
+// ENTITY ICONS & LABELS
 // ═══════════════════════════════════════════════════════════════════════════
 
 const ENTITY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -56,27 +52,66 @@ const ENTITY_LABELS: Record<string, string> = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
+// RECENT SEARCHES (localStorage)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const RECENT_SEARCHES_KEY = "tribes_recent_searches";
+const MAX_RECENT_SEARCHES = 5;
+
+interface RecentSearch {
+  query: string;
+  timestamp: number;
+}
+
+function getRecentSearches(): RecentSearch[] {
+  try {
+    const stored = localStorage.getItem(RECENT_SEARCHES_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+function addRecentSearch(query: string) {
+  if (!query.trim()) return;
+  
+  const searches = getRecentSearches();
+  const filtered = searches.filter(s => s.query.toLowerCase() !== query.toLowerCase());
+  const updated = [{ query, timestamp: Date.now() }, ...filtered].slice(0, MAX_RECENT_SEARCHES);
+  
+  try {
+    localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+function clearRecentSearches() {
+  try {
+    localStorage.removeItem(RECENT_SEARCHES_KEY);
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogProps) {
   const navigate = useNavigate();
-  const {
-    results,
-    isLoading,
-    search,
-    clearSearch,
-    availableScopes,
-    getAvailableEntityTypes,
-    isPlatformAdmin,
-    activeTenantId,
-    activeTenantName,
-  } = useSearch();
+  const { results, isLoading, search, clearSearch } = useSearch();
 
   const [query, setQuery] = useState("");
-  const [scope, setScope] = useState<SearchScopeType>("organization");
-  const [entityType, setEntityType] = useState<SearchEntityType>("all");
   const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
+
+  // Load recent searches on mount
+  useEffect(() => {
+    if (open) {
+      setRecentSearches(getRecentSearches());
+    }
+  }, [open]);
 
   // Debounce search query
   useEffect(() => {
@@ -91,13 +126,12 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
     if (debouncedQuery.trim()) {
       search({
         query: debouncedQuery,
-        scopeType: scope,
-        entityTypes: entityType === "all" ? undefined : [entityType],
+        scopeType: "organization",
       });
     } else {
       clearSearch();
     }
-  }, [debouncedQuery, scope, entityType, search, clearSearch]);
+  }, [debouncedQuery, search, clearSearch]);
 
   // Reset on close
   useEffect(() => {
@@ -110,20 +144,20 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
 
   // Handle result click
   const handleResultClick = useCallback((result: SearchResult) => {
-    onOpenChange(false);
+    // Save to recent searches
+    addRecentSearch(query);
     
-    // Navigate based on entity type and scope
-    const basePath = scope === "platform" ? "/admin" : "/modules";
+    onOpenChange(false);
     
     switch (result.entity_type) {
       case "contract":
-        navigate(`${basePath}/contracts/${result.entity_id}`);
+        navigate(`/modules/contracts/${result.entity_id}`);
         break;
       case "invoice":
-        navigate(`${basePath}/invoices/${result.entity_id}`);
+        navigate(`/modules/invoices/${result.entity_id}`);
         break;
       case "payment":
-        navigate(`${basePath}/payments/${result.entity_id}`);
+        navigate(`/modules/payments/${result.entity_id}`);
         break;
       case "member":
         navigate(`/admin/users/${result.entity_id}`);
@@ -132,7 +166,18 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
         navigate(`/admin/tenants/${result.entity_id}`);
         break;
     }
-  }, [navigate, onOpenChange, scope]);
+  }, [navigate, onOpenChange, query]);
+
+  // Handle recent search click
+  const handleRecentClick = (recentQuery: string) => {
+    setQuery(recentQuery);
+  };
+
+  // Handle clear recent searches
+  const handleClearRecent = () => {
+    clearRecentSearches();
+    setRecentSearches([]);
+  };
 
   // Keyboard shortcut
   useEffect(() => {
@@ -141,149 +186,189 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
         e.preventDefault();
         onOpenChange(true);
       }
+      if (e.key === "Escape" && open) {
+        onOpenChange(false);
+      }
     };
     
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onOpenChange]);
+  }, [onOpenChange, open]);
 
-  const availableEntityTypes = getAvailableEntityTypes(scope);
+  // Close handler
+  const handleCancel = () => {
+    onOpenChange(false);
+  };
+
+  if (!open) return null;
+
+  const hasQuery = query.trim().length > 0;
+  const showRecentSearches = !hasQuery && recentSearches.length > 0;
+  const showResults = hasQuery && results.length > 0;
+  const showNoResults = hasQuery && !isLoading && results.length === 0;
+  const showEmpty = !hasQuery && recentSearches.length === 0;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl p-0 gap-0">
-        <DialogHeader className="p-4 pb-0">
-          <DialogTitle className="sr-only">Search</DialogTitle>
-          
-          {/* Scope Indicator */}
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-[12px] text-muted-foreground">Searching:</span>
-            <Badge variant="outline" className="text-[11px]">
-              {scope === "platform" ? "System Console" : activeTenantName || "Organization"}
-            </Badge>
-          </div>
-          
-          {/* Search Input */}
-          <AppSearchInput
-            value={query}
-            onChange={setQuery}
-            placeholder="Search contracts, invoices, payments..."
-            autoFocus
-          />
-          
-          {/* Filters */}
-          <div className="flex items-center gap-3 mt-3">
-            {availableScopes.length > 1 && (
-              <Select value={scope} onValueChange={(v) => setScope(v as SearchScopeType)}>
-                <SelectTrigger className="w-[160px] h-8 text-[12px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableScopes.map((s) => (
-                    <SelectItem key={s} value={s} className="text-[12px]">
-                      {s === "platform" ? "System Console" : "Organization"}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+    <>
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm animate-in fade-in-0 duration-200"
+        onClick={handleCancel}
+      />
+      
+      {/* Search Panel */}
+      <div 
+        className={cn(
+          "fixed inset-x-0 top-0 z-50",
+          "bg-background",
+          "animate-in slide-in-from-top-2 fade-in-0 duration-200",
+          "safe-area-inset-top"
+        )}
+        style={{ 
+          paddingTop: 'env(safe-area-inset-top)',
+        }}
+      >
+        {/* Search Header */}
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
+          {/* Search Input Container */}
+          <div className="flex-1 flex items-center gap-2 bg-muted/50 rounded-lg px-3 h-10">
+            <Search className="h-4 w-4 text-muted-foreground shrink-0" strokeWidth={1.5} />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search"
+              autoFocus
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              className={cn(
+                "flex-1 bg-transparent border-none outline-none",
+                "text-base text-foreground placeholder:text-muted-foreground/60",
+                "h-full"
+              )}
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                className="h-5 w-5 rounded-full bg-muted-foreground/20 flex items-center justify-center shrink-0"
+              >
+                <X className="h-3 w-3 text-muted-foreground" strokeWidth={2} />
+              </button>
             )}
-            
-            <Select value={entityType} onValueChange={(v) => setEntityType(v as SearchEntityType)}>
-              <SelectTrigger className="w-[140px] h-8 text-[12px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all" className="text-[12px]">All types</SelectItem>
-                {availableEntityTypes.map((type) => (
-                  <SelectItem key={type} value={type} className="text-[12px]">
-                    {ENTITY_LABELS[type]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
-        </DialogHeader>
-        
-        {/* Results */}
-        <div className="p-4 pt-3 border-t mt-3 max-h-[400px] overflow-y-auto">
-          {isLoading ? (
-            <div className="text-center py-8 text-[13px] text-muted-foreground">
-              Searching...
+          
+          {/* Cancel Button */}
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="text-[15px] font-medium text-primary shrink-0 py-2 -mr-1"
+          >
+            Cancel
+          </button>
+        </div>
+
+        {/* Content Area */}
+        <div 
+          className="max-h-[60vh] overflow-y-auto overscroll-contain"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          {/* Loading State */}
+          {isLoading && (
+            <div className="px-4 py-6 text-center">
+              <p className="text-[14px] text-muted-foreground">Searching...</p>
             </div>
-          ) : results.length > 0 ? (
-            <div className="space-y-1">
-              {results.map((result) => {
+          )}
+
+          {/* Recent Searches */}
+          {showRecentSearches && !isLoading && (
+            <div className="py-2">
+              <div className="flex items-center justify-between px-4 py-2">
+                <span className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
+                  Recent
+                </span>
+                <button
+                  type="button"
+                  onClick={handleClearRecent}
+                  className="text-[12px] text-primary"
+                >
+                  Clear
+                </button>
+              </div>
+              <div>
+                {recentSearches.map((recent, index) => (
+                  <button
+                    key={`${recent.query}-${index}`}
+                    type="button"
+                    onClick={() => handleRecentClick(recent.query)}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 active:bg-muted transition-colors"
+                  >
+                    <Clock className="h-4 w-4 text-muted-foreground/60 shrink-0" strokeWidth={1.5} />
+                    <span className="text-[15px] text-foreground truncate">{recent.query}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Search Results */}
+          {showResults && !isLoading && (
+            <div className="py-2">
+              {results.map((result, index) => {
                 const Icon = ENTITY_ICONS[result.entity_type] || FileText;
+                const isLast = index === results.length - 1;
                 
                 return (
                   <button
                     key={`${result.entity_type}-${result.entity_id}`}
+                    type="button"
                     onClick={() => handleResultClick(result)}
-                    className="w-full flex items-start gap-3 p-3 rounded-md hover:bg-muted/50 text-left transition-colors"
+                    className={cn(
+                      "w-full flex items-center gap-3 px-4 py-3",
+                      "hover:bg-muted/50 active:bg-muted transition-colors",
+                      !isLast && "border-b border-border/50"
+                    )}
                   >
-                    <div className="flex-shrink-0 w-8 h-8 rounded bg-muted flex items-center justify-center">
-                      <Icon className="h-4 w-4 text-muted-foreground" />
+                    <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                      <Icon className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[13px] font-medium text-foreground truncate">
-                          {result.title}
-                        </span>
-                        <Badge variant="secondary" className="text-[10px] flex-shrink-0">
-                          {ENTITY_LABELS[result.entity_type]}
-                        </Badge>
-                        {result.entity_status && (
-                          <Badge variant="outline" className="text-[10px] flex-shrink-0">
-                            {result.entity_status}
-                          </Badge>
-                        )}
-                      </div>
-                      {result.subtitle && (
-                        <p className="text-[12px] text-muted-foreground truncate mt-0.5">
-                          {result.subtitle}
-                        </p>
-                      )}
-                      {result.entity_date && (
-                        <p className="text-[11px] text-muted-foreground mt-1">
-                          {format(new Date(result.entity_date), "MMM d, yyyy")}
-                        </p>
-                      )}
+                    <div className="flex-1 min-w-0 text-left">
+                      <p className="text-[15px] font-medium text-foreground truncate">
+                        {result.title}
+                      </p>
+                      <p className="text-[13px] text-muted-foreground truncate">
+                        {ENTITY_LABELS[result.entity_type]}
+                        {result.subtitle && ` · ${result.subtitle}`}
+                      </p>
                     </div>
                   </button>
                 );
               })}
             </div>
-          ) : query.trim() ? (
-            <div className="text-center py-8">
-              <p className="text-[13px] text-muted-foreground">
-                No results found for "{query}"
-              </p>
-              <p className="text-[12px] text-muted-foreground mt-1">
-                Results are limited to your authorized scope
+          )}
+
+          {/* No Results */}
+          {showNoResults && (
+            <div className="px-4 py-12 text-center">
+              <p className="text-[15px] text-foreground">No Results</p>
+              <p className="text-[13px] text-muted-foreground mt-1">
+                No matches found for "{query}"
               </p>
             </div>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-[13px] text-muted-foreground">
-                Start typing to search
-              </p>
-              <p className="text-[12px] text-muted-foreground mt-1">
-                Press <kbd className="px-1.5 py-0.5 bg-muted rounded text-[11px]">⌘K</kbd> to open search
+          )}
+
+          {/* Empty State (no query, no recent) */}
+          {showEmpty && !isLoading && (
+            <div className="px-4 py-12 text-center">
+              <p className="text-[14px] text-muted-foreground">
+                Search contracts, invoices, and more
               </p>
             </div>
           )}
         </div>
-        
-        {/* Footer */}
-        <div className="px-4 py-2 border-t bg-muted/30 flex items-center justify-between">
-          <span className="text-[11px] text-muted-foreground">
-            {results.length > 0 ? `${results.length} results` : "Search is scope-safe"}
-          </span>
-          <span className="text-[11px] text-muted-foreground">
-            <kbd className="px-1 py-0.5 bg-muted rounded text-[10px]">ESC</kbd> to close
-          </span>
-        </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </>
   );
 }
