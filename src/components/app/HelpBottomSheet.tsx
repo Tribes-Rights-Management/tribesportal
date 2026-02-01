@@ -134,13 +134,14 @@ export function HelpBottomSheet() {
       </DrawerTrigger>
       
       <DrawerContent 
-        className="min-h-[70vh] max-h-[85vh] bg-background border-t border-x border-border rounded-t-xl flex flex-col"
+        className="h-[70vh] max-h-[70vh] bg-background border-t border-x border-border rounded-t-xl flex flex-col overflow-hidden"
         style={{
           backgroundColor: 'hsl(var(--background))',
           boxShadow: '0 -8px 30px rgba(0, 0, 0, 0.25)',
         }}
       >
-        <DrawerHeader className="pb-3 border-b border-border">
+        {/* Sticky Header - always visible */}
+        <DrawerHeader className="shrink-0 pb-3 border-b border-border bg-background sticky top-0 z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {currentView !== 'home' && (
@@ -169,7 +170,8 @@ export function HelpBottomSheet() {
           </div>
         </DrawerHeader>
 
-        <div className="bg-background overflow-y-auto flex-1 pb-6">
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto overscroll-contain bg-background pb-6">
           {/* ═══════════════════════════════════════════════════════════════ */}
           {/* HOME VIEW */}
           {/* ═══════════════════════════════════════════════════════════════ */}
