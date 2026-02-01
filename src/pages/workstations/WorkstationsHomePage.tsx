@@ -132,18 +132,18 @@ export default function WorkstationsHomePage() {
       hasAccess: canAccessHelpWorkstation,
     },
     {
-      title: "Tribes Rights",
-      description: "Tribes client and rights management.",
-      icon: Music,
-      href: "/rights",
-      hasAccess: true, // TODO: Add proper access check
-    },
-    {
       title: "Tribes Licensing",
       description: "License requests, agreements, and payments.",
       icon: FileText,
       href: "/licensing",
       hasAccess: canAccessTribesLicensing,
+    },
+    {
+      title: "Tribes Rights",
+      description: "Tribes client and rights management.",
+      icon: Music,
+      href: "/rights",
+      hasAccess: true, // TODO: Add proper access check
     },
     {
       title: "Tribes Admin",
