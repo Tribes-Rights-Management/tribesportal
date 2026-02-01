@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { User } from "lucide-react";
 import { AppDropdown, type AppDropdownItem } from "@/components/app-ui";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 /**
@@ -12,6 +13,7 @@ import { cn } from "@/lib/utils";
  * - Workspaces → /workspaces
  * - System Console → /console (platform admins only)
  * - Settings → /account/settings
+ * - Help → /help (mobile only)
  * - Sign Out
  * 
  * Uses AppDropdown from the app-ui design system for consistency.
@@ -21,6 +23,7 @@ import { cn } from "@/lib/utils";
 export function UserMenuDropdown() {
   const navigate = useNavigate();
   const { signOut, isPlatformAdmin } = useAuth();
+  const isMobile = useIsMobile();
 
   const handleSignOut = async () => {
     await signOut();
@@ -40,6 +43,11 @@ export function UserMenuDropdown() {
     {
       label: "Settings",
       onClick: () => navigate("/account/settings"),
+    },
+    {
+      label: "Help",
+      onClick: () => navigate("/help"),
+      hidden: !isMobile,
     },
     {
       label: "Sign Out",

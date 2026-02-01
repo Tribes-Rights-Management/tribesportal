@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { CircleHelp, X, Search, ExternalLink, FileText, MessageSquare, ArrowLeft, Check, AlertCircle, Copy } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Popover,
   PopoverContent,
@@ -53,6 +54,7 @@ const CATEGORIES = [
 ];
 
 export function HelpAssistantLauncher() {
+  const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<ViewState>("home");
   const [searchQuery, setSearchQuery] = useState("");
@@ -97,6 +99,11 @@ export function HelpAssistantLauncher() {
       fetchArticles();
     }
   }, [open]);
+
+  // Don't render on mobile - Help is accessed via user menu instead
+  if (isMobile) {
+    return null;
+  }
 
   const handleViewHelpCenter = () => {
     window.open("/help", "_blank");
