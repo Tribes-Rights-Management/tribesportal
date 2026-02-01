@@ -9,7 +9,9 @@ import {
   Send,
   Search,
   ArrowLeft,
-  CheckCircle2
+  CheckCircle2,
+  Copy,
+  Check
 } from "lucide-react";
 import {
   Drawer,
@@ -49,6 +51,7 @@ export function HelpBottomSheet() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedTicketId, setSubmittedTicketId] = useState<string | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
 
   // Get real-time article suggestions from database based on subject input (contact form)
   const { suggestions: articleSuggestions } = useHelpArticleSuggestions(formData.subject);
@@ -65,6 +68,7 @@ export function HelpBottomSheet() {
         setSearchQuery('');
         setIsSubmitted(false);
         setSubmittedTicketId(null);
+        setIsCopied(false);
         setFormData({ subject: '', message: '' });
       }, 300);
     }
@@ -81,6 +85,7 @@ export function HelpBottomSheet() {
     setCurrentView('home');
     setIsSubmitted(false);
     setSubmittedTicketId(null);
+    setIsCopied(false);
     setFormData({ subject: '', message: '' });
   };
 
@@ -343,13 +348,36 @@ export function HelpBottomSheet() {
                   <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-3">
                     <CheckCircle2 className="h-6 w-6 text-emerald-600" strokeWidth={1.5} />
                   </div>
-                  <p className="text-[15px] font-medium text-foreground mb-1">
-                    Request Submitted
+                  <p className="text-[15px] font-medium text-foreground mb-3">
+                    Request submitted
                   </p>
                   {submittedTicketId && (
-                    <p className="text-[12px] font-mono text-muted-foreground mb-1">
-                      {submittedTicketId}
-                    </p>
+                    <div className="mb-4">
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
+                        Ticket ID
+                      </p>
+                      <div className="inline-flex items-center gap-1.5">
+                        <span className="text-[12px] font-mono text-muted-foreground">
+                          {submittedTicketId}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(submittedTicketId);
+                            setIsCopied(true);
+                            setTimeout(() => setIsCopied(false), 2000);
+                          }}
+                          className="p-1 rounded hover:bg-muted/50 transition-colors"
+                          aria-label="Copy ticket ID"
+                        >
+                          {isCopied ? (
+                            <Check className="h-3.5 w-3.5 text-emerald-600" strokeWidth={1.5} />
+                          ) : (
+                            <Copy className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.5} />
+                          )}
+                        </button>
+                      </div>
+                    </div>
                   )}
                   <p className="text-[13px] text-muted-foreground mb-6">
                     We'll follow up within a couple of business days.
