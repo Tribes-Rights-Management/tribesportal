@@ -43,6 +43,20 @@ body {
   flex-direction: column;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   iOS SAFARI AUTO-ZOOM PREVENTION (LOCKED)
+   
+   Safari auto-zooms inputs with font-size < 16px on focus.
+   Force 16px minimum on all form elements to prevent this behavior.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@supports (-webkit-touch-callout: none) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    GLOBAL SPACING SYSTEM â€” TRIBES STANDARD (LOCKED)
