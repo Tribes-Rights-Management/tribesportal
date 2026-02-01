@@ -108,7 +108,7 @@ export default function TribesAdminCataloguePage() {
             <AppItemCard
               title={song.title}
               subtitle={song.artist}
-              meta={song.songwriters.join(", ")}
+              meta={song.songwriters.join(" / ")}
               status={getStatusBadge(song.status)}
               onClick={() => handleSongClick(song.id)}
             />
