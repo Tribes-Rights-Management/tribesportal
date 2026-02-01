@@ -89,9 +89,9 @@ interface AppItemCardProps {
   title: string;
   /** Secondary subtitle */
   subtitle?: string;
-  /** Additional metadata (ISWC, date, etc.) */
+  /** Additional metadata (songwriter names, etc.) - allows text wrapping */
   meta?: React.ReactNode;
-  /** Status chip or badge */
+  /** Status chip or badge - anchored to top-right */
   status?: React.ReactNode;
   /** Click handler */
   onClick?: () => void;
@@ -131,13 +131,13 @@ export function AppItemCard({
             </p>
           )}
           {meta && (
-            <div className="text-xs text-muted-foreground/70 pt-1">
+            <p className="text-xs text-muted-foreground/70 pt-1 leading-relaxed">
               {meta}
-            </div>
+            </p>
           )}
         </div>
         {status && (
-          <div className="shrink-0">
+          <div className="shrink-0 pt-0.5">
             {status}
           </div>
         )}
