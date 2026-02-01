@@ -12,6 +12,7 @@ import {
   Settings, 
   LogOut,
   LayoutGrid,
+  Terminal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { iconClass, iconStroke } from "@/components/ui/Icon";
@@ -63,8 +64,9 @@ function useCurrentAreaLabel(): string {
 
 export function WorkspaceSwitcher() {
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, isPlatformAdmin } = useAuth();
   const currentAreaLabel = useCurrentAreaLabel();
+  const canAccessSystemConsole = isPlatformAdmin;
 
   const handleSignOut = async () => {
     await signOut();
@@ -137,6 +139,25 @@ export function WorkspaceSwitcher() {
             Workspaces
           </DropdownMenuItem>
         </div>
+
+        {/* SYSTEM CONSOLE - Platform admins/staff only */}
+        {canAccessSystemConsole && (
+          <>
+            <Separator className="my-0" />
+            <div className="py-1">
+              <DropdownMenuItem
+                onClick={() => navigate("/console")}
+                className="h-10 px-4 text-sm gap-3 rounded-none cursor-pointer"
+              >
+                <Terminal
+                  className={cn(iconClass("xs"), "text-muted-foreground")}
+                  strokeWidth={iconStroke("default")}
+                />
+                System Console
+              </DropdownMenuItem>
+            </div>
+          </>
+        )}
 
         <Separator className="my-0" />
 

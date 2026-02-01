@@ -5,13 +5,13 @@ import { WorkspaceCard } from "@/components/ui/workspace-card";
 import { OrganizationSwitcher } from "@/components/app/OrganizationSwitcher";
 import { Link } from "react-router-dom";
 import { 
-  Settings, 
   HelpCircle, 
   FileText, 
   LayoutDashboard,
   AlertCircle,
   Building2,
   ChevronRight,
+  Music,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -125,19 +125,19 @@ export default function WorkstationsHomePage() {
   // SAFETY: Always define all modules, even if user has no access
   const allModules = [
     {
-      title: "System Console",
-      description: "Platform governance, user management, security oversight, and compliance.",
-      icon: Settings,
-      href: "/console",
-      hasAccess: canAccessSystemConsole,
-      isPlatformOnly: true,
-    },
-    {
       title: "Help Workstation",
       description: "Manage help articles, categories, audiences, and support messages.",
       icon: HelpCircle,
       href: "/help",
       hasAccess: canAccessHelpWorkstation,
+      isPlatformOnly: false,
+    },
+    {
+      title: "Tribes Rights",
+      description: "Client accounts, song catalog, and rights management.",
+      icon: Music,
+      href: "/rights",
+      hasAccess: true, // TODO: Add proper access check
       isPlatformOnly: false,
     },
     {
