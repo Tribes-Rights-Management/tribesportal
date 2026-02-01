@@ -5,27 +5,25 @@ import { cn } from "@/lib/utils";
 import type { NavItem } from "@/config/moduleNav";
 
 /**
- * MOBILE MODULE NAVIGATION — COLLAPSIBLE HEADER DROPDOWN
+ * WORKSTATION MOBILE NAV — APPLE-STYLE COLLAPSIBLE NAVIGATION
  * 
  * ═══════════════════════════════════════════════════════════════════════════
- * Replaces hidden sidebar on mobile with a tappable module name dropdown.
- * Displays all nav items in a clean dropdown below the header.
- * 
- * BEHAVIOR:
- * - Tap module name → toggle dropdown
- * - Tap nav item → navigate and close
- * - Tap outside → close
+ * Full-width navigation bar that appears below the header on mobile.
+ * Matches Apple's account page pattern:
+ * - Module name + chevron as trigger
+ * - Full-width dropdown with dividers
+ * - No icons, minimal styling
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface MobileModuleNavProps {
+interface WorkstationMobileNavProps {
   moduleLabel: string;
   items: NavItem[];
 }
 
-export function MobileModuleNav({ moduleLabel, items }: MobileModuleNavProps) {
+export function WorkstationMobileNav({ moduleLabel, items }: WorkstationMobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
   // Close dropdown when route changes
@@ -36,7 +34,7 @@ export function MobileModuleNav({ moduleLabel, items }: MobileModuleNavProps) {
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
@@ -48,41 +46,40 @@ export function MobileModuleNav({ moduleLabel, items }: MobileModuleNavProps) {
   }, [isOpen]);
 
   return (
-    <div ref={dropdownRef} className="relative">
-      {/* Trigger button */}
+    <div ref={containerRef} className="relative">
+      {/* Trigger bar — full width, below header */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex items-center gap-1.5 px-2 py-1.5 -ml-2 rounded-md",
-          "text-[14px] font-medium text-foreground",
-          "hover:bg-muted/50 active:bg-muted",
-          "transition-colors duration-150",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]"
+          "w-full flex items-center justify-between px-4 py-3",
+          "bg-background border-b border-border/60",
+          "active:bg-muted/30 transition-colors duration-100"
         )}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <span>{moduleLabel}</span>
+        <span className="text-[15px] font-semibold text-foreground">
+          {moduleLabel}
+        </span>
         <ChevronDown 
           className={cn(
-            "h-4 w-4 text-muted-foreground transition-transform duration-150",
+            "h-5 w-5 text-muted-foreground transition-transform duration-200",
             isOpen && "rotate-180"
           )} 
           strokeWidth={1.5}
         />
       </button>
 
-      {/* Dropdown menu */}
+      {/* Dropdown menu — full width, Apple-style */}
       {isOpen && (
         <div 
           className={cn(
-            "absolute left-0 top-full mt-1 z-50",
-            "min-w-[200px] py-1.5 rounded-lg",
-            "bg-popover border border-border shadow-sm"
+            "absolute left-0 right-0 top-full z-50",
+            "bg-background border-b border-border/60 shadow-sm"
           )}
         >
-          {items.map((item) => {
-            const Icon = item.icon;
+          {items.map((item, index) => {
+            const isLast = index === items.length - 1;
             return (
               <NavLink
                 key={item.to}
@@ -90,16 +87,16 @@ export function MobileModuleNav({ moduleLabel, items }: MobileModuleNavProps) {
                 end={item.exact}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-3 px-3 py-2 text-[13px]",
-                    "transition-colors duration-100",
+                    "block w-full text-left px-4 py-4",
+                    "text-[15px]",
+                    !isLast && "border-b border-border/40",
                     isActive
-                      ? "font-medium text-foreground bg-muted"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      ? "font-medium text-foreground"
+                      : "font-normal text-foreground/80"
                   )
                 }
               >
-                <Icon className="h-4 w-4 shrink-0 opacity-70" strokeWidth={1.5} />
-                <span>{item.label}</span>
+                {item.label}
               </NavLink>
             );
           })}

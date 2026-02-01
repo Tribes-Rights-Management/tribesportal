@@ -3,7 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { AppShell } from "@/components/app/AppShell";
 import { ModuleHeader } from "@/components/app/ModuleHeader";
 import { SideNav } from "@/components/app/SideNav";
-import { MobileModuleNav } from "@/components/app/MobileModuleNav";
+import { WorkstationMobileNav } from "@/components/app/WorkstationMobileNav";
 import { useScrollReset } from "@/hooks/useScrollReset";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getNavForModule, getModuleLabel, type ModuleKey } from "@/config/moduleNav";
@@ -17,7 +17,7 @@ import { getNavForModule, getModuleLabel, type ModuleKey } from "@/config/module
  * 
  * Handles: /licensing/*, /rights/*
  * 
- * MOBILE: Shows collapsible header nav dropdown instead of sidebar.
+ * MOBILE: Shows Apple-style collapsible nav bar below header.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -25,6 +25,17 @@ function getModuleKeyFromPath(pathname: string): ModuleKey | null {
   if (pathname.startsWith("/licensing")) return "licensing";
   if (pathname.startsWith("/rights")) return "rights";
   return null;
+}
+
+function getModuleDisplayLabel(moduleKey: ModuleKey | null): string {
+  switch (moduleKey) {
+    case "licensing":
+      return "Tribes Licensing";
+    case "rights":
+      return "Tribes Rights";
+    default:
+      return "";
+  }
 }
 
 export function ModuleLayout() {
@@ -38,20 +49,19 @@ export function ModuleLayout() {
   // Get nav items from centralized config
   const moduleKey = getModuleKeyFromPath(location.pathname);
   const navItems = moduleKey ? getNavForModule(moduleKey) : [];
-  const moduleLabel = moduleKey ? getModuleLabel(moduleKey) : "";
+  const moduleLabel = getModuleDisplayLabel(moduleKey);
   const showSidebar = !isMobile && navItems.length > 0;
 
   return (
     <AppShell
       showSidebar={showSidebar}
-      headerContent={
-        <ModuleHeader 
-          showSidebarLogo={showSidebar}
-          mobileNav={isMobile && navItems.length > 0 ? <MobileModuleNav moduleLabel={moduleLabel} items={navItems} /> : undefined}
-        />
-      }
+      headerContent={<ModuleHeader showSidebarLogo={showSidebar} />}
       sidebarContent={<SideNav items={navItems} />}
     >
+      {/* Mobile navigation bar — appears below header */}
+      {isMobile && navItems.length > 0 && (
+        <WorkstationMobileNav moduleLabel={moduleLabel} items={navItems} />
+      )}
       <Outlet />
     </AppShell>
   );
