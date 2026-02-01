@@ -58,6 +58,7 @@ export { AppStatCard, AppStatCardGrid } from "./AppStatCard";
 // LISTS
 // ─────────────────────────────────────────────────────────────────────────────
 export { AppListCard, AppListRow, AppListAction } from "./AppListCard";
+export { AppResponsiveList, AppItemCard } from "./AppResponsiveList";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PAGE STRUCTURE
