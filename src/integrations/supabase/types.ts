@@ -479,6 +479,254 @@ export type Database = {
           },
         ]
       }
+      client_account_members: {
+        Row: {
+          accepted_at: string | null
+          can_download_exports: boolean
+          can_manage_team: boolean
+          can_submit_songs: boolean
+          can_view_contracts: boolean
+          client_account_id: string
+          created_at: string
+          id: string
+          invited_by: string | null
+          removed_at: string | null
+          role: Database["public"]["Enums"]["client_member_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          can_download_exports?: boolean
+          can_manage_team?: boolean
+          can_submit_songs?: boolean
+          can_view_contracts?: boolean
+          client_account_id: string
+          created_at?: string
+          id?: string
+          invited_by?: string | null
+          removed_at?: string | null
+          role?: Database["public"]["Enums"]["client_member_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          can_download_exports?: boolean
+          can_manage_team?: boolean
+          can_submit_songs?: boolean
+          can_view_contracts?: boolean
+          client_account_id?: string
+          created_at?: string
+          id?: string
+          invited_by?: string | null
+          removed_at?: string | null
+          role?: Database["public"]["Enums"]["client_member_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_account_members_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_accounts: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          archived_at: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          postal_code: string | null
+          primary_email: string | null
+          state_province: string | null
+          status: Database["public"]["Enums"]["client_account_status"]
+          trolley_recipient_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          archived_at?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          primary_email?: string | null
+          state_province?: string | null
+          status?: Database["public"]["Enums"]["client_account_status"]
+          trolley_recipient_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          archived_at?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          primary_email?: string | null
+          state_province?: string | null
+          status?: Database["public"]["Enums"]["client_account_status"]
+          trolley_recipient_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      client_ipi_numbers: {
+        Row: {
+          client_account_id: string
+          created_at: string
+          id: string
+          ipi_number: string
+          is_primary: boolean
+          party_name: string
+          party_type: Database["public"]["Enums"]["interested_party_type"]
+          pro_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          client_account_id: string
+          created_at?: string
+          id?: string
+          ipi_number: string
+          is_primary?: boolean
+          party_name: string
+          party_type: Database["public"]["Enums"]["interested_party_type"]
+          pro_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          client_account_id?: string
+          created_at?: string
+          id?: string
+          ipi_number?: string
+          is_primary?: boolean
+          party_name?: string
+          party_type?: Database["public"]["Enums"]["interested_party_type"]
+          pro_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_ipi_numbers_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_ipi_numbers_pro_id_fkey"
+            columns: ["pro_id"]
+            isOneToOne: false
+            referencedRelation: "pro_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_users: {
+        Row: {
+          created_at: string
+          deactivated_at: string | null
+          display_name: string | null
+          id: string
+          invited_by: string | null
+          role: Database["public"]["Enums"]["company_user_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          deactivated_at?: string | null
+          display_name?: string | null
+          id?: string
+          invited_by?: string | null
+          role?: Database["public"]["Enums"]["company_user_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          deactivated_at?: string | null
+          display_name?: string | null
+          id?: string
+          invited_by?: string | null
+          role?: Database["public"]["Enums"]["company_user_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      contract_associations: {
+        Row: {
+          client_account_id: string
+          contract_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_signatory: boolean
+          signature_required: boolean
+          signed_at: string | null
+        }
+        Insert: {
+          client_account_id: string
+          contract_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_signatory?: boolean
+          signature_required?: boolean
+          signed_at?: string | null
+        }
+        Update: {
+          client_account_id?: string
+          contract_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_signatory?: boolean
+          signature_required?: boolean
+          signed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_associations_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contract_associations_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contracts: {
         Row: {
           contract_number: string
@@ -1077,6 +1325,95 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_help_categories_by_audience"
             referencedColumns: ["category_id"]
+          },
+        ]
+      }
+      interested_parties: {
+        Row: {
+          client_account_id: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          party_type: Database["public"]["Enums"]["interested_party_type"]
+          pro_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          client_account_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          party_type: Database["public"]["Enums"]["interested_party_type"]
+          pro_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          client_account_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          party_type?: Database["public"]["Enums"]["interested_party_type"]
+          pro_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interested_parties_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interested_parties_pro_id_fkey"
+            columns: ["pro_id"]
+            isOneToOne: false
+            referencedRelation: "pro_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      interested_party_ipi_numbers: {
+        Row: {
+          created_at: string
+          id: string
+          interested_party_id: string
+          ipi_number: string
+          is_primary: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          interested_party_id: string
+          ipi_number: string
+          is_primary?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          interested_party_id?: string
+          ipi_number?: string
+          is_primary?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interested_party_ipi_numbers_interested_party_id_fkey"
+            columns: ["interested_party_id"]
+            isOneToOne: false
+            referencedRelation: "interested_parties"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1852,6 +2189,39 @@ export type Database = {
           },
         ]
       }
+      pro_organizations: {
+        Row: {
+          abbreviation: string
+          country: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          abbreviation: string
+          country?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          abbreviation?: string
+          country?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       recovery_events: {
         Row: {
           backup_id: string | null
@@ -2070,6 +2440,284 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      song_interested_parties: {
+        Row: {
+          controlled: boolean
+          created_at: string
+          id: string
+          interested_party_id: string
+          role: Database["public"]["Enums"]["interested_party_type"]
+          share_percentage: number | null
+          song_id: string
+          territory: string | null
+          updated_at: string
+        }
+        Insert: {
+          controlled?: boolean
+          created_at?: string
+          id?: string
+          interested_party_id: string
+          role: Database["public"]["Enums"]["interested_party_type"]
+          share_percentage?: number | null
+          song_id: string
+          territory?: string | null
+          updated_at?: string
+        }
+        Update: {
+          controlled?: boolean
+          created_at?: string
+          id?: string
+          interested_party_id?: string
+          role?: Database["public"]["Enums"]["interested_party_type"]
+          share_percentage?: number | null
+          song_id?: string
+          territory?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_interested_parties_interested_party_id_fkey"
+            columns: ["interested_party_id"]
+            isOneToOne: false
+            referencedRelation: "interested_parties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_interested_parties_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      song_queue: {
+        Row: {
+          admin_notes: string | null
+          approved_song_id: string | null
+          client_account_id: string
+          current_data: Json
+          id: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          revision_request: string | null
+          revision_requested_at: string | null
+          revision_requested_by: string | null
+          revision_submitted_at: string | null
+          status: Database["public"]["Enums"]["song_queue_status"]
+          submitted_at: string
+          submitted_by: string
+          submitted_data: Json
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          approved_song_id?: string | null
+          client_account_id: string
+          current_data: Json
+          id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_request?: string | null
+          revision_requested_at?: string | null
+          revision_requested_by?: string | null
+          revision_submitted_at?: string | null
+          status?: Database["public"]["Enums"]["song_queue_status"]
+          submitted_at?: string
+          submitted_by: string
+          submitted_data: Json
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          approved_song_id?: string | null
+          client_account_id?: string
+          current_data?: Json
+          id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_request?: string | null
+          revision_requested_at?: string | null
+          revision_requested_by?: string | null
+          revision_submitted_at?: string | null
+          status?: Database["public"]["Enums"]["song_queue_status"]
+          submitted_at?: string
+          submitted_by?: string
+          submitted_data?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_queue_approved_song_id_fkey"
+            columns: ["approved_song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_queue_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      song_versions: {
+        Row: {
+          alternate_titles: string[] | null
+          change_summary: string | null
+          changed_at: string
+          changed_by: string | null
+          id: string
+          interested_parties_snapshot: Json
+          iswc: string | null
+          metadata: Json
+          song_id: string
+          title: string
+          version_number: number
+        }
+        Insert: {
+          alternate_titles?: string[] | null
+          change_summary?: string | null
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          interested_parties_snapshot: Json
+          iswc?: string | null
+          metadata: Json
+          song_id: string
+          title: string
+          version_number: number
+        }
+        Update: {
+          alternate_titles?: string[] | null
+          change_summary?: string | null
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          interested_parties_snapshot?: Json
+          iswc?: string | null
+          metadata?: Json
+          song_id?: string
+          title?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_versions_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      song_visibility_overrides: {
+        Row: {
+          client_account_id: string
+          grant_visibility: boolean
+          granted_at: string
+          granted_by: string | null
+          id: string
+          reason: string | null
+          song_id: string
+        }
+        Insert: {
+          client_account_id: string
+          grant_visibility: boolean
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          reason?: string | null
+          song_id: string
+        }
+        Update: {
+          client_account_id?: string
+          grant_visibility?: boolean
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          reason?: string | null
+          song_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_visibility_overrides_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_visibility_overrides_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      songs: {
+        Row: {
+          alternate_titles: string[] | null
+          created_at: string
+          created_by: string | null
+          duration_seconds: number | null
+          genre: string | null
+          id: string
+          is_active: boolean
+          iswc: string | null
+          language: string | null
+          metadata: Json
+          published_at: string | null
+          published_by: string | null
+          release_date: string | null
+          source_queue_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          alternate_titles?: string[] | null
+          created_at?: string
+          created_by?: string | null
+          duration_seconds?: number | null
+          genre?: string | null
+          id?: string
+          is_active?: boolean
+          iswc?: string | null
+          language?: string | null
+          metadata?: Json
+          published_at?: string | null
+          published_by?: string | null
+          release_date?: string | null
+          source_queue_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          alternate_titles?: string[] | null
+          created_at?: string
+          created_by?: string | null
+          duration_seconds?: number | null
+          genre?: string | null
+          id?: string
+          is_active?: boolean
+          iswc?: string | null
+          language?: string | null
+          metadata?: Json
+          published_at?: string | null
+          published_by?: string | null
+          release_date?: string | null
+          source_queue_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       support_knowledge_base: {
         Row: {
@@ -2476,6 +3124,10 @@ export type Database = {
       can_manage_help: { Args: { _user_id: string }; Returns: boolean }
       can_manage_help_content: { Args: { _user_id: string }; Returns: boolean }
       check_escalations: { Args: never; Returns: number }
+      client_can_view_song: {
+        Args: { p_client_account_id: string; p_song_id: string }
+        Returns: boolean
+      }
       create_notification:
         | {
             Args: {
@@ -2537,6 +3189,15 @@ export type Database = {
           payment_amount: number
           payment_id: string
           payment_status: Database["public"]["Enums"]["payment_status"]
+        }[]
+      }
+      get_user_client_accounts: {
+        Args: { p_user_id: string }
+        Returns: {
+          client_account_id: string
+          client_name: string
+          is_company_user: boolean
+          role: Database["public"]["Enums"]["client_member_role"]
         }[]
       }
       get_user_contexts: {
@@ -2648,6 +3309,10 @@ export type Database = {
           title: string
         }[]
       }
+      user_has_client_access: {
+        Args: { p_client_account_id: string; p_user_id: string }
+        Returns: boolean
+      }
       validate_api_token: {
         Args: { _endpoint: string; _method: string; _token_hash: string }
         Returns: {
@@ -2677,6 +3342,9 @@ export type Database = {
         | "login"
         | "logout"
         | "record_viewed"
+      client_account_status: "active" | "suspended" | "archived"
+      client_member_role: "owner" | "team" | "viewer"
+      company_user_role: "super_admin" | "admin" | "viewer"
       contract_status: "draft" | "active" | "amended" | "terminated" | "expired"
       data_room_export_type:
         | "authority_governance"
@@ -2692,6 +3360,7 @@ export type Database = {
       escalation_status: "pending" | "escalated" | "resolved" | "expired"
       help_article_status: "draft" | "internal" | "published" | "archived"
       help_visibility: "public" | "internal"
+      interested_party_type: "writer" | "publisher" | "administrator"
       invitation_status: "pending" | "accepted" | "expired" | "revoked"
       invoice_status: "draft" | "open" | "paid" | "void" | "uncollectible"
       licensing_request_status:
@@ -2749,6 +3418,7 @@ export type Database = {
         | "requested_by_customer"
         | "service_not_provided"
         | "other"
+      song_queue_status: "pending" | "needs_revision" | "approved" | "rejected"
       ui_density_mode: "comfortable" | "compact"
     }
     CompositeTypes: {
@@ -2896,6 +3566,9 @@ export const Constants = {
         "logout",
         "record_viewed",
       ],
+      client_account_status: ["active", "suspended", "archived"],
+      client_member_role: ["owner", "team", "viewer"],
+      company_user_role: ["super_admin", "admin", "viewer"],
       contract_status: ["draft", "active", "amended", "terminated", "expired"],
       data_room_export_type: [
         "authority_governance",
@@ -2913,6 +3586,7 @@ export const Constants = {
       escalation_status: ["pending", "escalated", "resolved", "expired"],
       help_article_status: ["draft", "internal", "published", "archived"],
       help_visibility: ["public", "internal"],
+      interested_party_type: ["writer", "publisher", "administrator"],
       invitation_status: ["pending", "accepted", "expired", "revoked"],
       invoice_status: ["draft", "open", "paid", "void", "uncollectible"],
       licensing_request_status: [
@@ -2977,6 +3651,7 @@ export const Constants = {
         "service_not_provided",
         "other",
       ],
+      song_queue_status: ["pending", "needs_revision", "approved", "rejected"],
       ui_density_mode: ["comfortable", "compact"],
     },
   },
