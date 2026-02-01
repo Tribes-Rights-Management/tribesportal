@@ -51,7 +51,7 @@ export function WorkstationMobileNav({ moduleLabel, items }: WorkstationMobileNa
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "w-full flex items-center justify-between px-4 py-3",
+          "w-full flex items-center justify-between px-4 py-4",
           "bg-background border-b border-border/60",
           "active:bg-muted/30 transition-colors duration-100"
         )}
