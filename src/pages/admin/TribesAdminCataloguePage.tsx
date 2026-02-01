@@ -32,17 +32,18 @@ interface CatalogueSong {
   title: string;
   artist: string;
   iswc: string;
+  songwriters: string[];
   status: "active" | "pending" | "inactive";
   addedAt: string;
 }
 
 // Mock data
 const mockCatalogueSongs: CatalogueSong[] = [
-  { id: "1", title: "Midnight Dreams", artist: "Luna Wave", iswc: "T-123.456.789-0", status: "active", addedAt: "2026-01-15T10:00:00Z" },
-  { id: "2", title: "Electric Soul", artist: "The Frequency", iswc: "T-234.567.890-1", status: "active", addedAt: "2026-01-14T14:30:00Z" },
-  { id: "3", title: "Ocean Breeze", artist: "Coastal Sounds", iswc: "T-345.678.901-2", status: "pending", addedAt: "2026-01-13T09:15:00Z" },
-  { id: "4", title: "City Lights", artist: "Urban Echo", iswc: "T-456.789.012-3", status: "active", addedAt: "2026-01-12T16:00:00Z" },
-  { id: "5", title: "Mountain High", artist: "Summit", iswc: "T-567.890.123-4", status: "inactive", addedAt: "2026-01-11T11:00:00Z" },
+  { id: "1", title: "Midnight Dreams", artist: "Luna Wave", iswc: "T-123.456.789-0", songwriters: ["John Smith", "Jane Doe", "Mike Johnson"], status: "active", addedAt: "2026-01-15T10:00:00Z" },
+  { id: "2", title: "Electric Soul", artist: "The Frequency", iswc: "T-234.567.890-1", songwriters: ["Sarah Williams", "David Chen"], status: "active", addedAt: "2026-01-14T14:30:00Z" },
+  { id: "3", title: "Ocean Breeze", artist: "Coastal Sounds", iswc: "T-345.678.901-2", songwriters: ["Emily Rodriguez", "James Wilson", "Anna Lee", "Robert Taylor"], status: "pending", addedAt: "2026-01-13T09:15:00Z" },
+  { id: "4", title: "City Lights", artist: "Urban Echo", iswc: "T-456.789.012-3", songwriters: ["Michael Brown"], status: "active", addedAt: "2026-01-12T16:00:00Z" },
+  { id: "5", title: "Mountain High", artist: "Summit", iswc: "T-567.890.123-4", songwriters: ["Lisa Anderson", "Tom Harris", "Rachel Green", "Chris Martin", "Jennifer Lopez"], status: "inactive", addedAt: "2026-01-11T11:00:00Z" },
 ];
 
 const getStatusBadge = (status: CatalogueSong["status"]) => {
@@ -107,13 +108,7 @@ export default function TribesAdminCataloguePage() {
             <AppItemCard
               title={song.title}
               subtitle={song.artist}
-              meta={
-                <div className="flex items-center gap-2">
-                  <span className="font-mono">{song.iswc}</span>
-                  <span>·</span>
-                  <span>{format(new Date(song.addedAt), "MMM d, yyyy")}</span>
-                </div>
-              }
+              meta={song.songwriters.join(", ")}
               status={getStatusBadge(song.status)}
               onClick={() => handleSongClick(song.id)}
             />
