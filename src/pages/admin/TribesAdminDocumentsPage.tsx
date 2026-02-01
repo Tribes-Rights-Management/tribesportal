@@ -118,18 +118,18 @@ export default function TribesAdminDocumentsPage() {
       />
 
       <AppSection spacing="md">
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-3 mb-4">
           <AppSearchInput
             placeholder="Search documents..."
             value={searchQuery}
             onChange={setSearchQuery}
-            className="max-w-sm"
+            className="flex-1"
           />
           <AppSelect
             value={typeFilter}
             onChange={handleTypeChange}
             options={typeOptions}
-            className="w-40"
+            className="w-40 shrink-0"
           />
         </div>
 
