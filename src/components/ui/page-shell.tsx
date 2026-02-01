@@ -62,7 +62,7 @@ export function PageShell({
   return (
     <div 
       className={cn(
-        "relative flex items-center gap-3 mb-6 sm:mb-8",
+        "relative flex items-center gap-3 pt-6 pb-6 sm:pt-8 sm:pb-6",
         centered && "justify-between min-h-[56px]",
         className
       )}

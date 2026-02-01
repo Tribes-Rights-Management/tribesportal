@@ -60,22 +60,31 @@ export function AppPageHeader({
   className,
 }: AppPageHeaderProps) {
   return (
-    <div className={cn("flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-6 sm:mb-8", className)}>
+    <div className={cn("flex items-center gap-3 pt-6 pb-6 sm:pt-8 sm:pb-6", className)}>
+      {/* Back button - inline with title */}
+      {backLink && (
+        <Link 
+          to={backLink.to} 
+          className={cn(
+            "h-11 w-11 sm:h-8 sm:w-8 rounded-lg sm:rounded flex items-center justify-center",
+            "transition-colors shrink-0 -ml-2",
+            "text-muted-foreground hover:bg-muted/50"
+          )}
+          aria-label={backLink.label}
+        >
+          <ArrowLeft className="h-5 w-5 sm:h-4 sm:w-4" strokeWidth={1.5} />
+        </Link>
+      )}
+      
+      {/* Title block */}
       <div className="min-w-0 flex-1">
-        {backLink && (
-          <Link 
-            to={backLink.to} 
-            className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground transition-colors mb-2 min-h-[44px] sm:min-h-0 py-2 sm:py-0"
-          >
-            <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
-            <span>{backLink.label}</span>
-          </Link>
-        )}
-        <h1 className="text-lg sm:text-xl font-semibold text-foreground leading-tight tracking-tight">
+        <h1 className="text-[20px] sm:text-[24px] font-semibold text-foreground leading-tight tracking-[-0.02em]">
           {title}
         </h1>
       </div>
-      {action && <div className="shrink-0 self-start">{action}</div>}
+      
+      {/* Actions slot */}
+      {action && <div className="flex items-center gap-2 shrink-0">{action}</div>}
     </div>
   );
 }
