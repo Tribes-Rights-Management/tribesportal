@@ -113,9 +113,7 @@ export default function TribesAdminDocumentsPage() {
   return (
     <AppPageContainer maxWidth="xl">
       <AppPageHeader
-        eyebrow="Tribes Admin"
         title="Documents"
-        description="Contracts, agreements, and legal documents"
         backLink={{ to: "/admin", label: "Dashboard" }}
       />
 

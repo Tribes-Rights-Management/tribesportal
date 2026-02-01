@@ -70,9 +70,7 @@ export default function HelpSettingsPage() {
       {/* Header */}
       <AppPageHeader
         backLink={{ to: "/help", label: "Overview" }}
-        eyebrow="Help Workstation"
         title="Settings"
-        description="Configure Help Center behavior"
       />
 
       {/* Public Help Center */}

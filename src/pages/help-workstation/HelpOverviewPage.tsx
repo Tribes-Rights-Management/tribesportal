@@ -136,9 +136,7 @@ export default function HelpOverviewPage() {
     <AppPageContainer maxWidth="xl">
       {/* Page Header */}
       <AppPageHeader
-        eyebrow="Help Workstation"
         title="Overview"
-        description="Manage Help Center content"
         action={
           <AppButton
             intent="secondary"

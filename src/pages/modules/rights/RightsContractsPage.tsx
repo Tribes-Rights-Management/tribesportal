@@ -12,7 +12,6 @@ export default function RightsContractsPage() {
     <PageContainer>
       <PageHeader
         title="Contracts"
-        description="View and manage client contracts"
       />
       
       <AppCard>

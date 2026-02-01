@@ -145,9 +145,7 @@ export default function HelpAnalyticsPage() {
       {/* Header */}
       <AppPageHeader
         backLink={{ to: "/help", label: "Overview" }}
-        eyebrow="Help Workstation"
         title="Analytics"
-        description="Help content performance and trends"
         action={
           <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
             <SelectTrigger className="h-10 w-full sm:w-[140px] px-3 text-[14px] bg-card border border-border rounded-lg">

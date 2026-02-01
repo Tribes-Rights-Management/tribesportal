@@ -248,13 +248,7 @@ export default function HelpArticlesListPage() {
       {/* Page Header */}
       <AppPageHeader
         backLink={{ to: "/help", label: "Overview" }}
-        eyebrow="Help Workstation"
         title="Articles"
-        description={
-          selectedCategory
-            ? `${displayCount} articles in ${selectedCategory.name}`
-            : `${displayCount} articles`
-        }
         action={
           <AppButton intent="primary" size="sm" onClick={() => navigate("/help/articles/new")}>
             <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />

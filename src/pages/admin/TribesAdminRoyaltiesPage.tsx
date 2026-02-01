@@ -17,9 +17,7 @@ export default function TribesAdminRoyaltiesPage() {
   return (
     <AppPageContainer maxWidth="xl">
       <AppPageHeader
-        eyebrow="Tribes Admin"
         title="Royalties"
-        description="Royalty payments and distributions"
         backLink={{ to: "/admin", label: "Dashboard" }}
       />
 

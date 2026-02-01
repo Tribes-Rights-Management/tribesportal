@@ -40,9 +40,7 @@ export default function LicensingPaymentsPage() {
   return (
     <PageContainer maxWidth="wide">
       <AppPageHeader
-        eyebrow="LICENSING"
         title="Payments"
-        description="License fees, payments, and receipts"
       />
 
       {/* Summary Stats */}

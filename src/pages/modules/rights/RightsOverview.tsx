@@ -12,8 +12,7 @@ export default function RightsOverview() {
   return (
     <PageContainer>
       <PageHeader
-        title="Rights Overview"
-        description="Client and rights management dashboard"
+        title="Overview"
       />
       
       {/* Stats row */}

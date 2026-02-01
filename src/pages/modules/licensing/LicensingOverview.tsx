@@ -59,9 +59,7 @@ export default function LicensingOverview() {
         <AppCard>
           <AppCardBody className="p-6 md:p-8">
             <AppPageHeader 
-              eyebrow="LICENSING"
               title="Overview"
-              description="Manage licensing requests and agreements"
             />
             {tenantMemberships.length > 1 ? (
               <div className="mt-8">
@@ -94,9 +92,7 @@ export default function LicensingOverview() {
         <AppCard>
           <AppCardBody className="p-6 md:p-8">
             <AppPageHeader 
-              eyebrow="LICENSING"
               title="Overview"
-              description="Manage licensing requests and agreements"
             />
             <div className="mt-8">
               <InstitutionalLoadingState message="Loading licensing data" />
@@ -113,9 +109,7 @@ export default function LicensingOverview() {
         <AppCard>
           <AppCardBody className="p-6 md:p-8">
             <AppPageHeader 
-              eyebrow="LICENSING"
               title="Overview"
-              description="Manage licensing requests and agreements"
             />
             <div className="mt-8">
               <SystemErrorState 
@@ -135,9 +129,7 @@ export default function LicensingOverview() {
         <AppCardBody className="p-6 md:p-8">
           <div className="flex items-start justify-between gap-4 mb-8">
             <AppPageHeader 
-              eyebrow="LICENSING"
               title="Overview"
-              description="Manage licensing requests and agreements"
             />
             {tenantMemberships.length > 1 && <TenantSelector />}
           </div>

@@ -18,9 +18,7 @@ export default function LicensingRequestsPage() {
       <AppCard>
         <AppCardBody className="p-6 md:p-8">
           <AppPageHeader 
-            eyebrow="LICENSING"
             title="License Requests"
-            description="Review and manage incoming licensing requests"
           />
           
           <div className="mt-8">

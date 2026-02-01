@@ -36,18 +36,9 @@ export default function LicensingReceiptsPage() {
 
   return (
     <PageContainer maxWidth="wide">
-      <Link 
-        to="/licensing/payments" 
-        className="inline-flex items-center gap-2 text-[13px] text-muted-foreground hover:text-foreground transition-colors mb-6"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        <span>Back to Payments</span>
-      </Link>
-      
       <AppPageHeader
-        eyebrow="LICENSING"
         title="Payment Receipts"
-        description="Download receipts for completed payments"
+        backLink={{ to: "/licensing/payments", label: "Payments" }}
       />
 
       <AppCard>
