@@ -1,12 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { User, LayoutGrid, Terminal, Settings, LogOut } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { User } from "lucide-react";
+import { AppDropdown, type AppDropdownItem } from "@/components/app-ui";
 import { cn } from "@/lib/utils";
 
 /**
@@ -19,7 +14,7 @@ import { cn } from "@/lib/utils";
  * - Settings → /account/settings
  * - Sign Out
  * 
- * Styling: White background, vertical list, thin dividers, no icons in rows
+ * Uses AppDropdown from the app-ui design system for consistency.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -32,83 +27,46 @@ export function UserMenuDropdown() {
     navigate("/sign-in");
   };
 
+  const menuItems: AppDropdownItem[] = [
+    {
+      label: "Workspaces",
+      onClick: () => navigate("/workspaces"),
+    },
+    {
+      label: "System Console",
+      onClick: () => navigate("/console"),
+      hidden: !isPlatformAdmin,
+    },
+    {
+      label: "Settings",
+      onClick: () => navigate("/account/settings"),
+    },
+    {
+      label: "Sign Out",
+      onClick: handleSignOut,
+    },
+  ];
+
+  const trigger = (
+    <button
+      className={cn(
+        "flex items-center justify-center h-9 w-9 rounded-full",
+        "text-muted-foreground hover:text-foreground",
+        "hover:bg-muted/50 transition-colors",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      )}
+      aria-label="User menu"
+    >
+      <User className="h-[18px] w-[18px]" strokeWidth={1.5} />
+    </button>
+  );
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          className={cn(
-            "flex items-center justify-center h-9 w-9 rounded-full",
-            "text-muted-foreground hover:text-foreground",
-            "hover:bg-muted/50 transition-colors",
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          )}
-          aria-label="User menu"
-        >
-          <User className="h-[18px] w-[18px]" strokeWidth={1.5} />
-        </button>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent
-        align="end"
-        sideOffset={8}
-        className={cn(
-          "min-w-[200px] rounded-xl p-0 overflow-hidden",
-          "bg-background border border-border shadow-lg z-50"
-        )}
-      >
-        {/* Workspaces */}
-        <DropdownMenuItem
-          onClick={() => navigate("/workspaces")}
-          className={cn(
-            "h-12 px-4 text-[14px] font-normal text-foreground",
-            "rounded-none cursor-pointer",
-            "border-b border-border/40",
-            "focus:bg-muted/50"
-          )}
-        >
-          Workspaces
-        </DropdownMenuItem>
-
-        {/* System Console - Platform admins only */}
-        {isPlatformAdmin && (
-          <DropdownMenuItem
-            onClick={() => navigate("/console")}
-            className={cn(
-              "h-12 px-4 text-[14px] font-normal text-foreground",
-              "rounded-none cursor-pointer",
-              "border-b border-border/40",
-              "focus:bg-muted/50"
-            )}
-          >
-            System Console
-          </DropdownMenuItem>
-        )}
-
-        {/* Settings */}
-        <DropdownMenuItem
-          onClick={() => navigate("/account/settings")}
-          className={cn(
-            "h-12 px-4 text-[14px] font-normal text-foreground",
-            "rounded-none cursor-pointer",
-            "border-b border-border/40",
-            "focus:bg-muted/50"
-          )}
-        >
-          Settings
-        </DropdownMenuItem>
-
-        {/* Sign Out */}
-        <DropdownMenuItem
-          onClick={handleSignOut}
-          className={cn(
-            "h-12 px-4 text-[14px] font-normal text-foreground",
-            "rounded-none cursor-pointer",
-            "focus:bg-muted/50"
-          )}
-        >
-          Sign Out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <AppDropdown
+      trigger={trigger}
+      items={menuItems}
+      align="end"
+      minWidth={200}
+    />
   );
 }
