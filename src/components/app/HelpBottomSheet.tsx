@@ -134,7 +134,7 @@ export function HelpBottomSheet() {
       </DrawerTrigger>
       
       <DrawerContent 
-        className="max-h-[85vh] bg-background border-t border-x border-border rounded-t-xl"
+        className="min-h-[70vh] max-h-[85vh] bg-background border-t border-x border-border rounded-t-xl flex flex-col"
         style={{
           backgroundColor: 'hsl(var(--background))',
           boxShadow: '0 -8px 30px rgba(0, 0, 0, 0.25)',
@@ -169,7 +169,7 @@ export function HelpBottomSheet() {
           </div>
         </DrawerHeader>
 
-        <div className="bg-background overflow-y-auto max-h-[70vh]">
+        <div className="bg-background overflow-y-auto flex-1 pb-6">
           {/* ═══════════════════════════════════════════════════════════════ */}
           {/* HOME VIEW */}
           {/* ═══════════════════════════════════════════════════════════════ */}
@@ -400,8 +400,11 @@ export function HelpBottomSheet() {
           )}
         </div>
         
-        {/* Safe area padding */}
-        <div className="h-2 bg-background" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }} />
+        {/* Safe area padding for mobile keyboards and bottom notch */}
+        <div 
+          className="shrink-0 h-4 bg-background" 
+          style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)' }} 
+        />
       </DrawerContent>
     </Drawer>
   );
