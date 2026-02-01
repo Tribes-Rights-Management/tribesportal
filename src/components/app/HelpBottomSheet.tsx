@@ -37,17 +37,20 @@ import { Textarea } from "@/components/ui/textarea";
 
 type DrawerView = 'home' | 'contact';
 
-// Sample searchable articles
+// Sample searchable articles with categories
 const SEARCHABLE_ARTICLES = [
-  { id: 'getting-started', title: 'Getting Started', path: '/help/getting-started' },
-  { id: 'account-settings', title: 'Account Settings', path: '/help/account-settings' },
-  { id: 'managing-workspaces', title: 'Managing Workspaces', path: '/help/workspaces' },
-  { id: 'permissions', title: 'Permissions & Access', path: '/help/permissions' },
-  { id: 'billing', title: 'Billing & Payments', path: '/help/billing' },
-  { id: 'two-factor', title: 'Two-Factor Authentication', path: '/help/2fa' },
-  { id: 'inviting-members', title: 'Inviting Team Members', path: '/help/inviting-members' },
-  { id: 'api-reference', title: 'API Reference', path: '/docs/api' },
-  { id: 'integrations', title: 'Integrations Guide', path: '/docs/integrations' },
+  { id: 'getting-started', title: 'Getting Started', category: 'Basics', path: '/help/getting-started' },
+  { id: 'account-settings', title: 'Account Settings', category: 'Account', path: '/help/account-settings' },
+  { id: 'managing-workspaces', title: 'Managing Workspaces', category: 'Workspaces', path: '/help/workspaces' },
+  { id: 'permissions', title: 'Permissions & Access', category: 'Security', path: '/help/permissions' },
+  { id: 'billing', title: 'Billing & Payments', category: 'Billing', path: '/help/billing' },
+  { id: 'two-factor', title: 'Two-Factor Authentication', category: 'Security', path: '/help/2fa' },
+  { id: 'inviting-members', title: 'Inviting Team Members', category: 'Team', path: '/help/inviting-members' },
+  { id: 'api-reference', title: 'API Reference', category: 'Developers', path: '/docs/api' },
+  { id: 'integrations', title: 'Integrations Guide', category: 'Developers', path: '/docs/integrations' },
+  { id: 'password-reset', title: 'Reset Your Password', category: 'Account', path: '/help/password-reset' },
+  { id: 'notifications', title: 'Managing Notifications', category: 'Account', path: '/help/notifications' },
+  { id: 'export-data', title: 'Exporting Your Data', category: 'Data', path: '/help/export-data' },
 ];
 
 export function HelpBottomSheet() {
@@ -59,11 +62,19 @@ export function HelpBottomSheet() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Filter articles based on search
+  // Filter articles based on search (home view)
   const searchResults = searchQuery.trim().length > 1
     ? SEARCHABLE_ARTICLES.filter(article =>
         article.title.toLowerCase().includes(searchQuery.toLowerCase())
       ).slice(0, 5)
+    : [];
+
+  // Filter articles based on subject field (contact view) - for smart suggestions
+  const subjectSuggestions = formData.subject.trim().length > 2
+    ? SEARCHABLE_ARTICLES.filter(article =>
+        article.title.toLowerCase().includes(formData.subject.toLowerCase()) ||
+        article.category.toLowerCase().includes(formData.subject.toLowerCase())
+      ).slice(0, 4)
     : [];
 
   const handleOpenChange = useCallback((isOpen: boolean) => {
@@ -330,6 +341,38 @@ export function HelpBottomSheet() {
                       required
                       className="w-full h-10 px-3 text-base md:text-[13px] text-foreground placeholder:text-muted-foreground/60 bg-transparent border border-border/60 rounded-md focus:outline-none focus:border-foreground/30 transition-colors"
                     />
+                    
+                    {/* Smart Article Suggestions */}
+                    {subjectSuggestions.length > 0 && (
+                      <div className="mt-2 bg-muted/30 border border-border/40 rounded-md overflow-hidden">
+                        <p className="px-3 py-1.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wide border-b border-border/40">
+                          Suggested articles
+                        </p>
+                        <div className="divide-y divide-border/30">
+                          {subjectSuggestions.map((article) => (
+                            <div
+                              key={article.id}
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => handleNavigate(article.path)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  handleNavigate(article.path);
+                                }
+                              }}
+                              className="px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-muted/50 active:bg-muted transition-colors"
+                            >
+                              <div className="min-w-0 flex-1">
+                                <p className="text-[12px] font-medium text-foreground truncate">{article.title}</p>
+                                <p className="text-[10px] text-muted-foreground">{article.category}</p>
+                              </div>
+                              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0 ml-2" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label className="block text-[11px] font-medium text-muted-foreground mb-1.5">
