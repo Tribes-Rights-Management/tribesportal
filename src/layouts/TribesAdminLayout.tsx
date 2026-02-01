@@ -28,7 +28,7 @@ export function TribesAdminLayout() {
 
   // Get nav items from centralized config
   const navItems = getNavForModule("admin");
-  const moduleLabel = "Tribes Admin";
+  const moduleLabel = getModuleLabel("admin");
   const showSidebar = !isMobile;
 
   return (

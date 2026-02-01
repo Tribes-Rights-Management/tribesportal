@@ -28,14 +28,8 @@ function getModuleKeyFromPath(pathname: string): ModuleKey | null {
 }
 
 function getModuleDisplayLabel(moduleKey: ModuleKey | null): string {
-  switch (moduleKey) {
-    case "licensing":
-      return "Tribes Licensing";
-    case "rights":
-      return "Tribes Rights";
-    default:
-      return "";
-  }
+  if (!moduleKey) return "";
+  return getModuleLabel(moduleKey);
 }
 
 export function ModuleLayout() {
