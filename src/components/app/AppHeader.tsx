@@ -15,12 +15,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronDown, Menu } from "lucide-react";
+import { ChevronDown, Menu, CircleHelp } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { NAV_LABELS, PORTAL_TYPOGRAPHY } from "@/styles/tokens";
 import { NotificationCenter } from "./NotificationCenter";
+import { HeaderIconButton } from "./HeaderIconButton";
 import { SidebarHeader, ContentHeader } from "./AppShell";
 
 /**
@@ -327,10 +328,15 @@ export function AppHeader({ showSidebarLogo = false }: AppHeaderProps) {
             {NAV_LABELS.BRAND_WORDMARK}
           </button>
 
-          {/* Right: Notifications + Avatar */}
-          <div className="flex items-center gap-2 shrink-0">
+          {/* Right: Controls + Notifications + Help + Avatar */}
+          <div className="flex items-center gap-1 shrink-0">
             <MobileControls />
             <NotificationCenter />
+            <HeaderIconButton
+              icon={CircleHelp}
+              aria-label="Help & Resources"
+              onClick={() => navigate("/help")}
+            />
             <AccountMenu />
           </div>
         </div>
