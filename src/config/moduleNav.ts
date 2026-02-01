@@ -13,6 +13,7 @@ import {
   Settings2,
   Music,
   ListTodo,
+  Briefcase,
   type LucideIcon
 } from "lucide-react";
 
@@ -27,7 +28,7 @@ import {
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-export type ModuleKey = "console" | "admin" | "licensing" | "help";
+export type ModuleKey = "console" | "admin" | "licensing" | "help" | "rights";
 
 export interface NavItem {
   to: string;
@@ -75,6 +76,17 @@ const licensingNav: NavItem[] = [
 ];
 
 /**
+ * Rights Module Navigation - Client and Rights Management
+ */
+const rightsNav: NavItem[] = [
+  { to: "/rights", label: "Overview", icon: LayoutDashboard, exact: true, section: "main" },
+  { to: "/rights/clients", label: "Clients", icon: Users, section: "main" },
+  { to: "/rights/contracts", label: "Contracts", icon: Briefcase, section: "main" },
+  { to: "/rights/documents", label: "Documents", icon: FileText, section: "main" },
+  { to: "/rights/settings", label: "Settings", icon: Settings2, section: "settings" },
+];
+
+/**
  * Help Workstation Navigation - Content Management
  */
 const helpNav: NavItem[] = [
@@ -93,6 +105,7 @@ export const MODULE_NAV: Record<ModuleKey, NavItem[]> = {
   console: consoleNav,
   admin: adminNav,
   licensing: licensingNav,
+  rights: rightsNav,
   help: helpNav,
 };
 
@@ -113,11 +126,13 @@ export function getModuleLabel(moduleKey: ModuleKey): string {
     case "console":
       return "System Console";
     case "admin":
-      return "Tribes Admin";
+      return "Admin";
     case "licensing":
       return "Licensing";
+    case "rights":
+      return "Rights";
     case "help":
-      return "Help Workstation";
+      return "Help";
     default:
       return "";
   }
@@ -134,6 +149,8 @@ export function getModuleHomeRoute(moduleKey: ModuleKey): string {
       return "/admin";
     case "licensing":
       return "/licensing";
+    case "rights":
+      return "/rights";
     case "help":
       return "/help";
     default:
