@@ -82,6 +82,11 @@ export { AppCheckboxGroup, type CheckboxOption } from "./AppCheckboxGroup";
 export { AppInput, AppTextarea } from "./AppInput";
 
 // ─────────────────────────────────────────────────────────────────────────────
+// DROPDOWNS
+// ─────────────────────────────────────────────────────────────────────────────
+export { AppDropdown, type AppDropdownItem, type AppDropdownProps } from "./AppDropdown";
+
+// ─────────────────────────────────────────────────────────────────────────────
 // PANELS / MODALS
 // ─────────────────────────────────────────────────────────────────────────────
 export { AppPanel, AppPanelFooter } from "./AppPanel";

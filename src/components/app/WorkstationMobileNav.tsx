@@ -13,6 +13,9 @@ import type { NavItem } from "@/config/moduleNav";
  * - Module name + chevron as trigger
  * - Full-width dropdown with dividers
  * - No icons, minimal styling
+ * 
+ * Note: Uses custom implementation (not AppDropdown) because this is a
+ * full-width nav bar with NavLink items, not a positioned menu dropdown.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -42,6 +45,20 @@ export function WorkstationMobileNav({ moduleLabel, items }: WorkstationMobileNa
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
       return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [isOpen]);
+
+  // Close on escape key
+  useEffect(() => {
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
     }
   }, [isOpen]);
 
@@ -77,6 +94,8 @@ export function WorkstationMobileNav({ moduleLabel, items }: WorkstationMobileNa
             "absolute left-0 right-0 top-full z-50",
             "bg-background border-b border-border/60 shadow-sm"
           )}
+          role="menu"
+          aria-orientation="vertical"
         >
           {items.map((item, index) => {
             const isLast = index === items.length - 1;
@@ -87,14 +106,17 @@ export function WorkstationMobileNav({ moduleLabel, items }: WorkstationMobileNa
                 end={item.exact}
                 className={({ isActive }) =>
                   cn(
-                    "block w-full text-left px-4 py-4",
-                    "text-[15px]",
+                    "block w-full text-left px-4 h-12 flex items-center",
+                    "text-[14px]",
+                    "hover:bg-muted/50 focus:bg-muted/50",
+                    "transition-colors duration-100",
                     !isLast && "border-b border-border/40",
                     isActive
                       ? "font-medium text-foreground"
                       : "font-normal text-foreground/80"
                   )
                 }
+                role="menuitem"
               >
                 {item.label}
               </NavLink>
