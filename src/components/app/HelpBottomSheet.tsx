@@ -22,7 +22,6 @@ import {
 import { HeaderIconButton } from "./HeaderIconButton";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 /**
@@ -136,21 +135,22 @@ export function HelpBottomSheet() {
           {/* ─────────────────────────────────────────────────────────────── */}
           {/* SEARCH SECTION */}
           {/* ─────────────────────────────────────────────────────────────── */}
-          <div className="px-5 pt-4 pb-3">
+          <div className="px-4 pt-3 pb-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
+              <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" strokeWidth={1.5} />
+              <input
+                type="text"
                 placeholder="Search help articles..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-11 bg-muted/50 border-border text-base md:text-[13px]"
+                className="w-full h-9 pl-6 pr-3 text-base md:text-[13px] text-foreground placeholder:text-muted-foreground/60 bg-transparent border-b border-border/60 focus:outline-none focus:border-foreground/30 transition-colors"
               />
             </div>
 
             {/* Search Results */}
             {searchResults.length > 0 && (
-              <div className="mt-2 border border-border rounded-lg overflow-hidden">
-                {searchResults.map((article, index) => (
+              <div className="mt-2 space-y-0.5">
+                {searchResults.map((article) => (
                   <div
                     key={article.id}
                     role="button"
@@ -163,20 +163,19 @@ export function HelpBottomSheet() {
                       }
                     }}
                     className={cn(
-                      "px-4 py-3 flex items-center justify-between cursor-pointer",
-                      "hover:bg-muted/50 active:bg-muted transition-colors",
-                      index !== searchResults.length - 1 && "border-b border-border"
+                      "py-2 px-1 flex items-center justify-between cursor-pointer rounded-md",
+                      "hover:bg-muted/40 active:bg-muted/60 transition-colors"
                     )}
                   >
-                    <span className="text-[14px] text-foreground">{article.title}</span>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <span className="text-[13px] text-foreground">{article.title}</span>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground/50 shrink-0" />
                   </div>
                 ))}
               </div>
             )}
 
             {searchQuery.trim().length > 1 && searchResults.length === 0 && (
-              <p className="mt-3 text-[13px] text-muted-foreground text-center py-2">
+              <p className="mt-2 text-[11px] text-muted-foreground text-center py-1">
                 No articles found for "{searchQuery}"
               </p>
             )}
@@ -185,11 +184,8 @@ export function HelpBottomSheet() {
           {/* ─────────────────────────────────────────────────────────────── */}
           {/* QUICK LINKS SECTION */}
           {/* ─────────────────────────────────────────────────────────────── */}
-          <div className="px-5 pb-3">
-            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-2">
-              Quick Links
-            </p>
-            <div className="space-y-1">
+          <div className="px-4 pb-2">
+            <div className="space-y-0.5">
               <div
                 role="button"
                 tabIndex={0}
@@ -201,18 +197,16 @@ export function HelpBottomSheet() {
                   }
                 }}
                 className={cn(
-                  "flex items-center gap-3 p-3 rounded-lg cursor-pointer",
-                  "hover:bg-muted/50 active:bg-muted transition-colors"
+                  "flex items-center gap-3 py-2.5 px-1 rounded-md cursor-pointer",
+                  "hover:bg-muted/40 active:bg-muted/60 transition-colors"
                 )}
               >
-                <div className="w-8 h-8 rounded-md bg-muted/80 flex items-center justify-center">
-                  <BookOpen className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
+                <BookOpen className="h-[18px] w-[18px] text-muted-foreground/70" strokeWidth={1.5} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-medium text-foreground">Help Center</p>
+                  <p className="text-[11px] text-muted-foreground">Browse all articles</p>
                 </div>
-                <div className="flex-1">
-                  <p className="text-[14px] font-medium text-foreground">Help Center</p>
-                  <p className="text-[12px] text-muted-foreground">Browse all articles</p>
-                </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
               </div>
 
               <div
@@ -226,18 +220,16 @@ export function HelpBottomSheet() {
                   }
                 }}
                 className={cn(
-                  "flex items-center gap-3 p-3 rounded-lg cursor-pointer",
-                  "hover:bg-muted/50 active:bg-muted transition-colors"
+                  "flex items-center gap-3 py-2.5 px-1 rounded-md cursor-pointer",
+                  "hover:bg-muted/40 active:bg-muted/60 transition-colors"
                 )}
               >
-                <div className="w-8 h-8 rounded-md bg-muted/80 flex items-center justify-center">
-                  <FileText className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
+                <FileText className="h-[18px] w-[18px] text-muted-foreground/70" strokeWidth={1.5} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-medium text-foreground">Documentation</p>
+                  <p className="text-[11px] text-muted-foreground">Technical guides & API</p>
                 </div>
-                <div className="flex-1">
-                  <p className="text-[14px] font-medium text-foreground">Documentation</p>
-                  <p className="text-[12px] text-muted-foreground">Technical guides & API</p>
-                </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
               </div>
             </div>
           </div>
@@ -245,79 +237,73 @@ export function HelpBottomSheet() {
           {/* ─────────────────────────────────────────────────────────────── */}
           {/* CONTACT SUPPORT SECTION (Expandable) */}
           {/* ─────────────────────────────────────────────────────────────── */}
-          <div className="px-5 pb-5">
-            <button
-              type="button"
-              onClick={() => setContactExpanded(!contactExpanded)}
-              className={cn(
-                "w-full flex items-center justify-between p-3 rounded-lg",
-                "hover:bg-muted/50 transition-colors",
-                contactExpanded && "bg-muted/30"
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
-                  <Send className="h-4 w-4 text-primary" strokeWidth={1.5} />
+          <div className="px-4 pb-4">
+            <div className="border-t border-border/60 pt-2">
+              <button
+                type="button"
+                onClick={() => setContactExpanded(!contactExpanded)}
+                className={cn(
+                  "w-full flex items-center gap-3 py-2.5 px-1 rounded-md",
+                  "hover:bg-muted/40 transition-colors text-left"
+                )}
+              >
+                <Send className="h-[18px] w-[18px] text-muted-foreground/70" strokeWidth={1.5} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-medium text-foreground">Contact Support</p>
+                  <p className="text-[11px] text-muted-foreground">Submit a request</p>
                 </div>
-                <div className="text-left">
-                  <p className="text-[14px] font-medium text-foreground">Contact Support</p>
-                  <p className="text-[12px] text-muted-foreground">Submit a request</p>
-                </div>
-              </div>
-              {contactExpanded ? (
-                <ChevronUp className="h-4 w-4 text-muted-foreground" />
-              ) : (
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
-              )}
-            </button>
-
-            {/* Contact Form */}
-            {contactExpanded && (
-              <div className="mt-3 pt-3 border-t border-border">
-                {isSubmitted ? (
-                  <div className="text-center py-6">
-                    <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-3">
-                      <Send className="h-4 w-4 text-emerald-600" />
-                    </div>
-                    <p className="text-[15px] font-medium text-foreground mb-1">
-                      Request Submitted
-                    </p>
-                    <p className="text-[13px] text-muted-foreground">
-                      We'll respond within 24 hours.
-                    </p>
-                  </div>
+                {contactExpanded ? (
+                  <ChevronUp className="h-4 w-4 text-muted-foreground/50" />
                 ) : (
-                  <form onSubmit={handleSubmitContact} className="space-y-3">
-                    <div>
-                      <Input
+                  <ChevronDown className="h-4 w-4 text-muted-foreground/50" />
+                )}
+              </button>
+
+              {/* Contact Form */}
+              {contactExpanded && (
+                <div className="mt-2 pt-3 border-t border-border/40 ml-7">
+                  {isSubmitted ? (
+                    <div className="text-center py-4">
+                      <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-2">
+                        <Send className="h-3.5 w-3.5 text-emerald-600" strokeWidth={1.5} />
+                      </div>
+                      <p className="text-[13px] font-medium text-foreground mb-0.5">
+                        Request Submitted
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        We'll respond within 24 hours.
+                      </p>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmitContact} className="space-y-2.5">
+                      <input
+                        type="text"
                         placeholder="Subject"
                         value={formData.subject}
                         onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
                         required
-                        className="h-10 text-base md:text-[13px]"
+                        className="w-full h-9 px-3 text-base md:text-[13px] text-foreground placeholder:text-muted-foreground/60 bg-transparent border border-border/60 rounded-md focus:outline-none focus:border-foreground/30 transition-colors"
                       />
-                    </div>
-                    <div>
                       <Textarea
                         placeholder="How can we help?"
                         value={formData.message}
                         onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
                         required
                         rows={3}
-                        className="resize-none text-base md:text-[13px]"
+                        className="resize-none text-base md:text-[13px] border-border/60 focus:border-foreground/30"
                       />
-                    </div>
-                    <Button 
-                      type="submit" 
-                      className="w-full h-10"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? 'Submitting...' : 'Submit Request'}
-                    </Button>
-                  </form>
-                )}
-              </div>
-            )}
+                      <Button 
+                        type="submit" 
+                        className="w-full h-9 text-[13px]"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? 'Submitting...' : 'Submit Request'}
+                      </Button>
+                    </form>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
         
