@@ -60,7 +60,12 @@ export function AppPageHeader({
   className,
 }: AppPageHeaderProps) {
   return (
-    <div className={cn("flex items-center gap-3 pt-6 pb-6 sm:pt-8 sm:pb-6", className)}>
+    <div 
+      className={cn(
+        backLink ? "page-header-with-nav" : "page-header",
+        className
+      )}
+    >
       {/* Back button - inline with title */}
       {backLink && (
         <Link 
@@ -78,9 +83,7 @@ export function AppPageHeader({
       
       {/* Title block */}
       <div className="min-w-0 flex-1">
-        <h1 className="text-[20px] sm:text-[24px] font-semibold text-foreground leading-tight tracking-[-0.02em]">
-          {title}
-        </h1>
+        <h1 className="page-title">{title}</h1>
       </div>
       
       {/* Actions slot */}

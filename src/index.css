@@ -124,6 +124,66 @@ a:active,
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   PAGE HEADER SPACING SYSTEM — GLOBAL STANDARD (LOCKED)
+   
+   Standardized spacing for page headers based on layout context.
+   Ensures consistent vertical rhythm across all page types.
+   
+   TWO PATTERNS:
+   1. With secondary nav (workstations): secondary-nav row, then page-header
+   2. Without secondary nav: page-header or page-header-with-nav directly
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Page header — standard (no back button) */
+.page-header {
+  padding-top: 1.5rem;    /* pt-6 */
+  padding-bottom: 1rem;   /* pb-4 */
+}
+
+/* Page header — with back navigation button */
+.page-header-with-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;           /* gap-3 */
+  padding-top: 1rem;      /* pt-4 */
+  padding-bottom: 1rem;   /* pb-4 */
+}
+
+/* Secondary navigation row (workstation module tabs) */
+.secondary-nav {
+  display: flex;
+  align-items: center;
+  padding-top: 0.75rem;   /* py-3 */
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+/* Page title typography */
+.page-title {
+  font-size: 1.25rem;     /* text-xl */
+  font-weight: 600;       /* font-semibold */
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: hsl(var(--foreground));
+}
+
+@media (min-width: 640px) {
+  .page-header {
+    padding-top: 2rem;    /* sm:pt-8 */
+    padding-bottom: 1.5rem; /* sm:pb-6 */
+  }
+  
+  .page-header-with-nav {
+    padding-top: 1.5rem;  /* sm:pt-6 */
+    padding-bottom: 1.5rem; /* sm:pb-6 */
+  }
+  
+  .page-title {
+    font-size: 1.5rem;    /* sm:text-2xl */
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    iOS SAFARI AUTO-ZOOM PREVENTION (LOCKED)
    
    Safari auto-zooms inputs with font-size < 16px on focus.

@@ -204,12 +204,9 @@ export default function WorkstationsHomePage() {
         style={{ backgroundColor: 'var(--app-bg)' }}
       >
         <div className="mx-auto w-full max-w-[640px] pb-12">
-          {/* Header — consistent spacing with other pages */}
-          <div className="pt-6 pb-6 sm:pt-8 sm:pb-6">
-            <h1 
-              className="text-[20px] sm:text-[24px] font-semibold leading-tight tracking-[-0.02em]"
-              style={{ color: 'var(--text)' }}
-            >
+          {/* Header — using global page-header class */}
+          <div className="page-header">
+            <h1 className="page-title">
               Welcome, {getDisplayFirstName()}
             </h1>
             <p 
