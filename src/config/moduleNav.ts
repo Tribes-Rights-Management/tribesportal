@@ -13,6 +13,8 @@ import {
   BarChart3,
   Link2,
   Settings2,
+  Music,
+  ListTodo,
   type LucideIcon
 } from "lucide-react";
 
@@ -27,7 +29,7 @@ import {
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-export type ModuleKey = "console" | "admin" | "licensing" | "help";
+export type ModuleKey = "console" | "admin" | "licensing" | "help" | "tribes-admin";
 
 export interface NavItem {
   to: string;
@@ -87,6 +89,18 @@ const helpNav: NavItem[] = [
 ];
 
 /**
+ * Tribes Admin Navigation - Song Catalog Management
+ */
+const tribesAdminNav: NavItem[] = [
+  { to: "/tribes-admin", label: "Dashboard", icon: LayoutDashboard, exact: true, section: "main" },
+  { to: "/tribes-admin/catalogue", label: "Catalogue", icon: Music, section: "main" },
+  { to: "/tribes-admin/queue", label: "Queue", icon: ListTodo, section: "main" },
+  { to: "/tribes-admin/documents", label: "Documents", icon: FileText, section: "main" },
+  { to: "/tribes-admin/royalties", label: "Royalties", icon: CreditCard, section: "secondary" },
+  { to: "/tribes-admin/settings", label: "Settings", icon: Settings2, section: "settings" },
+];
+
+/**
  * Module navigation registry
  */
 export const MODULE_NAV: Record<ModuleKey, NavItem[]> = {
@@ -94,6 +108,7 @@ export const MODULE_NAV: Record<ModuleKey, NavItem[]> = {
   admin: adminNav,
   licensing: licensingNav,
   help: helpNav,
+  "tribes-admin": tribesAdminNav,
 };
 
 /**
@@ -113,11 +128,13 @@ export function getModuleLabel(moduleKey: ModuleKey): string {
     case "console":
       return "System Console";
     case "admin":
-      return "Tribes Admin";
+      return "Admin Portal";
     case "licensing":
       return "Licensing";
     case "help":
       return "Help Workstation";
+    case "tribes-admin":
+      return "Tribes Admin";
     default:
       return "";
   }
@@ -136,6 +153,8 @@ export function getModuleHomeRoute(moduleKey: ModuleKey): string {
       return "/licensing";
     case "help":
       return "/help";
+    case "tribes-admin":
+      return "/tribes-admin";
     default:
       return "/workspaces";
   }
