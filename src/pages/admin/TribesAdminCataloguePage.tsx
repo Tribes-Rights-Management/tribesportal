@@ -48,16 +48,16 @@ const mockCatalogueSongs: CatalogueSong[] = [
   { id: "5", title: "Mountain High", artist: "Summit", iswc: "T-567.890.123-4", songwriters: ["Lisa Anderson", "Tom Harris", "Rachel Green", "Chris Martin", "Jennifer Lopez"], status: "inactive", addedAt: "2026-01-11T11:00:00Z" },
 ];
 
-const getStatusBadge = (status: CatalogueSong["status"]) => {
+const getStatusText = (status: CatalogueSong["status"]) => {
   switch (status) {
     case "active":
-      return <AppTableBadge variant="success">Active</AppTableBadge>;
+      return <span className="text-[11px] font-medium text-[hsl(var(--success))]">Active</span>;
     case "pending":
-      return <AppTableBadge variant="warning">Pending</AppTableBadge>;
+      return <span className="text-[11px] font-medium text-[hsl(var(--warning))]">Pending</span>;
     case "inactive":
-      return <AppTableBadge variant="default">Inactive</AppTableBadge>;
+      return <span className="text-[11px] font-medium text-muted-foreground">Inactive</span>;
     default:
-      return <AppTableBadge variant="default">{status}</AppTableBadge>;
+      return <span className="text-[11px] font-medium text-muted-foreground">{status}</span>;
   }
 };
 
@@ -119,10 +119,10 @@ export default function TribesAdminCataloguePage() {
       </div>
 
       <AppSection spacing="none">
-        {/* Search Input */}
+        {/* Search Input - subtle bottom border */}
         <div className="relative mb-2">
           <Search 
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" 
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/50 pointer-events-none" 
           />
           <input
             type="text"
@@ -130,26 +130,26 @@ export default function TribesAdminCataloguePage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by title, writer, or lyric..."
             className={cn(
-              "w-full h-10 pl-10 pr-4 text-sm",
-              "bg-transparent border border-border rounded-lg",
-              "placeholder:text-muted-foreground/60",
-              "focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring",
+              "w-full h-9 pl-8 pr-3 text-[13px]",
+              "bg-transparent border-b border-border/60",
+              "placeholder:text-muted-foreground/40",
+              "focus:outline-none focus:border-foreground/30",
               "transition-colors"
             )}
           />
         </div>
 
-        {/* Filter Chips Row */}
-        <div className="flex items-center gap-1.5 mb-3">
+        {/* Filter Chips Row - minimal text styling */}
+        <div className="flex items-center gap-3 mb-3">
           {statusFilters.map((filter) => (
             <button
               key={filter.value}
               onClick={() => handleStatusChange(filter.value)}
               className={cn(
-                "px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap transition-colors",
+                "text-[12px] transition-colors pb-0.5",
                 statusFilter === filter.value
-                  ? "bg-muted border border-border text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  ? "font-semibold text-foreground border-b border-foreground"
+                  : "font-normal text-muted-foreground hover:text-foreground"
               )}
             >
               {filter.label}
@@ -161,12 +161,13 @@ export default function TribesAdminCataloguePage() {
           items={filteredSongs}
           keyExtractor={(song) => song.id}
           emptyMessage={searchQuery ? "No songs match your search" : "No songs in catalogue"}
+          className="[&_.md\\:hidden]:space-y-2"
           renderCard={(song) => (
             <AppItemCard
               title={song.title}
               subtitle={song.artist}
               meta={song.songwriters.join(" / ")}
-              status={getStatusBadge(song.status)}
+              status={getStatusText(song.status)}
               onClick={() => handleSongClick(song.id)}
             />
           )}
@@ -198,7 +199,7 @@ export default function TribesAdminCataloguePage() {
                       <AppTableCell className="font-medium">{song.title}</AppTableCell>
                       <AppTableCell muted>{song.artist}</AppTableCell>
                       <AppTableCell muted mono>{song.iswc}</AppTableCell>
-                      <AppTableCell align="center">{getStatusBadge(song.status)}</AppTableCell>
+                      <AppTableCell align="center">{getStatusText(song.status)}</AppTableCell>
                       <AppTableCell muted>
                         {format(new Date(song.addedAt), "MMM d, yyyy")}
                       </AppTableCell>

@@ -58,7 +58,7 @@ export function AppResponsiveList<T>({
   return (
     <div className={className}>
       {/* Mobile: Card view */}
-      <div className="md:hidden space-y-3">
+      <div className="md:hidden space-y-2">
         {items.map((item, index) => (
           <div key={keyExtractor(item)}>
             {renderCard(item, index)}
