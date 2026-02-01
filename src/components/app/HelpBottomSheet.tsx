@@ -76,15 +76,23 @@ export function HelpBottomSheet() {
           aria-label="Help & Resources"
         />
       </DrawerTrigger>
-      <DrawerContent className="max-h-[85vh]">
-        <DrawerHeader className="pb-2">
+      
+      {/* Custom overlay with lighter opacity */}
+      <DrawerContent 
+        className="max-h-[85vh] bg-background border-t border-x border-border rounded-t-xl"
+        style={{
+          backgroundColor: 'hsl(var(--background))',
+          boxShadow: '0 -8px 30px rgba(0, 0, 0, 0.25)',
+        }}
+      >
+        <DrawerHeader className="pb-2 border-b border-border">
           <div className="flex items-center justify-between">
-            <DrawerTitle className="text-lg font-semibold">
+            <DrawerTitle className="text-lg font-semibold text-foreground">
               Help & Support
             </DrawerTitle>
             <DrawerClose asChild>
               <button 
-                className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted/50 transition-colors"
+                className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
                 aria-label="Close"
               >
                 <X className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
@@ -93,7 +101,7 @@ export function HelpBottomSheet() {
           </div>
         </DrawerHeader>
 
-        <div className="px-4 pb-8 space-y-1">
+        <div className="px-5 py-4 space-y-1 bg-background">
           <HelpLink
             icon={BookOpen}
             label="Help Center"
@@ -115,6 +123,9 @@ export function HelpBottomSheet() {
             onClick={() => handleNavigate("/help")}
           />
         </div>
+        
+        {/* Safe area padding for bottom */}
+        <div className="h-6 bg-background" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }} />
       </DrawerContent>
     </Drawer>
   );
