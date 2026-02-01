@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, Settings } from "lucide-react";
 import { AppSearchInput } from "@/components/app-ui/AppSearchInput";
@@ -23,22 +23,24 @@ import {
  * 
  * Layout:
  * - Desktop with sidebar: 2-column grid (sidebar column + content column)
- * - Mobile: Full-width header with WorkspaceSwitcher + icons
+ * - Mobile: Full-width header with optional module nav + icons
  * 
  * HEADER ICONS (right side):
  * - Notifications (bell) → opens placeholder dropdown
  * - Settings (gear) → /account
  * 
- * NOTE: Help icon removed. Help is now accessed via the global floating
- * HelpAssistantLauncher mounted in App.tsx.
+ * MOBILE NAV: Optional mobileNav prop renders a collapsible navigation
+ * dropdown in place of the hidden sidebar.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
 interface ModuleHeaderProps {
   showSidebarLogo?: boolean;
+  /** Optional mobile navigation component (replaces hidden sidebar) */
+  mobileNav?: ReactNode;
 }
 
-export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
+export function ModuleHeader({ showSidebarLogo = true, mobileNav }: ModuleHeaderProps) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [searchValue, setSearchValue] = useState("");
@@ -52,7 +54,11 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
     return (
       <>
         <div className="w-full h-full flex items-center justify-between px-4">
-          <WorkspaceSwitcher />
+          {/* Show mobile nav if provided, otherwise show workspace switcher */}
+          <div className="flex items-center gap-3">
+            <WorkspaceSwitcher />
+            {mobileNav}
+          </div>
 
           <div className="flex items-center gap-1 shrink-0">
             <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
