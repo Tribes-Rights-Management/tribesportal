@@ -42,7 +42,7 @@ export function UserMenuDropdown() {
     },
     {
       label: "Settings",
-      onClick: () => navigate("/account/settings"),
+      onClick: () => navigate("/account"),
     },
     {
       label: "Help",
