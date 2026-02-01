@@ -116,7 +116,7 @@ export default function TribesAdminDocumentsPage() {
         eyebrow="Tribes Admin"
         title="Documents"
         description="Contracts, agreements, and legal documents"
-        backLink={{ to: "/tribes-admin", label: "Dashboard" }}
+        backLink={{ to: "/admin", label: "Dashboard" }}
       />
 
       <AppSection spacing="md">
@@ -158,7 +158,7 @@ export default function TribesAdminDocumentsPage() {
                 <AppTableRow
                   key={doc.id}
                   clickable
-                  onClick={() => navigate(`/tribes-admin/documents/${doc.id}`)}
+                  onClick={() => navigate(`/admin/documents/${doc.id}`)}
                 >
                   <AppTableCell className="font-medium">{doc.title}</AppTableCell>
                   <AppTableCell muted>{getTypeLabel(doc.type)}</AppTableCell>

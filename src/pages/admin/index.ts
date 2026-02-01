@@ -1,5 +1,8 @@
 /**
  * TRIBES ADMIN PAGES — MODULE EXPORTS
+ * 
+ * Song catalog management workstation pages.
+ * Renders at /admin
  */
 
 export { default as TribesAdminDashboard } from "./TribesAdminDashboard";

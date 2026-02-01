@@ -134,26 +134,26 @@ export default function TribesAdminDashboard() {
             label="Total Songs"
             value={stats.totalSongs}
             loading={loading}
-            onClick={() => navigate("/tribes-admin/catalogue")}
+            onClick={() => navigate("/admin/catalogue")}
           />
           <AppStatCard
             label="In Queue"
             value={stats.inQueue}
             subtitle="Awaiting review"
             loading={loading}
-            onClick={() => navigate("/tribes-admin/queue")}
+            onClick={() => navigate("/admin/queue")}
           />
           <AppStatCard
             label="Needs Attention"
             value={stats.needsAttention}
             loading={loading}
-            onClick={() => navigate("/tribes-admin/queue?filter=attention")}
+            onClick={() => navigate("/admin/queue?filter=attention")}
           />
           <AppStatCard
             label="Pending Contracts"
             value={stats.pendingContracts}
             loading={loading}
-            onClick={() => navigate("/tribes-admin/documents?type=pending")}
+            onClick={() => navigate("/admin/documents?type=pending")}
           />
         </AppStatCardGrid>
       </AppSection>
@@ -163,7 +163,7 @@ export default function TribesAdminDashboard() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-medium text-foreground">Songs in Queue</h2>
           <button
-            onClick={() => navigate("/tribes-admin/queue")}
+            onClick={() => navigate("/admin/queue")}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             View all →
@@ -188,7 +188,7 @@ export default function TribesAdminDashboard() {
                 <AppTableRow
                   key={song.id}
                   clickable
-                  onClick={() => navigate(`/tribes-admin/queue/${song.id}`)}
+                  onClick={() => navigate(`/admin/queue/${song.id}`)}
                 >
                   <AppTableCell className="font-medium">{song.title}</AppTableCell>
                   <AppTableCell muted>{song.artist}</AppTableCell>
@@ -209,7 +209,7 @@ export default function TribesAdminDashboard() {
           title="Recently Added"
           className="h-full"
           action={
-            <AppListAction onClick={() => navigate("/tribes-admin/catalogue")}>
+            <AppListAction onClick={() => navigate("/admin/catalogue")}>
               View all
             </AppListAction>
           }
@@ -226,7 +226,7 @@ export default function TribesAdminDashboard() {
                 key={song.id}
                 title={song.title}
                 subtitle={song.artist}
-                onClick={() => navigate(`/tribes-admin/catalogue/${song.id}`)}
+                onClick={() => navigate(`/admin/catalogue/${song.id}`)}
               />
             ))
           )}
@@ -239,17 +239,17 @@ export default function TribesAdminDashboard() {
           <AppListRow
             title="Submit New Song"
             subtitle="Add a song to the catalog"
-            onClick={() => navigate("/tribes-admin/songs/submit")}
+            onClick={() => navigate("/admin/songs/submit")}
           />
           <AppListRow
             title="Review Queue"
             subtitle="Process pending submissions"
-            onClick={() => navigate("/tribes-admin/queue")}
+            onClick={() => navigate("/admin/queue")}
           />
           <AppListRow
             title="Manage Documents"
             subtitle="Contracts and agreements"
-            onClick={() => navigate("/tribes-admin/documents")}
+            onClick={() => navigate("/admin/documents")}
           />
         </AppListCard>
       </AppSectionGrid>

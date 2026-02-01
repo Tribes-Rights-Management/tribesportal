@@ -23,7 +23,7 @@ export default function TribesAdminSettingsPage() {
         eyebrow="Tribes Admin"
         title="Settings"
         description="Manage your account and preferences"
-        backLink={{ to: "/tribes-admin", label: "Dashboard" }}
+        backLink={{ to: "/admin", label: "Dashboard" }}
       />
 
       <AppSection spacing="md">

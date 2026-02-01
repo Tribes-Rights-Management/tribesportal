@@ -20,7 +20,7 @@ export default function TribesAdminRoyaltiesPage() {
         eyebrow="Tribes Admin"
         title="Royalties"
         description="Royalty payments and distributions"
-        backLink={{ to: "/tribes-admin", label: "Dashboard" }}
+        backLink={{ to: "/admin", label: "Dashboard" }}
       />
 
       <AppSection spacing="md">

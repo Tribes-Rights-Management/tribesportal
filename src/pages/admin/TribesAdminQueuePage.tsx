@@ -91,7 +91,7 @@ export default function TribesAdminQueuePage() {
         eyebrow="Tribes Admin"
         title="Queue"
         description="Review and process song submissions"
-        backLink={{ to: "/tribes-admin", label: "Dashboard" }}
+        backLink={{ to: "/admin", label: "Dashboard" }}
       />
 
       <AppSection spacing="md">
@@ -127,7 +127,7 @@ export default function TribesAdminQueuePage() {
                 <AppTableRow
                   key={song.id}
                   clickable
-                  onClick={() => navigate(`/tribes-admin/queue/${song.id}`)}
+                  onClick={() => navigate(`/admin/queue/${song.id}`)}
                 >
                   <AppTableCell className="font-medium">{song.title}</AppTableCell>
                   <AppTableCell muted>{song.artist}</AppTableCell>
