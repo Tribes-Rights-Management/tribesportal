@@ -149,19 +149,16 @@ export default function TribesAdminDocumentsPage() {
 
   return (
     <AppPageContainer maxWidth="xl">
-      <AppPageHeader
-        title="Documents"
-        backLink={{ to: "/admin", label: "Dashboard" }}
-      />
+      {/* Header Row: Title + Filter */}
+      <div className="flex items-center justify-between mb-3">
+        <h1 className="text-lg font-semibold tracking-tight">Documents</h1>
+        <AppFilterTrigger
+          onClick={() => setFilterOpen(true)}
+          hasActiveFilters={hasActiveFilters}
+        />
+      </div>
 
-      <AppSection spacing="md">
-        <div className="flex items-center justify-between mb-4">
-          <AppFilterTrigger
-            onClick={() => setFilterOpen(true)}
-            hasActiveFilters={hasActiveFilters}
-          />
-          <div /> {/* Spacer - can add action button here if needed */}
-        </div>
+      <AppSection spacing="none">
 
         <AppTable columns={["25%", "12%", "18%", "15%", "15%", "15%"]}>
           <AppTableHeader>

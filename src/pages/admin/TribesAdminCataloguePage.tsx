@@ -105,24 +105,22 @@ export default function TribesAdminCataloguePage() {
 
   return (
     <AppPageContainer maxWidth="xl">
-      <AppPageHeader
-        title="Catalogue"
-        backLink={{ to: "/admin", label: "Dashboard" }}
-        action={
-          <AppButton
-            intent="secondary"
-            size="sm"
-            onClick={() => navigate("/admin/songs/submit")}
-          >
-            <Plus className="h-4 w-4" />
-            Add Song
-          </AppButton>
-        }
-      />
+      {/* Header Row: Title + Action */}
+      <div className="flex items-center justify-between mb-3">
+        <h1 className="text-lg font-semibold tracking-tight">Catalogue</h1>
+        <AppButton
+          intent="secondary"
+          size="sm"
+          onClick={() => navigate("/admin/songs/submit")}
+        >
+          <Plus className="h-4 w-4" />
+          Add Song
+        </AppButton>
+      </div>
 
-      <AppSection spacing="sm">
+      <AppSection spacing="none">
         {/* Search Input */}
-        <div className="relative mb-3">
+        <div className="relative mb-2">
           <Search 
             className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" 
           />

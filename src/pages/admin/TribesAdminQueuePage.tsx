@@ -152,19 +152,16 @@ export default function TribesAdminQueuePage() {
 
   return (
     <AppPageContainer maxWidth="xl">
-      <AppPageHeader
-        title="Queue"
-        backLink={{ to: "/admin", label: "Dashboard" }}
-      />
+      {/* Header Row: Title */}
+      <div className="flex items-center justify-between mb-3">
+        <h1 className="text-lg font-semibold tracking-tight">Queue</h1>
+        <AppFilterTrigger
+          onClick={() => setFilterOpen(true)}
+          hasActiveFilters={hasActiveFilters}
+        />
+      </div>
 
-      <AppSection spacing="md">
-        <div className="flex items-center justify-between mb-4">
-          <AppFilterTrigger
-            onClick={() => setFilterOpen(true)}
-            hasActiveFilters={hasActiveFilters}
-          />
-          <div /> {/* Spacer - no action button on Queue */}
-        </div>
+      <AppSection spacing="none">
 
         <AppResponsiveList
           items={filteredSongs}
