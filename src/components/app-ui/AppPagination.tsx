@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { AppButton } from "./AppButton";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /**
  * APP PAGINATION — GLOBAL UI KIT (SINGLE SOURCE OF TRUTH)
@@ -9,10 +9,10 @@ import { AppButton } from "./AppButton";
  * CANONICAL PAGINATION COMPONENT (LOCKED)
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * Consistent pagination styling with:
- * - Page info display
- * - Previous/Next buttons
- * - Theme-aware colors
+ * Minimal text-based pagination with:
+ * - Previous button (left)
+ * - Page info (center)
+ * - Next button (right)
  * 
  * USAGE:
  *   <AppPagination
@@ -34,8 +34,6 @@ interface AppPaginationProps {
   totalPages: number;
   /** Page change handler */
   onPageChange: (page: number) => void;
-  /** Show page info text */
-  showInfo?: boolean;
   /** Additional className */
   className?: string;
 }
@@ -44,36 +42,49 @@ export function AppPagination({
   currentPage,
   totalPages,
   onPageChange,
-  showInfo = true,
   className,
 }: AppPaginationProps) {
   if (totalPages <= 1) return null;
 
+  const canGoPrevious = currentPage > 1;
+  const canGoNext = currentPage < totalPages;
+
   return (
-    <div className={cn("flex items-center justify-between mt-4", className)}>
-      {showInfo && (
-        <p className="text-[12px] text-muted-foreground">
-          Page {currentPage} of {totalPages}
-        </p>
-      )}
-      <div className={cn("flex gap-2", !showInfo && "ml-auto")}>
-        <AppButton
-          intent="secondary"
-          size="sm"
-          disabled={currentPage === 1}
-          onClick={() => onPageChange(currentPage - 1)}
-        >
-          Previous
-        </AppButton>
-        <AppButton
-          intent="secondary"
-          size="sm"
-          disabled={currentPage === totalPages}
-          onClick={() => onPageChange(currentPage + 1)}
-        >
-          Next
-        </AppButton>
-      </div>
+    <div className={cn("flex items-center justify-between py-3", className)}>
+      {/* Previous */}
+      <button
+        onClick={() => canGoPrevious && onPageChange(currentPage - 1)}
+        disabled={!canGoPrevious}
+        className={cn(
+          "flex items-center gap-1 text-sm transition-colors",
+          canGoPrevious
+            ? "text-muted-foreground hover:text-foreground"
+            : "text-muted-foreground/40 cursor-not-allowed"
+        )}
+      >
+        <ChevronLeft className="h-4 w-4" />
+        <span>Previous</span>
+      </button>
+
+      {/* Page Info */}
+      <p className="text-sm text-muted-foreground">
+        Page {currentPage} of {totalPages}
+      </p>
+
+      {/* Next */}
+      <button
+        onClick={() => canGoNext && onPageChange(currentPage + 1)}
+        disabled={!canGoNext}
+        className={cn(
+          "flex items-center gap-1 text-sm transition-colors",
+          canGoNext
+            ? "text-muted-foreground hover:text-foreground"
+            : "text-muted-foreground/40 cursor-not-allowed"
+        )}
+      >
+        <span>Next</span>
+        <ChevronRight className="h-4 w-4" />
+      </button>
     </div>
   );
 }

@@ -18,13 +18,16 @@ import {
   AppFilterSection,
   AppFilterOption,
   AppFilterTrigger,
+  AppPagination,
 } from "@/components/app-ui";
 
 /**
  * TRIBES ADMIN DOCUMENTS PAGE
  * 
- * Contracts and documents management with filter drawer pattern.
+ * Contracts and documents management with filter drawer pattern and pagination.
  */
+
+const ITEMS_PER_PAGE = 50;
 
 type DocumentType = "all" | "contract" | "agreement" | "amendment" | "termination";
 type DocumentStatus = "draft" | "pending" | "active" | "expired" | "terminated";
@@ -40,14 +43,27 @@ interface Document {
   expiresAt: string | null;
 }
 
-// Mock data
-const mockDocuments: Document[] = [
-  { id: "1", title: "Publishing Agreement - Luna Wave", type: "agreement", party: "Luna Wave", status: "active", createdAt: "2025-06-15T10:00:00Z", expiresAt: "2028-06-15T10:00:00Z" },
-  { id: "2", title: "Sync License - The Frequency", type: "contract", party: "The Frequency", status: "pending", createdAt: "2026-01-20T14:30:00Z", expiresAt: null },
-  { id: "3", title: "Amendment - Coastal Sounds", type: "amendment", party: "Coastal Sounds", status: "active", createdAt: "2025-09-10T09:15:00Z", expiresAt: null },
-  { id: "4", title: "Publishing Contract - Urban Echo", type: "contract", party: "Urban Echo", status: "expired", createdAt: "2023-01-01T16:00:00Z", expiresAt: "2026-01-01T16:00:00Z" },
-  { id: "5", title: "Termination Notice - Summit", type: "termination", party: "Summit", status: "terminated", createdAt: "2025-12-01T11:00:00Z", expiresAt: null },
-];
+// Mock data - expanded for pagination demo
+const mockDocuments: Document[] = Array.from({ length: 89 }, (_, i) => ({
+  id: String(i + 1),
+  title: [
+    "Publishing Agreement",
+    "Sync License",
+    "Amendment",
+    "Publishing Contract",
+    "Termination Notice",
+    "Master License",
+    "Distribution Agreement",
+    "Co-Publishing Deal",
+    "Sub-Publishing Contract",
+    "Administration Agreement",
+  ][i % 10] + ` - ${["Luna Wave", "The Frequency", "Coastal Sounds", "Urban Echo", "Summit"][i % 5]}`,
+  type: (["agreement", "contract", "amendment", "contract", "termination"] as const)[i % 5],
+  party: ["Luna Wave", "The Frequency", "Coastal Sounds", "Urban Echo", "Summit"][i % 5],
+  status: (["active", "pending", "active", "expired", "terminated"] as const)[i % 5],
+  createdAt: new Date(2026, 0, 28 - (i % 30)).toISOString(),
+  expiresAt: i % 3 === 0 ? new Date(2028, 0, 28 - (i % 30)).toISOString() : null,
+}));
 
 const getStatusBadge = (status: DocumentStatus) => {
   switch (status) {
@@ -99,6 +115,7 @@ export default function TribesAdminDocumentsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [filterOpen, setFilterOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   
   const typeFilter = (searchParams.get("type") as DocumentType) || "all";
   const sortBy = (searchParams.get("sort") as SortOption) || "date";
@@ -112,6 +129,7 @@ export default function TribesAdminDocumentsPage() {
       searchParams.set("type", value);
     }
     setSearchParams(searchParams);
+    setCurrentPage(1);
   };
 
   const handleSortChange = (value: SortOption) => {
@@ -127,6 +145,7 @@ export default function TribesAdminDocumentsPage() {
     searchParams.delete("type");
     searchParams.delete("sort");
     setSearchParams(searchParams);
+    setCurrentPage(1);
   };
 
   // Filter documents
@@ -147,11 +166,26 @@ export default function TribesAdminDocumentsPage() {
     }
   });
 
+  // Pagination
+  const totalItems = filteredDocuments.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedDocuments = filteredDocuments.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  if (currentPage > totalPages && totalPages > 0) {
+    setCurrentPage(1);
+  }
+
   return (
     <AppPageContainer maxWidth="xl">
-      {/* Header Row: Title + Filter */}
+      {/* Header Row: Title + Count + Filter */}
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-lg font-semibold tracking-tight">Documents</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-lg font-semibold tracking-tight">Documents</h1>
+          <span className="text-[12px] text-muted-foreground">
+            {totalItems} {totalItems === 1 ? "document" : "documents"}
+          </span>
+        </div>
         <AppFilterTrigger
           onClick={() => setFilterOpen(true)}
           hasActiveFilters={hasActiveFilters}
@@ -172,14 +206,14 @@ export default function TribesAdminDocumentsPage() {
             </AppTableRow>
           </AppTableHeader>
           <AppTableBody>
-            {filteredDocuments.length === 0 ? (
+            {paginatedDocuments.length === 0 ? (
               <AppTableEmpty colSpan={6}>
                 <span className="text-muted-foreground text-sm">
                   {typeFilter !== "all" ? "No matching documents" : "No documents"}
                 </span>
               </AppTableEmpty>
             ) : (
-              filteredDocuments.map(doc => (
+              paginatedDocuments.map(doc => (
                 <AppTableRow
                   key={doc.id}
                   clickable
@@ -200,6 +234,12 @@ export default function TribesAdminDocumentsPage() {
             )}
           </AppTableBody>
         </AppTable>
+
+        <AppPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </AppSection>
 
       <AppFilterDrawer

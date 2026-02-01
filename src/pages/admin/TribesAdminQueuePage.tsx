@@ -20,13 +20,16 @@ import {
   AppFilterSection,
   AppFilterOption,
   AppFilterTrigger,
+  AppPagination,
 } from "@/components/app-ui";
 
 /**
  * TRIBES ADMIN QUEUE PAGE
  * 
- * Pending song submissions with filter drawer pattern and responsive table/card views.
+ * Pending song submissions with filter drawer pattern, pagination, and responsive table/card views.
  */
+
+const ITEMS_PER_PAGE = 50;
 
 type QueueStatus = "all" | "pending" | "review" | "approved" | "rejected";
 type SortOption = "date" | "title" | "submitter";
@@ -40,14 +43,15 @@ interface QueueSong {
   status: "pending" | "review" | "approved" | "rejected";
 }
 
-// Mock data
-const mockQueueSongs: QueueSong[] = [
-  { id: "1", title: "Midnight Dreams", artist: "Luna Wave", submitter: "john@example.com", submittedAt: "2026-01-28T10:00:00Z", status: "pending" },
-  { id: "2", title: "Electric Soul", artist: "The Frequency", submitter: "jane@example.com", submittedAt: "2026-01-27T14:30:00Z", status: "review" },
-  { id: "3", title: "Ocean Breeze", artist: "Coastal Sounds", submitter: "mike@example.com", submittedAt: "2026-01-26T09:15:00Z", status: "pending" },
-  { id: "4", title: "City Lights", artist: "Urban Echo", submitter: "sarah@example.com", submittedAt: "2026-01-25T16:00:00Z", status: "approved" },
-  { id: "5", title: "Mountain High", artist: "Summit", submitter: "david@example.com", submittedAt: "2026-01-24T11:00:00Z", status: "rejected" },
-];
+// Mock data - expanded for pagination demo
+const mockQueueSongs: QueueSong[] = Array.from({ length: 127 }, (_, i) => ({
+  id: String(i + 1),
+  title: ["Midnight Dreams", "Electric Soul", "Ocean Breeze", "City Lights", "Mountain High", "Sunset Boulevard", "Starlight", "Thunder Road", "Silver Moon", "Golden Hour"][i % 10],
+  artist: ["Luna Wave", "The Frequency", "Coastal Sounds", "Urban Echo", "Summit", "Horizon", "Velvet", "Chrome Hearts", "Neon Lights", "Desert Rose"][i % 10],
+  submitter: ["john@example.com", "jane@example.com", "mike@example.com", "sarah@example.com", "david@example.com"][i % 5],
+  submittedAt: new Date(2026, 0, 28 - (i % 30)).toISOString(),
+  status: (["pending", "review", "pending", "approved", "rejected"] as const)[i % 5],
+}));
 
 const getStatusBadge = (status: QueueSong["status"]) => {
   switch (status) {
@@ -82,6 +86,7 @@ export default function TribesAdminQueuePage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [filterOpen, setFilterOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   
   const statusFilter = (searchParams.get("status") as QueueStatus) || "all";
   const sortBy = (searchParams.get("sort") as SortOption) || "date";
@@ -95,6 +100,7 @@ export default function TribesAdminQueuePage() {
       searchParams.set("status", value);
     }
     setSearchParams(searchParams);
+    setCurrentPage(1);
   };
 
   const handleSortChange = (value: SortOption) => {
@@ -110,6 +116,7 @@ export default function TribesAdminQueuePage() {
     searchParams.delete("status");
     searchParams.delete("sort");
     setSearchParams(searchParams);
+    setCurrentPage(1);
   };
 
   // Filter songs
@@ -129,6 +136,16 @@ export default function TribesAdminQueuePage() {
         return new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime();
     }
   });
+
+  // Pagination
+  const totalItems = filteredSongs.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedSongs = filteredSongs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  if (currentPage > totalPages && totalPages > 0) {
+    setCurrentPage(1);
+  }
 
   const getCounts = () => ({
     all: mockQueueSongs.length,
@@ -152,9 +169,14 @@ export default function TribesAdminQueuePage() {
 
   return (
     <AppPageContainer maxWidth="xl">
-      {/* Header Row: Title */}
+      {/* Header Row: Title + Count + Filter */}
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-lg font-semibold tracking-tight">Queue</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-lg font-semibold tracking-tight">Queue</h1>
+          <span className="text-[12px] text-muted-foreground">
+            {totalItems} {totalItems === 1 ? "submission" : "submissions"}
+          </span>
+        </div>
         <AppFilterTrigger
           onClick={() => setFilterOpen(true)}
           hasActiveFilters={hasActiveFilters}
@@ -164,7 +186,7 @@ export default function TribesAdminQueuePage() {
       <AppSection spacing="none">
 
         <AppResponsiveList
-          items={filteredSongs}
+          items={paginatedSongs}
           keyExtractor={(song) => song.id}
           emptyMessage={`No ${statusFilter === "all" ? "" : statusFilter + " "}submissions`}
           renderCard={(song) => (
@@ -193,14 +215,14 @@ export default function TribesAdminQueuePage() {
                 </AppTableRow>
               </AppTableHeader>
               <AppTableBody>
-                {filteredSongs.length === 0 ? (
+                {paginatedSongs.length === 0 ? (
                   <AppTableEmpty colSpan={5}>
                     <span className="text-muted-foreground text-sm">
                       No {statusFilter === "all" ? "" : statusFilter + " "}submissions
                     </span>
                   </AppTableEmpty>
                 ) : (
-                  filteredSongs.map(song => (
+                  paginatedSongs.map(song => (
                     <AppTableRow
                       key={song.id}
                       clickable
@@ -219,6 +241,12 @@ export default function TribesAdminQueuePage() {
               </AppTableBody>
             </AppTable>
           )}
+        />
+
+        <AppPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
         />
       </AppSection>
 
