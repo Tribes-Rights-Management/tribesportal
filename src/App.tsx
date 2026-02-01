@@ -60,6 +60,7 @@ import {
   RightsContractsPage,
   RightsDocumentsPage,
   RightsSettingsPage,
+  SongSubmitPage,
 } from "@/pages/modules/rights";
 
 // App pages - Access states
@@ -270,6 +271,7 @@ const App = () => (
           <Route index element={<RightsOverview />} />
           <Route path="clients" element={<RightsClientsPage />} />
           <Route path="catalogue" element={<RightsCataloguePage />} />
+          <Route path="songs/submit" element={<SongSubmitPage />} />
           <Route path="contracts" element={<RightsContractsPage />} />
           <Route path="documents" element={<RightsDocumentsPage />} />
           <Route path="settings" element={<RightsSettingsPage />} />
