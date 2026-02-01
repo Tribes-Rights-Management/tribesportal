@@ -59,13 +59,18 @@ export function HelpBottomSheet() {
 
   const handleNavigate = (path: string) => {
     setOpen(false);
-    navigate(path);
+    // Small delay to let drawer close animation start before navigation
+    setTimeout(() => {
+      navigate(path);
+    }, 150);
   };
 
   const handleContactSupport = () => {
     setOpen(false);
-    // Navigate to help with contact form intent
-    navigate("/help?contact=true");
+    setTimeout(() => {
+      // Navigate to help with contact form intent
+      navigate("/help?contact=true");
+    }, 150);
   };
 
   return (
