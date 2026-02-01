@@ -88,9 +88,7 @@ export default function TribesAdminQueuePage() {
   return (
     <AppPageContainer maxWidth="xl">
       <AppPageHeader
-        eyebrow="Tribes Admin"
         title="Queue"
-        description="Review and process song submissions"
         backLink={{ to: "/admin", label: "Dashboard" }}
       />
 

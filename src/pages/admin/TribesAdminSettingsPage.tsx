@@ -20,9 +20,7 @@ export default function TribesAdminSettingsPage() {
   return (
     <AppPageContainer maxWidth="lg">
       <AppPageHeader
-        eyebrow="Tribes Admin"
         title="Settings"
-        description="Manage your account and preferences"
         backLink={{ to: "/admin", label: "Dashboard" }}
       />
 

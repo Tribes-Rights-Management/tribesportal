@@ -9,10 +9,14 @@ import { cn } from "@/lib/utils";
  * - Compact, restrained sizing
  * - Dense vertical rhythm
  * - No text clipping - uses h-auto, min-h-*, proper line-height
+ * 
+ * NOTE: description prop is kept for backwards compatibility
+ * but is no longer rendered per the new design standard.
  */
 
 interface PageHeaderProps {
   title: string;
+  /** @deprecated No longer rendered - kept for backwards compatibility */
   description?: string;
   children?: React.ReactNode;
   className?: string;
@@ -20,7 +24,7 @@ interface PageHeaderProps {
 
 export function PageHeader({ 
   title, 
-  description, 
+  description: _description, // Deprecated, not rendered
   children,
   className 
 }: PageHeaderProps) {
@@ -37,14 +41,6 @@ export function PageHeader({
           >
             {title}
           </h1>
-          {description && (
-            <p 
-              className="mt-1 text-[13px] sm:text-[14px] leading-[1.5]"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              {description}
-            </p>
-          )}
         </div>
         {children && (
           <div className="flex items-center gap-3 shrink-0">

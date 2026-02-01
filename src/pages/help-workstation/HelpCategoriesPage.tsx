@@ -318,13 +318,7 @@ export default function HelpCategoriesPage() {
       {/* Page Header */}
       <AppPageHeader
         backLink={{ to: "/help", label: "Overview" }}
-        eyebrow="Help Workstation"
         title="Categories"
-        description={
-          selectedAudienceId && selectedAudience 
-            ? `${linkedCategoryCount} categories linked to ${selectedAudience.name}`
-            : `${categories.length} categories`
-        }
         action={
           <AppButton intent="primary" size="sm" onClick={handleCreate}>
             <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />

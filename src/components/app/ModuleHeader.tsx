@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Settings } from "lucide-react";
-import { AppSearchInput } from "@/components/app-ui/AppSearchInput";
+import { Search, Bell } from "lucide-react";
 import { GlobalSearchDialog } from "@/components/search/GlobalSearchDialog";
 import { SidebarHeader, ContentHeader } from "@/components/app/AppShell";
-import { WorkspaceSwitcher } from "@/components/app/WorkspaceSwitcher";
-
+import { UserMenuDropdown } from "@/components/app/UserMenuDropdown";
 import { HeaderIconButton } from "@/components/app/HeaderIconButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUnreadNotificationCount } from "@/hooks/useNotifications";
@@ -16,20 +14,39 @@ import {
 } from "@/components/ui/popover";
 
 /**
- * MODULE HEADER — UNIFIED STRIPE-LIKE HEADER (CANONICAL)
+ * MODULE HEADER — SIMPLIFIED DESIGN (CANONICAL)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
- * Used across ALL modules: /console, /admin, /licensing, /help
+ * Used across ALL workstations: /admin, /licensing, /help, /rights
  * 
  * Layout:
- * - Desktop with sidebar: 2-column grid (sidebar column + content column)
- * - Mobile: Full-width header with workspace switcher + icons
+ * - Left: Tribes logo only (no text, no module name)
+ * - Right: Search icon, Notifications icon, User menu icon
  * 
- * HEADER ICONS (right side):
- * - Notifications (bell) → opens placeholder dropdown
- * - Settings (gear) → /account
+ * Desktop with sidebar: 2-column grid (sidebar column + content column)
+ * Mobile: Full-width header with logo + icons
  * ═══════════════════════════════════════════════════════════════════════════
  */
+
+// Tribes logo SVG component
+function TribesLogo({ className }: { className?: string }) {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      className={className}
+      aria-label="Tribes"
+    >
+      <path 
+        d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" 
+        stroke="currentColor" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 interface ModuleHeaderProps {
   showSidebarLogo?: boolean;
@@ -38,41 +55,65 @@ interface ModuleHeaderProps {
 export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const [searchValue, setSearchValue] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
+
+  const handleLogoClick = () => {
+    navigate("/workspaces");
+  };
+
+  // Right side icons (shared between mobile and desktop)
+  const rightIcons = (
+    <div className="flex items-center gap-1">
+      {/* Search */}
+      <HeaderIconButton
+        icon={Search}
+        aria-label="Search"
+        onClick={() => setSearchOpen(true)}
+      />
+
+      {/* Notifications */}
+      <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
+        <PopoverTrigger asChild>
+          <HeaderIconButton
+            icon={Bell}
+            aria-label="Notifications"
+            badgeCount={unreadCount}
+          />
+        </PopoverTrigger>
+        <PopoverContent align="end" className="w-72 p-4">
+          <p className="text-[13px] text-muted-foreground text-center py-6">
+            No notifications yet
+          </p>
+        </PopoverContent>
+      </Popover>
+
+      {/* User menu */}
+      <UserMenuDropdown />
+    </div>
+  );
 
   // Mobile header
   if (isMobile) {
     return (
       <>
         <div className="w-full h-full flex items-center justify-between px-4">
-          <WorkspaceSwitcher />
+          {/* Left: Logo only */}
+          <button
+            onClick={handleLogoClick}
+            className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-muted/50 transition-colors"
+            aria-label="Go to workspaces"
+          >
+            <TribesLogo className="h-5 w-5 text-foreground" />
+          </button>
 
-          <div className="flex items-center gap-1 shrink-0">
-            <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
-              <PopoverTrigger asChild>
-                <HeaderIconButton
-                  icon={Bell}
-                  aria-label="Notifications"
-                  badgeCount={unreadCount}
-                />
-              </PopoverTrigger>
-              <PopoverContent align="end" className="w-72 p-4">
-                <p className="text-[13px] text-muted-foreground text-center py-6">
-                  No notifications yet
-                </p>
-              </PopoverContent>
-            </Popover>
-            <HeaderIconButton
-              icon={Settings}
-              aria-label="Settings"
-              onClick={() => navigate("/account")}
-            />
-          </div>
+          {/* Right: Icons */}
+          {rightIcons}
         </div>
+
+        <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
       </>
     );
   }
@@ -81,48 +122,24 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
   if (showSidebarLogo) {
     return (
       <>
-        <SidebarHeader logo={<WorkspaceSwitcher />} />
+        <SidebarHeader 
+          logo={
+            <button
+              onClick={handleLogoClick}
+              className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-muted/50 transition-colors"
+              aria-label="Go to workspaces"
+            >
+              <TribesLogo className="h-5 w-5 text-foreground" />
+            </button>
+          }
+        />
 
         <ContentHeader>
-          {/* Left: Search trigger */}
-          <div className="flex items-center">
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="w-[320px]"
-            >
-              <AppSearchInput
-                value={searchValue}
-                onChange={setSearchValue}
-                placeholder="Search..."
-                rightHint="⌘ K"
-                size="sm"
-                className="w-full pointer-events-none"
-              />
-            </button>
-          </div>
-
+          {/* Left: empty spacer */}
+          <div />
+          
           {/* Right: Header icons */}
-          <div className="flex items-center gap-1">
-            <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
-              <PopoverTrigger asChild>
-                <HeaderIconButton
-                  icon={Bell}
-                  aria-label="Notifications"
-                  badgeCount={unreadCount}
-                />
-              </PopoverTrigger>
-              <PopoverContent align="end" className="w-72 p-4">
-                <p className="text-[13px] text-muted-foreground text-center py-6">
-                  No notifications yet
-                </p>
-              </PopoverContent>
-            </Popover>
-            <HeaderIconButton
-              icon={Settings}
-              aria-label="Settings"
-              onClick={() => navigate("/account")}
-            />
-          </div>
+          {rightIcons}
         </ContentHeader>
 
         <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
@@ -130,49 +147,21 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
     );
   }
 
-  // Desktop without sidebar
+  // Desktop without sidebar (fallback)
   return (
     <>
       <div className="w-full h-full flex items-center justify-between px-6">
-        <WorkspaceSwitcher />
+        {/* Left: Logo only */}
+        <button
+          onClick={handleLogoClick}
+          className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-muted/50 transition-colors"
+          aria-label="Go to workspaces"
+        >
+          <TribesLogo className="h-5 w-5 text-foreground" />
+        </button>
 
-        <div className="flex-1 flex items-center ml-6 max-w-md">
-          <button
-            onClick={() => setSearchOpen(true)}
-            className="w-full max-w-[320px]"
-          >
-            <AppSearchInput
-              value={searchValue}
-              onChange={setSearchValue}
-              placeholder="Search..."
-              rightHint="⌘ K"
-              size="sm"
-              className="w-full pointer-events-none"
-            />
-          </button>
-        </div>
-
-        <div className="flex items-center gap-1">
-          <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
-            <PopoverTrigger asChild>
-              <HeaderIconButton
-                icon={Bell}
-                aria-label="Notifications"
-                badgeCount={unreadCount}
-              />
-            </PopoverTrigger>
-            <PopoverContent align="end" className="w-72 p-4">
-              <p className="text-[13px] text-muted-foreground text-center py-6">
-                No notifications yet
-              </p>
-            </PopoverContent>
-          </Popover>
-          <HeaderIconButton
-            icon={Settings}
-            aria-label="Settings"
-            onClick={() => navigate("/account")}
-          />
-        </div>
+        {/* Right: Icons */}
+        {rightIcons}
       </div>
 
       <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />

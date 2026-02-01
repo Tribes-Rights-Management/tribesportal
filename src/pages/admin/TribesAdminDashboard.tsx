@@ -106,9 +106,7 @@ export default function TribesAdminDashboard() {
     <AppPageContainer maxWidth="xl">
       {/* Page Header */}
       <AppPageHeader
-        eyebrow="Tribes Admin"
         title="Dashboard"
-        description="Song catalog and submission management"
       />
 
       {/* Dismissible Alerts */}

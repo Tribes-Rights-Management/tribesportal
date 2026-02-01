@@ -236,9 +236,7 @@ export default function HelpAudiencesPage() {
       {/* Page Header */}
       <AppPageHeader
         backLink={{ to: "/help", label: "Overview" }}
-        eyebrow="Help Workstation"
         title="Audiences"
-        description={`${audiences.length} audience segments. Drag to reorder header tab order.`}
         action={
           <AppButton intent="primary" size="sm" onClick={handleCreate}>
             <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />

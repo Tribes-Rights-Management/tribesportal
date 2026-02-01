@@ -10,20 +10,19 @@ import { cn } from "@/lib/utils";
  * CANONICAL PAGE HEADER COMPONENT (LOCKED)
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * Standardized page header with:
+ * Simplified page header with:
  * - Optional back link (for child pages)
- * - Optional eyebrow label (e.g., "HELP WORKSTATION")
  * - Title (required)
- * - Optional description
  * - Optional action slot (buttons, etc.)
+ * 
+ * NOTE: eyebrow and description props are kept for backwards compatibility
+ * but are no longer rendered per the new design standard.
  * 
  * USAGE:
  *   <AppPageHeader
  *     backLink={{ to: "/help", label: "Overview" }}
- *     eyebrow="SYSTEM CONSOLE"
- *     title="Governance Overview"
- *     description="Company-wide compliance and oversight"
- *     action={<AppButton>Add New</AppButton>}
+ *     title="Article Editor"
+ *     action={<AppButton>Save</AppButton>}
  *   />
  * 
  * ENFORCEMENT:
@@ -40,11 +39,11 @@ interface BackLinkProps {
 interface AppPageHeaderProps {
   /** Back link to parent page */
   backLink?: BackLinkProps;
-  /** Small uppercase label above title */
+  /** @deprecated No longer rendered - kept for backwards compatibility */
   eyebrow?: string;
   /** Main page title */
   title: string;
-  /** Optional description below title */
+  /** @deprecated No longer rendered - kept for backwards compatibility */
   description?: string;
   /** Optional action slot (buttons, etc.) */
   action?: React.ReactNode;
@@ -54,20 +53,15 @@ interface AppPageHeaderProps {
 
 export function AppPageHeader({
   backLink,
-  eyebrow,
+  eyebrow: _eyebrow, // Deprecated, not rendered
   title,
-  description,
+  description: _description, // Deprecated, not rendered
   action,
   className,
 }: AppPageHeaderProps) {
   return (
     <div className={cn("flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-6 sm:mb-8", className)}>
       <div className="min-w-0 flex-1">
-        {eyebrow && (
-          <p className="text-[10px] uppercase tracking-wider font-medium mb-2 text-muted-foreground">
-            {eyebrow}
-          </p>
-        )}
         {backLink && (
           <Link 
             to={backLink.to} 
@@ -80,11 +74,6 @@ export function AppPageHeader({
         <h1 className="text-[18px] sm:text-[20px] font-semibold text-foreground leading-tight">
           {title}
         </h1>
-        {description && (
-          <p className="text-[13px] text-muted-foreground mt-1">
-            {description}
-          </p>
-        )}
       </div>
       {action && <div className="shrink-0 self-start">{action}</div>}
     </div>

@@ -69,9 +69,7 @@ export default function TribesAdminCataloguePage() {
   return (
     <AppPageContainer maxWidth="xl">
       <AppPageHeader
-        eyebrow="Tribes Admin"
         title="Catalogue"
-        description="Browse and manage song catalog"
         backLink={{ to: "/admin", label: "Dashboard" }}
         action={
           <AppButton
