@@ -97,6 +97,20 @@ import {
   HelpSettingsPage,
 } from "@/pages/help-workstation";
 
+// Tribes Admin Protected Route — gates access to Tribes Admin Workstation
+import { TribesAdminProtectedRoute } from "@/components/tribes-admin/TribesAdminProtectedRoute";
+
+// Tribes Admin Workstation — FIRST-CLASS WORKSTATION (song catalog management)
+import { TribesAdminLayout } from "@/layouts/TribesAdminLayout";
+import {
+  TribesAdminDashboard,
+  TribesAdminCataloguePage,
+  TribesAdminQueuePage,
+  TribesAdminDocumentsPage,
+  TribesAdminRoyaltiesPage,
+  TribesAdminSettingsPage,
+} from "@/pages/tribes-admin";
+
 
 // System Console - Executive Reporting (Platform Executives only)
 import ExecutiveReportingPage from "@/pages/admin/reporting/ExecutiveReportingPage";
@@ -371,6 +385,20 @@ const App = () => (
         <Route path="/help-workstation/*" element={<PathPreservingRedirect from="/help-workstation" to="/help" />} />
         <Route path="/help_workstation/*" element={<PathPreservingRedirect from="/help_workstation" to="/help" />} />
         <Route path="/helpcenter/*" element={<PathPreservingRedirect from="/helpcenter" to="/help" />} />
+
+        {/* ═══════════════════════════════════════════════════════════════════════
+            TRIBES ADMIN WORKSTATION (/tribes-admin) — FIRST-CLASS WORKSTATION
+            Permission: All authenticated users (for now)
+            Song catalog management, submissions, documents, royalties
+        ═══════════════════════════════════════════════════════════════════════ */}
+        <Route path="/tribes-admin" element={<TribesAdminProtectedRoute><TribesAdminLayout /></TribesAdminProtectedRoute>}>
+          <Route index element={<TribesAdminDashboard />} />
+          <Route path="catalogue" element={<TribesAdminCataloguePage />} />
+          <Route path="queue" element={<TribesAdminQueuePage />} />
+          <Route path="documents" element={<TribesAdminDocumentsPage />} />
+          <Route path="royalties" element={<TribesAdminRoyaltiesPage />} />
+          <Route path="settings" element={<TribesAdminSettingsPage />} />
+        </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
             ACCOUNT SETTINGS HUB (/account)
