@@ -5,6 +5,7 @@ import { GlobalSearchDialog } from "@/components/search/GlobalSearchDialog";
 import { SidebarHeader, ContentHeader } from "@/components/app/AppShell";
 import { UserMenuDropdown } from "@/components/app/UserMenuDropdown";
 import { HeaderIconButton } from "@/components/app/HeaderIconButton";
+import { HelpBottomSheet } from "@/components/app/HelpBottomSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUnreadNotificationCount } from "@/hooks/useNotifications";
 import {
@@ -89,12 +90,16 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
         </PopoverContent>
       </Popover>
 
-      {/* Help */}
-      <HeaderIconButton
-        icon={CircleHelp}
-        aria-label="Help & Resources"
-        onClick={() => navigate("/help")}
-      />
+      {/* Help - use bottom sheet on mobile, direct navigation on desktop */}
+      {isMobile ? (
+        <HelpBottomSheet />
+      ) : (
+        <HeaderIconButton
+          icon={CircleHelp}
+          aria-label="Help & Resources"
+          onClick={() => navigate("/help")}
+        />
+      )}
 
       {/* User menu */}
       <UserMenuDropdown />

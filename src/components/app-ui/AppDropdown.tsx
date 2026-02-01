@@ -54,17 +54,22 @@ export function AppDropdown({
   // Filter out hidden items
   const visibleItems = items.filter((item) => !item.hidden);
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking/touching outside
   React.useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
 
     if (isOpen) {
+      // Use both mousedown and touchstart for cross-device support
       document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener("touchstart", handleClickOutside);
+      };
     }
   }, [isOpen]);
 
@@ -82,6 +87,12 @@ export function AppDropdown({
     }
   }, [isOpen]);
 
+  const handleTriggerClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  };
+
   const handleItemClick = (item: AppDropdownItem) => {
     item.onClick();
     setIsOpen(false);
@@ -89,8 +100,13 @@ export function AppDropdown({
 
   return (
     <div ref={containerRef} className="relative">
-      {/* Trigger */}
-      <div onClick={() => setIsOpen(!isOpen)}>
+      {/* Trigger - using onClick which works for both mouse and touch */}
+      <div 
+        onClick={handleTriggerClick}
+        role="button"
+        tabIndex={0}
+        style={{ touchAction: "manipulation" }}
+      >
         {trigger}
       </div>
 
