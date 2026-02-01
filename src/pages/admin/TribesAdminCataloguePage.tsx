@@ -130,7 +130,8 @@ export default function TribesAdminCataloguePage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by title, writer, or lyric..."
             className={cn(
-              "w-full h-9 pl-8 pr-3 text-[13px]",
+              "w-full h-9 pl-8 pr-3",
+              "text-base sm:text-[13px]", // 16px on mobile to prevent Safari zoom
               "bg-transparent border-b border-border/60",
               "placeholder:text-muted-foreground/40",
               "focus:outline-none focus:border-foreground/30",
