@@ -61,7 +61,7 @@ const adminNav: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true, section: "main" },
   { to: "/admin/catalogue", label: "Catalogue", icon: Music, section: "main" },
   { to: "/admin/documents", label: "Documents", icon: FileText, section: "main" },
-  { to: "/admin/royalties", label: "Payments", icon: CreditCard, section: "secondary" },
+  { to: "/admin/payments", label: "Payments", icon: CreditCard, section: "secondary" },
   { to: "/admin/settings", label: "Settings", icon: Settings2, section: "settings" },
 ];
 
