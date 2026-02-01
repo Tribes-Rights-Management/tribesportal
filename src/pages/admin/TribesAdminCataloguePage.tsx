@@ -72,12 +72,12 @@ export default function TribesAdminCataloguePage() {
         eyebrow="Tribes Admin"
         title="Catalogue"
         description="Browse and manage song catalog"
-        backLink={{ to: "/tribes-admin", label: "Dashboard" }}
+        backLink={{ to: "/admin", label: "Dashboard" }}
         action={
           <AppButton
             intent="secondary"
             size="sm"
-            onClick={() => navigate("/tribes-admin/songs/submit")}
+            onClick={() => navigate("/admin/songs/submit")}
           >
             <Plus className="h-4 w-4" />
             Add Song
@@ -117,7 +117,7 @@ export default function TribesAdminCataloguePage() {
                 <AppTableRow
                   key={song.id}
                   clickable
-                  onClick={() => navigate(`/tribes-admin/catalogue/${song.id}`)}
+                  onClick={() => navigate(`/admin/catalogue/${song.id}`)}
                 >
                   <AppTableCell className="font-medium">{song.title}</AppTableCell>
                   <AppTableCell muted>{song.artist}</AppTableCell>

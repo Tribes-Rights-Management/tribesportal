@@ -52,35 +52,24 @@ import LicensingPaymentsPage from "@/pages/modules/licensing/LicensingPaymentsPa
 import LicensingFeesPage from "@/pages/modules/licensing/LicensingFeesPage";
 import LicensingReceiptsPage from "@/pages/modules/licensing/LicensingReceiptsPage";
 
-// First-class module pages - Tribes Admin (/admin) - ORGANIZATION-SCOPED
-import PortalOverview from "@/pages/modules/portal/PortalOverview";
-import PortalAgreementsPage from "@/pages/modules/portal/PortalAgreementsPage";
-import PortalStatementsPage from "@/pages/modules/portal/PortalStatementsPage";
-import PortalDocumentsPage from "@/pages/modules/portal/PortalDocumentsPage";
-import PortalPaymentsPage from "@/pages/modules/portal/PortalPaymentsPage";
-import PortalInvoicesPage from "@/pages/modules/portal/PortalInvoicesPage";
-import PortalPaymentMethodsPage from "@/pages/modules/portal/PortalPaymentMethodsPage";
-import PortalPaymentHistoryPage from "@/pages/modules/portal/PortalPaymentHistoryPage";
-
 // App pages - Access states
 import PendingApprovalPage from "@/pages/app/PendingApprovalPage";
 import NoAccessPage from "@/pages/app/NoAccessPage";
 import AccessSuspendedPage from "@/pages/app/AccessSuspendedPage";
 
-// System Console pages - COMPANY-LEVEL (executive only)
-// NO product navigation, NO workspace selector
-// Scoped to: governance, audit oversight, compliance, security
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import ApprovalsPage from "@/pages/admin/ApprovalsPage";
-import TenantsPage from "@/pages/admin/TenantsPage";
-import UserDirectoryPage from "@/pages/admin/UserDirectoryPage";
-import PermissionsPage from "@/pages/admin/PermissionsPage";
-import AccountSettingsPage from "@/pages/admin/AccountSettingsPage";
-import RLSAuditPage from "@/pages/admin/RLSAuditPage";
-import AuthAccessReviewPage from "@/pages/admin/AuthAccessReviewPage";
-import DisclosuresPage from "@/pages/admin/DisclosuresPage";
-import CorrelationChainPage from "@/pages/admin/CorrelationChainPage";
-import DataRoomPage from "@/pages/admin/DataRoomPage";
+// Tribes Admin Protected Route — gates access to Tribes Admin Workstation
+import { TribesAdminProtectedRoute } from "@/components/tribes-admin/TribesAdminProtectedRoute";
+
+// Tribes Admin Workstation — FIRST-CLASS WORKSTATION (song catalog management)
+import { TribesAdminLayout } from "@/layouts/TribesAdminLayout";
+import {
+  TribesAdminDashboard,
+  TribesAdminCataloguePage,
+  TribesAdminQueuePage,
+  TribesAdminDocumentsPage,
+  TribesAdminRoyaltiesPage,
+  TribesAdminSettingsPage,
+} from "@/pages/admin";
 
 // Help Protected Route — gates access to Help Workstation
 import { HelpProtectedRoute } from "@/components/help/HelpProtectedRoute";
@@ -97,20 +86,19 @@ import {
   HelpSettingsPage,
 } from "@/pages/help-workstation";
 
-// Tribes Admin Protected Route — gates access to Tribes Admin Workstation
-import { TribesAdminProtectedRoute } from "@/components/tribes-admin/TribesAdminProtectedRoute";
 
-// Tribes Admin Workstation — FIRST-CLASS WORKSTATION (song catalog management)
-import { TribesAdminLayout } from "@/layouts/TribesAdminLayout";
-import {
-  TribesAdminDashboard,
-  TribesAdminCataloguePage,
-  TribesAdminQueuePage,
-  TribesAdminDocumentsPage,
-  TribesAdminRoyaltiesPage,
-  TribesAdminSettingsPage,
-} from "@/pages/tribes-admin";
-
+// System Console pages - COMPANY-LEVEL (executive only)
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import ApprovalsPage from "@/pages/admin/ApprovalsPage";
+import TenantsPage from "@/pages/admin/TenantsPage";
+import UserDirectoryPage from "@/pages/admin/UserDirectoryPage";
+import PermissionsPage from "@/pages/admin/PermissionsPage";
+import AccountSettingsPage from "@/pages/admin/AccountSettingsPage";
+import RLSAuditPage from "@/pages/admin/RLSAuditPage";
+import AuthAccessReviewPage from "@/pages/admin/AuthAccessReviewPage";
+import DisclosuresPage from "@/pages/admin/DisclosuresPage";
+import CorrelationChainPage from "@/pages/admin/CorrelationChainPage";
+import DataRoomPage from "@/pages/admin/DataRoomPage";
 
 // System Console - Executive Reporting (Platform Executives only)
 import ExecutiveReportingPage from "@/pages/admin/reporting/ExecutiveReportingPage";
@@ -261,23 +249,17 @@ const App = () => (
         <Route path="/tribes-licensing/*" element={<PathPreservingRedirect from="/tribes-licensing" to="/licensing" />} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
-            FIRST-CLASS MODULE: TRIBES ADMIN (/admin) — ORGANIZATION-SCOPED
-            Permission: portal.view, portal.download, portal.submit
+            FIRST-CLASS MODULE: TRIBES ADMIN (/admin) — SONG CATALOG MANAGEMENT
+            Permission: All authenticated users (for now)
+            Song catalog management, submissions, documents, royalties
         ═══════════════════════════════════════════════════════════════════════ */}
-        <Route path="/admin" element={
-          <ModuleProtectedRoute requiredModule="admin">
-            <ModuleLayout />
-          </ModuleProtectedRoute>
-        }>
-          <Route index element={<PortalOverview />} />
-          <Route path="agreements" element={<PortalAgreementsPage />} />
-          <Route path="statements" element={<PortalStatementsPage />} />
-          <Route path="documents" element={<PortalDocumentsPage />} />
-          <Route path="payments" element={<PortalPaymentsPage />} />
-          <Route path="payments/invoices" element={<PortalInvoicesPage />} />
-          <Route path="payments/methods" element={<PortalPaymentMethodsPage />} />
-          <Route path="payments/history" element={<PortalPaymentHistoryPage />} />
-          <Route path="users" element={<OrgUsersPage />} />
+        <Route path="/admin" element={<TribesAdminProtectedRoute><TribesAdminLayout /></TribesAdminProtectedRoute>}>
+          <Route index element={<TribesAdminDashboard />} />
+          <Route path="catalogue" element={<TribesAdminCataloguePage />} />
+          <Route path="queue" element={<TribesAdminQueuePage />} />
+          <Route path="documents" element={<TribesAdminDocumentsPage />} />
+          <Route path="royalties" element={<TribesAdminRoyaltiesPage />} />
+          <Route path="settings" element={<TribesAdminSettingsPage />} />
         </Route>
         
         {/* Legacy Tribes Admin redirects */}
@@ -385,21 +367,6 @@ const App = () => (
         <Route path="/help-workstation/*" element={<PathPreservingRedirect from="/help-workstation" to="/help" />} />
         <Route path="/help_workstation/*" element={<PathPreservingRedirect from="/help_workstation" to="/help" />} />
         <Route path="/helpcenter/*" element={<PathPreservingRedirect from="/helpcenter" to="/help" />} />
-
-        {/* ═══════════════════════════════════════════════════════════════════════
-            TRIBES ADMIN WORKSTATION (/tribes-admin) — FIRST-CLASS WORKSTATION
-            Permission: All authenticated users (for now)
-            Song catalog management, submissions, documents, royalties
-        ═══════════════════════════════════════════════════════════════════════ */}
-        <Route path="/tribes-admin" element={<TribesAdminProtectedRoute><TribesAdminLayout /></TribesAdminProtectedRoute>}>
-          <Route index element={<TribesAdminDashboard />} />
-          <Route path="catalogue" element={<TribesAdminCataloguePage />} />
-          <Route path="queue" element={<TribesAdminQueuePage />} />
-          <Route path="documents" element={<TribesAdminDocumentsPage />} />
-          <Route path="royalties" element={<TribesAdminRoyaltiesPage />} />
-          <Route path="settings" element={<TribesAdminSettingsPage />} />
-        </Route>
-
         {/* ═══════════════════════════════════════════════════════════════════════
             ACCOUNT SETTINGS HUB (/account)
             Available to all authenticated users

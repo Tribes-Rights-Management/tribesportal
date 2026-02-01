@@ -24,7 +24,7 @@ export function TribesAdminLayout() {
   useScrollReset(mainRef);
 
   // Get nav items from centralized config
-  const navItems = getNavForModule("tribes-admin");
+  const navItems = getNavForModule("admin");
   const showSidebar = !isMobile;
 
   return (

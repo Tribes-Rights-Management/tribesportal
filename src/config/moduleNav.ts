@@ -3,8 +3,6 @@ import {
   FileText, 
   Scale, 
   CreditCard,
-  FileCheck,
-  Receipt,
   FolderOpen,
   Users,
   CheckSquare,
@@ -29,7 +27,7 @@ import {
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-export type ModuleKey = "console" | "admin" | "licensing" | "help" | "tribes-admin";
+export type ModuleKey = "console" | "admin" | "licensing" | "help";
 
 export interface NavItem {
   to: string;
@@ -55,15 +53,15 @@ const consoleNav: NavItem[] = [
 ];
 
 /**
- * Admin Module Navigation - Organization Management
+ * Admin Module Navigation - Tribes Admin (Song Catalog Management)
  */
 const adminNav: NavItem[] = [
-  { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true, section: "main" },
-  { to: "/admin/agreements", label: "Agreements", icon: FileCheck, section: "main" },
-  { to: "/admin/statements", label: "Statements", icon: Receipt, section: "main" },
-  { to: "/admin/documents", label: "Documents", icon: FolderOpen, section: "main" },
-  { to: "/admin/payments", label: "Payments", icon: CreditCard, section: "main" },
-  { to: "/admin/users", label: "Users", icon: Users, section: "main" },
+  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true, section: "main" },
+  { to: "/admin/catalogue", label: "Catalogue", icon: Music, section: "main" },
+  { to: "/admin/queue", label: "Queue", icon: ListTodo, section: "main" },
+  { to: "/admin/documents", label: "Documents", icon: FileText, section: "main" },
+  { to: "/admin/royalties", label: "Royalties", icon: CreditCard, section: "secondary" },
+  { to: "/admin/settings", label: "Settings", icon: Settings2, section: "settings" },
 ];
 
 /**
@@ -89,18 +87,6 @@ const helpNav: NavItem[] = [
 ];
 
 /**
- * Tribes Admin Navigation - Song Catalog Management
- */
-const tribesAdminNav: NavItem[] = [
-  { to: "/tribes-admin", label: "Dashboard", icon: LayoutDashboard, exact: true, section: "main" },
-  { to: "/tribes-admin/catalogue", label: "Catalogue", icon: Music, section: "main" },
-  { to: "/tribes-admin/queue", label: "Queue", icon: ListTodo, section: "main" },
-  { to: "/tribes-admin/documents", label: "Documents", icon: FileText, section: "main" },
-  { to: "/tribes-admin/royalties", label: "Royalties", icon: CreditCard, section: "secondary" },
-  { to: "/tribes-admin/settings", label: "Settings", icon: Settings2, section: "settings" },
-];
-
-/**
  * Module navigation registry
  */
 export const MODULE_NAV: Record<ModuleKey, NavItem[]> = {
@@ -108,7 +94,6 @@ export const MODULE_NAV: Record<ModuleKey, NavItem[]> = {
   admin: adminNav,
   licensing: licensingNav,
   help: helpNav,
-  "tribes-admin": tribesAdminNav,
 };
 
 /**
@@ -128,13 +113,11 @@ export function getModuleLabel(moduleKey: ModuleKey): string {
     case "console":
       return "System Console";
     case "admin":
-      return "Admin Portal";
+      return "Tribes Admin";
     case "licensing":
       return "Licensing";
     case "help":
       return "Help Workstation";
-    case "tribes-admin":
-      return "Tribes Admin";
     default:
       return "";
   }
@@ -153,8 +136,6 @@ export function getModuleHomeRoute(moduleKey: ModuleKey): string {
       return "/licensing";
     case "help":
       return "/help";
-    case "tribes-admin":
-      return "/tribes-admin";
     default:
       return "/workspaces";
   }
