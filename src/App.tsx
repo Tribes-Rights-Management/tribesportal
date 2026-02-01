@@ -52,6 +52,15 @@ import LicensingPaymentsPage from "@/pages/modules/licensing/LicensingPaymentsPa
 import LicensingFeesPage from "@/pages/modules/licensing/LicensingFeesPage";
 import LicensingReceiptsPage from "@/pages/modules/licensing/LicensingReceiptsPage";
 
+// First-class module pages - Rights (/rights) - CLIENT AND RIGHTS MANAGEMENT
+import {
+  RightsOverview,
+  RightsClientsPage,
+  RightsContractsPage,
+  RightsDocumentsPage,
+  RightsSettingsPage,
+} from "@/pages/modules/rights";
+
 // App pages - Access states
 import PendingApprovalPage from "@/pages/app/PendingApprovalPage";
 import NoAccessPage from "@/pages/app/NoAccessPage";
@@ -247,6 +256,23 @@ const App = () => (
         
         {/* Legacy licensing redirects */}
         <Route path="/tribes-licensing/*" element={<PathPreservingRedirect from="/tribes-licensing" to="/licensing" />} />
+
+        {/* ═══════════════════════════════════════════════════════════════════════
+            FIRST-CLASS MODULE: RIGHTS (/rights) — CLIENT AND RIGHTS MANAGEMENT
+            Permission: All authenticated users (for now)
+            Client management, contracts, documents
+        ═══════════════════════════════════════════════════════════════════════ */}
+        <Route path="/rights" element={
+          <AppProtectedRoute>
+            <ModuleLayout />
+          </AppProtectedRoute>
+        }>
+          <Route index element={<RightsOverview />} />
+          <Route path="clients" element={<RightsClientsPage />} />
+          <Route path="contracts" element={<RightsContractsPage />} />
+          <Route path="documents" element={<RightsDocumentsPage />} />
+          <Route path="settings" element={<RightsSettingsPage />} />
+        </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
             FIRST-CLASS MODULE: TRIBES ADMIN (/admin) — SONG CATALOG MANAGEMENT
