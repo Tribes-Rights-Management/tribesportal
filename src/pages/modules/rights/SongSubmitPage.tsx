@@ -550,41 +550,41 @@ export default function SongSubmitPage() {
               </div>
 
               <div className="space-y-4">
-              {/* Voice Option */}
-              <button
-                onClick={() => setEntryMode("voice")}
-                className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[var(--btn-text)] text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <Mic className="h-6 w-6" />
+                {/* Voice Option */}
+                <button
+                  onClick={() => setEntryMode("voice")}
+                  className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-[var(--btn-text)] text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Mic className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-[var(--btn-text)] mb-1">Tell me about it</div>
+                      <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
+                        Speak naturally. Include the song title, writers, splits, and year written.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-semibold text-[var(--btn-text)] mb-1">Tell me about it</div>
-                    <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
-                      Speak naturally. Include the song title, writers, splits, and year written.
-                    </p>
-                  </div>
-                </div>
-              </button>
+                </button>
 
-              {/* Manual Option */}
-              <button
-                onClick={() => setEntryMode("flow")}
-                className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[var(--muted-wash)] text-[var(--btn-text)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <Edit3 className="h-6 w-6" />
+                {/* Manual Option */}
+                <button
+                  onClick={() => setEntryMode("flow")}
+                  className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-[var(--muted-wash)] text-[var(--btn-text)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Edit3 className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
+                      <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
+                        Go step by step through the registration form.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
-                    <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
-                      Go step by step through the registration form.
-                  </p>
-                  </div>
-                </div>
-              </button>
+                </button>
               </div>
             </div>
           </div>
@@ -620,8 +620,8 @@ export default function SongSubmitPage() {
             {/* Listening State */}
             {isListening ? (
               <>
-                <div className="relative w-32 h-32 mx-auto mb-8">
-                  {/* Pulse rings */}
+                <div className="relative w-32 h-32 mx-auto mb-8 pointer-events-none">
+                  {/* Pulse rings - non-interactive */}
                   <div className="absolute inset-0 rounded-full bg-[var(--btn-text)]/10 animate-ping" />
                   <div className="absolute inset-2 rounded-full bg-[var(--btn-text)]/20 animate-pulse" />
                   <div className="absolute inset-4 rounded-full bg-[var(--btn-text)] flex items-center justify-center">
@@ -640,8 +640,19 @@ export default function SongSubmitPage() {
                 )}
                 
                 <button
-                  onClick={stopVoiceEntry}
-                  className="px-8 py-3 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 transition-all"
+                  type="button"
+                  onClick={() => {
+                    if (recognitionRef.current) {
+                      recognitionRef.current.stop();
+                    }
+                    setIsListening(false);
+                    if (voiceTranscript) {
+                      processVoiceEntry(voiceTranscript);
+                    } else {
+                      setEntryMode("flow");
+                    }
+                  }}
+                  className="relative z-10 px-8 py-3 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 transition-all cursor-pointer"
                 >
                   Done speaking
                 </button>
