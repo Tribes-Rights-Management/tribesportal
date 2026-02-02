@@ -74,153 +74,102 @@ const PUBLIC_DOMAIN_PATTERNS = [
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// AI PARSING UTILITIES
+// AI PARSING — LIMITED TO TITLE AND WRITERS ONLY
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function parseNaturalInput(input: string, currentData: SongData): Partial<SongData> {
-  const updates: Partial<SongData> = {};
-  const lower = input.toLowerCase();
+function parseVoiceInput(input: string): { title: string; writers: string[] } {
+  let title = "";
+  const writers: string[] = [];
   
-  // Detect song title patterns
-  const titlePatterns = [
-    /(?:called|titled|it's|song is|name is)\s+["']?([^"',]+)["']?/i,
-    /^["']?([^"',]{3,50})["']?$/i, // Just a title by itself
-  ];
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Extract song title
+  // ─────────────────────────────────────────────────────────────────────────────
   
-  for (const pattern of titlePatterns) {
-    const match = input.match(pattern);
-    if (match && !currentData.title) {
-      updates.title = match[1].trim();
-      break;
+  // Pattern 1: "called/titled [TITLE] written by" or "called [TITLE] by"
+  const calledMatch = input.match(/(?:called|titled)\s+["']?(.+?)["']?\s+(?:written\s+by|by\s+)/i);
+  if (calledMatch) {
+    title = calledMatch[1].trim();
+  }
+  
+  // Pattern 2: "called/titled [TITLE]" at end (no writers mentioned)
+  if (!title) {
+    const calledEndMatch = input.match(/(?:called|titled)\s+["']?([^"']+?)["']?\s*$/i);
+    if (calledEndMatch) {
+      title = calledEndMatch[1].trim();
     }
   }
   
-  // Check for public domain works
-  if (updates.title || currentData.title) {
-    const titleToCheck = updates.title || currentData.title;
-    for (const pd of PUBLIC_DOMAIN_PATTERNS) {
-      if (pd.pattern.test(titleToCheck)) {
-        updates.type = pd.type;
-        updates.originalWork = pd.original;
-        break;
-      }
+  // Pattern 3: Quoted title anywhere - "Title" or 'Title'
+  if (!title) {
+    const quotedMatch = input.match(/["']([^"']{2,60})["']/);
+    if (quotedMatch) {
+      title = quotedMatch[1].trim();
     }
   }
   
-  // Detect writers
-  const writerPatterns = [
-    /(?:written by|wrote by|by|writers?(?:\s+are)?)\s+(.+)/i,
-    /(?:me and|myself and|I and)\s+([^,]+)/i,
-    /(?:co-?wrote with|wrote with)\s+([^,]+)/i,
-  ];
+  // Clean and format title
+  if (title) {
+    title = title.replace(/\s+(?:written|by)$/i, '').trim();
+    title = toTitleCase(title);
+  }
   
-  for (const pattern of writerPatterns) {
-    const match = input.match(pattern);
-    if (match) {
-      const writerStr = match[1];
-      const names = writerStr.split(/(?:,|\s+and\s+|\s*&\s*)/i).map(n => n.trim()).filter(n => n.length > 1);
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Extract writers
+  // ─────────────────────────────────────────────────────────────────────────────
+  
+  const writerMatch = input.match(/(?:written\s+by|by)\s+(.+?)(?:\s*[.!?]|$)/i);
+  if (writerMatch) {
+    let writerStr = writerMatch[1].trim();
+    
+    // Clean trailing noise
+    writerStr = writerStr
+      .replace(/\s+(?:in|from|back|last|this|split|and\s+it|we\s+wrote|,\s*\d).*$/i, '')
+      .trim();
+    
+    const rawNames = writerStr
+      .split(/(?:\s+and\s+|\s*&\s*|\s*,\s*(?:and\s+)?)/i)
+      .map(n => n.trim())
+      .filter(n => n.length > 0 && n.length < 50);
+    
+    const seen = new Set<string>();
+    
+    for (const name of rawNames) {
+      const lower = name.toLowerCase();
       
-      if (names.length > 0) {
-        const newWriters: Writer[] = names.map(name => {
-          const known = KNOWN_WRITERS[name.toLowerCase()];
-          return {
-            id: crypto.randomUUID(),
-            name: name,
-            pro: known?.pro || "",
-            ipi: known?.ipi || "",
-            split: 0,
-            controlled: false,
-            fromDatabase: !!known,
-          };
-        });
-        
-        // Check if "me" or "I" is mentioned
-        if (/\b(me|myself|I)\b/i.test(input)) {
-          newWriters.unshift({
-            id: crypto.randomUUID(),
-            name: "Me",
-            pro: "",
-            ipi: "",
-            split: 0,
-            controlled: true,
-            fromDatabase: false,
-          });
+      // Normalize first-person references to a placeholder
+      if (/^(me|myself|i)$/i.test(name)) {
+        if (!seen.has("_self_")) {
+          writers.push("(Your name)");
+          seen.add("_self_");
         }
-        
-        // Auto-calculate even splits
-        const splitEach = Math.round((100 / newWriters.length) * 100) / 100;
-        newWriters.forEach((w, i) => {
-          w.split = i === newWriters.length - 1 ? 100 - (splitEach * (newWriters.length - 1)) : splitEach;
-        });
-        
-        updates.writers = newWriters;
+        continue;
       }
-      break;
+      
+      // Skip duplicates
+      if (seen.has(lower)) continue;
+      seen.add(lower);
+      
+      writers.push(toTitleCase(name));
     }
   }
   
-  // Detect splits
-  const splitPatterns = [
-    /(\d+)[\s/-]+(\d+)\s*split/i,
-    /split\s+(\d+)[\s/-]+(\d+)/i,
-    /(\d+)%?\s+(?:and|&)\s+(\d+)%?/i,
-  ];
+  return { title, writers };
+}
+
+// Helper: Convert to Title Case
+function toTitleCase(str: string): string {
+  const minorWords = new Set(['a', 'an', 'and', 'as', 'at', 'but', 'by', 'for', 'in', 'nor', 'of', 'on', 'or', 'so', 'the', 'to', 'up', 'yet']);
   
-  for (const pattern of splitPatterns) {
-    const match = input.match(pattern);
-    if (match && currentData.writers.length >= 2) {
-      const splits = [parseFloat(match[1]), parseFloat(match[2])];
-      if (splits[0] + splits[1] === 100) {
-        updates.writers = currentData.writers.map((w, i) => ({
-          ...w,
-          split: splits[i] || splits[splits.length - 1],
-        }));
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map((word, index) => {
+      if (index === 0 || !minorWords.has(word)) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
       }
-      break;
-    }
-  }
-  
-  // Detect year
-  const yearPatterns = [
-    /(?:in|from|year|wrote it|written in)\s+(\d{4})/i,
-    /(?:last|this)\s+(year|summer|winter|spring|fall)/i,
-    /(\d{4})/,
-  ];
-  
-  for (const pattern of yearPatterns) {
-    const match = input.match(pattern);
-    if (match) {
-      if (/\d{4}/.test(match[1])) {
-        updates.year = match[1];
-      } else if (match[1] === "year" || match[1] === "summer" || match[1] === "fall") {
-        updates.year = new Date().getFullYear().toString();
-      }
-      break;
-    }
-  }
-  
-  // Detect release status
-  if (/released|out now|available|published|live/i.test(lower)) {
-    updates.released = true;
-  } else if (/not released|unreleased|haven't released|not out yet/i.test(lower)) {
-    updates.released = false;
-  }
-  
-  // Detect instrumental
-  if (/instrumental|no lyrics|without words/i.test(lower)) {
-    updates.type = "instrumental";
-  }
-  
-  // Detect language
-  const languages = ["spanish", "french", "german", "portuguese", "korean", "japanese", "mandarin", "chinese"];
-  for (const lang of languages) {
-    if (lower.includes(lang)) {
-      updates.language = lang.charAt(0).toUpperCase() + lang.slice(1);
-      break;
-    }
-  }
-  
-  return updates;
+      return word;
+    })
+    .join(' ');
 }
 
 function detectLyricSections(lyrics: string): string {
@@ -255,11 +204,50 @@ function detectLyricSections(lyrics: string): string {
   return formatted.trim() || lyrics;
 }
 
+// Parse free-form natural language input during flow steps
+function parseNaturalInput(input: string, currentData: SongData): Partial<SongData> {
+  const updates: Partial<SongData> = {};
+  const lower = input.toLowerCase().trim();
+  
+  // If input looks like just a title (no "by" or "written")
+  if (!currentData.title && !lower.includes(" by ") && !lower.includes("written")) {
+    updates.title = toTitleCase(input.trim());
+    return updates;
+  }
+  
+  // If it contains writer info
+  if (lower.includes(" by ") || lower.includes("written")) {
+    const parsed = parseVoiceInput(input);
+    if (parsed.title && !currentData.title) {
+      updates.title = parsed.title;
+    }
+    if (parsed.writers.length > 0 && currentData.writers.length === 0) {
+      updates.writers = parsed.writers.map((name, i) => ({
+        id: crypto.randomUUID(),
+        name,
+        pro: KNOWN_WRITERS[name.toLowerCase()]?.pro || "",
+        ipi: KNOWN_WRITERS[name.toLowerCase()]?.ipi || "",
+        split: Math.floor(100 / parsed.writers.length),
+        controlled: i === 0,
+        fromDatabase: !!KNOWN_WRITERS[name.toLowerCase()],
+      }));
+    }
+    return updates;
+  }
+  
+  // Default: treat as title
+  if (!currentData.title) {
+    updates.title = toTitleCase(input.trim());
+  }
+  
+  return updates;
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════════
 
-type EntryMode = "choice" | "voice" | "flow";
+type EntryMode = "choice" | "voice" | "confirm" | "flow";
 
 export default function SongSubmitPage() {
   const navigate = useNavigate();
@@ -275,6 +263,10 @@ export default function SongSubmitPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingField, setEditingField] = useState<string | null>(null);
   const [voiceTranscript, setVoiceTranscript] = useState("");
+  
+  // Parsed voice data for confirmation screen
+  const [parsedTitle, setParsedTitle] = useState("");
+  const [parsedWriters, setParsedWriters] = useState<string[]>([]);
   
   const [data, setData] = useState<SongData>({
     title: "",
@@ -348,22 +340,41 @@ export default function SongSubmitPage() {
     setIsProcessing(true);
     
     setTimeout(() => {
-      const updates = parseNaturalInput(transcript, data);
+      const { title, writers } = parseVoiceInput(transcript);
       
-      if (Object.keys(updates).length > 0) {
-        setData(prev => ({ ...prev, ...updates }));
-      }
+      // Store parsed data for confirmation
+      setParsedTitle(title);
+      setParsedWriters(writers);
       
       setIsProcessing(false);
-      setEntryMode("flow");
-      
-      // Determine which step to start on based on what we got
-      if (updates.title && updates.writers && updates.writers.length > 0) {
-        setStep("lyrics");
-      } else if (updates.title) {
-        setStep("writers");
-      }
+      setEntryMode("confirm");
     }, 500);
+  };
+
+  const confirmVoiceEntry = () => {
+    // Build writers array with equal splits
+    const writerCount = parsedWriters.length;
+    const splitEach = writerCount > 0 ? Math.floor(10000 / writerCount) / 100 : 0;
+    
+    const writers: Writer[] = parsedWriters.map((name, i) => ({
+      id: crypto.randomUUID(),
+      name,
+      pro: "",
+      ipi: "",
+      split: i === writerCount - 1 ? Math.round((100 - splitEach * (writerCount - 1)) * 100) / 100 : splitEach,
+      controlled: name === "(Your name)",
+      fromDatabase: false,
+    }));
+    
+    // Update data and move to flow
+    setData(prev => ({
+      ...prev,
+      title: parsedTitle,
+      writers,
+    }));
+    
+    setEntryMode("flow");
+    setStep("lyrics"); // Skip to lyrics since we have title and writers
   };
 
   const toggleListening = () => {
@@ -550,41 +561,41 @@ export default function SongSubmitPage() {
               </div>
 
               <div className="space-y-4">
-                {/* Voice Option */}
-                <button
-                  onClick={() => setEntryMode("voice")}
-                  className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-[var(--btn-text)] text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <Mic className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-[var(--btn-text)] mb-1">Tell me about it</div>
-                      <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
-                        Speak naturally. Include the song title, writers, splits, and year written.
-                      </p>
-                    </div>
+              {/* Voice Option */}
+              <button
+                onClick={() => setEntryMode("voice")}
+                className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[var(--btn-text)] text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <Mic className="h-6 w-6" />
                   </div>
-                </button>
+                  <div>
+                    <div className="font-semibold text-[var(--btn-text)] mb-1">Tell me about it</div>
+                    <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
+                      Say the song title and who wrote it.
+                    </p>
+                  </div>
+                </div>
+              </button>
 
-                {/* Manual Option */}
-                <button
-                  onClick={() => setEntryMode("flow")}
-                  className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-[var(--muted-wash)] text-[var(--btn-text)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <Edit3 className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
-                      <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
-                        Go step by step through the registration form.
-                      </p>
-                    </div>
+              {/* Manual Option */}
+              <button
+                onClick={() => setEntryMode("flow")}
+                className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[var(--muted-wash)] text-[var(--btn-text)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <Edit3 className="h-6 w-6" />
                   </div>
-                </button>
+                  <div>
+                    <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
+                    <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
+                      Go step by step through the registration form.
+                    </p>
+                  </div>
+                </div>
+              </button>
               </div>
             </div>
           </div>
@@ -673,7 +684,7 @@ export default function SongSubmitPage() {
                 
                 <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-2">Tell me about your song</h2>
                 <p className="text-[var(--btn-text-muted)] mb-8 max-w-sm mx-auto">
-                  Include the title, who wrote it, how splits are divided, and when it was written.
+                  Say the song title and who wrote it.
                 </p>
                 
                 <button
@@ -685,10 +696,111 @@ export default function SongSubmitPage() {
                 </button>
                 
                 <p className="text-xs text-[var(--btn-text-muted)] mt-6">
-                  Example: "My song is called 'Morning Light', written by me and Sarah Johnson, split 60/40, we wrote it in 2024"
+                  Example: "It's called Christmas Hoedown, written by me and Joshua Carpenter"
                 </p>
               </>
             )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // CONFIRMATION SCREEN — Edit title & writers before continuing
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
+  if (entryMode === "confirm") {
+    return (
+      <div className="h-full flex flex-col bg-[var(--page-bg)]">
+        <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center">
+            <button onClick={() => setEntryMode("voice")} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] transition-colors text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Confirm Details</span>
+          </div>
+        </header>
+
+        <div className="flex-1 flex flex-col items-center justify-center p-6 overflow-y-auto">
+          <div className="max-w-md w-full">
+            <div className="text-center mb-8">
+              <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center mx-auto mb-4">
+                <Check className="h-7 w-7 text-green-600" />
+              </div>
+              <h1 className="text-2xl font-semibold text-[var(--btn-text)] mb-2">Got it!</h1>
+              <p className="text-[var(--btn-text-muted)]">Please review and edit if needed.</p>
+            </div>
+
+            {/* Song Title */}
+            <div className="mb-6">
+              <label className="block text-xs font-medium text-[var(--btn-text-muted)] uppercase tracking-wider mb-2">
+                Song Title
+              </label>
+              <input
+                type="text"
+                value={parsedTitle}
+                onChange={(e) => setParsedTitle(e.target.value)}
+                placeholder="Enter song title"
+                className="w-full h-12 px-4 text-base bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 focus:border-[var(--app-focus)]/40 transition-all"
+              />
+            </div>
+
+            {/* Writers */}
+            <div className="mb-8">
+              <label className="block text-xs font-medium text-[var(--btn-text-muted)] uppercase tracking-wider mb-2">
+                Writers
+              </label>
+              <div className="space-y-2">
+                {parsedWriters.map((writer, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={writer}
+                      onChange={(e) => {
+                        const updated = [...parsedWriters];
+                        updated[index] = e.target.value;
+                        setParsedWriters(updated);
+                      }}
+                      placeholder="Writer name"
+                      className="flex-1 h-11 px-4 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 transition-all"
+                    />
+                    {parsedWriters.length > 1 && (
+                      <button
+                        onClick={() => setParsedWriters(parsedWriters.filter((_, i) => i !== index))}
+                        className="p-2 rounded-lg hover:bg-red-50 text-[var(--btn-text-muted)] hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  onClick={() => setParsedWriters([...parsedWriters, ""])}
+                  className="w-full h-11 text-sm font-medium text-[var(--btn-text-muted)] border-2 border-dashed border-[var(--border-subtle)] rounded-xl hover:border-[var(--btn-text)]/30 hover:text-[var(--btn-text)] transition-all flex items-center justify-center gap-2"
+                >
+                  <Plus className="h-4 w-4" /> Add writer
+                </button>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={confirmVoiceEntry}
+                disabled={!parsedTitle.trim() || parsedWriters.length === 0 || parsedWriters.some(w => !w.trim())}
+                className="w-full h-12 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                Continue
+                <ChevronRight className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setEntryMode("voice")}
+                className="w-full h-12 text-sm font-medium rounded-xl text-[var(--btn-text-muted)] hover:bg-[var(--muted-wash)] transition-all"
+              >
+                Try again
+              </button>
+            </div>
           </div>
         </div>
       </div>
