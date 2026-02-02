@@ -210,70 +210,49 @@ function detectLyricSections(lyrics: string): string {
   return formatted.trim() || lyrics;
 }
 
-// Natural input parser for structured flow
+// ═══════════════════════════════════════════════════════════════════════════════
+// NATURAL LANGUAGE INPUT PARSER
+// ═══════════════════════════════════════════════════════════════════════════════
+
 function parseNaturalInput(input: string, currentData: SongData): Partial<SongData> {
   const updates: Partial<SongData> = {};
-  const lower = input.toLowerCase();
+  const lower = input.toLowerCase().trim();
   
-  // Check for public domain patterns
-  for (const { pattern, original, type } of PUBLIC_DOMAIN_PATTERNS) {
-    if (pattern.test(lower)) {
-      updates.type = type;
-      updates.originalWork = original;
-      if (!currentData.title) {
-        updates.title = toTitleCase(input.match(pattern)?.[0] || input);
-      }
-      return updates;
-    }
+  // Year detection
+  const yearMatch = input.match(/\b(19|20)\d{2}\b/);
+  if (yearMatch) {
+    updates.year = yearMatch[0];
   }
   
-  // Try to extract title
-  if (!currentData.title) {
-    const titleMatch = input.match(/(?:called|titled|it's|song is)\s+["']?(.+?)["']?(?:\s+by|\s*$)/i);
-    if (titleMatch) {
-      updates.title = toTitleCase(titleMatch[1].trim());
-    } else if (input.length < 100 && !lower.includes(" by ") && !lower.includes("written")) {
-      // Short input without writer keywords - likely just a title
-      updates.title = toTitleCase(input.trim());
-    }
-  }
-  
-  // Try to extract writers
-  if (lower.includes(" by ") || lower.includes("written")) {
+  // Title and writers detection
+  if (lower.includes(" by ") || lower.includes("written by")) {
     const parsed = parseVoiceLocal(input);
-    if (parsed.writers.length > 0) {
-      const writerCount = parsed.writers.length;
-      const splitEach = writerCount > 0 ? Math.floor(10000 / writerCount) / 100 : 0;
-      
-      updates.writers = parsed.writers.map((name, i) => {
-        const lowerName = name.toLowerCase();
-        const known = KNOWN_WRITERS[lowerName];
-        return {
-          id: crypto.randomUUID(),
-          name,
-          pro: known?.pro || "",
-          ipi: known?.ipi || "",
-          split: i === writerCount - 1 ? Math.round((100 - splitEach * (writerCount - 1)) * 100) / 100 : splitEach,
-          controlled: name === "(Your name)",
-          fromDatabase: !!known,
-        };
-      });
-    }
     if (parsed.title && !currentData.title) {
       updates.title = parsed.title;
     }
+    if (parsed.writers.length > 0 && currentData.writers.length === 0) {
+      const writers: Writer[] = parsed.writers.map((name, i) => {
+        const known = KNOWN_WRITERS[name.toLowerCase()];
+        return {
+          id: crypto.randomUUID(),
+          name: toTitleCase(name),
+          pro: known?.pro || "",
+          ipi: known?.ipi || "",
+          split: 0, // User will enter manually
+          controlled: false,
+          fromDatabase: !!known,
+        };
+      });
+      updates.writers = writers;
+    }
   }
   
-  // Check for year
-  const yearMatch = input.match(/\b(19\d{2}|20[0-2]\d)\b/);
-  if (yearMatch) {
-    updates.year = yearMatch[1];
-  }
-  
-  // Check for type keywords
-  if (lower.includes("instrumental")) {
+  // Song type detection
+  if (lower.includes("public domain")) {
+    updates.type = "public_domain";
+  } else if (lower.includes("instrumental")) {
     updates.type = "instrumental";
-  } else if (lower.includes("original") && !lower.includes("public domain")) {
+  } else if (lower.includes("original")) {
     updates.type = "original";
   }
   
@@ -400,16 +379,14 @@ export default function SongSubmitPage() {
   };
 
   const confirmVoiceEntry = async () => {
-    // Build writers array with equal splits
-    const writerCount = parsedWriters.length;
-    const splitEach = writerCount > 0 ? Math.floor(10000 / writerCount) / 100 : 0;
-    
-    const writers: Writer[] = parsedWriters.map((name, i) => ({
+    // Build writers array WITHOUT auto-calculated splits
+    // User will enter splits manually in the writers step
+    const writers: Writer[] = parsedWriters.map((name) => ({
       id: crypto.randomUUID(),
       name,
       pro: "",
       ipi: "",
-      split: i === writerCount - 1 ? Math.round((100 - splitEach * (writerCount - 1)) * 100) / 100 : splitEach,
+      split: 0, // No auto-calculation - user enters manually
       controlled: name === "(Your name)",
       fromDatabase: false,
     }));
@@ -443,7 +420,7 @@ export default function SongSubmitPage() {
     }));
     
     setEntryMode("flow");
-    setStep("lyrics");
+    setStep("writers"); // Go to writers step so user can enter splits
   };
 
   const toggleListening = () => {
@@ -630,42 +607,42 @@ export default function SongSubmitPage() {
               </div>
 
               <div className="space-y-4">
-                {/* Voice Option */}
-                <button
-                  onClick={() => setEntryMode("voice")}
-                  className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-[var(--btn-text)] text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <Mic className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-[var(--btn-text)] mb-1">Tell me about it</div>
-                      <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
-                        Say the song title and who wrote it.
-                      </p>
-                    </div>
+              {/* Voice Option */}
+              <button
+                onClick={() => setEntryMode("voice")}
+                className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[var(--btn-text)] text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <Mic className="h-6 w-6" />
                   </div>
-                </button>
+                  <div>
+                    <div className="font-semibold text-[var(--btn-text)] mb-1">Tell me about it</div>
+                    <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
+                      Say the song title and who wrote it.
+                    </p>
+                  </div>
+                </div>
+              </button>
 
-                {/* Manual Option */}
-                <button
-                  onClick={() => setEntryMode("flow")}
-                  className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-[var(--muted-wash)] text-[var(--btn-text)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <Edit3 className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
-                      <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
-                        Go step by step through the registration form.
-                      </p>
-                    </div>
+              {/* Manual Option */}
+              <button
+                onClick={() => setEntryMode("flow")}
+                className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[var(--muted-wash)] text-[var(--btn-text)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <Edit3 className="h-6 w-6" />
                   </div>
-                </button>
-              </div>
+                  <div>
+                    <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
+                    <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
+                      Go step by step through the registration form.
+                    </p>
+                  </div>
+                </div>
+              </button>
+            </div>
             </div>
           </div>
         </div>
