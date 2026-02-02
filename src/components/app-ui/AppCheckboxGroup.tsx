@@ -61,7 +61,7 @@ export function AppCheckboxGroup({
   return (
     <div className={cn("space-y-2", className)}>
       {label && (
-        <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
+        <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2 font-medium">
           {label}
           {required && <span className="text-destructive ml-1">*</span>}
         </label>
@@ -142,7 +142,7 @@ export function AppCheckboxGroup({
                 <div className="flex-1 min-w-0">
                   <span className="text-[13px] text-foreground">{option.label}</span>
                   {option.description && (
-                    <p className="text-[11px] text-muted-foreground mt-0.5">{option.description}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{option.description}</p>
                   )}
                 </div>
               </label>
@@ -152,7 +152,7 @@ export function AppCheckboxGroup({
       </div>
       
       {error && errorMessage && (
-        <p className="text-[11px] text-destructive mt-1.5">{errorMessage}</p>
+        <p className="text-xs text-destructive mt-1.5">{errorMessage}</p>
       )}
     </div>
   );

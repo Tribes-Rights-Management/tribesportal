@@ -66,12 +66,12 @@ export function AppSection({
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
             {title && (
-              <h2 className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mb-1">
+              <h2 className="text-xs uppercase tracking-wider font-medium text-muted-foreground mb-1">
                 {title}
               </h2>
             )}
             {description && (
-              <p className="text-[13px] text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 {description}
               </p>
             )}

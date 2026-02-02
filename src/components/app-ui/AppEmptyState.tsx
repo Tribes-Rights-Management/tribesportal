@@ -72,7 +72,7 @@ export function AppEmptyState({
       wrapper: "py-6",
       icon: "h-5 w-5",      // 20px (was h-6 = 24px)
       message: "text-[12px]",
-      description: "text-[11px]",
+      description: "text-xs",
     },
     md: {
       wrapper: "py-10",
