@@ -43,13 +43,15 @@ export function WorkspaceContextBar() {
   return (
     <div 
       className={cn(
-        "px-4 md:px-6 py-2.5 border-b",
+        "py-2.5 border-b",
         "flex items-center justify-between gap-3"
       )}
       style={{
         backgroundColor: 'var(--tribes-surface)',
         borderColor: 'var(--tribes-border)',
         minHeight: '44px', // Mobile tap target
+        paddingLeft: 20,
+        paddingRight: 20,
       }}
     >
       {/* Context confirmation */}

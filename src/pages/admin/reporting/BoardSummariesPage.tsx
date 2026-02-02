@@ -227,7 +227,7 @@ export default function BoardSummariesPage() {
   };
 
   return (
-    <div className="w-full max-w-[1040px] mx-auto px-4 sm:px-6 py-8">
+    <div className="w-full max-w-[1040px] mx-auto px-[20px] sm:px-6 py-8">
       <PageHeader 
         title="Board Summaries"
         description="Formal summaries for board decks, partners, and due diligence"

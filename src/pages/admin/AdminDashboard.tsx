@@ -78,7 +78,7 @@ export default function AdminDashboard() {
 
   return (
     <div 
-      className="min-h-full py-10 md:py-14 px-4 md:px-6"
+      className="min-h-full py-10 md:py-14 px-[20px] md:px-6"
       style={{ backgroundColor: 'var(--platform-canvas)' }}
     >
       {/* Main content card - elevated surface above page background */}

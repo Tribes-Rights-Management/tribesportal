@@ -69,8 +69,8 @@ export function PageContainer({
     // Runtime layout contract:
     // - Mobile: 20px (matches header alignment)
     // - Tablet/Desktop: 24px
-    // Using explicit pixel values to ensure alignment with header
-    const mobileBase = "20px";
+    // Uses CSS variable with fallback for consistency
+    const mobileBase = "var(--page-pad-x, 20px)";
     const desktopBase = padding === "compact" ? "12px" : "24px";
 
     // For mobile, use 20px; for desktop, use the standard padding
