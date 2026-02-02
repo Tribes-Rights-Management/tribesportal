@@ -48,7 +48,7 @@ export function TribesLogo({
   return (
     <button
       onClick={() => navigate(href)}
-      className={`flex items-center h-9 px-2 rounded-lg hover:bg-[var(--muted-wash)] transition-colors ${className}`}
+      className={`flex items-center h-9 rounded-lg hover:bg-[var(--muted-wash)] transition-colors ${className}`}
       aria-label="Go to workspaces"
     >
       {logoImage}
