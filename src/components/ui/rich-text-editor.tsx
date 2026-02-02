@@ -755,7 +755,7 @@ export function RichTextEditor({
     content,
     editorProps: {
       attributes: {
-        class: "max-w-none focus:outline-none min-h-[400px] p-4 text-[15px] leading-relaxed text-foreground [&_p]:my-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_ul]:my-3 [&_ol]:my-3 [&_li]:my-1 [&_a]:text-blue-500 [&_a]:underline",
+        class: "prose prose-sm max-w-none focus:outline-none min-h-[400px]",
       },
       handleDrop: (view, event, slice, moved) => {
         if (!moved && event.dataTransfer?.files?.length) {
