@@ -43,7 +43,7 @@ export const LAYOUT = {
    * Content area horizontal padding
    */
   CONTENT_PADDING_X: "24px", // px-6
-  CONTENT_PADDING_X_MOBILE: "16px", // px-4
+  CONTENT_PADDING_X_MOBILE: "20px", // p-[20px]
   
   /**
    * Maximum content width for centered layouts (e.g., workspaces page)
