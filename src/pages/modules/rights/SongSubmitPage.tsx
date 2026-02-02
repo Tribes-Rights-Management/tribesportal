@@ -100,9 +100,9 @@ const currentYear = new Date().getFullYear();
 const YEAR_OPTIONS = Array.from({ length: currentYear - 1899 }, (_, i) => String(currentYear - i));
 
 // Institutional input styles using design tokens
-const inputBase = "w-full h-10 px-3 text-[13px] bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-[var(--app-radius-sm)] placeholder:text-[var(--btn-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 focus:border-[var(--app-focus)]/40 transition-all duration-[280ms] ease-in-out";
+const inputBase = "w-full h-11 px-3.5 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-[var(--app-radius-sm)] placeholder:text-[var(--btn-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 focus:border-[var(--app-focus)]/40 transition-all duration-[280ms] ease-in-out";
 const selectBase = cn(inputBase, "appearance-none cursor-pointer pr-10");
-const textareaBase = "w-full px-3 py-2.5 text-[13px] bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-[var(--app-radius-sm)] placeholder:text-[var(--btn-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 focus:border-[var(--app-focus)]/40 transition-all duration-[280ms] ease-in-out resize-y";
+const textareaBase = "w-full px-3.5 py-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-[var(--app-radius-sm)] placeholder:text-[var(--btn-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 focus:border-[var(--app-focus)]/40 transition-all duration-[280ms] ease-in-out resize-y";
 
 export default function SongSubmitPage() {
   const navigate = useNavigate();
@@ -220,11 +220,11 @@ export default function SongSubmitPage() {
           onClick={() => navigate("/rights/catalogue")} 
           className="p-2 -ml-2 rounded-[var(--app-radius-sm)] hover:bg-[var(--muted-wash)] transition-all duration-[280ms] ease-in-out text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-5 w-5" />
         </button>
         <div className="ml-3">
-          <h1 className="text-[14px] font-semibold text-[var(--btn-text)] tracking-[-0.01em]">Submit Song</h1>
-          <p className="text-[11px] text-[var(--btn-text-muted)]">Add a new song to your catalogue</p>
+          <h1 className="text-lg font-semibold text-[var(--btn-text)] tracking-[-0.01em]">Submit Song</h1>
+          <p className="text-[13px] text-[var(--btn-text-muted)]">Add a new song to your catalogue</p>
         </div>
       </header>
 
@@ -232,9 +232,9 @@ export default function SongSubmitPage() {
       <div className="flex-1 flex min-h-0">
         {/* Desktop: Vertical Step Navigation */}
         {!isMobile && (
-          <aside className="w-56 shrink-0 border-r border-[var(--border-subtle)] bg-[var(--sidebar-bg)] overflow-y-auto">
+          <aside className="w-60 shrink-0 border-r border-[var(--border-subtle)] bg-[var(--sidebar-bg)] overflow-y-auto">
             <div className="p-4">
-              <div className="text-[10px] font-medium text-[var(--btn-text-muted)] uppercase tracking-[0.05em] mb-4 px-3">
+              <div className="text-[11px] font-medium text-[var(--btn-text-muted)] uppercase tracking-[0.05em] mb-4 px-3">
                 Progress
               </div>
               <nav className="space-y-1">
@@ -251,21 +251,21 @@ export default function SongSubmitPage() {
                     )}
                   >
                     <div className={cn(
-                      "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-semibold shrink-0 mt-0.5 transition-all duration-[280ms] ease-in-out",
+                      "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold shrink-0 mt-0.5 transition-all duration-[280ms] ease-in-out",
                       isStepComplete(step.number) && "bg-[var(--btn-text)] text-white",
                       isStepCurrent(step.number) && !isStepComplete(step.number) && "bg-[var(--btn-text)] text-white",
                       !isStepComplete(step.number) && !isStepCurrent(step.number) && "border border-[var(--border-strong)] text-[var(--btn-text-muted)] bg-transparent"
                     )}>
-                      {isStepComplete(step.number) ? <Check className="h-3 w-3" strokeWidth={2.5} /> : step.number}
+                      {isStepComplete(step.number) ? <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> : step.number}
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className={cn(
-                        "text-[12px] font-medium leading-tight",
+                        "text-[13px] font-medium leading-tight",
                         isStepCurrent(step.number) ? "text-[var(--btn-text)]" : "text-[var(--btn-text-muted)]"
                       )}>
                         {step.title}
                       </div>
-                      <div className="text-[10px] text-[var(--btn-text-muted)] mt-0.5 leading-tight">
+                      <div className="text-[11px] text-[var(--btn-text-muted)] mt-0.5 leading-tight">
                         {step.description}
                       </div>
                     </div>
@@ -284,12 +284,12 @@ export default function SongSubmitPage() {
               className="w-full px-4 py-3 bg-[var(--sidebar-bg)] border-b border-[var(--border-subtle)] flex items-center justify-between"
             >
               <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-[var(--btn-text)] text-white flex items-center justify-center text-[10px] font-semibold">
+                <div className="w-6 h-6 rounded-full bg-[var(--btn-text)] text-white flex items-center justify-center text-[11px] font-semibold">
                   {currentStep}
                 </div>
                 <div className="text-left">
-                  <div className="text-[12px] font-medium text-[var(--btn-text)]">{STEPS[currentStep - 1].title}</div>
-                  <div className="text-[10px] text-[var(--btn-text-muted)]">Step {currentStep} of {STEPS.length}</div>
+                  <div className="text-[13px] font-medium text-[var(--btn-text)]">{STEPS[currentStep - 1].title}</div>
+                  <div className="text-[11px] text-[var(--btn-text-muted)]">Step {currentStep} of {STEPS.length}</div>
                 </div>
               </div>
               <ChevronDown className={cn("h-4 w-4 text-[var(--btn-text-muted)] transition-transform duration-[280ms] ease-in-out", mobileNavOpen && "rotate-180")} />
@@ -309,15 +309,15 @@ export default function SongSubmitPage() {
                     )}
                   >
                     <div className={cn(
-                      "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-semibold",
+                      "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold",
                       (isStepComplete(step.number) || isStepCurrent(step.number)) && "bg-[var(--btn-text)] text-white",
                       !isStepComplete(step.number) && !isStepCurrent(step.number) && "border border-[var(--border-strong)] text-[var(--btn-text-muted)]"
                     )}>
-                      {isStepComplete(step.number) ? <Check className="h-3 w-3" strokeWidth={2.5} /> : step.number}
+                      {isStepComplete(step.number) ? <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> : step.number}
                     </div>
                     <div className="text-left flex-1">
-                      <div className="text-[12px] font-medium text-[var(--btn-text)]">{step.title}</div>
-                      <div className="text-[10px] text-[var(--btn-text-muted)]">{step.description}</div>
+                      <div className="text-[13px] font-medium text-[var(--btn-text)]">{step.title}</div>
+                      <div className="text-[11px] text-[var(--btn-text-muted)]">{step.description}</div>
                     </div>
                   </button>
                 ))}
@@ -331,8 +331,8 @@ export default function SongSubmitPage() {
           <div className="p-4 sm:p-6 max-w-2xl">
             {/* Step Title */}
             <div className="mb-6">
-              <h2 className="text-[14px] font-semibold text-[var(--btn-text)] tracking-[-0.01em]">{STEPS[currentStep - 1].title}</h2>
-              <p className="text-[11px] text-[var(--btn-text-muted)] mt-0.5">{STEPS[currentStep - 1].description}</p>
+              <h2 className="text-base font-semibold text-[var(--btn-text)] tracking-[-0.01em]">{STEPS[currentStep - 1].title}</h2>
+              <p className="text-[13px] text-[var(--btn-text-muted)] mt-0.5">{STEPS[currentStep - 1].description}</p>
             </div>
 
             {/* Form Card */}
@@ -350,7 +350,7 @@ export default function SongSubmitPage() {
                 onClick={handleBack}
                 disabled={currentStep === 1}
                 className={cn(
-                  "px-4 py-2 text-[12px] font-medium rounded-[var(--app-radius-sm)] border border-[var(--border-subtle)] transition-all duration-[280ms] ease-in-out",
+                  "px-4 py-2.5 text-[13px] font-medium rounded-[var(--app-radius-sm)] border border-[var(--border-subtle)] transition-all duration-[280ms] ease-in-out",
                   currentStep === 1 
                     ? "opacity-40 cursor-not-allowed text-[var(--btn-text-muted)]" 
                     : "text-[var(--btn-text)] hover:bg-[var(--muted-wash)]"
@@ -361,7 +361,7 @@ export default function SongSubmitPage() {
               {currentStep < STEPS.length ? (
                 <button
                   onClick={handleNext}
-                  className="px-4 py-2 text-[12px] font-medium rounded-[var(--app-radius-sm)] bg-[var(--btn-text)] text-white hover:opacity-90 transition-all duration-[280ms] ease-in-out"
+                  className="px-4 py-2.5 text-[13px] font-medium rounded-[var(--app-radius-sm)] bg-[var(--btn-text)] text-white hover:opacity-90 transition-all duration-[280ms] ease-in-out"
                 >
                   Continue
                 </button>
@@ -369,9 +369,9 @@ export default function SongSubmitPage() {
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="px-4 py-2 text-[12px] font-medium rounded-[var(--app-radius-sm)] bg-[var(--btn-text)] text-white hover:opacity-90 transition-all duration-[280ms] ease-in-out flex items-center gap-2 disabled:opacity-50"
+                  className="px-4 py-2.5 text-[13px] font-medium rounded-[var(--app-radius-sm)] bg-[var(--btn-text)] text-white hover:opacity-90 transition-all duration-[280ms] ease-in-out flex items-center gap-2 disabled:opacity-50"
                 >
-                  <Save className="h-3.5 w-3.5" />
+                  <Save className="h-4 w-4" />
                   {isSubmitting ? "Submitting..." : "Submit Song"}
                 </button>
               )}
@@ -391,8 +391,8 @@ function FormSection({ title, description, children, className }: { title: strin
   return (
     <div className={cn("space-y-4", className)}>
       <div>
-        <h3 className="text-[12px] font-semibold text-[var(--btn-text)]">{title}</h3>
-        {description && <p className="text-[10px] text-[var(--btn-text-muted)] mt-0.5">{description}</p>}
+        <h3 className="text-sm font-semibold text-[var(--btn-text)]">{title}</h3>
+        {description && <p className="text-[13px] text-[var(--btn-text-muted)] mt-0.5">{description}</p>}
       </div>
       {children}
     </div>
@@ -409,14 +409,14 @@ function Step1SongDetails({ formData, updateField, writers, addWriter, removeWri
       <FormSection title="Basic Information" description="Enter the primary details for this song">
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <Label className="text-[11px] text-[var(--btn-text-muted)]">Title <span className="text-red-500">*</span></Label>
+            <Label className="text-[13px] text-[var(--btn-text-muted)]">Title <span className="text-red-500">*</span></Label>
             <input type="text" value={formData.title} onChange={(e) => updateField("title", e.target.value)} placeholder="Enter song title" className={inputBase} />
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Checkbox id="hasAlternateTitle" checked={formData.hasAlternateTitle} onCheckedChange={(checked) => updateField("hasAlternateTitle", !!checked)} />
-              <Label htmlFor="hasAlternateTitle" className="text-[12px] cursor-pointer text-[var(--btn-text)]">This song has an alternate title</Label>
+              <Label htmlFor="hasAlternateTitle" className="text-sm cursor-pointer text-[var(--btn-text)]">This song has an alternate title</Label>
             </div>
             {formData.hasAlternateTitle && (
               <input type="text" value={formData.alternateTitle} onChange={(e) => updateField("alternateTitle", e.target.value)} placeholder="Enter alternate title" className={inputBase} />
@@ -425,13 +425,13 @@ function Step1SongDetails({ formData, updateField, writers, addWriter, removeWri
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-[11px] text-[var(--btn-text-muted)]">Language</Label>
+              <Label className="text-[13px] text-[var(--btn-text-muted)]">Language</Label>
               <select value={formData.language} onChange={(e) => updateField("language", e.target.value)} className={selectBase}>
                 {LANGUAGES.map(lang => <option key={lang} value={lang}>{lang}</option>)}
               </select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[11px] text-[var(--btn-text-muted)]">Song Type</Label>
+              <Label className="text-[13px] text-[var(--btn-text-muted)]">Song Type</Label>
               <select value={formData.songType} onChange={(e) => updateField("songType", e.target.value as SongFormData["songType"])} className={selectBase}>
                 {SONG_TYPES.map(type => <option key={type.value} value={type.value}>{type.label}</option>)}
               </select>
@@ -440,7 +440,7 @@ function Step1SongDetails({ formData, updateField, writers, addWriter, removeWri
 
           {["public_domain", "derivative", "medley"].includes(formData.songType) && (
             <div className="space-y-1.5">
-              <Label className="text-[11px] text-[var(--btn-text-muted)]">
+              <Label className="text-[13px] text-[var(--btn-text-muted)]">
                 {formData.songType === "public_domain" && "Original Public Domain Title"}
                 {formData.songType === "derivative" && "Original Composition Title"}
                 {formData.songType === "medley" && "Other Copyright Title"}
@@ -457,7 +457,7 @@ function Step1SongDetails({ formData, updateField, writers, addWriter, removeWri
       <FormSection title="Release Information" description="Publication and release details">
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-[11px] text-[var(--btn-text-muted)]">Has this song been recorded and released?</Label>
+            <Label className="text-[13px] text-[var(--btn-text-muted)]">Has this song been recorded and released?</Label>
             <div className="flex flex-wrap gap-3">
               {[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "youtube_only", label: "YouTube Only" }].map(option => (
                 <label key={option.value} className="flex items-center gap-2 cursor-pointer group">
@@ -468,14 +468,14 @@ function Step1SongDetails({ formData, updateField, writers, addWriter, removeWri
                     {formData.hasBeenReleased === option.value && <div className="w-2 h-2 rounded-full bg-[var(--btn-text)]" />}
                   </div>
                   <input type="radio" name="hasBeenReleased" value={option.value} checked={formData.hasBeenReleased === option.value} onChange={(e) => updateField("hasBeenReleased", e.target.value as SongFormData["hasBeenReleased"])} className="sr-only" />
-                  <span className="text-[12px] text-[var(--btn-text)]">{option.label}</span>
+                  <span className="text-sm text-[var(--btn-text)]">{option.label}</span>
                 </label>
               ))}
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-[11px] text-[var(--btn-text-muted)]">
+            <Label className="text-[13px] text-[var(--btn-text-muted)]">
               {formData.hasBeenReleased !== "no" ? "First Publication Year" : "Song Creation Year"} <span className="text-red-500">*</span>
             </Label>
             <select value={formData.hasBeenReleased !== "no" ? formData.publicationYear : formData.creationYear} onChange={(e) => updateField(formData.hasBeenReleased !== "no" ? "publicationYear" : "creationYear", e.target.value)} className={cn(selectBase, "max-w-[180px]")}>
@@ -493,7 +493,7 @@ function Step1SongDetails({ formData, updateField, writers, addWriter, removeWri
           {writers.map((writer, index) => (
             <div key={writer.id} className="p-4 bg-[var(--muted-wash)] rounded-[var(--app-radius-sm)] space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-semibold text-[var(--btn-text-muted)] uppercase tracking-[0.03em]">Writer {index + 1}</span>
+                <span className="text-[11px] font-semibold text-[var(--btn-text-muted)] uppercase tracking-[0.03em]">Writer {index + 1}</span>
                 {writers.length > 1 && (
                   <button onClick={() => removeWriter(writer.id)} className="p-1 rounded hover:bg-red-50 text-[var(--btn-text-muted)] hover:text-red-600 transition-colors duration-[280ms] ease-in-out">
                     <Trash2 className="h-3.5 w-3.5" />
@@ -502,23 +502,23 @@ function Step1SongDetails({ formData, updateField, writers, addWriter, removeWri
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label className="text-[10px] text-[var(--btn-text-muted)]">Name <span className="text-red-500">*</span></Label>
-                  <input type="text" value={writer.name} onChange={(e) => updateWriter(writer.id, { name: e.target.value })} placeholder="Writer name" className={cn(inputBase, "h-9 text-[12px]")} />
+                  <Label className="text-[11px] text-[var(--btn-text-muted)]">Name <span className="text-red-500">*</span></Label>
+                  <input type="text" value={writer.name} onChange={(e) => updateWriter(writer.id, { name: e.target.value })} placeholder="Writer name" className={cn(inputBase, "h-10 text-[13px]")} />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-[10px] text-[var(--btn-text-muted)]">PRO</Label>
-                  <select value={writer.pro} onChange={(e) => updateWriter(writer.id, { pro: e.target.value })} className={cn(selectBase, "h-9 text-[12px]")}>
+                  <Label className="text-[11px] text-[var(--btn-text-muted)]">PRO</Label>
+                  <select value={writer.pro} onChange={(e) => updateWriter(writer.id, { pro: e.target.value })} className={cn(selectBase, "h-10 text-[13px]")}>
                     <option value="">Select PRO</option>
                     {PRO_OPTIONS.map(pro => <option key={pro} value={pro}>{pro}</option>)}
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-[10px] text-[var(--btn-text-muted)]">Split % <span className="text-red-500">*</span></Label>
-                  <input type="number" min="0" max="100" step="0.01" value={writer.split} onChange={(e) => updateWriter(writer.id, { split: e.target.value })} placeholder="50.00" className={cn(inputBase, "h-9 text-[12px]")} />
+                  <Label className="text-[11px] text-[var(--btn-text-muted)]">Split % <span className="text-red-500">*</span></Label>
+                  <input type="number" min="0" max="100" step="0.01" value={writer.split} onChange={(e) => updateWriter(writer.id, { split: e.target.value })} placeholder="50.00" className={cn(inputBase, "h-10 text-[13px]")} />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-[10px] text-[var(--btn-text-muted)]">Credit</Label>
-                  <select value={writer.credit} onChange={(e) => updateWriter(writer.id, { credit: e.target.value as Writer["credit"] })} className={cn(selectBase, "h-9 text-[12px]")}>
+                  <Label className="text-[11px] text-[var(--btn-text-muted)]">Credit</Label>
+                  <select value={writer.credit} onChange={(e) => updateWriter(writer.id, { credit: e.target.value as Writer["credit"] })} className={cn(selectBase, "h-10 text-[13px]")}>
                     <option value="both">Lyrics & Music</option>
                     <option value="lyrics">Lyrics Only</option>
                     <option value="music">Music Only</option>
@@ -526,25 +526,25 @@ function Step1SongDetails({ formData, updateField, writers, addWriter, removeWri
                 </div>
               </div>
               <div className="flex items-center gap-2 pt-1">
-                <Checkbox id={`control-${writer.id}`} checked={writer.hasControl} onCheckedChange={(checked) => updateWriter(writer.id, { hasControl: !!checked })} />
-                <Label htmlFor={`control-${writer.id}`} className="text-[11px] flex items-center gap-1 cursor-pointer text-[var(--btn-text)]">
+                <Checkbox id={`control-${writer.id}`} checked={writer.hasControl} onCheckedChange={(checked) => updateWriter(writer.id, { hasControl: !!checked})} />
+                <Label htmlFor={`control-${writer.id}`} className="text-sm flex items-center gap-1 cursor-pointer text-[var(--btn-text)]">
                   You control the rights for this songwriter
-                  <TooltipProvider><Tooltip><TooltipTrigger><HelpCircle className="h-3 w-3 text-[var(--btn-text-muted)]" /></TooltipTrigger><TooltipContent side="top"><p className="text-[11px] max-w-[180px]">Do you control the publishing rights for this songwriter?</p></TooltipContent></Tooltip></TooltipProvider>
+                  <TooltipProvider><Tooltip><TooltipTrigger><HelpCircle className="h-3.5 w-3.5 text-[var(--btn-text-muted)]" /></TooltipTrigger><TooltipContent side="top"><p className="text-[13px] max-w-[200px]">Do you control the publishing rights for this songwriter?</p></TooltipContent></Tooltip></TooltipProvider>
                 </Label>
               </div>
             </div>
           ))}
 
           <div className="flex items-center justify-between pt-2">
-            <button onClick={addWriter} className="text-[11px] font-medium text-[var(--btn-text)] hover:text-[var(--btn-text-muted)] flex items-center gap-1 transition-colors duration-[280ms] ease-in-out">
-              <Plus className="h-3.5 w-3.5" /> Add Writer
+            <button onClick={addWriter} className="text-[13px] font-medium text-[var(--btn-text)] hover:text-[var(--btn-text-muted)] flex items-center gap-1 transition-colors duration-[280ms] ease-in-out">
+              <Plus className="h-4 w-4" /> Add Writer
             </button>
-            <span className={cn("text-[11px] font-medium tabular-nums", Math.abs(writers.reduce((sum, w) => sum + (parseFloat(w.split) || 0), 0) - 100) < 0.01 ? "text-green-600" : "text-red-600")}>
+            <span className={cn("text-[13px] font-medium tabular-nums", Math.abs(writers.reduce((sum, w) => sum + (parseFloat(w.split) || 0), 0) - 100) < 0.01 ? "text-green-600" : "text-red-600")}>
               Total: {writers.reduce((sum, w) => sum + (parseFloat(w.split) || 0), 0).toFixed(2)}%
             </span>
           </div>
           
-          <p className="text-[10px] text-[var(--btn-text-muted)] leading-relaxed">
+          <p className="text-[11px] text-[var(--btn-text-muted)] leading-relaxed">
             Note: You can only register the portion of the song you control. The remaining portion will remain unaffiliated until claimed by other owner(s).
           </p>
         </div>
@@ -565,7 +565,7 @@ function Step2Lyrics({ formData, updateField, lyricSections, addLyricSection, re
           {[{ value: "full", label: "Paste all at once" }, { value: "sections", label: "Add by section" }].map(option => (
             <button key={option.value} onClick={() => updateField("lyricsEntryMode", option.value as "full" | "sections")}
               className={cn(
-                "px-3 py-1.5 text-[11px] font-medium rounded-[var(--app-radius-sm)] border transition-all duration-[280ms] ease-in-out",
+                "px-3 py-1.5 text-[13px] font-medium rounded-[var(--app-radius-sm)] border transition-all duration-[280ms] ease-in-out",
                 formData.lyricsEntryMode === option.value 
                   ? "bg-[var(--btn-text)] text-white border-[var(--btn-text)]" 
                   : "bg-transparent text-[var(--btn-text-muted)] border-[var(--border-subtle)] hover:border-[var(--border-strong)]"
@@ -585,9 +585,9 @@ function Step2Lyrics({ formData, updateField, lyricSections, addLyricSection, re
           <div className="space-y-3">
             {lyricSections.length === 0 ? (
               <div className="py-8 text-center border-2 border-dashed border-[var(--border-subtle)] rounded-[var(--app-radius)]">
-                <p className="text-[11px] text-[var(--btn-text-muted)] mb-2">No sections added yet</p>
-                <button onClick={addLyricSection} className="text-[11px] font-medium text-[var(--btn-text)] hover:text-[var(--btn-text-muted)] flex items-center gap-1 mx-auto transition-colors duration-[280ms] ease-in-out">
-                  <Plus className="h-3.5 w-3.5" /> Add First Section
+                <p className="text-[13px] text-[var(--btn-text-muted)] mb-2">No sections added yet</p>
+                <button onClick={addLyricSection} className="text-[13px] font-medium text-[var(--btn-text)] hover:text-[var(--btn-text-muted)] flex items-center gap-1 mx-auto transition-colors duration-[280ms] ease-in-out">
+                  <Plus className="h-4 w-4" /> Add First Section
                 </button>
               </div>
             ) : (
@@ -595,7 +595,7 @@ function Step2Lyrics({ formData, updateField, lyricSections, addLyricSection, re
                 {lyricSections.map(section => (
                   <div key={section.id} className="p-4 bg-[var(--muted-wash)] rounded-[var(--app-radius-sm)] space-y-3">
                     <div className="flex items-center justify-between">
-                      <select value={section.type} onChange={(e) => updateLyricSection(section.id, { type: e.target.value as LyricSection["type"] })} className={cn(selectBase, "h-8 w-28 text-[11px]")}>
+                      <select value={section.type} onChange={(e) => updateLyricSection(section.id, { type: e.target.value as LyricSection["type"] })} className={cn(selectBase, "h-9 w-32 text-[13px]")}>
                         {LYRIC_SECTION_TYPES.map(type => <option key={type.value} value={type.value}>{type.label}</option>)}
                       </select>
                       <button onClick={() => removeLyricSection(section.id)} className="p-1 rounded hover:bg-red-50 text-[var(--btn-text-muted)] hover:text-red-600 transition-colors duration-[280ms] ease-in-out">
@@ -605,8 +605,8 @@ function Step2Lyrics({ formData, updateField, lyricSections, addLyricSection, re
                     <textarea value={section.content} onChange={(e) => updateLyricSection(section.id, { content: e.target.value })} placeholder={`Enter ${section.type} lyrics...`} rows={4} className={textareaBase} />
                   </div>
                 ))}
-                <button onClick={addLyricSection} className="text-[11px] font-medium text-[var(--btn-text)] hover:text-[var(--btn-text-muted)] flex items-center gap-1 transition-colors duration-[280ms] ease-in-out">
-                  <Plus className="h-3.5 w-3.5" /> Add Section
+                <button onClick={addLyricSection} className="text-[13px] font-medium text-[var(--btn-text)] hover:text-[var(--btn-text-muted)] flex items-center gap-1 transition-colors duration-[280ms] ease-in-out">
+                  <Plus className="h-4 w-4" /> Add Section
                 </button>
               </>
             )}
@@ -618,7 +618,7 @@ function Step2Lyrics({ formData, updateField, lyricSections, addLyricSection, re
 
       <div className="flex items-start gap-3">
         <Checkbox id="lyricsConfirmed" checked={formData.lyricsConfirmed} onCheckedChange={(checked) => updateField("lyricsConfirmed", !!checked)} className="mt-0.5" />
-        <Label htmlFor="lyricsConfirmed" className="text-[11px] leading-relaxed cursor-pointer text-[var(--btn-text)]">
+        <Label htmlFor="lyricsConfirmed" className="text-sm leading-relaxed cursor-pointer text-[var(--btn-text)]">
           I confirm the accuracy of the lyrics entered and that the lyrics are original and do not infringe on the rights of any other copyright holder. <span className="text-red-500">*</span>
         </Label>
       </div>
@@ -638,7 +638,7 @@ function Step3Chords({ formData, updateField }: { formData: SongFormData; update
           {[{ value: true, label: "Yes" }, { value: false, label: "No" }].map(option => (
             <button key={String(option.value)} onClick={() => updateField("hasChordChart", option.value)}
               className={cn(
-                "px-4 py-1.5 text-[11px] font-medium rounded-[var(--app-radius-sm)] border transition-all duration-[280ms] ease-in-out",
+                "px-4 py-1.5 text-[13px] font-medium rounded-[var(--app-radius-sm)] border transition-all duration-[280ms] ease-in-out",
                 formData.hasChordChart === option.value 
                   ? "bg-[var(--btn-text)] text-white border-[var(--btn-text)]" 
                   : "bg-transparent text-[var(--btn-text-muted)] border-[var(--border-subtle)] hover:border-[var(--border-strong)]"
@@ -653,19 +653,19 @@ function Step3Chords({ formData, updateField }: { formData: SongFormData; update
         <FormSection title="Upload Chord Chart">
           <div className="border-2 border-dashed border-[var(--border-subtle)] rounded-[var(--app-radius)] p-6 text-center hover:border-[var(--border-strong)] transition-colors duration-[280ms] ease-in-out">
             <Upload className="h-6 w-6 mx-auto mb-2 text-[var(--btn-text-muted)]" />
-            <p className="text-[11px] text-[var(--btn-text-muted)] mb-3">Drag and drop or click to browse</p>
+            <p className="text-[13px] text-[var(--btn-text-muted)] mb-3">Drag and drop or click to browse</p>
             <input type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" onChange={(e) => { const file = e.target.files?.[0]; if (file) updateField("chordChartFile", file); }} className="hidden" id="chordChartUpload" />
-            <button onClick={() => document.getElementById("chordChartUpload")?.click()} className="px-3 py-1.5 text-[11px] font-medium rounded-[var(--app-radius-sm)] border border-[var(--border-subtle)] hover:bg-[var(--muted-wash)] transition-colors duration-[280ms] ease-in-out">
+            <button onClick={() => document.getElementById("chordChartUpload")?.click()} className="px-3 py-1.5 text-[13px] font-medium rounded-[var(--app-radius-sm)] border border-[var(--border-subtle)] hover:bg-[var(--muted-wash)] transition-colors duration-[280ms] ease-in-out">
               Browse Files
             </button>
-            {formData.chordChartFile && <p className="text-[11px] text-green-600 mt-3 font-medium">{formData.chordChartFile.name}</p>}
+            {formData.chordChartFile && <p className="text-[13px] text-green-600 mt-3 font-medium">{formData.chordChartFile.name}</p>}
           </div>
         </FormSection>
       ) : (
         <div className="p-4 bg-[var(--warning-bg)] border border-[var(--warning-border)] rounded-[var(--app-radius-sm)]">
           <div className="flex items-start gap-3">
             <Checkbox id="chordChartAcknowledged" checked={formData.chordChartAcknowledged} onCheckedChange={(checked) => updateField("chordChartAcknowledged", !!checked)} className="mt-0.5" />
-            <Label htmlFor="chordChartAcknowledged" className="text-[11px] leading-relaxed cursor-pointer text-[var(--warning-text)]">
+            <Label htmlFor="chordChartAcknowledged" className="text-sm leading-relaxed cursor-pointer text-[var(--warning-text)]">
               I understand that chord charts are required to properly license and monetize songs at CCLI and that I am not supplying a chord chart at this time. <span className="text-red-500">*</span>
             </Label>
           </div>
@@ -687,7 +687,7 @@ function Step4Copyright({ formData, updateField }: { formData: SongFormData; upd
           {[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "unknown", label: "I Don't Know" }].map(option => (
             <button key={option.value} onClick={() => updateField("copyrightStatus", option.value as SongFormData["copyrightStatus"])}
               className={cn(
-                "px-3 py-1.5 text-[11px] font-medium rounded-[var(--app-radius-sm)] border transition-all duration-[280ms] ease-in-out",
+                "px-3 py-1.5 text-[13px] font-medium rounded-[var(--app-radius-sm)] border transition-all duration-[280ms] ease-in-out",
                 formData.copyrightStatus === option.value 
                   ? "bg-[var(--btn-text)] text-white border-[var(--btn-text)]" 
                   : "bg-transparent text-[var(--btn-text-muted)] border-[var(--border-subtle)] hover:border-[var(--border-strong)]"
@@ -701,12 +701,12 @@ function Step4Copyright({ formData, updateField }: { formData: SongFormData; upd
       {formData.copyrightStatus === "no" && (
         <FormSection title="Copyright Filing Service">
           <div className="p-4 bg-[var(--muted-wash)] rounded-[var(--app-radius-sm)] space-y-3">
-            <p className="text-[11px] text-[var(--btn-text-muted)]">Would you like Tribes Rights Management to file this song for copyright protection on your behalf?</p>
+            <p className="text-[13px] text-[var(--btn-text-muted)]">Would you like Tribes Rights Management to file this song for copyright protection on your behalf?</p>
             <div className="flex gap-2">
               {[{ value: true, label: "Yes" }, { value: false, label: "No" }].map(option => (
                 <button key={String(option.value)} onClick={() => updateField("wantsCopyrightFiling", option.value)}
                   className={cn(
-                    "px-3 py-1.5 text-[11px] font-medium rounded-[var(--app-radius-sm)] border transition-all duration-[280ms] ease-in-out",
+                    "px-3 py-1.5 text-[13px] font-medium rounded-[var(--app-radius-sm)] border transition-all duration-[280ms] ease-in-out",
                     formData.wantsCopyrightFiling === option.value 
                       ? "bg-[var(--btn-text)] text-white border-[var(--btn-text)]" 
                       : "bg-transparent text-[var(--btn-text-muted)] border-[var(--border-subtle)] hover:border-[var(--border-strong)]"
@@ -715,7 +715,7 @@ function Step4Copyright({ formData, updateField }: { formData: SongFormData; upd
                 </button>
               ))}
             </div>
-            <p className="text-[10px] text-[var(--btn-text-muted)]">Cost and administration fees may apply. Please refer to your administration agreement.</p>
+            <p className="text-[11px] text-[var(--btn-text-muted)]">Cost and administration fees may apply. Please refer to your administration agreement.</p>
           </div>
         </FormSection>
       )}
@@ -732,13 +732,13 @@ function Step5Agreement({ formData, updateField }: { formData: SongFormData; upd
     <div className="space-y-6">
       <FormSection title="Submission Summary">
         <div className="p-4 bg-[var(--muted-wash)] rounded-[var(--app-radius-sm)]">
-          <dl className="space-y-2 text-[12px]">
-            <div className="flex"><dt className="text-[var(--btn-text-muted)] w-24 shrink-0">Title</dt><dd className="font-medium text-[var(--btn-text)]">{formData.title || "—"}</dd></div>
-            <div className="flex"><dt className="text-[var(--btn-text-muted)] w-24 shrink-0">Writers</dt><dd className="font-medium text-[var(--btn-text)]">{formData.writers.map(w => w.name).filter(Boolean).join(", ") || "—"}</dd></div>
-            <div className="flex"><dt className="text-[var(--btn-text-muted)] w-24 shrink-0">Language</dt><dd className="font-medium text-[var(--btn-text)]">{formData.language}</dd></div>
-            <div className="flex"><dt className="text-[var(--btn-text-muted)] w-24 shrink-0">Song Type</dt><dd className="font-medium text-[var(--btn-text)]">{SONG_TYPES.find(t => t.value === formData.songType)?.label}</dd></div>
-            <div className="flex"><dt className="text-[var(--btn-text-muted)] w-24 shrink-0">Chord Chart</dt><dd className="font-medium text-[var(--btn-text)]">{formData.hasChordChart ? "Provided" : "Not provided"}</dd></div>
-            <div className="flex"><dt className="text-[var(--btn-text-muted)] w-24 shrink-0">Copyright</dt><dd className="font-medium text-[var(--btn-text)]">{formData.copyrightStatus === "yes" ? "Filed" : formData.copyrightStatus === "no" ? "Not filed" : "Unknown"}</dd></div>
+          <dl className="space-y-2 text-sm">
+            <div className="flex"><dt className="text-[var(--btn-text-muted)] w-28 shrink-0">Title</dt><dd className="font-medium text-[var(--btn-text)]">{formData.title || "—"}</dd></div>
+            <div className="flex"><dt className="text-[var(--btn-text-muted)] w-28 shrink-0">Writers</dt><dd className="font-medium text-[var(--btn-text)]">{formData.writers.map(w => w.name).filter(Boolean).join(", ") || "—"}</dd></div>
+            <div className="flex"><dt className="text-[var(--btn-text-muted)] w-28 shrink-0">Language</dt><dd className="font-medium text-[var(--btn-text)]">{formData.language}</dd></div>
+            <div className="flex"><dt className="text-[var(--btn-text-muted)] w-28 shrink-0">Song Type</dt><dd className="font-medium text-[var(--btn-text)]">{SONG_TYPES.find(t => t.value === formData.songType)?.label}</dd></div>
+            <div className="flex"><dt className="text-[var(--btn-text-muted)] w-28 shrink-0">Chord Chart</dt><dd className="font-medium text-[var(--btn-text)]">{formData.hasChordChart ? "Provided" : "Not provided"}</dd></div>
+            <div className="flex"><dt className="text-[var(--btn-text-muted)] w-28 shrink-0">Copyright</dt><dd className="font-medium text-[var(--btn-text)]">{formData.copyrightStatus === "yes" ? "Filed" : formData.copyrightStatus === "no" ? "Not filed" : "Unknown"}</dd></div>
           </dl>
         </div>
       </FormSection>
@@ -747,13 +747,13 @@ function Step5Agreement({ formData, updateField }: { formData: SongFormData; upd
 
       <FormSection title="Terms & Conditions">
         <div className="p-4 bg-[var(--muted-wash)] rounded-[var(--app-radius-sm)]">
-          <p className="text-[11px] text-[var(--btn-text-muted)] mb-4 leading-relaxed">
+          <p className="text-[13px] text-[var(--btn-text-muted)] mb-4 leading-relaxed">
             By submitting this song, you agree to the Tribes Rights Management LLC Terms & Conditions. Please review the complete terms at{" "}
             <a href="https://tribesrightsmanagement.com" target="_blank" rel="noopener noreferrer" className="text-[var(--btn-text)] underline hover:no-underline">tribesrightsmanagement.com</a>.
           </p>
           <div className="flex items-start gap-3">
             <Checkbox id="termsAccepted" checked={formData.termsAccepted} onCheckedChange={(checked) => updateField("termsAccepted", !!checked)} className="mt-0.5" />
-            <Label htmlFor="termsAccepted" className="text-[11px] leading-relaxed cursor-pointer text-[var(--btn-text)]">
+            <Label htmlFor="termsAccepted" className="text-sm leading-relaxed cursor-pointer text-[var(--btn-text)]">
               I agree to the Tribes Rights Management LLC Terms & Conditions. <span className="text-red-500">*</span>
             </Label>
           </div>
