@@ -114,18 +114,17 @@ export function AppHeader({ showSidebarColumn = false }: AppHeaderProps) {
   }
 
   // Single row layout (for pages without sidebar)
-  // Mobile: 20px edge padding for alignment with content below
+  // Use same 200px logo column width as sidebar pages for consistent logo position
   return (
     <>
-      <div 
-        className="w-full h-full flex items-center justify-between"
-        style={{ paddingLeft: 20, paddingRight: 20 }}
-      >
-        {logoArea}
-        <div className="hidden md:block" style={{ paddingRight: 4 }}>
-          {rightIcons}
+      <div className="w-full h-full flex items-center justify-between">
+        <div 
+          className="h-full flex items-center shrink-0"
+          style={{ width: '200px', paddingLeft: '20px' }}
+        >
+          <TribesLogo />
         </div>
-        <div className="md:hidden">
+        <div style={{ paddingRight: '20px' }}>
           {rightIcons}
         </div>
       </div>
