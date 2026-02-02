@@ -641,9 +641,7 @@ export default function HelpArticleEditorPage() {
             <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
               Content
             </label>
-            <div className="bg-card border border-border rounded-lg min-h-[400px]">
-              <RichTextEditor content={bodyMd} onChange={setBodyMd} />
-            </div>
+            <RichTextEditor content={bodyMd} onChange={setBodyMd} />
           </div>
         </div>
       </div>
