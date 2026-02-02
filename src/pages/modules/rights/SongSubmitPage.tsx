@@ -187,92 +187,88 @@ export default function SongSubmitPage() {
   };
 
   return (
-    <div className="min-h-full pb-24">
-      <AppPageContainer maxWidth="lg" className="pb-8">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <button onClick={() => navigate("/rights/catalogue")} className="p-2 -ml-2 rounded-md hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" />
-          </button>
-          <div>
-            <h1 className="text-base font-semibold tracking-tight">Submit Song</h1>
-            <p className="text-[12px] text-muted-foreground mt-0.5">Add a new song to your catalogue</p>
-          </div>
-        </div>
-
-        {/* Progress Section */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[12px] text-muted-foreground font-medium">
-              Step {currentStep} of {STEPS.length} · {STEPS[currentStep - 1].title}
-            </span>
-            <span className="text-[12px] font-semibold tabular-nums">{Math.round(progress)}%</span>
-          </div>
-          <div className="h-1 bg-muted rounded-full overflow-hidden">
-            <div className="h-full bg-foreground transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
-          </div>
-          
-          {/* Step Pills */}
-          <div className="flex items-center justify-between mt-5 px-1">
-            {STEPS.map((step) => (
-              <button
-                key={step.number}
-                onClick={() => step.number < currentStep && setCurrentStep(step.number)}
-                disabled={step.number > currentStep}
-                className={cn(
-                  "flex items-center gap-2 transition-all",
-                  step.number > currentStep && "opacity-40 cursor-not-allowed",
-                  step.number < currentStep && "cursor-pointer hover:opacity-80"
-                )}
-              >
-                <span className={cn(
-                  "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-medium transition-all",
-                  step.number === currentStep && "bg-foreground text-background",
-                  step.number < currentStep && "bg-muted text-muted-foreground",
-                  step.number > currentStep && "border border-border text-muted-foreground"
-                )}>
-                  {step.number < currentStep ? <Check className="h-3 w-3" /> : step.number}
-                </span>
-                <span className={cn(
-                  "text-[11px] font-medium hidden sm:inline",
-                  step.number === currentStep && "text-foreground",
-                  step.number !== currentStep && "text-muted-foreground"
-                )}>
-                  {step.title}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Form Content */}
-        <div className="bg-card border border-border rounded-lg p-6 sm:p-8">
-          {currentStep === 1 && <Step1SongDetails formData={formData} updateField={updateField} writers={formData.writers} addWriter={addWriter} removeWriter={removeWriter} updateWriter={updateWriter} />}
-          {currentStep === 2 && <Step2Lyrics formData={formData} updateField={updateField} lyricSections={formData.lyricSections} addLyricSection={addLyricSection} removeLyricSection={removeLyricSection} updateLyricSection={updateLyricSection} />}
-          {currentStep === 3 && <Step3Chords formData={formData} updateField={updateField} />}
-          {currentStep === 4 && <Step4Copyright formData={formData} updateField={updateField} />}
-          {currentStep === 5 && <Step5Agreement formData={formData} updateField={updateField} />}
-        </div>
-      </AppPageContainer>
-
-      {/* Fixed Footer Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-background/95 backdrop-blur-sm border-t border-border">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <AppButton intent="secondary" size="sm" onClick={handleBack} disabled={currentStep === 1}>
-            <ArrowLeft className="h-4 w-4" /> Back
-          </AppButton>
-          {currentStep < STEPS.length ? (
-            <AppButton intent="primary" size="sm" onClick={handleNext}>
-              Continue <ArrowRight className="h-4 w-4" />
-            </AppButton>
-          ) : (
-            <AppButton intent="primary" size="sm" onClick={handleSubmit} disabled={isSubmitting}>
-              <Save className="h-4 w-4" /> {isSubmitting ? "Submitting..." : "Submit Song"}
-            </AppButton>
-          )}
+    <AppPageContainer maxWidth="lg">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-8">
+        <button onClick={() => navigate("/rights/catalogue")} className="p-2 -ml-2 rounded-md hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="h-4 w-4" />
+        </button>
+        <div>
+          <h1 className="text-base font-semibold tracking-tight">Submit Song</h1>
+          <p className="text-[12px] text-muted-foreground mt-0.5">Add a new song to your catalogue</p>
         </div>
       </div>
-    </div>
+
+      {/* Progress Section */}
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-[12px] text-muted-foreground font-medium">
+            Step {currentStep} of {STEPS.length} · {STEPS[currentStep - 1].title}
+          </span>
+          <span className="text-[12px] font-semibold tabular-nums">{Math.round(progress)}%</span>
+        </div>
+        <div className="h-1 bg-muted rounded-full overflow-hidden">
+          <div className="h-full bg-foreground transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
+        </div>
+        
+        {/* Step Pills */}
+        <div className="flex items-center justify-between mt-5 px-1">
+          {STEPS.map((step) => (
+            <button
+              key={step.number}
+              onClick={() => step.number < currentStep && setCurrentStep(step.number)}
+              disabled={step.number > currentStep}
+              className={cn(
+                "flex items-center gap-2 transition-all",
+                step.number > currentStep && "opacity-40 cursor-not-allowed",
+                step.number < currentStep && "cursor-pointer hover:opacity-80"
+              )}
+            >
+              <span className={cn(
+                "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-medium transition-all",
+                step.number === currentStep && "bg-foreground text-background",
+                step.number < currentStep && "bg-muted text-muted-foreground",
+                step.number > currentStep && "border border-border text-muted-foreground"
+              )}>
+                {step.number < currentStep ? <Check className="h-3 w-3" /> : step.number}
+              </span>
+              <span className={cn(
+                "text-[11px] font-medium hidden sm:inline",
+                step.number === currentStep && "text-foreground",
+                step.number !== currentStep && "text-muted-foreground"
+              )}>
+                {step.title}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Form Content */}
+      <div className="bg-card border border-border rounded-lg p-6 sm:p-8">
+        {currentStep === 1 && <Step1SongDetails formData={formData} updateField={updateField} writers={formData.writers} addWriter={addWriter} removeWriter={removeWriter} updateWriter={updateWriter} />}
+        {currentStep === 2 && <Step2Lyrics formData={formData} updateField={updateField} lyricSections={formData.lyricSections} addLyricSection={addLyricSection} removeLyricSection={removeLyricSection} updateLyricSection={updateLyricSection} />}
+        {currentStep === 3 && <Step3Chords formData={formData} updateField={updateField} />}
+        {currentStep === 4 && <Step4Copyright formData={formData} updateField={updateField} />}
+        {currentStep === 5 && <Step5Agreement formData={formData} updateField={updateField} />}
+      </div>
+
+      {/* Navigation Buttons - Part of normal document flow */}
+      <div className="mt-8 pb-8 flex items-center justify-between">
+        <AppButton intent="secondary" size="sm" onClick={handleBack} disabled={currentStep === 1}>
+          <ArrowLeft className="h-4 w-4" /> Back
+        </AppButton>
+        {currentStep < STEPS.length ? (
+          <AppButton intent="primary" size="sm" onClick={handleNext}>
+            Continue <ArrowRight className="h-4 w-4" />
+          </AppButton>
+        ) : (
+          <AppButton intent="primary" size="sm" onClick={handleSubmit} disabled={isSubmitting}>
+            <Save className="h-4 w-4" /> {isSubmitting ? "Submitting..." : "Submit Song"}
+          </AppButton>
+        )}
+      </div>
+    </AppPageContainer>
   );
 }
 
