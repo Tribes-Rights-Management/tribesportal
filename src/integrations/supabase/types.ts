@@ -2883,6 +2883,39 @@ export type Database = {
         }
         Relationships: []
       }
+      system_prompts: {
+        Row: {
+          created_at: string | null
+          examples: Json | null
+          id: string
+          is_active: boolean | null
+          performance_notes: string | null
+          prompt_key: string
+          prompt_text: string
+          version: number
+        }
+        Insert: {
+          created_at?: string | null
+          examples?: Json | null
+          id?: string
+          is_active?: boolean | null
+          performance_notes?: string | null
+          prompt_key: string
+          prompt_text: string
+          version?: number
+        }
+        Update: {
+          created_at?: string | null
+          examples?: Json | null
+          id?: string
+          is_active?: boolean | null
+          performance_notes?: string | null
+          prompt_key?: string
+          prompt_text?: string
+          version?: number
+        }
+        Relationships: []
+      }
       tenant_memberships: {
         Row: {
           allowed_contexts: Database["public"]["Enums"]["portal_context"][]
