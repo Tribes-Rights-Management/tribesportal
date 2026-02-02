@@ -3126,6 +3126,45 @@ export type Database = {
         }
         Relationships: []
       }
+      voice_transcripts: {
+        Row: {
+          corrected_title: string | null
+          corrected_writers: string[] | null
+          created_at: string | null
+          id: string
+          parsed_title: string | null
+          parsed_writers: string[] | null
+          success: boolean | null
+          transcript: string
+          user_id: string | null
+          was_corrected: boolean | null
+        }
+        Insert: {
+          corrected_title?: string | null
+          corrected_writers?: string[] | null
+          created_at?: string | null
+          id?: string
+          parsed_title?: string | null
+          parsed_writers?: string[] | null
+          success?: boolean | null
+          transcript: string
+          user_id?: string | null
+          was_corrected?: boolean | null
+        }
+        Update: {
+          corrected_title?: string | null
+          corrected_writers?: string[] | null
+          created_at?: string | null
+          id?: string
+          parsed_title?: string | null
+          parsed_writers?: string[] | null
+          success?: boolean | null
+          transcript?: string
+          user_id?: string | null
+          was_corrected?: boolean | null
+        }
+        Relationships: []
+      }
       widget_settings: {
         Row: {
           chat_enabled: boolean | null
