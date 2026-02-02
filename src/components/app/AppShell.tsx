@@ -98,6 +98,7 @@ export function AppShell({
         style={{ 
           gridColumn: '2',
           gridRow: '2',
+          minHeight: 0,
         }}
       >
         <div className="flex-1 min-w-0 w-full max-w-full">
