@@ -7,12 +7,8 @@ import { BRAND } from "@/config/layout";
  * SINGLE source of truth for the Tribes wordmark logo.
  * USE THIS COMPONENT EVERYWHERE.
  * 
- * ALIGNMENT: The button has px-3 (12px) left padding to align the logo
- * with SideNav item text (which uses px-3 inside a px-2 container).
- * 
- * Variants:
- * - "button" (default): Clickable, navigates to /workspaces
- * - "static": Non-interactive, for public pages or footers
+ * ALIGNMENT: The button has px-3 (12px) padding to align the logo
+ * with SideNav item text (SideNav uses px-2 container + px-3 on links).
  */
 
 interface TribesLogoProps {
@@ -43,16 +39,12 @@ export function TribesLogo({
 
   if (variant === "static") {
     return (
-      <div 
-        className={`flex items-center h-9 px-3 ${className}`}
-      >
+      <div className={`flex items-center h-9 px-3 ${className}`}>
         {logoImage}
       </div>
     );
   }
 
-  // Button variant (default)
-  // px-3 (12px) aligns logo with nav item text
   return (
     <button
       onClick={() => navigate(href)}
