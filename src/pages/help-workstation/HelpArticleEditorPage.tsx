@@ -387,7 +387,7 @@ export default function HelpArticleEditorPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col min-h-0">
       {/* Header */}
       <div className="px-[20px] sm:px-6 py-3 border-b border-border flex items-center justify-between gap-2">
         {/* Back button - icon only on mobile, full on desktop */}
