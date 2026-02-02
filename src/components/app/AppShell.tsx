@@ -1,17 +1,18 @@
 import { ReactNode } from "react";
 import { LAYOUT, CSS_VARS } from "@/config/layout";
+import { AppHeader } from "@/components/app/AppHeader";
 
 /**
  * APP SHELL - STRIPE-LIKE 2-COLUMN GRID LAYOUT (CANONICAL)
  * 
  * Layout dimensions are centralized in @/config/layout.ts
+ * Header defaults to AppHeader component (single source of truth).
  * 
  * Grid: 2 columns (LAYOUT.SIDEBAR_WIDTH + 1fr)
  * Rows: LAYOUT.HEADER_HEIGHT + 1fr
  */
 
 interface AppShellProps {
-  headerContent: ReactNode;
   sidebarContent?: ReactNode;
   children: ReactNode;
   showSidebar?: boolean;
@@ -19,7 +20,6 @@ interface AppShellProps {
 }
 
 export function AppShell({
-  headerContent,
   sidebarContent,
   children,
   showSidebar = true,
@@ -39,7 +39,7 @@ export function AppShell({
             borderBottom: `1px solid ${CSS_VARS.BORDER_SUBTLE}`,
           }}
         >
-          {headerContent}
+          <AppHeader showSidebarColumn={false} />
         </header>
         
         <main className="flex-1 min-w-0 w-full max-w-full overflow-y-auto overflow-x-hidden flex flex-col">
@@ -77,7 +77,7 @@ export function AppShell({
             gridTemplateColumns: `${LAYOUT.SIDEBAR_WIDTH} 1fr`,
           }}
         >
-          {headerContent}
+          <AppHeader showSidebarColumn={true} />
         </div>
       </header>
       
@@ -105,48 +105,6 @@ export function AppShell({
         </div>
         {footer}
       </main>
-    </div>
-  );
-}
-
-interface SidebarHeaderProps {
-  logo: ReactNode;
-  contextSelector?: ReactNode;
-}
-
-/**
- * SidebarHeader - Logo area in header
- * 
- * ALIGNMENT: Uses px-2 (8px) to match SideNav container padding.
- * The logo button adds its own internal padding to align with nav item text.
- */
-export function SidebarHeader({ logo, contextSelector }: SidebarHeaderProps) {
-  return (
-    <div 
-      className="h-full flex items-center justify-between px-2"
-      style={{ backgroundColor: CSS_VARS.SIDEBAR_BG }}
-    >
-      {logo}
-      {contextSelector}
-    </div>
-  );
-}
-
-interface ContentHeaderProps {
-  children: ReactNode;
-}
-
-export function ContentHeader({ children }: ContentHeaderProps) {
-  return (
-    <div 
-      className="h-full flex items-center justify-between"
-      style={{ 
-        backgroundColor: CSS_VARS.TOPBAR_BG,
-        paddingLeft: LAYOUT.CONTENT_PADDING_X,
-        paddingRight: LAYOUT.CONTENT_PADDING_X,
-      }}
-    >
-      {children}
     </div>
   );
 }

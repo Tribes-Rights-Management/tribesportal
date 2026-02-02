@@ -1,7 +1,6 @@
 import { Outlet, NavLink, useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { AppShell } from "@/components/app/AppShell";
-import { ModuleHeader } from "@/components/app/ModuleHeader";
 import { useScrollReset } from "@/hooks/useScrollReset";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { User, Shield, Sliders, ChevronRight } from "lucide-react";
@@ -11,19 +10,9 @@ import { PageContainer } from "@/components/ui/page-container";
 import { PageShell } from "@/components/ui/page-shell";
 
 /**
- * ACCOUNT SETTINGS LAYOUT — STRIPE-LIKE GRID SHELL (CANONICAL)
- *
- * This file is the ONLY layout mounted for:
- * - /account
- * - /account/profile
- * - /account/security
- * - /account/preferences
- *
- * Contract:
- * - PageShell is the ONLY component that renders the H1
- * - PageContainer is the ONLY component that defines outer padding/max-width
- * - Account subpages render content sections only (no headers, no containers)
- * - Scroll reset is enforced ONLY here via useScrollReset
+ * ACCOUNT SETTINGS LAYOUT
+ * 
+ * Uses AppShell which now handles header internally via AppHeader.
  */
 
 const accountNavItems = [
@@ -84,9 +73,6 @@ function getAccountShellMeta(pathname: string): AccountShellMeta {
   return { title: "Account" };
 }
 
-/**
- * Account Navigation Sidebar
- */
 function AccountNav() {
   return (
     <nav className="flex flex-col h-full py-4 overflow-y-auto">
@@ -173,7 +159,6 @@ export default function AccountLayout() {
   const isMobile = useIsMobile();
   const contentRef = useRef<HTMLElement>(null);
 
-  // Scroll reset must live ONLY in this layout (never in pages/containers)
   useScrollReset(contentRef);
 
   const isRoot = location.pathname === "/account";
@@ -181,10 +166,7 @@ export default function AccountLayout() {
 
   if (loading) {
     return (
-      <AppShell
-        showSidebar={false}
-        headerContent={<ModuleHeader showSidebarLogo={false} />}
-      >
+      <AppShell showSidebar={false}>
         <div className="flex-1 flex items-center justify-center">
           <p className="text-[14px] text-muted-foreground">
             Loading account
@@ -198,7 +180,6 @@ export default function AccountLayout() {
     return <Navigate to="/auth/sign-in" replace />;
   }
 
-  // Desktop: redirect /account to /account/profile (mobile keeps index list)
   if (!isMobile && isRoot) {
     return <Navigate to="/account/profile" replace />;
   }
@@ -215,23 +196,17 @@ export default function AccountLayout() {
     </PageContainer>
   );
 
-  // Mobile: no sidebar
   if (isMobile) {
     return (
-      <AppShell
-        showSidebar={false}
-        headerContent={<ModuleHeader showSidebarLogo={false} />}
-      >
+      <AppShell showSidebar={false}>
         {content}
       </AppShell>
     );
   }
 
-  // Desktop: with account nav sidebar
   return (
     <AppShell
       showSidebar={true}
-      headerContent={<ModuleHeader showSidebarLogo={true} />}
       sidebarContent={<AccountNav />}
     >
       {content}
