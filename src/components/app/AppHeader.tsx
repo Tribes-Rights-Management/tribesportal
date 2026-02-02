@@ -79,10 +79,9 @@ export function AppHeader({ showSidebarColumn = false }: AppHeaderProps) {
     </div>
   );
 
-  // Logo area - IDENTICAL padding everywhere
-  // px-2 container + px-3 on logo button = logo aligns with nav items
+  // Logo area - CENTERED in sidebar column
   const logoArea = (
-    <div className="h-full flex items-center px-2">
+    <div className="h-full flex items-center justify-center">
       <TribesLogo />
     </div>
   );
