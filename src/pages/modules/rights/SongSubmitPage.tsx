@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Save, Plus, Check, HelpCircle, Upload, Trash2 } from "lucide-react";
+import { ArrowLeft, Save, Plus, Check, HelpCircle, Upload, Trash2, ChevronDown, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
-import { AppPageContainer, AppButton } from "@/components/app-ui";
+import { AppButton } from "@/components/app-ui";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
- * SONG SUBMIT PAGE — MULTI-STEP WIZARD
- * Institutional-grade song submission form following Tribes design standards
+ * SONG SUBMIT PAGE — INSTITUTIONAL MULTI-STEP WIZARD
+ * 
+ * Desktop: Vertical step nav on left, form content on right
+ * Mobile: Collapsible step header, full-width form below
  */
 
 interface Writer {
@@ -71,11 +74,11 @@ const initialFormData: SongFormData = {
 };
 
 const STEPS = [
-  { number: 1, title: "Song Details" },
-  { number: 2, title: "Lyrics" },
-  { number: 3, title: "Chords" },
-  { number: 4, title: "Copyright" },
-  { number: 5, title: "Agreement" },
+  { number: 1, title: "Song Details", description: "Basic song information" },
+  { number: 2, title: "Lyrics", description: "Add song lyrics" },
+  { number: 3, title: "Chords", description: "Upload chord chart" },
+  { number: 4, title: "Copyright", description: "Copyright status" },
+  { number: 5, title: "Review & Submit", description: "Confirm and submit" },
 ];
 
 const LANGUAGES = ["English", "Spanish", "French", "German", "Italian", "Portuguese", "Japanese", "Korean", "Chinese (Mandarin)", "Arabic", "Hebrew", "Russian", "Hindi", "Other"];
@@ -95,18 +98,18 @@ const LYRIC_SECTION_TYPES = [
 const currentYear = new Date().getFullYear();
 const YEAR_OPTIONS = Array.from({ length: currentYear - 1899 }, (_, i) => String(currentYear - i));
 
-// Shared input styles
 const inputClass = "w-full h-10 px-3 text-[13px] bg-background border border-border rounded-md placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-foreground/30 transition-colors";
 const selectClass = "w-full h-10 px-3 text-[13px] bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-foreground/30 transition-colors appearance-none cursor-pointer";
 const textareaClass = "w-full px-3 py-2.5 text-[13px] bg-background border border-border rounded-md placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-foreground/30 transition-colors resize-y";
 
 export default function SongSubmitPage() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<SongFormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  const progress = (currentStep / STEPS.length) * 100;
   const updateField = <K extends keyof SongFormData>(field: K, value: SongFormData[K]) => setFormData(prev => ({ ...prev, [field]: value }));
 
   const addWriter = () => setFormData(prev => ({ ...prev, writers: [...prev.writers, createEmptyWriter()] }));
@@ -148,7 +151,25 @@ export default function SongSubmitPage() {
     }
   };
 
-  const handleNext = () => { if (validateStep(currentStep)) setCurrentStep(prev => Math.min(prev + 1, STEPS.length)); };
+  const goToStep = (step: number) => {
+    // Can go back freely, but going forward requires validation
+    if (step < currentStep) {
+      setCurrentStep(step);
+      setMobileNavOpen(false);
+    } else if (step === currentStep + 1) {
+      if (validateStep(currentStep)) {
+        setCurrentStep(step);
+        setMobileNavOpen(false);
+      }
+    }
+  };
+
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => Math.min(prev + 1, STEPS.length));
+    }
+  };
+
   const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   const handleSubmit = async () => {
@@ -186,89 +207,172 @@ export default function SongSubmitPage() {
     }
   };
 
+  const isStepComplete = (step: number) => step < currentStep;
+  const isStepCurrent = (step: number) => step === currentStep;
+  const isStepAccessible = (step: number) => step <= currentStep;
+
   return (
-    <AppPageContainer maxWidth="lg">
+    <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-8">
-        <button onClick={() => navigate("/rights/catalogue")} className="p-2 -ml-2 rounded-md hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" />
-        </button>
-        <div>
-          <h1 className="text-base font-semibold tracking-tight">Submit Song</h1>
-          <p className="text-[12px] text-muted-foreground mt-0.5">Add a new song to your catalogue</p>
+      <div className="shrink-0 border-b border-border bg-background">
+        <div className="px-4 sm:px-6 py-4 flex items-center gap-3">
+          <button onClick={() => navigate("/rights/catalogue")} className="p-1.5 -ml-1.5 rounded-md hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <div>
+            <h1 className="text-[15px] font-semibold tracking-tight">Submit Song</h1>
+            <p className="text-[11px] text-muted-foreground">Add a new song to your catalogue</p>
+          </div>
         </div>
       </div>
 
-      {/* Progress Section */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-[12px] text-muted-foreground font-medium">
-            Step {currentStep} of {STEPS.length} · {STEPS[currentStep - 1].title}
-          </span>
-          <span className="text-[12px] font-semibold tabular-nums">{Math.round(progress)}%</span>
-        </div>
-        <div className="h-1 bg-muted rounded-full overflow-hidden">
-          <div className="h-full bg-foreground transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
-        </div>
-        
-        {/* Step Pills */}
-        <div className="flex items-center justify-between mt-5 px-1">
-          {STEPS.map((step) => (
-            <button
-              key={step.number}
-              onClick={() => step.number < currentStep && setCurrentStep(step.number)}
-              disabled={step.number > currentStep}
-              className={cn(
-                "flex items-center gap-2 transition-all",
-                step.number > currentStep && "opacity-40 cursor-not-allowed",
-                step.number < currentStep && "cursor-pointer hover:opacity-80"
-              )}
-            >
-              <span className={cn(
-                "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-medium transition-all",
-                step.number === currentStep && "bg-foreground text-background",
-                step.number < currentStep && "bg-muted text-muted-foreground",
-                step.number > currentStep && "border border-border text-muted-foreground"
-              )}>
-                {step.number < currentStep ? <Check className="h-3 w-3" /> : step.number}
-              </span>
-              <span className={cn(
-                "text-[11px] font-medium hidden sm:inline",
-                step.number === currentStep && "text-foreground",
-                step.number !== currentStep && "text-muted-foreground"
-              )}>
-                {step.title}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Form Content */}
-      <div className="bg-card border border-border rounded-lg p-6 sm:p-8">
-        {currentStep === 1 && <Step1SongDetails formData={formData} updateField={updateField} writers={formData.writers} addWriter={addWriter} removeWriter={removeWriter} updateWriter={updateWriter} />}
-        {currentStep === 2 && <Step2Lyrics formData={formData} updateField={updateField} lyricSections={formData.lyricSections} addLyricSection={addLyricSection} removeLyricSection={removeLyricSection} updateLyricSection={updateLyricSection} />}
-        {currentStep === 3 && <Step3Chords formData={formData} updateField={updateField} />}
-        {currentStep === 4 && <Step4Copyright formData={formData} updateField={updateField} />}
-        {currentStep === 5 && <Step5Agreement formData={formData} updateField={updateField} />}
-      </div>
-
-      {/* Navigation Buttons - Part of normal document flow */}
-      <div className="mt-8 pb-8 flex items-center justify-between">
-        <AppButton intent="secondary" size="sm" onClick={handleBack} disabled={currentStep === 1}>
-          <ArrowLeft className="h-4 w-4" /> Back
-        </AppButton>
-        {currentStep < STEPS.length ? (
-          <AppButton intent="primary" size="sm" onClick={handleNext}>
-            Continue <ArrowRight className="h-4 w-4" />
-          </AppButton>
-        ) : (
-          <AppButton intent="primary" size="sm" onClick={handleSubmit} disabled={isSubmitting}>
-            <Save className="h-4 w-4" /> {isSubmitting ? "Submitting..." : "Submit Song"}
-          </AppButton>
+      {/* Main content area */}
+      <div className="flex-1 flex min-h-0">
+        {/* Desktop: Vertical Step Navigation */}
+        {!isMobile && (
+          <div className="w-64 shrink-0 border-r border-border bg-muted/30 overflow-y-auto">
+            <div className="p-4">
+              <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+                Progress
+              </div>
+              <nav className="space-y-1">
+                {STEPS.map((step, index) => (
+                  <button
+                    key={step.number}
+                    onClick={() => goToStep(step.number)}
+                    disabled={!isStepAccessible(step.number)}
+                    className={cn(
+                      "w-full text-left px-3 py-3 rounded-md transition-all group",
+                      isStepCurrent(step.number) && "bg-background shadow-sm border border-border",
+                      !isStepCurrent(step.number) && isStepAccessible(step.number) && "hover:bg-background/50 cursor-pointer",
+                      !isStepAccessible(step.number) && "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={cn(
+                        "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-medium shrink-0 mt-0.5 transition-colors",
+                        isStepComplete(step.number) && "bg-foreground text-background",
+                        isStepCurrent(step.number) && "bg-foreground text-background",
+                        !isStepComplete(step.number) && !isStepCurrent(step.number) && "border border-border text-muted-foreground"
+                      )}>
+                        {isStepComplete(step.number) ? <Check className="h-3.5 w-3.5" /> : step.number}
+                      </div>
+                      <div className="min-w-0">
+                        <div className={cn(
+                          "text-[13px] font-medium truncate",
+                          isStepCurrent(step.number) ? "text-foreground" : "text-muted-foreground"
+                        )}>
+                          {step.title}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground/70 truncate">
+                          {step.description}
+                        </div>
+                      </div>
+                    </div>
+                    {index < STEPS.length - 1 && (
+                      <div className={cn(
+                        "ml-3 mt-2 mb-1 w-px h-4",
+                        isStepComplete(step.number) ? "bg-foreground/30" : "bg-border"
+                      )} />
+                    )}
+                  </button>
+                ))}
+              </nav>
+            </div>
+          </div>
         )}
+
+        {/* Mobile: Collapsible Step Header */}
+        {isMobile && (
+          <div className="absolute left-0 right-0 z-20" style={{ top: '73px' }}>
+            <button
+              onClick={() => setMobileNavOpen(!mobileNavOpen)}
+              className="w-full px-4 py-3 bg-muted/50 border-b border-border flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center text-[11px] font-medium">
+                  {currentStep}
+                </div>
+                <div className="text-left">
+                  <div className="text-[13px] font-medium">{STEPS[currentStep - 1].title}</div>
+                  <div className="text-[11px] text-muted-foreground">Step {currentStep} of {STEPS.length}</div>
+                </div>
+              </div>
+              <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", mobileNavOpen && "rotate-180")} />
+            </button>
+            
+            {mobileNavOpen && (
+              <div className="bg-background border-b border-border shadow-lg">
+                {STEPS.map((step) => (
+                  <button
+                    key={step.number}
+                    onClick={() => goToStep(step.number)}
+                    disabled={!isStepAccessible(step.number)}
+                    className={cn(
+                      "w-full px-4 py-3 flex items-center gap-3 border-b border-border/50 last:border-0",
+                      isStepCurrent(step.number) && "bg-muted/50",
+                      !isStepAccessible(step.number) && "opacity-50"
+                    )}
+                  >
+                    <div className={cn(
+                      "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-medium",
+                      isStepComplete(step.number) && "bg-foreground text-background",
+                      isStepCurrent(step.number) && "bg-foreground text-background",
+                      !isStepComplete(step.number) && !isStepCurrent(step.number) && "border border-border text-muted-foreground"
+                    )}>
+                      {isStepComplete(step.number) ? <Check className="h-3.5 w-3.5" /> : step.number}
+                    </div>
+                    <div className="text-left">
+                      <div className="text-[13px] font-medium">{step.title}</div>
+                      <div className="text-[11px] text-muted-foreground">{step.description}</div>
+                    </div>
+                    {isStepCurrent(step.number) && <ChevronRight className="h-4 w-4 text-muted-foreground ml-auto" />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Form Content */}
+        <div className={cn("flex-1 overflow-y-auto", isMobile && "pt-14")}>
+          <div className="p-4 sm:p-6 lg:p-8 max-w-3xl">
+            {/* Step Title (Desktop) */}
+            {!isMobile && (
+              <div className="mb-6">
+                <h2 className="text-[15px] font-semibold">{STEPS[currentStep - 1].title}</h2>
+                <p className="text-[12px] text-muted-foreground mt-0.5">{STEPS[currentStep - 1].description}</p>
+              </div>
+            )}
+
+            {/* Form Content */}
+            <div className="bg-card border border-border rounded-lg p-5 sm:p-6">
+              {currentStep === 1 && <Step1SongDetails formData={formData} updateField={updateField} writers={formData.writers} addWriter={addWriter} removeWriter={removeWriter} updateWriter={updateWriter} />}
+              {currentStep === 2 && <Step2Lyrics formData={formData} updateField={updateField} lyricSections={formData.lyricSections} addLyricSection={addLyricSection} removeLyricSection={removeLyricSection} updateLyricSection={updateLyricSection} />}
+              {currentStep === 3 && <Step3Chords formData={formData} updateField={updateField} />}
+              {currentStep === 4 && <Step4Copyright formData={formData} updateField={updateField} />}
+              {currentStep === 5 && <Step5Agreement formData={formData} updateField={updateField} />}
+            </div>
+
+            {/* Navigation */}
+            <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
+              <AppButton intent="secondary" size="sm" onClick={handleBack} disabled={currentStep === 1}>
+                Back
+              </AppButton>
+              {currentStep < STEPS.length ? (
+                <AppButton intent="primary" size="sm" onClick={handleNext}>
+                  Continue
+                </AppButton>
+              ) : (
+                <AppButton intent="primary" size="sm" onClick={handleSubmit} disabled={isSubmitting}>
+                  <Save className="h-4 w-4" /> {isSubmitting ? "Submitting..." : "Submit Song"}
+                </AppButton>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
-    </AppPageContainer>
+    </div>
   );
 }
 
@@ -276,124 +380,130 @@ export default function SongSubmitPage() {
 // STEP COMPONENTS
 // ════════════════════════════════════════════════════════════════════════════════
 
+function FormSection({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-4">
+      <div>
+        <h3 className="text-[12px] font-semibold text-foreground">{title}</h3>
+        {description && <p className="text-[11px] text-muted-foreground mt-0.5">{description}</p>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
 function Step1SongDetails({ formData, updateField, writers, addWriter, removeWriter, updateWriter }: { formData: SongFormData; updateField: <K extends keyof SongFormData>(field: K, value: SongFormData[K]) => void; writers: Writer[]; addWriter: () => void; removeWriter: (id: string) => void; updateWriter: (id: string, updates: Partial<Writer>) => void; }) {
   return (
     <div className="space-y-8">
-      {/* Basic Info Section */}
-      <div className="space-y-5">
-        <div className="space-y-2">
-          <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">Title <span className="text-destructive">*</span></Label>
-          <input type="text" value={formData.title} onChange={(e) => updateField("title", e.target.value)} placeholder="Enter song title" className={inputClass} />
-        </div>
-
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Checkbox id="hasAlternateTitle" checked={formData.hasAlternateTitle} onCheckedChange={(checked) => updateField("hasAlternateTitle", !!checked)} />
-            <Label htmlFor="hasAlternateTitle" className="text-[13px] cursor-pointer">This song has an alternate title</Label>
+      <FormSection title="Basic Information" description="Enter the primary details for this song">
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label className="text-[11px] text-muted-foreground">Title <span className="text-destructive">*</span></Label>
+            <input type="text" value={formData.title} onChange={(e) => updateField("title", e.target.value)} placeholder="Enter song title" className={inputClass} />
           </div>
-          {formData.hasAlternateTitle && (
-            <input type="text" value={formData.alternateTitle} onChange={(e) => updateField("alternateTitle", e.target.value)} placeholder="Enter alternate title" className={inputClass} />
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Checkbox id="hasAlternateTitle" checked={formData.hasAlternateTitle} onCheckedChange={(checked) => updateField("hasAlternateTitle", !!checked)} />
+              <Label htmlFor="hasAlternateTitle" className="text-[12px] cursor-pointer">This song has an alternate title</Label>
+            </div>
+            {formData.hasAlternateTitle && (
+              <input type="text" value={formData.alternateTitle} onChange={(e) => updateField("alternateTitle", e.target.value)} placeholder="Enter alternate title" className={inputClass} />
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label className="text-[11px] text-muted-foreground">Language</Label>
+              <select value={formData.language} onChange={(e) => updateField("language", e.target.value)} className={selectClass}>
+                {LANGUAGES.map(lang => <option key={lang} value={lang}>{lang}</option>)}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[11px] text-muted-foreground">Song Type</Label>
+              <select value={formData.songType} onChange={(e) => updateField("songType", e.target.value as SongFormData["songType"])} className={selectClass}>
+                {SONG_TYPES.map(type => <option key={type.value} value={type.value}>{type.label}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {["public_domain", "derivative", "medley"].includes(formData.songType) && (
+            <div className="space-y-1.5">
+              <Label className="text-[11px] text-muted-foreground">
+                {formData.songType === "public_domain" && "Original Public Domain Title"}
+                {formData.songType === "derivative" && "Original Composition Title"}
+                {formData.songType === "medley" && "Other Copyright Title"}
+                <span className="text-destructive"> *</span>
+              </Label>
+              <input type="text" value={formData.originalWorkTitle} onChange={(e) => updateField("originalWorkTitle", e.target.value)} placeholder="Enter title" className={inputClass} />
+            </div>
           )}
         </div>
+      </FormSection>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div className="space-y-2">
-            <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">Language</Label>
-            <select value={formData.language} onChange={(e) => updateField("language", e.target.value)} className={selectClass}>
-              {LANGUAGES.map(lang => <option key={lang} value={lang}>{lang}</option>)}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">Song Type</Label>
-            <select value={formData.songType} onChange={(e) => updateField("songType", e.target.value as SongFormData["songType"])} className={selectClass}>
-              {SONG_TYPES.map(type => <option key={type.value} value={type.value}>{type.label}</option>)}
-            </select>
-          </div>
-        </div>
+      <div className="border-t border-border" />
 
-        {["public_domain", "derivative", "medley"].includes(formData.songType) && (
+      <FormSection title="Release Information" description="Publication and release details">
+        <div className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
-              {formData.songType === "public_domain" && "Original Public Domain Title"}
-              {formData.songType === "derivative" && "Original Composition Title"}
-              {formData.songType === "medley" && "Other Copyright Title"}
-              <span className="text-destructive"> *</span>
+            <Label className="text-[11px] text-muted-foreground">Has this song been recorded and released?</Label>
+            <div className="flex flex-wrap gap-3">
+              {[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "youtube_only", label: "YouTube Only" }].map(option => (
+                <label key={option.value} className="flex items-center gap-2 cursor-pointer">
+                  <div className={cn("w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors", formData.hasBeenReleased === option.value ? "border-foreground" : "border-muted-foreground/40")}>
+                    {formData.hasBeenReleased === option.value && <div className="w-2 h-2 rounded-full bg-foreground" />}
+                  </div>
+                  <input type="radio" name="hasBeenReleased" value={option.value} checked={formData.hasBeenReleased === option.value} onChange={(e) => updateField("hasBeenReleased", e.target.value as SongFormData["hasBeenReleased"])} className="sr-only" />
+                  <span className="text-[12px]">{option.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="text-[11px] text-muted-foreground">
+              {formData.hasBeenReleased !== "no" ? "First Publication Year" : "Song Creation Year"} <span className="text-destructive">*</span>
             </Label>
-            <input type="text" value={formData.originalWorkTitle} onChange={(e) => updateField("originalWorkTitle", e.target.value)} placeholder="Enter title" className={inputClass} />
-          </div>
-        )}
-      </div>
-
-      {/* Release Section */}
-      <div className="pt-6 border-t border-border space-y-5">
-        <div className="space-y-3">
-          <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">Has this song been recorded and released?</Label>
-          <div className="flex flex-wrap gap-4">
-            {[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "youtube_only", label: "Yes - YouTube Only" }].map(option => (
-              <label key={option.value} className="flex items-center gap-2 cursor-pointer group">
-                <div className={cn("w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors", formData.hasBeenReleased === option.value ? "border-foreground" : "border-muted-foreground/40 group-hover:border-muted-foreground")}>
-                  {formData.hasBeenReleased === option.value && <div className="w-2 h-2 rounded-full bg-foreground" />}
-                </div>
-                <input type="radio" name="hasBeenReleased" value={option.value} checked={formData.hasBeenReleased === option.value} onChange={(e) => updateField("hasBeenReleased", e.target.value as SongFormData["hasBeenReleased"])} className="sr-only" />
-                <span className="text-[13px]">{option.label}</span>
-              </label>
-            ))}
+            <select value={formData.hasBeenReleased !== "no" ? formData.publicationYear : formData.creationYear} onChange={(e) => updateField(formData.hasBeenReleased !== "no" ? "publicationYear" : "creationYear", e.target.value)} className={cn(selectClass, "max-w-[200px]")}>
+              <option value="">Select year</option>
+              {YEAR_OPTIONS.map(year => <option key={year} value={year}>{year}</option>)}
+            </select>
           </div>
         </div>
+      </FormSection>
 
-        <div className="space-y-2">
-          <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
-            {formData.hasBeenReleased !== "no" ? "First Publication Year" : "Song Creation Year"} <span className="text-destructive">*</span>
-          </Label>
-          <select 
-            value={formData.hasBeenReleased !== "no" ? formData.publicationYear : formData.creationYear} 
-            onChange={(e) => updateField(formData.hasBeenReleased !== "no" ? "publicationYear" : "creationYear", e.target.value)} 
-            className={selectClass}
-          >
-            <option value="">Select year</option>
-            {YEAR_OPTIONS.map(year => <option key={year} value={year}>{year}</option>)}
-          </select>
-        </div>
-      </div>
+      <div className="border-t border-border" />
 
-      {/* Writers Section */}
-      <div className="pt-6 border-t border-border space-y-5">
-        <div className="flex items-center justify-between">
-          <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">Writers</Label>
-          <button onClick={addWriter} className="text-[12px] font-medium text-foreground hover:text-foreground/70 flex items-center gap-1 transition-colors">
-            <Plus className="h-3.5 w-3.5" /> Add Writer
-          </button>
-        </div>
-
+      <FormSection title="Writers & Splits" description="Add all songwriters and their ownership splits">
         <div className="space-y-4">
           {writers.map((writer, index) => (
             <div key={writer.id} className="p-4 bg-muted/30 rounded-lg space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Writer {index + 1}</span>
+                <span className="text-[11px] font-semibold text-muted-foreground">Writer {index + 1}</span>
                 {writers.length > 1 && (
                   <button onClick={() => removeWriter(writer.id)} className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <Label className="text-[11px] text-muted-foreground">Name <span className="text-destructive">*</span></Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-[10px] text-muted-foreground">Name <span className="text-destructive">*</span></Label>
                   <input type="text" value={writer.name} onChange={(e) => updateWriter(writer.id, { name: e.target.value })} placeholder="Writer name" className={cn(inputClass, "h-9 text-[12px]")} />
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-[11px] text-muted-foreground">PRO</Label>
+                <div className="space-y-1">
+                  <Label className="text-[10px] text-muted-foreground">PRO</Label>
                   <select value={writer.pro} onChange={(e) => updateWriter(writer.id, { pro: e.target.value })} className={cn(selectClass, "h-9 text-[12px]")}>
                     <option value="">Select PRO</option>
                     {PRO_OPTIONS.map(pro => <option key={pro} value={pro}>{pro}</option>)}
                   </select>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-[11px] text-muted-foreground">Split % <span className="text-destructive">*</span></Label>
+                <div className="space-y-1">
+                  <Label className="text-[10px] text-muted-foreground">Split % <span className="text-destructive">*</span></Label>
                   <input type="number" min="0" max="100" step="0.01" value={writer.split} onChange={(e) => updateWriter(writer.id, { split: e.target.value })} placeholder="50.00" className={cn(inputClass, "h-9 text-[12px]")} />
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-[11px] text-muted-foreground">Credit</Label>
+                <div className="space-y-1">
+                  <Label className="text-[10px] text-muted-foreground">Credit</Label>
                   <select value={writer.credit} onChange={(e) => updateWriter(writer.id, { credit: e.target.value as Writer["credit"] })} className={cn(selectClass, "h-9 text-[12px]")}>
                     <option value="both">Lyrics & Music</option>
                     <option value="lyrics">Lyrics Only</option>
@@ -403,22 +513,28 @@ function Step1SongDetails({ formData, updateField, writers, addWriter, removeWri
               </div>
               <div className="flex items-center gap-2">
                 <Checkbox id={`control-${writer.id}`} checked={writer.hasControl} onCheckedChange={(checked) => updateWriter(writer.id, { hasControl: !!checked })} />
-                <Label htmlFor={`control-${writer.id}`} className="text-[12px] flex items-center gap-1 cursor-pointer">
+                <Label htmlFor={`control-${writer.id}`} className="text-[11px] flex items-center gap-1 cursor-pointer">
                   You control the rights for this songwriter
                   <TooltipProvider><Tooltip><TooltipTrigger><HelpCircle className="h-3 w-3 text-muted-foreground" /></TooltipTrigger><TooltipContent side="top"><p className="text-[11px] max-w-[180px]">Do you control the publishing rights for this songwriter?</p></TooltipContent></Tooltip></TooltipProvider>
                 </Label>
               </div>
             </div>
           ))}
-        </div>
 
-        <div className="flex justify-end">
-          <span className={cn("text-[12px] font-medium tabular-nums", Math.abs(writers.reduce((sum, w) => sum + (parseFloat(w.split) || 0), 0) - 100) < 0.01 ? "text-green-600 dark:text-green-500" : "text-destructive")}>
-            Total: {writers.reduce((sum, w) => sum + (parseFloat(w.split) || 0), 0).toFixed(2)}%
-            <span className="text-muted-foreground font-normal ml-1">(must equal 100%)</span>
-          </span>
+          <div className="flex items-center justify-between">
+            <button onClick={addWriter} className="text-[12px] font-medium text-foreground hover:text-foreground/70 flex items-center gap-1 transition-colors">
+              <Plus className="h-3.5 w-3.5" /> Add Writer
+            </button>
+            <span className={cn("text-[12px] font-medium tabular-nums", Math.abs(writers.reduce((sum, w) => sum + (parseFloat(w.split) || 0), 0) - 100) < 0.01 ? "text-green-600 dark:text-green-500" : "text-destructive")}>
+              Total: {writers.reduce((sum, w) => sum + (parseFloat(w.split) || 0), 0).toFixed(2)}%
+            </span>
+          </div>
+          
+          <p className="text-[11px] text-muted-foreground">
+            Note: You can only register the portion of the song you control. The remaining portion will remain unaffiliated until claimed by other owner(s).
+          </p>
         </div>
-      </div>
+      </FormSection>
     </div>
   );
 }
@@ -426,9 +542,8 @@ function Step1SongDetails({ formData, updateField, writers, addWriter, removeWri
 function Step2Lyrics({ formData, updateField, lyricSections, addLyricSection, removeLyricSection, updateLyricSection }: { formData: SongFormData; updateField: <K extends keyof SongFormData>(field: K, value: SongFormData[K]) => void; lyricSections: LyricSection[]; addLyricSection: () => void; removeLyricSection: (id: string) => void; updateLyricSection: (id: string, updates: Partial<LyricSection>) => void; }) {
   return (
     <div className="space-y-6">
-      <div className="space-y-3">
-        <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">How would you like to enter lyrics?</Label>
-        <div className="flex gap-3">
+      <FormSection title="Entry Method">
+        <div className="flex gap-2">
           {[{ value: "full", label: "Paste all at once" }, { value: "sections", label: "Add by section" }].map(option => (
             <button key={option.value} onClick={() => updateField("lyricsEntryMode", option.value as "full" | "sections")}
               className={cn("px-4 py-2 text-[12px] font-medium rounded-md border transition-all", formData.lyricsEntryMode === option.value ? "bg-foreground text-background border-foreground" : "bg-transparent text-muted-foreground border-border hover:border-foreground/30")}>
@@ -436,47 +551,50 @@ function Step2Lyrics({ formData, updateField, lyricSections, addLyricSection, re
             </button>
           ))}
         </div>
-      </div>
+      </FormSection>
 
       {formData.lyricsEntryMode === "full" ? (
-        <div className="space-y-2">
-          <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">Lyrics</Label>
+        <FormSection title="Lyrics">
           <textarea value={formData.fullLyrics} onChange={(e) => updateField("fullLyrics", e.target.value)} placeholder="Paste or type your lyrics here..." rows={14} className={cn(textareaClass, "min-h-[280px]")} />
-        </div>
+        </FormSection>
       ) : (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">Lyric Sections</Label>
-            <button onClick={addLyricSection} className="text-[12px] font-medium text-foreground hover:text-foreground/70 flex items-center gap-1 transition-colors">
-              <Plus className="h-3.5 w-3.5" /> Add Section
-            </button>
-          </div>
-          {lyricSections.length === 0 ? (
-            <div className="py-12 text-center border-2 border-dashed border-border rounded-lg">
-              <p className="text-[13px] text-muted-foreground">No sections added. Click "Add Section" to start.</p>
-            </div>
-          ) : (
-            lyricSections.map(section => (
-              <div key={section.id} className="p-4 bg-muted/30 rounded-lg space-y-3">
-                <div className="flex items-center justify-between">
-                  <select value={section.type} onChange={(e) => updateLyricSection(section.id, { type: e.target.value as LyricSection["type"] })} className={cn(selectClass, "h-8 w-32 text-[12px]")}>
-                    {LYRIC_SECTION_TYPES.map(type => <option key={type.value} value={type.value}>{type.label}</option>)}
-                  </select>
-                  <button onClick={() => removeLyricSection(section.id)} className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-                <textarea value={section.content} onChange={(e) => updateLyricSection(section.id, { content: e.target.value })} placeholder={`Enter ${section.type} lyrics...`} rows={4} className={textareaClass} />
+        <FormSection title="Lyric Sections">
+          <div className="space-y-3">
+            {lyricSections.length === 0 ? (
+              <div className="py-10 text-center border-2 border-dashed border-border rounded-lg">
+                <p className="text-[12px] text-muted-foreground mb-3">No sections added yet</p>
+                <button onClick={addLyricSection} className="text-[12px] font-medium text-foreground hover:text-foreground/70 flex items-center gap-1 mx-auto transition-colors">
+                  <Plus className="h-3.5 w-3.5" /> Add First Section
+                </button>
               </div>
-            ))
-          )}
-        </div>
+            ) : (
+              <>
+                {lyricSections.map(section => (
+                  <div key={section.id} className="p-4 bg-muted/30 rounded-lg space-y-3">
+                    <div className="flex items-center justify-between">
+                      <select value={section.type} onChange={(e) => updateLyricSection(section.id, { type: e.target.value as LyricSection["type"] })} className={cn(selectClass, "h-8 w-32 text-[12px]")}>
+                        {LYRIC_SECTION_TYPES.map(type => <option key={type.value} value={type.value}>{type.label}</option>)}
+                      </select>
+                      <button onClick={() => removeLyricSection(section.id)} className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <textarea value={section.content} onChange={(e) => updateLyricSection(section.id, { content: e.target.value })} placeholder={`Enter ${section.type} lyrics...`} rows={4} className={textareaClass} />
+                  </div>
+                ))}
+                <button onClick={addLyricSection} className="text-[12px] font-medium text-foreground hover:text-foreground/70 flex items-center gap-1 transition-colors">
+                  <Plus className="h-3.5 w-3.5" /> Add Section
+                </button>
+              </>
+            )}
+          </div>
+        </FormSection>
       )}
 
-      <div className="pt-6 border-t border-border">
+      <div className="pt-4 border-t border-border">
         <div className="flex items-start gap-3">
           <Checkbox id="lyricsConfirmed" checked={formData.lyricsConfirmed} onCheckedChange={(checked) => updateField("lyricsConfirmed", !!checked)} className="mt-0.5" />
-          <Label htmlFor="lyricsConfirmed" className="text-[13px] leading-relaxed cursor-pointer">
+          <Label htmlFor="lyricsConfirmed" className="text-[12px] leading-relaxed cursor-pointer">
             I confirm the accuracy of the lyrics entered and that the lyrics are original and do not infringe on the rights of any other copyright holder. <span className="text-destructive">*</span>
           </Label>
         </div>
@@ -488,36 +606,32 @@ function Step2Lyrics({ formData, updateField, lyricSections, addLyricSection, re
 function Step3Chords({ formData, updateField }: { formData: SongFormData; updateField: <K extends keyof SongFormData>(field: K, value: SongFormData[K]) => void; }) {
   return (
     <div className="space-y-6">
-      <div className="space-y-4">
-        <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">Is a chord chart available?</Label>
-        <div className="flex gap-3">
-          {[{ value: true, label: "Yes" }, { value: false, label: "No" }].map(option => (
+      <FormSection title="Chord Chart Availability">
+        <div className="flex gap-2">
+          {[{ value: true, label: "Yes, I have a chord chart" }, { value: false, label: "No chord chart" }].map(option => (
             <button key={String(option.value)} onClick={() => updateField("hasChordChart", option.value)}
-              className={cn("px-6 py-2 text-[12px] font-medium rounded-md border transition-all", formData.hasChordChart === option.value ? "bg-foreground text-background border-foreground" : "bg-transparent text-muted-foreground border-border hover:border-foreground/30")}>
+              className={cn("px-4 py-2 text-[12px] font-medium rounded-md border transition-all", formData.hasChordChart === option.value ? "bg-foreground text-background border-foreground" : "bg-transparent text-muted-foreground border-border hover:border-foreground/30")}>
               {option.label}
             </button>
           ))}
         </div>
-      </div>
+      </FormSection>
 
       {formData.hasChordChart ? (
-        <div className="space-y-2">
-          <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">Upload Chord Chart</Label>
-          <div className="border-2 border-dashed border-border rounded-lg p-10 text-center hover:border-foreground/30 transition-colors">
+        <FormSection title="Upload Chord Chart">
+          <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-foreground/30 transition-colors">
             <Upload className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
-            <p className="text-[13px] text-muted-foreground mb-3">Drag and drop your file here, or click to browse</p>
+            <p className="text-[12px] text-muted-foreground mb-3">Drag and drop your file here, or click to browse</p>
             <input type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" onChange={(e) => { const file = e.target.files?.[0]; if (file) updateField("chordChartFile", file); }} className="hidden" id="chordChartUpload" />
-            <button onClick={() => document.getElementById("chordChartUpload")?.click()} className="px-4 py-2 text-[12px] font-medium rounded-md border border-border hover:bg-muted transition-colors">
-              Browse Files
-            </button>
+            <button onClick={() => document.getElementById("chordChartUpload")?.click()} className="px-4 py-2 text-[12px] font-medium rounded-md border border-border hover:bg-muted transition-colors">Browse Files</button>
             {formData.chordChartFile && <p className="text-[12px] text-green-600 dark:text-green-500 mt-3 font-medium">{formData.chordChartFile.name}</p>}
           </div>
-        </div>
+        </FormSection>
       ) : (
-        <div className="p-5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-lg">
+        <div className="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-lg">
           <div className="flex items-start gap-3">
             <Checkbox id="chordChartAcknowledged" checked={formData.chordChartAcknowledged} onCheckedChange={(checked) => updateField("chordChartAcknowledged", !!checked)} className="mt-0.5" />
-            <Label htmlFor="chordChartAcknowledged" className="text-[13px] leading-relaxed cursor-pointer text-amber-900 dark:text-amber-100">
+            <Label htmlFor="chordChartAcknowledged" className="text-[12px] leading-relaxed cursor-pointer text-amber-900 dark:text-amber-100">
               I understand that chord charts are required to properly license and monetize songs at CCLI and that I am not supplying a chord chart at this time. <span className="text-destructive">*</span>
             </Label>
           </div>
@@ -530,31 +644,32 @@ function Step3Chords({ formData, updateField }: { formData: SongFormData; update
 function Step4Copyright({ formData, updateField }: { formData: SongFormData; updateField: <K extends keyof SongFormData>(field: K, value: SongFormData[K]) => void; }) {
   return (
     <div className="space-y-6">
-      <div className="space-y-4">
-        <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">Has this song been filed for copyright protection?</Label>
-        <div className="flex flex-wrap gap-3">
+      <FormSection title="Copyright Status" description="Has this song been filed for copyright protection?">
+        <div className="flex flex-wrap gap-2">
           {[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "unknown", label: "I Don't Know" }].map(option => (
             <button key={option.value} onClick={() => updateField("copyrightStatus", option.value as SongFormData["copyrightStatus"])}
-              className={cn("px-5 py-2 text-[12px] font-medium rounded-md border transition-all", formData.copyrightStatus === option.value ? "bg-foreground text-background border-foreground" : "bg-transparent text-muted-foreground border-border hover:border-foreground/30")}>
+              className={cn("px-4 py-2 text-[12px] font-medium rounded-md border transition-all", formData.copyrightStatus === option.value ? "bg-foreground text-background border-foreground" : "bg-transparent text-muted-foreground border-border hover:border-foreground/30")}>
               {option.label}
             </button>
           ))}
         </div>
-      </div>
+      </FormSection>
 
       {formData.copyrightStatus === "no" && (
-        <div className="p-5 bg-muted/50 rounded-lg space-y-4">
-          <Label className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">Do you want us to file this song for copyright protection?</Label>
-          <div className="flex gap-3">
-            {[{ value: true, label: "Yes" }, { value: false, label: "No" }].map(option => (
-              <button key={String(option.value)} onClick={() => updateField("wantsCopyrightFiling", option.value)}
-                className={cn("px-5 py-2 text-[12px] font-medium rounded-md border transition-all", formData.wantsCopyrightFiling === option.value ? "bg-foreground text-background border-foreground" : "bg-transparent text-muted-foreground border-border hover:border-foreground/30")}>
-                {option.label}
-              </button>
-            ))}
+        <FormSection title="Copyright Filing Service">
+          <div className="p-4 bg-muted/50 rounded-lg space-y-3">
+            <p className="text-[12px] text-muted-foreground">Would you like Tribes Rights Management to file this song for copyright protection on your behalf?</p>
+            <div className="flex gap-2">
+              {[{ value: true, label: "Yes, file for me" }, { value: false, label: "No thanks" }].map(option => (
+                <button key={String(option.value)} onClick={() => updateField("wantsCopyrightFiling", option.value)}
+                  className={cn("px-4 py-2 text-[12px] font-medium rounded-md border transition-all", formData.wantsCopyrightFiling === option.value ? "bg-foreground text-background border-foreground" : "bg-transparent text-muted-foreground border-border hover:border-foreground/30")}>
+                  {option.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-[11px] text-muted-foreground">Cost and administration fees may apply. Please refer to your administration agreement.</p>
           </div>
-          <p className="text-[11px] text-muted-foreground">Cost and administration fees may apply. Please refer to your administration agreement.</p>
-        </div>
+        </FormSection>
       )}
     </div>
   );
@@ -563,29 +678,33 @@ function Step4Copyright({ formData, updateField }: { formData: SongFormData; upd
 function Step5Agreement({ formData, updateField }: { formData: SongFormData; updateField: <K extends keyof SongFormData>(field: K, value: SongFormData[K]) => void; }) {
   return (
     <div className="space-y-6">
-      <div className="p-6 bg-muted/30 rounded-lg">
-        <h3 className="text-[13px] font-semibold mb-3">Terms & Conditions</h3>
-        <p className="text-[13px] text-muted-foreground mb-5 leading-relaxed">
-          By submitting this song, you agree to the Tribes Rights Management LLC Terms & Conditions. Please review the complete terms at{" "}
-          <a href="https://tribesrightsmanagement.com" target="_blank" rel="noopener noreferrer" className="text-foreground underline hover:no-underline">tribesrightsmanagement.com</a>.
-        </p>
-        <div className="flex items-start gap-3">
-          <Checkbox id="termsAccepted" checked={formData.termsAccepted} onCheckedChange={(checked) => updateField("termsAccepted", !!checked)} className="mt-0.5" />
-          <Label htmlFor="termsAccepted" className="text-[13px] leading-relaxed cursor-pointer">
-            I agree to the Tribes Rights Management LLC Terms & Conditions. <span className="text-destructive">*</span>
-          </Label>
+      <FormSection title="Submission Summary">
+        <div className="p-4 bg-muted/30 rounded-lg">
+          <dl className="space-y-3 text-[13px]">
+            <div className="flex"><dt className="text-muted-foreground w-28 shrink-0">Title</dt><dd className="font-medium">{formData.title || "—"}</dd></div>
+            <div className="flex"><dt className="text-muted-foreground w-28 shrink-0">Writers</dt><dd className="font-medium">{formData.writers.map(w => w.name).filter(Boolean).join(", ") || "—"}</dd></div>
+            <div className="flex"><dt className="text-muted-foreground w-28 shrink-0">Language</dt><dd className="font-medium">{formData.language}</dd></div>
+            <div className="flex"><dt className="text-muted-foreground w-28 shrink-0">Song Type</dt><dd className="font-medium">{SONG_TYPES.find(t => t.value === formData.songType)?.label}</dd></div>
+            <div className="flex"><dt className="text-muted-foreground w-28 shrink-0">Chord Chart</dt><dd className="font-medium">{formData.hasChordChart ? "Provided" : "Not provided"}</dd></div>
+            <div className="flex"><dt className="text-muted-foreground w-28 shrink-0">Copyright</dt><dd className="font-medium">{formData.copyrightStatus === "yes" ? "Filed" : formData.copyrightStatus === "no" ? "Not filed" : "Unknown"}</dd></div>
+          </dl>
         </div>
-      </div>
+      </FormSection>
 
-      <div className="p-5 border border-border rounded-lg">
-        <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-4">Submission Summary</h3>
-        <dl className="space-y-3 text-[13px]">
-          <div className="flex"><dt className="text-muted-foreground w-28 shrink-0">Title</dt><dd className="font-medium">{formData.title || "—"}</dd></div>
-          <div className="flex"><dt className="text-muted-foreground w-28 shrink-0">Writers</dt><dd className="font-medium">{formData.writers.map(w => w.name).filter(Boolean).join(", ") || "—"}</dd></div>
-          <div className="flex"><dt className="text-muted-foreground w-28 shrink-0">Language</dt><dd className="font-medium">{formData.language}</dd></div>
-          <div className="flex"><dt className="text-muted-foreground w-28 shrink-0">Song Type</dt><dd className="font-medium">{SONG_TYPES.find(t => t.value === formData.songType)?.label}</dd></div>
-        </dl>
-      </div>
+      <FormSection title="Terms & Conditions">
+        <div className="p-4 bg-muted/30 rounded-lg">
+          <p className="text-[12px] text-muted-foreground mb-4 leading-relaxed">
+            By submitting this song, you agree to the Tribes Rights Management LLC Terms & Conditions. Please review the complete terms at{" "}
+            <a href="https://tribesrightsmanagement.com" target="_blank" rel="noopener noreferrer" className="text-foreground underline hover:no-underline">tribesrightsmanagement.com</a>.
+          </p>
+          <div className="flex items-start gap-3">
+            <Checkbox id="termsAccepted" checked={formData.termsAccepted} onCheckedChange={(checked) => updateField("termsAccepted", !!checked)} className="mt-0.5" />
+            <Label htmlFor="termsAccepted" className="text-[12px] leading-relaxed cursor-pointer">
+              I agree to the Tribes Rights Management LLC Terms & Conditions. <span className="text-destructive">*</span>
+            </Label>
+          </div>
+        </div>
+      </FormSection>
     </div>
   );
 }
