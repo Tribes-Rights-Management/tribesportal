@@ -837,7 +837,7 @@ export function RichTextEditor({
 
   return (
     <div
-      className={`border border-border rounded-md overflow-hidden relative ${className} ${
+      className={`bg-card border border-border rounded-lg overflow-hidden relative ${className} ${
         isDragging ? "ring-2 ring-[#60A5FA] ring-opacity-50" : ""
       }`}
       onDragOver={handleDragOver}
