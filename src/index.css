@@ -123,6 +123,16 @@ a:active,
   transform: scale(0.98);
 }
 
+/* Exclude editor from scale transform */
+.ProseMirror:active,
+.ProseMirror *:active,
+.tiptap:active,
+.tiptap *:active,
+[contenteditable]:active,
+[contenteditable] *:active {
+  transform: none !important;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    PAGE HEADER SPACING SYSTEM — GLOBAL STANDARD (LOCKED)
    
