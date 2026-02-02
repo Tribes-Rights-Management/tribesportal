@@ -79,9 +79,11 @@ export function AppHeader({ showSidebarColumn = false }: AppHeaderProps) {
     </div>
   );
 
-  // Logo area - CENTERED in sidebar column
+  // Logo area - LEFT ALIGNED to match nav items below
+  // SideNav uses: px-2 container (8px) + px-3 on links (12px) = 20px to text
+  // We use px-5 (20px) to align logo with nav item text
   const logoArea = (
-    <div className="h-full flex items-center justify-center">
+    <div className="h-full flex items-center pl-5">
       <TribesLogo />
     </div>
   );
