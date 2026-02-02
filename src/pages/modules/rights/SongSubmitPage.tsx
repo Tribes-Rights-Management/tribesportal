@@ -74,55 +74,63 @@ const PUBLIC_DOMAIN_PATTERNS = [
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// AI PARSING — LIMITED TO TITLE AND WRITERS ONLY
+// AI PARSING — Claude API Integration
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function parseVoiceInput(input: string): { title: string; writers: string[] } {
+async function parseVoiceWithAI(transcript: string): Promise<{ title: string; writers: string[] }> {
+  try {
+    const { data, error } = await supabase.functions.invoke('parse-voice', {
+      body: { transcript }
+    });
+    
+    if (error) throw error;
+    
+    return {
+      title: data?.title || "",
+      writers: Array.isArray(data?.writers) ? data.writers : [],
+    };
+  } catch (err) {
+    console.error("AI parsing failed, using fallback:", err);
+    // Fallback to local parsing if API fails
+    return parseVoiceLocal(transcript);
+  }
+}
+
+// Fallback local parsing (regex-based)
+function parseVoiceLocal(transcript: string): { title: string; writers: string[] } {
   let title = "";
   const writers: string[] = [];
   
-  // ─────────────────────────────────────────────────────────────────────────────
-  // Extract song title
-  // ─────────────────────────────────────────────────────────────────────────────
-  
-  // Pattern 1: "called/titled [TITLE] written by" or "called [TITLE] by"
-  const calledMatch = input.match(/(?:called|titled)\s+["']?(.+?)["']?\s+(?:written\s+by|by\s+)/i);
+  // Try to extract title
+  const calledMatch = transcript.match(/(?:called|titled)\s+["']?(.+?)["']?\s+(?:written\s+by|by\s+)/i);
   if (calledMatch) {
     title = calledMatch[1].trim();
   }
   
-  // Pattern 2: "called/titled [TITLE]" at end (no writers mentioned)
   if (!title) {
-    const calledEndMatch = input.match(/(?:called|titled)\s+["']?([^"']+?)["']?\s*$/i);
+    const calledEndMatch = transcript.match(/(?:called|titled)\s+["']?([^"']+?)["']?\s*$/i);
     if (calledEndMatch) {
       title = calledEndMatch[1].trim();
     }
   }
   
-  // Pattern 3: Quoted title anywhere - "Title" or 'Title'
   if (!title) {
-    const quotedMatch = input.match(/["']([^"']{2,60})["']/);
+    const quotedMatch = transcript.match(/["']([^"']{2,60})["']/);
     if (quotedMatch) {
       title = quotedMatch[1].trim();
     }
   }
   
-  // Clean and format title
+  // Clean title
   if (title) {
     title = title.replace(/\s+(?:written|by)$/i, '').trim();
     title = toTitleCase(title);
   }
   
-  // ─────────────────────────────────────────────────────────────────────────────
-  // Extract writers
-  // ─────────────────────────────────────────────────────────────────────────────
-  
-  const writerMatch = input.match(/(?:written\s+by|by)\s+(.+?)(?:\s*[.!?]|$)/i);
+  // Try to extract writers
+  const writerMatch = transcript.match(/(?:written\s+by|by)\s+(.+?)(?:\s*[.!?]|$)/i);
   if (writerMatch) {
-    let writerStr = writerMatch[1].trim();
-    
-    // Clean trailing noise
-    writerStr = writerStr
+    let writerStr = writerMatch[1].trim()
       .replace(/\s+(?:in|from|back|last|this|split|and\s+it|we\s+wrote|,\s*\d).*$/i, '')
       .trim();
     
@@ -136,7 +144,6 @@ function parseVoiceInput(input: string): { title: string; writers: string[] } {
     for (const name of rawNames) {
       const lower = name.toLowerCase();
       
-      // Normalize first-person references to a placeholder
       if (/^(me|myself|i)$/i.test(name)) {
         if (!seen.has("_self_")) {
           writers.push("(Your name)");
@@ -145,7 +152,6 @@ function parseVoiceInput(input: string): { title: string; writers: string[] } {
         continue;
       }
       
-      // Skip duplicates
       if (seen.has(lower)) continue;
       seen.add(lower);
       
@@ -204,40 +210,71 @@ function detectLyricSections(lyrics: string): string {
   return formatted.trim() || lyrics;
 }
 
-// Parse free-form natural language input during flow steps
+// Natural input parser for structured flow
 function parseNaturalInput(input: string, currentData: SongData): Partial<SongData> {
   const updates: Partial<SongData> = {};
-  const lower = input.toLowerCase().trim();
+  const lower = input.toLowerCase();
   
-  // If input looks like just a title (no "by" or "written")
-  if (!currentData.title && !lower.includes(" by ") && !lower.includes("written")) {
-    updates.title = toTitleCase(input.trim());
-    return updates;
+  // Check for public domain patterns
+  for (const { pattern, original, type } of PUBLIC_DOMAIN_PATTERNS) {
+    if (pattern.test(lower)) {
+      updates.type = type;
+      updates.originalWork = original;
+      if (!currentData.title) {
+        updates.title = toTitleCase(input.match(pattern)?.[0] || input);
+      }
+      return updates;
+    }
   }
   
-  // If it contains writer info
+  // Try to extract title
+  if (!currentData.title) {
+    const titleMatch = input.match(/(?:called|titled|it's|song is)\s+["']?(.+?)["']?(?:\s+by|\s*$)/i);
+    if (titleMatch) {
+      updates.title = toTitleCase(titleMatch[1].trim());
+    } else if (input.length < 100 && !lower.includes(" by ") && !lower.includes("written")) {
+      // Short input without writer keywords - likely just a title
+      updates.title = toTitleCase(input.trim());
+    }
+  }
+  
+  // Try to extract writers
   if (lower.includes(" by ") || lower.includes("written")) {
-    const parsed = parseVoiceInput(input);
+    const parsed = parseVoiceLocal(input);
+    if (parsed.writers.length > 0) {
+      const writerCount = parsed.writers.length;
+      const splitEach = writerCount > 0 ? Math.floor(10000 / writerCount) / 100 : 0;
+      
+      updates.writers = parsed.writers.map((name, i) => {
+        const lowerName = name.toLowerCase();
+        const known = KNOWN_WRITERS[lowerName];
+        return {
+          id: crypto.randomUUID(),
+          name,
+          pro: known?.pro || "",
+          ipi: known?.ipi || "",
+          split: i === writerCount - 1 ? Math.round((100 - splitEach * (writerCount - 1)) * 100) / 100 : splitEach,
+          controlled: name === "(Your name)",
+          fromDatabase: !!known,
+        };
+      });
+    }
     if (parsed.title && !currentData.title) {
       updates.title = parsed.title;
     }
-    if (parsed.writers.length > 0 && currentData.writers.length === 0) {
-      updates.writers = parsed.writers.map((name, i) => ({
-        id: crypto.randomUUID(),
-        name,
-        pro: KNOWN_WRITERS[name.toLowerCase()]?.pro || "",
-        ipi: KNOWN_WRITERS[name.toLowerCase()]?.ipi || "",
-        split: Math.floor(100 / parsed.writers.length),
-        controlled: i === 0,
-        fromDatabase: !!KNOWN_WRITERS[name.toLowerCase()],
-      }));
-    }
-    return updates;
   }
   
-  // Default: treat as title
-  if (!currentData.title) {
-    updates.title = toTitleCase(input.trim());
+  // Check for year
+  const yearMatch = input.match(/\b(19\d{2}|20[0-2]\d)\b/);
+  if (yearMatch) {
+    updates.year = yearMatch[1];
+  }
+  
+  // Check for type keywords
+  if (lower.includes("instrumental")) {
+    updates.type = "instrumental";
+  } else if (lower.includes("original") && !lower.includes("public domain")) {
+    updates.type = "original";
   }
   
   return updates;
@@ -336,22 +373,33 @@ export default function SongSubmitPage() {
     }
   };
 
-  const processVoiceEntry = (transcript: string) => {
+  const processVoiceEntry = async (transcript: string) => {
     setIsProcessing(true);
     
-    setTimeout(() => {
-      const { title, writers } = parseVoiceInput(transcript);
-      
-      // Store parsed data for confirmation
-      setParsedTitle(title);
-      setParsedWriters(writers);
-      
-      setIsProcessing(false);
-      setEntryMode("confirm");
-    }, 500);
+    // Use Claude AI to parse the transcript
+    const { title, writers } = await parseVoiceWithAI(transcript);
+    
+    // Log the voice transcript for analysis
+    try {
+      await supabase.from("voice_transcripts").insert({
+        transcript: transcript,
+        parsed_title: title,
+        parsed_writers: writers,
+        success: !!(title && writers.length > 0),
+      });
+    } catch (err) {
+      console.error("Failed to log voice transcript:", err);
+    }
+    
+    // Store parsed data for confirmation
+    setParsedTitle(title);
+    setParsedWriters(writers.length > 0 ? writers : ["(Your name)"]);
+    
+    setIsProcessing(false);
+    setEntryMode("confirm");
   };
 
-  const confirmVoiceEntry = () => {
+  const confirmVoiceEntry = async () => {
     // Build writers array with equal splits
     const writerCount = parsedWriters.length;
     const splitEach = writerCount > 0 ? Math.floor(10000 / writerCount) / 100 : 0;
@@ -366,6 +414,27 @@ export default function SongSubmitPage() {
       fromDatabase: false,
     }));
     
+    // Log corrections if user edited the AI's parsing
+    const originalParsed = await parseVoiceWithAI(voiceTranscript);
+    const wasEdited = originalParsed.title !== parsedTitle || 
+      JSON.stringify(originalParsed.writers) !== JSON.stringify(parsedWriters);
+    
+    if (wasEdited && voiceTranscript) {
+      try {
+        await supabase.from("voice_transcripts").insert({
+          transcript: voiceTranscript,
+          parsed_title: originalParsed.title,
+          parsed_writers: originalParsed.writers,
+          corrected_title: parsedTitle,
+          corrected_writers: parsedWriters,
+          was_corrected: true,
+          success: true,
+        });
+      } catch (err) {
+        console.error("Failed to log correction:", err);
+      }
+    }
+    
     // Update data and move to flow
     setData(prev => ({
       ...prev,
@@ -374,7 +443,7 @@ export default function SongSubmitPage() {
     }));
     
     setEntryMode("flow");
-    setStep("lyrics"); // Skip to lyrics since we have title and writers
+    setStep("lyrics");
   };
 
   const toggleListening = () => {
@@ -561,41 +630,41 @@ export default function SongSubmitPage() {
               </div>
 
               <div className="space-y-4">
-              {/* Voice Option */}
-              <button
-                onClick={() => setEntryMode("voice")}
-                className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[var(--btn-text)] text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <Mic className="h-6 w-6" />
+                {/* Voice Option */}
+                <button
+                  onClick={() => setEntryMode("voice")}
+                  className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-[var(--btn-text)] text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Mic className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-[var(--btn-text)] mb-1">Tell me about it</div>
+                      <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
+                        Say the song title and who wrote it.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-semibold text-[var(--btn-text)] mb-1">Tell me about it</div>
-                    <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
-                      Say the song title and who wrote it.
-                    </p>
-                  </div>
-                </div>
-              </button>
+                </button>
 
-              {/* Manual Option */}
-              <button
-                onClick={() => setEntryMode("flow")}
-                className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[var(--muted-wash)] text-[var(--btn-text)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <Edit3 className="h-6 w-6" />
+                {/* Manual Option */}
+                <button
+                  onClick={() => setEntryMode("flow")}
+                  className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-[var(--muted-wash)] text-[var(--btn-text)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Edit3 className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
+                      <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
+                        Go step by step through the registration form.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
-                    <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
-                      Go step by step through the registration form.
-                    </p>
-                  </div>
-                </div>
-              </button>
+                </button>
               </div>
             </div>
           </div>
