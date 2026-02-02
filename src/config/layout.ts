@@ -65,11 +65,11 @@ export const BRAND = {
   
   /**
    * Logo dimensions — consistent everywhere
-   * Height: 20px (h-5 in Tailwind)
+   * Height: 18px for tighter feel
    * Width: auto, max 80px
    */
-  LOGO_HEIGHT: "20px",
-  LOGO_HEIGHT_PX: 20,
+  LOGO_HEIGHT: "18px",
+  LOGO_HEIGHT_PX: 18,
   LOGO_MAX_WIDTH: "80px",
   LOGO_MAX_WIDTH_PX: 80,
   
