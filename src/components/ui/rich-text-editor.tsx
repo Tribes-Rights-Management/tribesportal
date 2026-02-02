@@ -745,10 +745,13 @@ export function RichTextEditor({
       }),
     ],
     content,
+    autofocus: false,
     editorProps: {
       attributes: {
         class: "max-w-none focus:outline-none min-h-[400px]",
       },
+      scrollThreshold: 0,
+      scrollMargin: 0,
       handleDrop: (view, event, slice, moved) => {
         if (!moved && event.dataTransfer?.files?.length) {
           const file = event.dataTransfer.files[0];
