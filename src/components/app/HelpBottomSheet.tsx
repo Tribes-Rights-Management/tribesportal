@@ -91,6 +91,18 @@ export function HelpBottomSheet() {
     }, 150);
   };
 
+  // Open article in external Help Center website
+  const handleOpenArticle = (articleSlug: string) => {
+    setOpen(false);
+    window.open(`https://tribesrightsmanagement.com/hc/publishers/articles/${articleSlug}`, '_blank');
+  };
+
+  // Open Help Center in new tab
+  const handleOpenHelpCenter = () => {
+    setOpen(false);
+    window.open('https://tribesrightsmanagement.com/hc/publishers', '_blank');
+  };
+
   const handleBack = () => {
     setCurrentView('home');
     setIsSubmitted(false);
@@ -228,11 +240,11 @@ export function HelpBottomSheet() {
                     key={article.id}
                     role="button"
                     tabIndex={0}
-                    onClick={() => handleNavigate(`/help/article/${article.slug}`)}
+                    onClick={() => handleOpenArticle(article.slug)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        handleNavigate(`/help/article/${article.slug}`);
+                        handleOpenArticle(article.slug);
                       }
                     }}
                     className={cn(
@@ -265,11 +277,11 @@ export function HelpBottomSheet() {
               <div
                 role="button"
                 tabIndex={0}
-                onClick={() => handleNavigate('/help')}
+                onClick={() => handleOpenHelpCenter()}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    handleNavigate('/help');
+                    handleOpenHelpCenter();
                   }
                 }}
                 className={cn(
@@ -397,11 +409,11 @@ export function HelpBottomSheet() {
                           key={article.id}
                           role="button"
                           tabIndex={0}
-                          onClick={() => handleNavigate(`/help/article/${article.slug}`)}
+                          onClick={() => handleOpenArticle(article.slug)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' || e.key === ' ') {
                               e.preventDefault();
-                              handleNavigate(`/help/article/${article.slug}`);
+                              handleOpenArticle(article.slug);
                             }
                           }}
                           className="px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-muted/50 active:bg-muted transition-colors"
