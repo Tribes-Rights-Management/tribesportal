@@ -56,7 +56,7 @@ export function AppShell({
     // No sidebar: simple stacked layout
     return (
       <div 
-        className="min-h-screen flex flex-col w-full max-w-full overflow-hidden"
+        className="h-screen flex flex-col w-full max-w-full overflow-hidden"
         style={{ backgroundColor: 'var(--page-bg)' }}
       >
         {/* Header — full width */}
@@ -85,7 +85,7 @@ export function AppShell({
   // With sidebar: CSS Grid layout (Stripe-like)
   return (
     <div 
-      className="min-h-screen w-full max-w-full overflow-hidden"
+      className="h-screen w-full max-w-full overflow-hidden"
       style={{ 
         display: 'grid',
         gridTemplateColumns: `${SIDEBAR_WIDTH} 1fr`,
