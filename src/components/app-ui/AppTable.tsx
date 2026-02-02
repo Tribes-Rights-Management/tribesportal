@@ -236,8 +236,8 @@ export function AppTableHead({
   return (
     <th
       className={cn(
-        "py-3 px-4",
-        "text-[11px] uppercase tracking-wider font-medium text-muted-foreground",
+        "py-3.5 px-4",
+        "text-xs uppercase tracking-wider font-medium text-muted-foreground",
         alignClasses[align],
         className
       )}
@@ -292,9 +292,9 @@ export function AppTableCell({
   return (
     <td
       className={cn(
-        "py-3 px-4 text-[13px]",
+        "py-3.5 px-4 text-sm",
         muted ? "text-muted-foreground" : "text-foreground",
-        mono && "font-mono text-[12px]",
+        mono && "font-mono text-[13px]",
         alignClasses[align],
         className
       )}
@@ -354,7 +354,7 @@ export function AppTableBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2 py-1 rounded-md text-[11px] font-medium",
+        "inline-flex items-center px-2 py-1 rounded-md text-xs font-medium",
         badgeVariants[variant],
         className
       )}
@@ -378,7 +378,7 @@ export function AppTableTag({ children, className }: AppTableTagProps) {
     <span
       className={cn(
         "inline-flex items-center px-1.5 py-0.5 rounded",
-        "text-[10px] bg-muted text-muted-foreground",
+        "text-[11px] bg-muted text-muted-foreground",
         className
       )}
     >

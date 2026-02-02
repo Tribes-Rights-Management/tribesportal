@@ -51,7 +51,7 @@ const sizeConfig: Record<StatCardSize, { padding: string; valueSize: string; lab
   sm: {
     padding: "p-3",
     valueSize: "text-xl sm:text-2xl",
-    labelSize: "text-[10px]",
+    labelSize: "text-xs",
   },
   md: {
     padding: "p-4",

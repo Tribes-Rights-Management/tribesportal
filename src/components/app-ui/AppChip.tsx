@@ -121,7 +121,7 @@ export function AppChip({
         className={cn(
           "inline-flex items-center justify-center",
           "h-5 px-1.5",
-          "text-[10px] font-medium uppercase tracking-wide rounded",
+          "text-xs font-medium uppercase tracking-wide rounded",
           "select-none pointer-events-none",
           className
         )}
@@ -144,7 +144,7 @@ export function AppChip({
       className={cn(
         "inline-flex items-center justify-center",
         "h-5 px-1.5",
-        "text-[10px] font-medium uppercase tracking-wide rounded",
+        "text-xs font-medium uppercase tracking-wide rounded",
         "select-none pointer-events-none",
         className
       )}

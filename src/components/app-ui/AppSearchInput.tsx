@@ -172,7 +172,7 @@ export function AppSearchInput({
             "absolute right-3 top-1/2 -translate-y-1/2",
             "inline-flex items-center justify-center",
             "h-[22px] min-w-[22px] px-1.5 rounded-md",
-            "text-[11px] font-medium text-[#6B7280]",
+            "text-xs font-medium text-[#6B7280]",
             "pointer-events-none select-none",
             "bg-white border border-[#E6E8EC]",
             "shadow-[0_1px_0_rgba(0,0,0,0.05)]"

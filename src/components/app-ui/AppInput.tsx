@@ -72,7 +72,7 @@ export function AppInput({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-[11px] uppercase tracking-wider font-medium text-muted-foreground"
+          className="block text-xs uppercase tracking-wider font-medium text-muted-foreground"
         >
           {label}
           {required && <span className="text-destructive ml-1">*</span>}
@@ -87,9 +87,9 @@ export function AppInput({
         disabled={disabled}
         required={required}
         className={cn(
-          "w-full h-9 px-3",
+          "w-full h-10 px-3.5",
           "bg-[var(--app-surface-bg)] border rounded-lg",
-          "text-base sm:text-[13px] text-foreground placeholder:text-muted-foreground/60", // 16px on mobile to prevent Safari zoom
+          "text-base sm:text-sm text-foreground placeholder:text-muted-foreground/60", // 16px on mobile to prevent Safari zoom
           "focus:outline-none focus:ring-2 focus:ring-[#0071E3]/20 focus:border-[#0071E3]",
           "transition-colors duration-150",
           hasError
@@ -105,7 +105,7 @@ export function AppInput({
         <p
           id={`${inputId}-description`}
           className={cn(
-            "text-[11px]",
+            "text-xs",
             hasError ? "text-destructive" : "text-muted-foreground"
           )}
         >
@@ -168,7 +168,7 @@ export function AppTextarea({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-[11px] uppercase tracking-wider font-medium text-muted-foreground"
+          className="block text-xs uppercase tracking-wider font-medium text-muted-foreground"
         >
           {label}
           {required && <span className="text-destructive ml-1">*</span>}
@@ -183,9 +183,9 @@ export function AppTextarea({
         required={required}
         rows={rows}
         className={cn(
-          "w-full px-3 py-2",
+          "w-full px-3.5 py-2.5",
           "bg-[var(--app-surface-bg)] border rounded-lg",
-          "text-base sm:text-[13px] text-foreground placeholder:text-muted-foreground/60", // 16px on mobile to prevent Safari zoom
+          "text-base sm:text-sm text-foreground placeholder:text-muted-foreground/60", // 16px on mobile to prevent Safari zoom
           "focus:outline-none focus:ring-2 focus:ring-[#0071E3]/20 focus:border-[#0071E3]",
           "transition-colors duration-150",
           hasError
@@ -202,7 +202,7 @@ export function AppTextarea({
         <p
           id={`${inputId}-description`}
           className={cn(
-            "text-[11px]",
+            "text-xs",
             hasError ? "text-destructive" : "text-muted-foreground"
           )}
         >

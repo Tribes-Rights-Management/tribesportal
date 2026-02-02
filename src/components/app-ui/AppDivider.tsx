@@ -44,7 +44,7 @@ export function AppDivider({
     return (
       <div className={cn("flex items-center gap-4", spacingClasses[spacing], className)}>
         <div className="flex-1 h-px bg-border" />
-        <span className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">
+        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
           {label}
         </span>
         <div className="flex-1 h-px bg-border" />
