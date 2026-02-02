@@ -32,7 +32,7 @@ html {
   overflow-x: clip;   /* Modern override - clips without scrollbars */
   overscroll-behavior-x: none;
   -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 body {
@@ -2009,14 +2009,25 @@ html[data-ui-density="compact"] {
   overflow-anchor: none;
 }
 
-.ProseMirror:focus {
+.ProseMirror:focus,
+.ProseMirror:focus-visible {
   outline: none;
-  scroll-behavior: auto;
 }
 
 .ProseMirror * {
-  scroll-margin: 0;
-  scroll-padding: 0;
+  scroll-margin: 0 !important;
+  scroll-padding: 0 !important;
+}
+
+/* Prevent any transforms or transitions on editor content */
+.ProseMirror p,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror ul,
+.ProseMirror ol,
+.ProseMirror li {
+  transition: none !important;
+  transform: none !important;
 }
 
 .ProseMirror p {
