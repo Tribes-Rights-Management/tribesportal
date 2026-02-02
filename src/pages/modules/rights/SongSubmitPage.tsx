@@ -242,27 +242,140 @@ export default function SongSubmitPage() {
   const splitValid = Math.abs(totalSplit - 100) < 0.01;
 
   // ═══════════════════════════════════════════════════════════════════════════════
+  // STEP DEFINITIONS
+  // ═══════════════════════════════════════════════════════════════════════════════
+
+  const STEPS = [
+    { id: 1, label: "Song Info", description: "Title, writers, and details" },
+    { id: 2, label: "Lyrics", description: "Song lyrics or instrumental" },
+    { id: 3, label: "Chords", description: "Chord chart upload" },
+    { id: 4, label: "Copyright", description: "Protection status" },
+    { id: 5, label: "Agreement", description: "Terms and submit" },
+  ];
+
+  const isStepComplete = (stepId: number): boolean => {
+    switch (stepId) {
+      case 1:
+        const hasTitle = !!data.title;
+        const hasAltHandled = data.hasAlternateTitle === false || (data.hasAlternateTitle === true && !!data.alternateTitle);
+        const hasType = !!data.songType;
+        const hasOriginal = !["public_domain", "derivative", "medley"].includes(data.songType) || !!data.originalWorkTitle;
+        const hasYear = data.releaseStatus === "no" ? !!data.creationYear : !!data.publicationYear;
+        const hasWriters = data.writers.length > 0 && 
+          data.writers.every(w => w.name && w.split > 0 && w.credit && w.pro) &&
+          Math.abs(data.writers.reduce((s, w) => s + w.split, 0) - 100) < 0.01;
+        return hasTitle && hasAltHandled && hasType && hasOriginal && data.releaseStatus !== null && hasYear && hasWriters;
+      case 2:
+        if (data.songType === "instrumental") return true;
+        const hasLyrics = data.lyricsEntryMode === "paste" ? !!data.lyricsFull : data.lyricsSections.length > 0 && data.lyricsSections.every(s => s.type && s.content);
+        return hasLyrics && data.lyricsConfirmed;
+      case 3:
+        return data.hasChordChart === true || data.chordChartAcknowledged;
+      case 4:
+        if (!data.copyrightStatus) return false;
+        if (data.copyrightStatus === "no") return data.wantsCopyrightFiling !== null;
+        return true;
+      case 5:
+        return data.termsAccepted;
+      default:
+        return false;
+    }
+  };
+
+  const canNavigateToStep = (targetStep: number): boolean => {
+    // Can always go back
+    if (targetStep < step) return true;
+    // Can only go forward if all previous steps are complete
+    for (let i = 1; i < targetStep; i++) {
+      if (!isStepComplete(i)) return false;
+    }
+    return true;
+  };
+
+  const goToStep = (targetStep: FlowStep) => {
+    if (canNavigateToStep(targetStep)) {
+      setStep(targetStep);
+    }
+  };
+
+  // ═══════════════════════════════════════════════════════════════════════════════
   // MAIN FORM
   // ═══════════════════════════════════════════════════════════════════════════════
 
   return (
     <div className="h-full flex flex-col bg-[var(--page-bg)]">
-      <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center justify-between px-4 sm:px-6">
-        <div className="flex items-center">
-          <button onClick={goToPrevStep} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)]">
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Add Song</span>
-        </div>
-        <span className="text-xs text-[var(--btn-text-muted)]">Step {step} of 5</span>
+      {/* Header */}
+      <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center px-4 sm:px-6">
+        <button onClick={() => navigate("/rights/catalogue")} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
+          <ArrowLeft className="h-5 w-5" />
+        </button>
+        <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Add Song</span>
       </header>
 
-      <div className="shrink-0 h-1 bg-[var(--border-subtle)]">
-        <div className="h-full bg-[var(--btn-text)] transition-all" style={{ width: `${(step / 5) * 100}%` }} />
-      </div>
+      {/* Main Content with Side Stepper */}
+      <div className="flex-1 flex overflow-hidden">
+        
+        {/* Side Stepper - Hidden on mobile */}
+        <aside className="hidden md:flex w-64 shrink-0 border-r border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex-col p-6">
+          <nav className="space-y-1">
+            {STEPS.map((s, index) => {
+              const isActive = step === s.id;
+              const isComplete = isStepComplete(s.id);
+              const canNavigate = canNavigateToStep(s.id);
+              
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => goToStep(s.id as FlowStep)}
+                  disabled={!canNavigate}
+                  className={cn(
+                    "w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all",
+                    isActive && "bg-[var(--muted-wash)]",
+                    !isActive && canNavigate && "hover:bg-[var(--muted-wash)]/50",
+                    !canNavigate && "opacity-50 cursor-not-allowed"
+                  )}
+                >
+                  {/* Step indicator */}
+                  <div className={cn(
+                    "w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-medium transition-all",
+                    isComplete && !isActive && "bg-success text-success-foreground",
+                    isActive && "bg-[var(--btn-text)] text-white",
+                    !isComplete && !isActive && "border-2 border-[var(--border-subtle)] text-[var(--btn-text-muted)]"
+                  )}>
+                    {isComplete && !isActive ? (
+                      <Check className="h-3.5 w-3.5" />
+                    ) : (
+                      s.id
+                    )}
+                  </div>
+                  
+                  {/* Step text */}
+                  <div className="min-w-0">
+                    <div className={cn(
+                      "text-sm font-medium truncate",
+                      isActive ? "text-[var(--btn-text)]" : "text-[var(--btn-text-muted)]"
+                    )}>
+                      {s.label}
+                    </div>
+                    <div className="text-xs text-[var(--btn-text-muted)] truncate">
+                      {s.description}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
 
-      <div className="flex-1 overflow-y-auto p-6 sm:p-8">
-        <div className="max-w-2xl mx-auto">
+        {/* Mobile Progress Bar */}
+        <div className="md:hidden absolute top-14 left-0 right-0 h-1 bg-[var(--border-subtle)] z-10">
+          <div className="h-full bg-[var(--btn-text)] transition-all" style={{ width: `${(step / 5) * 100}%` }} />
+        </div>
+
+        {/* Form Content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-6 sm:p-8 md:pt-8">
+            <div className="max-w-2xl">
 
           {/* STEP 1: SONG DETAILS */}
           {step === 1 && (
@@ -529,18 +642,21 @@ export default function SongSubmitPage() {
         </div>
       </div>
 
+      {/* Footer Actions */}
       <div className="shrink-0 border-t border-[var(--border-subtle)] bg-[var(--topbar-bg)] p-4 sm:px-6">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <button onClick={goToPrevStep} className="px-5 py-2.5 text-sm font-medium rounded-xl text-[var(--btn-text)] hover:bg-[var(--muted-wash)]">Back</button>
+        <div className="max-w-2xl flex items-center justify-between">
+          <button onClick={goToPrevStep} className="px-5 py-2.5 text-sm font-medium rounded-lg text-[var(--btn-text)] hover:bg-[var(--muted-wash)]">Back</button>
           {step === 5 ? (
-            <button onClick={submit} disabled={!canAdvanceStep() || isSubmitting} className="px-6 py-2.5 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 disabled:opacity-50 flex items-center gap-2">
+            <button onClick={submit} disabled={!canAdvanceStep() || isSubmitting} className="px-6 py-2.5 text-sm font-medium rounded-lg bg-[var(--btn-text)] text-white hover:opacity-90 disabled:opacity-50 flex items-center gap-2">
               {isSubmitting ? "Submitting..." : "Submit Song"} <Send className="h-4 w-4" />
             </button>
           ) : (
-            <button onClick={goToNextStep} disabled={!canAdvanceStep()} className="px-6 py-2.5 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 disabled:opacity-50 flex items-center gap-2">
+            <button onClick={goToNextStep} disabled={!canAdvanceStep()} className="px-6 py-2.5 text-sm font-medium rounded-lg bg-[var(--btn-text)] text-white hover:opacity-90 disabled:opacity-50 flex items-center gap-2">
               Continue <ChevronRight className="h-4 w-4" />
             </button>
           )}
+        </div>
+      </div>
         </div>
       </div>
     </div>
