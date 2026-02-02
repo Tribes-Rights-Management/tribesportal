@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Mic, MicOff, Check, ChevronRight, Music, Users, FileText, Shield, Send, Sparkles, Edit3, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
@@ -259,18 +259,22 @@ function detectLyricSections(lyrics: string): string {
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════════
 
+type EntryMode = "choice" | "voice" | "flow";
+
 export default function SongSubmitPage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
+  const [entryMode, setEntryMode] = useState<EntryMode>("choice");
   const [step, setStep] = useState<FlowStep>("title");
   const [input, setInput] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingField, setEditingField] = useState<string | null>(null);
+  const [voiceTranscript, setVoiceTranscript] = useState("");
   
   const [data, setData] = useState<SongData>({
     title: "",
@@ -298,21 +302,69 @@ export default function SongSubmitPage() {
     if (typeof window !== "undefined" && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)) {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false;
+      recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
       
       recognitionRef.current.onresult = (event: any) => {
         const transcript = Array.from(event.results)
           .map((result: any) => result[0].transcript)
           .join("");
-        setInput(transcript);
+        
+        if (entryMode === "voice") {
+          setVoiceTranscript(transcript);
+        } else {
+          setInput(transcript);
+        }
       };
       
       recognitionRef.current.onend = () => {
         setIsListening(false);
+        
+        // If in voice entry mode and we have a transcript, process it
+        if (entryMode === "voice" && voiceTranscript) {
+          processVoiceEntry(voiceTranscript);
+        }
       };
     }
-  }, []);
+  }, [entryMode, voiceTranscript]);
+
+  const startVoiceEntry = () => {
+    if (!recognitionRef.current) {
+      toast.error("Voice input not supported in this browser");
+      return;
+    }
+    setVoiceTranscript("");
+    recognitionRef.current.start();
+    setIsListening(true);
+  };
+
+  const stopVoiceEntry = () => {
+    if (recognitionRef.current && isListening) {
+      recognitionRef.current.stop();
+    }
+  };
+
+  const processVoiceEntry = (transcript: string) => {
+    setIsProcessing(true);
+    
+    setTimeout(() => {
+      const updates = parseNaturalInput(transcript, data);
+      
+      if (Object.keys(updates).length > 0) {
+        setData(prev => ({ ...prev, ...updates }));
+      }
+      
+      setIsProcessing(false);
+      setEntryMode("flow");
+      
+      // Determine which step to start on based on what we got
+      if (updates.title && updates.writers && updates.writers.length > 0) {
+        setStep("lyrics");
+      } else if (updates.title) {
+        setStep("writers");
+      }
+    }, 500);
+  };
 
   const toggleListening = () => {
     if (!recognitionRef.current) {
@@ -324,9 +376,14 @@ export default function SongSubmitPage() {
       recognitionRef.current.stop();
       setIsListening(false);
     } else {
+      setInput("");
       recognitionRef.current.start();
       setIsListening(true);
     }
+  };
+
+  const goBackFromChoice = () => {
+    navigate("/rights/catalogue");
   };
 
   const processInput = () => {
@@ -461,6 +518,171 @@ export default function SongSubmitPage() {
   };
 
   const stepNumber = ["title", "writers", "lyrics", "details", "review"].indexOf(step) + 1;
+
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // ENTRY CHOICE SCREEN
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
+  if (entryMode === "choice") {
+    return (
+      <div className="h-full flex flex-col bg-[var(--page-bg)]">
+        <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center px-4 sm:px-6">
+          <button onClick={goBackFromChoice} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] transition-colors text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+          <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Add Song</span>
+        </header>
+
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="max-w-md w-full text-center">
+            <div className="w-16 h-16 rounded-2xl bg-[var(--muted-wash)] flex items-center justify-center mx-auto mb-6">
+              <Music className="h-8 w-8 text-[var(--btn-text)]" />
+            </div>
+            
+            <h1 className="text-2xl font-semibold text-[var(--btn-text)] mb-2">
+              Add a new song
+            </h1>
+            <p className="text-[var(--btn-text-muted)] mb-10">
+              How would you like to get started?
+            </p>
+
+            <div className="space-y-4">
+              {/* Voice Option */}
+              <button
+                onClick={() => setEntryMode("voice")}
+                className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[var(--btn-text)] text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <Mic className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-[var(--btn-text)] mb-1">Tell me about it</div>
+                    <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
+                      Speak naturally. Include the song title, writers, splits, and year written.
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              {/* Manual Option */}
+              <button
+                onClick={() => setEntryMode("flow")}
+                className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[var(--muted-wash)] text-[var(--btn-text)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <Edit3 className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
+                    <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
+                      Go step by step through the registration form.
+                    </p>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // VOICE ENTRY SCREEN
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
+  if (entryMode === "voice") {
+    return (
+      <div className="h-full flex flex-col bg-[var(--page-bg)]">
+        <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center">
+            <button onClick={() => { stopVoiceEntry(); setEntryMode("choice"); }} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] transition-colors text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Voice Entry</span>
+          </div>
+          <button
+            onClick={() => { stopVoiceEntry(); setEntryMode("flow"); }}
+            className="text-sm text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]"
+          >
+            Skip to form
+          </button>
+        </header>
+
+        <div className="flex-1 flex flex-col items-center justify-center p-6">
+          <div className="max-w-lg w-full text-center">
+            {/* Listening State */}
+            {isListening ? (
+              <>
+                <div className="relative w-32 h-32 mx-auto mb-8">
+                  {/* Pulse rings */}
+                  <div className="absolute inset-0 rounded-full bg-[var(--btn-text)]/10 animate-ping" />
+                  <div className="absolute inset-2 rounded-full bg-[var(--btn-text)]/20 animate-pulse" />
+                  <div className="absolute inset-4 rounded-full bg-[var(--btn-text)] flex items-center justify-center">
+                    <Mic className="h-10 w-10 text-white" />
+                  </div>
+                </div>
+                
+                <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-2">Listening...</h2>
+                <p className="text-[var(--btn-text-muted)] mb-6">Tell me about your song</p>
+                
+                {/* Live transcript */}
+                {voiceTranscript && (
+                  <div className="p-4 bg-[var(--muted-wash)] rounded-xl text-left mb-8 max-h-32 overflow-y-auto">
+                    <p className="text-sm text-[var(--btn-text)]">{voiceTranscript}</p>
+                  </div>
+                )}
+                
+                <button
+                  onClick={stopVoiceEntry}
+                  className="px-8 py-3 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 transition-all"
+                >
+                  Done speaking
+                </button>
+              </>
+            ) : isProcessing ? (
+              <>
+                <div className="w-32 h-32 mx-auto mb-8 rounded-full bg-[var(--muted-wash)] flex items-center justify-center">
+                  <Sparkles className="h-10 w-10 text-[var(--btn-text)] animate-pulse" />
+                </div>
+                <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-2">Processing...</h2>
+                <p className="text-[var(--btn-text-muted)]">Extracting song details</p>
+              </>
+            ) : (
+              <>
+                <div className="w-32 h-32 mx-auto mb-8 rounded-full bg-[var(--muted-wash)] flex items-center justify-center">
+                  <Mic className="h-10 w-10 text-[var(--btn-text-muted)]" />
+                </div>
+                
+                <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-2">Tell me about your song</h2>
+                <p className="text-[var(--btn-text-muted)] mb-8 max-w-sm mx-auto">
+                  Include the title, who wrote it, how splits are divided, and when it was written.
+                </p>
+                
+                <button
+                  onClick={startVoiceEntry}
+                  className="px-8 py-4 text-base font-medium rounded-2xl bg-[var(--btn-text)] text-white hover:opacity-90 transition-all flex items-center gap-3 mx-auto"
+                >
+                  <Mic className="h-5 w-5" />
+                  Start speaking
+                </button>
+                
+                <p className="text-xs text-[var(--btn-text-muted)] mt-6">
+                  Example: "My song is called 'Morning Light', written by me and Sarah Johnson, split 60/40, we wrote it in 2024"
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // MAIN FLOW
+  // ═══════════════════════════════════════════════════════════════════════════════
 
   return (
     <div className="h-full flex flex-col bg-[var(--page-bg)]">
