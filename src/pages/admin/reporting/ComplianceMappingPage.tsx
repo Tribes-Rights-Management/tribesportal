@@ -323,7 +323,7 @@ export default function ComplianceMappingPage() {
     : COMPLIANCE_CONTROLS.filter(c => c.domain === selectedDomain);
 
   return (
-    <div className="w-full max-w-[1040px] mx-auto px-4 sm:px-6 py-8">
+    <div className="w-full max-w-[1040px] mx-auto px-[20px] sm:px-6 py-8">
       <PageHeader 
         title="Compliance Mapping"
         description="System behavior mapped to recognized compliance controls"

@@ -305,7 +305,7 @@ export default function SongSubmitPage() {
   return (
     <div className="h-full flex flex-col bg-[var(--page-bg)]">
       {/* Header */}
-      <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center px-4 sm:px-6">
+      <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center px-[20px] sm:px-6">
         <button onClick={() => navigate("/rights/catalogue")} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
           <ArrowLeft className="h-5 w-5" />
         </button>

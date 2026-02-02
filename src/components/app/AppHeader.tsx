@@ -81,9 +81,9 @@ export function AppHeader({ showSidebarColumn = false }: AppHeaderProps) {
 
   // Logo area - LEFT ALIGNED to match nav items below
   // Desktop: SideNav uses px-2 container (8px) + px-3 on links (12px) = 20px to text
-  // Mobile: Logo at left edge, 20px padding applied at container level
+  // Mobile: Logo at left edge, 20px padding applied at container level (no extra offset)
   const logoArea = (
-    <div className="h-full flex items-center md:pl-5">
+    <div className="h-full flex items-center" style={{ paddingLeft: isMobile ? 0 : 20 }}>
       <TribesLogo />
     </div>
   );
@@ -102,8 +102,8 @@ export function AppHeader({ showSidebarColumn = false }: AppHeaderProps) {
 
         {/* Content column */}
         <div 
-          className="h-full flex items-center justify-end px-6"
-          style={{ backgroundColor: CSS_VARS.TOPBAR_BG }}
+          className="h-full flex items-center justify-end"
+          style={{ backgroundColor: CSS_VARS.TOPBAR_BG, paddingRight: 24 }}
         >
           {rightIcons}
         </div>
@@ -119,10 +119,10 @@ export function AppHeader({ showSidebarColumn = false }: AppHeaderProps) {
     <>
       <div 
         className="w-full h-full flex items-center justify-between"
-        style={{ paddingLeft: isMobile ? 20 : 0, paddingRight: isMobile ? 20 : 24 }}
+        style={{ paddingLeft: 20, paddingRight: 20 }}
       >
         {logoArea}
-        <div className="hidden md:block px-6">
+        <div className="hidden md:block" style={{ paddingRight: 4 }}>
           {rightIcons}
         </div>
         <div className="md:hidden">

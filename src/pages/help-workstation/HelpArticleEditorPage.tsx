@@ -389,7 +389,7 @@ export default function HelpArticleEditorPage() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <div className="px-4 sm:px-6 py-3 border-b border-border flex items-center justify-between gap-2">
+      <div className="px-[20px] sm:px-6 py-3 border-b border-border flex items-center justify-between gap-2">
         {/* Back button - icon only on mobile, full on desktop */}
         <AppButton 
           intent="ghost" 

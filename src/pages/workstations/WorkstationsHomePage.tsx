@@ -200,7 +200,7 @@ export default function WorkstationsHomePage() {
   const renderPageShell = (content: React.ReactNode) => (
     <HeaderOnlyLayout>
       <div 
-        className="min-h-[calc(100vh-56px)] px-4 sm:px-6"
+        className="min-h-[calc(100vh-56px)] px-[20px] sm:px-6"
         style={{ backgroundColor: 'var(--app-bg)' }}
       >
         <div className="mx-auto w-full max-w-[640px] pb-12">

@@ -159,7 +159,7 @@ export default function ExecutiveReportingPage() {
   const [timeRange, setTimeRange] = useState("30d");
 
   return (
-    <div className="w-full max-w-[1040px] mx-auto px-4 sm:px-6 py-8">
+    <div className="w-full max-w-[1040px] mx-auto px-[20px] sm:px-6 py-8">
       <PageHeader 
         title="Executive Reporting"
         description="System health, governance, and risk visibility"

@@ -235,7 +235,7 @@ a:active,
      Tablet/Desktop: 24px (px-6)
      Used by PageContainer + header bars via CSS var + safe-area max().
      â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  --page-pad-x: 16px;
+  --page-pad-x: 20px;
   
   /* Footer-specific tokens â€” Institutional grade, balanced zones */
   --footer-pt-mobile: 72px;    /* Locked: equal top/bottom */
