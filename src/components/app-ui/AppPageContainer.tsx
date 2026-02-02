@@ -53,7 +53,7 @@ export function AppPageContainer({
   return (
     <div 
       className={cn(
-        "p-4 sm:p-6 lg:p-8 mx-auto w-full",
+        "p-[20px] sm:p-6 lg:p-8 mx-auto w-full",
         maxWidthClasses[maxWidth],
         className
       )}
