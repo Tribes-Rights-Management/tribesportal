@@ -1,6 +1,5 @@
-import { ReactNode, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Bell, Search, CircleHelp } from "lucide-react";
+import { useState } from "react";
+import { Bell, Search } from "lucide-react";
 import { HeaderIconButton } from "@/components/app/HeaderIconButton";
 import { UserMenuDropdown } from "@/components/app/UserMenuDropdown";
 import { HelpBottomSheet } from "@/components/app/HelpBottomSheet";
@@ -35,7 +34,6 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ showSidebarColumn = false }: AppHeaderProps) {
-  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [searchOpen, setSearchOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -65,15 +63,8 @@ export function AppHeader({ showSidebarColumn = false }: AppHeaderProps) {
         </PopoverContent>
       </Popover>
 
-      {isMobile ? (
-        <HelpBottomSheet />
-      ) : (
-        <HeaderIconButton
-          icon={CircleHelp}
-          aria-label="Help & Resources"
-          onClick={() => navigate("/help")}
-        />
-      )}
+      {/* Help - use bottom sheet/drawer for mobile, popover for desktop */}
+      <HelpBottomSheet />
 
       <UserMenuDropdown />
     </div>
