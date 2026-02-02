@@ -581,11 +581,11 @@ export default function SongSubmitPage() {
                     <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
                     <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
                       Go step by step through the registration form.
-                    </p>
+                  </p>
                   </div>
                 </div>
               </button>
-            </div>
+              </div>
             </div>
           </div>
         </div>
