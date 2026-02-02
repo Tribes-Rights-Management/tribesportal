@@ -706,25 +706,17 @@ export function RichTextEditor({
     extensions: [
       StarterKit.configure({
         bulletList: {
-          HTMLAttributes: {
-            class: "list-disc pl-6 space-y-1",
-          },
+          HTMLAttributes: {},
         },
         orderedList: {
-          HTMLAttributes: {
-            class: "list-decimal pl-6 space-y-1",
-          },
+          HTMLAttributes: {},
         },
         heading: {
           levels: [2, 3],
-          HTMLAttributes: {
-            class: "font-semibold",
-          },
+          HTMLAttributes: {},
         },
         paragraph: {
-          HTMLAttributes: {
-            class: "leading-relaxed",
-          },
+          HTMLAttributes: {},
         },
       }),
       Underline,
@@ -755,7 +747,7 @@ export function RichTextEditor({
     content,
     editorProps: {
       attributes: {
-        class: "prose prose-sm max-w-none focus:outline-none min-h-[400px]",
+        class: "max-w-none focus:outline-none min-h-[400px]",
       },
       handleDrop: (view, event, slice, moved) => {
         if (!moved && event.dataTransfer?.files?.length) {
