@@ -2002,11 +2002,18 @@ html[data-ui-density="compact"] {
   outline: none;
   min-height: 400px;
   padding: 16px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.ProseMirror:focus {
+  outline: none;
 }
 
 .ProseMirror p {
   margin: 0 0 1em 0;
   line-height: 1.6;
+  font-size: inherit;
 }
 
 .ProseMirror p:last-child {
