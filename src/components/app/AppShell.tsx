@@ -114,15 +114,17 @@ interface SidebarHeaderProps {
   contextSelector?: ReactNode;
 }
 
+/**
+ * SidebarHeader - Logo area in header
+ * 
+ * ALIGNMENT: Uses px-2 (8px) to match SideNav container padding.
+ * The logo button adds its own internal padding to align with nav item text.
+ */
 export function SidebarHeader({ logo, contextSelector }: SidebarHeaderProps) {
   return (
     <div 
-      className="h-full flex items-center justify-between"
-      style={{ 
-        backgroundColor: CSS_VARS.SIDEBAR_BG,
-        paddingLeft: LAYOUT.SIDEBAR_PADDING_X,
-        paddingRight: LAYOUT.SIDEBAR_PADDING_X,
-      }}
+      className="h-full flex items-center justify-between px-2"
+      style={{ backgroundColor: CSS_VARS.SIDEBAR_BG }}
     >
       {logo}
       {contextSelector}

@@ -4,27 +4,20 @@ import { BRAND } from "@/config/layout";
 /**
  * TRIBES LOGO — STANDARDIZED BRAND COMPONENT
  * 
- * ═══════════════════════════════════════════════════════════════════════════════
  * SINGLE source of truth for the Tribes wordmark logo.
+ * USE THIS COMPONENT EVERYWHERE.
  * 
- * USE THIS COMPONENT EVERYWHERE. Do not create custom logo implementations.
+ * ALIGNMENT: The button has px-3 (12px) left padding to align the logo
+ * with SideNav item text (which uses px-3 inside a px-2 container).
  * 
  * Variants:
  * - "button" (default): Clickable, navigates to /workspaces
  * - "static": Non-interactive, for public pages or footers
- * 
- * Size is FIXED and cannot be overridden:
- * - Height: 20px
- * - Max width: 80px
- * ═══════════════════════════════════════════════════════════════════════════════
  */
 
 interface TribesLogoProps {
-  /** "button" = clickable (default), "static" = non-interactive */
   variant?: "button" | "static";
-  /** Override navigation target (default: /workspaces) */
   href?: string;
-  /** Additional class names for the container */
   className?: string;
 }
 
@@ -51,8 +44,7 @@ export function TribesLogo({
   if (variant === "static") {
     return (
       <div 
-        className={`flex items-center ${className}`}
-        style={{ height: BRAND.LOGO_BUTTON_HEIGHT }}
+        className={`flex items-center h-9 px-3 ${className}`}
       >
         {logoImage}
       </div>
@@ -60,15 +52,11 @@ export function TribesLogo({
   }
 
   // Button variant (default)
+  // px-3 (12px) aligns logo with nav item text
   return (
     <button
       onClick={() => navigate(href)}
-      className={`flex items-center rounded-lg hover:bg-[var(--muted-wash)] transition-colors ${className}`}
-      style={{ 
-        height: BRAND.LOGO_BUTTON_HEIGHT,
-        paddingLeft: BRAND.LOGO_BUTTON_PADDING_X,
-        paddingRight: BRAND.LOGO_BUTTON_PADDING_X,
-      }}
+      className={`flex items-center h-9 px-3 rounded-lg hover:bg-[var(--muted-wash)] transition-colors ${className}`}
       aria-label="Go to workspaces"
     >
       {logoImage}
