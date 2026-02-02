@@ -1,10 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Mic, MicOff, Check, ChevronRight, Music, Users, FileText, Shield, Send, Sparkles, Edit3, Plus, Trash2, X, HelpCircle, Upload } from "lucide-react";
+import { ArrowLeft, Check, ChevronRight, Plus, Trash2, HelpCircle, Upload, Send } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -51,7 +50,6 @@ interface SongData {
 }
 
 type FlowStep = 1 | 2 | 3 | 4 | 5;
-type EntryMode = "choice" | "voice" | "confirm" | "form";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -86,41 +84,14 @@ const LYRIC_SECTION_TYPES = [
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// AI PARSING
-// ═══════════════════════════════════════════════════════════════════════════════
-
-async function parseVoiceWithAI(transcript: string): Promise<{ title: string; writers: string[] }> {
-  try {
-    const { data, error } = await supabase.functions.invoke('parse-voice', {
-      body: { transcript }
-    });
-    if (error) throw error;
-    return {
-      title: data?.title || "",
-      writers: Array.isArray(data?.writers) ? data.writers : [],
-    };
-  } catch (err) {
-    console.error("AI parsing failed:", err);
-    return { title: "", writers: [] };
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export default function SongSubmitPage() {
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
   
-  const [entryMode, setEntryMode] = useState<EntryMode>("choice");
   const [step, setStep] = useState<FlowStep>(1);
-  const [isListening, setIsListening] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [voiceTranscript, setVoiceTranscript] = useState("");
-  const [parsedTitle, setParsedTitle] = useState("");
-  const [parsedWriters, setParsedWriters] = useState<string[]>([]);
   
   const [data, setData] = useState<SongData>({
     title: "",
@@ -132,7 +103,7 @@ export default function SongSubmitPage() {
     releaseStatus: null,
     publicationYear: "",
     creationYear: "",
-    writers: [],
+    writers: [{ id: crypto.randomUUID(), name: "", pro: "", ipi: "", split: 0, credit: "", controlled: false, fromDatabase: false }],
     lyricsEntryMode: "paste",
     lyricsFull: "",
     lyricsSections: [],
@@ -144,86 +115,6 @@ export default function SongSubmitPage() {
     wantsCopyrightFiling: null,
     termsAccepted: false,
   });
-
-  const recognitionRef = useRef<any>(null);
-  
-  useEffect(() => {
-    if (typeof window !== "undefined" && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)) {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-      
-      recognitionRef.current.onresult = (event: any) => {
-        let transcript = "";
-        for (let i = 0; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
-        }
-        setVoiceTranscript(transcript);
-      };
-      
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-        if (entryMode === "voice" && voiceTranscript) {
-          processVoiceEntry(voiceTranscript);
-        }
-      };
-    }
-  }, [entryMode, voiceTranscript]);
-
-  const startVoiceEntry = () => {
-    if (!recognitionRef.current) {
-      toast.error("Voice input not supported");
-      return;
-    }
-    setVoiceTranscript("");
-    recognitionRef.current.start();
-    setIsListening(true);
-  };
-
-  const stopVoiceEntry = () => {
-    if (recognitionRef.current && isListening) {
-      recognitionRef.current.stop();
-    }
-  };
-
-  const processVoiceEntry = async (transcript: string) => {
-    setIsProcessing(true);
-    const { title, writers } = await parseVoiceWithAI(transcript);
-    
-    try {
-      await supabase.from("voice_transcripts").insert({
-        transcript,
-        parsed_title: title,
-        parsed_writers: writers,
-        success: !!(title && writers.length > 0),
-      });
-    } catch (err) {
-      console.error("Failed to log transcript:", err);
-    }
-    
-    setParsedTitle(title);
-    setParsedWriters(writers.length > 0 ? writers : ["(Your name)"]);
-    setIsProcessing(false);
-    setEntryMode("confirm");
-  };
-
-  const confirmVoiceEntry = () => {
-    const writers: Writer[] = parsedWriters.map((name) => ({
-      id: crypto.randomUUID(),
-      name,
-      pro: "",
-      ipi: "",
-      split: 0,
-      credit: "",
-      controlled: name === "(Your name)",
-      fromDatabase: false,
-    }));
-    
-    setData(prev => ({ ...prev, title: parsedTitle, writers }));
-    setEntryMode("form");
-    setStep(1);
-  };
 
   // Writer management
   const addWriter = () => {
@@ -335,7 +226,6 @@ export default function SongSubmitPage() {
         },
         is_active: false,
       };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await supabase.from("songs").insert(songPayload as any);
       
       if (error) throw error;
@@ -350,180 +240,6 @@ export default function SongSubmitPage() {
 
   const totalSplit = data.writers.reduce((s, w) => s + w.split, 0);
   const splitValid = Math.abs(totalSplit - 100) < 0.01;
-
-  // ═══════════════════════════════════════════════════════════════════════════════
-  // CHOICE SCREEN
-  // ═══════════════════════════════════════════════════════════════════════════════
-
-  if (entryMode === "choice") {
-    return (
-      <div className="h-full flex flex-col bg-[var(--page-bg)]">
-        <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center px-4 sm:px-6">
-          <button onClick={() => navigate("/rights/catalogue")} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Add Song</span>
-        </header>
-        <div className="flex-1 relative">
-          <div className="absolute inset-0 flex items-center justify-center p-6 overflow-y-auto">
-            <div className="max-w-md w-full">
-              <div className="text-center mb-8">
-                <div className="w-14 h-14 rounded-2xl bg-[var(--muted-wash)] flex items-center justify-center mx-auto mb-4">
-                  <Music className="h-7 w-7 text-[var(--btn-text)]" />
-                </div>
-                <h1 className="text-2xl font-semibold text-[var(--btn-text)] mb-2">Add a new song</h1>
-                <p className="text-[var(--btn-text-muted)]">How would you like to get started?</p>
-              </div>
-              <div className="space-y-4">
-                <button onClick={() => setEntryMode("voice")} className="w-full p-5 rounded-2xl border-2 border-[var(--border-subtle)] hover:border-[var(--btn-text)]/30 text-left group">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-[var(--btn-text)] text-white flex items-center justify-center shrink-0">
-                      <Mic className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-[var(--btn-text)] mb-1">Tell me about it</div>
-                      <p className="text-sm text-[var(--btn-text-muted)]">Say the song title and who wrote it.</p>
-                    </div>
-                  </div>
-                </button>
-                <button onClick={() => setEntryMode("form")} className="w-full p-5 rounded-2xl border-2 border-[var(--border-subtle)] hover:border-[var(--btn-text)]/30 text-left group">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-[var(--muted-wash)] text-[var(--btn-text)] flex items-center justify-center shrink-0">
-                      <Edit3 className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
-                      <p className="text-sm text-[var(--btn-text-muted)]">Fill out the form step by step.</p>
-                    </div>
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════════
-  // VOICE ENTRY SCREEN
-  // ═══════════════════════════════════════════════════════════════════════════════
-
-  if (entryMode === "voice") {
-    return (
-      <div className="h-full flex flex-col bg-[var(--page-bg)]">
-        <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center justify-between px-4 sm:px-6">
-          <div className="flex items-center">
-            <button onClick={() => { stopVoiceEntry(); setEntryMode("choice"); }} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)]">
-              <ArrowLeft className="h-5 w-5" />
-            </button>
-            <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Voice Entry</span>
-          </div>
-          <button onClick={() => { stopVoiceEntry(); setEntryMode("form"); }} className="text-sm text-[var(--btn-text-muted)]">Skip to form</button>
-        </header>
-        <div className="flex-1 flex flex-col items-center justify-center p-6">
-          <div className="max-w-lg w-full text-center">
-            {isListening ? (
-              <>
-                <div className="relative w-32 h-32 mx-auto mb-8 pointer-events-none">
-                  <div className="absolute inset-0 rounded-full bg-[var(--btn-text)]/10 animate-ping" />
-                  <div className="absolute inset-2 rounded-full bg-[var(--btn-text)]/20 animate-pulse" />
-                  <div className="absolute inset-4 rounded-full bg-[var(--btn-text)] flex items-center justify-center">
-                    <Mic className="h-10 w-10 text-white" />
-                  </div>
-                </div>
-                <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-2">Listening...</h2>
-                <p className="text-[var(--btn-text-muted)] mb-6">Tell me about your song</p>
-                {voiceTranscript && (
-                  <div className="p-4 bg-[var(--muted-wash)] rounded-xl text-left mb-8 max-h-32 overflow-y-auto">
-                    <p className="text-sm text-[var(--btn-text)]">{voiceTranscript}</p>
-                  </div>
-                )}
-                <button type="button" onClick={() => { if (recognitionRef.current) recognitionRef.current.stop(); setIsListening(false); if (voiceTranscript) processVoiceEntry(voiceTranscript); else setEntryMode("form"); }} className="relative z-10 px-8 py-4 text-base font-medium rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                  Done speaking
-                </button>
-              </>
-            ) : isProcessing ? (
-              <>
-                <div className="w-20 h-20 mx-auto mb-8 flex items-center justify-center">
-                  <Sparkles className="h-12 w-12 text-[var(--btn-text)] animate-pulse" />
-                </div>
-                <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-2">Processing...</h2>
-                <p className="text-[var(--btn-text-muted)]">Extracting song details</p>
-              </>
-            ) : (
-              <>
-                <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-2">Tell me about your song</h2>
-                <p className="text-[var(--btn-text-muted)] mb-8">Say the song title and who wrote it.</p>
-                <button onClick={startVoiceEntry} className="px-8 py-4 text-base font-medium rounded-2xl bg-[var(--btn-text)] text-white hover:opacity-90 flex items-center gap-3 mx-auto">
-                  <Mic className="h-5 w-5" /> Start speaking
-                </button>
-                <p className="text-xs text-[var(--btn-text-muted)] mt-6">Example: "It's called Christmas Hoedown, written by me and Joshua Carpenter"</p>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════════
-  // CONFIRMATION SCREEN
-  // ═══════════════════════════════════════════════════════════════════════════════
-
-  if (entryMode === "confirm") {
-    return (
-      <div className="h-full flex flex-col bg-[var(--page-bg)]">
-        <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center px-4 sm:px-6">
-          <button onClick={() => setEntryMode("voice")} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)]">
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Confirm Details</span>
-        </header>
-        <div className="flex-1 flex flex-col items-center justify-center p-6 overflow-y-auto">
-          <div className="max-w-md w-full">
-            <div className="text-center mb-8">
-              <div className="w-14 h-14 rounded-2xl bg-success/10 flex items-center justify-center mx-auto mb-4">
-                <Check className="h-7 w-7 text-success" />
-              </div>
-              <h1 className="text-2xl font-semibold text-[var(--btn-text)] mb-2">Got it!</h1>
-              <p className="text-[var(--btn-text-muted)]">Please review and edit if needed.</p>
-            </div>
-            <div className="mb-6">
-              <label className="block text-xs font-medium text-[var(--btn-text-muted)] uppercase tracking-wider mb-2">Song Title</label>
-              <input type="text" value={parsedTitle} onChange={(e) => setParsedTitle(e.target.value)} placeholder="Enter song title" className="w-full h-12 px-4 text-base bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20" />
-            </div>
-            <div className="mb-8">
-              <label className="block text-xs font-medium text-[var(--btn-text-muted)] uppercase tracking-wider mb-2">Writers</label>
-              <div className="space-y-2">
-                {parsedWriters.map((writer, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <input type="text" value={writer} onChange={(e) => { const u = [...parsedWriters]; u[index] = e.target.value; setParsedWriters(u); }} placeholder="Writer name" className="flex-1 h-11 px-4 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
-                    {parsedWriters.length > 1 && (
-                      <button onClick={() => setParsedWriters(parsedWriters.filter((_, i) => i !== index))} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-                <button onClick={() => setParsedWriters([...parsedWriters, ""])} className="w-full h-11 text-sm font-medium text-[var(--btn-text-muted)] border-2 border-dashed border-[var(--border-subtle)] rounded-xl hover:border-[var(--btn-text)]/30 flex items-center justify-center gap-2">
-                  <Plus className="h-4 w-4" /> Add writer
-                </button>
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <button onClick={confirmVoiceEntry} disabled={!parsedTitle.trim() || parsedWriters.length === 0 || parsedWriters.some(w => !w.trim())} className="w-full h-12 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2">
-                Continue <ChevronRight className="h-4 w-4" />
-              </button>
-              <button onClick={() => setEntryMode("voice")} className="w-full h-12 text-sm font-medium rounded-xl text-[var(--btn-text-muted)] hover:bg-[var(--muted-wash)]">
-                Try again
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // ═══════════════════════════════════════════════════════════════════════════════
   // MAIN FORM
@@ -633,7 +349,7 @@ export default function SongSubmitPage() {
                     <div key={w.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-[var(--btn-text-muted)]">Writer {i + 1}</span>
-                        {data.writers.length > 1 && <button onClick={() => removeWriter(w.id)} className="p-1 text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>}
+                        {data.writers.length > 1 && <button onClick={() => removeWriter(w.id)} className="p-1 text-[var(--btn-text-muted)] hover:text-destructive"><Trash2 className="h-4 w-4" /></button>}
                       </div>
                       <input type="text" value={w.name} onChange={(e) => updateWriter(w.id, { name: e.target.value })} placeholder="Writer name" className="w-full h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none" />
                       <div className="grid grid-cols-3 gap-3">
@@ -696,7 +412,7 @@ export default function SongSubmitPage() {
                               <option value="">Select section...</option>
                               {LYRIC_SECTION_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                             </select>
-                            <button onClick={() => removeLyricSection(s.id)} className="p-1 text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
+                            <button onClick={() => removeLyricSection(s.id)} className="p-1 text-[var(--btn-text-muted)] hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
                           </div>
                           <textarea value={s.content} onChange={(e) => updateLyricSection(s.id, { content: e.target.value })} placeholder="Enter lyrics..." rows={4} className="w-full px-3 py-2 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg resize-y" />
                         </div>
@@ -749,7 +465,7 @@ export default function SongSubmitPage() {
               {data.hasChordChart === false && (
                 <label className="flex items-start gap-3 p-4 bg-warning/10 border border-warning/30 rounded-xl cursor-pointer">
                   <input type="checkbox" checked={data.chordChartAcknowledged} onChange={(e) => setData(prev => ({ ...prev, chordChartAcknowledged: e.target.checked }))} className="w-5 h-5 mt-0.5 rounded border-2 border-warning/50" />
-                  <span className="text-sm text-warning-foreground">I understand that chord charts are required to properly license and monetize songs at CCLI and that I am not supplying a chord chart at this time.</span>
+                  <span className="text-sm text-warning">I understand that chord charts are required to properly license and monetize songs at CCLI and that I am not supplying a chord chart at this time.</span>
                 </label>
               )}
             </div>
