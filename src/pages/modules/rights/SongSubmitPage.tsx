@@ -533,20 +533,23 @@ export default function SongSubmitPage() {
           <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Add Song</span>
         </header>
 
-        <div className="flex-1 flex items-center justify-center p-6">
-          <div className="max-w-md w-full text-center">
-            <div className="w-16 h-16 rounded-2xl bg-[var(--muted-wash)] flex items-center justify-center mx-auto mb-6">
-              <Music className="h-8 w-8 text-[var(--btn-text)]" />
-            </div>
-            
-            <h1 className="text-2xl font-semibold text-[var(--btn-text)] mb-2">
-              Add a new song
-            </h1>
-            <p className="text-[var(--btn-text-muted)] mb-10">
-              How would you like to get started?
-            </p>
+        <div className="flex-1 relative">
+          <div className="absolute inset-0 flex items-center justify-center p-6 overflow-y-auto">
+            <div className="max-w-md w-full">
+              <div className="text-center mb-10">
+                <div className="w-16 h-16 rounded-2xl bg-[var(--muted-wash)] flex items-center justify-center mx-auto mb-6">
+                  <Music className="h-8 w-8 text-[var(--btn-text)]" />
+                </div>
+                
+                <h1 className="text-2xl font-semibold text-[var(--btn-text)] mb-2">
+                  Add a new song
+                </h1>
+                <p className="text-[var(--btn-text-muted)]">
+                  How would you like to get started?
+                </p>
+              </div>
 
-            <div className="space-y-4">
+              <div className="space-y-4">
               {/* Voice Option */}
               <button
                 onClick={() => setEntryMode("voice")}
@@ -582,6 +585,7 @@ export default function SongSubmitPage() {
                   </div>
                 </div>
               </button>
+            </div>
             </div>
           </div>
         </div>
