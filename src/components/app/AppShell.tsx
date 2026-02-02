@@ -1,49 +1,22 @@
 import { ReactNode } from "react";
+import { LAYOUT, CSS_VARS } from "@/config/layout";
 
 /**
- * APP SHELL — STRIPE-LIKE 2-COLUMN GRID LAYOUT (CANONICAL)
+ * APP SHELL - STRIPE-LIKE 2-COLUMN GRID LAYOUT (CANONICAL)
  * 
- * ═══════════════════════════════════════════════════════════════════════════
- * GRID ARCHITECTURE (LOCKED):
- * ═══════════════════════════════════════════════════════════════════════════
+ * Layout dimensions are centralized in @/config/layout.ts
  * 
- * Layout: CSS Grid with 2 columns
- * - Column 1 (sidebar): 200px fixed width
- * - Column 2 (content): 1fr (fills remaining space)
- * 
- * Rows: 
- * - Row 1 (header): 56px (h-14)
- * - Row 2 (main): 1fr (fills remaining height)
- * 
- * STRIPE-LIKE BEHAVIOR:
- * - Sidebar starts at y=0 (full viewport height)
- * - Header spans full width with logo in sidebar column area
- * - Unified top edge: header background extends to left edge
- * - Logo sits inside sidebar chrome region of header
- * 
- * SURFACE TOKENS:
- * - Sidebar: var(--sidebar-bg)
- * - Header: var(--topbar-bg) with border-bottom
- * - Content: var(--page-bg)
- * ═══════════════════════════════════════════════════════════════════════════
+ * Grid: 2 columns (LAYOUT.SIDEBAR_WIDTH + 1fr)
+ * Rows: LAYOUT.HEADER_HEIGHT + 1fr
  */
 
 interface AppShellProps {
-  /** Header content (right side of header row) */
   headerContent: ReactNode;
-  /** Sidebar content (navigation) */
   sidebarContent?: ReactNode;
-  /** Main content area */
   children: ReactNode;
-  /** Whether to show sidebar (false for mobile or no-sidebar layouts) */
   showSidebar?: boolean;
-  /** Optional footer at bottom of main content */
   footer?: ReactNode;
 }
-
-// Sidebar width token (matches existing 200px/w-48 or 260px for Help Workstation)
-const SIDEBAR_WIDTH = "200px";
-const HEADER_HEIGHT = "56px";
 
 export function AppShell({
   headerContent,
@@ -53,25 +26,22 @@ export function AppShell({
   footer,
 }: AppShellProps) {
   if (!showSidebar) {
-    // No sidebar: simple stacked layout
     return (
       <div 
-        className="h-screen flex flex-col w-full max-w-full overflow-hidden"
-        style={{ backgroundColor: 'var(--page-bg)' }}
+        className="min-h-screen flex flex-col w-full max-w-full overflow-hidden"
+        style={{ backgroundColor: CSS_VARS.PAGE_BG }}
       >
-        {/* Header — full width */}
         <header 
           className="shrink-0 sticky top-0 z-40 flex items-center w-full max-w-full overflow-hidden"
           style={{ 
-            height: HEADER_HEIGHT,
-            backgroundColor: 'var(--topbar-bg)',
-            borderBottom: '1px solid var(--border-subtle)',
+            height: LAYOUT.HEADER_HEIGHT,
+            backgroundColor: CSS_VARS.TOPBAR_BG,
+            borderBottom: `1px solid ${CSS_VARS.BORDER_SUBTLE}`,
           }}
         >
           {headerContent}
         </header>
         
-        {/* Main content */}
         <main className="flex-1 min-w-0 w-full max-w-full overflow-y-auto overflow-x-hidden flex flex-col">
           <div className="flex-1 min-w-0 w-full max-w-full">
             {children}
@@ -82,52 +52,47 @@ export function AppShell({
     );
   }
 
-  // With sidebar: CSS Grid layout (Stripe-like)
   return (
     <div 
-      className="h-screen w-full max-w-full overflow-hidden"
+      className="min-h-screen w-full max-w-full overflow-hidden"
       style={{ 
         display: 'grid',
-        gridTemplateColumns: `${SIDEBAR_WIDTH} 1fr`,
-        gridTemplateRows: `${HEADER_HEIGHT} 1fr`,
-        backgroundColor: 'var(--page-bg)',
+        gridTemplateColumns: `${LAYOUT.SIDEBAR_WIDTH} 1fr`,
+        gridTemplateRows: `${LAYOUT.HEADER_HEIGHT} 1fr`,
+        backgroundColor: CSS_VARS.PAGE_BG,
       }}
     >
-      {/* Header — spans full width (both columns) */}
       <header 
         className="sticky top-0 z-40 flex items-center w-full max-w-full overflow-hidden"
         style={{ 
           gridColumn: '1 / -1',
           gridRow: '1',
-          backgroundColor: 'var(--topbar-bg)',
-          borderBottom: '1px solid var(--border-subtle)',
+          backgroundColor: CSS_VARS.TOPBAR_BG,
+          borderBottom: `1px solid ${CSS_VARS.BORDER_SUBTLE}`,
         }}
       >
-        {/* Header uses internal 2-column layout to align with grid */}
         <div 
           className="w-full h-full grid items-center max-w-full overflow-hidden"
           style={{ 
-            gridTemplateColumns: `${SIDEBAR_WIDTH} 1fr`,
+            gridTemplateColumns: `${LAYOUT.SIDEBAR_WIDTH} 1fr`,
           }}
         >
           {headerContent}
         </div>
       </header>
       
-      {/* Sidebar — full height (visually starts at top via grid) */}
       <aside 
         className="flex flex-col overflow-hidden"
         style={{ 
           gridColumn: '1',
           gridRow: '2',
-          backgroundColor: 'var(--sidebar-bg)',
-          borderRight: '1px solid var(--border-subtle)',
+          backgroundColor: CSS_VARS.SIDEBAR_BG,
+          borderRight: `1px solid ${CSS_VARS.BORDER_SUBTLE}`,
         }}
       >
         {sidebarContent}
       </aside>
       
-      {/* Main content area */}
       <main 
         className="min-w-0 overflow-y-auto overflow-x-hidden flex flex-col"
         style={{ 
@@ -144,23 +109,20 @@ export function AppShell({
   );
 }
 
-/**
- * SIDEBAR HEADER — Logo + optional workspace selector
- * 
- * Renders in the sidebar column area of the header row.
- * Contains branding that appears to be part of sidebar chrome.
- */
 interface SidebarHeaderProps {
   logo: ReactNode;
-  /** Optional workspace selector or dropdown */
   contextSelector?: ReactNode;
 }
 
 export function SidebarHeader({ logo, contextSelector }: SidebarHeaderProps) {
   return (
     <div 
-      className="h-full flex items-center justify-between px-4"
-      style={{ backgroundColor: 'var(--sidebar-bg)' }}
+      className="h-full flex items-center justify-between"
+      style={{ 
+        backgroundColor: CSS_VARS.SIDEBAR_BG,
+        paddingLeft: LAYOUT.SIDEBAR_PADDING_X,
+        paddingRight: LAYOUT.SIDEBAR_PADDING_X,
+      }}
     >
       {logo}
       {contextSelector}
@@ -168,12 +130,6 @@ export function SidebarHeader({ logo, contextSelector }: SidebarHeaderProps) {
   );
 }
 
-/**
- * CONTENT HEADER — Actions, search, avatar
- * 
- * Renders in the content column area of the header row.
- * Contains navigation controls and user actions.
- */
 interface ContentHeaderProps {
   children: ReactNode;
 }
@@ -181,8 +137,12 @@ interface ContentHeaderProps {
 export function ContentHeader({ children }: ContentHeaderProps) {
   return (
     <div 
-      className="h-full flex items-center justify-between px-6"
-      style={{ backgroundColor: 'var(--topbar-bg)' }}
+      className="h-full flex items-center justify-between"
+      style={{ 
+        backgroundColor: CSS_VARS.TOPBAR_BG,
+        paddingLeft: LAYOUT.CONTENT_PADDING_X,
+        paddingRight: LAYOUT.CONTENT_PADDING_X,
+      }}
     >
       {children}
     </div>

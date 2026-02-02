@@ -6,6 +6,7 @@ import { SidebarHeader, ContentHeader } from "@/components/app/AppShell";
 import { UserMenuDropdown } from "@/components/app/UserMenuDropdown";
 import { HeaderIconButton } from "@/components/app/HeaderIconButton";
 import { HelpBottomSheet } from "@/components/app/HelpBottomSheet";
+import { TribesLogo } from "@/components/brand/TribesLogo";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUnreadNotificationCount } from "@/hooks/useNotifications";
 import {
@@ -15,22 +16,11 @@ import {
 } from "@/components/ui/popover";
 
 /**
- * MODULE HEADER — SIMPLIFIED DESIGN (CANONICAL)
+ * MODULE HEADER - UNIFIED HEADER FOR ALL WORKSTATIONS
  * 
- * ═══════════════════════════════════════════════════════════════════════════
- * Used across ALL workstations: /admin, /licensing, /help, /rights
- * 
- * Layout:
- * - Left: Tribes wordmark logo (image, ~80-100px wide)
- * - Right: Search icon, Notifications icon, User menu icon
- * 
- * Desktop with sidebar: 2-column grid (sidebar column + content column)
- * Mobile: Full-width header with logo + icons
- * ═══════════════════════════════════════════════════════════════════════════
+ * Uses TribesLogo component for consistent branding.
+ * Layout dimensions from @/config/layout.ts
  */
-
-// Tribes wordmark logo URL
-const TRIBES_LOGO_URL = "https://rsdjfnsbimcdrxlhognv.supabase.co/storage/v1/object/public/Tribes%20Brand%20Files/Tribes%20-%20Wordmark%20Black%20Transparent.png";
 
 interface ModuleHeaderProps {
   showSidebarLogo?: boolean;
@@ -44,37 +34,14 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
   
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
 
-  const handleLogoClick = () => {
-    navigate("/workspaces");
-  };
-
-  // Tribes wordmark logo component
-  const tribesLogo = (
-    <button
-      onClick={handleLogoClick}
-      className="flex items-center h-9 px-1 rounded-lg hover:bg-muted/50 transition-colors"
-      aria-label="Go to workspaces"
-    >
-      <img
-        src={TRIBES_LOGO_URL}
-        alt="Tribes"
-        className="h-5 w-auto dark:invert"
-        style={{ maxWidth: "90px" }}
-      />
-    </button>
-  );
-
-  // Right side icons (shared between mobile and desktop)
   const rightIcons = (
     <div className="flex items-center gap-1">
-      {/* Search */}
       <HeaderIconButton
         icon={Search}
         aria-label="Search"
         onClick={() => setSearchOpen(true)}
       />
 
-      {/* Notifications */}
       <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
         <PopoverTrigger asChild>
           <HeaderIconButton
@@ -90,7 +57,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
         </PopoverContent>
       </Popover>
 
-      {/* Help - use bottom sheet on mobile, direct navigation on desktop */}
       {isMobile ? (
         <HelpBottomSheet />
       ) : (
@@ -101,7 +67,6 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
         />
       )}
 
-      {/* User menu */}
       <UserMenuDropdown />
     </div>
   );
@@ -111,13 +76,9 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
     return (
       <>
         <div className="w-full h-full flex items-center justify-between px-4">
-          {/* Left: Logo only */}
-          {tribesLogo}
-
-          {/* Right: Icons */}
+          <TribesLogo />
           {rightIcons}
         </div>
-
         <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
       </>
     );
@@ -127,16 +88,11 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
   if (showSidebarLogo) {
     return (
       <>
-        <SidebarHeader logo={tribesLogo} />
-
+        <SidebarHeader logo={<TribesLogo />} />
         <ContentHeader>
-          {/* Left: empty spacer */}
           <div />
-          
-          {/* Right: Header icons */}
           {rightIcons}
         </ContentHeader>
-
         <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
       </>
     );
@@ -146,13 +102,9 @@ export function ModuleHeader({ showSidebarLogo = true }: ModuleHeaderProps) {
   return (
     <>
       <div className="w-full h-full flex items-center justify-between px-6">
-        {/* Left: Logo only */}
-        {tribesLogo}
-
-        {/* Right: Icons */}
+        <TribesLogo />
         {rightIcons}
       </div>
-
       <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </>
   );
