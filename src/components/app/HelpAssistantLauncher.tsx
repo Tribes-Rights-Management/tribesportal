@@ -100,8 +100,8 @@ export function HelpAssistantLauncher() {
     }
   }, [open]);
 
-  // Don't render on mobile - Help is accessed via user menu instead
-  if (isMobile) {
+  // Only render on mobile - Desktop users access Help via header icon
+  if (!isMobile) {
     return null;
   }
 
