@@ -2006,10 +2006,17 @@ html[data-ui-density="compact"] {
   padding: 16px;
   font-size: 16px;
   line-height: 1.6;
+  overflow-anchor: none;
 }
 
 .ProseMirror:focus {
   outline: none;
+  scroll-behavior: auto;
+}
+
+.ProseMirror * {
+  scroll-margin: 0;
+  scroll-padding: 0;
 }
 
 .ProseMirror p {
