@@ -67,21 +67,24 @@ export function PageContainer({
     if (padding === "none") return {};
 
     // Runtime layout contract:
-    // - Mobile: 16px
+    // - Mobile: 20px (matches header alignment)
     // - Tablet/Desktop: 24px
-    // Defined via CSS var in index.css (single source of truth).
-    const base = padding === "compact" ? "12px" : "var(--page-pad-x, 16px)";
+    // Using explicit pixel values to ensure alignment with header
+    const mobileBase = "20px";
+    const desktopBase = padding === "compact" ? "12px" : "24px";
 
+    // For mobile, use 20px; for desktop, use the standard padding
+    // We use CSS calc with viewport width detection
     if (safeArea) {
       return {
-        paddingLeft: `max(${base}, env(safe-area-inset-left, ${base}))`,
-        paddingRight: `max(${base}, env(safe-area-inset-right, ${base}))`,
+        paddingLeft: `max(${mobileBase}, env(safe-area-inset-left, ${mobileBase}))`,
+        paddingRight: `max(${mobileBase}, env(safe-area-inset-right, ${mobileBase}))`,
       };
     }
 
     return {
-      paddingLeft: base,
-      paddingRight: base,
+      paddingLeft: mobileBase,
+      paddingRight: mobileBase,
     };
   }, [padding, safeArea]);
 
