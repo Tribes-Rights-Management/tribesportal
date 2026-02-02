@@ -1,17 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Mic, MicOff, Check, ChevronRight, Music, Users, FileText, Shield, Send, Sparkles, Edit3, Plus, Trash2, X } from "lucide-react";
+import { ArrowLeft, Mic, MicOff, Check, ChevronRight, Music, Users, FileText, Shield, Send, Sparkles, Edit3, Plus, Trash2, X, HelpCircle, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
-
-/**
- * SONG SUBMIT — AI-ASSISTED CONVERSATIONAL FLOW
- * 
- * Smart, voice-friendly registration that feels like magic.
- * AI guides and auto-fills, user just talks naturally.
- */
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -23,58 +16,77 @@ interface Writer {
   pro: string;
   ipi: string;
   split: number;
+  credit: "lyrics" | "music" | "both" | "";
   controlled: boolean;
   fromDatabase: boolean;
 }
 
+interface LyricSection {
+  id: string;
+  type: "verse" | "chorus" | "bridge" | "pre-chorus" | "outro" | "intro" | "tag" | "";
+  content: string;
+}
+
 interface SongData {
   title: string;
+  hasAlternateTitle: boolean | null;
   alternateTitle: string;
-  type: "original" | "instrumental" | "public_domain" | "derivative" | "medley" | "";
-  originalWork: string;
   language: string;
-  year: string;
-  released: boolean | null;
+  songType: "original" | "instrumental" | "public_domain" | "derivative" | "medley" | "";
+  originalWorkTitle: string;
+  releaseStatus: "yes" | "no" | "youtube_only" | null;
+  publicationYear: string;
+  creationYear: string;
   writers: Writer[];
-  lyrics: string;
+  lyricsEntryMode: "paste" | "sections";
+  lyricsFull: string;
+  lyricsSections: LyricSection[];
   lyricsConfirmed: boolean;
   hasChordChart: boolean | null;
   chordChartFile: File | null;
   chordChartAcknowledged: boolean;
-  copyrightStatus: "registered" | "not_registered" | "unknown" | "";
-  wantsCopyrightFiling: boolean;
+  copyrightStatus: "yes" | "no" | "unknown" | "";
+  wantsCopyrightFiling: boolean | null;
   termsAccepted: boolean;
 }
 
-interface FieldStatus {
-  filled: boolean;
-  value: string;
-  confidence: "high" | "medium" | "needs_confirm";
-}
-
-type FlowStep = "title" | "writers" | "lyrics" | "details" | "review";
+type FlowStep = 1 | 2 | 3 | 4 | 5;
+type EntryMode = "choice" | "voice" | "confirm" | "form";
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// KNOWN WRITERS DATABASE (would come from Supabase in production)
+// CONSTANTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const KNOWN_WRITERS: Record<string, { pro: string; ipi: string }> = {
-  "chris tomlin": { pro: "BMI", ipi: "00274837264" },
-  "louie giglio": { pro: "BMI", ipi: "00385746283" },
-  "matt redman": { pro: "PRS", ipi: "00192837465" },
-  "hillsong": { pro: "APRA", ipi: "00847362514" },
-  "bethel music": { pro: "ASCAP", ipi: "00736251847" },
-};
+const LANGUAGES = [
+  "English", "Spanish", "French", "German", "Portuguese", "Italian", 
+  "Korean", "Japanese", "Chinese (Mandarin)", "Chinese (Cantonese)",
+  "Arabic", "Hebrew", "Russian", "Hindi", "Swahili", "Dutch",
+  "Swedish", "Norwegian", "Danish", "Finnish", "Polish", "Greek",
+  "Turkish", "Vietnamese", "Thai", "Indonesian", "Tagalog", "Other"
+];
 
-const PUBLIC_DOMAIN_PATTERNS = [
-  { pattern: /amazing grace/i, original: "Amazing Grace", type: "public_domain" as const },
-  { pattern: /how great thou art/i, original: "How Great Thou Art", type: "public_domain" as const },
-  { pattern: /be thou my vision/i, original: "Be Thou My Vision", type: "public_domain" as const },
-  { pattern: /come thou fount/i, original: "Come Thou Fount of Every Blessing", type: "public_domain" as const },
+const SONG_TYPES = [
+  { value: "original", label: "Original" },
+  { value: "instrumental", label: "Instrumental" },
+  { value: "public_domain", label: "Public Domain + Original Adaptation" },
+  { value: "derivative", label: "Derivative Work" },
+  { value: "medley", label: "Medley/Mashup" },
+];
+
+const PRO_OPTIONS = ["ASCAP", "BMI", "SESAC", "GMR", "PRS", "APRA", "SOCAN", "GEMA", "SACEM", "Other"];
+
+const LYRIC_SECTION_TYPES = [
+  { value: "verse", label: "Verse" },
+  { value: "chorus", label: "Chorus" },
+  { value: "bridge", label: "Bridge" },
+  { value: "pre-chorus", label: "Pre-Chorus" },
+  { value: "intro", label: "Intro" },
+  { value: "outro", label: "Outro" },
+  { value: "tag", label: "Tag" },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// AI PARSING — Claude API Integration
+// AI PARSING
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function parseVoiceWithAI(transcript: string): Promise<{ title: string; writers: string[] }> {
@@ -82,228 +94,57 @@ async function parseVoiceWithAI(transcript: string): Promise<{ title: string; wr
     const { data, error } = await supabase.functions.invoke('parse-voice', {
       body: { transcript }
     });
-    
     if (error) throw error;
-    
     return {
       title: data?.title || "",
       writers: Array.isArray(data?.writers) ? data.writers : [],
     };
   } catch (err) {
-    console.error("AI parsing failed, using fallback:", err);
-    // Fallback to local parsing if API fails
-    return parseVoiceLocal(transcript);
+    console.error("AI parsing failed:", err);
+    return { title: "", writers: [] };
   }
-}
-
-// Fallback local parsing (regex-based)
-function parseVoiceLocal(transcript: string): { title: string; writers: string[] } {
-  let title = "";
-  const writers: string[] = [];
-  
-  // Try to extract title
-  const calledMatch = transcript.match(/(?:called|titled)\s+["']?(.+?)["']?\s+(?:written\s+by|by\s+)/i);
-  if (calledMatch) {
-    title = calledMatch[1].trim();
-  }
-  
-  if (!title) {
-    const calledEndMatch = transcript.match(/(?:called|titled)\s+["']?([^"']+?)["']?\s*$/i);
-    if (calledEndMatch) {
-      title = calledEndMatch[1].trim();
-    }
-  }
-  
-  if (!title) {
-    const quotedMatch = transcript.match(/["']([^"']{2,60})["']/);
-    if (quotedMatch) {
-      title = quotedMatch[1].trim();
-    }
-  }
-  
-  // Clean title
-  if (title) {
-    title = title.replace(/\s+(?:written|by)$/i, '').trim();
-    title = toTitleCase(title);
-  }
-  
-  // Try to extract writers
-  const writerMatch = transcript.match(/(?:written\s+by|by)\s+(.+?)(?:\s*[.!?]|$)/i);
-  if (writerMatch) {
-    let writerStr = writerMatch[1].trim()
-      .replace(/\s+(?:in|from|back|last|this|split|and\s+it|we\s+wrote|,\s*\d).*$/i, '')
-      .trim();
-    
-    const rawNames = writerStr
-      .split(/(?:\s+and\s+|\s*&\s*|\s*,\s*(?:and\s+)?)/i)
-      .map(n => n.trim())
-      .filter(n => n.length > 0 && n.length < 50);
-    
-    const seen = new Set<string>();
-    
-    for (const name of rawNames) {
-      const lower = name.toLowerCase();
-      
-      if (/^(me|myself|i)$/i.test(name)) {
-        if (!seen.has("_self_")) {
-          writers.push("(Your name)");
-          seen.add("_self_");
-        }
-        continue;
-      }
-      
-      if (seen.has(lower)) continue;
-      seen.add(lower);
-      
-      writers.push(toTitleCase(name));
-    }
-  }
-  
-  return { title, writers };
-}
-
-// Helper: Convert to Title Case
-function toTitleCase(str: string): string {
-  const minorWords = new Set(['a', 'an', 'and', 'as', 'at', 'but', 'by', 'for', 'in', 'nor', 'of', 'on', 'or', 'so', 'the', 'to', 'up', 'yet']);
-  
-  return str
-    .toLowerCase()
-    .split(' ')
-    .map((word, index) => {
-      if (index === 0 || !minorWords.has(word)) {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-      }
-      return word;
-    })
-    .join(' ');
-}
-
-function detectLyricSections(lyrics: string): string {
-  const lines = lyrics.split("\n");
-  let formatted = "";
-  let currentSection = "";
-  
-  const sectionPatterns = [
-    { pattern: /^\[?(verse|v)\s*\d*\]?:?\s*$/i, label: "VERSE" },
-    { pattern: /^\[?(chorus|ch)\]?:?\s*$/i, label: "CHORUS" },
-    { pattern: /^\[?(bridge|br)\]?:?\s*$/i, label: "BRIDGE" },
-    { pattern: /^\[?(pre-?chorus|pc)\]?:?\s*$/i, label: "PRE-CHORUS" },
-    { pattern: /^\[?(outro)\]?:?\s*$/i, label: "OUTRO" },
-    { pattern: /^\[?(intro)\]?:?\s*$/i, label: "INTRO" },
-  ];
-  
-  for (const line of lines) {
-    let foundSection = false;
-    for (const { pattern, label } of sectionPatterns) {
-      if (pattern.test(line.trim())) {
-        currentSection = label;
-        formatted += `\n[${label}]\n`;
-        foundSection = true;
-        break;
-      }
-    }
-    if (!foundSection && line.trim()) {
-      formatted += line + "\n";
-    }
-  }
-  
-  return formatted.trim() || lyrics;
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// NATURAL LANGUAGE INPUT PARSER
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function parseNaturalInput(input: string, currentData: SongData): Partial<SongData> {
-  const updates: Partial<SongData> = {};
-  const lower = input.toLowerCase().trim();
-  
-  // Year detection
-  const yearMatch = input.match(/\b(19|20)\d{2}\b/);
-  if (yearMatch) {
-    updates.year = yearMatch[0];
-  }
-  
-  // Title and writers detection
-  if (lower.includes(" by ") || lower.includes("written by")) {
-    const parsed = parseVoiceLocal(input);
-    if (parsed.title && !currentData.title) {
-      updates.title = parsed.title;
-    }
-    if (parsed.writers.length > 0 && currentData.writers.length === 0) {
-      const writers: Writer[] = parsed.writers.map((name, i) => {
-        const known = KNOWN_WRITERS[name.toLowerCase()];
-        return {
-          id: crypto.randomUUID(),
-          name: toTitleCase(name),
-          pro: known?.pro || "",
-          ipi: known?.ipi || "",
-          split: 0, // User will enter manually
-          controlled: false,
-          fromDatabase: !!known,
-        };
-      });
-      updates.writers = writers;
-    }
-  }
-  
-  // Song type detection
-  if (lower.includes("public domain")) {
-    updates.type = "public_domain";
-  } else if (lower.includes("instrumental")) {
-    updates.type = "instrumental";
-  } else if (lower.includes("original")) {
-    updates.type = "original";
-  }
-  
-  return updates;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════════
 
-type EntryMode = "choice" | "voice" | "confirm" | "flow";
-
 export default function SongSubmitPage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   const [entryMode, setEntryMode] = useState<EntryMode>("choice");
-  const [step, setStep] = useState<FlowStep>("title");
-  const [input, setInput] = useState("");
+  const [step, setStep] = useState<FlowStep>(1);
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [editingField, setEditingField] = useState<string | null>(null);
   const [voiceTranscript, setVoiceTranscript] = useState("");
-  
-  // Parsed voice data for confirmation screen
   const [parsedTitle, setParsedTitle] = useState("");
   const [parsedWriters, setParsedWriters] = useState<string[]>([]);
   
   const [data, setData] = useState<SongData>({
     title: "",
+    hasAlternateTitle: null,
     alternateTitle: "",
-    type: "",
-    originalWork: "",
     language: "English",
-    year: "",
-    released: null,
+    songType: "",
+    originalWorkTitle: "",
+    releaseStatus: null,
+    publicationYear: "",
+    creationYear: "",
     writers: [],
-    lyrics: "",
+    lyricsEntryMode: "paste",
+    lyricsFull: "",
+    lyricsSections: [],
     lyricsConfirmed: false,
     hasChordChart: null,
     chordChartFile: null,
     chordChartAcknowledged: false,
     copyrightStatus: "",
-    wantsCopyrightFiling: false,
+    wantsCopyrightFiling: null,
     termsAccepted: false,
   });
 
-  // Speech recognition
   const recognitionRef = useRef<any>(null);
   
   useEffect(() => {
@@ -314,21 +155,15 @@ export default function SongSubmitPage() {
       recognitionRef.current.interimResults = true;
       
       recognitionRef.current.onresult = (event: any) => {
-        const transcript = Array.from(event.results)
-          .map((result: any) => result[0].transcript)
-          .join("");
-        
-        if (entryMode === "voice") {
-          setVoiceTranscript(transcript);
-        } else {
-          setInput(transcript);
+        let transcript = "";
+        for (let i = 0; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
         }
+        setVoiceTranscript(transcript);
       };
       
       recognitionRef.current.onend = () => {
         setIsListening(false);
-        
-        // If in voice entry mode and we have a transcript, process it
         if (entryMode === "voice" && voiceTranscript) {
           processVoiceEntry(voiceTranscript);
         }
@@ -338,7 +173,7 @@ export default function SongSubmitPage() {
 
   const startVoiceEntry = () => {
     if (!recognitionRef.current) {
-      toast.error("Voice input not supported in this browser");
+      toast.error("Voice input not supported");
       return;
     }
     setVoiceTranscript("");
@@ -354,191 +189,154 @@ export default function SongSubmitPage() {
 
   const processVoiceEntry = async (transcript: string) => {
     setIsProcessing(true);
-    
-    // Use Claude AI to parse the transcript
     const { title, writers } = await parseVoiceWithAI(transcript);
     
-    // Log the voice transcript for analysis
     try {
       await supabase.from("voice_transcripts").insert({
-        transcript: transcript,
+        transcript,
         parsed_title: title,
         parsed_writers: writers,
         success: !!(title && writers.length > 0),
       });
     } catch (err) {
-      console.error("Failed to log voice transcript:", err);
+      console.error("Failed to log transcript:", err);
     }
     
-    // Store parsed data for confirmation
     setParsedTitle(title);
     setParsedWriters(writers.length > 0 ? writers : ["(Your name)"]);
-    
     setIsProcessing(false);
     setEntryMode("confirm");
   };
 
-  const confirmVoiceEntry = async () => {
-    // Build writers array WITHOUT auto-calculated splits
-    // User will enter splits manually in the writers step
+  const confirmVoiceEntry = () => {
     const writers: Writer[] = parsedWriters.map((name) => ({
       id: crypto.randomUUID(),
       name,
       pro: "",
       ipi: "",
-      split: 0, // No auto-calculation - user enters manually
+      split: 0,
+      credit: "",
       controlled: name === "(Your name)",
       fromDatabase: false,
     }));
     
-    // Log corrections if user edited the AI's parsing
-    const originalParsed = await parseVoiceWithAI(voiceTranscript);
-    const wasEdited = originalParsed.title !== parsedTitle || 
-      JSON.stringify(originalParsed.writers) !== JSON.stringify(parsedWriters);
-    
-    if (wasEdited && voiceTranscript) {
-      try {
-        await supabase.from("voice_transcripts").insert({
-          transcript: voiceTranscript,
-          parsed_title: originalParsed.title,
-          parsed_writers: originalParsed.writers,
-          corrected_title: parsedTitle,
-          corrected_writers: parsedWriters,
-          was_corrected: true,
-          success: true,
-        });
-      } catch (err) {
-        console.error("Failed to log correction:", err);
-      }
-    }
-    
-    // Update data and move to flow
+    setData(prev => ({ ...prev, title: parsedTitle, writers }));
+    setEntryMode("form");
+    setStep(1);
+  };
+
+  // Writer management
+  const addWriter = () => {
     setData(prev => ({
       ...prev,
-      title: parsedTitle,
-      writers,
+      writers: [...prev.writers, { id: crypto.randomUUID(), name: "", pro: "", ipi: "", split: 0, credit: "", controlled: false, fromDatabase: false }]
     }));
-    
-    setEntryMode("flow");
-    setStep("writers"); // Go to writers step so user can enter splits
   };
 
-  const toggleListening = () => {
-    if (!recognitionRef.current) {
-      toast.error("Voice input not supported in this browser");
-      return;
-    }
-    
-    if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    } else {
-      setInput("");
-      recognitionRef.current.start();
-      setIsListening(true);
+  const updateWriter = (id: string, updates: Partial<Writer>) => {
+    setData(prev => ({
+      ...prev,
+      writers: prev.writers.map(w => w.id === id ? { ...w, ...updates } : w)
+    }));
+  };
+
+  const removeWriter = (id: string) => {
+    if (data.writers.length > 1) {
+      setData(prev => ({ ...prev, writers: prev.writers.filter(w => w.id !== id) }));
     }
   };
 
-  const goBackFromChoice = () => {
-    navigate("/rights/catalogue");
+  // Lyric section management
+  const addLyricSection = () => {
+    setData(prev => ({
+      ...prev,
+      lyricsSections: [...prev.lyricsSections, { id: crypto.randomUUID(), type: "", content: "" }]
+    }));
   };
 
-  const processInput = () => {
-    if (!input.trim()) return;
-    
-    setIsProcessing(true);
-    
-    // Simulate brief processing delay for natural feel
-    setTimeout(() => {
-      const updates = parseNaturalInput(input, data);
-      
-      if (Object.keys(updates).length > 0) {
-        setData(prev => ({ ...prev, ...updates }));
-      }
-      
-      setInput("");
-      setIsProcessing(false);
-      
-      // Auto-advance logic
-      if (step === "title" && (updates.title || data.title)) {
-        if ((updates.writers && updates.writers.length > 0) || data.writers.length > 0) {
-          // Already have writers, maybe skip to lyrics
-        }
-      }
-    }, 300);
+  const updateLyricSection = (id: string, updates: Partial<LyricSection>) => {
+    setData(prev => ({
+      ...prev,
+      lyricsSections: prev.lyricsSections.map(s => s.id === id ? { ...s, ...updates } : s)
+    }));
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      processInput();
-    }
+  const removeLyricSection = (id: string) => {
+    setData(prev => ({ ...prev, lyricsSections: prev.lyricsSections.filter(s => s.id !== id) }));
   };
 
-  const advanceStep = () => {
-    const steps: FlowStep[] = ["title", "writers", "lyrics", "details", "review"];
-    const currentIndex = steps.indexOf(step);
-    if (currentIndex < steps.length - 1) {
-      setStep(steps[currentIndex + 1]);
-    }
-  };
-
-  const goBack = () => {
-    const steps: FlowStep[] = ["title", "writers", "lyrics", "details", "review"];
-    const currentIndex = steps.indexOf(step);
-    if (currentIndex > 0) {
-      setStep(steps[currentIndex - 1]);
-    } else {
-      navigate("/rights/catalogue");
-    }
-  };
-
-  const canAdvance = (): boolean => {
+  // Validation
+  const canAdvanceStep = (): boolean => {
     switch (step) {
-      case "title":
-        return !!data.title && data.writers.length > 0 && data.writers.every(w => w.name && w.split > 0);
-      case "writers":
-        return data.writers.length > 0 && Math.abs(data.writers.reduce((s, w) => s + w.split, 0) - 100) < 0.01;
-      case "lyrics":
-        return data.type === "instrumental" || (!!data.lyrics && data.lyricsConfirmed);
-      case "details":
-        return !!data.year && data.released !== null && (data.hasChordChart === true || data.chordChartAcknowledged);
-      case "review":
+      case 1:
+        const hasTitle = !!data.title;
+        const hasAltHandled = data.hasAlternateTitle === false || (data.hasAlternateTitle === true && !!data.alternateTitle);
+        const hasType = !!data.songType;
+        const hasOriginal = !["public_domain", "derivative", "medley"].includes(data.songType) || !!data.originalWorkTitle;
+        const hasYear = data.releaseStatus === "no" ? !!data.creationYear : !!data.publicationYear;
+        const totalSplit = data.writers.reduce((s, w) => s + w.split, 0);
+        const hasWriters = data.writers.length > 0 && 
+          data.writers.every(w => w.name && w.split > 0 && w.credit && w.pro) &&
+          Math.abs(totalSplit - 100) < 0.01;
+        return hasTitle && hasAltHandled && hasType && hasOriginal && data.releaseStatus !== null && hasYear && hasWriters;
+      case 2:
+        if (data.songType === "instrumental") return true;
+        const hasLyrics = data.lyricsEntryMode === "paste" ? !!data.lyricsFull : data.lyricsSections.length > 0 && data.lyricsSections.every(s => s.type && s.content);
+        return hasLyrics && data.lyricsConfirmed;
+      case 3:
+        return data.hasChordChart === true || data.chordChartAcknowledged;
+      case 4:
+        if (!data.copyrightStatus) return false;
+        if (data.copyrightStatus === "no") return data.wantsCopyrightFiling !== null;
+        return true;
+      case 5:
         return data.termsAccepted;
       default:
         return false;
     }
   };
 
+  const goToNextStep = () => {
+    if (step < 5 && canAdvanceStep()) setStep((step + 1) as FlowStep);
+  };
+
+  const goToPrevStep = () => {
+    if (step > 1) setStep((step - 1) as FlowStep);
+    else navigate("/rights/catalogue");
+  };
+
   const submit = async () => {
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from("songs").insert({
+      const year = data.releaseStatus === "no" ? data.creationYear : data.publicationYear;
+      const lyrics = data.lyricsEntryMode === "paste" ? data.lyricsFull : data.lyricsSections.map(s => `[${s.type?.toUpperCase()}]\n${s.content}`).join("\n\n");
+      
+      const songPayload = {
         title: data.title,
-        alternate_titles: data.alternateTitle ? [data.alternateTitle] : null,
+        alternate_titles: data.hasAlternateTitle && data.alternateTitle ? [data.alternateTitle] : null,
         language: data.language,
-        genre: data.type || "original",
-        release_date: data.released && data.year ? `${data.year}-01-01` : null,
+        genre: data.songType || "original",
+        release_date: data.releaseStatus !== "no" && year ? `${year}-01-01` : null,
         metadata: {
-          type: data.type || "original",
-          original_work: data.originalWork || null,
-          year: data.year,
-          released: data.released,
-          lyrics: data.lyrics,
+          song_type: data.songType,
+          original_work_title: data.originalWorkTitle || null,
+          release_status: data.releaseStatus,
+          publication_year: data.publicationYear || null,
+          creation_year: data.creationYear || null,
+          lyrics,
+          lyrics_sections: data.lyricsSections,
           lyrics_confirmed: data.lyricsConfirmed,
           has_chord_chart: data.hasChordChart,
           copyright_status: data.copyrightStatus,
           wants_copyright_filing: data.wantsCopyrightFiling,
           writers: data.writers.map(w => ({
-            name: w.name,
-            pro: w.pro,
-            ipi: w.ipi,
-            split: w.split,
-            controlled: w.controlled,
+            name: w.name, pro: w.pro, ipi: w.ipi, split: w.split, credit: w.credit, controlled: w.controlled,
           })),
         },
         is_active: false,
-      });
+      };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await supabase.from("songs").insert(songPayload as any);
       
       if (error) throw error;
       toast.success("Song submitted successfully");
@@ -550,99 +348,56 @@ export default function SongSubmitPage() {
     }
   };
 
-  const getPrompt = (): string => {
-    switch (step) {
-      case "title":
-        if (!data.title) return "What's your song called?";
-        if (data.writers.length === 0) return "Who wrote it?";
-        if (data.writers.some(w => !w.split)) return "How should we split the ownership?";
-        return "Anything else about the song?";
-      case "writers":
-        return "Add or adjust writers and splits";
-      case "lyrics":
-        if (data.type === "instrumental") return "No lyrics needed for instrumentals";
-        return "Paste or speak your lyrics";
-      case "details":
-        if (!data.year) return "What year was it written?";
-        if (data.released === null) return "Has it been released?";
-        if (data.hasChordChart === null) return "Do you have a chord chart?";
-        return "Any other details?";
-      case "review":
-        return "Review and submit";
-      default:
-        return "";
-    }
-  };
-
-  const stepNumber = ["title", "writers", "lyrics", "details", "review"].indexOf(step) + 1;
+  const totalSplit = data.writers.reduce((s, w) => s + w.split, 0);
+  const splitValid = Math.abs(totalSplit - 100) < 0.01;
 
   // ═══════════════════════════════════════════════════════════════════════════════
-  // ENTRY CHOICE SCREEN
+  // CHOICE SCREEN
   // ═══════════════════════════════════════════════════════════════════════════════
-  
+
   if (entryMode === "choice") {
     return (
       <div className="h-full flex flex-col bg-[var(--page-bg)]">
         <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center px-4 sm:px-6">
-          <button onClick={goBackFromChoice} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] transition-colors text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
+          <button onClick={() => navigate("/rights/catalogue")} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
             <ArrowLeft className="h-5 w-5" />
           </button>
           <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Add Song</span>
         </header>
-
         <div className="flex-1 relative">
           <div className="absolute inset-0 flex items-center justify-center p-6 overflow-y-auto">
             <div className="max-w-md w-full">
-              <div className="text-center mb-10">
-                <div className="w-16 h-16 rounded-2xl bg-[var(--muted-wash)] flex items-center justify-center mx-auto mb-6">
-                  <Music className="h-8 w-8 text-[var(--btn-text)]" />
+              <div className="text-center mb-8">
+                <div className="w-14 h-14 rounded-2xl bg-[var(--muted-wash)] flex items-center justify-center mx-auto mb-4">
+                  <Music className="h-7 w-7 text-[var(--btn-text)]" />
                 </div>
-                
-                <h1 className="text-2xl font-semibold text-[var(--btn-text)] mb-2">
-                  Add a new song
-                </h1>
-                <p className="text-[var(--btn-text-muted)]">
-                  How would you like to get started?
-                </p>
+                <h1 className="text-2xl font-semibold text-[var(--btn-text)] mb-2">Add a new song</h1>
+                <p className="text-[var(--btn-text-muted)]">How would you like to get started?</p>
               </div>
-
               <div className="space-y-4">
-              {/* Voice Option */}
-              <button
-                onClick={() => setEntryMode("voice")}
-                className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[var(--btn-text)] text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <Mic className="h-6 w-6" />
+                <button onClick={() => setEntryMode("voice")} className="w-full p-5 rounded-2xl border-2 border-[var(--border-subtle)] hover:border-[var(--btn-text)]/30 text-left group">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-[var(--btn-text)] text-white flex items-center justify-center shrink-0">
+                      <Mic className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-[var(--btn-text)] mb-1">Tell me about it</div>
+                      <p className="text-sm text-[var(--btn-text-muted)]">Say the song title and who wrote it.</p>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-semibold text-[var(--btn-text)] mb-1">Tell me about it</div>
-                    <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
-                      Say the song title and who wrote it.
-                    </p>
+                </button>
+                <button onClick={() => setEntryMode("form")} className="w-full p-5 rounded-2xl border-2 border-[var(--border-subtle)] hover:border-[var(--btn-text)]/30 text-left group">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-[var(--muted-wash)] text-[var(--btn-text)] flex items-center justify-center shrink-0">
+                      <Edit3 className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
+                      <p className="text-sm text-[var(--btn-text-muted)]">Fill out the form step by step.</p>
+                    </div>
                   </div>
-                </div>
-              </button>
-
-              {/* Manual Option */}
-              <button
-                onClick={() => setEntryMode("flow")}
-                className="w-full p-6 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl text-left hover:border-[var(--btn-text)]/30 hover:shadow-sm transition-all group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[var(--muted-wash)] text-[var(--btn-text)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <Edit3 className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-[var(--btn-text)] mb-1">I'll type it out</div>
-                    <p className="text-sm text-[var(--btn-text-muted)] leading-relaxed">
-                      Go step by step through the registration form.
-                    </p>
-                  </div>
-                </div>
-              </button>
-            </div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -653,97 +408,57 @@ export default function SongSubmitPage() {
   // ═══════════════════════════════════════════════════════════════════════════════
   // VOICE ENTRY SCREEN
   // ═══════════════════════════════════════════════════════════════════════════════
-  
+
   if (entryMode === "voice") {
     return (
       <div className="h-full flex flex-col bg-[var(--page-bg)]">
         <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center justify-between px-4 sm:px-6">
           <div className="flex items-center">
-            <button onClick={() => { stopVoiceEntry(); setEntryMode("choice"); }} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] transition-colors text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
+            <button onClick={() => { stopVoiceEntry(); setEntryMode("choice"); }} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)]">
               <ArrowLeft className="h-5 w-5" />
             </button>
             <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Voice Entry</span>
           </div>
-          <button
-            onClick={() => { stopVoiceEntry(); setEntryMode("flow"); }}
-            className="text-sm text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]"
-          >
-            Skip to form
-          </button>
+          <button onClick={() => { stopVoiceEntry(); setEntryMode("form"); }} className="text-sm text-[var(--btn-text-muted)]">Skip to form</button>
         </header>
-
         <div className="flex-1 flex flex-col items-center justify-center p-6">
           <div className="max-w-lg w-full text-center">
-            {/* Listening State */}
             {isListening ? (
               <>
                 <div className="relative w-32 h-32 mx-auto mb-8 pointer-events-none">
-                  {/* Pulse rings - non-interactive */}
                   <div className="absolute inset-0 rounded-full bg-[var(--btn-text)]/10 animate-ping" />
                   <div className="absolute inset-2 rounded-full bg-[var(--btn-text)]/20 animate-pulse" />
                   <div className="absolute inset-4 rounded-full bg-[var(--btn-text)] flex items-center justify-center">
                     <Mic className="h-10 w-10 text-white" />
                   </div>
                 </div>
-                
                 <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-2">Listening...</h2>
                 <p className="text-[var(--btn-text-muted)] mb-6">Tell me about your song</p>
-                
-                {/* Live transcript */}
                 {voiceTranscript && (
                   <div className="p-4 bg-[var(--muted-wash)] rounded-xl text-left mb-8 max-h-32 overflow-y-auto">
                     <p className="text-sm text-[var(--btn-text)]">{voiceTranscript}</p>
                   </div>
                 )}
-                
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (recognitionRef.current) {
-                      recognitionRef.current.stop();
-                    }
-                    setIsListening(false);
-                    if (voiceTranscript) {
-                      processVoiceEntry(voiceTranscript);
-                    } else {
-                      setEntryMode("flow");
-                    }
-                  }}
-                  className="relative z-10 px-8 py-3 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 transition-all cursor-pointer"
-                >
+                <button type="button" onClick={() => { if (recognitionRef.current) recognitionRef.current.stop(); setIsListening(false); if (voiceTranscript) processVoiceEntry(voiceTranscript); else setEntryMode("form"); }} className="relative z-10 px-8 py-4 text-base font-medium rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90">
                   Done speaking
                 </button>
               </>
             ) : isProcessing ? (
               <>
-                <div className="w-32 h-32 mx-auto mb-8 rounded-full bg-[var(--muted-wash)] flex items-center justify-center">
-                  <Sparkles className="h-10 w-10 text-[var(--btn-text)] animate-pulse" />
+                <div className="w-20 h-20 mx-auto mb-8 flex items-center justify-center">
+                  <Sparkles className="h-12 w-12 text-[var(--btn-text)] animate-pulse" />
                 </div>
                 <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-2">Processing...</h2>
                 <p className="text-[var(--btn-text-muted)]">Extracting song details</p>
               </>
             ) : (
               <>
-                <div className="w-32 h-32 mx-auto mb-8 rounded-full bg-[var(--muted-wash)] flex items-center justify-center">
-                  <Mic className="h-10 w-10 text-[var(--btn-text-muted)]" />
-                </div>
-                
                 <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-2">Tell me about your song</h2>
-                <p className="text-[var(--btn-text-muted)] mb-8 max-w-sm mx-auto">
-                  Say the song title and who wrote it.
-                </p>
-                
-                <button
-                  onClick={startVoiceEntry}
-                  className="px-8 py-4 text-base font-medium rounded-2xl bg-[var(--btn-text)] text-white hover:opacity-90 transition-all flex items-center gap-3 mx-auto"
-                >
-                  <Mic className="h-5 w-5" />
-                  Start speaking
+                <p className="text-[var(--btn-text-muted)] mb-8">Say the song title and who wrote it.</p>
+                <button onClick={startVoiceEntry} className="px-8 py-4 text-base font-medium rounded-2xl bg-[var(--btn-text)] text-white hover:opacity-90 flex items-center gap-3 mx-auto">
+                  <Mic className="h-5 w-5" /> Start speaking
                 </button>
-                
-                <p className="text-xs text-[var(--btn-text-muted)] mt-6">
-                  Example: "It's called Christmas Hoedown, written by me and Joshua Carpenter"
-                </p>
+                <p className="text-xs text-[var(--btn-text-muted)] mt-6">Example: "It's called Christmas Hoedown, written by me and Joshua Carpenter"</p>
               </>
             )}
           </div>
@@ -753,97 +468,54 @@ export default function SongSubmitPage() {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════════
-  // CONFIRMATION SCREEN — Edit title & writers before continuing
+  // CONFIRMATION SCREEN
   // ═══════════════════════════════════════════════════════════════════════════════
-  
+
   if (entryMode === "confirm") {
     return (
       <div className="h-full flex flex-col bg-[var(--page-bg)]">
-        <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center justify-between px-4 sm:px-6">
-          <div className="flex items-center">
-            <button onClick={() => setEntryMode("voice")} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] transition-colors text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
-              <ArrowLeft className="h-5 w-5" />
-            </button>
-            <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Confirm Details</span>
-          </div>
+        <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center px-4 sm:px-6">
+          <button onClick={() => setEntryMode("voice")} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)]">
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+          <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Confirm Details</span>
         </header>
-
         <div className="flex-1 flex flex-col items-center justify-center p-6 overflow-y-auto">
           <div className="max-w-md w-full">
             <div className="text-center mb-8">
-              <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center mx-auto mb-4">
-                <Check className="h-7 w-7 text-green-600" />
+              <div className="w-14 h-14 rounded-2xl bg-success/10 flex items-center justify-center mx-auto mb-4">
+                <Check className="h-7 w-7 text-success" />
               </div>
               <h1 className="text-2xl font-semibold text-[var(--btn-text)] mb-2">Got it!</h1>
               <p className="text-[var(--btn-text-muted)]">Please review and edit if needed.</p>
             </div>
-
-            {/* Song Title */}
             <div className="mb-6">
-              <label className="block text-xs font-medium text-[var(--btn-text-muted)] uppercase tracking-wider mb-2">
-                Song Title
-              </label>
-              <input
-                type="text"
-                value={parsedTitle}
-                onChange={(e) => setParsedTitle(e.target.value)}
-                placeholder="Enter song title"
-                className="w-full h-12 px-4 text-base bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 focus:border-[var(--app-focus)]/40 transition-all"
-              />
+              <label className="block text-xs font-medium text-[var(--btn-text-muted)] uppercase tracking-wider mb-2">Song Title</label>
+              <input type="text" value={parsedTitle} onChange={(e) => setParsedTitle(e.target.value)} placeholder="Enter song title" className="w-full h-12 px-4 text-base bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20" />
             </div>
-
-            {/* Writers */}
             <div className="mb-8">
-              <label className="block text-xs font-medium text-[var(--btn-text-muted)] uppercase tracking-wider mb-2">
-                Writers
-              </label>
+              <label className="block text-xs font-medium text-[var(--btn-text-muted)] uppercase tracking-wider mb-2">Writers</label>
               <div className="space-y-2">
                 {parsedWriters.map((writer, index) => (
                   <div key={index} className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={writer}
-                      onChange={(e) => {
-                        const updated = [...parsedWriters];
-                        updated[index] = e.target.value;
-                        setParsedWriters(updated);
-                      }}
-                      placeholder="Writer name"
-                      className="flex-1 h-11 px-4 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 transition-all"
-                    />
+                    <input type="text" value={writer} onChange={(e) => { const u = [...parsedWriters]; u[index] = e.target.value; setParsedWriters(u); }} placeholder="Writer name" className="flex-1 h-11 px-4 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
                     {parsedWriters.length > 1 && (
-                      <button
-                        onClick={() => setParsedWriters(parsedWriters.filter((_, i) => i !== index))}
-                        className="p-2 rounded-lg hover:bg-red-50 text-[var(--btn-text-muted)] hover:text-red-500 transition-colors"
-                      >
+                      <button onClick={() => setParsedWriters(parsedWriters.filter((_, i) => i !== index))} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive">
                         <Trash2 className="h-4 w-4" />
                       </button>
                     )}
                   </div>
                 ))}
-                <button
-                  onClick={() => setParsedWriters([...parsedWriters, ""])}
-                  className="w-full h-11 text-sm font-medium text-[var(--btn-text-muted)] border-2 border-dashed border-[var(--border-subtle)] rounded-xl hover:border-[var(--btn-text)]/30 hover:text-[var(--btn-text)] transition-all flex items-center justify-center gap-2"
-                >
+                <button onClick={() => setParsedWriters([...parsedWriters, ""])} className="w-full h-11 text-sm font-medium text-[var(--btn-text-muted)] border-2 border-dashed border-[var(--border-subtle)] rounded-xl hover:border-[var(--btn-text)]/30 flex items-center justify-center gap-2">
                   <Plus className="h-4 w-4" /> Add writer
                 </button>
               </div>
             </div>
-
-            {/* Actions */}
             <div className="flex flex-col gap-3">
-              <button
-                onClick={confirmVoiceEntry}
-                disabled={!parsedTitle.trim() || parsedWriters.length === 0 || parsedWriters.some(w => !w.trim())}
-                className="w-full h-12 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                Continue
-                <ChevronRight className="h-4 w-4" />
+              <button onClick={confirmVoiceEntry} disabled={!parsedTitle.trim() || parsedWriters.length === 0 || parsedWriters.some(w => !w.trim())} className="w-full h-12 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2">
+                Continue <ChevronRight className="h-4 w-4" />
               </button>
-              <button
-                onClick={() => setEntryMode("voice")}
-                className="w-full h-12 text-sm font-medium rounded-xl text-[var(--btn-text-muted)] hover:bg-[var(--muted-wash)] transition-all"
-              >
+              <button onClick={() => setEntryMode("voice")} className="w-full h-12 text-sm font-medium rounded-xl text-[var(--btn-text-muted)] hover:bg-[var(--muted-wash)]">
                 Try again
               </button>
             </div>
@@ -854,465 +526,305 @@ export default function SongSubmitPage() {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════════
-  // MAIN FLOW
+  // MAIN FORM
   // ═══════════════════════════════════════════════════════════════════════════════
 
   return (
     <div className="h-full flex flex-col bg-[var(--page-bg)]">
-      {/* Header */}
       <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center justify-between px-4 sm:px-6">
         <div className="flex items-center">
-          <button onClick={goBack} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] transition-colors text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
+          <button onClick={goToPrevStep} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)]">
             <ArrowLeft className="h-5 w-5" />
           </button>
           <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Add Song</span>
         </div>
-        <div className="flex items-center gap-1 text-xs text-[var(--btn-text-muted)]">
-          <Sparkles className="h-3.5 w-3.5" />
-          <span>AI-Assisted</span>
-        </div>
+        <span className="text-xs text-[var(--btn-text-muted)]">Step {step} of 5</span>
       </header>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        {/* Input Area */}
-        <div className="flex-1 flex flex-col p-6 sm:p-10 lg:p-12 overflow-y-auto">
-          <div className="flex-1 flex flex-col justify-center max-w-xl mx-auto w-full">
-            {/* Progress */}
-            <div className="flex items-center gap-2 mb-8">
-              {["title", "writers", "lyrics", "details", "review"].map((s, i) => (
-                <div key={s} className={cn(
-                  "h-1 flex-1 rounded-full transition-all",
-                  i < stepNumber ? "bg-[var(--btn-text)]" : "bg-[var(--border-subtle)]"
-                )} />
-              ))}
-            </div>
+      <div className="shrink-0 h-1 bg-[var(--border-subtle)]">
+        <div className="h-full bg-[var(--btn-text)] transition-all" style={{ width: `${(step / 5) * 100}%` }} />
+      </div>
 
-            {/* Prompt */}
-            <h1 className="text-2xl sm:text-3xl font-semibold text-[var(--btn-text)] mb-8">
-              {getPrompt()}
-            </h1>
+      <div className="flex-1 overflow-y-auto p-6 sm:p-8">
+        <div className="max-w-2xl mx-auto">
 
-            {/* Dynamic Input Area */}
-            {step === "title" && (
-              <div className="space-y-4">
-                <div className="relative">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder={data.title ? "Add writers, year, or other details..." : "Song title, writers, year..."}
-                    className="w-full h-14 pl-5 pr-14 text-lg bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl placeholder:text-[var(--btn-text-muted)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 focus:border-[var(--app-focus)]/40 transition-all"
-                    autoFocus
-                  />
-                  <button
-                    onClick={toggleListening}
-                    className={cn(
-                      "absolute right-2 top-1/2 -translate-y-1/2 p-3 rounded-xl transition-all",
-                      isListening ? "bg-red-500 text-white" : "bg-[var(--muted-wash)] text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]"
-                    )}
-                  >
-                    {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-                  </button>
-                </div>
-                
-                {input && (
-                  <button
-                    onClick={processInput}
-                    disabled={isProcessing}
-                    className="px-5 py-2.5 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 transition-all disabled:opacity-50"
-                  >
-                    {isProcessing ? "Processing..." : "Add"}
-                  </button>
-                )}
-                
-                <p className="text-sm text-[var(--btn-text-muted)]">
-                  Try: "Amazing Grace My Chains Are Gone, written by me and Chris Tomlin, 50/50 split, 2006"
-                </p>
+          {/* STEP 1: SONG DETAILS */}
+          {step === 1 && (
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-1">Song Details</h2>
+                <p className="text-sm text-[var(--btn-text-muted)]">Basic information about your song</p>
               </div>
-            )}
 
-            {step === "lyrics" && data.type !== "instrumental" && (
-              <div className="space-y-4">
-                <textarea
-                  ref={textareaRef}
-                  value={data.lyrics}
-                  onChange={(e) => setData(prev => ({ ...prev, lyrics: e.target.value }))}
-                  onBlur={() => {
-                    if (data.lyrics) {
-                      setData(prev => ({ ...prev, lyrics: detectLyricSections(prev.lyrics) }));
-                    }
-                  }}
-                  placeholder="Paste your lyrics here..."
-                  rows={12}
-                  className="w-full px-5 py-4 text-base bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-2xl placeholder:text-[var(--btn-text-muted)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 transition-all resize-y"
-                />
-                
-                {data.lyrics && (
-                  <label className="flex items-center gap-3 p-4 bg-[var(--muted-wash)] rounded-xl cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={data.lyricsConfirmed}
-                      onChange={(e) => setData(prev => ({ ...prev, lyricsConfirmed: e.target.checked }))}
-                      className="w-5 h-5 rounded border-2 border-[var(--border-strong)] text-[var(--btn-text)] focus:ring-[var(--app-focus)] focus:ring-offset-0"
-                    />
-                    <span className="text-sm text-[var(--btn-text)]">These lyrics are accurate and original</span>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[var(--btn-text)]">Title <span className="text-destructive">*</span></label>
+                <input type="text" value={data.title} onChange={(e) => setData(prev => ({ ...prev, title: e.target.value }))} placeholder="Enter song title" className="w-full h-12 px-4 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20" />
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-[var(--btn-text)]">Is there an alternate song title? <span className="text-destructive">*</span></label>
+                <div className="flex gap-3">
+                  {[{ v: true, l: "Yes" }, { v: false, l: "No" }].map(o => (
+                    <button key={String(o.v)} onClick={() => setData(prev => ({ ...prev, hasAlternateTitle: o.v, alternateTitle: o.v ? prev.alternateTitle : "" }))} className={cn("px-5 py-2.5 text-sm font-medium rounded-xl border-2", data.hasAlternateTitle === o.v ? "border-[var(--btn-text)] bg-[var(--btn-text)] text-white" : "border-[var(--border-subtle)] text-[var(--btn-text)]")}>
+                      {o.l}
+                    </button>
+                  ))}
+                </div>
+                {data.hasAlternateTitle && (
+                  <input type="text" value={data.alternateTitle} onChange={(e) => setData(prev => ({ ...prev, alternateTitle: e.target.value }))} placeholder="Enter alternate title" className="w-full h-11 px-4 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[var(--btn-text)]">Language</label>
+                <select value={data.language} onChange={(e) => setData(prev => ({ ...prev, language: e.target.value }))} className="w-full h-12 px-4 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none">
+                  {LANGUAGES.map(lang => <option key={lang} value={lang}>{lang}</option>)}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[var(--btn-text)]">Song Type <span className="text-destructive">*</span></label>
+                <select value={data.songType} onChange={(e) => setData(prev => ({ ...prev, songType: e.target.value as SongData["songType"] }))} className="w-full h-12 px-4 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none">
+                  <option value="">Select type...</option>
+                  {SONG_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                </select>
+              </div>
+
+              {["public_domain", "derivative", "medley"].includes(data.songType) && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-[var(--btn-text)]">
+                    {data.songType === "public_domain" && "Enter the title of the original public domain song"}
+                    {data.songType === "derivative" && "Enter the title of the original composition"}
+                    {data.songType === "medley" && "Enter the titles of other copyrights used"}
+                    <span className="text-destructive">*</span>
                   </label>
-                )}
-              </div>
-            )}
-
-            {step === "details" && (
-              <div className="space-y-6">
-                {!data.year && (
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium text-[var(--btn-text)]">Year written</label>
-                    <input
-                      type="number"
-                      min="1900"
-                      max={new Date().getFullYear()}
-                      value={data.year}
-                      onChange={(e) => setData(prev => ({ ...prev, year: e.target.value }))}
-                      placeholder={new Date().getFullYear().toString()}
-                      className="w-32 h-12 px-4 text-base bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 transition-all"
-                    />
-                  </div>
-                )}
-                
-                {data.year && data.released === null && (
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium text-[var(--btn-text)]">Has it been released?</label>
-                    <div className="flex gap-3">
-                      {[{ v: true, l: "Yes" }, { v: false, l: "Not yet" }].map(o => (
-                        <button
-                          key={String(o.v)}
-                          onClick={() => setData(prev => ({ ...prev, released: o.v }))}
-                          className={cn(
-                            "px-5 py-3 text-sm font-medium rounded-xl border-2 transition-all",
-                            data.released === o.v
-                              ? "border-[var(--btn-text)] bg-[var(--btn-text)] text-white"
-                              : "border-[var(--border-subtle)] text-[var(--btn-text)] hover:border-[var(--btn-text)]/30"
-                          )}
-                        >
-                          {o.l}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {data.released !== null && data.hasChordChart === null && (
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium text-[var(--btn-text)]">Do you have a chord chart?</label>
-                    <div className="flex gap-3">
-                      {[{ v: true, l: "Yes" }, { v: false, l: "No" }].map(o => (
-                        <button
-                          key={String(o.v)}
-                          onClick={() => setData(prev => ({ ...prev, hasChordChart: o.v }))}
-                          className={cn(
-                            "px-5 py-3 text-sm font-medium rounded-xl border-2 transition-all",
-                            data.hasChordChart === o.v
-                              ? "border-[var(--btn-text)] bg-[var(--btn-text)] text-white"
-                              : "border-[var(--border-subtle)] text-[var(--btn-text)] hover:border-[var(--btn-text)]/30"
-                          )}
-                        >
-                          {o.l}
-                        </button>
-                      ))}
-                    </div>
-                    
-                    {data.hasChordChart === false && !data.chordChartAcknowledged && (
-                      <label className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl cursor-pointer mt-4">
-                        <input
-                          type="checkbox"
-                          checked={data.chordChartAcknowledged}
-                          onChange={(e) => setData(prev => ({ ...prev, chordChartAcknowledged: e.target.checked }))}
-                          className="w-5 h-5 rounded border-2 border-amber-300 text-amber-600 focus:ring-amber-500 focus:ring-offset-0"
-                        />
-                        <span className="text-sm text-amber-800">I understand chord charts help with CCLI licensing</span>
-                      </label>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {step === "review" && (
-              <div className="space-y-6">
-                <div className="p-6 bg-[var(--muted-wash)] rounded-2xl space-y-4">
-                  <div className="flex items-center gap-2 text-sm font-medium text-[var(--btn-text)]">
-                    <Check className="h-4 w-4 text-green-500" />
-                    Ready to submit
-                  </div>
-                  <p className="text-sm text-[var(--btn-text-muted)]">
-                    Your song "{data.title}" with {data.writers.length} writer{data.writers.length !== 1 ? "s" : ""} is ready for review.
-                  </p>
+                  <input type="text" value={data.originalWorkTitle} onChange={(e) => setData(prev => ({ ...prev, originalWorkTitle: e.target.value }))} placeholder="Original work title(s)" className="w-full h-11 px-4 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
                 </div>
-                
-                <label className="flex items-center gap-3 p-4 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={data.termsAccepted}
-                    onChange={(e) => setData(prev => ({ ...prev, termsAccepted: e.target.checked }))}
-                    className="w-5 h-5 rounded border-2 border-[var(--border-strong)] text-[var(--btn-text)] focus:ring-[var(--app-focus)] focus:ring-offset-0"
-                  />
-                  <span className="text-sm text-[var(--btn-text)]">
-                    I agree to the{" "}
-                    <a href="https://tribesrightsmanagement.com" target="_blank" rel="noopener noreferrer" className="underline">
-                      Terms & Conditions
-                    </a>
-                  </span>
-                </label>
+              )}
+
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-[var(--btn-text)]">Has this song been recorded and released? <span className="text-destructive">*</span></label>
+                <div className="flex flex-wrap gap-3">
+                  {[{ v: "yes" as const, l: "Yes" }, { v: "no" as const, l: "No" }, { v: "youtube_only" as const, l: "Yes - YouTube Only" }].map(o => (
+                    <button key={o.v} onClick={() => setData(prev => ({ ...prev, releaseStatus: o.v }))} className={cn("px-5 py-2.5 text-sm font-medium rounded-xl border-2", data.releaseStatus === o.v ? "border-[var(--btn-text)] bg-[var(--btn-text)] text-white" : "border-[var(--border-subtle)] text-[var(--btn-text)]")}>
+                      {o.l}
+                    </button>
+                  ))}
+                </div>
               </div>
-            )}
-          </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-between pt-6 mt-auto">
-            <button
-              onClick={goBack}
-              className="px-5 py-2.5 text-sm font-medium rounded-xl text-[var(--btn-text)] hover:bg-[var(--muted-wash)] transition-all"
-            >
-              Back
-            </button>
-            
-            {step === "review" ? (
-              <button
-                onClick={submit}
-                disabled={!canAdvance() || isSubmitting}
-                className="px-6 py-2.5 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
-              >
-                <Send className="h-4 w-4" />
-                {isSubmitting ? "Submitting..." : "Submit Song"}
-              </button>
-            ) : (
-              <button
-                onClick={advanceStep}
-                disabled={!canAdvance()}
-                className="px-6 py-2.5 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
-              >
-                Continue
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-        </div>
+              {data.releaseStatus && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-[var(--btn-text)]">
+                    {data.releaseStatus === "no" ? "Song creation year" : data.releaseStatus === "youtube_only" ? "First publication year on YouTube" : "First publication year"}
+                    <span className="text-destructive">*</span>
+                  </label>
+                  <input type="number" min="1900" max={new Date().getFullYear()} value={data.releaseStatus === "no" ? data.creationYear : data.publicationYear} onChange={(e) => setData(prev => ({ ...prev, [data.releaseStatus === "no" ? "creationYear" : "publicationYear"]: e.target.value }))} placeholder={new Date().getFullYear().toString()} className="w-40 h-11 px-4 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
+                </div>
+              )}
 
-        {/* Live Document Card */}
-        <div className={cn(
-          "border-t lg:border-t-0 lg:border-l border-[var(--border-subtle)] bg-[var(--card-bg)] overflow-y-auto",
-          isMobile ? "h-64" : "w-96"
-        )}>
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-sm font-semibold text-[var(--btn-text)]">Song Registration</h2>
-              <Music className="h-4 w-4 text-[var(--btn-text-muted)]" />
-            </div>
-
-            {/* Title */}
-            <DocumentField
-              label="Title"
-              value={data.title}
-              filled={!!data.title}
-              onEdit={() => setEditingField("title")}
-            />
-
-            {/* Type */}
-            {(data.type || data.originalWork) && (
-              <DocumentField
-                label="Type"
-                value={data.type === "public_domain" ? `Public Domain (${data.originalWork})` : data.type || "Original"}
-                filled={!!data.type}
-              />
-            )}
-
-            {/* Writers */}
-            <div className="py-3 border-b border-[var(--border-subtle)]">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-[var(--btn-text-muted)]">Writers</span>
-                {data.writers.length > 0 && (
-                  <button
-                    onClick={() => setEditingField("writers")}
-                    className="p-1 rounded hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)]"
-                  >
-                    <Edit3 className="h-3 w-3" />
-                  </button>
-                )}
-              </div>
-              {data.writers.length > 0 ? (
-                <div className="space-y-1.5">
-                  {data.writers.map((w) => (
-                    <div key={w.id} className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[var(--btn-text)]">{w.name}</span>
-                        {w.fromDatabase && (
-                          <span className="px-1.5 py-0.5 text-[10px] font-medium bg-green-100 text-green-700 rounded">
-                            {w.pro}
-                          </span>
-                        )}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-[var(--btn-text)]">Writers <span className="text-destructive">*</span></label>
+                  <span className={cn("text-xs font-medium", splitValid ? "text-success" : "text-warning")}>Total: {totalSplit.toFixed(2)}%</span>
+                </div>
+                <div className="space-y-4">
+                  {data.writers.map((w, i) => (
+                    <div key={w.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-[var(--btn-text-muted)]">Writer {i + 1}</span>
+                        {data.writers.length > 1 && <button onClick={() => removeWriter(w.id)} className="p-1 text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>}
                       </div>
-                      <span className="text-[var(--btn-text-muted)] tabular-nums">{w.split}%</span>
+                      <input type="text" value={w.name} onChange={(e) => updateWriter(w.id, { name: e.target.value })} placeholder="Writer name" className="w-full h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none" />
+                      <div className="grid grid-cols-3 gap-3">
+                        <select value={w.pro} onChange={(e) => updateWriter(w.id, { pro: e.target.value })} className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none">
+                          <option value="">PRO *</option>
+                          {PRO_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
+                        </select>
+                        <input type="number" step="0.01" value={w.split || ""} onChange={(e) => updateWriter(w.id, { split: parseFloat(e.target.value) || 0 })} placeholder="Split % *" className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none" />
+                        <select value={w.credit} onChange={(e) => updateWriter(w.id, { credit: e.target.value as Writer["credit"] })} className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none">
+                          <option value="">Credit *</option>
+                          <option value="lyrics">Lyrics</option>
+                          <option value="music">Music</option>
+                          <option value="both">Both</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input type="checkbox" id={`ctrl-${w.id}`} checked={w.controlled} onChange={(e) => updateWriter(w.id, { controlled: e.target.checked })} className="h-4 w-4 rounded" />
+                        <label htmlFor={`ctrl-${w.id}`} className="text-sm text-[var(--btn-text)]">I control rights for this writer</label>
+                        <div className="group relative">
+                          <HelpCircle className="h-4 w-4 text-[var(--btn-text-muted)] cursor-help" />
+                          <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-[var(--btn-text)] text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none z-10">Do you control the rights of this song for this songwriter?</div>
+                        </div>
+                      </div>
                     </div>
                   ))}
-                  <div className="flex items-center justify-between text-xs pt-1">
-                    <span className="text-[var(--btn-text-muted)]">Total</span>
-                    <span className={cn(
-                      "font-medium tabular-nums",
-                      Math.abs(data.writers.reduce((s, w) => s + w.split, 0) - 100) < 0.01 ? "text-green-600" : "text-amber-600"
-                    )}>
-                      {data.writers.reduce((s, w) => s + w.split, 0)}%
-                    </span>
-                  </div>
+                  <button onClick={addWriter} className="w-full py-3 text-sm font-medium text-[var(--btn-text)] border-2 border-dashed border-[var(--border-subtle)] rounded-xl hover:border-[var(--btn-text)]/30 flex items-center justify-center gap-2">
+                    <Plus className="h-4 w-4" /> Add Writer
+                  </button>
                 </div>
-              ) : (
-                <div className="h-4 w-32 bg-[var(--muted-wash)] rounded animate-pulse" />
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2: LYRICS */}
+          {step === 2 && (
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-1">Lyrics</h2>
+                <p className="text-sm text-[var(--btn-text-muted)]">{data.songType === "instrumental" ? "This is an instrumental - no lyrics needed." : "Add your song lyrics"}</p>
+              </div>
+              {data.songType !== "instrumental" && (
+                <>
+                  <div className="flex gap-3">
+                    <button onClick={() => setData(prev => ({ ...prev, lyricsEntryMode: "paste" }))} className={cn("px-4 py-2 text-sm font-medium rounded-lg", data.lyricsEntryMode === "paste" ? "bg-[var(--btn-text)] text-white" : "bg-[var(--muted-wash)] text-[var(--btn-text)]")}>
+                      Paste all lyrics
+                    </button>
+                    <button onClick={() => setData(prev => ({ ...prev, lyricsEntryMode: "sections" }))} className={cn("px-4 py-2 text-sm font-medium rounded-lg", data.lyricsEntryMode === "sections" ? "bg-[var(--btn-text)] text-white" : "bg-[var(--muted-wash)] text-[var(--btn-text)]")}>
+                      Add by section
+                    </button>
+                  </div>
+                  {data.lyricsEntryMode === "paste" && (
+                    <textarea value={data.lyricsFull} onChange={(e) => setData(prev => ({ ...prev, lyricsFull: e.target.value }))} placeholder="Paste your lyrics here..." rows={15} className="w-full px-4 py-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none resize-y" />
+                  )}
+                  {data.lyricsEntryMode === "sections" && (
+                    <div className="space-y-4">
+                      {data.lyricsSections.map((s) => (
+                        <div key={s.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
+                          <div className="flex items-center justify-between">
+                            <select value={s.type} onChange={(e) => updateLyricSection(s.id, { type: e.target.value as LyricSection["type"] })} className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg">
+                              <option value="">Select section...</option>
+                              {LYRIC_SECTION_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                            </select>
+                            <button onClick={() => removeLyricSection(s.id)} className="p-1 text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
+                          </div>
+                          <textarea value={s.content} onChange={(e) => updateLyricSection(s.id, { content: e.target.value })} placeholder="Enter lyrics..." rows={4} className="w-full px-3 py-2 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg resize-y" />
+                        </div>
+                      ))}
+                      <button onClick={addLyricSection} className="w-full py-3 text-sm font-medium text-[var(--btn-text)] border-2 border-dashed border-[var(--border-subtle)] rounded-xl flex items-center justify-center gap-2">
+                        <Plus className="h-4 w-4" /> Add Section
+                      </button>
+                    </div>
+                  )}
+                  {((data.lyricsEntryMode === "paste" && data.lyricsFull) || (data.lyricsEntryMode === "sections" && data.lyricsSections.length > 0)) && (
+                    <label className="flex items-start gap-3 p-4 bg-[var(--muted-wash)] rounded-xl cursor-pointer">
+                      <input type="checkbox" checked={data.lyricsConfirmed} onChange={(e) => setData(prev => ({ ...prev, lyricsConfirmed: e.target.checked }))} className="w-5 h-5 mt-0.5 rounded border-2" />
+                      <span className="text-sm text-[var(--btn-text)]">I confirm the accuracy of the lyrics entered and that the lyrics are original and do not infringe on the rights of any other copyright holder.</span>
+                    </label>
+                  )}
+                </>
               )}
             </div>
+          )}
 
-            {/* Year */}
-            <DocumentField
-              label="Year"
-              value={data.year}
-              filled={!!data.year}
-            />
+          {/* STEP 3: CHORDS */}
+          {step === 3 && (
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-1">Chord Chart</h2>
+                <p className="text-sm text-[var(--btn-text-muted)]">Chord charts help with licensing and monetization</p>
+              </div>
+              <div className="space-y-4">
+                <label className="text-sm font-medium text-[var(--btn-text)]">Is a chord chart available? <span className="text-destructive">*</span></label>
+                <div className="flex gap-3">
+                  {[{ v: true, l: "Yes" }, { v: false, l: "No" }].map(o => (
+                    <button key={String(o.v)} onClick={() => setData(prev => ({ ...prev, hasChordChart: o.v }))} className={cn("px-5 py-2.5 text-sm font-medium rounded-xl border-2", data.hasChordChart === o.v ? "border-[var(--btn-text)] bg-[var(--btn-text)] text-white" : "border-[var(--border-subtle)] text-[var(--btn-text)]")}>
+                      {o.l}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {data.hasChordChart === true && (
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-[var(--btn-text)]">Upload chord chart</label>
+                  <div className="border-2 border-dashed border-[var(--border-subtle)] rounded-xl p-8 text-center">
+                    <Upload className="h-10 w-10 mx-auto mb-3 text-[var(--btn-text-muted)]" />
+                    <input type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" onChange={(e) => setData(prev => ({ ...prev, chordChartFile: e.target.files?.[0] || null }))} className="hidden" id="chord-upload" />
+                    <label htmlFor="chord-upload" className="text-sm text-[var(--btn-text)] cursor-pointer hover:underline">Click to upload</label>
+                    <p className="text-xs text-[var(--btn-text-muted)] mt-2">PDF, DOC, DOCX, PNG, or JPG</p>
+                  </div>
+                  {data.chordChartFile && <p className="text-sm text-success">✓ {data.chordChartFile.name}</p>}
+                </div>
+              )}
+              {data.hasChordChart === false && (
+                <label className="flex items-start gap-3 p-4 bg-warning/10 border border-warning/30 rounded-xl cursor-pointer">
+                  <input type="checkbox" checked={data.chordChartAcknowledged} onChange={(e) => setData(prev => ({ ...prev, chordChartAcknowledged: e.target.checked }))} className="w-5 h-5 mt-0.5 rounded border-2 border-warning/50" />
+                  <span className="text-sm text-warning-foreground">I understand that chord charts are required to properly license and monetize songs at CCLI and that I am not supplying a chord chart at this time.</span>
+                </label>
+              )}
+            </div>
+          )}
 
-            {/* Status */}
-            <DocumentField
-              label="Released"
-              value={data.released === null ? "" : data.released ? "Yes" : "Not yet"}
-              filled={data.released !== null}
-            />
+          {/* STEP 4: COPYRIGHT */}
+          {step === 4 && (
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-1">Copyright</h2>
+                <p className="text-sm text-[var(--btn-text-muted)]">Copyright protection status</p>
+              </div>
+              <div className="space-y-4">
+                <label className="text-sm font-medium text-[var(--btn-text)]">Has this song been filed for copyright protection? <span className="text-destructive">*</span></label>
+                <div className="flex flex-wrap gap-3">
+                  {[{ v: "yes" as const, l: "Yes" }, { v: "no" as const, l: "No" }, { v: "unknown" as const, l: "I Don't Know" }].map(o => (
+                    <button key={o.v} onClick={() => setData(prev => ({ ...prev, copyrightStatus: o.v, wantsCopyrightFiling: o.v === "no" ? null : prev.wantsCopyrightFiling }))} className={cn("px-5 py-2.5 text-sm font-medium rounded-xl border-2", data.copyrightStatus === o.v ? "border-[var(--btn-text)] bg-[var(--btn-text)] text-white" : "border-[var(--border-subtle)] text-[var(--btn-text)]")}>
+                      {o.l}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {data.copyrightStatus === "no" && (
+                <div className="space-y-4">
+                  <label className="text-sm font-medium text-[var(--btn-text)]">Do you want us to file this song for copyright protection for you?</label>
+                  <p className="text-xs text-[var(--btn-text-muted)]">Cost and administration fees may incur. Please refer to your administration agreement.</p>
+                  <div className="flex gap-3">
+                    {[{ v: true, l: "Yes" }, { v: false, l: "No" }].map(o => (
+                      <button key={String(o.v)} onClick={() => setData(prev => ({ ...prev, wantsCopyrightFiling: o.v }))} className={cn("px-5 py-2.5 text-sm font-medium rounded-xl border-2", data.wantsCopyrightFiling === o.v ? "border-[var(--btn-text)] bg-[var(--btn-text)] text-white" : "border-[var(--border-subtle)] text-[var(--btn-text)]")}>
+                        {o.l}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
-            {/* Lyrics */}
-            <DocumentField
-              label="Lyrics"
-              value={data.type === "instrumental" ? "Instrumental" : data.lyricsConfirmed ? "Confirmed" : data.lyrics ? "Pending confirmation" : ""}
-              filled={data.type === "instrumental" || data.lyricsConfirmed}
-            />
+          {/* STEP 5: AGREEMENT */}
+          {step === 5 && (
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-1">Agreement</h2>
+                <p className="text-sm text-[var(--btn-text-muted)]">Review and accept the terms</p>
+              </div>
+              <div className="p-6 bg-[var(--muted-wash)] rounded-2xl space-y-4">
+                <div className="flex items-center gap-2 text-sm font-medium text-[var(--btn-text)]">
+                  <Check className="h-4 w-4 text-success" /> Ready to submit
+                </div>
+                <p className="text-sm text-[var(--btn-text-muted)]">Your song "{data.title}" with {data.writers.length} writer{data.writers.length !== 1 ? "s" : ""} is ready for review.</p>
+              </div>
+              <label className="flex items-start gap-3 p-4 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl cursor-pointer">
+                <input type="checkbox" checked={data.termsAccepted} onChange={(e) => setData(prev => ({ ...prev, termsAccepted: e.target.checked }))} className="w-5 h-5 mt-0.5 rounded border-2" />
+                <span className="text-sm text-[var(--btn-text)]">
+                  I agree to the <a href="https://tribesrightsmanagement.com" target="_blank" rel="noopener noreferrer" className="underline text-[var(--app-focus)]">Tribes Rights Management LLC Terms & Conditions</a>
+                </span>
+              </label>
+            </div>
+          )}
 
-            {/* Chord Chart */}
-            <DocumentField
-              label="Chord Chart"
-              value={data.hasChordChart === null ? "" : data.hasChordChart ? "Provided" : "Not provided"}
-              filled={data.hasChordChart !== null}
-            />
-          </div>
         </div>
       </div>
 
-      {/* Writer Edit Modal */}
-      {editingField === "writers" && (
-        <WriterEditModal
-          writers={data.writers}
-          onSave={(writers) => {
-            setData(prev => ({ ...prev, writers }));
-            setEditingField(null);
-          }}
-          onClose={() => setEditingField(null)}
-        />
-      )}
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// SUB-COMPONENTS
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function DocumentField({ label, value, filled, onEdit }: { label: string; value: string; filled: boolean; onEdit?: () => void }) {
-  return (
-    <div className="py-3 border-b border-[var(--border-subtle)] flex items-center justify-between">
-      <div>
-        <span className="text-xs text-[var(--btn-text-muted)] block mb-0.5">{label}</span>
-        {value ? (
-          <span className="text-sm text-[var(--btn-text)]">{value}</span>
-        ) : (
-          <div className="h-4 w-24 bg-[var(--muted-wash)] rounded animate-pulse" />
-        )}
-      </div>
-      {filled && (
-        <div className="flex items-center gap-1">
-          {onEdit && (
-            <button onClick={onEdit} className="p-1 rounded hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)]">
-              <Edit3 className="h-3 w-3" />
+      <div className="shrink-0 border-t border-[var(--border-subtle)] bg-[var(--topbar-bg)] p-4 sm:px-6">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <button onClick={goToPrevStep} className="px-5 py-2.5 text-sm font-medium rounded-xl text-[var(--btn-text)] hover:bg-[var(--muted-wash)]">Back</button>
+          {step === 5 ? (
+            <button onClick={submit} disabled={!canAdvanceStep() || isSubmitting} className="px-6 py-2.5 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 disabled:opacity-50 flex items-center gap-2">
+              {isSubmitting ? "Submitting..." : "Submit Song"} <Send className="h-4 w-4" />
+            </button>
+          ) : (
+            <button onClick={goToNextStep} disabled={!canAdvanceStep()} className="px-6 py-2.5 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90 disabled:opacity-50 flex items-center gap-2">
+              Continue <ChevronRight className="h-4 w-4" />
             </button>
           )}
-          <Check className="h-4 w-4 text-green-500" />
-        </div>
-      )}
-    </div>
-  );
-}
-
-function WriterEditModal({ writers, onSave, onClose }: { writers: Writer[]; onSave: (w: Writer[]) => void; onClose: () => void }) {
-  const [local, setLocal] = useState<Writer[]>(writers);
-  
-  const add = () => setLocal(prev => [...prev, { id: crypto.randomUUID(), name: "", pro: "", ipi: "", split: 0, controlled: false, fromDatabase: false }]);
-  const remove = (id: string) => local.length > 1 && setLocal(prev => prev.filter(w => w.id !== id));
-  const update = (id: string, updates: Partial<Writer>) => setLocal(prev => prev.map(w => w.id === id ? { ...w, ...updates } : w));
-  
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
-      <div className="bg-[var(--card-bg)] rounded-2xl shadow-xl max-w-lg w-full max-h-[80vh] overflow-hidden" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border-subtle)]">
-          <h3 className="text-base font-semibold text-[var(--btn-text)]">Edit Writers</h3>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)]">
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-        
-        <div className="p-4 space-y-4 max-h-[60vh] overflow-y-auto">
-          {local.map((w, i) => (
-            <div key={w.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-[var(--btn-text-muted)]">Writer {i + 1}</span>
-                {local.length > 1 && (
-                  <button onClick={() => remove(w.id)} className="p-1 text-[var(--btn-text-muted)] hover:text-red-500">
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  type="text"
-                  value={w.name}
-                  onChange={(e) => update(w.id, { name: e.target.value })}
-                  placeholder="Name"
-                  className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20"
-                />
-                <input
-                  type="number"
-                  value={w.split || ""}
-                  onChange={(e) => update(w.id, { split: parseFloat(e.target.value) || 0 })}
-                  placeholder="Split %"
-                  className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20"
-                />
-              </div>
-            </div>
-          ))}
-          
-          <button onClick={add} className="w-full py-3 text-sm font-medium text-[var(--btn-text)] border-2 border-dashed border-[var(--border-subtle)] rounded-xl hover:border-[var(--btn-text)]/30 flex items-center justify-center gap-2">
-            <Plus className="h-4 w-4" /> Add Writer
-          </button>
-        </div>
-        
-        <div className="flex items-center justify-between p-4 border-t border-[var(--border-subtle)]">
-          <span className={cn(
-            "text-sm font-medium tabular-nums",
-            Math.abs(local.reduce((s, w) => s + w.split, 0) - 100) < 0.01 ? "text-green-600" : "text-amber-600"
-          )}>
-            Total: {local.reduce((s, w) => s + w.split, 0)}%
-          </span>
-          <div className="flex gap-3">
-            <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-lg text-[var(--btn-text)] hover:bg-[var(--muted-wash)]">
-              Cancel
-            </button>
-            <button onClick={() => onSave(local)} className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--btn-text)] text-white hover:opacity-90">
-              Save
-            </button>
-          </div>
         </div>
       </div>
     </div>
