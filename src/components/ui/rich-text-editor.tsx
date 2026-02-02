@@ -750,6 +750,9 @@ export function RichTextEditor({
     editorProps: {
       attributes: {
         class: "max-w-none focus:outline-none min-h-[400px]",
+        "data-gramm": "false",
+        "data-gramm_editor": "false",
+        "data-enable-grammarly": "false",
       },
       scrollThreshold: { top: 0, right: 0, bottom: 0, left: 0 },
       scrollMargin: { top: 0, right: 0, bottom: 0, left: 0 },
