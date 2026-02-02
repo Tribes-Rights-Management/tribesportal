@@ -64,14 +64,15 @@ export function WorkstationMobileNav({ moduleLabel, items }: WorkstationMobileNa
 
   return (
     <div ref={containerRef} className="relative">
-      {/* Trigger bar — full width, below header */}
+      {/* Trigger bar — full width, below header, 20px edge padding to match header/content */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "w-full flex items-center justify-between px-4 py-4",
+          "w-full flex items-center justify-between py-4",
           "bg-background border-b border-border/60",
           "active:bg-muted/30 transition-colors duration-100"
         )}
+        style={{ paddingLeft: 20, paddingRight: 20 }}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -106,7 +107,7 @@ export function WorkstationMobileNav({ moduleLabel, items }: WorkstationMobileNa
                 end={item.exact}
                 className={({ isActive }) =>
                   cn(
-                    "block w-full text-left px-4 h-12 flex items-center",
+                    "block w-full text-left h-12 flex items-center",
                     "text-[14px]",
                     "hover:bg-muted/50 focus:bg-muted/50",
                     "transition-colors duration-100",
@@ -116,6 +117,7 @@ export function WorkstationMobileNav({ moduleLabel, items }: WorkstationMobileNa
                       : "font-normal text-foreground/80"
                   )
                 }
+                style={{ paddingLeft: 20, paddingRight: 20 }}
                 role="menuitem"
               >
                 {item.label}
