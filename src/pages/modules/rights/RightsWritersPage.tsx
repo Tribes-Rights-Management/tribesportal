@@ -15,7 +15,6 @@ import {
   AppPanel,
   AppPanelFooter,
   AppAlert,
-  AppPageHeader,
 } from "@/components/app-ui";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -256,15 +255,13 @@ export default function RightsWritersPage() {
   return (
     <AppPageContainer maxWidth="xl">
       {/* Header */}
-      <AppPageHeader
-        title="Writers"
-        action={
-          <AppButton intent="primary" size="sm" onClick={handleCreate}>
-            <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
-            Add Writer
-          </AppButton>
-        }
-      />
+      <div className="flex items-center justify-between mb-3">
+        <h1 className="text-lg font-semibold tracking-tight">Writers</h1>
+        <AppButton intent="secondary" size="sm" onClick={handleCreate}>
+          <Plus className="h-4 w-4" />
+          Add Writer
+        </AppButton>
+      </div>
 
       {/* Search */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-4 mb-4">
