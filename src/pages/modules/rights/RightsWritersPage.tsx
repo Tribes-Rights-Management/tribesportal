@@ -175,8 +175,8 @@ export default function RightsWritersPage() {
     const firstName = formData.first_name.trim();
     const lastName = formData.last_name.trim();
     
-    if (!firstName && !lastName) {
-      setFormError("At least first name or last name is required");
+    if (!firstName) {
+      setFormError("First name is required");
       return;
     }
     
@@ -382,7 +382,7 @@ export default function RightsWritersPage() {
             </div>
             <div>
               <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
-                Last Name *
+                Last Name
               </label>
               <input
                 type="text"
