@@ -70,7 +70,8 @@ export default function RightsWritersPage() {
   
   // Form state
   const [formData, setFormData] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     pro: "",
     ipi_number: "",
     email: "",
@@ -136,7 +137,8 @@ export default function RightsWritersPage() {
   const handleCreate = () => {
     setEditing(null);
     setFormData({
-      name: "",
+      first_name: "",
+      last_name: "",
       pro: "",
       ipi_number: "",
       email: "",
@@ -148,7 +150,8 @@ export default function RightsWritersPage() {
   const handleEdit = (writer: Writer) => {
     setEditing(writer);
     setFormData({
-      name: writer.name || "",
+      first_name: writer.first_name || "",
+      last_name: writer.last_name || "",
       pro: writer.pro || "",
       ipi_number: writer.ipi_number || writer.cae_number || "",
       email: writer.email || "",
@@ -158,10 +161,16 @@ export default function RightsWritersPage() {
   };
 
   const handleSave = async () => {
-    if (!formData.name.trim()) {
-      setFormError("Name is required");
+    const firstName = formData.first_name.trim();
+    const lastName = formData.last_name.trim();
+    
+    if (!firstName && !lastName) {
+      setFormError("At least first name or last name is required");
       return;
     }
+    
+    // Build full name from first + last
+    const fullName = [firstName, lastName].filter(Boolean).join(' ');
     
     setSaving(true);
     setFormError(null);
@@ -172,7 +181,9 @@ export default function RightsWritersPage() {
         const { error } = await supabase
           .from('writers')
           .update({
-            name: formData.name.trim(),
+            name: fullName,
+            first_name: firstName || null,
+            last_name: lastName || null,
             pro: formData.pro || null,
             ipi_number: formData.ipi_number.trim() || null,
             email: formData.email.trim() || null,
@@ -186,7 +197,9 @@ export default function RightsWritersPage() {
         const { error } = await supabase
           .from('writers')
           .insert({
-            name: formData.name.trim(),
+            name: fullName,
+            first_name: firstName || null,
+            last_name: lastName || null,
             pro: formData.pro || null,
             ipi_number: formData.ipi_number.trim() || null,
             email: formData.email.trim() || null,
@@ -343,17 +356,31 @@ export default function RightsWritersPage() {
             <AppAlert variant="error" message={formError} />
           )}
 
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
-              Name *
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Full name"
-              className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+                First Name *
+              </label>
+              <input
+                type="text"
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                placeholder="First name"
+                className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              />
+            </div>
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+                Last Name *
+              </label>
+              <input
+                type="text"
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                placeholder="Last name"
+                className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              />
+            </div>
           </div>
 
           <div>
