@@ -28,7 +28,7 @@ export function AppShell({
   if (!showSidebar) {
     return (
       <div 
-        className="min-h-screen flex flex-col w-full max-w-full overflow-hidden"
+        className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip"
         style={{ backgroundColor: CSS_VARS.PAGE_BG }}
       >
         <header 
@@ -54,7 +54,7 @@ export function AppShell({
 
   return (
     <div 
-      className="min-h-screen w-full max-w-full overflow-hidden"
+      className="min-h-screen w-full max-w-full overflow-x-clip"
       style={{ 
         display: 'grid',
         gridTemplateColumns: `${LAYOUT.SIDEBAR_WIDTH} 1fr`,
