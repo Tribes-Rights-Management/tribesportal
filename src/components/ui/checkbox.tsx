@@ -26,16 +26,17 @@ const Checkbox = React.forwardRef<
     ref={ref}
     checked={checked}
     className={cn(
-      // Square, thin border, NO fill on checked, NO rounded corners
-      // Scaled to 18px to match reduced input proportions
-      "peer h-[18px] w-[18px] shrink-0 border border-border bg-background transition-colors duration-100 ease-out",
-      "data-[state=checked]:border-foreground data-[state=checked]:bg-background",
-      "data-[state=indeterminate]:border-foreground data-[state=indeterminate]:bg-background",
-      "focus-visible:outline-none focus-visible:border-ring",
+      "peer h-[18px] w-[18px] shrink-0 bg-background transition-colors duration-100 ease-out",
+      "data-[state=checked]:bg-background",
+      "data-[state=indeterminate]:bg-background",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
       "disabled:cursor-not-allowed disabled:opacity-40",
       className,
     )}
-    style={{ borderRadius: 0 }}
+    style={{ 
+      borderRadius: 0,
+      border: '1.5px solid #888',
+    }}
     {...props}
   >
     <CheckboxPrimitive.Indicator className={cn("flex items-center justify-center text-foreground")}>
