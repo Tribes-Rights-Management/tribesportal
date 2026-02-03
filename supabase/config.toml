@@ -17,3 +17,6 @@ verify_jwt = true
 
 [functions.parse-voice]
 verify_jwt = false
+
+[functions.sync-writers-algolia]
+verify_jwt = false

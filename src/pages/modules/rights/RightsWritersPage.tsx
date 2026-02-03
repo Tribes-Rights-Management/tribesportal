@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Plus, Search } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Plus } from "lucide-react";
 
 import {
   AppPageContainer,
@@ -15,15 +15,18 @@ import {
   AppPanel,
   AppPanelFooter,
   AppAlert,
+  AppSearchInput,
 } from "@/components/app-ui";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useAlgoliaSearch } from "@/hooks/useAlgoliaSearch";
 
 /**
  * RIGHTS WRITERS PAGE — Staff Management View
  * 
  * Master registry of all writers/composers/interested parties.
- * Displays: Name, PRO, IPI Number
+ * Uses Algolia for fast, typo-tolerant search with Supabase fallback.
  */
 
 const ITEMS_PER_PAGE = 50;
@@ -60,6 +63,7 @@ export default function RightsWritersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [searchSource, setSearchSource] = useState<'algolia' | 'supabase'>('supabase');
   
   // Panel state
   const [panelOpen, setPanelOpen] = useState(false);
@@ -76,18 +80,44 @@ export default function RightsWritersPage() {
     email: "",
   });
 
-  // Fetch writers from Supabase
-  const fetchWriters = async () => {
+  // Debounce search query for API calls
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
+  // Algolia search hook
+  const { search: algoliaSearch, isConfigured: algoliaConfigured } = useAlgoliaSearch<Writer>({
+    indexName: 'writers',
+    hitsPerPage: ITEMS_PER_PAGE,
+  });
+
+  // Fetch writers - uses Algolia for search, Supabase for browsing
+  const fetchWriters = useCallback(async () => {
     setLoading(true);
     
     try {
+      // Try Algolia if configured and has search query
+      if (algoliaConfigured && debouncedSearch.trim()) {
+        const algoliaResult = await algoliaSearch(debouncedSearch, currentPage - 1);
+        
+        if (algoliaResult) {
+          setWriters(algoliaResult.hits);
+          setTotalCount(algoliaResult.totalHits);
+          setSearchSource('algolia');
+          setLoading(false);
+          return;
+        }
+        // Fall through to Supabase if Algolia fails
+      }
+
+      // Supabase: for browsing or as fallback
+      setSearchSource('supabase');
+
       // Build count query
       let countQuery = supabase
         .from('writers')
         .select('*', { count: 'exact', head: true });
       
-      if (searchQuery.trim()) {
-        countQuery = countQuery.ilike('name', `%${searchQuery.trim()}%`);
+      if (debouncedSearch.trim()) {
+        countQuery = countQuery.ilike('name', `%${debouncedSearch.trim()}%`);
       }
       
       const { count } = await countQuery;
@@ -103,8 +133,8 @@ export default function RightsWritersPage() {
         .order('name', { ascending: true })
         .range(from, to);
 
-      if (searchQuery.trim()) {
-        query = query.ilike('name', `%${searchQuery.trim()}%`);
+      if (debouncedSearch.trim()) {
+        query = query.ilike('name', `%${debouncedSearch.trim()}%`);
       }
 
       const { data, error } = await query;
@@ -120,18 +150,18 @@ export default function RightsWritersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, debouncedSearch, algoliaConfigured, algoliaSearch]);
 
   useEffect(() => {
     fetchWriters();
-  }, [currentPage, searchQuery]);
+  }, [fetchWriters]);
+
+  // Reset to page 1 when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch]);
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-  };
 
   const handleCreate = () => {
     setEditing(null);
@@ -170,6 +200,16 @@ export default function RightsWritersPage() {
     setPanelOpen(true);
   };
 
+  const syncToAlgolia = async (action: 'upsert' | 'delete', writerId: string) => {
+    try {
+      await supabase.functions.invoke('sync-writers-algolia', {
+        body: { action, writer_id: writerId },
+      });
+    } catch (err) {
+      console.warn('Algolia sync failed (non-blocking):', err);
+    }
+  };
+
   const handleSave = async () => {
     const firstName = formData.first_name.trim();
     const lastName = formData.last_name.trim();
@@ -201,10 +241,14 @@ export default function RightsWritersPage() {
           .eq('id', editing.id);
 
         if (error) throw error;
+        
+        // Sync to Algolia (non-blocking)
+        syncToAlgolia('upsert', editing.id);
+        
         toast.success('Writer updated');
       } else {
         // Create new
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('writers')
           .insert({
             name: fullName,
@@ -213,9 +257,17 @@ export default function RightsWritersPage() {
             pro: formData.pro || null,
             ipi_number: formData.ipi_number.trim() || null,
             email: formData.email.trim() || null,
-          });
+          })
+          .select('id')
+          .single();
 
         if (error) throw error;
+        
+        // Sync to Algolia (non-blocking)
+        if (data?.id) {
+          syncToAlgolia('upsert', data.id);
+        }
+        
         toast.success('Writer added');
       }
 
@@ -234,12 +286,17 @@ export default function RightsWritersPage() {
     
     setSaving(true);
     try {
+      const writerId = editing.id;
+      
       const { error } = await supabase
         .from('writers')
         .delete()
-        .eq('id', editing.id);
+        .eq('id', writerId);
 
       if (error) throw error;
+      
+      // Sync deletion to Algolia (non-blocking)
+      syncToAlgolia('delete', writerId);
       
       toast.success('Writer deleted');
       setPanelOpen(false);
@@ -265,18 +322,17 @@ export default function RightsWritersPage() {
 
       {/* Search */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-4 mb-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search writers..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="w-full h-10 pl-9 pr-3 text-sm bg-transparent border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-muted-foreground/20"
-          />
-        </div>
+        <AppSearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Search writers..."
+          className="flex-1 max-w-sm"
+        />
         <span className="text-[13px] text-muted-foreground">
           {totalCount.toLocaleString()} writers
+          {debouncedSearch.trim() && searchSource === 'algolia' && (
+            <span className="ml-1 text-xs opacity-60">(Algolia)</span>
+          )}
         </span>
       </div>
 
