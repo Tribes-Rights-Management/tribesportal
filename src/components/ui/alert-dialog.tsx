@@ -69,8 +69,7 @@ AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
  */
 const AlertDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div 
-    className={cn("flex flex-col space-y-1.5 px-5 pt-5 pb-4 text-left", className)} 
-    style={{ borderBottom: '1px solid var(--platform-border)' }}
+    className={cn("flex flex-col space-y-1.5 px-5 pt-5 pb-4 text-left border-b border-border", className)} 
     {...props} 
   />
 );
@@ -84,9 +83,8 @@ AlertDialogHeader.displayName = "AlertDialogHeader";
  */
 const AlertDialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div 
-    className={cn("flex flex-col gap-3 px-5 pt-4 pb-5 sm:flex-row-reverse sm:gap-2", className)} 
+    className={cn("flex flex-col gap-3 px-5 pt-4 pb-5 sm:flex-row-reverse sm:gap-2 border-t border-border", className)} 
     style={{ 
-      borderTop: '1px solid var(--platform-border)',
       paddingBottom: 'max(20px, env(safe-area-inset-bottom, 20px))',
     }}
     {...props} 
@@ -103,8 +101,7 @@ const AlertDialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Title 
     ref={ref} 
-    className={cn("text-[17px] sm:text-[16px] font-semibold leading-tight", className)} 
-    style={{ color: 'var(--platform-text)' }}
+    className={cn("text-[17px] sm:text-[16px] font-semibold leading-tight text-foreground", className)} 
     {...props} 
   />
 ));
@@ -119,8 +116,7 @@ const AlertDialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Description 
     ref={ref} 
-    className={cn("text-[14px] sm:text-[13px] leading-normal mt-1", className)} 
-    style={{ color: 'var(--platform-text-secondary)' }}
+    className={cn("text-[14px] sm:text-[13px] leading-normal mt-1 text-muted-foreground", className)} 
     {...props} 
   />
 ));
@@ -138,13 +134,10 @@ const AlertDialogAction = React.forwardRef<
     className={cn(
       "w-full sm:w-auto h-12 sm:h-11 px-5 rounded-lg text-[15px] sm:text-[14px] font-semibold",
       "flex items-center justify-center transition-all",
+      "bg-foreground text-background",
       "disabled:opacity-40 disabled:cursor-not-allowed",
       className
     )} 
-    style={{
-      backgroundColor: 'var(--platform-text)',
-      color: 'var(--platform-canvas)',
-    }}
     {...props} 
   />
 ));
@@ -161,9 +154,9 @@ const AlertDialogCancel = React.forwardRef<
     ref={ref}
     className={cn(
       "w-full sm:w-auto h-10 sm:h-9 px-4 rounded-lg text-[14px] font-medium transition-colors",
+      "text-muted-foreground hover:text-foreground",
       className
     )}
-    style={{ color: 'var(--platform-text-secondary)' }}
     {...props}
   />
 ));

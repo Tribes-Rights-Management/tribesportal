@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, ArrowUpDown, Check, Trash2 } from "lucide-react";
+import { Plus, ArrowUpDown, Check } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -295,7 +295,6 @@ export default function RightsCataloguePage() {
 
   const handleDeleteSongs = async () => {
     setIsDeleting(true);
-    const count = selectedSongs.size;
     try {
       // TODO: Replace with actual Supabase delete when using real data
       // await supabase.from('songs').delete().in('id', Array.from(selectedSongs));
@@ -306,9 +305,6 @@ export default function RightsCataloguePage() {
       // Clear selection
       setSelectedSongs(new Set());
       setShowDeleteDialog(false);
-      
-      // Show success toast
-      toast.success(`${count} ${count === 1 ? 'song' : 'songs'} deleted`);
     } catch (error) {
       toast.error('Failed to delete songs');
     } finally {
@@ -473,23 +469,15 @@ export default function RightsCataloguePage() {
 
         {/* Floating Action Bar - Admin Only */}
         {selectedSongs.size > 0 && isPlatformAdmin && (
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-            <div 
-              className="flex items-center gap-4 px-4 py-2.5 rounded-lg shadow-xl"
-              style={{ backgroundColor: 'hsl(var(--foreground))' }}
-            >
-              <span className="text-[13px]" style={{ color: 'hsl(var(--background))' }}>
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in fade-in-0 slide-in-from-bottom-2 duration-200">
+            <div className="flex items-center gap-4 px-4 py-2.5 rounded-lg bg-background border border-border shadow-lg">
+              <span className="text-[13px] text-muted-foreground">
                 {selectedSongs.size} {selectedSongs.size === 1 ? 'song' : 'songs'} selected
               </span>
               <button
                 onClick={() => setShowDeleteDialog(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-colors"
-                style={{ 
-                  backgroundColor: 'hsl(var(--destructive))', 
-                  color: 'hsl(var(--destructive-foreground))' 
-                }}
+                className="text-[13px] text-muted-foreground hover:text-destructive transition-colors"
               >
-                <Trash2 className="h-4 w-4" />
                 Delete
               </button>
             </div>
