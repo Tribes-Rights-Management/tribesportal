@@ -475,20 +475,23 @@ export default function RightsCataloguePage() {
         {selectedSongs.size > 0 && isPlatformAdmin && (
           <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
             <div 
-              className="flex items-center gap-4 px-4 py-2.5 rounded-lg border border-border shadow-lg"
-              style={{ backgroundColor: 'hsl(var(--background))' }}
+              className="flex items-center gap-4 px-4 py-2.5 rounded-lg shadow-xl"
+              style={{ backgroundColor: 'hsl(var(--foreground))' }}
             >
-              <span className="text-[13px] text-muted-foreground">
+              <span className="text-[13px]" style={{ color: 'hsl(var(--background))' }}>
                 {selectedSongs.size} {selectedSongs.size === 1 ? 'song' : 'songs'} selected
               </span>
-              <AppButton
-                intent="destructive"
-                size="sm"
+              <button
                 onClick={() => setShowDeleteDialog(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-colors"
+                style={{ 
+                  backgroundColor: 'hsl(var(--destructive))', 
+                  color: 'hsl(var(--destructive-foreground))' 
+                }}
               >
                 <Trash2 className="h-4 w-4" />
                 Delete
-              </AppButton>
+              </button>
             </div>
           </div>
         )}
