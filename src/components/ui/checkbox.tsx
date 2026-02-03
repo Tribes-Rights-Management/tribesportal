@@ -35,7 +35,8 @@ const Checkbox = React.forwardRef<
     )}
     style={{ 
       borderRadius: 0,
-      border: '1.5px solid #888',
+      border: 'none',
+      boxShadow: 'inset 0 0 0 1.5px #888',
     }}
     {...props}
   >

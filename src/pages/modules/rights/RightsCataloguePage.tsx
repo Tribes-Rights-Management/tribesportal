@@ -61,22 +61,8 @@ interface CatalogueSong {
   addedAt: string;
 }
 
-// Mock data - expanded for pagination demo
-const mockCatalogueSongs: CatalogueSong[] = Array.from({ length: 247 }, (_, i) => ({
-  id: String(i + 1),
-  title: ["Midnight Dreams", "Electric Soul", "Ocean Breeze", "City Lights", "Mountain High", "Sunset Boulevard", "Starlight", "Thunder Road", "Silver Moon", "Golden Hour"][i % 10],
-  artist: ["Luna Wave", "The Frequency", "Coastal Sounds", "Urban Echo", "Summit", "Horizon", "Velvet", "Chrome Hearts", "Neon Lights", "Desert Rose"][i % 10],
-  iswc: `T-${String(100 + i).padStart(3, '0')}.${String(400 + i).padStart(3, '0')}.${String(700 + i).padStart(3, '0')}-${i % 10}`,
-  songwriters: [
-    ["John Smith", "Jane Doe"],
-    ["Sarah Williams", "David Chen"],
-    ["Emily Rodriguez", "James Wilson"],
-    ["Michael Brown"],
-    ["Lisa Anderson", "Tom Harris"],
-  ][i % 5],
-  status: (["active", "active", "active", "pending", "inactive"] as const)[i % 5],
-  addedAt: new Date(2026, 0, 28 - (i % 30)).toISOString(),
-}));
+// Empty catalogue - will be populated from Supabase
+const mockCatalogueSongs: CatalogueSong[] = [];
 
 const getStatusText = (status: CatalogueSong["status"]) => {
   switch (status) {
