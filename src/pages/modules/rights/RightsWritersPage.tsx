@@ -71,8 +71,6 @@ export default function RightsWritersPage() {
   // Form state
   const [formData, setFormData] = useState({
     name: "",
-    first_name: "",
-    last_name: "",
     pro: "",
     ipi_number: "",
     email: "",
@@ -139,8 +137,6 @@ export default function RightsWritersPage() {
     setEditing(null);
     setFormData({
       name: "",
-      first_name: "",
-      last_name: "",
       pro: "",
       ipi_number: "",
       email: "",
@@ -153,10 +149,8 @@ export default function RightsWritersPage() {
     setEditing(writer);
     setFormData({
       name: writer.name || "",
-      first_name: writer.first_name || "",
-      last_name: writer.last_name || "",
       pro: writer.pro || "",
-      ipi_number: writer.ipi_number || "",
+      ipi_number: writer.ipi_number || writer.cae_number || "",
       email: writer.email || "",
     });
     setFormError(null);
@@ -179,8 +173,6 @@ export default function RightsWritersPage() {
           .from('writers')
           .update({
             name: formData.name.trim(),
-            first_name: formData.first_name.trim() || null,
-            last_name: formData.last_name.trim() || null,
             pro: formData.pro || null,
             ipi_number: formData.ipi_number.trim() || null,
             email: formData.email.trim() || null,
@@ -195,8 +187,6 @@ export default function RightsWritersPage() {
           .from('writers')
           .insert({
             name: formData.name.trim(),
-            first_name: formData.first_name.trim() || null,
-            last_name: formData.last_name.trim() || null,
             pro: formData.pro || null,
             ipi_number: formData.ipi_number.trim() || null,
             email: formData.email.trim() || null,
@@ -364,31 +354,6 @@ export default function RightsWritersPage() {
               placeholder="Full name"
               className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
-                First Name
-              </label>
-              <input
-                type="text"
-                value={formData.first_name}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-              />
-            </div>
-            <div>
-              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
-                Last Name
-              </label>
-              <input
-                type="text"
-                value={formData.last_name}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-              />
-            </div>
           </div>
 
           <div>
