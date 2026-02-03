@@ -1,44 +1,33 @@
-/**
- * RIGHTS WRITERS PAGE — STAFF WORKSTATION
- * 
- * Displays writers from Supabase 'writers' table with search and pagination.
- * Columns: NAME, PRO, IPI NUMBER, (edit)
- */
+import { useState, useEffect } from "react";
+import { Plus, Search } from "lucide-react";
 
-import { useState, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { AppPageContainer } from "@/components/app-ui/AppPageContainer";
-import { AppPageHeader } from "@/components/app-ui/AppPageHeader";
-import { AppSearchInput } from "@/components/app-ui/AppSearchInput";
-import { AppButton } from "@/components/app-ui/AppButton";
 import {
+  AppPageContainer,
+  AppButton,
   AppTable,
   AppTableHeader,
   AppTableBody,
   AppTableRow,
   AppTableHead,
   AppTableCell,
-} from "@/components/app-ui/AppTable";
-import { AppEmptyState } from "@/components/app-ui/AppEmptyState";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, PenTool, Pencil, Plus } from "lucide-react";
+  AppTableEmpty,
+  AppPagination,
+  AppPanel,
+  AppPanelFooter,
+  AppAlert,
+  AppPageHeader,
+} from "@/components/app-ui";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+/**
+ * RIGHTS WRITERS PAGE — Staff Management View
+ * 
+ * Master registry of all writers/composers/interested parties.
+ * Displays: Name, PRO, IPI Number
+ */
+
+const ITEMS_PER_PAGE = 50;
 
 interface Writer {
   id: string;
@@ -49,130 +38,119 @@ interface Writer {
   ipi_number: string | null;
   cae_number: string | null;
   email: string | null;
-}
-
-interface WriterFormData {
-  name: string;
-  first_name: string;
-  last_name: string;
-  pro: string;
-  ipi_number: string;
-  email: string;
+  created_at: string;
 }
 
 const PRO_OPTIONS = [
-  "ASCAP",
-  "BMI",
-  "SESAC",
-  "GMR",
-  "SOCAN",
-  "PRS",
-  "APRA",
-  "GEMA",
-  "SACEM",
-  "NS",
+  { value: "", label: "Not specified" },
+  { value: "ASCAP", label: "ASCAP" },
+  { value: "BMI", label: "BMI" },
+  { value: "SESAC", label: "SESAC" },
+  { value: "GMR", label: "GMR" },
+  { value: "SOCAN", label: "SOCAN" },
+  { value: "PRS", label: "PRS" },
+  { value: "APRA", label: "APRA" },
+  { value: "GEMA", label: "GEMA" },
+  { value: "SACEM", label: "SACEM" },
+  { value: "NS", label: "NS (Not Specified)" },
 ];
 
-const ITEMS_PER_PAGE = 50;
-
-const emptyFormData: WriterFormData = {
-  name: "",
-  first_name: "",
-  last_name: "",
-  pro: "",
-  ipi_number: "",
-  email: "",
-};
-
 export default function RightsWritersPage() {
+  const [writers, setWriters] = useState<Writer[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [editingWriter, setEditingWriter] = useState<Writer | null>(null);
-  const [formData, setFormData] = useState<WriterFormData>(emptyFormData);
-
-  const queryClient = useQueryClient();
+  const [totalCount, setTotalCount] = useState(0);
+  
+  // Panel state
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [editing, setEditing] = useState<Writer | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    name: "",
+    first_name: "",
+    last_name: "",
+    pro: "",
+    ipi_number: "",
+    email: "",
+  });
 
   // Fetch writers from Supabase
-  const { data: writers = [], isLoading } = useQuery({
-    queryKey: ["writers"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("writers")
-        .select("id, name, first_name, last_name, pro, ipi_number, cae_number, email")
-        .eq("is_active", true)
-        .order("name", { ascending: true });
-
-      if (error) throw error;
-      return (data || []) as Writer[];
-    },
-  });
-
-  // Save mutation (create or update)
-  const saveMutation = useMutation({
-    mutationFn: async (data: WriterFormData & { id?: string }) => {
-      const payload = {
-        name: data.name.trim(),
-        first_name: data.first_name.trim() || null,
-        last_name: data.last_name.trim() || null,
-        pro: data.pro || null,
-        ipi_number: data.ipi_number.trim() || null,
-        email: data.email.trim() || null,
-      };
-
-      if (data.id) {
-        // Update existing writer
-        const { error } = await supabase
-          .from("writers")
-          .update(payload)
-          .eq("id", data.id);
-        if (error) throw error;
-      } else {
-        // Create new writer
-        const { error } = await supabase
-          .from("writers")
-          .insert({ ...payload, is_active: true });
-        if (error) throw error;
+  const fetchWriters = async () => {
+    setLoading(true);
+    
+    try {
+      // Build count query
+      let countQuery = supabase
+        .from('writers')
+        .select('*', { count: 'exact', head: true });
+      
+      if (searchQuery.trim()) {
+        countQuery = countQuery.ilike('name', `%${searchQuery.trim()}%`);
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["writers"] });
-      setSheetOpen(false);
-      setEditingWriter(null);
-      setFormData(emptyFormData);
-    },
-    onError: (error) => {
-      toast.error("Failed to save writer", {
-        description: error.message,
-      });
-    },
-  });
+      
+      const { count } = await countQuery;
+      setTotalCount(count || 0);
 
-  // Filter writers by search query
-  const filteredWriters = useMemo(() => {
-    if (!searchQuery.trim()) return writers;
-    const query = searchQuery.toLowerCase();
-    return writers.filter((writer) =>
-      writer.name.toLowerCase().includes(query)
-    );
-  }, [writers, searchQuery]);
+      // Fetch paginated data
+      const from = (currentPage - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
 
-  // Pagination
-  const totalPages = Math.ceil(filteredWriters.length / ITEMS_PER_PAGE);
-  const paginatedWriters = useMemo(() => {
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredWriters.slice(start, start + ITEMS_PER_PAGE);
-  }, [filteredWriters, currentPage]);
+      let query = supabase
+        .from('writers')
+        .select('id, name, first_name, last_name, pro, ipi_number, cae_number, email, created_at')
+        .order('name', { ascending: true })
+        .range(from, to);
 
-  // Reset to page 1 when search changes
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
+      if (searchQuery.trim()) {
+        query = query.ilike('name', `%${searchQuery.trim()}%`);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching writers:', error);
+        return;
+      }
+
+      setWriters(data || []);
+    } catch (err) {
+      console.error('Error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWriters();
+  }, [currentPage, searchQuery]);
+
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
     setCurrentPage(1);
   };
 
-  // Open sheet for editing
+  const handleCreate = () => {
+    setEditing(null);
+    setFormData({
+      name: "",
+      first_name: "",
+      last_name: "",
+      pro: "",
+      ipi_number: "",
+      email: "",
+    });
+    setFormError(null);
+    setPanelOpen(true);
+  };
+
   const handleEdit = (writer: Writer) => {
-    setEditingWriter(writer);
+    setEditing(writer);
     setFormData({
       name: writer.name || "",
       first_name: writer.first_name || "",
@@ -181,264 +159,280 @@ export default function RightsWritersPage() {
       ipi_number: writer.ipi_number || "",
       email: writer.email || "",
     });
-    setSheetOpen(true);
+    setFormError(null);
+    setPanelOpen(true);
   };
 
-  // Open sheet for creating new writer
-  const handleAddWriter = () => {
-    setEditingWriter(null);
-    setFormData(emptyFormData);
-    setSheetOpen(true);
-  };
-
-  // Handle form submission
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formData.name.trim()) {
-      toast.error("Name is required");
+      setFormError("Name is required");
       return;
     }
-    saveMutation.mutate({
-      ...formData,
-      id: editingWriter?.id,
-    });
+    
+    setSaving(true);
+    setFormError(null);
+
+    try {
+      if (editing) {
+        // Update existing
+        const { error } = await supabase
+          .from('writers')
+          .update({
+            name: formData.name.trim(),
+            first_name: formData.first_name.trim() || null,
+            last_name: formData.last_name.trim() || null,
+            pro: formData.pro || null,
+            ipi_number: formData.ipi_number.trim() || null,
+            email: formData.email.trim() || null,
+          })
+          .eq('id', editing.id);
+
+        if (error) throw error;
+        toast.success('Writer updated');
+      } else {
+        // Create new
+        const { error } = await supabase
+          .from('writers')
+          .insert({
+            name: formData.name.trim(),
+            first_name: formData.first_name.trim() || null,
+            last_name: formData.last_name.trim() || null,
+            pro: formData.pro || null,
+            ipi_number: formData.ipi_number.trim() || null,
+            email: formData.email.trim() || null,
+          });
+
+        if (error) throw error;
+        toast.success('Writer added');
+      }
+
+      setPanelOpen(false);
+      fetchWriters();
+    } catch (err) {
+      console.error('Error saving writer:', err);
+      setFormError('Failed to save writer');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  // Get IPI display value (ipi_number or cae_number fallback)
-  const getIpiDisplay = (writer: Writer) => {
-    return writer.ipi_number || writer.cae_number || "—";
+  const handleDelete = async () => {
+    if (!editing) return;
+    
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('writers')
+        .delete()
+        .eq('id', editing.id);
+
+      if (error) throw error;
+      
+      toast.success('Writer deleted');
+      setPanelOpen(false);
+      fetchWriters();
+    } catch (err) {
+      console.error('Error deleting writer:', err);
+      setFormError('Failed to delete writer');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <AppPageContainer maxWidth="xl">
+      {/* Header */}
       <AppPageHeader
         title="Writers"
         action={
-          <AppButton onClick={handleAddWriter}>
-            <Plus className="h-4 w-4 mr-1.5" />
+          <AppButton intent="primary" size="sm" onClick={handleCreate}>
+            <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
             Add Writer
           </AppButton>
         }
       />
 
-      {/* Search and count */}
-      <div className="flex items-center justify-between gap-4 mb-6">
-        <AppSearchInput
-          value={searchQuery}
-          onChange={handleSearchChange}
-          placeholder="Search writers..."
-          className="max-w-sm"
-        />
-        <span className="text-sm text-muted-foreground">
-          {filteredWriters.length} {filteredWriters.length === 1 ? "writer" : "writers"}
+      {/* Search */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-4 mb-4">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search writers..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-full h-10 pl-9 pr-3 text-sm bg-transparent border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-muted-foreground/20"
+          />
+        </div>
+        <span className="text-[13px] text-muted-foreground">
+          {totalCount.toLocaleString()} writers
         </span>
       </div>
 
       {/* Table */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-16">
-          <span className="text-sm text-muted-foreground">Loading writers...</span>
-        </div>
-      ) : filteredWriters.length === 0 ? (
-        <AppEmptyState
-          customIcon={<PenTool className="h-6 w-6" strokeWidth={1.0} />}
-          message={searchQuery ? "No writers found" : "No writers yet"}
-          description={
-            searchQuery
-              ? "Try adjusting your search query"
-              : "Writers will appear here once added to the catalogue"
-          }
-          action={
-            !searchQuery && (
-              <AppButton onClick={handleAddWriter} variant="secondary" size="sm">
-                <Plus className="h-4 w-4 mr-1.5" />
-                Add Writer
-              </AppButton>
-            )
-          }
-        />
-      ) : (
-        <>
-          <AppTable columns={["45%", "20%", "25%", "10%"]}>
+      <div className="overflow-x-auto -mx-4 sm:mx-0">
+        <div className="min-w-[500px] px-4 sm:px-0">
+          <AppTable columns={["45%", "20%", "35%"]}>
             <AppTableHeader>
               <AppTableRow header>
                 <AppTableHead>Name</AppTableHead>
                 <AppTableHead>PRO</AppTableHead>
                 <AppTableHead>IPI Number</AppTableHead>
-                <AppTableHead align="right"></AppTableHead>
               </AppTableRow>
             </AppTableHeader>
             <AppTableBody>
-              {paginatedWriters.map((writer) => (
-                <AppTableRow key={writer.id}>
-                  <AppTableCell>{writer.name}</AppTableCell>
-                  <AppTableCell muted>{writer.pro || "—"}</AppTableCell>
-                  <AppTableCell mono muted>
-                    {getIpiDisplay(writer)}
-                  </AppTableCell>
-                  <AppTableCell align="right">
-                    <button
-                      onClick={() => handleEdit(writer)}
-                      className="p-1.5 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-                      aria-label="Edit writer"
-                    >
-                      <Pencil className="h-4 w-4" strokeWidth={1.5} />
-                    </button>
-                  </AppTableCell>
-                </AppTableRow>
-              ))}
+              {loading ? (
+                <tr>
+                  <td colSpan={3} className="text-center py-12 text-muted-foreground text-sm">
+                    Loading...
+                  </td>
+                </tr>
+              ) : writers.length === 0 ? (
+                <AppTableEmpty colSpan={3}>
+                  <p className="text-[13px] text-muted-foreground">
+                    {searchQuery ? "No writers match your search" : "No writers in the system"}
+                  </p>
+                </AppTableEmpty>
+              ) : (
+                writers.map((writer) => (
+                  <AppTableRow
+                    key={writer.id}
+                    clickable
+                    onClick={() => handleEdit(writer)}
+                  >
+                    <AppTableCell>{writer.name}</AppTableCell>
+                    <AppTableCell muted>{writer.pro || "—"}</AppTableCell>
+                    <AppTableCell muted>{writer.ipi_number || writer.cae_number || "—"}</AppTableCell>
+                  </AppTableRow>
+                ))
+              )}
             </AppTableBody>
           </AppTable>
+        </div>
+      </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-4 mt-6 text-sm text-muted-foreground">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="flex items-center gap-1 hover:text-foreground disabled:opacity-40 disabled:hover:text-muted-foreground transition-colors"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Previous
-              </button>
-              <span>
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="flex items-center gap-1 hover:text-foreground disabled:opacity-40 disabled:hover:text-muted-foreground transition-colors"
-              >
-                Next
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          )}
-        </>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-4">
+          <AppPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
       )}
 
-      {/* Writer Edit/Create Sheet */}
-      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent className="sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>
-              {editingWriter ? "Edit Writer" : "Add Writer"}
-            </SheetTitle>
-          </SheetHeader>
+      {/* Edit/Add Panel */}
+      <AppPanel
+        open={panelOpen}
+        onClose={() => setPanelOpen(false)}
+        title={editing ? "Edit writer" : "New writer"}
+        description={editing ? "Update writer details" : "Add a new writer to the registry"}
+        footer={
+          <AppPanelFooter
+            left={
+              editing && (
+                <button
+                  onClick={handleDelete}
+                  disabled={saving}
+                  className="text-xs text-destructive hover:text-destructive/80 disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
+                >
+                  Delete writer
+                </button>
+              )
+            }
+            onCancel={() => setPanelOpen(false)}
+            onSubmit={handleSave}
+            submitLabel={editing ? "Save Changes" : "Add Writer"}
+            submitting={saving}
+          />
+        }
+      >
+        <div className="space-y-4">
+          {formError && (
+            <AppAlert variant="error" message={formError} />
+          )}
 
-          <div className="mt-6 space-y-5">
-            {/* Name (required) */}
-            <div className="space-y-1.5">
-              <Label htmlFor="name" className="text-xs">
-                Name <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Display name"
-                className="h-10"
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+              Name *
+            </label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Full name"
+              className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+                First Name
+              </label>
+              <input
+                type="text"
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               />
             </div>
-
-            {/* First Name / Last Name */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="first_name" className="text-xs">
-                  First Name
-                </Label>
-                <Input
-                  id="first_name"
-                  value={formData.first_name}
-                  onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                  placeholder="First"
-                  className="h-10"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="last_name" className="text-xs">
-                  Last Name
-                </Label>
-                <Input
-                  id="last_name"
-                  value={formData.last_name}
-                  onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                  placeholder="Last"
-                  className="h-10"
-                />
-              </div>
-            </div>
-
-            {/* PRO Dropdown */}
-            <div className="space-y-1.5">
-              <Label htmlFor="pro" className="text-xs">
-                PRO
-              </Label>
-              <Select
-                value={formData.pro}
-                onValueChange={(value) => setFormData({ ...formData, pro: value })}
-              >
-                <SelectTrigger className="h-10">
-                  <SelectValue placeholder="Select PRO" />
-                </SelectTrigger>
-                <SelectContent>
-                  {PRO_OPTIONS.map((pro) => (
-                    <SelectItem key={pro} value={pro}>
-                      {pro}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* IPI Number */}
-            <div className="space-y-1.5">
-              <Label htmlFor="ipi_number" className="text-xs">
-                IPI Number
-              </Label>
-              <Input
-                id="ipi_number"
-                value={formData.ipi_number}
-                onChange={(e) => setFormData({ ...formData, ipi_number: e.target.value })}
-                placeholder="e.g., 00123456789"
-                className="h-10 font-mono"
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+                Last Name
+              </label>
+              <input
+                type="text"
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               />
-            </div>
-
-            {/* Email */}
-            <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="writer@example.com"
-                className="h-10"
-              />
-            </div>
-
-            {/* Actions */}
-            <div className="flex justify-end gap-3 pt-4">
-              <Button
-                variant="ghost"
-                onClick={() => setSheetOpen(false)}
-                className="text-muted-foreground"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSave}
-                disabled={saveMutation.isPending}
-                className="bg-foreground text-background hover:bg-foreground/90"
-              >
-                {saveMutation.isPending ? "Saving..." : "Save"}
-              </Button>
             </div>
           </div>
-        </SheetContent>
-      </Sheet>
+
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+              PRO
+            </label>
+            <select
+              value={formData.pro}
+              onChange={(e) => setFormData({ ...formData, pro: e.target.value })}
+              className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            >
+              {PRO_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+              IPI Number
+            </label>
+            <input
+              type="text"
+              value={formData.ipi_number}
+              onChange={(e) => setFormData({ ...formData, ipi_number: e.target.value })}
+              placeholder="e.g., 00123456789"
+              className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+              Email
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              placeholder="writer@example.com"
+              className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+          </div>
+        </div>
+      </AppPanel>
     </AppPageContainer>
   );
 }
