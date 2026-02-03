@@ -149,9 +149,20 @@ export default function RightsWritersPage() {
 
   const handleEdit = (writer: Writer) => {
     setEditing(writer);
+    
+    // Parse first/last from name if individual fields are empty
+    let firstName = writer.first_name || "";
+    let lastName = writer.last_name || "";
+    
+    if (!firstName && !lastName && writer.name) {
+      const nameParts = writer.name.trim().split(/\s+/);
+      firstName = nameParts[0] || "";
+      lastName = nameParts.slice(1).join(' ') || "";
+    }
+    
     setFormData({
-      first_name: writer.first_name || "",
-      last_name: writer.last_name || "",
+      first_name: firstName,
+      last_name: lastName,
       pro: writer.pro || "",
       ipi_number: writer.ipi_number || writer.cae_number || "",
       email: writer.email || "",
