@@ -57,6 +57,7 @@ import {
   RightsOverview,
   RightsClientsPage,
   RightsCataloguePage,
+  RightsWritersPage,
   RightsContractsPage,
   RightsDocumentsPage,
   RightsSettingsPage,
@@ -271,6 +272,7 @@ const App = () => (
           <Route index element={<RightsOverview />} />
           <Route path="clients" element={<RightsClientsPage />} />
           <Route path="catalogue" element={<RightsCataloguePage />} />
+          <Route path="writers" element={<RightsWritersPage />} />
           <Route path="songs/submit" element={<SongSubmitPage />} />
           <Route path="contracts" element={<RightsContractsPage />} />
           <Route path="documents" element={<RightsDocumentsPage />} />

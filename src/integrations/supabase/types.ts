@@ -2308,6 +2308,99 @@ export type Database = {
         }
         Relationships: []
       }
+      publishers: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          city: string | null
+          contact_name: string | null
+          country: string | null
+          created_at: string | null
+          created_by: string | null
+          dba_name: string | null
+          email: string | null
+          id: string
+          ipi_number: string | null
+          is_active: boolean | null
+          is_controlled: boolean | null
+          isni: string | null
+          legal_name: string | null
+          mechanical_society: string | null
+          mechanical_society_id: string | null
+          metadata: Json | null
+          name: string
+          notes: string | null
+          phone: string | null
+          postal_code: string | null
+          pro: string | null
+          pro_member_id: string | null
+          publisher_type: string | null
+          state: string | null
+          territories: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          city?: string | null
+          contact_name?: string | null
+          country?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          dba_name?: string | null
+          email?: string | null
+          id?: string
+          ipi_number?: string | null
+          is_active?: boolean | null
+          is_controlled?: boolean | null
+          isni?: string | null
+          legal_name?: string | null
+          mechanical_society?: string | null
+          mechanical_society_id?: string | null
+          metadata?: Json | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          pro?: string | null
+          pro_member_id?: string | null
+          publisher_type?: string | null
+          state?: string | null
+          territories?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          city?: string | null
+          contact_name?: string | null
+          country?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          dba_name?: string | null
+          email?: string | null
+          id?: string
+          ipi_number?: string | null
+          is_active?: boolean | null
+          is_controlled?: boolean | null
+          isni?: string | null
+          legal_name?: string | null
+          mechanical_society?: string | null
+          mechanical_society_id?: string | null
+          metadata?: Json | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          pro?: string | null
+          pro_member_id?: string | null
+          publisher_type?: string | null
+          state?: string | null
+          territories?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       recovery_events: {
         Row: {
           backup_id: string | null
@@ -2578,6 +2671,70 @@ export type Database = {
           },
         ]
       }
+      song_publishers: {
+        Row: {
+          administered_by: string | null
+          created_at: string | null
+          effective_from: string | null
+          effective_to: string | null
+          id: string
+          ownership_percentage: number
+          publisher_id: string
+          publisher_role: string | null
+          song_id: string
+          territory: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          administered_by?: string | null
+          created_at?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          id?: string
+          ownership_percentage?: number
+          publisher_id: string
+          publisher_role?: string | null
+          song_id: string
+          territory?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          administered_by?: string | null
+          created_at?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          id?: string
+          ownership_percentage?: number
+          publisher_id?: string
+          publisher_role?: string | null
+          song_id?: string
+          territory?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_publishers_administered_by_fkey"
+            columns: ["administered_by"]
+            isOneToOne: false
+            referencedRelation: "publishers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_publishers_publisher_id_fkey"
+            columns: ["publisher_id"]
+            isOneToOne: false
+            referencedRelation: "publishers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_publishers_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       song_queue: {
         Row: {
           admin_notes: string | null
@@ -2744,6 +2901,60 @@ export type Database = {
             columns: ["song_id"]
             isOneToOne: false
             referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      song_writers: {
+        Row: {
+          created_at: string | null
+          effective_from: string | null
+          effective_to: string | null
+          id: string
+          ownership_percentage: number
+          share_type: string | null
+          song_id: string
+          updated_at: string | null
+          writer_id: string
+          writer_role: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          id?: string
+          ownership_percentage?: number
+          share_type?: string | null
+          song_id: string
+          updated_at?: string | null
+          writer_id: string
+          writer_role?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          id?: string
+          ownership_percentage?: number
+          share_type?: string | null
+          song_id?: string
+          updated_at?: string | null
+          writer_id?: string
+          writer_role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_writers_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_writers_writer_id_fkey"
+            columns: ["writer_id"]
+            isOneToOne: false
+            referencedRelation: "writers"
             referencedColumns: ["id"]
           },
         ]
@@ -3222,6 +3433,84 @@ export type Database = {
           primary_color?: string | null
           updated_at?: string | null
           welcome_message?: string | null
+        }
+        Relationships: []
+      }
+      writers: {
+        Row: {
+          cae_number: string | null
+          created_at: string | null
+          created_by: string | null
+          email: string | null
+          first_name: string | null
+          id: string
+          ipi_number: string | null
+          is_active: boolean | null
+          is_controlled: boolean | null
+          isni: string | null
+          last_name: string | null
+          legal_name: string | null
+          mechanical_society: string | null
+          mechanical_society_id: string | null
+          metadata: Json | null
+          middle_name: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          pro: string | null
+          pro_member_id: string | null
+          territories: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          cae_number?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          ipi_number?: string | null
+          is_active?: boolean | null
+          is_controlled?: boolean | null
+          isni?: string | null
+          last_name?: string | null
+          legal_name?: string | null
+          mechanical_society?: string | null
+          mechanical_society_id?: string | null
+          metadata?: Json | null
+          middle_name?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          pro?: string | null
+          pro_member_id?: string | null
+          territories?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          cae_number?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          ipi_number?: string | null
+          is_active?: boolean | null
+          is_controlled?: boolean | null
+          isni?: string | null
+          last_name?: string | null
+          legal_name?: string | null
+          mechanical_society?: string | null
+          mechanical_society_id?: string | null
+          metadata?: Json | null
+          middle_name?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          pro?: string | null
+          pro_member_id?: string | null
+          territories?: string[] | null
+          updated_at?: string | null
         }
         Relationships: []
       }

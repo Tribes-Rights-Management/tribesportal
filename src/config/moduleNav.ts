@@ -14,6 +14,7 @@ import {
   Music,
   ListTodo,
   Briefcase,
+  PenTool,
   type LucideIcon
 } from "lucide-react";
 
@@ -83,6 +84,7 @@ const rightsNav: NavItem[] = [
   { to: "/rights", label: "Overview", icon: LayoutDashboard, exact: true, section: "main" },
   { to: "/rights/clients", label: "Clients", icon: Users, section: "main" },
   { to: "/rights/catalogue", label: "Catalogue", icon: Music, section: "main" },
+  { to: "/rights/writers", label: "Writers", icon: PenTool, section: "main" },
   { to: "/rights/contracts", label: "Contracts", icon: Briefcase, section: "main" },
   { to: "/rights/documents", label: "Documents", icon: FileText, section: "main" },
   { to: "/rights/settings", label: "Settings", icon: Settings2, section: "settings" },
