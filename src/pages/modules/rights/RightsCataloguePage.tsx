@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, ArrowUpDown, Check } from "lucide-react";
+import { Plus, ArrowUpDown, Check, Search } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -318,25 +318,24 @@ export default function RightsCataloguePage() {
       </div>
 
       <AppSection spacing="none">
-        {/* Search Input - subtle bottom border */}
-        <div className="relative mb-2">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Search by title, writer, or lyric..."
-            className={cn(
-              "w-full h-9 px-0",
-              "text-base sm:text-[13px]",
-              "bg-transparent border-b border-border/60",
-              "placeholder:text-muted-foreground/40",
-              "focus:outline-none focus:border-foreground/30",
-              "transition-colors"
-            )}
-          />
+        {/* Search */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search by title, writer, or lyric..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="w-full h-10 pl-9 pr-3 text-sm bg-transparent border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-muted-foreground/20"
+            />
+          </div>
+          <span className="text-[13px] text-muted-foreground">
+            {totalItems} {totalItems === 1 ? "song" : "songs"}
+          </span>
         </div>
 
-        {/* Filter Chips Row with Sort + Count */}
+        {/* Filter Chips Row with Sort */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             {statusFilters.map((filter) => (
@@ -354,12 +353,7 @@ export default function RightsCataloguePage() {
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-2">
-            <SortDropdown value={sortBy} onChange={setSortBy} />
-            <span className="text-[12px] text-muted-foreground">
-              {totalItems} {totalItems === 1 ? "song" : "songs"}
-            </span>
-          </div>
+          <SortDropdown value={sortBy} onChange={setSortBy} />
         </div>
 
         <AppResponsiveList
