@@ -98,7 +98,13 @@ const LYRIC_SECTION_TYPES = [
   { value: "rap", label: "Rap" },
 ];
 
-const SECTION_HEADINGS = ['Verse', 'Chorus', 'Pre-Chorus', 'Bridge', 'Intro', 'Outro', 'Tag', 'Interlude', 'Refrain', 'Ending', 'Vamp', 'Rap', 'Spoken Words'];
+const SECTION_HEADINGS = ['Verse', 'Chorus', 'Pre-Chorus', 'Bridge', 'Intro', 'Outro', 'Tag', 'Interlude', 'Refrain', 'Ending', 'Vamp', 'Rap', 'Spoken Words', 'Mid-Section', 'Post-Chorus', 'Descant', 'Ostinato Refrain'];
+
+interface ParsedSection {
+  id: string;
+  type: string;
+  lyrics: string;
+}
 
 const formatLyricsForDisplay = (lyrics: string): string => {
   const lines = lyrics.split('\n');
@@ -121,6 +127,52 @@ const formatLyricsForDisplay = (lyrics: string): string => {
   return formatted.join('\n');
 };
 
+const parseLyricsIntoSections = (fullLyrics: string): ParsedSection[] => {
+  const lines = fullLyrics.split('\n');
+  const sections: ParsedSection[] = [];
+  let currentSection: ParsedSection | null = null;
+  
+  lines.forEach((line) => {
+    const trimmedLine = line.trim();
+    
+    // Check if this line is a section heading
+    const matchedHeading = SECTION_HEADINGS.find(heading => 
+      trimmedLine.toLowerCase() === heading.toLowerCase() ||
+      !!trimmedLine.toLowerCase().match(new RegExp(`^${heading.toLowerCase()}\\s*\\d*$`))
+    );
+    
+    if (matchedHeading || SECTION_HEADINGS.some(h => trimmedLine.toLowerCase().startsWith(h.toLowerCase() + ' '))) {
+      // Save previous section if exists
+      if (currentSection && currentSection.lyrics.trim()) {
+        sections.push(currentSection);
+      }
+      // Start new section
+      currentSection = {
+        id: crypto.randomUUID(),
+        type: trimmedLine,
+        lyrics: ''
+      };
+    } else if (currentSection) {
+      // Add line to current section
+      currentSection.lyrics += (currentSection.lyrics ? '\n' : '') + line;
+    } else if (trimmedLine) {
+      // No section heading yet, create a default "Verse" section
+      currentSection = {
+        id: crypto.randomUUID(),
+        type: 'Verse',
+        lyrics: line
+      };
+    }
+  });
+  
+  // Don't forget the last section
+  if (currentSection && currentSection.lyrics.trim()) {
+    sections.push(currentSection);
+  }
+  
+  return sections;
+};
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -131,6 +183,8 @@ export default function SongSubmitPage() {
   const [step, setStep] = useState<FlowStep>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [writerSearchResults, setWriterSearchResults] = useState<Record<string, any[]>>({});
+  const [parsedSections, setParsedSections] = useState<ParsedSection[]>([]);
+  const [showParsedPreview, setShowParsedPreview] = useState(false);
   const [activeWriterSearch, setActiveWriterSearch] = useState<string | null>(null);
   
   const [data, setData] = useState<SongData>({
@@ -266,7 +320,28 @@ export default function SongSubmitPage() {
   };
 
   const goToNextStep = () => {
+    // Special handling for lyrics step with paste mode - show parsed preview first
+    if (step === 2 && data.lyricsEntryMode === 'paste' && data.lyricsFull.trim() && !showParsedPreview) {
+      const sections = parseLyricsIntoSections(data.lyricsFull);
+      if (sections.length > 0) {
+        setParsedSections(sections);
+        setShowParsedPreview(true);
+        return; // Don't advance to next step yet
+      }
+    }
     if (step < 5 && canAdvanceStep()) setStep((step + 1) as FlowStep);
+  };
+
+  const confirmParsedSections = () => {
+    // Convert parsed sections to the lyricsSections format and continue
+    const convertedSections: LyricSection[] = parsedSections.map(s => ({
+      id: s.id,
+      type: s.type.toLowerCase().replace(/\s+\d*$/, '').replace(/[- ]/g, '-') as LyricSection["type"],
+      content: s.lyrics.trim()
+    }));
+    setData(prev => ({ ...prev, lyricsSections: convertedSections }));
+    setShowParsedPreview(false);
+    setStep(3);
   };
 
   const goToPrevStep = () => {
@@ -709,7 +784,82 @@ export default function SongSubmitPage() {
                 <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-1">Lyrics</h2>
                 <p className="text-sm text-[var(--btn-text-muted)]">{data.songType === "instrumental" ? "This is an instrumental - no lyrics needed." : "Add your song lyrics"}</p>
               </div>
-              {data.songType !== "instrumental" && (
+              
+              {/* Parsed Sections Preview */}
+              {showParsedPreview && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-[var(--btn-text)]">Review Parsed Sections</h3>
+                    <p className="text-sm text-[var(--btn-text-muted)]">{parsedSections.length} sections detected</p>
+                  </div>
+                  
+                  <p className="text-sm text-[var(--btn-text-muted)]">
+                    We've automatically separated your lyrics into sections. Review and edit if needed.
+                  </p>
+                  
+                  <div className="space-y-4">
+                    {parsedSections.map((section, index) => (
+                      <div key={section.id} className="p-4 bg-white border border-[var(--border-subtle)] rounded-xl space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-[var(--btn-text-muted)]">Section {index + 1}</span>
+                          <button 
+                            type="button"
+                            onClick={() => setParsedSections(prev => prev.filter(s => s.id !== section.id))}
+                            className="text-xs text-[var(--btn-text-muted)] hover:text-destructive"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        
+                        <Select 
+                          value={section.type} 
+                          onValueChange={(value) => setParsedSections(prev => 
+                            prev.map(s => s.id === section.id ? { ...s, type: value } : s)
+                          )}
+                        >
+                          <SelectTrigger className="w-48 h-10 bg-white border border-[var(--border-subtle)] rounded-lg">
+                            <SelectValue placeholder="Section type" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white">
+                            {SECTION_HEADINGS.map(h => (
+                              <SelectItem key={h} value={h}>{h}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        
+                        <textarea
+                          value={section.lyrics}
+                          onChange={(e) => setParsedSections(prev => 
+                            prev.map(s => s.id === section.id ? { ...s, lyrics: e.target.value } : s)
+                          )}
+                          rows={4}
+                          className="w-full px-4 py-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none resize-y font-mono"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="flex gap-3">
+                    <button 
+                      type="button"
+                      onClick={() => setShowParsedPreview(false)}
+                      className="px-4 py-2 text-sm text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]"
+                    >
+                      Back to Edit
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={confirmParsedSections}
+                      className="px-6 py-2 bg-[var(--btn-bg)] text-white text-sm font-medium rounded-xl hover:opacity-90"
+                    >
+                      Confirm & Continue
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+              {/* Regular Lyrics Entry (hidden when showing preview) */}
+              {!showParsedPreview && data.songType !== "instrumental" && (
                 <>
                   <div className="flex gap-3">
                     <button onClick={() => setData(prev => ({ ...prev, lyricsEntryMode: "paste" }))} className={cn("px-4 py-2 text-sm font-medium rounded-lg", data.lyricsEntryMode === "paste" ? "bg-[var(--btn-text)] text-white" : "bg-[var(--muted-wash)] text-[var(--btn-text)]")}>
