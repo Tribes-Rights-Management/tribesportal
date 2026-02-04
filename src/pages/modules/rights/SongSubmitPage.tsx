@@ -30,7 +30,7 @@ interface Writer {
 
 interface LyricSection {
   id: string;
-  type: "verse" | "chorus" | "bridge" | "pre-chorus" | "outro" | "intro" | "tag" | "";
+  type: "verse" | "chorus" | "bridge" | "pre-chorus" | "outro" | "intro" | "tag" | "interlude" | "refrain" | "ending" | "spoken" | "vamp" | "rap" | "";
   content: string;
 }
 
@@ -84,11 +84,17 @@ const PRO_OPTIONS = ["ASCAP", "BMI", "SESAC", "GMR", "PRS", "APRA", "SOCAN", "GE
 const LYRIC_SECTION_TYPES = [
   { value: "verse", label: "Verse" },
   { value: "chorus", label: "Chorus" },
-  { value: "bridge", label: "Bridge" },
   { value: "pre-chorus", label: "Pre-Chorus" },
+  { value: "bridge", label: "Bridge" },
   { value: "intro", label: "Intro" },
   { value: "outro", label: "Outro" },
   { value: "tag", label: "Tag" },
+  { value: "interlude", label: "Interlude" },
+  { value: "refrain", label: "Refrain" },
+  { value: "ending", label: "Ending" },
+  { value: "spoken", label: "Spoken Words" },
+  { value: "vamp", label: "Vamp" },
+  { value: "rap", label: "Rap" },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -661,7 +667,28 @@ export default function SongSubmitPage() {
                     </button>
                   </div>
                   {data.lyricsEntryMode === "paste" && (
-                    <textarea value={data.lyricsFull} onChange={(e) => setData(prev => ({ ...prev, lyricsFull: e.target.value }))} placeholder="Paste your lyrics here..." rows={15} className="w-full px-4 py-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none resize-y" />
+                    <div className="space-y-3">
+                      <div className="p-4 bg-[var(--muted-wash)] rounded-xl text-sm text-[var(--btn-text-muted)] space-y-2">
+                        <p className="font-medium text-[var(--btn-text)]">Guidelines:</p>
+                        <ul className="list-disc list-inside space-y-1 text-xs">
+                          <li>Include section headings (Verse, Chorus, Bridge, Pre-Chorus, etc.) on their own line</li>
+                          <li>Capitalize the first word of each line</li>
+                          <li>Use (REPEAT) when a section repeats</li>
+                          <li>Use (2X) at the end of a line if it's sung twice</li>
+                        </ul>
+                      </div>
+                      <textarea 
+                        value={data.lyricsFull} 
+                        onChange={(e) => setData(prev => ({ ...prev, lyricsFull: e.target.value }))} 
+                        placeholder={"Verse\nBefore the world was made\nThe word of God dwelt with the Father\n\nChorus\nHe is the King of kings\nAnd the Lord of lords..."} 
+                        rows={15} 
+                        className="w-full px-4 py-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none resize-y font-mono"
+                      />
+                      <div className="flex justify-between text-xs text-[var(--btn-text-muted)] mt-1">
+                        <span>{data.lyricsFull.split('\n').filter(line => line.trim()).length} lines</span>
+                        <span>{data.lyricsFull.length} characters</span>
+                      </div>
+                    </div>
                   )}
                   {data.lyricsEntryMode === "sections" && (
                     <div className="space-y-4">
