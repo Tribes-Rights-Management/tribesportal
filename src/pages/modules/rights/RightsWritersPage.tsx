@@ -20,7 +20,6 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useAlgoliaSearch } from "@/hooks/useAlgoliaSearch";
 
 /**
  * RIGHTS WRITERS PAGE — Staff Management View
@@ -30,7 +29,9 @@ import { useAlgoliaSearch } from "@/hooks/useAlgoliaSearch";
  */
 
 const ITEMS_PER_PAGE = 50;
-
+const ALGOLIA_APP_ID = "8WVEYVACJ3";
+const ALGOLIA_SEARCH_KEY = "8d74d3b795b7d35a82f93d9af9b7535755ddc22419ab8d4495ceac0eebf5a6ad";
+const ALGOLIA_INDEX = "writers";
 interface Writer {
   id: string;
   name: string;
@@ -83,19 +84,61 @@ export default function RightsWritersPage() {
   // Debounce search query for API calls
   const debouncedSearch = useDebounce(searchQuery, 300);
 
-  // Algolia search hook
-  const { search: algoliaSearch, isConfigured: algoliaConfigured } = useAlgoliaSearch<Writer>({
-    indexName: 'writers',
-    hitsPerPage: ITEMS_PER_PAGE,
-  });
+  // Algolia search function
+  const algoliaSearch = useCallback(async (query: string, page: number): Promise<{ hits: Writer[]; totalHits: number } | null> => {
+    if (!query.trim()) return null;
+
+    try {
+      const response = await fetch(
+        `https://${ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}/query`,
+        {
+          method: 'POST',
+          headers: {
+            'X-Algolia-API-Key': ALGOLIA_SEARCH_KEY,
+            'X-Algolia-Application-Id': ALGOLIA_APP_ID,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query,
+            page,
+            hitsPerPage: ITEMS_PER_PAGE,
+            attributesToRetrieve: ['objectID', 'name', 'first_name', 'last_name', 'pro', 'ipi_number', 'email', 'created_at'],
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Algolia search failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const hits: Writer[] = data.hits.map((hit: { objectID: string; name: string; first_name: string | null; last_name: string | null; pro: string | null; ipi_number: string | null; email: string | null; created_at: string }) => ({
+        id: hit.objectID,
+        name: hit.name,
+        first_name: hit.first_name,
+        last_name: hit.last_name,
+        pro: hit.pro,
+        ipi_number: hit.ipi_number,
+        cae_number: null,
+        email: hit.email,
+        created_at: hit.created_at,
+      }));
+
+      return { hits, totalHits: data.nbHits };
+    } catch (err) {
+      console.error('Algolia search error:', err);
+      return null;
+    }
+  }, []);
 
   // Fetch writers - uses Algolia for search, Supabase for browsing
   const fetchWriters = useCallback(async () => {
     setLoading(true);
     
     try {
-      // Try Algolia if configured and has search query
-      if (algoliaConfigured && debouncedSearch.trim()) {
+      // Try Algolia if has search query
+      if (debouncedSearch.trim()) {
         const algoliaResult = await algoliaSearch(debouncedSearch, currentPage - 1);
         
         if (algoliaResult) {
@@ -150,7 +193,7 @@ export default function RightsWritersPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, debouncedSearch, algoliaConfigured, algoliaSearch]);
+  }, [currentPage, debouncedSearch, algoliaSearch]);
 
   useEffect(() => {
     fetchWriters();
