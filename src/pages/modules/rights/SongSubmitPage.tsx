@@ -497,12 +497,12 @@ export default function SongSubmitPage() {
               </div>
 
               {data.releaseStatus && (
-                <div className="space-y-2 mt-6">
-                  <label className="text-sm font-medium text-[var(--btn-text)]">
+                <div className="space-y-2 mt-8">
+                  <label className="block text-sm font-medium text-[var(--btn-text)]">
                     {data.releaseStatus === "no" ? "Song creation year" : data.releaseStatus === "youtube_only" ? "First publication year on YouTube" : "First publication year"}
-                    <span className="text-destructive">*</span>
+                    <span className="text-destructive"> *</span>
                   </label>
-                  <input type="number" min="1900" max={new Date().getFullYear()} value={data.releaseStatus === "no" ? data.creationYear : data.publicationYear} onChange={(e) => setData(prev => ({ ...prev, [data.releaseStatus === "no" ? "creationYear" : "publicationYear"]: e.target.value }))} placeholder={new Date().getFullYear().toString()} className="w-40 h-11 px-4 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
+                  <input type="number" min="1900" max={new Date().getFullYear()} value={data.releaseStatus === "no" ? data.creationYear : data.publicationYear} onChange={(e) => setData(prev => ({ ...prev, [data.releaseStatus === "no" ? "creationYear" : "publicationYear"]: e.target.value }))} placeholder={new Date().getFullYear().toString()} className="w-32 h-11 px-4 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
                 </div>
               )}
 
