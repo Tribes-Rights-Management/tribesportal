@@ -4,6 +4,7 @@ import { ArrowLeft, Check, ChevronRight, Plus, Trash2, HelpCircle, Upload, Send 
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ALGOLIA CONFIG
@@ -460,17 +461,30 @@ export default function SongSubmitPage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Language</label>
-                <select value={data.language} onChange={(e) => setData(prev => ({ ...prev, language: e.target.value }))} className="w-full h-12 px-4 bg-background text-foreground border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 appearance-none cursor-pointer" style={{ colorScheme: 'light' }}>
-                  {LANGUAGES.map(lang => <option key={lang} value={lang}>{lang}</option>)}
-                </select>
+                <Select value={data.language} onValueChange={(value) => setData(prev => ({ ...prev, language: value }))}>
+                  <SelectTrigger className="w-full h-12 px-4 bg-white border border-[var(--border-subtle)] rounded-xl">
+                    <SelectValue placeholder="Select language..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    {LANGUAGES.map(lang => (
+                      <SelectItem key={lang} value={lang}>{lang}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Song Type <span className="text-destructive">*</span></label>
-                <select value={data.songType} onChange={(e) => setData(prev => ({ ...prev, songType: e.target.value as SongData["songType"] }))} className="w-full h-12 px-4 bg-background text-foreground border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 appearance-none cursor-pointer" style={{ colorScheme: 'light' }}>
-                  <option value="">Select type...</option>
-                  {SONG_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                </select>
+                <Select value={data.songType} onValueChange={(value) => setData(prev => ({ ...prev, songType: value as SongData["songType"] }))}>
+                  <SelectTrigger className="w-full h-12 px-4 bg-white border border-[var(--border-subtle)] rounded-xl">
+                    <SelectValue placeholder="Select type..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    {SONG_TYPES.map(t => (
+                      <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {["public_domain", "derivative", "medley"].includes(data.songType) && (
@@ -547,10 +561,16 @@ export default function SongSubmitPage() {
                         {/* PRO field - disabled when from database */}
                         <div className="grid grid-cols-3 gap-3">
                           <div className="relative">
-                            <select value={w.pro} disabled className="h-10 w-full px-3 text-sm bg-muted text-foreground border border-[var(--border-subtle)] rounded-lg cursor-not-allowed opacity-70" style={{ colorScheme: 'light' }}>
-                              <option value="">PRO</option>
-                              {PRO_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
-                            </select>
+                            <Select value={w.pro} onValueChange={(value) => updateWriter(w.id, { pro: value })} disabled={w.fromDatabase}>
+                              <SelectTrigger className={`h-10 px-3 bg-white border border-[var(--border-subtle)] rounded-lg ${w.fromDatabase ? 'opacity-70 cursor-not-allowed' : ''}`}>
+                                <SelectValue placeholder="PRO" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-white">
+                                {PRO_OPTIONS.map(p => (
+                                  <SelectItem key={p} value={p}>{p}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           </div>
                           <input type="number" step="0.01" value={w.split || ""} onChange={(e) => updateWriter(w.id, { split: parseFloat(e.target.value) || 0 })} placeholder="Split % *" className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg" />
                           <div>{/* Credit is now in the chip above */}</div>
@@ -620,17 +640,27 @@ export default function SongSubmitPage() {
                         {w.name && !w.fromDatabase && activeWriterSearch !== w.id && (
                           <>
                             <div className="grid grid-cols-3 gap-3">
-                              <select value={w.pro} onChange={(e) => updateWriter(w.id, { pro: e.target.value })} className="h-10 px-3 text-sm bg-background text-foreground border border-[var(--border-subtle)] rounded-lg appearance-none cursor-pointer" style={{ colorScheme: 'light' }}>
-                                <option value="">PRO *</option>
-                                {PRO_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
-                              </select>
+                              <Select value={w.pro} onValueChange={(value) => updateWriter(w.id, { pro: value })}>
+                                <SelectTrigger className="h-10 px-3 bg-white border border-[var(--border-subtle)] rounded-lg">
+                                  <SelectValue placeholder="PRO *" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-white">
+                                  {PRO_OPTIONS.map(p => (
+                                    <SelectItem key={p} value={p}>{p}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                               <input type="number" step="0.01" value={w.split || ""} onChange={(e) => updateWriter(w.id, { split: parseFloat(e.target.value) || 0 })} placeholder="Split % *" className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg" />
-                              <select value={w.credit} onChange={(e) => updateWriter(w.id, { credit: e.target.value as Writer["credit"] })} className="h-10 px-3 text-sm bg-background text-foreground border border-[var(--border-subtle)] rounded-lg appearance-none cursor-pointer" style={{ colorScheme: 'light' }}>
-                                <option value="">Credit *</option>
-                                <option value="lyrics">Lyrics</option>
-                                <option value="music">Music</option>
-                                <option value="both">Both</option>
-                              </select>
+                              <Select value={w.credit} onValueChange={(value) => updateWriter(w.id, { credit: value as Writer["credit"] })}>
+                                <SelectTrigger className="h-10 px-3 bg-white border border-[var(--border-subtle)] rounded-lg">
+                                  <SelectValue placeholder="Credit *" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-white">
+                                  <SelectItem value="lyrics">Lyrics</SelectItem>
+                                  <SelectItem value="music">Music</SelectItem>
+                                  <SelectItem value="both">Both</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </div>
                             <div className="flex items-center gap-2">
                               <input type="checkbox" id={`ctrl-${w.id}`} checked={w.controlled} onChange={(e) => updateWriter(w.id, { controlled: e.target.checked })} className="h-4 w-4 rounded" />
@@ -695,10 +725,16 @@ export default function SongSubmitPage() {
                       {data.lyricsSections.map((s) => (
                         <div key={s.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
                           <div className="flex items-center justify-between">
-                            <select value={s.type} onChange={(e) => updateLyricSection(s.id, { type: e.target.value as LyricSection["type"] })} className="h-10 px-3 text-sm bg-background text-foreground border border-[var(--border-subtle)] rounded-lg appearance-none cursor-pointer" style={{ colorScheme: 'light' }}>
-                              <option value="">Select section...</option>
-                              {LYRIC_SECTION_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                            </select>
+                            <Select value={s.type} onValueChange={(value) => updateLyricSection(s.id, { type: value as LyricSection["type"] })}>
+                              <SelectTrigger className="h-10 px-3 bg-white border border-[var(--border-subtle)] rounded-lg w-40">
+                                <SelectValue placeholder="Select section..." />
+                              </SelectTrigger>
+                              <SelectContent className="bg-white">
+                                {LYRIC_SECTION_TYPES.map(t => (
+                                  <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                             <button onClick={() => removeLyricSection(s.id)} className="p-1 text-[var(--btn-text-muted)] hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
                           </div>
                           <textarea value={s.content} onChange={(e) => updateLyricSection(s.id, { content: e.target.value })} placeholder="Enter lyrics..." rows={4} className="w-full px-3 py-2 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg resize-y" />
