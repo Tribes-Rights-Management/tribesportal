@@ -497,7 +497,7 @@ export default function SongSubmitPage() {
               </div>
 
               {data.releaseStatus && (
-                <div className="space-y-2">
+                <div className="space-y-2 mt-6">
                   <label className="text-sm font-medium text-[var(--btn-text)]">
                     {data.releaseStatus === "no" ? "Song creation year" : data.releaseStatus === "youtube_only" ? "First publication year on YouTube" : "First publication year"}
                     <span className="text-destructive">*</span>
@@ -506,7 +506,7 @@ export default function SongSubmitPage() {
                 </div>
               )}
 
-              <div className="space-y-4">
+              <div className="space-y-4 mt-8">
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium text-[var(--btn-text)]">Writers <span className="text-destructive">*</span></label>
                   <span className={cn("text-xs font-medium", splitValid ? "text-success" : "text-warning")}>Total: {totalSplit.toFixed(2)}%</span>
