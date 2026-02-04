@@ -86,6 +86,17 @@ export default function RightsWritersPage() {
     email: "",
   });
 
+  // Sync writer to Algolia after create/update/delete
+  const syncWriterToAlgolia = async (writerId: string, action: 'upsert' | 'delete' = 'upsert') => {
+    try {
+      await supabase.functions.invoke('sync-writers-algolia', {
+        body: { action, writer_id: writerId }
+      });
+    } catch (err) {
+      console.error('Failed to sync to Algolia:', err);
+    }
+  };
+
   // Algolia search function
   const searchAlgolia = useCallback(async (query: string, page: number) => {
     if (!ALGOLIA_SEARCH_KEY) {
@@ -278,9 +289,10 @@ export default function RightsWritersPage() {
 
         if (error) throw error;
         toast.success('Writer updated');
+        syncWriterToAlgolia(editing.id, 'upsert');
       } else {
         // Create new
-        const { error } = await supabase
+        const { data: newWriter, error } = await supabase
           .from('writers')
           .insert({
             name: fullName,
@@ -289,9 +301,16 @@ export default function RightsWritersPage() {
             pro: formData.pro || null,
             ipi_number: formData.ipi_number.trim() || null,
             email: formData.email.trim() || null,
-          });
+          })
+          .select('id')
+          .single();
 
         if (error) throw error;
+
+        // Sync new writer to Algolia
+        if (newWriter?.id) {
+          syncWriterToAlgolia(newWriter.id, 'upsert');
+        }
         toast.success('Writer added');
       }
 
@@ -318,6 +337,7 @@ export default function RightsWritersPage() {
       if (error) throw error;
       
       toast.success('Writer deleted');
+      syncWriterToAlgolia(editing.id, 'delete');
       setPanelOpen(false);
       fetchWriters();
     } catch (err) {
