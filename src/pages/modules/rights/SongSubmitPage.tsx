@@ -6,6 +6,14 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// ALGOLIA CONFIG
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const ALGOLIA_APP_ID = "8WVEYVACJ3";
+const ALGOLIA_SEARCH_KEY = "00c22202043b8d20f009257782838d48";
+const ALGOLIA_INDEX = "writers";
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -92,6 +100,8 @@ export default function SongSubmitPage() {
   
   const [step, setStep] = useState<FlowStep>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [writerSearchResults, setWriterSearchResults] = useState<Record<string, any[]>>({});
+  const [activeWriterSearch, setActiveWriterSearch] = useState<string | null>(null);
   
   const [data, setData] = useState<SongData>({
     title: "",
@@ -135,6 +145,44 @@ export default function SongSubmitPage() {
     if (data.writers.length > 1) {
       setData(prev => ({ ...prev, writers: prev.writers.filter(w => w.id !== id) }));
     }
+  };
+
+  // Algolia writer search
+  const searchWriters = async (query: string, writerId: string) => {
+    if (!query.trim() || query.length < 2) {
+      setWriterSearchResults(prev => ({ ...prev, [writerId]: [] }));
+      return;
+    }
+    
+    try {
+      const response = await fetch(
+        `https://${ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}/query`,
+        {
+          method: "POST",
+          headers: {
+            "X-Algolia-API-Key": ALGOLIA_SEARCH_KEY,
+            "X-Algolia-Application-Id": ALGOLIA_APP_ID,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query, hitsPerPage: 8 }),
+        }
+      );
+      const data = await response.json();
+      setWriterSearchResults(prev => ({ ...prev, [writerId]: data.hits || [] }));
+    } catch (error) {
+      console.error("Writer search error:", error);
+    }
+  };
+
+  const selectWriterFromDatabase = (writerId: string, hit: any) => {
+    updateWriter(writerId, {
+      name: hit.name,
+      pro: hit.pro || "",
+      ipi: hit.ipi_number || "",
+      fromDatabase: true,
+    });
+    setWriterSearchResults(prev => ({ ...prev, [writerId]: [] }));
+    setActiveWriterSearch(null);
   };
 
   // Lyric section management
@@ -459,34 +507,131 @@ export default function SongSubmitPage() {
                 </div>
                 <div className="space-y-4">
                   {data.writers.map((w, i) => (
-                    <div key={w.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium text-[var(--btn-text-muted)]">Writer {i + 1}</span>
-                        {data.writers.length > 1 && <button onClick={() => removeWriter(w.id)} className="p-1 text-[var(--btn-text-muted)] hover:text-destructive"><Trash2 className="h-4 w-4" /></button>}
-                      </div>
-                      <input type="text" value={w.name} onChange={(e) => updateWriter(w.id, { name: e.target.value })} placeholder="Writer name" className="w-full h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none" />
-                      <div className="grid grid-cols-3 gap-3">
-                        <select value={w.pro} onChange={(e) => updateWriter(w.id, { pro: e.target.value })} className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none">
-                          <option value="">PRO *</option>
-                          {PRO_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
-                        </select>
-                        <input type="number" step="0.01" value={w.split || ""} onChange={(e) => updateWriter(w.id, { split: parseFloat(e.target.value) || 0 })} placeholder="Split % *" className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none" />
-                        <select value={w.credit} onChange={(e) => updateWriter(w.id, { credit: e.target.value as Writer["credit"] })} className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none">
-                          <option value="">Credit *</option>
-                          <option value="lyrics">Lyrics</option>
-                          <option value="music">Music</option>
-                          <option value="both">Both</option>
-                        </select>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input type="checkbox" id={`ctrl-${w.id}`} checked={w.controlled} onChange={(e) => updateWriter(w.id, { controlled: e.target.checked })} className="h-4 w-4 rounded" />
-                        <label htmlFor={`ctrl-${w.id}`} className="text-sm text-[var(--btn-text)]">I control rights for this writer</label>
-                        <div className="group relative">
-                          <HelpCircle className="h-4 w-4 text-[var(--btn-text-muted)] cursor-help" />
-                          <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-[var(--btn-text)] text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none z-10">Do you control the rights of this song for this songwriter?</div>
+                    w.fromDatabase && w.name ? (
+                      // Selected writer chip view
+                      <div key={w.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-[var(--btn-text-muted)]">Writer {i + 1}</span>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg">
+                          <span className="font-medium text-sm">{w.name}</span>
+                          <div className="flex items-center gap-4">
+                            <label className="flex items-center gap-1.5 text-sm">
+                              <input type="checkbox" checked={w.credit === "lyrics" || w.credit === "both"} onChange={(e) => {
+                                const hasMusic = w.credit === "music" || w.credit === "both";
+                                const newCredit = e.target.checked ? (hasMusic ? "both" : "lyrics") : (hasMusic ? "music" : "");
+                                updateWriter(w.id, { credit: newCredit as Writer["credit"] });
+                              }} className="h-4 w-4 rounded" />
+                              Lyrics
+                            </label>
+                            <label className="flex items-center gap-1.5 text-sm">
+                              <input type="checkbox" checked={w.credit === "music" || w.credit === "both"} onChange={(e) => {
+                                const hasLyrics = w.credit === "lyrics" || w.credit === "both";
+                                const newCredit = e.target.checked ? (hasLyrics ? "both" : "music") : (hasLyrics ? "lyrics" : "");
+                                updateWriter(w.id, { credit: newCredit as Writer["credit"] });
+                              }} className="h-4 w-4 rounded" />
+                              Music
+                            </label>
+                            <button onClick={() => updateWriter(w.id, { name: "", pro: "", ipi: "", fromDatabase: false })} className="text-xs text-[var(--btn-text-muted)] hover:text-destructive flex items-center gap-1">
+                              <Trash2 className="h-3 w-3" /> Remove
+                            </button>
+                          </div>
+                        </div>
+                        
+                        {/* PRO field - disabled when from database */}
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="relative">
+                            <select value={w.pro} disabled className="h-10 w-full px-3 text-sm bg-muted/50 border border-[var(--border-subtle)] rounded-lg cursor-not-allowed opacity-70">
+                              <option value="">PRO</option>
+                              {PRO_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
+                            </select>
+                          </div>
+                          <input type="number" step="0.01" value={w.split || ""} onChange={(e) => updateWriter(w.id, { split: parseFloat(e.target.value) || 0 })} placeholder="Split % *" className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg" />
+                          <div>{/* Credit is now in the chip above */}</div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <input type="checkbox" id={`ctrl-${w.id}`} checked={w.controlled} onChange={(e) => updateWriter(w.id, { controlled: e.target.checked })} className="h-4 w-4 rounded" />
+                          <label htmlFor={`ctrl-${w.id}`} className="text-sm text-[var(--btn-text)]">I control rights for this writer</label>
+                          <div className="group relative">
+                            <HelpCircle className="h-4 w-4 text-[var(--btn-text-muted)] cursor-help" />
+                            <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-[var(--btn-text)] text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none z-10">Do you control the rights of this song for this songwriter?</div>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ) : (
+                      // Search input view
+                      <div key={w.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-[var(--btn-text-muted)]">Writer {i + 1}</span>
+                          {data.writers.length > 1 && <button onClick={() => removeWriter(w.id)} className="p-1 text-[var(--btn-text-muted)] hover:text-destructive"><Trash2 className="h-4 w-4" /></button>}
+                        </div>
+                        
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={w.name}
+                            onChange={(e) => {
+                              updateWriter(w.id, { name: e.target.value, fromDatabase: false });
+                              searchWriters(e.target.value, w.id);
+                              setActiveWriterSearch(w.id);
+                            }}
+                            onFocus={() => setActiveWriterSearch(w.id)}
+                            onBlur={() => setTimeout(() => setActiveWriterSearch(null), 200)}
+                            placeholder="Begin typing to find existing songwriter"
+                            className="w-full h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none"
+                          />
+                          
+                          {/* Dropdown results */}
+                          {activeWriterSearch === w.id && writerSearchResults[w.id]?.length > 0 && (
+                            <div className="absolute z-20 w-full mt-1 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                              {writerSearchResults[w.id].map((hit: any) => (
+                                <button
+                                  key={hit.objectID}
+                                  type="button"
+                                  onMouseDown={(e) => e.preventDefault()}
+                                  onClick={() => selectWriterFromDatabase(w.id, hit)}
+                                  className="w-full px-3 py-2 text-left hover:bg-[var(--muted-wash)] border-b border-[var(--border-subtle)] last:border-0"
+                                >
+                                  <div className="font-medium text-sm">{hit.name}</div>
+                                  <div className="text-xs text-[var(--btn-text-muted)]">{hit.pro || "No PRO"}</div>
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="text-xs text-[var(--btn-text-muted)]">
+                          Can't find the songwriter you're looking for?{" "}
+                          <button type="button" onClick={() => navigate("/rights/writers")} className="text-[var(--app-focus)] hover:underline">
+                            Register a new songwriter
+                          </button>
+                        </div>
+                        
+                        {/* Show PRO/Split/Credit fields only if manually entering */}
+                        {w.name && !w.fromDatabase && (
+                          <>
+                            <div className="grid grid-cols-3 gap-3">
+                              <select value={w.pro} onChange={(e) => updateWriter(w.id, { pro: e.target.value })} className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg">
+                                <option value="">PRO *</option>
+                                {PRO_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
+                              </select>
+                              <input type="number" step="0.01" value={w.split || ""} onChange={(e) => updateWriter(w.id, { split: parseFloat(e.target.value) || 0 })} placeholder="Split % *" className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg" />
+                              <select value={w.credit} onChange={(e) => updateWriter(w.id, { credit: e.target.value as Writer["credit"] })} className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg">
+                                <option value="">Credit *</option>
+                                <option value="lyrics">Lyrics</option>
+                                <option value="music">Music</option>
+                                <option value="both">Both</option>
+                              </select>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <input type="checkbox" id={`ctrl-${w.id}`} checked={w.controlled} onChange={(e) => updateWriter(w.id, { controlled: e.target.checked })} className="h-4 w-4 rounded" />
+                              <label htmlFor={`ctrl-${w.id}`} className="text-sm text-[var(--btn-text)]">I control rights for this writer</label>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    )
                   ))}
                   <button onClick={addWriter} className="w-full py-3 text-sm font-medium text-[var(--btn-text)] border-2 border-dashed border-[var(--border-subtle)] rounded-xl hover:border-[var(--btn-text)]/30 flex items-center justify-center gap-2">
                     <Plus className="h-4 w-4" /> Add Writer
