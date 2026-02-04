@@ -126,7 +126,8 @@ serve(async (req) => {
       const { data: writers, error } = await supabase
         .from('writers')
         .select('id, name, first_name, last_name, pro, ipi_number, cae_number, email, created_at')
-        .order('name');
+        .order('name')
+        .limit(10000);
 
       if (error) {
         throw new Error(`Failed to fetch writers: ${error.message}`);
