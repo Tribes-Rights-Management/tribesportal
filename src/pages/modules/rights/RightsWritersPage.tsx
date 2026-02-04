@@ -32,7 +32,7 @@ const ITEMS_PER_PAGE = 50;
 
 // Algolia configuration
 const ALGOLIA_APP_ID = "8WVEYVACJ3";
-const ALGOLIA_SEARCH_KEY = "8d74d3b795b7d35a82f93d9af9b7535755ddc22419ab8d4495ceac0eebf5a6ad";
+const ALGOLIA_SEARCH_KEY = "00c22202043b8d20f009257782838d48";
 const ALGOLIA_INDEX = "writers";
 
 interface Writer {
