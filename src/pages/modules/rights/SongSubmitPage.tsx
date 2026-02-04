@@ -591,12 +591,12 @@ export default function SongSubmitPage() {
                                   type="button"
                                   onMouseDown={(e) => e.preventDefault()}
                                   onClick={() => selectWriterFromDatabase(w.id, hit)}
-                                  className="w-full px-4 py-3 text-left hover:bg-[var(--muted-wash)] border-b border-[var(--border-subtle)] last:border-0 transition-colors"
+                                  className="w-full px-4 py-3 text-left hover:bg-[var(--muted-wash)] border-b border-[var(--border-subtle)] last:border-b-0 transition-colors flex items-center justify-between gap-3"
                                 >
-                                  <div className="flex items-center justify-between">
-                                    <span className="font-medium text-sm text-[var(--btn-text)]">{hit.name}</span>
-                                    <span className="text-xs text-[var(--btn-text-muted)] bg-[var(--muted-wash)] px-2 py-0.5 rounded">{hit.pro || "No PRO"}</span>
-                                  </div>
+                                  <span className="font-medium text-sm text-[var(--btn-text)]">{hit.name}</span>
+                                  <span className="text-[11px] text-[var(--btn-text-muted)] bg-[var(--muted-wash)] px-2 py-0.5 rounded shrink-0">
+                                    {hit.pro || "—"}
+                                  </span>
                                 </button>
                               ))}
                             </div>
@@ -610,8 +610,8 @@ export default function SongSubmitPage() {
                           </a>
                         </p>
                         
-                        {/* Show PRO/Split/Credit fields only if manually entering */}
-                        {w.name && !w.fromDatabase && (
+                        {/* Show PRO/Split/Credit fields only when not actively searching (dropdown closed) */}
+                        {w.name && !w.fromDatabase && activeWriterSearch !== w.id && (
                           <>
                             <div className="grid grid-cols-3 gap-3">
                               <select value={w.pro} onChange={(e) => updateWriter(w.id, { pro: e.target.value })} className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg">
