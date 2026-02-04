@@ -460,14 +460,14 @@ export default function SongSubmitPage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Language</label>
-                <select value={data.language} onChange={(e) => setData(prev => ({ ...prev, language: e.target.value }))} className="w-full h-12 px-4 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none">
+                <select value={data.language} onChange={(e) => setData(prev => ({ ...prev, language: e.target.value }))} className="w-full h-12 px-4 bg-background text-foreground border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 appearance-none cursor-pointer" style={{ colorScheme: 'light' }}>
                   {LANGUAGES.map(lang => <option key={lang} value={lang}>{lang}</option>)}
                 </select>
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Song Type <span className="text-destructive">*</span></label>
-                <select value={data.songType} onChange={(e) => setData(prev => ({ ...prev, songType: e.target.value as SongData["songType"] }))} className="w-full h-12 px-4 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none">
+                <select value={data.songType} onChange={(e) => setData(prev => ({ ...prev, songType: e.target.value as SongData["songType"] }))} className="w-full h-12 px-4 bg-background text-foreground border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--app-focus)]/20 appearance-none cursor-pointer" style={{ colorScheme: 'light' }}>
                   <option value="">Select type...</option>
                   {SONG_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
@@ -547,7 +547,7 @@ export default function SongSubmitPage() {
                         {/* PRO field - disabled when from database */}
                         <div className="grid grid-cols-3 gap-3">
                           <div className="relative">
-                            <select value={w.pro} disabled className="h-10 w-full px-3 text-sm bg-muted/50 border border-[var(--border-subtle)] rounded-lg cursor-not-allowed opacity-70">
+                            <select value={w.pro} disabled className="h-10 w-full px-3 text-sm bg-muted text-foreground border border-[var(--border-subtle)] rounded-lg cursor-not-allowed opacity-70" style={{ colorScheme: 'light' }}>
                               <option value="">PRO</option>
                               {PRO_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
                             </select>
@@ -620,12 +620,12 @@ export default function SongSubmitPage() {
                         {w.name && !w.fromDatabase && activeWriterSearch !== w.id && (
                           <>
                             <div className="grid grid-cols-3 gap-3">
-                              <select value={w.pro} onChange={(e) => updateWriter(w.id, { pro: e.target.value })} className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg">
+                              <select value={w.pro} onChange={(e) => updateWriter(w.id, { pro: e.target.value })} className="h-10 px-3 text-sm bg-background text-foreground border border-[var(--border-subtle)] rounded-lg appearance-none cursor-pointer" style={{ colorScheme: 'light' }}>
                                 <option value="">PRO *</option>
                                 {PRO_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
                               </select>
                               <input type="number" step="0.01" value={w.split || ""} onChange={(e) => updateWriter(w.id, { split: parseFloat(e.target.value) || 0 })} placeholder="Split % *" className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg" />
-                              <select value={w.credit} onChange={(e) => updateWriter(w.id, { credit: e.target.value as Writer["credit"] })} className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg">
+                              <select value={w.credit} onChange={(e) => updateWriter(w.id, { credit: e.target.value as Writer["credit"] })} className="h-10 px-3 text-sm bg-background text-foreground border border-[var(--border-subtle)] rounded-lg appearance-none cursor-pointer" style={{ colorScheme: 'light' }}>
                                 <option value="">Credit *</option>
                                 <option value="lyrics">Lyrics</option>
                                 <option value="music">Music</option>
@@ -695,7 +695,7 @@ export default function SongSubmitPage() {
                       {data.lyricsSections.map((s) => (
                         <div key={s.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
                           <div className="flex items-center justify-between">
-                            <select value={s.type} onChange={(e) => updateLyricSection(s.id, { type: e.target.value as LyricSection["type"] })} className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg">
+                            <select value={s.type} onChange={(e) => updateLyricSection(s.id, { type: e.target.value as LyricSection["type"] })} className="h-10 px-3 text-sm bg-background text-foreground border border-[var(--border-subtle)] rounded-lg appearance-none cursor-pointer" style={{ colorScheme: 'light' }}>
                               <option value="">Select section...</option>
                               {LYRIC_SECTION_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                             </select>
