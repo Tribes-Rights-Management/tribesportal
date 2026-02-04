@@ -317,24 +317,24 @@ export default function RightsCataloguePage() {
         </AppButton>
       </div>
 
-      <AppSection spacing="none">
-        {/* Search */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search by title, writer, or lyric..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="w-full h-10 pl-9 pr-3 text-sm bg-transparent border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-muted-foreground/20"
-            />
-          </div>
-          <span className="text-[13px] text-muted-foreground">
-            {totalItems} {totalItems === 1 ? "song" : "songs"}
-          </span>
+      {/* Search - Outside AppSection */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-4 mb-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search by title, writer, or lyric..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-full h-10 pl-9 pr-3 text-sm bg-transparent border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-muted-foreground/20"
+          />
         </div>
+        <span className="text-[13px] text-muted-foreground">
+          {totalItems} {totalItems === 1 ? "song" : "songs"}
+        </span>
+      </div>
 
+      <AppSection spacing="none">
         {/* Filter Chips Row with Sort */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
