@@ -1,4 +1,3 @@
-// Redeployed: Feb 4, 2026 v2
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -123,18 +122,34 @@ serve(async (req) => {
     console.log(`Sync action: ${action}, writer_id: ${writerId || 'N/A'}`);
 
     if (action === 'full_sync') {
-      // Full sync: fetch all writers and index them
-      const { data: writers, error } = await supabase
-        .from('writers')
-        .select('id, name, first_name, last_name, pro, ipi_number, cae_number, email, created_at')
-        .order('name')
-        .limit(10000);
+      // Full sync: fetch all writers using pagination and index them
+      const PAGE_SIZE = 1000;
+      let allWriters: Writer[] = [];
+      let page = 0;
+      let hasMore = true;
 
-      if (error) {
-        throw new Error(`Failed to fetch writers: ${error.message}`);
+      // Fetch all writers using pagination
+      while (hasMore) {
+        const { data: writers, error } = await supabase
+          .from('writers')
+          .select('id, name, first_name, last_name, pro, ipi_number, cae_number, email, created_at')
+          .order('name')
+          .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+
+        if (error) {
+          throw new Error(`Failed to fetch writers: ${error.message}`);
+        }
+
+        if (writers && writers.length > 0) {
+          allWriters = allWriters.concat(writers);
+          page++;
+          hasMore = writers.length === PAGE_SIZE;
+        } else {
+          hasMore = false;
+        }
       }
 
-      if (!writers || writers.length === 0) {
+      if (allWriters.length === 0) {
         return new Response(
           JSON.stringify({ success: true, message: 'No writers to sync', count: 0 }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -145,8 +160,8 @@ serve(async (req) => {
       const BATCH_SIZE = 1000;
       let totalIndexed = 0;
 
-      for (let i = 0; i < writers.length; i += BATCH_SIZE) {
-        const batch = writers.slice(i, i + BATCH_SIZE);
+      for (let i = 0; i < allWriters.length; i += BATCH_SIZE) {
+        const batch = allWriters.slice(i, i + BATCH_SIZE);
         const records = batch.map(writerToAlgoliaRecord);
         await indexToAlgolia(records);
         totalIndexed += batch.length;
