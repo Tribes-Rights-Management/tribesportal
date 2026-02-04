@@ -98,6 +98,29 @@ const LYRIC_SECTION_TYPES = [
   { value: "rap", label: "Rap" },
 ];
 
+const SECTION_HEADINGS = ['Verse', 'Chorus', 'Pre-Chorus', 'Bridge', 'Intro', 'Outro', 'Tag', 'Interlude', 'Refrain', 'Ending', 'Vamp', 'Rap', 'Spoken Words'];
+
+const formatLyricsForDisplay = (lyrics: string): string => {
+  const lines = lyrics.split('\n');
+  const formatted: string[] = [];
+  
+  lines.forEach((line, index) => {
+    const trimmedLine = line.trim();
+    const isHeading = SECTION_HEADINGS.some(heading => 
+      trimmedLine.toLowerCase() === heading.toLowerCase() ||
+      trimmedLine.toLowerCase().startsWith(heading.toLowerCase() + ' ')
+    );
+    
+    // Add empty line before section headings (except first line)
+    if (isHeading && index > 0 && formatted[formatted.length - 1]?.trim() !== '') {
+      formatted.push('');
+    }
+    formatted.push(line);
+  });
+  
+  return formatted.join('\n');
+};
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -706,10 +729,17 @@ export default function SongSubmitPage() {
                           <li>Use (REPEAT) when a section repeats</li>
                           <li>Use (2X) at the end of a line if it's sung twice</li>
                         </ul>
+                        <p className="text-xs text-[var(--btn-text-muted)] mt-2">Section headings will be automatically separated with blank lines.</p>
                       </div>
                       <textarea 
                         value={data.lyricsFull} 
                         onChange={(e) => setData(prev => ({ ...prev, lyricsFull: e.target.value }))} 
+                        onBlur={(e) => {
+                          const formatted = formatLyricsForDisplay(e.target.value);
+                          if (formatted !== e.target.value) {
+                            setData(prev => ({ ...prev, lyricsFull: formatted }));
+                          }
+                        }}
                         placeholder={"Verse\nBefore the world was made\nThe word of God dwelt with the Father\n\nChorus\nHe is the King of kings\nAnd the Lord of lords..."} 
                         rows={15} 
                         className="w-full px-4 py-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none resize-y font-mono"
