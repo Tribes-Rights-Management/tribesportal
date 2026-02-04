@@ -209,6 +209,23 @@ a:active,
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   NATIVE SELECT LIGHT THEME OVERRIDE (LOCKED)
+   
+   Forces all native <select> elements to render with light backgrounds.
+   Ensures consistency for any selects not yet converted to Radix Select.
+   ═══════════════════════════════════════════════════════════════════════════ */
+select {
+  color-scheme: light;
+  background-color: white;
+  color: var(--btn-text);
+}
+
+select option {
+  background-color: white;
+  color: var(--btn-text);
+}
+
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    GLOBAL SPACING SYSTEM â€” TRIBES STANDARD (LOCKED)
