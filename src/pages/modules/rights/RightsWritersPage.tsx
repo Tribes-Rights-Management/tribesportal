@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
 import {
   AppPageContainer,
@@ -15,7 +15,6 @@ import {
   AppPanel,
   AppPanelFooter,
   AppAlert,
-  AppSearchInput,
 } from "@/components/app-ui";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -25,13 +24,17 @@ import { useDebounce } from "@/hooks/useDebounce";
  * RIGHTS WRITERS PAGE — Staff Management View
  * 
  * Master registry of all writers/composers/interested parties.
- * Uses Algolia for fast, typo-tolerant search with Supabase fallback.
+ * Uses Algolia for fast, typo-tolerant search.
+ * Displays: Name, PRO, IPI Number
  */
 
 const ITEMS_PER_PAGE = 50;
+
+// Algolia configuration
 const ALGOLIA_APP_ID = "8WVEYVACJ3";
 const ALGOLIA_SEARCH_KEY = "8d74d3b795b7d35a82f93d9af9b7535755ddc22419ab8d4495ceac0eebf5a6ad";
 const ALGOLIA_INDEX = "writers";
+
 interface Writer {
   id: string;
   name: string;
@@ -55,7 +58,7 @@ const PRO_OPTIONS = [
   { value: "APRA", label: "APRA" },
   { value: "GEMA", label: "GEMA" },
   { value: "SACEM", label: "SACEM" },
-  { value: "NS", label: "NS (Not Specified)" },
+  { value: "NS", label: "NS (No Society)" },
 ];
 
 export default function RightsWritersPage() {
@@ -64,7 +67,9 @@ export default function RightsWritersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [searchSource, setSearchSource] = useState<'algolia' | 'supabase'>('supabase');
+  
+  // Debounce search query for Algolia
+  const debouncedSearch = useDebounce(searchQuery, 300);
   
   // Panel state
   const [panelOpen, setPanelOpen] = useState(false);
@@ -81,80 +86,74 @@ export default function RightsWritersPage() {
     email: "",
   });
 
-  // Debounce search query for API calls
-  const debouncedSearch = useDebounce(searchQuery, 300);
-
   // Algolia search function
-  const algoliaSearch = useCallback(async (query: string, page: number): Promise<{ hits: Writer[]; totalHits: number } | null> => {
-    if (!query.trim()) return null;
+  const searchAlgolia = useCallback(async (query: string, page: number) => {
+    if (!ALGOLIA_SEARCH_KEY) {
+      console.warn("Algolia search key not configured, falling back to Supabase");
+      return null;
+    }
 
     try {
       const response = await fetch(
         `https://${ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}/query`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'X-Algolia-API-Key': ALGOLIA_SEARCH_KEY,
-            'X-Algolia-Application-Id': ALGOLIA_APP_ID,
-            'Content-Type': 'application/json',
+            "X-Algolia-API-Key": ALGOLIA_SEARCH_KEY,
+            "X-Algolia-Application-Id": ALGOLIA_APP_ID,
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             query,
-            page,
+            page: page - 1, // Algolia is 0-indexed
             hitsPerPage: ITEMS_PER_PAGE,
-            attributesToRetrieve: ['objectID', 'name', 'first_name', 'last_name', 'pro', 'ipi_number', 'email', 'created_at'],
           }),
         }
       );
 
       if (!response.ok) {
-        throw new Error(`Algolia search failed: ${response.status}`);
+        throw new Error("Algolia search failed");
       }
 
       const data = await response.json();
-
-      const hits: Writer[] = data.hits.map((hit: { objectID: string; name: string; first_name: string | null; last_name: string | null; pro: string | null; ipi_number: string | null; email: string | null; created_at: string }) => ({
-        id: hit.objectID,
-        name: hit.name,
-        first_name: hit.first_name,
-        last_name: hit.last_name,
-        pro: hit.pro,
-        ipi_number: hit.ipi_number,
-        cae_number: null,
-        email: hit.email,
-        created_at: hit.created_at,
-      }));
-
-      return { hits, totalHits: data.nbHits };
-    } catch (err) {
-      console.error('Algolia search error:', err);
+      return {
+        hits: data.hits.map((hit: any) => ({
+          id: hit.objectID,
+          name: hit.name,
+          first_name: hit.first_name,
+          last_name: hit.last_name,
+          pro: hit.pro,
+          ipi_number: hit.ipi_number,
+          cae_number: null,
+          email: hit.email,
+          created_at: "",
+        })),
+        totalCount: data.nbHits,
+      };
+    } catch (error) {
+      console.error("Algolia search error:", error);
       return null;
     }
   }, []);
 
-  // Fetch writers - uses Algolia for search, Supabase for browsing
+  // Fetch writers - uses Algolia for search, Supabase for browse
   const fetchWriters = useCallback(async () => {
     setLoading(true);
     
     try {
-      // Try Algolia if has search query
+      // If searching and Algolia is available, use it
       if (debouncedSearch.trim()) {
-        const algoliaResult = await algoliaSearch(debouncedSearch, currentPage - 1);
+        const algoliaResult = await searchAlgolia(debouncedSearch, currentPage);
         
         if (algoliaResult) {
           setWriters(algoliaResult.hits);
-          setTotalCount(algoliaResult.totalHits);
-          setSearchSource('algolia');
+          setTotalCount(algoliaResult.totalCount);
           setLoading(false);
           return;
         }
-        // Fall through to Supabase if Algolia fails
       }
 
-      // Supabase: for browsing or as fallback
-      setSearchSource('supabase');
-
-      // Build count query
+      // Fallback to Supabase (for browsing or if Algolia fails)
       let countQuery = supabase
         .from('writers')
         .select('*', { count: 'exact', head: true });
@@ -166,7 +165,6 @@ export default function RightsWritersPage() {
       const { count } = await countQuery;
       setTotalCount(count || 0);
 
-      // Fetch paginated data
       const from = (currentPage - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
 
@@ -193,18 +191,18 @@ export default function RightsWritersPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, debouncedSearch, algoliaSearch]);
+  }, [currentPage, debouncedSearch, searchAlgolia]);
 
   useEffect(() => {
     fetchWriters();
   }, [fetchWriters]);
 
-  // Reset to page 1 when search changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [debouncedSearch]);
-
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
 
   const handleCreate = () => {
     setEditing(null);
@@ -222,14 +220,20 @@ export default function RightsWritersPage() {
   const handleEdit = (writer: Writer) => {
     setEditing(writer);
     
-    // Parse first/last from name if individual fields are empty
+    // Try to get first/last name, fallback to parsing from name field
     let firstName = writer.first_name || "";
     let lastName = writer.last_name || "";
     
+    // If no first/last name but we have a name, try to split it
     if (!firstName && !lastName && writer.name) {
       const nameParts = writer.name.trim().split(/\s+/);
-      firstName = nameParts[0] || "";
-      lastName = nameParts.slice(1).join(' ') || "";
+      if (nameParts.length >= 2) {
+        firstName = nameParts[0];
+        lastName = nameParts.slice(1).join(" ");
+      } else if (nameParts.length === 1) {
+        // Single name goes in First Name field
+        firstName = nameParts[0];
+      }
     }
     
     setFormData({
@@ -243,30 +247,19 @@ export default function RightsWritersPage() {
     setPanelOpen(true);
   };
 
-  const syncToAlgolia = async (action: 'upsert' | 'delete', writerId: string) => {
-    try {
-      await supabase.functions.invoke('sync-writers-algolia', {
-        body: { action, writer_id: writerId },
-      });
-    } catch (err) {
-      console.warn('Algolia sync failed (non-blocking):', err);
-    }
-  };
-
   const handleSave = async () => {
-    const firstName = formData.first_name.trim();
-    const lastName = formData.last_name.trim();
-    
-    if (!firstName) {
+    if (!formData.first_name.trim()) {
       setFormError("First name is required");
       return;
     }
     
-    // Build full name from first + last
-    const fullName = [firstName, lastName].filter(Boolean).join(' ');
-    
     setSaving(true);
     setFormError(null);
+
+    // Build full name from first + last
+    const fullName = [formData.first_name.trim(), formData.last_name.trim()]
+      .filter(Boolean)
+      .join(" ");
 
     try {
       if (editing) {
@@ -275,8 +268,8 @@ export default function RightsWritersPage() {
           .from('writers')
           .update({
             name: fullName,
-            first_name: firstName || null,
-            last_name: lastName || null,
+            first_name: formData.first_name.trim() || null,
+            last_name: formData.last_name.trim() || null,
             pro: formData.pro || null,
             ipi_number: formData.ipi_number.trim() || null,
             email: formData.email.trim() || null,
@@ -284,33 +277,21 @@ export default function RightsWritersPage() {
           .eq('id', editing.id);
 
         if (error) throw error;
-        
-        // Sync to Algolia (non-blocking)
-        syncToAlgolia('upsert', editing.id);
-        
         toast.success('Writer updated');
       } else {
         // Create new
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('writers')
           .insert({
             name: fullName,
-            first_name: firstName || null,
-            last_name: lastName || null,
+            first_name: formData.first_name.trim() || null,
+            last_name: formData.last_name.trim() || null,
             pro: formData.pro || null,
             ipi_number: formData.ipi_number.trim() || null,
             email: formData.email.trim() || null,
-          })
-          .select('id')
-          .single();
+          });
 
         if (error) throw error;
-        
-        // Sync to Algolia (non-blocking)
-        if (data?.id) {
-          syncToAlgolia('upsert', data.id);
-        }
-        
         toast.success('Writer added');
       }
 
@@ -329,17 +310,12 @@ export default function RightsWritersPage() {
     
     setSaving(true);
     try {
-      const writerId = editing.id;
-      
       const { error } = await supabase
         .from('writers')
         .delete()
-        .eq('id', writerId);
+        .eq('id', editing.id);
 
       if (error) throw error;
-      
-      // Sync deletion to Algolia (non-blocking)
-      syncToAlgolia('delete', writerId);
       
       toast.success('Writer deleted');
       setPanelOpen(false);
@@ -354,46 +330,51 @@ export default function RightsWritersPage() {
 
   return (
     <AppPageContainer maxWidth="xl">
-      {/* Header */}
+      {/* Header Row: Title + Action */}
       <div className="flex items-center justify-between mb-3">
         <h1 className="text-lg font-semibold tracking-tight">Writers</h1>
-        <AppButton intent="secondary" size="sm" onClick={handleCreate}>
+        <AppButton
+          intent="secondary"
+          size="sm"
+          onClick={handleCreate}
+        >
           <Plus className="h-4 w-4" />
           Add Writer
         </AppButton>
       </div>
 
       {/* Search */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-4 mb-4">
-        <AppSearchInput
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder="Search writers..."
-          className="flex-1 max-w-sm"
-        />
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-4 mb-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search writers..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-full h-10 pl-9 pr-3 text-sm bg-transparent border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-muted-foreground/20"
+          />
+        </div>
         <span className="text-[13px] text-muted-foreground">
           {totalCount.toLocaleString()} writers
-          {debouncedSearch.trim() && searchSource === 'algolia' && (
-            <span className="ml-1 text-xs opacity-60">(Algolia)</span>
-          )}
         </span>
       </div>
 
       {/* Table */}
       <div className="overflow-x-auto -mx-4 sm:mx-0">
-        <div className="min-w-[500px] px-4 sm:px-0">
-          <AppTable columns={["45%", "20%", "35%"]}>
+        <div className="px-4 sm:px-0">
+          <AppTable columns={["50%", "25%", "25%"]}>
             <AppTableHeader>
               <AppTableRow header>
                 <AppTableHead>Name</AppTableHead>
                 <AppTableHead>PRO</AppTableHead>
-                <AppTableHead>IPI Number</AppTableHead>
+                <AppTableHead className="hidden sm:table-cell">IPI Number</AppTableHead>
               </AppTableRow>
             </AppTableHeader>
             <AppTableBody>
               {loading ? (
                 <tr>
-                  <td colSpan={3} className="text-center py-12 text-muted-foreground text-sm">
+                  <td colSpan={3} className="text-center py-8 text-muted-foreground text-sm">
                     Loading...
                   </td>
                 </tr>
@@ -412,7 +393,7 @@ export default function RightsWritersPage() {
                   >
                     <AppTableCell>{writer.name}</AppTableCell>
                     <AppTableCell muted>{writer.pro || "—"}</AppTableCell>
-                    <AppTableCell muted>{writer.ipi_number || writer.cae_number || "—"}</AppTableCell>
+                    <AppTableCell muted className="hidden sm:table-cell">{writer.ipi_number || writer.cae_number || "—"}</AppTableCell>
                   </AppTableRow>
                 ))
               )}
@@ -472,7 +453,7 @@ export default function RightsWritersPage() {
                 type="text"
                 value={formData.first_name}
                 onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                placeholder="First name"
+                placeholder="First"
                 className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               />
             </div>
@@ -484,7 +465,7 @@ export default function RightsWritersPage() {
                 type="text"
                 value={formData.last_name}
                 onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                placeholder="Last name"
+                placeholder="Last"
                 className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               />
             </div>
