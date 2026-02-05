@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, ArrowUpDown, Check, Search } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 import {
   AppPageContainer,
@@ -54,15 +55,10 @@ const sortLabels: Record<SortOption, string> = {
 interface CatalogueSong {
   id: string;
   title: string;
-  artist: string;
-  iswc: string;
   songwriters: string[];
   status: "active" | "pending" | "inactive";
   addedAt: string;
 }
-
-// Empty catalogue - will be populated from Supabase
-const mockCatalogueSongs: CatalogueSong[] = [];
 
 const getStatusText = (status: CatalogueSong["status"]) => {
   switch (status) {
@@ -150,6 +146,10 @@ export default function RightsCataloguePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<SortOption>("a-z");
   
+  // Data state
+  const [songs, setSongs] = useState<CatalogueSong[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
   // Selection state
   const [selectedSongs, setSelectedSongs] = useState<Set<string>>(new Set());
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
@@ -159,6 +159,48 @@ export default function RightsCataloguePage() {
   const [isDeleting, setIsDeleting] = useState(false);
   
   const statusFilter = (searchParams.get("status") as CatalogueStatus) || "all";
+
+  // Fetch songs from database
+  const fetchSongs = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("songs")
+        .select("id, title, metadata, created_at, is_active")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      
+      // Transform data to match CatalogueSong interface
+      const transformedSongs: CatalogueSong[] = (data || []).map((song) => {
+        // Extract writers from metadata
+        const metadata = song.metadata as Record<string, any> || {};
+        const writers = metadata.writers || [];
+        const songwriters = writers.map((w: { name?: string }) => w.name || "Unknown").filter(Boolean);
+        
+        return {
+          id: song.id,
+          title: song.title,
+          songwriters,
+          status: "active" as const,
+          addedAt: song.created_at,
+        };
+      });
+      
+      setSongs(transformedSongs);
+    } catch (err: any) {
+      console.error("Failed to fetch songs:", err);
+      toast.error("Failed to load catalogue");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+  
+  // Fetch songs on mount
+  useEffect(() => {
+    fetchSongs();
+  }, [fetchSongs]);
 
   const handleStatusChange = (value: CatalogueStatus) => {
     if (value === "all") {
@@ -172,15 +214,14 @@ export default function RightsCataloguePage() {
 
   // Filter by status
   let filteredSongs = statusFilter === "all"
-    ? mockCatalogueSongs
-    : mockCatalogueSongs.filter(song => song.status === statusFilter);
+    ? songs
+    : songs.filter(song => song.status === statusFilter);
 
   // Filter by search query
   if (searchQuery.trim()) {
     const query = searchQuery.toLowerCase();
     filteredSongs = filteredSongs.filter(song =>
       song.title.toLowerCase().includes(query) ||
-      song.artist.toLowerCase().includes(query) ||
       song.songwriters.some(w => w.toLowerCase().includes(query))
     );
   }
@@ -282,15 +323,22 @@ export default function RightsCataloguePage() {
   const handleDeleteSongs = async () => {
     setIsDeleting(true);
     try {
-      // TODO: Replace with actual Supabase delete when using real data
-      // await supabase.from('songs').delete().in('id', Array.from(selectedSongs));
+      // Soft delete by setting is_active to false
+      const { error } = await supabase
+        .from("songs")
+        .update({ is_active: false })
+        .in("id", Array.from(selectedSongs));
       
-      // For now, just simulate with mock data
-      console.log('Deleting songs:', Array.from(selectedSongs));
+      if (error) throw error;
+      
+      toast.success(`${selectedSongs.size} ${selectedSongs.size === 1 ? 'song' : 'songs'} deleted`);
       
       // Clear selection
       setSelectedSongs(new Set());
       setShowDeleteDialog(false);
+      
+      // Refresh the list
+      fetchSongs();
     } catch (error) {
       toast.error('Failed to delete songs');
     } finally {
