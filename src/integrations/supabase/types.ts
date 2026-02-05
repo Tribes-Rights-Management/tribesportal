@@ -3571,6 +3571,10 @@ export type Database = {
       can_manage_help: { Args: { _user_id: string }; Returns: boolean }
       can_manage_help_content: { Args: { _user_id: string }; Returns: boolean }
       check_escalations: { Args: never; Returns: number }
+      check_is_company_user: {
+        Args: { check_user_id: string }
+        Returns: boolean
+      }
       client_can_view_song: {
         Args: { p_client_account_id: string; p_song_id: string }
         Returns: boolean
