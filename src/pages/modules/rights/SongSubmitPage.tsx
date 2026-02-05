@@ -504,7 +504,7 @@ export default function SongSubmitPage() {
         {!submissionComplete && (
         <aside className="hidden md:flex w-64 shrink-0 border-r border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex-col p-6">
           <nav className="space-y-1">
-            {STEPS.map((s, index) => {
+            {STEPS.map((s) => {
               const isActive = step === s.id;
               const isComplete = isStepComplete(s.id);
               const canNavigate = canNavigateToStep(s.id);
@@ -515,21 +515,22 @@ export default function SongSubmitPage() {
                   onClick={() => goToStep(s.id as FlowStep)}
                   disabled={!canNavigate}
                   className={cn(
-                    "w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all",
-                    isActive && "bg-[var(--muted-wash)]",
-                    !isActive && canNavigate && "hover:bg-[var(--muted-wash)]/50",
+                    "w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors",
+                    isActive ? "bg-white shadow-sm" : "hover:bg-white/50",
                     !canNavigate && "opacity-50 cursor-not-allowed"
                   )}
                 >
                   {/* Step indicator */}
                   <div className={cn(
-                    "w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-medium transition-all",
-                    isComplete && !isActive && "bg-success text-success-foreground",
-                    isActive && "bg-[var(--btn-text)] text-white",
-                    !isComplete && !isActive && "border-2 border-[var(--border-subtle)] text-[var(--btn-text-muted)]"
+                    "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold shrink-0",
+                    isActive 
+                      ? "bg-[var(--btn-text)] text-white" 
+                      : isComplete
+                        ? "bg-success/20 text-success"
+                        : "bg-[var(--border-subtle)] text-[var(--btn-text-muted)]"
                   )}>
                     {isComplete && !isActive ? (
-                      <Check className="h-3.5 w-3.5" />
+                      <Check className="h-4 w-4" />
                     ) : (
                       s.id
                     )}
@@ -537,15 +538,13 @@ export default function SongSubmitPage() {
                   
                   {/* Step text */}
                   <div className="min-w-0">
-                    <div className={cn(
+                    <p className={cn(
                       "text-sm font-medium truncate",
                       isActive ? "text-[var(--btn-text)]" : "text-[var(--btn-text-muted)]"
                     )}>
                       {s.label}
-                    </div>
-                    <div className="text-xs text-[var(--btn-text-muted)] truncate">
-                      {s.description}
-                    </div>
+                    </p>
+                    <p className="text-xs text-[var(--btn-text-muted)] truncate">{s.description}</p>
                   </div>
                 </button>
               );
