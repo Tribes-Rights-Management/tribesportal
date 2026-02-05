@@ -182,6 +182,8 @@ export default function SongSubmitPage() {
   
   const [step, setStep] = useState<FlowStep>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionComplete, setSubmissionComplete] = useState(false);
+  const [submittedSongId, setSubmittedSongId] = useState<string | null>(null);
   const [writerSearchResults, setWriterSearchResults] = useState<Record<string, any[]>>({});
   const [parsedSections, setParsedSections] = useState<ParsedSection[]>([]);
   const [showParsedPreview, setShowParsedPreview] = useState(false);
@@ -379,16 +381,46 @@ export default function SongSubmitPage() {
         },
         is_active: false,
       };
-      const { error } = await supabase.from("songs").insert(songPayload as any);
+      const { data: insertedData, error } = await supabase.from("songs").insert(songPayload as any).select("id").single();
       
       if (error) throw error;
-      toast.success("Song submitted successfully");
-      navigate("/rights/catalogue");
+      setSubmittedSongId(insertedData?.id || null);
+      setSubmissionComplete(true);
     } catch (err: any) {
       toast.error(err.message || "Failed to submit");
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const resetForm = () => {
+    setSubmissionComplete(false);
+    setSubmittedSongId(null);
+    setStep(1);
+    setParsedSections([]);
+    setShowParsedPreview(false);
+    setData({
+      title: "",
+      hasAlternateTitle: null,
+      alternateTitle: "",
+      language: "English",
+      songType: "",
+      originalWorkTitle: "",
+      releaseStatus: null,
+      publicationYear: "",
+      creationYear: "",
+      writers: [{ id: crypto.randomUUID(), name: "", pro: "", ipi: "", split: 0, credit: "", controlled: false, fromDatabase: false }],
+      lyricsEntryMode: "paste",
+      lyricsFull: "",
+      lyricsSections: [],
+      lyricsConfirmed: false,
+      hasChordChart: null,
+      chordChartFile: null,
+      chordChartAcknowledged: false,
+      copyrightStatus: "",
+      wantsCopyrightFiling: null,
+      termsAccepted: false,
+    });
   };
 
   const totalSplit = data.writers.reduce((s, w) => s + w.split, 0);
@@ -468,7 +500,8 @@ export default function SongSubmitPage() {
       {/* Main Content with Side Stepper */}
       <div className="flex-1 flex overflow-hidden">
         
-        {/* Side Stepper - Hidden on mobile */}
+        {/* Side Stepper - Hidden on mobile and when submission complete */}
+        {!submissionComplete && (
         <aside className="hidden md:flex w-64 shrink-0 border-r border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex-col p-6">
           <nav className="space-y-1">
             {STEPS.map((s, index) => {
@@ -519,15 +552,151 @@ export default function SongSubmitPage() {
             })}
           </nav>
         </aside>
+        )}
 
-        {/* Mobile Progress Bar */}
+        {/* Mobile Progress Bar - Hidden when submission complete */}
+        {!submissionComplete && (
         <div className="md:hidden absolute top-14 left-0 right-0 h-1 bg-[var(--border-subtle)] z-10">
           <div className="h-full bg-[var(--btn-text)] transition-all" style={{ width: `${(step / 5) * 100}%` }} />
         </div>
+        )}
 
         {/* Form Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="flex-1 overflow-y-auto p-6 sm:p-8 md:pt-8">
+
+          {/* SUCCESS CONFIRMATION PAGE */}
+          {submissionComplete ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              {/* Success Banner */}
+              <div className="text-center py-8 space-y-3">
+                <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto">
+                  <Check className="h-8 w-8 text-success" />
+                </div>
+                <h2 className="text-xl font-semibold text-[var(--btn-text)]">Song Submitted Successfully</h2>
+                <p className="text-sm text-[var(--btn-text-muted)] max-w-md mx-auto">
+                  Your song has been submitted for review. We've emailed a confirmation to your primary email address. You can track the status of your submission in your catalogue.
+                </p>
+              </div>
+
+              {/* Song ID if available */}
+              {submittedSongId && (
+                <div className="bg-[var(--muted-wash)] rounded-xl px-4 py-3 text-center">
+                  <p className="text-xs text-[var(--btn-text-muted)]">Tribes Song ID</p>
+                  <p className="text-lg font-semibold text-[var(--btn-text)] tabular-nums">{submittedSongId}</p>
+                </div>
+              )}
+
+              {/* Full Review Receipt - Song Details */}
+              <div className="bg-white border border-[var(--border-subtle)] rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-[var(--border-subtle)]">
+                  <h3 className="text-sm font-semibold text-[var(--app-focus)]">Song Details</h3>
+                </div>
+                <div className="p-4 space-y-3">
+                  <div>
+                    <p className="text-xs font-semibold text-[var(--btn-text)]">Song Title</p>
+                    <p className="text-sm text-[var(--btn-text-muted)]">{data.title}</p>
+                  </div>
+                  {data.hasAlternateTitle && data.alternateTitle && (
+                    <div>
+                      <p className="text-xs font-semibold text-[var(--btn-text)]">Alternate Title</p>
+                      <p className="text-sm text-[var(--btn-text-muted)]">{data.alternateTitle}</p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-xs font-semibold text-[var(--btn-text)]">Song Type</p>
+                    <p className="text-sm text-[var(--btn-text-muted)]">{SONG_TYPES.find(t => t.value === data.songType)?.label || '—'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-[var(--btn-text)]">
+                      {data.releaseStatus === 'no' ? 'Creation Year' : 'Publication Year'}
+                    </p>
+                    <p className="text-sm text-[var(--btn-text-muted)]">
+                      {data.releaseStatus === 'no' ? data.creationYear : data.publicationYear}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-[var(--btn-text)]">Registered Songwriters</p>
+                    {data.writers.map((w) => (
+                      <p key={w.id} className="text-sm text-[var(--btn-text-muted)]">
+                        {w.name} ({w.credit === 'both' ? 'Wrote the lyrics, Composed the music' : w.credit === 'lyrics' ? 'Wrote the lyrics' : 'Composed the music'}) — {w.split}%
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Lyrics Receipt */}
+              <div className="bg-white border border-[var(--border-subtle)] rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-[var(--border-subtle)]">
+                  <h3 className="text-sm font-semibold text-[var(--app-focus)]">Lyrics</h3>
+                </div>
+                <div className="p-4 space-y-2">
+                  <div>
+                    <p className="text-xs font-semibold text-[var(--btn-text)]">Language</p>
+                    <p className="text-sm text-[var(--btn-text-muted)]">{data.language}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-[var(--btn-text)]">Lyric Sections</p>
+                    {data.lyricsSections && data.lyricsSections.length > 0 ? (
+                      <div className="mt-2 space-y-3">
+                        {data.lyricsSections.map((section, i) => (
+                          <div key={section.id || i}>
+                            <p className="text-sm font-medium text-[var(--btn-text-muted)] capitalize">{section.type}</p>
+                            <pre className="text-sm text-[var(--btn-text-muted)] whitespace-pre-wrap font-sans">{section.content}</pre>
+                          </div>
+                        ))}
+                      </div>
+                    ) : data.lyricsFull ? (
+                      <pre className="mt-2 text-sm text-[var(--btn-text-muted)] whitespace-pre-wrap font-sans">{data.lyricsFull}</pre>
+                    ) : (
+                      <p className="text-sm text-[var(--btn-text-muted)] italic">No lyrics entered</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Chords Receipt */}
+              <div className="bg-white border border-[var(--border-subtle)] rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-[var(--border-subtle)]">
+                  <h3 className="text-sm font-semibold text-[var(--app-focus)]">Chords</h3>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-[var(--btn-text-muted)]">
+                    {data.hasChordChart && data.chordChartFile ? data.chordChartFile.name : 'No Chords Entered'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Copyright Receipt */}
+              <div className="bg-white border border-[var(--border-subtle)] rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-[var(--border-subtle)]">
+                  <h3 className="text-sm font-semibold text-[var(--app-focus)]">Copyright</h3>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-[var(--btn-text-muted)]">
+                    {data.copyrightStatus === 'yes' ? 'Filed for copyright protection' : data.copyrightStatus === 'no' ? (data.wantsCopyrightFiling ? 'Not filed — Tribes to file on behalf' : 'Not filed') : 'Unknown'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-center gap-4 pt-4 pb-8">
+                <button 
+                  onClick={() => navigate('/rights/catalogue')}
+                  className="px-5 py-2.5 text-sm font-medium rounded-xl border border-[var(--border-subtle)] text-[var(--btn-text)] hover:bg-[var(--muted-wash)]"
+                >
+                  View Catalogue
+                </button>
+                <button 
+                  onClick={resetForm}
+                  className="px-5 py-2.5 text-sm font-medium rounded-xl bg-[var(--btn-text)] text-white hover:opacity-90"
+                >
+                  Register Another Song
+                </button>
+              </div>
+            </div>
+          ) : (
             <div className="max-w-2xl">
 
           {/* STEP 1: SONG DETAILS */}
@@ -1029,10 +1198,13 @@ export default function SongSubmitPage() {
             </div>
           )}
 
-        </div>
+            </div>
+          )}
+          </div>
       </div>
 
-      {/* Footer Actions */}
+      {/* Footer Actions - Hidden when submission complete */}
+      {!submissionComplete && (
       <div className="shrink-0 border-t border-[var(--border-subtle)] bg-[var(--topbar-bg)] p-4 sm:px-6">
         <div className="max-w-2xl flex items-center justify-between">
           <button onClick={goToPrevStep} className="px-5 py-2.5 text-sm font-medium rounded-lg text-[var(--btn-text)] hover:bg-[var(--muted-wash)]">Back</button>
@@ -1047,7 +1219,7 @@ export default function SongSubmitPage() {
           )}
         </div>
       </div>
-        </div>
+      )}
       </div>
     </div>
   );
