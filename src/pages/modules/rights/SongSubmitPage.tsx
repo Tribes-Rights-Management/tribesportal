@@ -1201,7 +1201,7 @@ export default function SongSubmitPage() {
           {/* Footer Actions - Hidden when submission complete */}
           {!submissionComplete && (
             <div className="shrink-0 border-t border-[var(--border-subtle)] bg-[var(--topbar-bg)] p-4 sm:px-6">
-              <div className="max-w-2xl flex items-center justify-between">
+              <div className="w-full flex items-center justify-between">
                 {step > 1 ? (
                   <button 
                     onClick={goToPrevStep} 
