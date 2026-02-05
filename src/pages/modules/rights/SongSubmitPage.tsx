@@ -386,6 +386,7 @@ export default function SongSubmitPage() {
       if (error) throw error;
       setSubmittedSongId(insertedData?.id || null);
       setSubmissionComplete(true);
+      window.scrollTo(0, 0);
     } catch (err: any) {
       toast.error(err.message || "Failed to submit");
     } finally {
