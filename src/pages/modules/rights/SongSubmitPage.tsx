@@ -515,37 +515,30 @@ export default function SongSubmitPage() {
                   onClick={() => goToStep(s.id as FlowStep)}
                   disabled={!canNavigate}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors",
-                    isActive ? "bg-white shadow-sm" : "hover:bg-white/50",
+                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all",
+                    isActive && "bg-[var(--muted-wash)]",
+                    !isActive && canNavigate && "hover:bg-[var(--muted-wash)]/50",
                     !canNavigate && "opacity-50 cursor-not-allowed"
                   )}
                 >
-                  {/* Step indicator */}
                   <div className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold shrink-0",
-                    isActive 
-                      ? "bg-[var(--btn-text)] text-white" 
-                      : isComplete
-                        ? "bg-success/20 text-success"
-                        : "bg-[var(--border-subtle)] text-[var(--btn-text-muted)]"
+                    "w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-semibold",
+                    isActive && "bg-[var(--btn-text)] text-white",
+                    isComplete && !isActive && "bg-success text-white",
+                    !isComplete && !isActive && "bg-[var(--border-subtle)] text-[var(--btn-text-muted)]"
                   )}>
                     {isComplete && !isActive ? (
-                      <Check className="h-4 w-4" />
+                      <Check className="h-3.5 w-3.5" />
                     ) : (
                       s.id
                     )}
                   </div>
-                  
-                  {/* Step text */}
-                  <div className="min-w-0">
-                    <p className={cn(
-                      "text-sm font-medium truncate",
-                      isActive ? "text-[var(--btn-text)]" : "text-[var(--btn-text-muted)]"
-                    )}>
-                      {s.label}
-                    </p>
-                    <p className="text-xs text-[var(--btn-text-muted)] truncate">{s.description}</p>
-                  </div>
+                  <span className={cn(
+                    "text-sm font-medium",
+                    isActive ? "text-[var(--btn-text)]" : "text-[var(--btn-text-muted)]"
+                  )}>
+                    {s.label}
+                  </span>
                 </button>
               );
             })}
