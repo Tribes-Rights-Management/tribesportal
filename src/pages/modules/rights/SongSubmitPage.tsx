@@ -515,7 +515,7 @@ export default function SongSubmitPage() {
                   onClick={() => goToStep(s.id as FlowStep)}
                   disabled={!canNavigate}
                   className={cn(
-                    "flex items-center gap-3 py-3 text-left transition-colors",
+                    "flex items-center justify-start gap-3 py-3 text-left transition-colors",
                     isActive && "bg-[var(--muted-wash)]",
                     !isActive && canNavigate && "hover:bg-[var(--muted-wash)]/50",
                     !canNavigate && "opacity-50 cursor-not-allowed"
