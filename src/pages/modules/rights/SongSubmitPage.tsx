@@ -1202,16 +1202,16 @@ export default function SongSubmitPage() {
           {!submissionComplete && (
             <div className="shrink-0 border-t border-[var(--border-subtle)] bg-[var(--topbar-bg)] p-4 sm:px-6">
               <div className="max-w-2xl flex items-center justify-between">
-                <button 
-                  onClick={goToPrevStep} 
-                  disabled={step === 1}
-                  className={cn(
-                    "px-5 py-2.5 text-sm font-medium rounded-lg text-[var(--btn-text)] hover:bg-[var(--muted-wash)]",
-                    step === 1 && "opacity-0 pointer-events-none"
-                  )}
-                >
-                  Back
-                </button>
+                {step > 1 ? (
+                  <button 
+                    onClick={goToPrevStep} 
+                    className="px-5 py-2.5 text-sm font-medium rounded-lg text-[var(--btn-text)] hover:bg-[var(--muted-wash)]"
+                  >
+                    Back
+                  </button>
+                ) : (
+                  <div />
+                )}
                 {step === 5 ? (
                   <button 
                     onClick={submit} 
