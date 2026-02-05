@@ -1203,13 +1203,30 @@ export default function SongSubmitPage() {
       {!submissionComplete && (
       <div className="shrink-0 border-t border-[var(--border-subtle)] bg-[var(--topbar-bg)] p-4 sm:px-6">
         <div className="max-w-2xl flex items-center justify-between">
-          <button onClick={goToPrevStep} className="px-5 py-2.5 text-sm font-medium rounded-lg text-[var(--btn-text)] hover:bg-[var(--muted-wash)]">Back</button>
+           <button 
+             onClick={goToPrevStep} 
+             disabled={step === 1}
+             className={cn(
+               "px-5 py-2.5 text-sm font-medium rounded-lg text-[var(--btn-text)] hover:bg-[var(--muted-wash)]",
+               step === 1 && "opacity-0 pointer-events-none"
+             )}
+           >
+             Back
+           </button>
           {step === 5 ? (
-            <button onClick={submit} disabled={!canAdvanceStep() || isSubmitting} className="px-6 py-2.5 text-sm font-medium rounded-lg bg-[var(--btn-text)] text-white hover:opacity-90 disabled:opacity-50 flex items-center gap-2">
-              {isSubmitting ? "Submitting..." : "Submit Song"} <Send className="h-4 w-4" />
+             <button 
+               onClick={submit} 
+               disabled={!canAdvanceStep() || isSubmitting} 
+               className="px-6 py-2.5 text-sm font-medium rounded-lg bg-[var(--btn-text)] text-white hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+             >
+               {isSubmitting ? 'Submitting...' : 'Submit Song'} <ChevronRight className="h-4 w-4" />
             </button>
           ) : (
-            <button onClick={goToNextStep} disabled={!canAdvanceStep()} className="px-6 py-2.5 text-sm font-medium rounded-lg bg-[var(--btn-text)] text-white hover:opacity-90 disabled:opacity-50 flex items-center gap-2">
+             <button 
+               onClick={goToNextStep} 
+               disabled={!canAdvanceStep()} 
+               className="px-6 py-2.5 text-sm font-medium rounded-lg bg-[var(--btn-text)] text-white hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+             >
               Continue <ChevronRight className="h-4 w-4" />
             </button>
           )}
