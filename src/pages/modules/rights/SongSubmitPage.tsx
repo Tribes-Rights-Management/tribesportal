@@ -515,18 +515,22 @@ export default function SongSubmitPage() {
                   onClick={() => goToStep(s.id as FlowStep)}
                   disabled={!canNavigate}
                   className={cn(
-                    "flex items-center gap-3 pl-6 pr-4 py-3 text-left transition-colors",
-                    isActive && "bg-[var(--muted-wash)] border-r-2 border-[var(--btn-text)]",
+                    "flex items-center gap-3 py-3 text-left transition-colors",
+                    isActive && "bg-[var(--muted-wash)]",
                     !isActive && canNavigate && "hover:bg-[var(--muted-wash)]/50",
                     !canNavigate && "opacity-50 cursor-not-allowed"
                   )}
+                  style={{ paddingLeft: '24px', paddingRight: '16px' }}
                 >
-                  <div className={cn(
-                    "w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-semibold",
+                  <div 
+                    className={cn(
+                    "rounded-full flex items-center justify-center text-xs font-semibold",
                     isActive && "bg-[var(--btn-text)] text-white",
                     isComplete && !isActive && "bg-success text-white",
                     !isComplete && !isActive && "bg-[var(--border-subtle)] text-[var(--btn-text-muted)]"
-                  )}>
+                    )}
+                    style={{ width: '28px', height: '28px', minWidth: '28px' }}
+                  >
                     {isComplete && !isActive ? (
                       <Check className="h-3.5 w-3.5" />
                     ) : (
