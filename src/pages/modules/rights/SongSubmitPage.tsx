@@ -387,6 +387,9 @@ export default function SongSubmitPage() {
       setSubmittedSongId(insertedData?.id || null);
       setSubmissionComplete(true);
       window.scrollTo(0, 0);
+       
+       // Fire and forget: send confirmation emails
+       sendConfirmationEmails(data.title, data.writers);
     } catch (err: any) {
       toast.error(err.message || "Failed to submit");
     } finally {
@@ -427,6 +430,58 @@ export default function SongSubmitPage() {
   const totalSplit = data.writers.reduce((s, w) => s + w.split, 0);
   const splitValid = Math.abs(totalSplit - 100) < 0.01;
 
+   // Fire and forget email sending
+   const sendConfirmationEmails = async (songTitle: string, writers: Writer[]) => {
+     try {
+       // Get current user's email
+       const { data: { user } } = await supabase.auth.getUser();
+       if (!user?.email) return;
+ 
+       // Get super_admin emails from company_users
+       const { data: adminUsers } = await supabase
+         .from("company_users")
+         .select("user_id")
+         .eq("role", "super_admin")
+         .is("deactivated_at", null);
+ 
+       const adminEmails: string[] = [];
+       if (adminUsers && adminUsers.length > 0) {
+         // Fetch emails from auth.users via RPC or user_profiles
+         const { data: profiles } = await supabase
+           .from("user_profiles")
+           .select("email")
+           .in("user_id", adminUsers.map(a => a.user_id));
+         
+         if (profiles) {
+           adminEmails.push(...profiles.map(p => p.email).filter(Boolean));
+         }
+       }
+ 
+       // Build recipient list (deduplicated)
+       const recipients = [...new Set([user.email, ...adminEmails])];
+       
+       // Build writer names separated by backslash
+       const writerNames = writers.map(w => w.name).join(" \\ ");
+       
+       const emailBody = `Congratulations! ${songTitle} by ${writerNames} has been successfully submitted to Tribes.
+ 
+ If you did not authorize or approve this change, please email our IP department at publishing@tribesassets.com.`;
+ 
+       // Fire and forget - don't await
+       supabase.functions.invoke("send-support-email", {
+         body: {
+           to: recipients,
+           subject: "Song Submission Confirmation",
+           body: emailBody,
+         },
+       }).catch((err) => {
+         console.error("Failed to send confirmation email:", err);
+       });
+     } catch (err) {
+       console.error("Error preparing confirmation email:", err);
+     }
+   };
+ 
   // ═══════════════════════════════════════════════════════════════════════════════
   // STEP DEFINITIONS
   // ═══════════════════════════════════════════════════════════════════════════════
@@ -575,14 +630,6 @@ export default function SongSubmitPage() {
                   Your song has been submitted for review. We've emailed a confirmation to your primary email address. You can track the status of your submission in your catalogue.
                 </p>
               </div>
-
-              {/* Song ID if available */}
-              {submittedSongId && (
-                <div className="bg-[var(--muted-wash)] rounded-xl px-4 py-3 text-center">
-                  <p className="text-xs text-[var(--btn-text-muted)]">Tribes Song ID</p>
-                  <p className="text-lg font-semibold text-[var(--btn-text)] tabular-nums">{submittedSongId}</p>
-                </div>
-              )}
 
               {/* Full Review Receipt - Song Details */}
               <div className="bg-white border border-[var(--border-subtle)] rounded-xl overflow-hidden">
