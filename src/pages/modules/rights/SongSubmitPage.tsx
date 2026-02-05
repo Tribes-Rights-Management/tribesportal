@@ -1003,23 +1003,6 @@ export default function SongSubmitPage() {
                       </div>
                     ))}
                   </div>
-                  
-                  <div className="flex gap-3">
-                    <button 
-                      type="button"
-                      onClick={() => setShowParsedPreview(false)}
-                      className="px-4 py-2 text-sm text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]"
-                    >
-                      Back to Edit
-                    </button>
-                    <button 
-                      type="button"
-                      onClick={confirmParsedSections}
-                      className="px-6 py-2 bg-[var(--btn-bg)] text-white text-sm font-medium rounded-xl hover:opacity-90"
-                    >
-                      Confirm & Continue
-                    </button>
-                  </div>
                 </div>
               )}
               
