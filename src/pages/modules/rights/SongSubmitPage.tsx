@@ -502,8 +502,8 @@ export default function SongSubmitPage() {
         
         {/* Side Stepper - Hidden on mobile and when submission complete */}
         {!submissionComplete && (
-        <aside className="hidden md:flex w-64 shrink-0 border-r border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex-col p-6">
-          <nav className="space-y-1">
+        <aside className="hidden md:flex w-64 shrink-0 border-r border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex-col pt-6 pl-6 pr-6">
+          <nav className="space-y-1 flex flex-col items-start">
             {STEPS.map((s) => {
               const isActive = step === s.id;
               const isComplete = isStepComplete(s.id);
@@ -515,7 +515,7 @@ export default function SongSubmitPage() {
                   onClick={() => goToStep(s.id as FlowStep)}
                   disabled={!canNavigate}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all",
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all w-full",
                     isActive && "bg-[var(--muted-wash)]",
                     !isActive && canNavigate && "hover:bg-[var(--muted-wash)]/50",
                     !canNavigate && "opacity-50 cursor-not-allowed"
