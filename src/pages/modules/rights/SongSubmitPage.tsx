@@ -1106,9 +1106,9 @@ export default function SongSubmitPage() {
                   <label className="text-sm font-medium text-[var(--btn-text)]">Upload chord chart</label>
                   <div className="border-2 border-dashed border-[var(--border-subtle)] rounded-xl p-8 text-center">
                     <Upload className="h-10 w-10 mx-auto mb-3 text-[var(--btn-text-muted)]" />
-                    <input type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" onChange={(e) => setData(prev => ({ ...prev, chordChartFile: e.target.files?.[0] || null }))} className="hidden" id="chord-upload" />
+                    <input type="file" accept=".pdf,.doc,.docx" onChange={(e) => setData(prev => ({ ...prev, chordChartFile: e.target.files?.[0] || null }))} className="hidden" id="chord-upload" />
                     <label htmlFor="chord-upload" className="text-sm text-[var(--btn-text)] cursor-pointer hover:underline">Click to upload</label>
-                    <p className="text-xs text-[var(--btn-text-muted)] mt-2">PDF, DOC, DOCX, PNG, or JPG</p>
+                    <p className="text-xs text-[var(--btn-text-muted)] mt-2">PDF, DOC, or DOCX</p>
                   </div>
                   {data.chordChartFile && <p className="text-sm text-success">✓ {data.chordChartFile.name}</p>}
                 </div>
