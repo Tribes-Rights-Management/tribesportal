@@ -389,7 +389,7 @@ export default function SongSubmitPage() {
       window.scrollTo(0, 0);
        
        // Fire and forget: send confirmation emails
-       sendConfirmationEmails(data.title, data.writers);
+       sendConfirmationEmails(data);
     } catch (err: any) {
       toast.error(err.message || "Failed to submit");
     } finally {
@@ -430,8 +430,8 @@ export default function SongSubmitPage() {
   const totalSplit = data.writers.reduce((s, w) => s + w.split, 0);
   const splitValid = Math.abs(totalSplit - 100) < 0.01;
 
-   // Fire and forget email sending
-   const sendConfirmationEmails = async (songTitle: string, writers: Writer[]) => {
+   // Fire and forget email sending - pass full song data for detailed email
+   const sendConfirmationEmails = async (songData: SongData) => {
      try {
        // Get current user's email
        const { data: { user } } = await supabase.auth.getUser();
@@ -461,11 +461,58 @@ export default function SongSubmitPage() {
        const recipients = [...new Set([user.email, ...adminEmails])];
        
        // Build writer names separated by backslash
-       const writerNames = writers.map(w => w.name).join(" \\ ");
+       const writerNames = songData.writers.map(w => w.name).join(" \\ ");
        
-       const emailBody = `Congratulations! ${songTitle} by ${writerNames} has been successfully submitted to Tribes.
+       // Get song type label
+       const songTypeLabel = SONG_TYPES.find(t => t.value === songData.songType)?.label || songData.songType;
+       
+       // Get year
+       const year = songData.releaseStatus === "no" ? songData.creationYear : songData.publicationYear;
+       
+       // Build writers section
+       const writersSection = songData.writers.map(w => {
+         const creditLabel = w.credit === "both" 
+           ? "Wrote the words, Composed the music" 
+           : w.credit === "lyrics" 
+             ? "Wrote the words" 
+             : "Composed the music";
+         return `${w.name} — ${creditLabel} — ${w.split}% — ${w.pro}`;
+       }).join("\n");
+       
+       // Build lyrics text
+       const lyricsText = songData.lyricsEntryMode === "paste" 
+         ? songData.lyricsFull 
+         : songData.lyricsSections.map(s => `[${s.type?.toUpperCase()}]\n${s.content}`).join("\n\n");
+       
+       // Chord chart status
+       const chordChartStatus = songData.hasChordChart ? "Yes" : "No";
+       
+       // Copyright status
+       const copyrightStatus = songData.copyrightStatus === "yes" 
+         ? "Yes" 
+         : songData.copyrightStatus === "no" 
+           ? "No" 
+           : "I Don't Know";
+       
+       const emailBody = `Congratulations! ${songData.title} by ${writerNames} has been successfully submitted to Tribes.
  
- If you did not authorize or approve this change, please email our IP department at publishing@tribesassets.com.`;
+ If you did not authorize or approve this change, please email our IP department at publishing@tribesassets.com.
+ 
+ Song Details
+ 
+ Song Title: ${songData.title}
+ Song Type: ${songTypeLabel}
+ Language: ${songData.language}
+ Publication Year: ${year || "Not specified"}
+ 
+ Songwriters:
+ ${writersSection}
+ 
+ Lyrics:
+ ${lyricsText || "(No lyrics)"}
+ 
+ Chord Chart: ${chordChartStatus}
+ Copyright Filed: ${copyrightStatus}`;
  
        // Fire and forget - don't await
        supabase.functions.invoke("send-support-email", {
