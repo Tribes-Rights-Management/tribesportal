@@ -435,7 +435,7 @@ export default function SongSubmitPage() {
     { id: 2, label: "Lyrics", description: "Song lyrics or instrumental" },
     { id: 3, label: "Chords", description: "Chord chart upload" },
     { id: 4, label: "Copyright", description: "Protection status" },
-    { id: 5, label: "Agreement", description: "Terms and submit" },
+    { id: 5, label: "Review", description: "Review and submit" },
   ];
 
   const isStepComplete = (stepId: number): boolean => {
@@ -1157,23 +1157,156 @@ export default function SongSubmitPage() {
 
           {/* STEP 5: AGREEMENT */}
           {step === 5 && (
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-xl font-semibold text-[var(--btn-text)] mb-1">Agreement</h2>
-                <p className="text-sm text-[var(--btn-text-muted)]">Review and accept the terms</p>
-              </div>
-              <div className="p-6 bg-[var(--muted-wash)] rounded-2xl space-y-4">
-                <div className="flex items-center gap-2 text-sm font-medium text-[var(--btn-text)]">
-                  <Check className="h-4 w-4 text-success" /> Ready to submit
+            <div className="space-y-6">
+              {/* Song Details */}
+              <div className="bg-white border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-3 bg-[var(--muted-wash)] border-b border-[var(--border-subtle)]">
+                  <h3 className="text-sm font-semibold text-[var(--btn-text)]">Song Details</h3>
+                  <button onClick={() => goToStep(1)} className="text-xs text-[var(--app-focus)] hover:underline">Edit</button>
                 </div>
-                <p className="text-sm text-[var(--btn-text-muted)]">Your song "{data.title}" with {data.writers.length} writer{data.writers.length !== 1 ? "s" : ""} is ready for review.</p>
+                <div className="px-5 py-4 space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[var(--btn-text-muted)]">Title</span>
+                    <span className="text-[var(--btn-text)] font-medium">{data.title}</span>
+                  </div>
+                  {data.alternateTitle && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-[var(--btn-text-muted)]">Alternate Title</span>
+                      <span className="text-[var(--btn-text)] font-medium">{data.alternateTitle}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[var(--btn-text-muted)]">Language</span>
+                    <span className="text-[var(--btn-text)] font-medium">{data.language || "Not specified"}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[var(--btn-text-muted)]">Song Type</span>
+                    <span className="text-[var(--btn-text)] font-medium capitalize">{data.songType.replace("_", " ") || "Not specified"}</span>
+                  </div>
+                  {data.publicationYear && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-[var(--btn-text-muted)]">First Publication Year</span>
+                      <span className="text-[var(--btn-text)] font-medium">{data.publicationYear}</span>
+                    </div>
+                  )}
+                  {data.creationYear && !data.publicationYear && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-[var(--btn-text-muted)]">Creation Year</span>
+                      <span className="text-[var(--btn-text)] font-medium">{data.creationYear}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[var(--btn-text-muted)]">Released/Recorded</span>
+                    <span className="text-[var(--btn-text)] font-medium capitalize">{data.releaseStatus === "yes" ? "Yes" : data.releaseStatus === "no" ? "No" : data.releaseStatus === "youtube_only" ? "YouTube Only" : "Not specified"}</span>
+                  </div>
+                </div>
               </div>
-              <label className="flex items-start gap-3 p-4 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl cursor-pointer">
-                <input type="checkbox" checked={data.termsAccepted} onChange={(e) => setData(prev => ({ ...prev, termsAccepted: e.target.checked }))} className="w-5 h-5 mt-0.5 rounded border-2" />
-                <span className="text-sm text-[var(--btn-text)]">
-                  I agree to the <a href="https://tribesrightsmanagement.com" target="_blank" rel="noopener noreferrer" className="underline text-[var(--app-focus)]">Tribes Rights Management LLC Terms & Conditions</a>
-                </span>
-              </label>
+
+              {/* Writers */}
+              <div className="bg-white border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-3 bg-[var(--muted-wash)] border-b border-[var(--border-subtle)]">
+                  <h3 className="text-sm font-semibold text-[var(--btn-text)]">Writers</h3>
+                  <button onClick={() => goToStep(1)} className="text-xs text-[var(--app-focus)] hover:underline">Edit</button>
+                </div>
+                <div className="px-5 py-4 space-y-3">
+                  {data.writers.map((w) => (
+                    <div key={w.id} className="flex justify-between text-sm">
+                      <span className="text-[var(--btn-text)] font-medium">{w.name}</span>
+                      <span className="text-[var(--btn-text-muted)]">
+                        {w.pro} · {w.split}% · {w.credit === "both" ? "Lyrics & Music" : w.credit === "lyrics" ? "Lyrics" : w.credit === "music" ? "Music" : "—"}
+                      </span>
+                    </div>
+                  ))}
+                  <div className="flex justify-between text-sm border-t border-[var(--border-subtle)] pt-3">
+                    <span className="text-[var(--btn-text-muted)]">Total Split</span>
+                    <span className={cn("font-semibold", data.writers.reduce((sum, w) => sum + w.split, 0) === 100 ? "text-success" : "text-warning")}>
+                      {data.writers.reduce((sum, w) => sum + w.split, 0)}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lyrics */}
+              <div className="bg-white border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-3 bg-[var(--muted-wash)] border-b border-[var(--border-subtle)]">
+                  <h3 className="text-sm font-semibold text-[var(--btn-text)]">Lyrics</h3>
+                  <button onClick={() => goToStep(2)} className="text-xs text-[var(--app-focus)] hover:underline">Edit</button>
+                </div>
+                <div className="px-5 py-4">
+                  {data.songType === "instrumental" ? (
+                    <p className="text-sm text-[var(--btn-text-muted)] italic">Instrumental (no lyrics)</p>
+                  ) : data.lyricsFull ? (
+                    <pre className="text-sm text-[var(--btn-text)] whitespace-pre-wrap font-sans">{data.lyricsFull.substring(0, 500)}{data.lyricsFull.length > 500 ? '...' : ''}</pre>
+                  ) : data.lyricsSections.length > 0 ? (
+                    <div className="space-y-2">
+                      {data.lyricsSections.slice(0, 3).map((section) => (
+                        <div key={section.id}>
+                          <span className="text-xs font-semibold text-[var(--btn-text-muted)] uppercase">{section.type || "Section"}</span>
+                          <p className="text-sm text-[var(--btn-text)]">{section.content.substring(0, 100)}{section.content.length > 100 ? '...' : ''}</p>
+                        </div>
+                      ))}
+                      {data.lyricsSections.length > 3 && (
+                        <p className="text-xs text-[var(--btn-text-muted)]">+ {data.lyricsSections.length - 3} more sections</p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-[var(--btn-text-muted)] italic">No lyrics provided</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Chords */}
+              <div className="bg-white border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-3 bg-[var(--muted-wash)] border-b border-[var(--border-subtle)]">
+                  <h3 className="text-sm font-semibold text-[var(--btn-text)]">Chords</h3>
+                  <button onClick={() => goToStep(3)} className="text-xs text-[var(--app-focus)] hover:underline">Edit</button>
+                </div>
+                <div className="px-5 py-4">
+                  {data.chordChartFile ? (
+                    <p className="text-sm text-[var(--btn-text)]">Chord chart uploaded: {data.chordChartFile.name}</p>
+                  ) : data.hasChordChart === false ? (
+                    <p className="text-sm text-[var(--btn-text-muted)] italic">No chord chart (acknowledged)</p>
+                  ) : (
+                    <p className="text-sm text-[var(--btn-text-muted)] italic">No chords provided</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Copyright */}
+              <div className="bg-white border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-3 bg-[var(--muted-wash)] border-b border-[var(--border-subtle)]">
+                  <h3 className="text-sm font-semibold text-[var(--btn-text)]">Copyright</h3>
+                  <button onClick={() => goToStep(4)} className="text-xs text-[var(--app-focus)] hover:underline">Edit</button>
+                </div>
+                <div className="px-5 py-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[var(--btn-text-muted)]">Copyright Registered</span>
+                    <span className="text-[var(--btn-text)] font-medium capitalize">{data.copyrightStatus === "yes" ? "Yes" : data.copyrightStatus === "no" ? "No" : data.copyrightStatus === "unknown" ? "Unknown" : "Not specified"}</span>
+                  </div>
+                  {data.copyrightStatus === "no" && data.wantsCopyrightFiling !== null && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-[var(--btn-text-muted)]">Copyright Filing Requested</span>
+                      <span className="text-[var(--btn-text)] font-medium">{data.wantsCopyrightFiling ? "Yes" : "No"}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Agreement */}
+              <div className="bg-white border border-[var(--border-subtle)] rounded-lg p-5">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={data.termsAccepted} 
+                    onChange={(e) => setData(prev => ({ ...prev, termsAccepted: e.target.checked }))} 
+                    className="w-[18px] h-[18px] mt-0.5 rounded-none" 
+                    style={{ boxShadow: 'inset 0 0 0 1.5px #888', border: 'none' }}
+                  />
+                  <span className="text-sm text-[var(--btn-text)]">
+                    I agree to the <a href="https://tribesrightsmanagement.com" target="_blank" rel="noopener noreferrer" className="text-[var(--app-focus)] hover:underline">Tribes Rights Management LLC Terms & Conditions</a>
+                  </span>
+                </label>
+              </div>
             </div>
           )}
 
