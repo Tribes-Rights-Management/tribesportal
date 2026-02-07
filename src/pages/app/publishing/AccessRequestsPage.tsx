@@ -122,7 +122,7 @@ export default function AccessRequestsPage() {
   return (
     <div className="w-full max-w-[1000px]">
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-xl sm:text-[24px] font-medium text-foreground tracking-[-0.02em]">Access Requests</h1>
+        <h1 className="page-title">Access Requests</h1>
         <p className="mt-2 text-[14px] text-muted-foreground">
           Review and approve pending access requests for {activeTenant.tenant_name}.
         </p>

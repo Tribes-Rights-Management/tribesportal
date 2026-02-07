@@ -377,12 +377,7 @@ export default function PermissionsPage() {
               <ArrowLeft className="h-4 w-4" />
             </Link>
             <div>
-              <h1 
-                className="text-[28px] font-semibold tracking-[-0.02em]"
-                style={{ color: 'var(--platform-text)' }}
-              >
-                Authority Record
-              </h1>
+              <h1 className="page-title">Authority Record</h1>
               <p 
                 className="text-[15px] mt-0.5"
                 style={{ color: 'var(--platform-text-secondary)' }}

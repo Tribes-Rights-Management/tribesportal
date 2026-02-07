@@ -103,7 +103,7 @@ export default function RLSAuditPage() {
             Back
           </Link>
           <div>
-            <h1 className="text-lg sm:text-xl font-medium flex items-center gap-2">
+            <h1 className="page-title flex items-center gap-2">
               <Shield className="h-5 w-5" />
               RLS Coverage Audit
             </h1>

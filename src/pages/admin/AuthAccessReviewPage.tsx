@@ -557,9 +557,7 @@ export default function SecurityVerificationPage() {
             </button>
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 flex-shrink-0" style={{ color: 'var(--platform-text-muted)' }} />
-              <h1 className="text-[20px] font-semibold" style={{ color: 'var(--platform-text)' }}>
-                Security Verification
-              </h1>
+              <h1 className="page-title">Security Verification</h1>
             </div>
           </div>
           <p className="text-[13px] mt-1 ml-14" style={{ color: 'var(--platform-text-muted)' }}>

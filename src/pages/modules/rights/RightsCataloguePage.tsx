@@ -354,7 +354,7 @@ export default function RightsCataloguePage() {
     <AppPageContainer maxWidth="xl">
       {/* Header Row: Title + Action */}
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-lg font-semibold tracking-tight">Catalogue</h1>
+        <h1 className="page-title">Catalogue</h1>
         <AppButton
           intent="secondary"
           size="sm"

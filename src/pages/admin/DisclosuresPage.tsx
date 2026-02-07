@@ -312,12 +312,7 @@ export default function DisclosuresPage() {
     <PlatformLayout maxWidth="wide" elevated>
       {/* Header */}
       <div className="mb-8">
-        <h1 
-          className="text-[18px] font-medium mb-1"
-          style={{ color: 'hsl(var(--platform-text))' }}
-        >
-          Regulatory Disclosures
-        </h1>
+        <h1 className="page-title mb-1">Regulatory Disclosures</h1>
         <p 
           className="text-[14px]"
           style={{ color: 'hsl(var(--platform-text-muted))' }}

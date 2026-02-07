@@ -215,7 +215,7 @@ export default function TribesAdminCataloguePage() {
     <AppPageContainer maxWidth="xl">
       {/* Header Row: Title */}
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-lg font-semibold tracking-tight">My Catalogue</h1>
+        <h1 className="page-title">My Catalogue</h1>
       </div>
 
       <AppSection spacing="none">
