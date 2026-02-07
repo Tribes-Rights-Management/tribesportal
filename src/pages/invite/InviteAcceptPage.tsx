@@ -39,35 +39,16 @@ export default function InviteAcceptPage() {
       const { data, error: fetchError } = await supabase
         .from("invitations")
         .select(`
-          id,
-          org_role,
-          grant_admin_module,
-          grant_licensing_module,
-          invited_email,
-          expires_at,
-          status,
+          id, org_role, grant_admin_module, grant_licensing_module,
+          invited_email, expires_at, status,
           tenants:organization_id (name)
         `)
         .eq("token", token)
         .single();
 
-      if (fetchError || !data) {
-        setError("Invalid or expired invitation");
-        setLoading(false);
-        return;
-      }
-
-      if (data.status !== "pending") {
-        setError(`This invitation has already been ${data.status}`);
-        setLoading(false);
-        return;
-      }
-
-      if (new Date(data.expires_at) < new Date()) {
-        setError("This invitation has expired");
-        setLoading(false);
-        return;
-      }
+      if (fetchError || !data) { setError("Invalid or expired invitation"); setLoading(false); return; }
+      if (data.status !== "pending") { setError(`This invitation has already been ${data.status}`); setLoading(false); return; }
+      if (new Date(data.expires_at) < new Date()) { setError("This invitation has expired"); setLoading(false); return; }
 
       setInvitation({
         id: data.id,
@@ -87,33 +68,19 @@ export default function InviteAcceptPage() {
 
   const handleAccept = async () => {
     if (!token || !user) return;
-
     setAccepting(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("Not authenticated");
-
-      const response = await supabase.functions.invoke("accept-invite", {
-        body: { token },
-      });
-
+      const response = await supabase.functions.invoke("accept-invite", { body: { token } });
       if (response.error) throw response.error;
       if (!response.data?.success) throw new Error(response.data?.error || "Failed to accept");
-
-      toast({
-        title: "Invitation accepted",
-        description: `You now have access to ${invitation?.organization_name}`,
-      });
-
+      toast({ title: "Invitation accepted", description: `You now have access to ${invitation?.organization_name}` });
       await refreshProfile();
       navigate("/workspaces");
     } catch (err: any) {
       console.error("Accept error:", err);
-      toast({
-        title: "Failed to accept invitation",
-        description: err.message || "An error occurred",
-        variant: "destructive",
-      });
+      toast({ title: "Failed to accept invitation", description: err.message || "An error occurred", variant: "destructive" });
     } finally {
       setAccepting(false);
     }
@@ -129,18 +96,13 @@ export default function InviteAcceptPage() {
     }
   };
 
-  // Not logged in - redirect to sign in
   if (!user && !loading) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: 'var(--app-bg)' }}>
         <div className="max-w-md w-full text-center">
           <h1 className="text-[24px] font-semibold mb-4">Sign in required</h1>
-          <p className="text-muted-foreground mb-6">
-            Please sign in to accept this invitation.
-          </p>
-          <AppButton onClick={() => navigate(`/auth/sign-in?returnTo=/invite/accept?token=${token}`)}>
-            Sign in
-          </AppButton>
+          <p className="text-muted-foreground mb-6">Please sign in to accept this invitation.</p>
+          <AppButton onClick={() => navigate(`/auth/sign-in?returnTo=/invite/accept?token=${token}`)}>Sign in</AppButton>
         </div>
       </div>
     );
@@ -161,30 +123,21 @@ export default function InviteAcceptPage() {
           <XCircle className="h-5 w-5 text-destructive mx-auto mb-4" strokeWidth={1.25} />
           <h1 className="text-[24px] font-semibold mb-2">Invalid invitation</h1>
           <p className="text-muted-foreground mb-6">{error}</p>
-          <AppButton variant="outline" onClick={() => navigate("/workspaces")}>
-            Go to workspaces
-          </AppButton>
+          <AppButton variant="secondary" onClick={() => navigate("/workspaces")}>Go to workspaces</AppButton>
         </div>
       </div>
     );
   }
 
-  // Email mismatch check
   if (invitation && user?.email?.toLowerCase() !== invitation.invited_email.toLowerCase()) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: 'var(--app-bg)' }}>
         <div className="max-w-md w-full text-center">
           <XCircle className="h-5 w-5 text-amber-500 mx-auto mb-4" strokeWidth={1.25} />
           <h1 className="text-[24px] font-semibold mb-2">Wrong account</h1>
-          <p className="text-muted-foreground mb-2">
-            This invitation was sent to <strong>{invitation.invited_email}</strong>
-          </p>
-          <p className="text-muted-foreground mb-6">
-            You're signed in as <strong>{user?.email}</strong>
-          </p>
-          <AppButton variant="outline" onClick={() => navigate("/auth/sign-in")}>
-            Sign in with different account
-          </AppButton>
+          <p className="text-muted-foreground mb-2">This invitation was sent to <strong>{invitation.invited_email}</strong></p>
+          <p className="text-muted-foreground mb-6">You're signed in as <strong>{user?.email}</strong></p>
+          <AppButton variant="secondary" onClick={() => navigate("/auth/sign-in")}>Sign in with different account</AppButton>
         </div>
       </div>
     );
@@ -195,34 +148,25 @@ export default function InviteAcceptPage() {
       <div className="max-w-md w-full">
         <div className="bg-card rounded-xl border border-border p-6">
           <CheckCircle className="h-5 w-5 text-emerald-500 mx-auto mb-4" strokeWidth={1.25} />
-          <h1 className="text-[22px] font-semibold text-center mb-2">
-            You're invited
-          </h1>
-          <p className="text-center text-muted-foreground mb-6">
-            Join <strong>{invitation?.organization_name}</strong>
-          </p>
+          <h1 className="text-[22px] font-semibold text-center mb-2">You're invited</h1>
+          <p className="text-center text-muted-foreground mb-6">Join <strong>{invitation?.organization_name}</strong></p>
 
           <div className="space-y-3 mb-6">
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-muted-foreground">Role</span>
-              <AppChip>{getRoleLabel(invitation?.org_role || "")}</AppChip>
+              <AppChip status="pending" label={getRoleLabel(invitation?.org_role || "")} />
             </div>
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-muted-foreground">Access</span>
               <div className="flex gap-1">
-                {invitation?.grant_admin_module && (
-                  <AppChip variant="outline"><Shield className="h-3 w-3 mr-1" />Admin</AppChip>
-                )}
-                {invitation?.grant_licensing_module && (
-                  <AppChip variant="outline"><FileText className="h-3 w-3 mr-1" />Licensing</AppChip>
-                )}
+                {invitation?.grant_admin_module && <AppChip status="pass" label="Admin" />}
+                {invitation?.grant_licensing_module && <AppChip status="pass" label="Licensing" />}
               </div>
             </div>
           </div>
 
-          <AppButton className="w-full" onClick={handleAccept} disabled={accepting}>
-            {accepting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            {accepting ? "Accepting…" : "Accept invitation"}
+          <AppButton className="w-full" onClick={handleAccept} disabled={accepting} loading={accepting} loadingText="Accepting…">
+            Accept invitation
           </AppButton>
         </div>
       </div>

@@ -41,22 +41,16 @@ export default function NoAccessPage() {
       {/* Actions */}
       <div className="mt-10 space-y-3">
         <AppButton
-          variant="default"
+          variant="primary"
           size="lg"
           className="w-full h-[48px]"
-          asChild
+          onClick={() => window.open("https://tribesassets.com/request-access", "_blank")}
         >
-          <a
-            href="https://tribesassets.com/request-access"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Request access
-          </a>
+          Request access
         </AppButton>
 
         <AppButton
-          variant="link"
+          variant="tertiary"
           onClick={signOut}
           className="w-full text-[13px]"
         >

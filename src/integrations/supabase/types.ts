@@ -2816,6 +2816,47 @@ export type Database = {
           },
         ]
       }
+      song_queue_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_internal: boolean | null
+          message: string
+          queue_id: string
+          sender_id: string
+          sender_role: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_internal?: boolean | null
+          message: string
+          queue_id: string
+          sender_id: string
+          sender_role: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_internal?: boolean | null
+          message?: string
+          queue_id?: string
+          sender_id?: string
+          sender_role?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_queue_messages_queue_id_fkey"
+            columns: ["queue_id"]
+            isOneToOne: false
+            referencedRelation: "song_queue"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       song_versions: {
         Row: {
           alternate_titles: string[] | null
@@ -3881,7 +3922,13 @@ export type Database = {
         | "requested_by_customer"
         | "service_not_provided"
         | "other"
-      song_queue_status: "pending" | "needs_revision" | "approved" | "rejected"
+      song_queue_status:
+        | "submitted"
+        | "pending"
+        | "in_review"
+        | "needs_revision"
+        | "approved"
+        | "rejected"
       ui_density_mode: "comfortable" | "compact"
     }
     CompositeTypes: {
@@ -4114,7 +4161,14 @@ export const Constants = {
         "service_not_provided",
         "other",
       ],
-      song_queue_status: ["pending", "needs_revision", "approved", "rejected"],
+      song_queue_status: [
+        "submitted",
+        "pending",
+        "in_review",
+        "needs_revision",
+        "approved",
+        "rejected",
+      ],
       ui_density_mode: ["comfortable", "compact"],
     },
   },
