@@ -61,11 +61,12 @@ Components must be created or fixed in `src/components/app-ui/` first, then cons
 
 | Context | Component Source | When to Use |
 |---------|-----------------|-------------|
-| Console (`/console/*`) | `@/components/admin` + `@/components/console` | AdminListRow, AdminMetricRow, AdminSection, ConsoleButton |
+| Console (`/console/*`) | `@/components/console` + `@/components/admin` + `@/components/ui/*` | ConsoleButton, ConsoleChip, ConsoleCard, AdminSection, InviteUserModal. Raw `ui/table`, `ui/select`, `ui/dialog` are acceptable here. |
 | Help Workstation (`/help/*`) | `@/components/app-ui` | All app-ui components |
 | Rights/Licensing modules | `@/components/app-ui` | All app-ui components |
 | Client Portal (`/app/*`) | `@/components/app-ui` | All app-ui components |
 | Account settings | `@/components/app-ui` | All app-ui components |
+| Auditor (`/auditor/*`) | `@/components/ui/*` + PlatformLayout | Read-only governance views. Raw `ui/table` acceptable. |
 
 ### Prohibited Patterns (NEVER do these)
 
@@ -270,7 +271,7 @@ CREATE POLICY "Tenant members can view"
 
 ## Known Technical Debt
 
-1. **Design system adoption at 43%** — 50 of 88 pages don't import from app-ui. See Phase 4 migration list.
+1. **Design system adoption at 97%** — 57 of 59 non-Console pages pass lint. 2 remaining: `InviteAcceptPage` (auth-context card) and `SongSubmitPage` (complex form with many `<div>` panels). Console/Auditor pages (28 pages) follow their own component architecture.
 2. **Legacy schema tables** — `articles`, `categories`, `messages`, `searches`, `widget_settings`, `chat_conversations`, `chat_messages` are from the help widget era. See `docs/SCHEMA_CANON.md`.
 3. **19 stub pages** — Placeholder pages with < 2KB of code. Need MVP scope decision.
 4. **Dual export systems** — Both `disclosure_exports` and `data_room_exports` exist with overlapping purpose.
