@@ -68,7 +68,6 @@ export default function HelpSettingsPage() {
     <AppPageLayout
       title="Settings"
       backLink={{ to: "/help", label: "Overview" }}
-      maxWidth="lg"
     >
 
       {/* Public Help Center */}

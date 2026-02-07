@@ -234,7 +234,6 @@ export default function HelpAudiencesPage() {
     <AppPageLayout
       title="Audiences"
       backLink={{ to: "/help", label: "Overview" }}
-      maxWidth="lg"
       action={
         <AppButton intent="primary" size="sm" onClick={handleCreate}>
           <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
