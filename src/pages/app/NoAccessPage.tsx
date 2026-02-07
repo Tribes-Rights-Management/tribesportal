@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { SYSTEM_COPY } from "@/styles/tokens";
-import { Button } from "@/components/ui/button";
+import { AppButton } from "@/components/app-ui";
 
 /**
  * NoAccessPage - System boundary for accounts with no access record
@@ -40,7 +40,7 @@ export default function NoAccessPage() {
 
       {/* Actions */}
       <div className="mt-10 space-y-3">
-        <Button
+        <AppButton
           variant="default"
           size="lg"
           className="w-full h-[48px]"
@@ -53,15 +53,15 @@ export default function NoAccessPage() {
           >
             Request access
           </a>
-        </Button>
+        </AppButton>
 
-        <Button
+        <AppButton
           variant="link"
           onClick={signOut}
           className="w-full text-[13px]"
         >
           Sign out
-        </Button>
+        </AppButton>
       </div>
 
       {/* Contact */}

@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { SYSTEM_COPY } from "@/styles/tokens";
-import { Button } from "@/components/ui/button";
+import { AppButton } from "@/components/app-ui";
 
 /**
  * PendingApprovalPage - System boundary for pending approval
@@ -46,13 +46,13 @@ export default function PendingApprovalPage() {
 
       {/* Action - using Button component */}
       <div className="mt-10">
-        <Button
+        <AppButton
           onClick={signOut}
           variant="outline"
           className="w-full h-[48px]"
         >
           Sign out
-        </Button>
+        </AppButton>
       </div>
 
       {/* Contact */}
