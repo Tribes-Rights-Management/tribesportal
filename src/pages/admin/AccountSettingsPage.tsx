@@ -1,7 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppDetailRow,
   AppSettingsCard,
   AppSettingsFooter,
@@ -29,13 +28,11 @@ export default function AccountSettingsPage() {
     : 'User';
 
   return (
-    <AppPageContainer maxWidth="sm">
-      <AppPageHeader
-        backLink={{ to: "/admin", label: "Back" }}
-        title="Account Settings"
-        description="Profile, preferences, and security configuration"
-      />
-
+    <AppPageLayout
+      title="Account Settings"
+      backLink={{ to: "/admin", label: "Back" }}
+      maxWidth="sm"
+    >
       {/* Profile Information */}
       <AppSettingsCard
         title="Profile Information"
@@ -114,6 +111,6 @@ export default function AccountSettingsPage() {
         Account configuration is governed by organizational policies. 
         Contact your administrator for access-related changes.
       </AppSettingsFooter>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }
