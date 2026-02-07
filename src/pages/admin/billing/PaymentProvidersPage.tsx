@@ -1,8 +1,7 @@
-import { PageHeader } from "@/components/ui/page-header";
+import { AppPageLayout } from "@/components/app-ui";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BackButton } from "@/components/ui/back-button";
 import { 
   CreditCard,
   Settings,
@@ -36,14 +35,7 @@ export default function PaymentProvidersPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
-        <BackButton />
-        <PageHeader
-          title="Payment Providers"
-          description="Configure payment processor connections"
-        />
-      </div>
+    <AppPageLayout title="Payment Providers" maxWidth="md" backLink={{ to: "/console/billing", label: "Billing" }}>
 
       {/* Current Status */}
       <Card className={activeProvider === "none" ? "border-amber-500/20" : "border-green-500/20"}>
@@ -167,6 +159,6 @@ export default function PaymentProvidersPage() {
           </p>
         </CardContent>
       </Card>
-    </div>
+    </AppPageLayout>
   );
 }

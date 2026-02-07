@@ -17,7 +17,7 @@
 
 import { useState } from "react";
 import { Shield, Check, Minus, ExternalLink, FileText, Database, Clock, AlertTriangle } from "lucide-react";
-import { PageHeader } from "@/components/ui/page-header";
+import { AppPageLayout } from "@/components/app-ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

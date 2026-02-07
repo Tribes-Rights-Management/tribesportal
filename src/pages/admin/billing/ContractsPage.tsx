@@ -9,8 +9,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FileText, ExternalLink, Filter } from "lucide-react";
 import { format } from "date-fns";
-import { PageHeader } from "@/components/ui/page-header";
-import { BackButton } from "@/components/ui/back-button";
+import { AppPageLayout } from "@/components/app-ui";
 import { 
   Table, 
   TableHeader, 
@@ -75,25 +74,16 @@ export default function ContractsPage() {
 
   if (!canViewAllInvoices) {
     return (
-      <div className="p-6">
-        <PageHeader title="Access Denied" />
+      <AppPageLayout title="Access Denied">
         <p className="text-muted-foreground">
           You do not have permission to view platform contracts.
         </p>
-      </div>
+      </AppPageLayout>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <BackButton />
-        <PageHeader 
-          title="Contracts Registry" 
-          description="Platform-wide contract governance and lineage tracking"
-        />
-      </div>
+    <AppPageLayout title="Contracts Registry" backLink={{ to: "/console/billing", label: "Billing" }}>
 
       {/* Filters */}
       <div 
@@ -224,6 +214,6 @@ export default function ContractsPage() {
           </div>
         )}
       </div>
-    </div>
+    </AppPageLayout>
   );
 }

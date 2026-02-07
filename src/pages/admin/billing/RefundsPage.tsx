@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/ui/page-header";
+import { AppPageLayout } from "@/components/app-ui";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -133,11 +133,7 @@ export default function RefundsPage() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <PageHeader
-        title="Refunds"
-        description="Issue refunds for completed transactions"
-      />
+    <AppPageLayout title="Refunds" maxWidth="md">
 
       {/* Warning Banner */}
       <div 
@@ -375,6 +371,6 @@ export default function RefundsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </AppPageLayout>
   );
 }
