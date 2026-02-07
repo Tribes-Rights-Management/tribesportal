@@ -4,6 +4,7 @@ import { MOBILE_COPY } from "@/constants/institutional-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminListRow, AdminMetricRow, AdminSection } from "@/components/admin/AdminListRow";
+import { AppPageLayout } from "@/components/app-ui";
 
 /**
  * SYSTEM CONSOLE LANDING — EXECUTIVE-GRADE GOVERNANCE (CANONICAL)
@@ -19,13 +20,6 @@ import { AdminListRow, AdminMetricRow, AdminSection } from "@/components/admin/A
  * 3. REGULATORY & DISCLOSURES — Compliance exports
  * 4. FINANCIAL GOVERNANCE — Billing, revenue, invoices
  * 5. SECURITY & INTEGRITY — Access, sessions, RLS
- * 
- * KEY ARCHITECTURAL DECISIONS:
- * - Stats (AdminMetricRow) live ONLY in Governance Overview
- * - Navigation items (AdminListRow) are separate from stats
- * - Help Workstation is now a standalone module (not in console)
- * - Removed redundant "Help Center Management" section — that content is
- *   accessible through Help Workstation's internal navigation
  * 
  * VISUAL RULES:
  * - Fewer elements than any workspace
@@ -67,7 +61,7 @@ export default function AdminDashboard() {
         activeWorkspaces: tenantsRes.count ?? 0,
         activeUsers: usersRes.count ?? 0,
         pendingAccessRequests: accessReqRes.count ?? 0,
-        openExceptions: 0, // Future: count from alerts/exceptions table
+        openExceptions: 0,
       });
       
       setLoading(false);
@@ -77,51 +71,41 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div 
-      className="min-h-full py-10 md:py-14 px-[20px] md:px-6"
-      style={{ backgroundColor: 'var(--platform-canvas)' }}
-    >
-      {/* Main content card - elevated surface above page background */}
+    <AppPageLayout title="System Console">
+      {/* Subtitle */}
+      <p 
+        className="text-[13px] md:text-[14px] -mt-2 mb-6"
+        style={{ color: 'var(--platform-text-muted)' }}
+      >
+        Company governance and oversight
+      </p>
+
+      {/* Mobile: Read-only notice */}
+      {isMobile && (
+        <div 
+          className="mb-6 flex items-center gap-2.5 text-[11px] px-3 py-2.5 rounded"
+          style={{ 
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            color: 'var(--platform-text-muted)',
+            border: '1px solid rgba(255, 255, 255, 0.06)'
+          }}
+        >
+          <Monitor className="h-3.5 w-3.5 shrink-0 opacity-60" />
+          <span>{MOBILE_COPY.SYSTEM_CONSOLE_READ_ONLY}</span>
+        </div>
+      )}
+
+      {/* Dashboard card */}
       <div 
-        className="max-w-[860px] mx-auto rounded-lg"
+        className="rounded-lg"
         style={{
           backgroundColor: 'var(--platform-surface)',
           border: '1px solid var(--platform-border)',
         }}
       >
         <div className="p-6 md:p-8 lg:p-10">
-          {/* ─────────────────────────────────────────────────────────────────
-              HEADER — Sparse, authoritative
-          ───────────────────────────────────────────────────────────────── */}
-          <header className="mb-10 md:mb-12">
-            <h1 className="page-title">System Console</h1>
-            <p 
-              className="text-[13px] md:text-[14px] mt-1.5"
-              style={{ color: 'var(--platform-text-muted)' }}
-            >
-              Company governance and oversight
-            </p>
-            
-            {/* Mobile: Read-only notice */}
-            {isMobile && (
-              <div 
-                className="mt-5 flex items-center gap-2.5 text-[11px] px-3 py-2.5 rounded"
-                style={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                  color: 'var(--platform-text-muted)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)'
-                }}
-              >
-                <Monitor className="h-3.5 w-3.5 shrink-0 opacity-60" />
-                <span>{MOBILE_COPY.SYSTEM_CONSOLE_READ_ONLY}</span>
-              </div>
-            )}
-          </header>
 
-          {/* ─────────────────────────────────────────────────────────────────
-              SECTION 1: GOVERNANCE OVERVIEW
-              Purpose: "Is the system healthy?" — Stats ONLY, no navigation items
-          ───────────────────────────────────────────────────────────────── */}
+          {/* SECTION 1: GOVERNANCE OVERVIEW */}
           <AdminSection label="Governance Overview">
             <AdminMetricRow
               to="/console/tenants"
@@ -146,16 +130,7 @@ export default function AdminDashboard() {
             />
           </AdminSection>
 
-          {/* ─────────────────────────────────────────────────────────────────
-              SECTION 2: WORKSTATIONS (REMOVED)
-              Help Workstation is now a standalone module accessible via /workspaces
-              Not shown in System Console anymore
-          ───────────────────────────────────────────────────────────────── */}
-
-          {/* ─────────────────────────────────────────────────────────────────
-              SECTION 3: AUDIT & ACTIVITY
-              Purpose: "Can this system be trusted under scrutiny?"
-          ───────────────────────────────────────────────────────────────── */}
+          {/* SECTION 2: AUDIT & ACTIVITY */}
           <AdminSection label="Audit & Activity">
             <AdminListRow
               to="/console/approvals"
@@ -174,10 +149,7 @@ export default function AdminDashboard() {
             />
           </AdminSection>
 
-          {/* ─────────────────────────────────────────────────────────────────
-              SECTION 4: REGULATORY & DISCLOSURES
-              Purpose: "Can we respond to a formal request immediately?"
-          ───────────────────────────────────────────────────────────────── */}
+          {/* SECTION 3: REGULATORY & DISCLOSURES */}
           <AdminSection label="Regulatory & Disclosures">
             <AdminListRow
               to="/console/disclosures"
@@ -191,10 +163,7 @@ export default function AdminDashboard() {
             />
           </AdminSection>
 
-          {/* ─────────────────────────────────────────────────────────────────
-              SECTION 5: FINANCIAL GOVERNANCE
-              Purpose: "Is financial configuration controlled and auditable?"
-          ───────────────────────────────────────────────────────────────── */}
+          {/* SECTION 4: FINANCIAL GOVERNANCE */}
           <AdminSection label="Financial Governance">
             <AdminListRow
               to="/console/billing"
@@ -218,10 +187,7 @@ export default function AdminDashboard() {
             />
           </AdminSection>
 
-          {/* ─────────────────────────────────────────────────────────────────
-              SECTION 6: SECURITY & INTEGRITY
-              Purpose: "Is access controlled and defensible?"
-          ───────────────────────────────────────────────────────────────── */}
+          {/* SECTION 5: SECURITY & INTEGRITY */}
           <AdminSection label="Security & Integrity">
             <AdminListRow
               to="/console/users"
@@ -240,9 +206,7 @@ export default function AdminDashboard() {
             />
           </AdminSection>
 
-          {/* ─────────────────────────────────────────────────────────────────
-              FOOTER — Minimal, institutional
-          ───────────────────────────────────────────────────────────────── */}
+          {/* FOOTER */}
           <footer 
             className="mt-10 pt-5 text-center"
             style={{ borderTop: '1px solid var(--platform-border)' }}
@@ -256,6 +220,6 @@ export default function AdminDashboard() {
           </footer>
         </div>
       </div>
-    </div>
+    </AppPageLayout>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PlatformLayout } from "@/layouts/PlatformLayout";
+import { AppPageLayout } from "@/components/app-ui";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
@@ -295,7 +295,7 @@ export default function DisclosuresPage() {
 
   if (!hasAccess) {
     return (
-      <PlatformLayout maxWidth="wide">
+      <AppPageLayout title="Regulatory Disclosures">
         <div className="py-12 text-center">
           <p 
             className="text-[14px]"
@@ -304,22 +304,19 @@ export default function DisclosuresPage() {
             Access restricted. Platform administrator or auditor role required.
           </p>
         </div>
-      </PlatformLayout>
+      </AppPageLayout>
     );
   }
 
   return (
-    <PlatformLayout maxWidth="wide" elevated>
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="page-title mb-1">Regulatory Disclosures</h1>
-        <p 
-          className="text-[14px]"
-          style={{ color: 'hsl(var(--platform-text-muted))' }}
-        >
-          Generate standardized disclosure export packs for regulatory and audit requirements
-        </p>
-      </div>
+    <AppPageLayout title="Regulatory Disclosures">
+      {/* Description */}
+      <p 
+        className="text-[14px] mb-6"
+        style={{ color: 'hsl(var(--platform-text-muted))' }}
+      >
+        Generate standardized disclosure export packs for regulatory and audit requirements
+      </p>
 
       {/* Mobile Read-Only Notice */}
       {isMobile && (
@@ -834,6 +831,6 @@ export default function DisclosuresPage() {
           )}
         </AppModalBody>
       </AppModal>
-    </PlatformLayout>
+    </AppPageLayout>
   );
 }

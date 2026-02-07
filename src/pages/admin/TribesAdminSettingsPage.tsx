@@ -20,7 +20,6 @@ export default function TribesAdminSettingsPage() {
     <AppPageLayout
       title="Settings"
       backLink={{ to: "/admin", label: "Dashboard" }}
-      maxWidth="lg"
     >
       <AppSection spacing="md">
         <AppListCard title="Account">
