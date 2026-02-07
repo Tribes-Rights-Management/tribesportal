@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { PlatformLayout, InstitutionalHeader } from "@/layouts/PlatformLayout";
+import { AppPageLayout } from "@/components/app-ui";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -145,11 +145,13 @@ export default function AuditorChainPage() {
   }
 
   return (
-    <PlatformLayout maxWidth="wide">
-      <InstitutionalHeader 
-        title="Correlation Chain"
-        description="Read-only view of related platform actions"
-      />
+    <AppPageLayout
+      title="Correlation Chain"
+      backLink={{ to: "/auditor", label: "Auditor Portal" }}
+    >
+      <p className="text-sm text-muted-foreground mb-4">
+        Read-only view of related platform actions
+      </p>
 
       {/* Read-only notice */}
       <div 
@@ -285,6 +287,6 @@ export default function AuditorChainPage() {
           </div>
         </>
       )}
-    </PlatformLayout>
+    </AppPageLayout>
   );
 }

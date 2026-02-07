@@ -1,7 +1,7 @@
-import { PlatformLayout, InstitutionalHeader } from "@/layouts/PlatformLayout";
+import { AppPageLayout } from "@/components/app-ui";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
-import { AUDIT_COPY, FOOTER_COPY } from "@/constants/institutional-copy";
+import { AUDIT_COPY } from "@/constants/institutional-copy";
 import { Navigate } from "react-router-dom";
 
 /**
@@ -34,13 +34,12 @@ export default function AuditorLanding() {
   }
 
   return (
-    <PlatformLayout maxWidth="medium">
-      <InstitutionalHeader 
-        title="Auditor Access"
-        description="Read-only access for external review and compliance verification"
-      />
-
+    <AppPageLayout title="Auditor Access">
       {/* Purpose Statement */}
+      <p className="text-sm text-muted-foreground mb-6">
+        Read-only access for external review and compliance verification
+      </p>
+
       <section 
         className="mb-8 p-6 rounded-md"
         style={{ 
@@ -138,7 +137,7 @@ export default function AuditorLanding() {
           </div>
         </div>
       </section>
-    </PlatformLayout>
+    </AppPageLayout>
   );
 }
 
