@@ -323,11 +323,7 @@ export default function ComplianceMappingPage() {
     : COMPLIANCE_CONTROLS.filter(c => c.domain === selectedDomain);
 
   return (
-    <div className="w-full max-w-[1040px] mx-auto px-[20px] sm:px-6 py-8">
-      <PageHeader 
-        title="Compliance Mapping"
-        description="System behavior mapped to recognized compliance controls"
-      />
+    <AppPageLayout title="Compliance Mapping" maxWidth="xl">
 
       {/* Disclaimer */}
       <div 
@@ -557,6 +553,6 @@ export default function ComplianceMappingPage() {
       >
         This mapping is for audit reference only and does not constitute certification.
       </div>
-    </div>
+    </AppPageLayout>
   );
 }

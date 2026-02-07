@@ -227,11 +227,7 @@ export default function BoardSummariesPage() {
   };
 
   return (
-    <div className="w-full max-w-[1040px] mx-auto px-[20px] sm:px-6 py-8">
-      <PageHeader 
-        title="Board Summaries"
-        description="Formal summaries for board decks, partners, and due diligence"
-      />
+    <AppPageLayout title="Board Summaries" maxWidth="xl">
 
       {/* Period Selector */}
       {!isExternalAuditor && (
@@ -319,6 +315,6 @@ export default function BoardSummariesPage() {
       >
         Generated summaries are immutable and versioned. Every generation is logged for audit purposes.
       </div>
-    </div>
+    </AppPageLayout>
   );
 }
