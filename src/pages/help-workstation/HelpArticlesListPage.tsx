@@ -18,6 +18,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { supabase } from "@/integrations/supabase/client";
+import { ContentPanel } from "@/components/ui/page-shell";
 import { useHelpManagement, HelpArticle, HelpArticleStatus } from "@/hooks/useHelpManagement";
 import { useArticleOrderByCategory } from "@/hooks/useArticleOrderByCategory";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -340,10 +341,11 @@ export default function HelpArticlesListPage() {
       ) : (
         /* All Articles View - Table */
         <>
-          <div className="overflow-x-auto -mx-4 sm:mx-0">
-            <div className="min-w-[600px] px-4 sm:px-0">
-              <AppTable columns="name-meta-status-date">
-                <AppTableHeader>
+          <ContentPanel>
+            <div className="overflow-x-auto">
+              <div className="min-w-[600px]">
+                <AppTable columns="name-meta-status-date" className="border-0 rounded-none shadow-none">
+                  <AppTableHeader>
                   <AppTableRow header>
                     <AppTableHead
                       sortable
@@ -392,9 +394,10 @@ export default function HelpArticlesListPage() {
                     ))
                   )}
                 </AppTableBody>
-              </AppTable>
+                </AppTable>
+              </div>
             </div>
-          </div>
+          </ContentPanel>
 
           {/* Pagination - responsive */}
           {totalPages > 1 && (
