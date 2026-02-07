@@ -48,7 +48,7 @@ export default function PendingApprovalPage() {
       <div className="mt-10">
         <AppButton
           onClick={signOut}
-          variant="outline"
+          variant="secondary"
           className="w-full h-[48px]"
         >
           Sign out

@@ -55,6 +55,8 @@ import LicensingReceiptsPage from "@/pages/modules/licensing/LicensingReceiptsPa
 // First-class module pages - Rights (/rights) - STAFF WORKSTATION FOR PUBLISHING CATALOG
 import {
   RightsOverview,
+  RightsQueuePage,
+  RightsQueueDetailPage,
   RightsClientsPage,
   RightsCataloguePage,
   RightsWritersPage,
@@ -270,6 +272,8 @@ const App = () => (
           </AppProtectedRoute>
         }>
           <Route index element={<RightsOverview />} />
+          <Route path="queue" element={<RightsQueuePage />} />
+          <Route path="queue/:queueId" element={<RightsQueueDetailPage />} />
           <Route path="clients" element={<RightsClientsPage />} />
           <Route path="catalogue" element={<RightsCataloguePage />} />
           <Route path="writers" element={<RightsWritersPage />} />

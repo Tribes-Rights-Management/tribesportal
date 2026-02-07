@@ -82,6 +82,7 @@ const licensingNav: NavItem[] = [
  */
 const rightsNav: NavItem[] = [
   { to: "/rights", label: "Overview", icon: LayoutDashboard, exact: true, section: "main" },
+  { to: "/rights/queue", label: "Queue", icon: ListTodo, section: "main" },
   { to: "/rights/clients", label: "Clients", icon: Users, section: "main" },
   { to: "/rights/catalogue", label: "Catalogue", icon: Music, section: "main" },
   { to: "/rights/writers", label: "Writers", icon: PenTool, section: "main" },
