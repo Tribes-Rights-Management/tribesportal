@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
 import { DollarSign, Receipt } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
-import { PageContainer } from "@/components/ui/page-container";
 import {
-  AppPageHeader,
+  AppPageLayout,
   AppCard,
   AppCardHeader,
   AppCardTitle,
@@ -25,7 +24,7 @@ export default function LicensingPaymentsPage() {
 
   if (!canViewOrgInvoices) {
     return (
-      <PageContainer maxWidth="wide">
+      <AppPageLayout title="Payments">
         <AppCard>
           <AppCardBody className="p-6 md:p-8">
             <div className="text-center py-12">
@@ -33,16 +32,12 @@ export default function LicensingPaymentsPage() {
             </div>
           </AppCardBody>
         </AppCard>
-      </PageContainer>
+      </AppPageLayout>
     );
   }
 
   return (
-    <PageContainer maxWidth="wide">
-      <AppPageHeader
-        title="Payments"
-      />
-
+    <AppPageLayout title="Payments">
       {/* Summary Stats */}
       <AppStatCardGrid columns={2} className="mb-8">
         <AppStatCard
@@ -122,6 +117,6 @@ export default function LicensingPaymentsPage() {
           />
         </AppCardBody>
       </AppCard>
-    </PageContainer>
+    </AppPageLayout>
   );
 }

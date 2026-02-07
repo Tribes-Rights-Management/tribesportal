@@ -1,6 +1,5 @@
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppEmptyState,
 } from "@/components/app-ui";
 
@@ -9,13 +8,12 @@ import {
  */
 export default function LicensingCatalog() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Catalog" />
+    <AppPageLayout title="Catalog">
       <AppEmptyState
         message="No catalog entries available"
         description="Catalog items will appear once added."
         size="lg"
       />
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

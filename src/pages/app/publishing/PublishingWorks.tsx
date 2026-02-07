@@ -1,6 +1,5 @@
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppEmptyState,
 } from "@/components/app-ui";
 
@@ -9,13 +8,12 @@ import {
  */
 export default function PublishingWorks() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Works" />
+    <AppPageLayout title="Works">
       <AppEmptyState
         message="No works available"
         description="Works will appear once added to your catalog."
         size="lg"
       />
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

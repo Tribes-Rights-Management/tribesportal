@@ -5,9 +5,8 @@ import { TenantSelector } from "@/components/app/TenantSelector";
 import { useSearchParams } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
 import { format } from "date-fns";
-import { PageContainer } from "@/components/ui/page-container";
 import {
-  AppPageHeader,
+  AppPageLayout,
   AppCard,
   AppCardBody,
   AppTable,
@@ -143,100 +142,75 @@ export default function LicensingAgreementsPage() {
   // No tenant selected
   if (!activeTenant) {
     return (
-      <PageContainer maxWidth="wide">
+      <AppPageLayout title="Agreements">
         <AppCard>
           <AppCardBody className="p-6 md:p-8">
-            <AppPageHeader 
-              title="Agreements"
-            />
             {tenantMemberships.length > 1 ? (
-              <div className="mt-8">
+              <div>
                 <p className="text-[13px] text-muted-foreground mb-4">
                   Select an organization to view agreements.
                 </p>
                 <TenantSelector />
               </div>
             ) : (
-              <div className="mt-8">
-                <AppEmptyState
-                  icon="folder"
-                  message="No organization available"
-                  description="You are not a member of any organization."
-                />
-              </div>
+              <AppEmptyState
+                icon="folder"
+                message="No organization available"
+                description="You are not a member of any organization."
+              />
             )}
           </AppCardBody>
         </AppCard>
-      </PageContainer>
+      </AppPageLayout>
     );
   }
 
   // Detail view
   if (selectedId) {
     return (
-      <PageContainer maxWidth="wide">
-        <div className="mb-6">
-          <AppButton
-            intent="ghost"
-            size="sm"
-            onClick={() => setSearchParams({})}
-          >
-            ← Back to agreements
-          </AppButton>
-        </div>
+      <AppPageLayout
+        title="Agreement Detail"
+        backLink={{ to: "/licensing/agreements", label: "Back to agreements" }}
+      >
         <AgreementDetailView agreementId={selectedId} />
-      </PageContainer>
+      </AppPageLayout>
     );
   }
 
   if (isLoading) {
     return (
-      <PageContainer maxWidth="wide">
+      <AppPageLayout title="Agreements">
         <AppCard>
           <AppCardBody className="p-6 md:p-8">
-            <AppPageHeader 
-              title="Agreements"
-            />
-            <div className="mt-8">
-              <InstitutionalLoadingState message="Loading agreements" />
-            </div>
+            <InstitutionalLoadingState message="Loading agreements" />
           </AppCardBody>
         </AppCard>
-      </PageContainer>
+      </AppPageLayout>
     );
   }
 
   if (error) {
     return (
-      <PageContainer maxWidth="wide">
+      <AppPageLayout title="Agreements">
         <AppCard>
           <AppCardBody className="p-6 md:p-8">
-            <AppPageHeader 
-              title="Agreements"
+            <SystemErrorState 
+              title="Unable to load agreements"
+              description="Please try again or contact support if the issue persists."
             />
-            <div className="mt-8">
-              <SystemErrorState 
-                title="Unable to load agreements"
-                description="Please try again or contact support if the issue persists."
-              />
-            </div>
           </AppCardBody>
         </AppCard>
-      </PageContainer>
+      </AppPageLayout>
     );
   }
 
   return (
-    <PageContainer maxWidth="wide">
+    <AppPageLayout
+      title="Agreements"
+      action={tenantMemberships.length > 1 ? <TenantSelector /> : undefined}
+    >
       <AppCard>
         <AppCardBody className="p-6 md:p-8">
-          <div className="flex items-start justify-between gap-4 mb-8">
-            <AppPageHeader 
-              title="Agreements"
-            />
-            {tenantMemberships.length > 1 && <TenantSelector />}
-          </div>
-
           {agreements && agreements.length > 0 ? (
             <AppTable>
               <AppTableHeader>
@@ -287,6 +261,6 @@ export default function LicensingAgreementsPage() {
           )}
         </AppCardBody>
       </AppCard>
-    </PageContainer>
+    </AppPageLayout>
   );
 }

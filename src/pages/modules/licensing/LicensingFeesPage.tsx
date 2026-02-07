@@ -1,16 +1,12 @@
-import { Link } from "react-router-dom";
-import { ArrowLeft, DollarSign } from "lucide-react";
+import { DollarSign } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
-import { PageContainer } from "@/components/ui/page-container";
 import {
-  AppPageHeader,
+  AppPageLayout,
   AppCard,
   AppCardHeader,
   AppCardTitle,
   AppCardBody,
-  AppSectionHeader,
   AppEmptyState,
-  AppButton,
 } from "@/components/app-ui";
 
 /**
@@ -24,7 +20,7 @@ export default function LicensingFeesPage() {
 
   if (!canViewOrgInvoices) {
     return (
-      <PageContainer maxWidth="wide">
+      <AppPageLayout title="License Fees" backLink={{ to: "/licensing/payments", label: "Payments" }}>
         <AppCard>
           <AppCardBody className="p-6 md:p-8">
             <div className="text-center py-12">
@@ -32,21 +28,12 @@ export default function LicensingFeesPage() {
             </div>
           </AppCardBody>
         </AppCard>
-      </PageContainer>
+      </AppPageLayout>
     );
   }
 
   return (
-    <PageContainer maxWidth="wide">
-      <AppPageHeader
-        title="License Fees"
-        backLink={{ to: "/licensing/payments", label: "Payments" }}
-      />
-      <AppPageHeader
-        title="License Fees"
-        backLink={{ to: "/licensing/payments", label: "Payments" }}
-      />
-
+    <AppPageLayout title="License Fees" backLink={{ to: "/licensing/payments", label: "Payments" }}>
       {/* Outstanding Fees */}
       <AppCard className="mb-6">
         <AppCardHeader>
@@ -80,6 +67,6 @@ export default function LicensingFeesPage() {
           />
         </AppCardBody>
       </AppCard>
-    </PageContainer>
+    </AppPageLayout>
   );
 }

@@ -3,9 +3,8 @@ import { useLicensingRequests, useLicensingAgreements } from "@/hooks/useLicensi
 import { TenantSelector } from "@/components/app/TenantSelector";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
-import { PageContainer } from "@/components/ui/page-container";
 import {
-  AppPageHeader,
+  AppPageLayout,
   AppCard,
   AppCardBody,
   AppTable,
@@ -55,31 +54,26 @@ export default function LicensingOverview() {
   // No tenant selected
   if (!activeTenant) {
     return (
-      <PageContainer maxWidth="wide">
+      <AppPageLayout title="Overview">
         <AppCard>
           <AppCardBody className="p-6 md:p-8">
-            <AppPageHeader 
-              title="Overview"
-            />
             {tenantMemberships.length > 1 ? (
-              <div className="mt-8">
+              <div>
                 <p className="text-[13px] text-muted-foreground mb-4">
                   Select an organization to view licensing data.
                 </p>
                 <TenantSelector />
               </div>
             ) : (
-              <div className="mt-8">
-                <AppEmptyState
-                  icon="folder"
-                  message="No organization available"
-                  description="You are not a member of any organization."
-                />
-              </div>
+              <AppEmptyState
+                icon="folder"
+                message="No organization available"
+                description="You are not a member of any organization."
+              />
             )}
           </AppCardBody>
         </AppCard>
-      </PageContainer>
+      </AppPageLayout>
     );
   }
 
@@ -88,52 +82,38 @@ export default function LicensingOverview() {
 
   if (isLoading) {
     return (
-      <PageContainer maxWidth="wide">
+      <AppPageLayout title="Overview">
         <AppCard>
           <AppCardBody className="p-6 md:p-8">
-            <AppPageHeader 
-              title="Overview"
-            />
-            <div className="mt-8">
-              <InstitutionalLoadingState message="Loading licensing data" />
-            </div>
+            <InstitutionalLoadingState message="Loading licensing data" />
           </AppCardBody>
         </AppCard>
-      </PageContainer>
+      </AppPageLayout>
     );
   }
 
   if (hasError) {
     return (
-      <PageContainer maxWidth="wide">
+      <AppPageLayout title="Overview">
         <AppCard>
           <AppCardBody className="p-6 md:p-8">
-            <AppPageHeader 
-              title="Overview"
+            <SystemErrorState 
+              title="Unable to load licensing data"
+              description="Please try again or contact support if the issue persists."
             />
-            <div className="mt-8">
-              <SystemErrorState 
-                title="Unable to load licensing data"
-                description="Please try again or contact support if the issue persists."
-              />
-            </div>
           </AppCardBody>
         </AppCard>
-      </PageContainer>
+      </AppPageLayout>
     );
   }
 
   return (
-    <PageContainer maxWidth="wide">
+    <AppPageLayout
+      title="Overview"
+      action={tenantMemberships.length > 1 ? <TenantSelector /> : undefined}
+    >
       <AppCard>
         <AppCardBody className="p-6 md:p-8">
-          <div className="flex items-start justify-between gap-4 mb-8">
-            <AppPageHeader 
-              title="Overview"
-            />
-            {tenantMemberships.length > 1 && <TenantSelector />}
-          </div>
-
           {/* Requests Section */}
           <section className="mb-10">
             <AppSectionHeader title="Requests" />
@@ -228,6 +208,6 @@ export default function LicensingOverview() {
           </section>
         </AppCardBody>
       </AppCard>
-    </PageContainer>
+    </AppPageLayout>
   );
 }

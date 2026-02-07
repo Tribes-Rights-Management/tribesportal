@@ -1,6 +1,5 @@
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppEmptyState,
 } from "@/components/app-ui";
 
@@ -9,13 +8,12 @@ import {
  */
 export default function LicensingReports() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Reports" />
+    <AppPageLayout title="Reports">
       <AppEmptyState
         message="No reports available"
         description="Reports will appear once data is processed."
         size="lg"
       />
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

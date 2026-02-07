@@ -1,9 +1,6 @@
-import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
-import { PageContainer } from "@/components/ui/page-container";
 import {
-  AppPageHeader,
+  AppPageLayout,
   AppCard,
   AppCardHeader,
   AppCardTitle,
@@ -22,7 +19,7 @@ export default function LicensingReceiptsPage() {
 
   if (!canDownloadReceipts) {
     return (
-      <PageContainer maxWidth="wide">
+      <AppPageLayout title="Payment Receipts" backLink={{ to: "/licensing/payments", label: "Payments" }}>
         <AppCard>
           <AppCardBody className="p-6 md:p-8">
             <div className="text-center py-12">
@@ -30,17 +27,12 @@ export default function LicensingReceiptsPage() {
             </div>
           </AppCardBody>
         </AppCard>
-      </PageContainer>
+      </AppPageLayout>
     );
   }
 
   return (
-    <PageContainer maxWidth="wide">
-      <AppPageHeader
-        title="Payment Receipts"
-        backLink={{ to: "/licensing/payments", label: "Payments" }}
-      />
-
+    <AppPageLayout title="Payment Receipts" backLink={{ to: "/licensing/payments", label: "Payments" }}>
       <AppCard>
         <AppCardHeader>
           <AppCardTitle>Available Receipts</AppCardTitle>
@@ -53,6 +45,6 @@ export default function LicensingReceiptsPage() {
           />
         </AppCardBody>
       </AppCard>
-    </PageContainer>
+    </AppPageLayout>
   );
 }

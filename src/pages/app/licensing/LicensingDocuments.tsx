@@ -1,6 +1,5 @@
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppEmptyState,
 } from "@/components/app-ui";
 
@@ -9,13 +8,12 @@ import {
  */
 export default function LicensingDocuments() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Documents" />
+    <AppPageLayout title="Documents">
       <AppEmptyState
         message="No documents available"
         description="Documents will appear once uploaded."
         size="lg"
       />
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

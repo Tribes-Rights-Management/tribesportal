@@ -4,7 +4,7 @@ import { ArrowUpDown, Check } from "lucide-react";
 import { format } from "date-fns";
 
 import {
-  AppPageContainer,
+  AppPageLayout,
   AppSection,
   AppTable,
   AppTableHeader,
@@ -214,15 +214,15 @@ export default function TribesAdminQueuePage() {
   }));
 
   return (
-    <AppPageContainer maxWidth="xl">
-      {/* Header Row: Title + Filter */}
-      <div className="flex items-center justify-between mb-3">
-        <h1 className="page-title">Queue</h1>
+    <AppPageLayout
+      title="Queue"
+      action={
         <AppFilterTrigger
           onClick={() => setFilterOpen(true)}
           hasActiveFilters={hasActiveFilters}
         />
-      </div>
+      }
+    >
 
       <AppSection spacing="none">
         {/* Sort + Count Row */}
@@ -317,6 +317,6 @@ export default function TribesAdminQueuePage() {
           ))}
         </AppFilterSection>
       </AppFilterDrawer>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

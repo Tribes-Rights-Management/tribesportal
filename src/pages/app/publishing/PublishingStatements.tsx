@@ -1,6 +1,5 @@
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppEmptyState,
 } from "@/components/app-ui";
 
@@ -9,13 +8,12 @@ import {
  */
 export default function PublishingStatements() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Statements" />
+    <AppPageLayout title="Statements">
       <AppEmptyState
         message="No statements available"
         description="Royalty statements will appear once processed."
         size="lg"
       />
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }
