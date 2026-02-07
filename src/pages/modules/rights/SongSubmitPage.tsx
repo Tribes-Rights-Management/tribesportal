@@ -679,7 +679,7 @@ export default function SongSubmitPage() {
               </div>
 
               {/* Full Review Receipt - Song Details */}
-              <div className="bg-white border border-[var(--border-subtle)] rounded-xl overflow-hidden">
+              <div className="bg-card border border-[var(--border-subtle)] rounded-xl overflow-hidden">
                 <div className="px-4 py-3 border-b border-[var(--border-subtle)]">
                   <h3 className="text-sm font-semibold text-[var(--app-focus)]">Song Details</h3>
                 </div>
@@ -718,7 +718,7 @@ export default function SongSubmitPage() {
               </div>
 
               {/* Lyrics Receipt */}
-              <div className="bg-white border border-[var(--border-subtle)] rounded-xl overflow-hidden">
+              <div className="bg-card border border-[var(--border-subtle)] rounded-xl overflow-hidden">
                 <div className="px-4 py-3 border-b border-[var(--border-subtle)]">
                   <h3 className="text-sm font-semibold text-[var(--app-focus)]">Lyrics</h3>
                 </div>
@@ -748,7 +748,7 @@ export default function SongSubmitPage() {
               </div>
 
               {/* Chords Receipt */}
-              <div className="bg-white border border-[var(--border-subtle)] rounded-xl overflow-hidden">
+              <div className="bg-card border border-[var(--border-subtle)] rounded-xl overflow-hidden">
                 <div className="px-4 py-3 border-b border-[var(--border-subtle)]">
                   <h3 className="text-sm font-semibold text-[var(--app-focus)]">Chords</h3>
                 </div>
@@ -760,7 +760,7 @@ export default function SongSubmitPage() {
               </div>
 
               {/* Copyright Receipt */}
-              <div className="bg-white border border-[var(--border-subtle)] rounded-xl overflow-hidden">
+              <div className="bg-card border border-[var(--border-subtle)] rounded-xl overflow-hidden">
                 <div className="px-4 py-3 border-b border-[var(--border-subtle)]">
                   <h3 className="text-sm font-semibold text-[var(--app-focus)]">Copyright</h3>
                 </div>
@@ -820,10 +820,10 @@ export default function SongSubmitPage() {
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Language</label>
                 <Select value={data.language} onValueChange={(value) => setData(prev => ({ ...prev, language: value }))}>
-                  <SelectTrigger className="w-full h-12 px-4 bg-white border border-[var(--border-subtle)] rounded-xl">
+                  <SelectTrigger className="w-full h-12 px-4 bg-card border border-[var(--border-subtle)] rounded-xl">
                     <SelectValue placeholder="Select language..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-white">
+                  <SelectContent className="bg-popover">
                     {LANGUAGES.map(lang => (
                       <SelectItem key={lang} value={lang}>{lang}</SelectItem>
                     ))}
@@ -834,10 +834,10 @@ export default function SongSubmitPage() {
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Song Type <span className="text-destructive">*</span></label>
                 <Select value={data.songType} onValueChange={(value) => setData(prev => ({ ...prev, songType: value as SongData["songType"] }))}>
-                  <SelectTrigger className="w-full h-12 px-4 bg-white border border-[var(--border-subtle)] rounded-xl">
+                  <SelectTrigger className="w-full h-12 px-4 bg-card border border-[var(--border-subtle)] rounded-xl">
                     <SelectValue placeholder="Select type..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-white">
+                  <SelectContent className="bg-popover">
                     {SONG_TYPES.map(t => (
                       <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
                     ))}
@@ -920,10 +920,10 @@ export default function SongSubmitPage() {
                         <div className="grid grid-cols-3 gap-3">
                           <div className="relative">
                             <Select value={w.pro} onValueChange={(value) => updateWriter(w.id, { pro: value })} disabled={w.fromDatabase}>
-                              <SelectTrigger className={`h-10 px-3 bg-white border border-[var(--border-subtle)] rounded-lg ${w.fromDatabase ? 'opacity-70 cursor-not-allowed' : ''}`}>
+                              <SelectTrigger className={`h-10 px-3 bg-card border border-[var(--border-subtle)] rounded-lg ${w.fromDatabase ? 'opacity-70 cursor-not-allowed' : ''}`}>
                                 <SelectValue placeholder="PRO" />
                               </SelectTrigger>
-                              <SelectContent className="bg-white">
+                              <SelectContent className="bg-popover">
                                 {PRO_OPTIONS.map(p => (
                                   <SelectItem key={p} value={p}>{p}</SelectItem>
                                 ))}
@@ -968,7 +968,7 @@ export default function SongSubmitPage() {
                           
                           {/* Dropdown results */}
                           {activeWriterSearch === w.id && writerSearchResults[w.id]?.length > 0 && (
-                            <div className="absolute z-20 w-full mt-1 bg-white border border-[var(--border-subtle)] rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                            <div className="absolute z-20 w-full mt-1 bg-card border border-[var(--border-subtle)] rounded-lg shadow-lg max-h-60 overflow-y-auto">
                               {writerSearchResults[w.id].map((hit: any) => (
                                 <button
                                   key={hit.objectID}
@@ -999,10 +999,10 @@ export default function SongSubmitPage() {
                           <>
                             <div className="grid grid-cols-3 gap-3">
                               <Select value={w.pro} onValueChange={(value) => updateWriter(w.id, { pro: value })}>
-                                <SelectTrigger className="h-10 px-3 bg-white border border-[var(--border-subtle)] rounded-lg">
+                                <SelectTrigger className="h-10 px-3 bg-card border border-[var(--border-subtle)] rounded-lg">
                                   <SelectValue placeholder="PRO *" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-white">
+                                <SelectContent className="bg-popover">
                                   {PRO_OPTIONS.map(p => (
                                     <SelectItem key={p} value={p}>{p}</SelectItem>
                                   ))}
@@ -1010,10 +1010,10 @@ export default function SongSubmitPage() {
                               </Select>
                               <input type="number" step="0.01" value={w.split || ""} onChange={(e) => updateWriter(w.id, { split: parseFloat(e.target.value) || 0 })} placeholder="Split % *" className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg" />
                               <Select value={w.credit} onValueChange={(value) => updateWriter(w.id, { credit: value as Writer["credit"] })}>
-                                <SelectTrigger className="h-10 px-3 bg-white border border-[var(--border-subtle)] rounded-lg">
+                                <SelectTrigger className="h-10 px-3 bg-card border border-[var(--border-subtle)] rounded-lg">
                                   <SelectValue placeholder="Credit *" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-white">
+                                <SelectContent className="bg-popover">
                                   <SelectItem value="lyrics">Lyrics</SelectItem>
                                   <SelectItem value="music">Music</SelectItem>
                                   <SelectItem value="both">Both</SelectItem>
@@ -1059,7 +1059,7 @@ export default function SongSubmitPage() {
                   
                   <div className="space-y-4">
                     {parsedSections.map((section, index) => (
-                      <div key={section.id} className="p-4 bg-white border border-[var(--border-subtle)] rounded-xl space-y-3">
+                      <div key={section.id} className="p-4 bg-card border border-[var(--border-subtle)] rounded-xl space-y-3">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-medium text-[var(--btn-text-muted)]">Section {index + 1}</span>
                           <button 
@@ -1077,10 +1077,10 @@ export default function SongSubmitPage() {
                             prev.map(s => s.id === section.id ? { ...s, type: value } : s)
                           )}
                         >
-                          <SelectTrigger className="w-48 h-10 bg-white border border-[var(--border-subtle)] rounded-lg">
+                          <SelectTrigger className="w-48 h-10 bg-card border border-[var(--border-subtle)] rounded-lg">
                             <SelectValue placeholder="Section type" />
                           </SelectTrigger>
-                          <SelectContent className="bg-white">
+                          <SelectContent className="bg-popover">
                             {SECTION_HEADINGS.map(h => (
                               <SelectItem key={h} value={h}>{h}</SelectItem>
                             ))}
@@ -1149,10 +1149,10 @@ export default function SongSubmitPage() {
                         <div key={s.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
                           <div className="flex items-center justify-between">
                             <Select value={s.type} onValueChange={(value) => updateLyricSection(s.id, { type: value as LyricSection["type"] })}>
-                              <SelectTrigger className="h-10 px-3 bg-white border border-[var(--border-subtle)] rounded-lg w-40">
+                              <SelectTrigger className="h-10 px-3 bg-card border border-[var(--border-subtle)] rounded-lg w-40">
                                 <SelectValue placeholder="Select section..." />
                               </SelectTrigger>
-                              <SelectContent className="bg-white">
+                              <SelectContent className="bg-popover">
                                 {LYRIC_SECTION_TYPES.map(t => (
                                   <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
                                 ))}
@@ -1254,7 +1254,7 @@ export default function SongSubmitPage() {
           {step === 5 && (
             <div className="space-y-6">
               {/* Song Details */}
-              <div className="bg-white border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+              <div className="bg-card border border-[var(--border-subtle)] rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-3 bg-[var(--muted-wash)] border-b border-[var(--border-subtle)]">
                   <h3 className="text-sm font-semibold text-[var(--btn-text)]">Song Details</h3>
                   <button onClick={() => goToStep(1)} className="text-xs text-[var(--app-focus)] hover:underline">Edit</button>
@@ -1298,7 +1298,7 @@ export default function SongSubmitPage() {
               </div>
 
               {/* Writers */}
-              <div className="bg-white border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+              <div className="bg-card border border-[var(--border-subtle)] rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-3 bg-[var(--muted-wash)] border-b border-[var(--border-subtle)]">
                   <h3 className="text-sm font-semibold text-[var(--btn-text)]">Writers</h3>
                   <button onClick={() => goToStep(1)} className="text-xs text-[var(--app-focus)] hover:underline">Edit</button>
@@ -1322,7 +1322,7 @@ export default function SongSubmitPage() {
               </div>
 
               {/* Lyrics */}
-              <div className="bg-white border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+              <div className="bg-card border border-[var(--border-subtle)] rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-3 bg-[var(--muted-wash)] border-b border-[var(--border-subtle)]">
                   <h3 className="text-sm font-semibold text-[var(--btn-text)]">Lyrics</h3>
                   <button onClick={() => goToStep(2)} className="text-xs text-[var(--app-focus)] hover:underline">Edit</button>
@@ -1351,7 +1351,7 @@ export default function SongSubmitPage() {
               </div>
 
               {/* Chords */}
-              <div className="bg-white border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+              <div className="bg-card border border-[var(--border-subtle)] rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-3 bg-[var(--muted-wash)] border-b border-[var(--border-subtle)]">
                   <h3 className="text-sm font-semibold text-[var(--btn-text)]">Chords</h3>
                   <button onClick={() => goToStep(3)} className="text-xs text-[var(--app-focus)] hover:underline">Edit</button>
@@ -1368,7 +1368,7 @@ export default function SongSubmitPage() {
               </div>
 
               {/* Copyright */}
-              <div className="bg-white border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+              <div className="bg-card border border-[var(--border-subtle)] rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-3 bg-[var(--muted-wash)] border-b border-[var(--border-subtle)]">
                   <h3 className="text-sm font-semibold text-[var(--btn-text)]">Copyright</h3>
                   <button onClick={() => goToStep(4)} className="text-xs text-[var(--app-focus)] hover:underline">Edit</button>
@@ -1388,7 +1388,7 @@ export default function SongSubmitPage() {
               </div>
 
               {/* Agreement */}
-              <div className="bg-white border border-[var(--border-subtle)] rounded-lg p-5">
+              <div className="bg-card border border-[var(--border-subtle)] rounded-lg p-5">
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input 
                     type="checkbox" 

@@ -1,29 +1,23 @@
-import { PageHeader } from "@/components/ui/page-header";
-import { PageContainer } from "@/components/ui/page-container";
-import { AppCard, AppCardBody } from "@/components/app-ui/AppCard";
+import {
+  AppPageContainer,
+  AppPageHeader,
+  AppEmptyState,
+} from "@/components/app-ui";
 
 /**
  * RIGHTS SETTINGS PAGE
- * 
+ *
  * Settings for the Rights module.
  */
 export default function RightsSettingsPage() {
   return (
-    <PageContainer>
-      <PageHeader
-        title="Settings"
-        description="Rights module configuration"
+    <AppPageContainer maxWidth="xl">
+      <AppPageHeader title="Settings" />
+      <AppEmptyState
+        message="No settings available"
+        description="Settings functionality coming soon."
+        size="lg"
       />
-      
-      <AppCard>
-        <AppCardBody>
-          <div className="py-12 text-center">
-            <p className="text-sm text-muted-foreground">
-              Settings functionality coming soon.
-            </p>
-          </div>
-        </AppCardBody>
-      </AppCard>
-    </PageContainer>
+    </AppPageContainer>
   );
 }
