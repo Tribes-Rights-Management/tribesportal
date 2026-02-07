@@ -21,6 +21,7 @@ import { useCategoryAudiences } from "@/hooks/useCategoryAudiences";
 import { useCategoryOrderByAudience, CategoryWithPosition } from "@/hooks/useCategoryOrderByAudience";
 import { SortableCategoryCard } from "@/components/help/SortableCategoryCard";
 import { supabase } from "@/integrations/supabase/client";
+import { ContentPanel } from "@/components/ui/page-shell";
 import {
   AppButton,
   AppTable,
@@ -335,14 +336,13 @@ export default function HelpCategoriesPage() {
       )}
 
       {/* Audience Filter - responsive */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-4 mb-4">
-        <span className="text-[12px] text-muted-foreground">Audience:</span>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4">
         <Select
           value={selectedAudienceId || "all"}
           onValueChange={(value) => setSelectedAudienceId(value === "all" ? "" : value)}
         >
-          <SelectTrigger className="h-10 w-full sm:w-[200px] text-sm border-border bg-transparent focus:ring-2 focus:ring-muted-foreground/20 focus:ring-offset-0">
-            <SelectValue placeholder="All Categories" />
+          <SelectTrigger className="h-9 w-full sm:w-[200px] text-[13px] border-border bg-background">
+            <SelectValue placeholder="All categories" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all" className="text-sm">
@@ -400,11 +400,12 @@ export default function HelpCategoriesPage() {
           </DndContext>
         )
       ) : (
-        /* All Categories View - Table */
-        <div className="overflow-x-auto -mx-4 sm:mx-0">
-          <div className="min-w-[500px] px-4 sm:px-0">
-            <AppTable columns={["40%", "35%", "25%"]}>
-              <AppTableHeader>
+        /* All Categories View - Table in ContentPanel */
+        <ContentPanel>
+          <div className="overflow-x-auto">
+            <div className="min-w-[500px]">
+              <AppTable columns={["40%", "35%", "25%"]} className="border-0 rounded-none shadow-none">
+                <AppTableHeader>
                 <AppTableRow header>
                   <AppTableHead>Name</AppTableHead>
                   <AppTableHead className="hidden sm:table-cell">Audiences</AppTableHead>
@@ -450,9 +451,10 @@ export default function HelpCategoriesPage() {
                   ))
                 )}
               </AppTableBody>
-            </AppTable>
+              </AppTable>
+            </div>
           </div>
-        </div>
+        </ContentPanel>
       )}
 
       {/* Right-side Panel */}

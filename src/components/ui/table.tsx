@@ -135,8 +135,8 @@ const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
       ref={ref}
       className={cn(
         // Institutional header: 11px, uppercase, +0.04em tracking, muted
-        // Height controlled for tight row density
-        "h-9 px-3 align-middle",
+        // Explicit py padding for consistent 14px vertical spacing
+        "px-4 py-3.5 align-middle",
         "text-[11px] font-medium tracking-wider uppercase",
         numeric && "text-right",
         status && "text-center",
@@ -165,8 +165,8 @@ const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
     <td 
       ref={ref} 
       className={cn(
-        // Tight row height via reduced padding
-        "px-3 py-2 align-middle text-[13px]",
+        // Standard row padding: 14px vertical for ~47-57px rows
+        "px-4 py-3.5 align-middle text-[13px]",
         numeric && "text-right tabular-nums font-medium",
         status && "text-center",
         muted && "text-[12px]",

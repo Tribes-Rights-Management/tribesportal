@@ -133,7 +133,7 @@ export default function RefundsPage() {
   };
 
   return (
-    <AppPageLayout title="Refunds" maxWidth="md">
+    <AppPageLayout title="Refunds">
 
       {/* Warning Banner */}
       <div 

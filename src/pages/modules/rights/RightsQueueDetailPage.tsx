@@ -33,7 +33,7 @@ export default function RightsQueueDetailPage() {
 
   if (isLoading) {
     return (
-      <AppPageLayout title="Loading..." backLink={{ to: "/rights/queue", label: "Back to Queue" }} maxWidth="lg">
+      <AppPageLayout title="Loading..." backLink={{ to: "/rights/queue", label: "Back to Queue" }}>
         <div className="py-12 text-center text-muted-foreground text-sm">Loading...</div>
       </AppPageLayout>
     );
@@ -41,7 +41,7 @@ export default function RightsQueueDetailPage() {
 
   if (!item) {
     return (
-      <AppPageLayout title="Not Found" backLink={{ to: "/rights/queue", label: "Back to Queue" }} maxWidth="lg">
+      <AppPageLayout title="Not Found" backLink={{ to: "/rights/queue", label: "Back to Queue" }}>
         <div className="py-12 text-center text-muted-foreground text-sm">Queue item not found.</div>
       </AppPageLayout>
     );
@@ -65,7 +65,6 @@ export default function RightsQueueDetailPage() {
     <AppPageLayout
       title={title}
       backLink={{ to: "/rights/queue", label: "Back to Queue" }}
-      maxWidth="lg"
       action={<QueueStatusBadge status={item.status} />}
     >
       <p className="text-[13px] text-muted-foreground -mt-2 mb-6">

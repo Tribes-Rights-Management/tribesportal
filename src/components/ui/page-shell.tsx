@@ -173,7 +173,7 @@ interface ContentPanelProps {
 export function ContentPanel({ children, className }: ContentPanelProps) {
   return (
     <div 
-      className={cn("rounded-lg sm:rounded overflow-hidden", className)}
+      className={cn("rounded-lg overflow-hidden", className)}
       style={{ 
         backgroundColor: 'var(--platform-surface)',
         border: '1px solid var(--platform-border)',
