@@ -159,7 +159,7 @@ export default function ExecutiveReportingPage() {
   const [timeRange, setTimeRange] = useState("30d");
 
   return (
-    <AppPageLayout title="Executive Reporting" maxWidth="lg">
+    <AppPageLayout title="Executive Reporting">
 
       {/* Time Range Filter */}
       <div className="flex items-center justify-end mb-6">

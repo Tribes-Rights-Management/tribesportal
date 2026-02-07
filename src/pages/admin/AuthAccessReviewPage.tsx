@@ -532,29 +532,29 @@ export default function SecurityVerificationPage() {
       title="Security Verification"
       backLink={{ to: "/console", label: "System Console" }}
       action={
-        <div className="flex flex-col items-end gap-1.5">
-          <ConsoleButton
-            intent="primary"
-            onClick={runChecks}
-            disabled={isRunning || !user}
-            loading={isRunning}
-            loadingText="Running…"
-            minWidth="130px"
-            icon={<ShieldCheck className="h-4 w-4" />}
-          >
-            Run checks
-          </ConsoleButton>
-          <span className="text-[11px] flex items-center gap-1" style={{ color: 'var(--platform-text-muted)' }}>
-            <Clock className="h-3 w-3" />
-            {lastRunAt ? (
-              <>Last run: {formatDistanceToNow(lastRunAt, { addSuffix: true })}</>
-            ) : (
-              "Last run: Never"
-            )}
-          </span>
-        </div>
+        <ConsoleButton
+          intent="primary"
+          onClick={runChecks}
+          disabled={isRunning || !user}
+          loading={isRunning}
+          loadingText="Running…"
+          minWidth="130px"
+          icon={<ShieldCheck className="h-4 w-4" />}
+        >
+          Run checks
+        </ConsoleButton>
       }
     >
+
+      {/* Last run metadata — body zone */}
+      <div className="flex items-center gap-1 mb-4 text-[11px]" style={{ color: 'var(--platform-text-muted)' }}>
+        <Clock className="h-3 w-3" />
+        {lastRunAt ? (
+          <>Last run: {formatDistanceToNow(lastRunAt, { addSuffix: true })}</>
+        ) : (
+          "Last run: Never"
+        )}
+      </div>
 
       <div className="space-y-5">
         {/* ========== OPEN EXCEPTIONS PANEL ========== */}

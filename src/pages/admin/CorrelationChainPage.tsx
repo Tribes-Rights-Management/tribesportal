@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { PlatformLayout, InstitutionalHeader } from "@/layouts/PlatformLayout";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { supabase } from "@/integrations/supabase/client";
 import { 
@@ -16,10 +15,10 @@ import {
   TableCell,
   TableEmptyRow 
 } from "@/components/ui/table";
-import { AppSearchInput, AppButton } from "@/components/app-ui";
+import { AppPageLayout, AppSearchInput } from "@/components/app-ui";
 import { ConsoleButton } from "@/components/console";
 import { Search, Link2 } from "lucide-react";
-import { EMPTY_STATES, AUDIT_COPY } from "@/constants/institutional-copy";
+import { EMPTY_STATES } from "@/constants/institutional-copy";
 
 interface CorrelatedRecord {
   correlation_id: string;
@@ -59,7 +58,6 @@ export default function CorrelationChainPage() {
   async function fetchRecentCorrelations() {
     setLoadingRecent(true);
     
-    // Get recent licensing requests with correlation IDs
     const { data: requests, error: reqError } = await supabase
       .from('licensing_requests')
       .select('correlation_id, created_at')
@@ -67,8 +65,7 @@ export default function CorrelationChainPage() {
       .order('created_at', { ascending: false })
       .limit(20);
 
-    // Get recent audit logs with correlation IDs (includes billing events)
-    const { data: auditLogs, error: auditError } = await supabase
+    const { data: auditLogs } = await supabase
       .from('audit_logs')
       .select('correlation_id, record_type, created_at, action')
       .not('correlation_id', 'is', null)
@@ -79,10 +76,8 @@ export default function CorrelationChainPage() {
       console.error('Error fetching recent correlations:', reqError);
     }
 
-    // Deduplicate and format
     const uniqueCorrelations = new Map<string, CorrelatedRecord>();
     
-    // Add licensing requests
     for (const req of requests || []) {
       if (req.correlation_id && !uniqueCorrelations.has(req.correlation_id)) {
         uniqueCorrelations.set(req.correlation_id, {
@@ -94,7 +89,6 @@ export default function CorrelationChainPage() {
       }
     }
 
-    // Add audit log events (billing, authority changes, etc.)
     for (const log of auditLogs || []) {
       if (log.correlation_id && !uniqueCorrelations.has(log.correlation_id)) {
         uniqueCorrelations.set(log.correlation_id, {
@@ -106,7 +100,6 @@ export default function CorrelationChainPage() {
       }
     }
 
-    // Sort by created_at descending and take top 20
     const sorted = Array.from(uniqueCorrelations.values())
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(0, 20);
@@ -162,21 +155,18 @@ export default function CorrelationChainPage() {
 
   if (!hasAccess) {
     return (
-      <PlatformLayout maxWidth="wide">
-        <InstitutionalHeader 
-          title="Access Restricted"
-          description="You do not have permission to view correlation chains"
-        />
-      </PlatformLayout>
+      <AppPageLayout title="Correlation Chain" backLink={{ to: "/console", label: "System Console" }}>
+        <div className="py-12 text-center">
+          <p className="text-[14px]" style={{ color: 'var(--platform-text-muted)' }}>
+            Access restricted. Platform administrator or auditor role required.
+          </p>
+        </div>
+      </AppPageLayout>
     );
   }
 
   return (
-    <PlatformLayout maxWidth="wide">
-      <InstitutionalHeader 
-        title="Correlation Chain"
-        description="Trace related actions across the platform"
-      />
+    <AppPageLayout title="Correlation Chain" backLink={{ to: "/console", label: "System Console" }}>
 
       {/* Search */}
       <div 
@@ -205,7 +195,7 @@ export default function CorrelationChainPage() {
         </div>
       </div>
 
-      {/* Chain View - shown when a correlation ID is selected */}
+      {/* Chain View */}
       {correlationId && (
         <div className="mb-8">
           <CorrelationChainView
@@ -216,7 +206,7 @@ export default function CorrelationChainPage() {
         </div>
       )}
 
-      {/* Recent Correlations Table - shown when no specific chain is selected */}
+      {/* Recent Correlations Table */}
       {!correlationId && (
         <>
           <div className="mb-4">
@@ -313,6 +303,6 @@ export default function CorrelationChainPage() {
           This view is read-only and cannot be modified.
         </p>
       </div>
-    </PlatformLayout>
+    </AppPageLayout>
   );
 }
