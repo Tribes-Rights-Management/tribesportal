@@ -7,8 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { ConsoleButton } from "@/components/console";
 import { Plus, MoreHorizontal, Mail, XCircle, UserCheck, Shield, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { PageContainer } from "@/components/ui/page-container";
-import { PageShell, ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
+import { AppPageLayout } from "@/components/app-ui";
+import { ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
 import { InviteUserModal } from "@/components/admin/InviteUserModal";
 import {
   DropdownMenu,
@@ -140,22 +140,19 @@ export default function OrganizationUsersPage() {
 
   if (!organization) {
     return (
-      <PageContainer>
+      <AppPageLayout title="Loading...">
         <div className="py-16 text-center">
           <LoadingState message="Loading organization…" />
         </div>
-      </PageContainer>
+      </AppPageLayout>
     );
   }
 
   return (
-    <PageContainer>
-      <PageShell
-        title={organization.name}
-        subtitle={subtitleText}
-        backTo="/console/organizations"
-        backLabel="Organizations"
-      >
+    <AppPageLayout
+      title={organization.name}
+      backLink={{ to: "/console/tenants", label: "Organizations" }}
+      action={
         <ConsoleButton
           intent="primary"
           size="sm"
@@ -164,7 +161,8 @@ export default function OrganizationUsersPage() {
           <Plus className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Invite user</span>
         </ConsoleButton>
-      </PageShell>
+      }
+    >
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-4">
@@ -472,6 +470,6 @@ export default function OrganizationUsersPage() {
         organizationName={organization.name}
         onSuccess={refetch}
       />
-    </PageContainer>
+    </AppPageLayout>
   );
 }

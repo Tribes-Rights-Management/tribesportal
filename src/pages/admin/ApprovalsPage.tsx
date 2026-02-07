@@ -8,8 +8,8 @@ import { ConsoleButton } from "@/components/console";
 import { ChevronRight, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { PageContainer } from "@/components/ui/page-container";
-import { PageShell, ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
+import { AppPageLayout } from "@/components/app-ui";
+import { ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
 import type { Database } from "@/integrations/supabase/types";
 
 type PortalRole = Database["public"]["Enums"]["portal_role"];
@@ -257,13 +257,10 @@ export default function ApprovalsPage() {
   ];
 
   return (
-    <PageContainer>
-      <PageShell
-        title="Access Control"
-        subtitle={pendingMemberships.length === 0 ? "No pending requests" : `${pendingMemberships.length} pending`}
-        backTo="/admin"
-        backLabel="System Console"
-      />
+    <AppPageLayout
+      title="Access Control"
+      backLink={{ to: "/console", label: "System Console" }}
+    >
 
       {/* Content Panel */}
       <ContentPanel>
@@ -722,6 +719,6 @@ export default function ApprovalsPage() {
             </Table>
         )}
       </ContentPanel>
-    </PageContainer>
+    </AppPageLayout>
   );
 }

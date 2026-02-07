@@ -5,8 +5,8 @@ import { ConsoleButton } from "@/components/console";
 import { Plus, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { OrganizationFormModal } from "@/components/admin/OrganizationFormModal";
-import { PageContainer } from "@/components/ui/page-container";
-import { PageShell, ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
+import { AppPageLayout, AppButton } from "@/components/app-ui";
+import { ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
 
 interface Tenant {
   id: string;
@@ -125,14 +125,10 @@ export default function TenantsPage() {
   const subtitleText = loading ? "Loading..." : `${tenants.length} organization${tenants.length !== 1 ? 's' : ''}`;
 
   return (
-    <PageContainer>
-      <PageShell
-        title="Organizations"
-        subtitle={subtitleText}
-        backTo="/admin"
-        backLabel="System Console"
-      >
-        {/* Add button */}
+    <AppPageLayout
+      title="Organizations"
+      backLink={{ to: "/console", label: "System Console" }}
+      action={
         <ConsoleButton 
           intent="primary"
           size="sm"
@@ -143,7 +139,8 @@ export default function TenantsPage() {
           <Plus className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Add organization</span>
         </ConsoleButton>
-      </PageShell>
+      }
+    >
 
       <ContentPanel>
         {loading ? (
@@ -262,6 +259,6 @@ export default function TenantsPage() {
         initialData={editingTenant ? { name: editingTenant.name, slug: editingTenant.slug } : null}
         mode={editingTenant ? "edit" : "create"}
       />
-    </PageContainer>
+    </AppPageLayout>
   );
 }
