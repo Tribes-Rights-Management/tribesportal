@@ -4,7 +4,7 @@ import { ArrowUpDown, Check } from "lucide-react";
 import { format } from "date-fns";
 
 import {
-  AppPageContainer,
+  AppPageLayout,
   AppSection,
   AppTable,
   AppTableHeader,
@@ -224,15 +224,15 @@ export default function TribesAdminDocumentsPage() {
   }
 
   return (
-    <AppPageContainer maxWidth="xl">
-      {/* Header Row: Title + Filter */}
-      <div className="flex items-center justify-between mb-3">
-        <h1 className="page-title">Documents</h1>
+    <AppPageLayout
+      title="Documents"
+      action={
         <AppFilterTrigger
           onClick={() => setFilterOpen(true)}
           hasActiveFilters={hasActiveFilters}
         />
-      </div>
+      }
+    >
 
       <AppSection spacing="none">
         {/* Sort + Count Row */}
@@ -310,6 +310,6 @@ export default function TribesAdminDocumentsPage() {
           ))}
         </AppFilterSection>
       </AppFilterDrawer>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

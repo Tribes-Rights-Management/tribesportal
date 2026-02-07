@@ -1,6 +1,5 @@
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppEmptyState,
 } from "@/components/app-ui";
 
@@ -9,13 +8,12 @@ import {
  */
 export default function PublishingRegistrations() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Registrations" />
+    <AppPageLayout title="Registrations">
       <AppEmptyState
         message="No registrations available"
         description="Registration records will appear once works are submitted."
         size="lg"
       />
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

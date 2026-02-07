@@ -1,8 +1,7 @@
 import { CreditCard } from "lucide-react";
 
 import {
-  AppPageHeader,
-  AppPageContainer,
+  AppPageLayout,
   AppSection,
   AppEmptyState,
 } from "@/components/app-ui";
@@ -15,12 +14,7 @@ import {
 
 export default function TribesAdminRoyaltiesPage() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader
-        title="Royalties"
-        backLink={{ to: "/admin", label: "Dashboard" }}
-      />
-
+    <AppPageLayout title="Royalties" backLink={{ to: "/admin", label: "Dashboard" }}>
       <AppSection spacing="md">
         <div className="flex items-center justify-center min-h-[400px]">
           <AppEmptyState
@@ -30,6 +24,6 @@ export default function TribesAdminRoyaltiesPage() {
           />
         </div>
       </AppSection>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

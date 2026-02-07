@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   AppButton,
+  AppPageLayout,
   AppTable,
   AppTableBody,
   AppTableCell,
@@ -120,13 +121,10 @@ export default function AccessRequestsPage() {
   }
 
   return (
-    <div className="w-full max-w-[1000px]">
-      <div className="mb-6 sm:mb-8">
-        <h1 className="page-title">Access Requests</h1>
-        <p className="mt-2 text-[14px] text-muted-foreground">
-          Review and approve pending access requests for {activeTenant.tenant_name}.
-        </p>
-      </div>
+    <AppPageLayout title="Access Requests">
+      <p className="mt-[-8px] mb-6 text-[14px] text-muted-foreground">
+        Review and approve pending access requests for {activeTenant.tenant_name}.
+      </p>
 
       {isLoading ? (
         <div className="text-center py-12 text-muted-foreground">Loading requests...</div>
@@ -235,6 +233,6 @@ export default function AccessRequestsPage() {
           </AppTable>
         </div>
       )}
-    </div>
+    </AppPageLayout>
   );
 }

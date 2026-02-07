@@ -4,7 +4,7 @@ import { ArrowUpDown, Check } from "lucide-react";
 import { format } from "date-fns";
 
 import {
-  AppPageContainer,
+  AppPageLayout,
   AppSection,
   AppTable,
   AppTableHeader,
@@ -212,11 +212,7 @@ export default function TribesAdminCataloguePage() {
   };
 
   return (
-    <AppPageContainer maxWidth="xl">
-      {/* Header Row: Title */}
-      <div className="flex items-center justify-between mb-3">
-        <h1 className="page-title">My Catalogue</h1>
-      </div>
+    <AppPageLayout title="My Catalogue">
 
       <AppSection spacing="none">
         {/* Search Input - subtle bottom border */}
@@ -321,6 +317,6 @@ export default function TribesAdminCataloguePage() {
           onPageChange={setCurrentPage}
         />
       </AppSection>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

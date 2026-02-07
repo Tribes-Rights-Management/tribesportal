@@ -1,6 +1,5 @@
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppEmptyState,
 } from "@/components/app-ui";
 
@@ -9,13 +8,12 @@ import {
  */
 export default function PublishingPayments() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Payments" />
+    <AppPageLayout title="Payments">
       <AppEmptyState
         message="No payments available"
         description="Payment records will appear once transactions are processed."
         size="lg"
       />
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

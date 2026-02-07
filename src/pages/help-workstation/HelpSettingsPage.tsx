@@ -2,8 +2,7 @@ import { useState } from "react";
 import { ExternalLink } from "lucide-react";
 import {
   AppButton,
-  AppPageHeader,
-  AppPageContainer,
+  AppPageLayout,
   AppCard,
   AppCardHeader,
   AppCardTitle,
@@ -66,12 +65,11 @@ export default function HelpSettingsPage() {
   };
 
   return (
-    <AppPageContainer maxWidth="lg">
-      {/* Header */}
-      <AppPageHeader
-        backLink={{ to: "/help", label: "Overview" }}
-        title="Settings"
-      />
+    <AppPageLayout
+      title="Settings"
+      backLink={{ to: "/help", label: "Overview" }}
+      maxWidth="lg"
+    >
 
       {/* Public Help Center */}
       <AppSection spacing="md">
@@ -183,6 +181,6 @@ export default function HelpSettingsPage() {
           {saving ? "Saving..." : saved ? "Saved" : "Save Settings"}
         </AppButton>
       </div>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

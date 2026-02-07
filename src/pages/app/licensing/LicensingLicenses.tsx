@@ -1,6 +1,5 @@
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppEmptyState,
 } from "@/components/app-ui";
 
@@ -9,13 +8,12 @@ import {
  */
 export default function LicensingLicenses() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Licenses" />
+    <AppPageLayout title="Licenses">
       <AppEmptyState
         message="No licenses available"
         description="Issued licenses will appear once processed."
         size="lg"
       />
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }
