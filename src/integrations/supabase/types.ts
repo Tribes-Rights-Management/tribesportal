@@ -1207,7 +1207,9 @@ export type Database = {
         Row: {
           content: string
           created_at: string | null
+          helpful_count: number | null
           id: string
+          not_helpful_count: number | null
           published_at: string | null
           search_vector: unknown
           slug: string
@@ -1219,7 +1221,9 @@ export type Database = {
         Insert: {
           content?: string
           created_at?: string | null
+          helpful_count?: number | null
           id?: string
+          not_helpful_count?: number | null
           published_at?: string | null
           search_vector?: unknown
           slug: string
@@ -1231,7 +1235,9 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string | null
+          helpful_count?: number | null
           id?: string
+          not_helpful_count?: number | null
           published_at?: string | null
           search_vector?: unknown
           slug?: string
@@ -3059,6 +3065,8 @@ export type Database = {
           mailgun_message_id: string | null
           metadata: Json | null
           priority: string | null
+          search_query: string | null
+          searched_articles: Json | null
           status: string | null
           subject: string | null
           updated_at: string | null
@@ -3073,6 +3081,8 @@ export type Database = {
           mailgun_message_id?: string | null
           metadata?: Json | null
           priority?: string | null
+          search_query?: string | null
+          searched_articles?: Json | null
           status?: string | null
           subject?: string | null
           updated_at?: string | null
@@ -3087,6 +3097,8 @@ export type Database = {
           mailgun_message_id?: string | null
           metadata?: Json | null
           priority?: string | null
+          search_query?: string | null
+          searched_articles?: Json | null
           status?: string | null
           subject?: string | null
           updated_at?: string | null
