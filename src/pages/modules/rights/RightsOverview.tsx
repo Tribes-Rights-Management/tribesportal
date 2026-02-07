@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import { PageHeader } from "@/components/ui/page-header";
-import { PageContainer } from "@/components/ui/page-container";
 import {
+  AppPageLayout,
   AppStatCard,
   AppStatCardGrid,
   AppSection,
@@ -13,9 +12,6 @@ import {
   AppTableHead,
   AppTableCell,
   AppTableEmpty,
-  AppListCard,
-  AppListRow,
-  AppListAction,
 } from "@/components/app-ui";
 import { QueueStatusBadge } from "@/components/queue/QueueStatusBadge";
 import { useQueueStats, useStaffQueue } from "@/hooks/use-song-queue";
@@ -58,9 +54,7 @@ export default function RightsOverview() {
   const getSongTitle = (item: any) => item.current_data?.title || item.submitted_data?.title || "Untitled";
 
   return (
-    <PageContainer>
-      <PageHeader title="Overview" />
-
+    <AppPageLayout title="Overview">
       <AppStatCardGrid columns={4} className="mb-6">
         <AppStatCard label="Active Clients" value={clientCount ?? "—"} onClick={() => navigate("/rights/clients")} />
         <AppStatCard label="Active Contracts" value={contractCount ?? "—"} onClick={() => navigate("/rights/contracts")} />
@@ -103,6 +97,6 @@ export default function RightsOverview() {
           </AppTableBody>
         </AppTable>
       </AppSection>
-    </PageContainer>
+    </AppPageLayout>
   );
 }

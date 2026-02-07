@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Plus, Search } from "lucide-react";
 
 import {
-  AppPageContainer,
+  AppPageLayout,
   AppButton,
   AppTable,
   AppTableHeader,
@@ -349,10 +349,9 @@ export default function RightsWritersPage() {
   };
 
   return (
-    <AppPageContainer maxWidth="xl">
-      {/* Header Row: Title + Action */}
-      <div className="flex items-center justify-between mb-3">
-        <h1 className="page-title">Writers</h1>
+    <AppPageLayout
+      title="Writers"
+      action={
         <AppButton
           intent="secondary"
           size="sm"
@@ -361,7 +360,8 @@ export default function RightsWritersPage() {
           <Plus className="h-4 w-4" />
           Add Writer
         </AppButton>
-      </div>
+      }
+    >
 
       {/* Search */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-4 mb-4">
@@ -533,6 +533,6 @@ export default function RightsWritersPage() {
           </div>
         </div>
       </AppPanel>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowUpDown, Check, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppSection,
   AppTable,
   AppTableHeader,
@@ -25,7 +23,6 @@ import {
 } from "@/components/app-ui";
 import { QueueStatusBadge } from "@/components/queue/QueueStatusBadge";
 import { useStaffQueue, useQueueStats } from "@/hooks/use-song-queue";
-import { cn } from "@/lib/utils";
 
 /**
  * RIGHTS QUEUE PAGE — Staff view of all song submissions
@@ -75,12 +72,10 @@ export default function RightsQueuePage() {
   ];
 
   return (
-    <AppPageContainer maxWidth="xl">
-      <div className="flex items-center justify-between mb-3">
-        <AppPageHeader title="Queue" />
-        <AppFilterTrigger onClick={() => setFilterOpen(true)} hasActiveFilters={hasActiveFilters} />
-      </div>
-
+    <AppPageLayout
+      title="Queue"
+      action={<AppFilterTrigger onClick={() => setFilterOpen(true)} hasActiveFilters={hasActiveFilters} />}
+    >
       <AppSection spacing="md">
         <AppStatCardGrid columns={4}>
           <AppStatCard label="Submitted" value={stats?.submitted || 0} loading={!stats} onClick={() => handleStatusChange("submitted")} />
@@ -161,6 +156,6 @@ export default function RightsQueuePage() {
           ))}
         </AppFilterSection>
       </AppFilterDrawer>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

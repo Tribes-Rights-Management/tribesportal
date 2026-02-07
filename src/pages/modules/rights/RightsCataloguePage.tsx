@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 import {
-  AppPageContainer,
+  AppPageLayout,
   AppSection,
   AppButton,
   AppTable,
@@ -351,10 +351,9 @@ export default function RightsCataloguePage() {
   const someSelected = paginatedSongs.some(s => selectedSongs.has(s.id)) && !allSelected;
 
   return (
-    <AppPageContainer maxWidth="xl">
-      {/* Header Row: Title + Action */}
-      <div className="flex items-center justify-between mb-3">
-        <h1 className="page-title">Catalogue</h1>
+    <AppPageLayout
+      title="Catalogue"
+      action={
         <AppButton
           intent="secondary"
           size="sm"
@@ -363,7 +362,8 @@ export default function RightsCataloguePage() {
           <Plus className="h-4 w-4" />
           Add Song
         </AppButton>
-      </div>
+      }
+    >
 
       {/* Search - Outside AppSection */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-4 mb-4">
@@ -536,6 +536,6 @@ export default function RightsCataloguePage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

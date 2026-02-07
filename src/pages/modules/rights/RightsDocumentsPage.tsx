@@ -1,6 +1,5 @@
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppEmptyState,
 } from "@/components/app-ui";
 
@@ -11,13 +10,12 @@ import {
  */
 export default function RightsDocumentsPage() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Documents" />
+    <AppPageLayout title="Documents">
       <AppEmptyState
         message="No documents available"
         description="Document management functionality coming soon."
         size="lg"
       />
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

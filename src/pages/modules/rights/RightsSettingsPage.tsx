@@ -1,6 +1,5 @@
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppEmptyState,
 } from "@/components/app-ui";
 
@@ -11,13 +10,12 @@ import {
  */
 export default function RightsSettingsPage() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Settings" />
+    <AppPageLayout title="Settings">
       <AppEmptyState
         message="No settings available"
         description="Settings functionality coming soon."
         size="lg"
       />
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }
