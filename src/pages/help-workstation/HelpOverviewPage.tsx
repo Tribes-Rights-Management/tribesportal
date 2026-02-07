@@ -7,8 +7,7 @@ import { format } from "date-fns";
 // Import from unified app-ui kit
 import {
   AppButton,
-  AppPageHeader,
-  AppPageContainer,
+  AppPageLayout,
   AppStatCard,
   AppStatCardGrid,
   AppListCard,
@@ -133,22 +132,19 @@ export default function HelpOverviewPage() {
 
 
   return (
-    <AppPageContainer maxWidth="xl">
-      {/* Page Header */}
-      <AppPageHeader
-        title="Overview"
-        action={
-          <AppButton
-            intent="secondary"
-            size="sm"
-            onClick={() => navigate("/help/articles/new")}
-          >
-            <Plus className="h-4 w-4" />
-            New Article
-          </AppButton>
-        }
-      />
-
+    <AppPageLayout
+      title="Overview"
+      action={
+        <AppButton
+          intent="secondary"
+          size="sm"
+          onClick={() => navigate("/help/articles/new")}
+        >
+          <Plus className="h-4 w-4" />
+          New Article
+        </AppButton>
+      }
+    >
       {/* Error Alert */}
       {error && (
         <div className="mb-6">
@@ -243,6 +239,6 @@ export default function HelpOverviewPage() {
           )}
         </AppListCard>
       </AppSectionGrid>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

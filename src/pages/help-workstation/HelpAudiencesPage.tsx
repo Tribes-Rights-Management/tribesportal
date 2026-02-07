@@ -2,8 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Plus, GripVertical } from "lucide-react";
 import {
   AppButton,
-  AppPageHeader,
-  AppPageContainer,
+  AppPageLayout,
   AppAlert,
   AppEmptyState,
   AppPanel,
@@ -232,19 +231,17 @@ export default function HelpAudiencesPage() {
   };
 
   return (
-    <AppPageContainer maxWidth="lg">
-      {/* Page Header */}
-      <AppPageHeader
-        backLink={{ to: "/help", label: "Overview" }}
-        title="Audiences"
-        action={
-          <AppButton intent="primary" size="sm" onClick={handleCreate}>
-            <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
-            New Audience
-          </AppButton>
-        }
-      />
-
+    <AppPageLayout
+      title="Audiences"
+      backLink={{ to: "/help", label: "Overview" }}
+      maxWidth="lg"
+      action={
+        <AppButton intent="primary" size="sm" onClick={handleCreate}>
+          <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
+          New Audience
+        </AppButton>
+      }
+    >
       {/* Error */}
       {error && (
         <div className="mb-6">
@@ -402,6 +399,6 @@ export default function HelpAudiencesPage() {
           </div>
         </div>
       </AppPanel>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

@@ -31,8 +31,7 @@ import {
   AppTableHead,
   AppTableCell,
   AppTableEmpty,
-  AppPageHeader,
-  AppPageContainer,
+  AppPageLayout,
   AppAlert,
   AppEmptyState,
 } from "@/components/app-ui";
@@ -244,19 +243,16 @@ export default function HelpArticlesListPage() {
   const displayCount = isTableView ? filteredArticles.length : orderedArticles.length;
 
   return (
-    <AppPageContainer maxWidth="xl">
-      {/* Page Header */}
-      <AppPageHeader
-        backLink={{ to: "/help", label: "Overview" }}
-        title="Articles"
-        action={
-          <AppButton intent="primary" size="sm" onClick={() => navigate("/help/articles/new")}>
-            <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
-            New Article
-          </AppButton>
-        }
-      />
-
+    <AppPageLayout
+      title="Articles"
+      backLink={{ to: "/help", label: "Overview" }}
+      action={
+        <AppButton intent="primary" size="sm" onClick={() => navigate("/help/articles/new")}>
+          <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
+          New Article
+        </AppButton>
+      }
+    >
       {/* Error */}
       {articlesError && (
         <div className="mb-6">
@@ -430,6 +426,6 @@ export default function HelpArticlesListPage() {
           )}
         </>
       )}
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }
