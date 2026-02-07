@@ -257,30 +257,23 @@ export default function DataRoomPage() {
 
   if (!isPlatformAdmin) {
     return (
-      <div className="p-6">
-        <PageHeader title="Access Denied" />
+      <AppPageLayout title="Access Denied">
         <p className="text-muted-foreground">
           You do not have permission to access the data room.
         </p>
-      </div>
+      </AppPageLayout>
     );
   }
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <BackButton />
-        <div className="flex items-center justify-between">
-          <PageHeader 
-            title="Data Room" 
-            description="Formal disclosure packages for audits and compliance"
-          />
-          <ConsoleButton onClick={() => setShowCreateDialog(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Create Export
-          </ConsoleButton>
-        </div>
+      <div className="flex items-center justify-between">
+        <h1 className="page-title">Data Room</h1>
+        <ConsoleButton onClick={() => setShowCreateDialog(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Create Export
+        </ConsoleButton>
       </div>
 
       {/* Info Card */}
