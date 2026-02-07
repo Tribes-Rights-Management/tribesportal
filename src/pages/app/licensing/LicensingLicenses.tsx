@@ -1,13 +1,21 @@
-import { PageHeader } from "@/components/ui/page-header";
-import { InstitutionalEmptyPanel } from "@/components/ui/institutional-states";
+import {
+  AppPageContainer,
+  AppPageHeader,
+  AppEmptyState,
+} from "@/components/app-ui";
 
+/**
+ * Licenses — Client Portal
+ */
 export default function LicensingLicenses() {
   return (
-    <div className="p-6" style={{ backgroundColor: 'var(--platform-canvas)' }}>
-      <div className="max-w-[960px]">
-        <PageHeader title="Licenses" description="Issued licenses and terms" />
-        <InstitutionalEmptyPanel title="No licenses available." description="Issued licenses will appear once processed." />
-      </div>
-    </div>
+    <AppPageContainer maxWidth="xl">
+      <AppPageHeader title="Licenses" />
+      <AppEmptyState
+        message="No licenses available"
+        description="Issued licenses will appear once processed."
+        size="lg"
+      />
+    </AppPageContainer>
   );
 }

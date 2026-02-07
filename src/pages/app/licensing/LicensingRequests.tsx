@@ -1,13 +1,21 @@
-import { PageHeader } from "@/components/ui/page-header";
-import { InstitutionalEmptyPanel } from "@/components/ui/institutional-states";
+import {
+  AppPageContainer,
+  AppPageHeader,
+  AppEmptyState,
+} from "@/components/app-ui";
 
+/**
+ * Requests — Client Portal
+ */
 export default function LicensingRequests() {
   return (
-    <div className="p-6" style={{ backgroundColor: 'var(--platform-canvas)' }}>
-      <div className="max-w-[960px]">
-        <PageHeader title="Requests" description="Licensing request management" />
-        <InstitutionalEmptyPanel title="No requests available." description="Licensing requests will appear once submitted." />
-      </div>
-    </div>
+    <AppPageContainer maxWidth="xl">
+      <AppPageHeader title="Requests" />
+      <AppEmptyState
+        message="No requests available"
+        description="Licensing requests will appear once submitted."
+        size="lg"
+      />
+    </AppPageContainer>
   );
 }
