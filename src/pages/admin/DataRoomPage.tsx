@@ -266,15 +266,15 @@ export default function DataRoomPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="page-title">Data Room</h1>
+    <AppPageLayout
+      title="Data Room"
+      action={
         <ConsoleButton onClick={() => setShowCreateDialog(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Create Export
         </ConsoleButton>
-      </div>
+      }
+    >
 
       {/* Info Card */}
       <div 
@@ -424,6 +424,6 @@ export default function DataRoomPage() {
         open={showCreateDialog} 
         onOpenChange={setShowCreateDialog} 
       />
-    </div>
+    </AppPageLayout>
   );
 }

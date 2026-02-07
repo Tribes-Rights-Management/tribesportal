@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { PageContainer } from "@/components/ui/page-container";
+import { AppPageLayout } from "@/components/app-ui";
 import { 
   ConsoleButton,
   ConsoleChip,
@@ -528,44 +528,11 @@ export default function SecurityVerificationPage() {
   const selectedException = exceptions.find(e => e.id === selectedExceptionId) || null;
 
   return (
-    <PageContainer>
-      {/* ========== COMMAND BAR ========== */}
-      <div 
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 pb-6"
-        style={{ borderBottom: '1px solid hsl(var(--border))' }}
-      >
-        <div className="min-w-0">
-          <div className="flex items-center gap-3 mb-1">
-            {/* Back Button */}
-            <button
-              type="button"
-              onClick={handleBack}
-              className="inline-flex items-center justify-center h-11 w-11 rounded-xl transition-colors"
-              style={{
-                backgroundColor: 'transparent',
-                color: 'var(--platform-text-secondary)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-              aria-label="Back"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 flex-shrink-0" style={{ color: 'var(--platform-text-muted)' }} />
-              <h1 className="page-title">Security Verification</h1>
-            </div>
-          </div>
-          <p className="text-[13px] mt-1 ml-14" style={{ color: 'var(--platform-text-muted)' }}>
-            Validate RLS enforcement and platform security posture
-          </p>
-        </div>
-        
-        <div className="flex flex-col items-start sm:items-end gap-1.5">
+    <AppPageLayout
+      title="Security Verification"
+      backLink={{ to: "/console", label: "System Console" }}
+      action={
+        <div className="flex flex-col items-end gap-1.5">
           <ConsoleButton
             intent="primary"
             onClick={runChecks}
@@ -577,19 +544,17 @@ export default function SecurityVerificationPage() {
           >
             Run checks
           </ConsoleButton>
-          
           <span className="text-[11px] flex items-center gap-1" style={{ color: 'var(--platform-text-muted)' }}>
             <Clock className="h-3 w-3" />
             {lastRunAt ? (
-              <>
-                Last run: {formatDistanceToNow(lastRunAt, { addSuffix: true })} • {format(lastRunAt, "yyyy-MM-dd HH:mm")}
-              </>
+              <>Last run: {formatDistanceToNow(lastRunAt, { addSuffix: true })}</>
             ) : (
               "Last run: Never"
             )}
           </span>
         </div>
-      </div>
+      }
+    >
 
       <div className="space-y-5">
         {/* ========== OPEN EXCEPTIONS PANEL ========== */}
@@ -736,6 +701,6 @@ export default function SecurityVerificationPage() {
         open={!!selectedExceptionId}
         onClose={() => setSelectedExceptionId(null)}
       />
-    </PageContainer>
+    </AppPageLayout>
   );
 }

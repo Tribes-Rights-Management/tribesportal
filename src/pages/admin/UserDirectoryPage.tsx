@@ -3,8 +3,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { ChevronRight, Copy, X, AlertCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { PageContainer } from "@/components/ui/page-container";
-import { PageShell, ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
+import { AppPageLayout } from "@/components/app-ui";
+import { ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 
@@ -171,13 +171,10 @@ export default function UserDirectoryPage() {
   const isCurrentUser = (user: UserWithProfile) => user.user_id === currentProfile?.user_id;
 
   return (
-    <PageContainer>
-      <PageShell
-        title="Member Directory"
-        subtitle={`${users.length} account(s)`}
-        backTo="/admin"
-        backLabel="System Console"
-      />
+    <AppPageLayout
+      title="Member Directory"
+      backLink={{ to: "/console", label: "System Console" }}
+    >
 
       <ContentPanel>
         {loading ? (
@@ -517,6 +514,6 @@ export default function UserDirectoryPage() {
           )}
         </DialogContent>
       </Dialog>
-    </PageContainer>
+    </AppPageLayout>
   );
 }
