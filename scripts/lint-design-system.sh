@@ -24,8 +24,10 @@ echo "  TRIBES DESIGN SYSTEM LINT"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Skip index files and auth callback (special case)
-find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.tsx" | sort | while read -r file; do
+# Skip index files, auth callback, and console-context pages (admin/ uses console components)
+# Console pages use @/components/console + @/components/ui which is correct for that context
+CONSOLE_PAGES="admin/AdminDashboard|admin/ApprovalsPage|admin/AuthAccessReviewPage|admin/CorrelationChainPage|admin/DataRoomPage|admin/DisclosuresPage|admin/OrgUsersPage|admin/OrganizationUsersPage|admin/PermissionsPage|admin/RLSAuditPage|admin/TenantsPage|admin/UserDirectoryPage|admin/AccountSettingsPage|admin/billing/|admin/reporting/|auditor/"
+find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.tsx" | grep -vE "$CONSOLE_PAGES" | sort | while read -r file; do
     TOTAL=$((TOTAL + 1))
     shortname="${file#src/pages/}"
     file_violations=0
@@ -61,9 +63,9 @@ find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.
         file_violations=$((file_violations + 1))
     fi
 
-    # Check 6: bg-white or bg-card used as panel pattern
-    if grep -qE 'bg-(white|card).*border.*rounded|bg-(white|card).*rounded.*border' "$file"; then
-        file_issues+="  ${YELLOW}PATTERN${NC} Raw bg-white/bg-card panel → use AppPanel or AppCard\n"
+    # Check 6: bg-white or bg-card on DIV elements used as panel pattern (skip inputs and selects)
+    if grep -qE '<div.*className=.*bg-(white|card).*border.*rounded|<div.*className=.*bg-(white|card).*rounded.*border|<section.*className=.*bg-(white|card).*border.*rounded' "$file"; then
+        file_issues+="  ${YELLOW}PATTERN${NC} Raw bg-white/bg-card panel on div → use AppPanel or AppCard\n"
         file_violations=$((file_violations + 1))
     fi
 
@@ -93,8 +95,8 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Recount since the while loop runs in a subshell
-TOTAL_FILES=$(find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.tsx" | wc -l)
-VIOLATION_FILES=$(find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.tsx" -exec grep -lE 'from.*@/components/ui/(button|card|input|badge|table)|bg-(white|card).*border.*rounded|<table' {} \; | wc -l)
+TOTAL_FILES=$(find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.tsx" | grep -vE "$CONSOLE_PAGES" | wc -l)
+VIOLATION_FILES=$(find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.tsx" | grep -vE "$CONSOLE_PAGES" | xargs grep -lE 'from.*@/components/ui/(button|card|input|badge|table)|<div.*className=.*bg-(white|card).*border.*rounded|<div.*className=.*bg-(white|card).*rounded.*border|<table' 2>/dev/null | wc -l)
 CLEAN_FILES=$((TOTAL_FILES - VIOLATION_FILES))
 
 if [ "$VIOLATION_FILES" -eq 0 ]; then
