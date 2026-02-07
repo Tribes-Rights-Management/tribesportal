@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PlatformLayout, InstitutionalHeader } from "@/layouts/PlatformLayout";
+import { AppPageLayout } from "@/components/app-ui";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -82,11 +82,13 @@ export default function AuditorLicensingPage() {
   }
 
   return (
-    <PlatformLayout maxWidth="wide">
-      <InstitutionalHeader 
-        title="Licensing Records"
-        description="Requests, agreements, and approval history"
-      />
+    <AppPageLayout
+      title="Licensing Records"
+      backLink={{ to: "/auditor", label: "Auditor Portal" }}
+    >
+      <p className="text-sm text-muted-foreground mb-4">
+        Requests, agreements, and approval history
+      </p>
 
       <Tabs defaultValue="requests" className="w-full">
         <TabsList 
@@ -216,7 +218,7 @@ export default function AuditorLicensingPage() {
           </div>
         </TabsContent>
       </Tabs>
-    </PlatformLayout>
+    </AppPageLayout>
   );
 }
 

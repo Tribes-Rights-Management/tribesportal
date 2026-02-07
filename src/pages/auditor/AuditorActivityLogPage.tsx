@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PlatformLayout, InstitutionalHeader } from "@/layouts/PlatformLayout";
+import { AppPageLayout } from "@/components/app-ui";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -76,11 +76,13 @@ export default function AuditorActivityLogPage() {
   }
 
   return (
-    <PlatformLayout maxWidth="wide">
-      <InstitutionalHeader 
-        title="Activity Log"
-        description="Immutable record of all platform actions"
-      />
+    <AppPageLayout
+      title="Activity Log"
+      backLink={{ to: "/auditor", label: "Auditor Portal" }}
+    >
+      <p className="text-sm text-muted-foreground mb-4">
+        Immutable record of all platform actions
+      </p>
 
       <div 
         className="mb-4 px-4 py-3 rounded-md"
@@ -103,7 +105,7 @@ export default function AuditorActivityLogPage() {
         loading={loading}
         // No export for auditors — read-only
       />
-    </PlatformLayout>
+    </AppPageLayout>
   );
 }
 

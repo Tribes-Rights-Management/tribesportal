@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PlatformLayout, InstitutionalHeader } from "@/layouts/PlatformLayout";
+import { AppPageLayout } from "@/components/app-ui";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -65,11 +65,13 @@ export default function AuditorAccessLogPage() {
   }
 
   return (
-    <PlatformLayout maxWidth="wide">
-      <InstitutionalHeader 
-        title="Access Log"
-        description="Record access and download events"
-      />
+    <AppPageLayout
+      title="Access Log"
+      backLink={{ to: "/auditor", label: "Auditor Portal" }}
+    >
+      <p className="text-sm text-muted-foreground mb-4">
+        Record access and download events
+      </p>
 
       <div 
         className="mb-4 px-4 py-3 rounded-md"
@@ -135,7 +137,7 @@ export default function AuditorAccessLogPage() {
           </TableBody>
         </Table>
       </div>
-    </PlatformLayout>
+    </AppPageLayout>
   );
 }
 
