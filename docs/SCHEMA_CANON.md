@@ -101,7 +101,7 @@
 
 | Table | Cols | Classification | Notes |
 |-------|------|---------------|-------|
-| `help_articles` | 10 | **CANONICAL** | Help Workstation articles. `status` (help_article_status), `search_vector` for full-text search, `content` (TipTap HTML). |
+| `help_articles` | 12 | **CANONICAL** | Help Workstation articles. `status` (help_article_status), `search_vector` for full-text search, `content` (TipTap HTML). Now includes `helpful_count` and `not_helpful_count` (migrated from legacy `articles`). |
 | `help_categories` | 7 | **CANONICAL** | Help article categories. `icon`, `slug`. |
 | `help_audiences` | 8 | **CANONICAL** | Audience segments (e.g., "Songwriters", "Licensees"). `is_active`, `position` for ordering. |
 | `help_article_audiences` | 8 | **JUNCTION** | Links articles → audiences via categories. Supports `title_override`, `content_override` per audience. |
@@ -117,7 +117,7 @@
 
 | Table | Cols | Classification | Notes |
 |-------|------|---------------|-------|
-| `support_tickets` | 12 | **CANONICAL** | Email-based support tickets. `mailgun_message_id` for threading, `from_email`, `from_name`. |
+| `support_tickets` | 14 | **CANONICAL** | Email-based support tickets. `mailgun_message_id` for threading, `from_email`, `from_name`. Now includes `search_query` and `searched_articles` (migrated from legacy `messages`). |
 | `ticket_messages` | 7 | **CANONICAL** | Messages within support ticket threads. `role` (agent/customer), `mailgun_message_id`. |
 | `support_knowledge_base` | 8 | **CANONICAL** | AI knowledge base for support triage. `embedding` for vector search, `category`. |
 | `messages` | 13 | **LEGACY** | ⚠️ From help widget contact form. Has `search_query`, `searched_articles` (JSONB). Superseded by `support_tickets` + `ticket_messages` for new support flows. |
@@ -222,16 +222,16 @@
 
 ---
 
-## Legacy Table Migration Plan (Post-MVP)
+## Legacy Table Migration Status
 
-| Legacy Table | Canonical Replacement | Migration Complexity | Data at Risk |
-|-------------|----------------------|---------------------|-------------|
-| `articles` | `help_articles` | Low — different schemas, likely no shared data | Check if widget still writes here |
-| `categories` | `help_categories` | Low — same | Check if widget still writes here |
-| `messages` | `support_tickets` + `ticket_messages` | Medium — different structure | Existing messages need migration |
-| `searches` | `search_query_log` | Low — analytics only | Can archive |
-| `chat_conversations` | None (deprecate) | Low | Archive if any data exists |
-| `chat_messages` | None (deprecate) | Low | Archive if any data exists |
-| `widget_settings` | None (deprecate) | None | Single row, not used |
+| Legacy Table | Canonical Replacement | Frontend References | Status |
+|-------------|----------------------|-------------------|--------|
+| `articles` | `help_articles` | ✅ None remaining | Ready to drop after data archive |
+| `categories` | `help_categories` | ✅ None remaining | Ready to drop after data archive |
+| `messages` | `support_tickets` + `ticket_messages` | ✅ None remaining | Ready to drop after data archive |
+| `searches` | `search_query_log` | ✅ None remaining | Ready to drop |
+| `chat_conversations` | None (deprecated) | ✅ None remaining | Ready to drop |
+| `chat_messages` | None (deprecated) | ✅ None remaining | Ready to drop |
+| `widget_settings` | None (deprecated) | ✅ None remaining | Ready to drop |
 
-**Migration strategy:** Don't DROP tables yet. Add a comment `-- LEGACY: superseded by X` to each. Remove frontend references first, then archive data, then drop tables in a dedicated cleanup migration.
+**Next step:** After deploying the SQL migration (`20260207_legacy_table_deprecation.sql`), verify the app works correctly with canonical tables. Then in a future migration, archive any legacy data and DROP the tables.
