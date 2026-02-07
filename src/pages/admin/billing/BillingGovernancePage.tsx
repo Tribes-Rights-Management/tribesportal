@@ -1,4 +1,4 @@
-import { PageHeader } from "@/components/ui/page-header";
+import { AppPageLayout } from "@/components/app-ui";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -53,11 +53,7 @@ export default function BillingGovernancePage() {
   } = useBillingAuthority();
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <PageHeader
-        title="Billing Governance"
-        description="Company-level financial oversight and configuration"
-      />
+    <AppPageLayout title="Billing Governance">
 
       {/* Governance Notice */}
       <Card className="border-[var(--warning-border)] bg-[var(--warning-bg)]">
@@ -259,6 +255,6 @@ export default function BillingGovernancePage() {
           </p>
         </CardContent>
       </Card>
-    </div>
+    </AppPageLayout>
   );
 }

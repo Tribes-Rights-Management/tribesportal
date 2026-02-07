@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/ui/page-header";
+import { AppPageLayout } from "@/components/app-ui";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BackButton } from "@/components/ui/back-button";
 import { Plus, Check } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
@@ -31,14 +30,7 @@ export default function PlansConfigurationPage() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
-        <BackButton />
-        <PageHeader
-          title="Plans & Pricing"
-          description="Configure billing plans and pricing rules"
-        />
-      </div>
+    <AppPageLayout title="Plans & Pricing" backLink={{ to: "/console/billing", label: "Billing" }}>
 
       <div className="flex items-center justify-between">
         <AppSearchInput
@@ -126,6 +118,6 @@ export default function PlansConfigurationPage() {
           </p>
         </CardContent>
       </Card>
-    </div>
+    </AppPageLayout>
   );
 }

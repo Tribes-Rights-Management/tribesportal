@@ -20,7 +20,7 @@
 import { useState } from "react";
 import { FileText, Download, Clock, Shield, DollarSign, Scale, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
-import { PageHeader } from "@/components/ui/page-header";
+import { AppPageLayout } from "@/components/app-ui";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";

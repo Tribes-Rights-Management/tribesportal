@@ -17,8 +17,7 @@ import {
   Users,
   Eye
 } from "lucide-react";
-import { PageHeader } from "@/components/ui/page-header";
-import { BackButton } from "@/components/ui/back-button";
+import { AppPageLayout } from "@/components/app-ui";
 import { ConsoleButton, ConsoleChip } from "@/components/console";
 import { 
   Table, 
