@@ -204,8 +204,8 @@ export default function WorkstationsHomePage() {
         style={{ backgroundColor: 'var(--app-bg)' }}
       >
         <div className="mx-auto w-full max-w-[640px] pb-12">
-          {/* Header — using global page-header class */}
-          <div className="page-header">
+          {/* Header — using canonical page-header-zone for vertical position */}
+          <div className="page-header-zone">
             <h1 className="page-title">
               Welcome, {getDisplayFirstName()}
             </h1>

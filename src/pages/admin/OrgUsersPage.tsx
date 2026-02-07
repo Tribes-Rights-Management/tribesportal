@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AppPageHeader } from "@/components/app-ui/AppPageHeader";
+import { AppPageLayout } from "@/components/app-ui/AppPageLayout";
 import { AppCard } from "@/components/app-ui/AppCard";
 import { AppEmptyState } from "@/components/app-ui/AppEmptyState";
 import { AppButton } from "@/components/app-ui/AppButton";
@@ -212,17 +212,15 @@ export default function OrgUsersPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <AppPageHeader
-        title="Users"
-        description={`Manage members and invitations for ${organizationName}`}
-        action={
-          <AppButton onClick={() => setInviteModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Invite user
-          </AppButton>
-        }
-      />
+    <AppPageLayout
+      title="Users"
+      action={
+        <AppButton onClick={() => setInviteModalOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Invite user
+        </AppButton>
+      }
+    >
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
@@ -434,6 +432,6 @@ export default function OrgUsersPage() {
           setActiveTab("invitations");
         }}
       />
-    </div>
+    </AppPageLayout>
   );
 }
