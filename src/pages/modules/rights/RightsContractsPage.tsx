@@ -1,6 +1,5 @@
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppEmptyState,
 } from "@/components/app-ui";
 
@@ -11,13 +10,12 @@ import {
  */
 export default function RightsContractsPage() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Contracts" />
+    <AppPageLayout title="Contracts">
       <AppEmptyState
         message="No contracts available"
         description="Contract management functionality coming soon."
         size="lg"
       />
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

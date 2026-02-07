@@ -1,6 +1,5 @@
 import {
-  AppPageContainer,
-  AppPageHeader,
+  AppPageLayout,
   AppEmptyState,
 } from "@/components/app-ui";
 
@@ -11,13 +10,12 @@ import {
  */
 export default function RightsClientsPage() {
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Clients" />
+    <AppPageLayout title="Clients">
       <AppEmptyState
         message="No clients available"
         description="Client management functionality coming soon."
         size="lg"
       />
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

@@ -144,9 +144,15 @@ a:active,
    2. Without secondary nav: page-header or page-header-with-nav directly
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Page header — standard (no back button) */
+/* Page header zone — CANONICAL vertical position for all page titles */
+.page-header-zone {
+  padding-top: 24px;      /* Space from top nav to title */
+  padding-bottom: 16px;   /* Space from title to body content */
+}
+
+/* Page header — standard (no back button) — deprecated, kept for compat */
 .page-header {
-  padding-top: 0;         /* no extra padding; container handles spacing */
+  padding-top: 0;
   padding-bottom: 1rem;   /* pb-4 */
 }
 
@@ -180,7 +186,7 @@ a:active,
 
 @media (min-width: 640px) {
   .page-header {
-    padding-top: 0;         /* no extra padding; container handles spacing */
+    padding-top: 0;
     padding-bottom: 1.5rem; /* sm:pb-6 */
   }
   

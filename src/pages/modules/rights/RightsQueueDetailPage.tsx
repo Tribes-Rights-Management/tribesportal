@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import {
-  AppPageContainer,
+  AppPageLayout,
   AppButton,
   AppCard,
   AppCardBody,
@@ -34,17 +33,17 @@ export default function RightsQueueDetailPage() {
 
   if (isLoading) {
     return (
-      <AppPageContainer maxWidth="lg">
+      <AppPageLayout title="Loading..." backLink={{ to: "/rights/queue", label: "Back to Queue" }} maxWidth="lg">
         <div className="py-12 text-center text-muted-foreground text-sm">Loading...</div>
-      </AppPageContainer>
+      </AppPageLayout>
     );
   }
 
   if (!item) {
     return (
-      <AppPageContainer maxWidth="lg">
+      <AppPageLayout title="Not Found" backLink={{ to: "/rights/queue", label: "Back to Queue" }} maxWidth="lg">
         <div className="py-12 text-center text-muted-foreground text-sm">Queue item not found.</div>
-      </AppPageContainer>
+      </AppPageLayout>
     );
   }
 
@@ -63,26 +62,15 @@ export default function RightsQueueDetailPage() {
   };
 
   return (
-    <AppPageContainer maxWidth="lg">
-      {/* Back button */}
-      <button
-        onClick={() => navigate("/rights/queue")}
-        className="flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground transition-colors mb-4"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Back to Queue
-      </button>
-
-      {/* Header */}
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h1 className="page-title">{title}</h1>
-          <p className="text-[13px] text-muted-foreground mt-1">
-            Submitted by {item.client_name} · {format(new Date(item.submitted_at), "MMM d, yyyy")}
-          </p>
-        </div>
-        <QueueStatusBadge status={item.status} />
-      </div>
+    <AppPageLayout
+      title={title}
+      backLink={{ to: "/rights/queue", label: "Back to Queue" }}
+      maxWidth="lg"
+      action={<QueueStatusBadge status={item.status} />}
+    >
+      <p className="text-[13px] text-muted-foreground -mt-2 mb-6">
+        Submitted by {item.client_name} · {format(new Date(item.submitted_at), "MMM d, yyyy")}
+      </p>
 
       {/* Tabs */}
       <Tabs defaultValue="details" className="space-y-4">
@@ -221,6 +209,6 @@ export default function RightsQueueDetailPage() {
           </AppCard>
         </TabsContent>
       </Tabs>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }
