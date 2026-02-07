@@ -94,12 +94,7 @@ export default function AdminDashboard() {
               HEADER — Sparse, authoritative
           ───────────────────────────────────────────────────────────────── */}
           <header className="mb-10 md:mb-12">
-            <h1 
-              className="text-[22px] md:text-[26px] font-medium tracking-[-0.01em]"
-              style={{ color: 'var(--platform-text)' }}
-            >
-              System Console
-            </h1>
+            <h1 className="page-title">System Console</h1>
             <p 
               className="text-[13px] md:text-[14px] mt-1.5"
               style={{ color: 'var(--platform-text-muted)' }}

@@ -227,7 +227,7 @@ export default function TribesAdminDocumentsPage() {
     <AppPageContainer maxWidth="xl">
       {/* Header Row: Title + Filter */}
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-lg font-semibold tracking-tight">Documents</h1>
+        <h1 className="page-title">Documents</h1>
         <AppFilterTrigger
           onClick={() => setFilterOpen(true)}
           hasActiveFilters={hasActiveFilters}

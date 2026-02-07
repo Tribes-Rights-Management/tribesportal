@@ -76,7 +76,7 @@ export default function RightsQueueDetailPage() {
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
+          <h1 className="page-title">{title}</h1>
           <p className="text-[13px] text-muted-foreground mt-1">
             Submitted by {item.client_name} · {format(new Date(item.submitted_at), "MMM d, yyyy")}
           </p>

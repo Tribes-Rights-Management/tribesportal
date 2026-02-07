@@ -352,7 +352,7 @@ export default function RightsWritersPage() {
     <AppPageContainer maxWidth="xl">
       {/* Header Row: Title + Action */}
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-lg font-semibold tracking-tight">Writers</h1>
+        <h1 className="page-title">Writers</h1>
         <AppButton
           intent="secondary"
           size="sm"

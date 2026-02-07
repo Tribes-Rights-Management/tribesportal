@@ -32,15 +32,7 @@ export function PageHeader({
     <div className={cn("mb-6", className)}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div className="min-w-0 flex-1">
-          <h1 
-            className="text-[18px] sm:text-[20px] font-medium leading-[1.2] sm:leading-[1.25]"
-            style={{ 
-              color: 'var(--platform-text)',
-              letterSpacing: '-0.01em',
-            }}
-          >
-            {title}
-          </h1>
+          <h1 className="page-title">{title}</h1>
         </div>
         {children && (
           <div className="flex items-center gap-3 shrink-0">
