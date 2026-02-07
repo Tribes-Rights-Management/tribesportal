@@ -31,8 +31,7 @@ import {
   AppTableCell,
   AppTableEmpty,
   AppCheckboxGroup,
-  AppPageHeader,
-  AppPageContainer,
+  AppPageLayout,
   AppAlert,
   AppEmptyState,
   AppPanel,
@@ -314,19 +313,16 @@ export default function HelpCategoriesPage() {
   const linkedCategoryCount = selectedAudienceId ? orderedCategories.length : categories.length;
 
   return (
-    <AppPageContainer maxWidth="xl">
-      {/* Page Header */}
-      <AppPageHeader
-        backLink={{ to: "/help", label: "Overview" }}
-        title="Categories"
-        action={
-          <AppButton intent="primary" size="sm" onClick={handleCreate}>
-            <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
-            New Category
-          </AppButton>
-        }
-      />
-
+    <AppPageLayout
+      title="Categories"
+      backLink={{ to: "/help", label: "Overview" }}
+      action={
+        <AppButton intent="primary" size="sm" onClick={handleCreate}>
+          <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
+          New Category
+        </AppButton>
+      }
+    >
       {/* Error */}
       {(error || categoriesError) && (
         <div className="mb-6">
@@ -551,6 +547,6 @@ export default function HelpCategoriesPage() {
           )}
         </p>
       </AppPanel>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

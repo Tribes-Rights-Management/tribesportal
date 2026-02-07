@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import {
-  AppPageHeader,
-  AppPageContainer,
+  AppPageLayout,
   AppSection,
   AppListCard,
   AppListRow,
@@ -18,12 +17,11 @@ export default function TribesAdminSettingsPage() {
   const navigate = useNavigate();
 
   return (
-    <AppPageContainer maxWidth="lg">
-      <AppPageHeader
-        title="Settings"
-        backLink={{ to: "/admin", label: "Dashboard" }}
-      />
-
+    <AppPageLayout
+      title="Settings"
+      backLink={{ to: "/admin", label: "Dashboard" }}
+      maxWidth="lg"
+    >
       <AppSection spacing="md">
         <AppListCard title="Account">
           <AppListRow
@@ -46,6 +44,6 @@ export default function TribesAdminSettingsPage() {
           />
         </AppListCard>
       </AppSection>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

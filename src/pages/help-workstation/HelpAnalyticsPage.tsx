@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { RefreshCw } from "lucide-react";
 import {
-  AppPageHeader,
-  AppPageContainer,
+  AppPageLayout,
   AppStatCard,
   AppStatCardGrid,
   AppCard,
@@ -142,25 +141,22 @@ export default function HelpAnalyticsPage() {
   const totalViews = topArticles.reduce((sum, a) => sum + a.view_count, 0);
 
   return (
-    <AppPageContainer maxWidth="xl">
-      {/* Header */}
-      <AppPageHeader
-        backLink={{ to: "/help", label: "Overview" }}
-        title="Analytics"
-        action={
-          <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
-            <SelectTrigger className="h-10 w-full sm:w-[140px] px-3 text-[14px] bg-card border border-border rounded-lg">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7">Last 7 days</SelectItem>
-              <SelectItem value="30">Last 30 days</SelectItem>
-              <SelectItem value="90">Last 90 days</SelectItem>
-            </SelectContent>
-          </Select>
-        }
-      />
-
+    <AppPageLayout
+      title="Analytics"
+      backLink={{ to: "/help", label: "Overview" }}
+      action={
+        <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
+          <SelectTrigger className="h-10 w-full sm:w-[140px] px-3 text-[14px] bg-card border border-border rounded-lg">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="7">Last 7 days</SelectItem>
+            <SelectItem value="30">Last 30 days</SelectItem>
+            <SelectItem value="90">Last 90 days</SelectItem>
+          </SelectContent>
+        </Select>
+      }
+    >
       {/* Error */}
       {error && (
         <div className="mb-6">
@@ -278,6 +274,6 @@ export default function HelpAnalyticsPage() {
           </AppSection>
         </>
       )}
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }

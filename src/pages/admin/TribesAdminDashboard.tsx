@@ -2,8 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { Music } from "lucide-react";
 import {
-  AppPageHeader,
-  AppPageContainer,
+  AppPageLayout,
   AppStatCard,
   AppStatCardGrid,
   AppSection,
@@ -40,9 +39,7 @@ export default function TribesAdminDashboard() {
   };
 
   return (
-    <AppPageContainer maxWidth="xl">
-      <AppPageHeader title="Dashboard" />
-
+    <AppPageLayout title="Dashboard">
       <AppSection spacing="md">
         <AppStatCardGrid columns={4}>
           <AppStatCard label="My Submissions" value={queueItems.length} loading={isLoading} />
@@ -91,6 +88,6 @@ export default function TribesAdminDashboard() {
           <AppListRow title="Manage Documents" subtitle="Contracts and agreements" onClick={() => navigate("/admin/documents")} />
         </AppListCard>
       </AppSectionGrid>
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }
