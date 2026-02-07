@@ -1,26 +1,21 @@
-import { PageHeader } from "@/components/ui/page-header";
-import { InstitutionalEmptyPanel } from "@/components/ui/institutional-states";
+import {
+  AppPageContainer,
+  AppPageHeader,
+  AppEmptyState,
+} from "@/components/app-ui";
 
 /**
- * PUBLISHING DOCUMENTS — INSTITUTIONAL MODE
+ * Documents — Client Portal
  */
 export default function PublishingDocuments() {
   return (
-    <div 
-      className="p-6"
-      style={{ backgroundColor: 'var(--platform-canvas)' }}
-    >
-      <div className="max-w-[960px]">
-        <PageHeader 
-          title="Documents"
-          description="Contracts, agreements, and related documents"
-        />
-
-        <InstitutionalEmptyPanel
-          title="No documents available."
-          description="Documents will appear once uploaded to your account."
-        />
-      </div>
-    </div>
+    <AppPageContainer maxWidth="xl">
+      <AppPageHeader title="Documents" />
+      <AppEmptyState
+        message="No documents available"
+        description="Documents will appear once uploaded to your account."
+        size="lg"
+      />
+    </AppPageContainer>
   );
 }

@@ -1,26 +1,21 @@
-import { PageHeader } from "@/components/ui/page-header";
-import { InstitutionalEmptyPanel } from "@/components/ui/institutional-states";
+import {
+  AppPageContainer,
+  AppPageHeader,
+  AppEmptyState,
+} from "@/components/app-ui";
 
 /**
- * PUBLISHING REGISTRATIONS — INSTITUTIONAL MODE
+ * Registrations — Client Portal
  */
 export default function PublishingRegistrations() {
   return (
-    <div 
-      className="p-6"
-      style={{ backgroundColor: 'var(--platform-canvas)' }}
-    >
-      <div className="max-w-[960px]">
-        <PageHeader 
-          title="Registrations"
-          description="Registration status across societies and territories"
-        />
-
-        <InstitutionalEmptyPanel
-          title="No registrations available."
-          description="Registration records will appear once works are submitted."
-        />
-      </div>
-    </div>
+    <AppPageContainer maxWidth="xl">
+      <AppPageHeader title="Registrations" />
+      <AppEmptyState
+        message="No registrations available"
+        description="Registration records will appear once works are submitted."
+        size="lg"
+      />
+    </AppPageContainer>
   );
 }

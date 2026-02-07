@@ -2,23 +2,23 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  AppButton,
+  AppTable,
+  AppTableBody,
+  AppTableCell,
+  AppTableHead,
+  AppTableHeader,
+  AppTableRow,
+  AppChip,
+} from "@/components/app-ui";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+} from "@/components/ui/select"; // TODO: needs AppSelect migration
 import { toast } from "sonner";
 import { Check, X, Clock, UserCircle } from "lucide-react";
 import { format } from "date-fns";
@@ -200,33 +200,33 @@ export default function AccessRequestsPage() {
         </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50">
-                <TableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
+          <AppTable>
+            <AppTableHeader>
+              <AppTableRow className="bg-muted/50">
+                <AppTableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
                   User
-                </TableHead>
-                <TableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
+                </AppTableHead>
+                <AppTableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
                   Requested
-                </TableHead>
-                <TableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
+                </AppTableHead>
+                <AppTableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
                   Status
-                </TableHead>
-                <TableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
+                </AppTableHead>
+                <AppTableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
                   Role
-                </TableHead>
-                <TableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
+                </AppTableHead>
+                <AppTableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
                   Contexts
-                </TableHead>
-                <TableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide text-right">
+                </AppTableHead>
+                <AppTableHead className="text-[12px] font-medium text-muted-foreground uppercase tracking-wide text-right">
                   Actions
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+                </AppTableHead>
+              </AppTableRow>
+            </AppTableHeader>
+            <AppTableBody>
               {pendingRequests?.map((request) => (
-                <TableRow key={request.id}>
-                  <TableCell>
+                <AppTableRow key={request.id}>
+                  <AppTableCell>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
                         <UserCircle className="h-4 w-4 text-muted-foreground" />
@@ -235,22 +235,22 @@ export default function AccessRequestsPage() {
                         {request.user_email}
                       </span>
                     </div>
-                  </TableCell>
-                  <TableCell>
+                  </AppTableCell>
+                  <AppTableCell>
                     <span className="text-[13px] text-muted-foreground">
                       {format(new Date(request.created_at), "MMM d, yyyy")}
                     </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
+                  </AppTableCell>
+                  <AppTableCell>
+                    <AppChip
                       variant="outline"
                       className="text-[11px] font-normal border-amber-400 bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400"
                     >
                       <Clock className="h-3 w-3 mr-1" />
                       Pending
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
+                    </AppChip>
+                  </AppTableCell>
+                  <AppTableCell>
                     <Select
                       value={selectedRoles[request.id] ?? "tenant_user"}
                       onValueChange={(value) => handleRoleChange(request.id, value as PortalRole)}
@@ -270,30 +270,30 @@ export default function AccessRequestsPage() {
                         </SelectItem>
                       </SelectContent>
                     </Select>
-                  </TableCell>
-                  <TableCell>
+                  </AppTableCell>
+                  <AppTableCell>
                     <div className="flex gap-1">
-                      <Button
+                      <AppButton
                         variant={(selectedContexts[request.id] ?? ["publishing"]).includes("publishing") ? "default" : "outline"}
                         size="sm"
                         onClick={() => handleContextToggle(request.id, "publishing")}
                         className="h-7 px-2 text-[10px]"
                       >
                         Publishing
-                      </Button>
-                      <Button
+                      </AppButton>
+                      <AppButton
                         variant={(selectedContexts[request.id] ?? ["publishing"]).includes("licensing") ? "default" : "outline"}
                         size="sm"
                         onClick={() => handleContextToggle(request.id, "licensing")}
                         className="h-7 px-2 text-[10px]"
                       >
                         Licensing
-                      </Button>
+                      </AppButton>
                     </div>
-                  </TableCell>
-                  <TableCell className="text-right">
+                  </AppTableCell>
+                  <AppTableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Button
+                      <AppButton
                         size="sm"
                         variant="destructive"
                         onClick={() => handleDeny(request.id)}
@@ -302,8 +302,8 @@ export default function AccessRequestsPage() {
                       >
                         <X className="h-3.5 w-3.5 mr-1" />
                         Deny
-                      </Button>
-                      <Button
+                      </AppButton>
+                      <AppButton
                         size="sm"
                         variant="default"
                         onClick={() => handleApprove(request.id)}
@@ -312,13 +312,13 @@ export default function AccessRequestsPage() {
                       >
                         <Check className="h-3.5 w-3.5 mr-1" />
                         Approve
-                      </Button>
+                      </AppButton>
                     </div>
-                  </TableCell>
-                </TableRow>
+                  </AppTableCell>
+                </AppTableRow>
               ))}
-            </TableBody>
-          </Table>
+            </AppTableBody>
+          </AppTable>
         </div>
       )}
     </div>
