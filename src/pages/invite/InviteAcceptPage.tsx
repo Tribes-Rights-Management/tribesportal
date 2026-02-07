@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
+import { AppButton, AppChip } from "@/components/app-ui";
 import { toast } from "@/hooks/use-toast";
 import { CheckCircle, XCircle, Loader2, Shield, FileText } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 interface InvitationDetails {
   id: string;
@@ -139,9 +138,9 @@ export default function InviteAcceptPage() {
           <p className="text-muted-foreground mb-6">
             Please sign in to accept this invitation.
           </p>
-          <Button onClick={() => navigate(`/auth/sign-in?returnTo=/invite/accept?token=${token}`)}>
+          <AppButton onClick={() => navigate(`/auth/sign-in?returnTo=/invite/accept?token=${token}`)}>
             Sign in
-          </Button>
+          </AppButton>
         </div>
       </div>
     );
@@ -162,9 +161,9 @@ export default function InviteAcceptPage() {
           <XCircle className="h-5 w-5 text-destructive mx-auto mb-4" strokeWidth={1.25} />
           <h1 className="text-[24px] font-semibold mb-2">Invalid invitation</h1>
           <p className="text-muted-foreground mb-6">{error}</p>
-          <Button variant="outline" onClick={() => navigate("/workspaces")}>
+          <AppButton variant="outline" onClick={() => navigate("/workspaces")}>
             Go to workspaces
-          </Button>
+          </AppButton>
         </div>
       </div>
     );
@@ -183,9 +182,9 @@ export default function InviteAcceptPage() {
           <p className="text-muted-foreground mb-6">
             You're signed in as <strong>{user?.email}</strong>
           </p>
-          <Button variant="outline" onClick={() => navigate("/auth/sign-in")}>
+          <AppButton variant="outline" onClick={() => navigate("/auth/sign-in")}>
             Sign in with different account
-          </Button>
+          </AppButton>
         </div>
       </div>
     );
@@ -194,7 +193,7 @@ export default function InviteAcceptPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: 'var(--app-bg)' }}>
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-xl border p-6 shadow-sm">
+        <div className="bg-card rounded-xl border border-border p-6">
           <CheckCircle className="h-5 w-5 text-emerald-500 mx-auto mb-4" strokeWidth={1.25} />
           <h1 className="text-[22px] font-semibold text-center mb-2">
             You're invited
@@ -206,25 +205,25 @@ export default function InviteAcceptPage() {
           <div className="space-y-3 mb-6">
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-muted-foreground">Role</span>
-              <Badge>{getRoleLabel(invitation?.org_role || "")}</Badge>
+              <AppChip>{getRoleLabel(invitation?.org_role || "")}</AppChip>
             </div>
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-muted-foreground">Access</span>
               <div className="flex gap-1">
                 {invitation?.grant_admin_module && (
-                  <Badge variant="outline"><Shield className="h-3 w-3 mr-1" />Admin</Badge>
+                  <AppChip variant="outline"><Shield className="h-3 w-3 mr-1" />Admin</AppChip>
                 )}
                 {invitation?.grant_licensing_module && (
-                  <Badge variant="outline"><FileText className="h-3 w-3 mr-1" />Licensing</Badge>
+                  <AppChip variant="outline"><FileText className="h-3 w-3 mr-1" />Licensing</AppChip>
                 )}
               </div>
             </div>
           </div>
 
-          <Button className="w-full" onClick={handleAccept} disabled={accepting}>
+          <AppButton className="w-full" onClick={handleAccept} disabled={accepting}>
             {accepting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
             {accepting ? "Accepting…" : "Accept invitation"}
-          </Button>
+          </AppButton>
         </div>
       </div>
     </div>
