@@ -62,9 +62,9 @@ export default function HelpAnalyticsPage() {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - daysAgo);
       
-      // Fetch top searches (from searches table if exists)
+      // Fetch top searches from support_tickets (canonical)
       const { data: searchesData } = await supabase
-        .from("messages")
+        .from("support_tickets")
         .select("search_query")
         .not("search_query", "is", null)
         .gte("created_at", startDate.toISOString());
@@ -89,10 +89,11 @@ export default function HelpAnalyticsPage() {
         setTopSearches([]);
       }
       
-      // Fetch top articles
+      // Fetch top articles from help_articles (canonical)
       const { data: articlesData } = await supabase
-        .from("articles")
+        .from("help_articles")
         .select("id, title, slug, view_count, helpful_count, not_helpful_count")
+        .eq("status", "published")
         .order("view_count", { ascending: false })
         .limit(10);
       
@@ -112,18 +113,18 @@ export default function HelpAnalyticsPage() {
         setTopArticles([]);
       }
       
-      // Fetch message volume
-      const { data: messagesData } = await supabase
-        .from("messages")
+      // Fetch ticket volume from support_tickets (canonical)
+      const { data: ticketsData } = await supabase
+        .from("support_tickets")
         .select("id, status, created_at")
         .gte("created_at", startDate.toISOString());
       
-      if (messagesData) {
+      if (ticketsData) {
         setMessageVolume({
-          total: messagesData.length,
-          resolved: messagesData.filter(m => m.status === "resolved").length,
+          total: ticketsData.length,
+          resolved: ticketsData.filter(m => m.status === "resolved").length,
         });
-        if (messagesData.length > 0) setHasData(true);
+        if (ticketsData.length > 0) setHasData(true);
       }
       
       setLoading(false);
@@ -201,7 +202,7 @@ export default function HelpAnalyticsPage() {
                 subtitle="All time"
               />
               <AppStatCard
-                label="Messages"
+                label="Support Tickets"
                 value={messageVolume.total}
                 subtitle={`${messageVolume.resolved} resolved`}
               />
