@@ -146,7 +146,7 @@ a:active,
 
 /* Page header — standard (no back button) */
 .page-header {
-  padding-top: 1.5rem;    /* pt-6 */
+  padding-top: 0;         /* no extra padding; container handles spacing */
   padding-bottom: 1rem;   /* pb-4 */
 }
 
@@ -180,7 +180,7 @@ a:active,
 
 @media (min-width: 640px) {
   .page-header {
-    padding-top: 2rem;    /* sm:pt-8 */
+    padding-top: 0;         /* no extra padding; container handles spacing */
     padding-bottom: 1.5rem; /* sm:pb-6 */
   }
   
