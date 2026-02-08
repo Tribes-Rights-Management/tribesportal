@@ -2,14 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  AppPageLayout,
-  AppSection,
-  AppCard,
-  AppCardHeader,
-  AppCardTitle,
-  AppCardBody,
-} from "@/components/app-ui";
+import { AppPageLayout, AppSection } from "@/components/app-ui";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +13,9 @@ import { cn } from "@/lib/utils";
  * Shows all metadata, writers, status, and related information for a single song.
  * Back arrow returns to /rights/catalog.
  * The slug is optional — if missing or mismatched, it's silently corrected via replaceState.
+ *
+ * Visual: Cardless institutional layout with border-top section separators,
+ * two-column metadata grid on desktop, and left-border lyrics accent.
  */
 
 interface SongDetail {
@@ -75,7 +71,7 @@ function DetailRow({
   type?: "text" | "date";
 }) {
   return (
-    <div className="flex flex-col gap-0.5 py-2.5 border-b border-border last:border-0">
+    <div className="py-2.5">
       <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
         {label}
       </span>
@@ -84,18 +80,18 @@ function DetailRow({
           <textarea
             value={value}
             onChange={(e) => onValueChange(e.target.value)}
-            className="text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1.5 min-h-[60px] resize-y focus:outline-none focus:border-primary/40 transition-colors"
+            className="mt-1 w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1.5 min-h-[60px] resize-y focus:outline-none focus:border-primary/40 transition-colors"
           />
         ) : (
           <input
             type={type}
             value={value}
             onChange={(e) => onValueChange(e.target.value)}
-            className="text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+            className="mt-1 w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
           />
         )
       ) : (
-        <span className="text-[14px] text-foreground">{children}</span>
+        <div className="text-[14px] text-foreground mt-0.5">{children}</div>
       )}
     </div>
   );
@@ -113,11 +109,38 @@ function StatusSelect({
     <select
       value={value ? "active" : "inactive"}
       onChange={(e) => onChange(e.target.value === "active")}
-      className="text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+      className="mt-1 w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
     >
       <option value="active">Active</option>
       <option value="inactive">Inactive</option>
     </select>
+  );
+}
+
+// ── Status Badge ────────────────────────────────────────────
+function StatusBadge({ active }: { active: boolean }) {
+  return (
+    <span
+      className={cn(
+        "text-[11px] uppercase tracking-wider font-medium px-2 py-0.5 rounded-sm",
+        active
+          ? "text-[hsl(var(--success))] bg-[hsl(var(--success)/0.08)]"
+          : "text-muted-foreground bg-muted"
+      )}
+    >
+      {active ? "Active" : "Inactive"}
+    </span>
+  );
+}
+
+// ── Section Header ──────────────────────────────────────────
+function SectionHeader({ title }: { title: string }) {
+  return (
+    <div className="border-t border-border pt-5 mt-2">
+      <h2 className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground mb-3">
+        {title}
+      </h2>
+    </div>
   );
 }
 
@@ -283,9 +306,10 @@ export default function SongDetailPage() {
 
   const displayTitle = editing ? editedFields.title || song.title : song.title;
 
-  // ── Action buttons ────────────────────────────────────────
+  // ── Action slot: status badge + edit/save buttons ─────────
   const actionSlot = (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-3">
+      {!editing && <StatusBadge active={song.is_active} />}
       {editing && (
         <button
           onClick={handleSave}
@@ -314,166 +338,159 @@ export default function SongDetailPage() {
       backLink={{ to: "/rights/catalog", label: "Catalog" }}
       action={actionSlot}
     >
-      <div className="space-y-4 mt-4">
-        {/* ── Overview ───────────────────────────────────── */}
-        <AppCard>
-          <AppCardHeader>
-            <AppCardTitle>Overview</AppCardTitle>
-          </AppCardHeader>
-          <AppCardBody className="p-0">
-            <div className="divide-y divide-border px-4">
-              <DetailRow
-                label="Title"
-                editing={editing}
-                value={editedFields.title}
-                onValueChange={(v) => updateField("title", v)}
-              >
-                {song.title}
-              </DetailRow>
+      <div className="mt-4">
+        {/* ── Overview — two-column metadata grid ────────── */}
+        <SectionHeader title="Overview" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+          {editing ? (
+            <DetailRow
+              label="Title"
+              editing
+              value={editedFields.title}
+              onValueChange={(v) => updateField("title", v)}
+            />
+          ) : (
+            <DetailRow label="Title">{song.title}</DetailRow>
+          )}
 
-              <div className="flex flex-col gap-0.5 py-2.5 border-b border-border last:border-0">
-                <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
-                  Status
-                </span>
-                {editing ? (
-                  <StatusSelect
-                    value={editedFields.is_active}
-                    onChange={(v) => updateField("is_active", v)}
-                  />
+          <div className="py-2.5">
+            <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+              Status
+            </span>
+            {editing ? (
+              <StatusSelect
+                value={editedFields.is_active}
+                onChange={(v) => updateField("is_active", v)}
+              />
+            ) : (
+              <div className="text-[14px] mt-0.5">
+                {song.is_active ? (
+                  <span className="text-[hsl(var(--success))]">Active</span>
                 ) : (
-                  <span className="text-[14px]">
-                    {song.is_active ? (
-                      <span className="text-[hsl(var(--success))]">Active</span>
-                    ) : (
-                      <span className="text-muted-foreground">Inactive</span>
-                    )}
-                  </span>
+                  <span className="text-muted-foreground">Inactive</span>
                 )}
               </div>
+            )}
+          </div>
 
-              <DetailRow label="Added">
-                {format(new Date(song.created_at), "MMMM d, yyyy")}
-              </DetailRow>
+          <DetailRow label="Added">
+            {format(new Date(song.created_at), "MMMM d, yyyy")}
+          </DetailRow>
 
-              {(song.iswc || editing) && (
-                <DetailRow
-                  label="ISWC"
-                  editing={editing}
-                  value={editedFields.iswc}
-                  onValueChange={(v) => updateField("iswc", v)}
-                >
-                  {song.iswc || "—"}
-                </DetailRow>
-              )}
+          {(song.language || editing) && (
+            <DetailRow
+              label="Language"
+              editing={editing}
+              value={editedFields.language}
+              onValueChange={(v) => updateField("language", v)}
+            >
+              {song.language || "—"}
+            </DetailRow>
+          )}
 
-              {(song.language || editing) && (
-                <DetailRow
-                  label="Language"
-                  editing={editing}
-                  value={editedFields.language}
-                  onValueChange={(v) => updateField("language", v)}
-                >
-                  {song.language || "—"}
-                </DetailRow>
-              )}
+          {(song.genre || editing) && (
+            <DetailRow
+              label="Genre"
+              editing={editing}
+              value={editedFields.genre}
+              onValueChange={(v) => updateField("genre", v)}
+            >
+              {song.genre || "—"}
+            </DetailRow>
+          )}
 
-              {(song.genre || editing) && (
-                <DetailRow
-                  label="Genre"
-                  editing={editing}
-                  value={editedFields.genre}
-                  onValueChange={(v) => updateField("genre", v)}
-                >
-                  {song.genre || "—"}
-                </DetailRow>
-              )}
+          {(song.release_date || editing) && (
+            <DetailRow
+              label="Release Date"
+              editing={editing}
+              value={editedFields.release_date}
+              onValueChange={(v) => updateField("release_date", v)}
+              type="date"
+            >
+              {song.release_date
+                ? format(new Date(song.release_date), "MMMM d, yyyy")
+                : "—"}
+            </DetailRow>
+          )}
 
-              {song.duration_seconds != null && (
-                <DetailRow label="Duration">
-                  {formatDuration(song.duration_seconds)}
-                </DetailRow>
-              )}
+          {(song.iswc || editing) && (
+            <DetailRow
+              label="ISWC"
+              editing={editing}
+              value={editedFields.iswc}
+              onValueChange={(v) => updateField("iswc", v)}
+            >
+              <span className="font-mono">{song.iswc || "—"}</span>
+            </DetailRow>
+          )}
 
-              {(song.release_date || editing) && (
-                <DetailRow
-                  label="Release Date"
-                  editing={editing}
-                  value={editedFields.release_date}
-                  onValueChange={(v) => updateField("release_date", v)}
-                  type="date"
-                >
-                  {song.release_date
-                    ? format(new Date(song.release_date), "MMMM d, yyyy")
-                    : "—"}
-                </DetailRow>
-              )}
+          {song.duration_seconds != null && (
+            <DetailRow label="Duration">
+              {formatDuration(song.duration_seconds)}
+            </DetailRow>
+          )}
 
-              {song.alternate_titles && song.alternate_titles.length > 0 && (
-                <DetailRow label="Alternate Titles">
-                  {song.alternate_titles.join(", ")}
-                </DetailRow>
-              )}
-            </div>
-          </AppCardBody>
-        </AppCard>
+          {song.alternate_titles && song.alternate_titles.length > 0 && (
+            <DetailRow label="Alternate Titles">
+              {song.alternate_titles.join(", ")}
+            </DetailRow>
+          )}
+        </div>
 
         {/* ── Songwriters ────────────────────────────────── */}
         {writers.length > 0 && (
-          <AppCard>
-            <AppCardHeader>
-              <AppCardTitle>Songwriters</AppCardTitle>
-            </AppCardHeader>
-            <AppCardBody className="p-0">
-              <div className="divide-y divide-border">
-                {writers.map((writer, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between py-2.5 px-4"
-                  >
-                    <span className="text-[13px] text-foreground">
-                      {writer.name || "Unknown"}
-                    </span>
-                    <div className="flex items-center gap-3">
-                      {writer.ipi && (
-                        <span className="text-[12px] text-muted-foreground font-mono">
-                          {writer.ipi}
-                        </span>
-                      )}
-                      {writer.split != null && (
-                        <span className="text-[12px] text-muted-foreground">
-                          {writer.split}%
-                        </span>
-                      )}
-                    </div>
+          <>
+            <SectionHeader title="Songwriters" />
+            <div className="divide-y divide-border">
+              {writers.map((writer, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between py-2.5"
+                >
+                  <span className="text-[14px] text-foreground font-medium">
+                    {writer.name || "Unknown"}
+                  </span>
+                  <div className="flex items-center gap-4">
+                    {writer.ipi && (
+                      <span className="text-[12px] text-muted-foreground font-mono">
+                        {writer.ipi}
+                      </span>
+                    )}
+                    {writer.split != null && (
+                      <span className="text-[12px] text-muted-foreground">
+                        {writer.split}%
+                      </span>
+                    )}
                   </div>
-                ))}
-              </div>
-            </AppCardBody>
-          </AppCard>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {/* ── Lyrics ─────────────────────────────────────── */}
         {(metadata.lyrics || editing) && (
-          <AppCard>
-            <AppCardHeader>
-              <AppCardTitle>Lyrics</AppCardTitle>
-            </AppCardHeader>
-            <AppCardBody>
-              {editing ? (
-                <textarea
-                  value={editedFields.lyrics}
-                  onChange={(e) => updateField("lyrics", e.target.value)}
-                  className="w-full text-[13px] text-foreground bg-transparent border border-border rounded px-3 py-2 min-h-[160px] resize-y focus:outline-none focus:border-primary/40 transition-colors font-sans leading-relaxed"
-                  placeholder="Enter lyrics…"
-                />
-              ) : (
-                <pre className="text-[13px] text-foreground whitespace-pre-wrap font-sans leading-relaxed">
+          <>
+            <SectionHeader title="Lyrics" />
+            {editing ? (
+              <textarea
+                value={editedFields.lyrics}
+                onChange={(e) => updateField("lyrics", e.target.value)}
+                className="w-full text-[13px] text-foreground bg-transparent border border-border rounded px-3 py-2 min-h-[160px] resize-y focus:outline-none focus:border-primary/40 transition-colors font-sans leading-relaxed"
+                placeholder="Enter lyrics…"
+              />
+            ) : (
+              <div className="pl-4 border-l-2 border-border">
+                <pre className="text-[13px] text-foreground/80 whitespace-pre-wrap font-sans leading-relaxed">
                   {metadata.lyrics}
                 </pre>
-              )}
-            </AppCardBody>
-          </AppCard>
+              </div>
+            )}
+          </>
         )}
+
+        {/* Bottom breathing room */}
+        <div className="pb-8" />
       </div>
     </AppPageLayout>
   );
