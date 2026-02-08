@@ -1304,10 +1304,10 @@ html[data-ui-density="compact"] {
     /* Reduce section header padding */
   }
 
-  /* Table cells: reduce vertical padding */
+  /* Table cells: reduce vertical padding in compact mode */
   td, th {
-    padding-top: 0.5rem !important;
-    padding-bottom: 0.5rem !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
 
   /* CRITICAL: Preserve 16px input font size to prevent iOS zoom */

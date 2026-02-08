@@ -236,7 +236,7 @@ export function AppTableHead({
   return (
     <th
       className={cn(
-        "py-3.5 px-4",
+        "py-[14px] px-4",
         "text-xs uppercase tracking-wider font-medium text-muted-foreground",
         alignClasses[align],
         className
@@ -292,7 +292,7 @@ export function AppTableCell({
   return (
     <td
       className={cn(
-        "py-3.5 px-4 text-sm",
+        "py-[14px] px-4 text-sm",
         muted ? "text-muted-foreground" : "text-foreground",
         mono && "font-mono text-[13px]",
         alignClasses[align],
