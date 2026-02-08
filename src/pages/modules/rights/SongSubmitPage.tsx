@@ -564,6 +564,8 @@ export default function SongSubmitPage() {
         if (writerError) {
           console.error("Writer save error:", JSON.stringify(writerError));
           toast.error("Failed to save writers: " + (writerError.message || "Unknown error"));
+          // Clean up orphaned song
+          await supabase.from("songs").delete().eq("id", newSongId);
           return;
         }
         insertedWriters = swData || [];
@@ -604,8 +606,21 @@ export default function SongSubmitPage() {
         if (ownershipError) {
           console.error("Ownership save error:", JSON.stringify(ownershipError));
           toast.error("Failed to save ownership: " + (ownershipError.message || "Unknown error"));
+          // Clean up orphaned song and writers
+          await supabase.from("songs").delete().eq("id", newSongId);
           return;
         }
+      }
+
+      // 5. Activate the song now that all data is saved
+      const { error: activateError } = await supabase
+        .from("songs")
+        .update({ is_active: true })
+        .eq("id", newSongId);
+
+      if (activateError) {
+        console.error("Failed to activate song:", JSON.stringify(activateError));
+        toast.error("Song saved but failed to activate. Contact support.");
       }
 
       setSubmittedSongId(newSongId);

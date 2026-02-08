@@ -3048,39 +3048,30 @@ export type Database = {
       song_writers: {
         Row: {
           created_at: string | null
-          effective_from: string | null
-          effective_to: string | null
+          credit: string | null
           id: string
-          ownership_percentage: number
-          share_type: string | null
+          share: number
           song_id: string
           updated_at: string | null
           writer_id: string
-          writer_role: string | null
         }
         Insert: {
           created_at?: string | null
-          effective_from?: string | null
-          effective_to?: string | null
+          credit?: string | null
           id?: string
-          ownership_percentage?: number
-          share_type?: string | null
+          share?: number
           song_id: string
           updated_at?: string | null
           writer_id: string
-          writer_role?: string | null
         }
         Update: {
           created_at?: string | null
-          effective_from?: string | null
-          effective_to?: string | null
+          credit?: string | null
           id?: string
-          ownership_percentage?: number
-          share_type?: string | null
+          share?: number
           song_id?: string
           updated_at?: string | null
           writer_id?: string
-          writer_role?: string | null
         }
         Relationships: [
           {
