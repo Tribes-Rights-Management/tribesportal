@@ -177,31 +177,38 @@ function SectionPanel({ title, children }: { title: string; children: React.Reac
   );
 }
 
-// ── PRO options ─────────────────────────────────────────────
-const PRO_OPTIONS = [
-  "", "ASCAP", "BMI", "SESAC", "GMR", "SOCAN", "PRS", "APRA", "GEMA", "SACEM", "JASRAC", "Other",
-];
+// ── PRO Organization type ───────────────────────────────────
+interface ProOrg {
+  id: string;
+  name: string;
+  abbreviation: string | null;
+}
 
 // ── Interested Party Typeahead ──────────────────────────────
 function InterestedPartyTypeahead({
   value,
   onChange,
   partyType,
+  proOrgs,
   placeholder = "Type to search…",
 }: {
   value: string;
-  onChange: (id: string, name: string, proId?: string | null) => void;
+  onChange: (id: string, name: string, proAbbr?: string | null) => void;
   partyType: "publisher" | "administrator";
+  proOrgs: ProOrg[];
   placeholder?: string;
 }) {
   const [search, setSearch] = useState(value);
   const [open, setOpen] = useState(false);
-  const [results, setResults] = useState<{ id: string; name: string; pro_id: string | null }[]>([]);
+  const [results, setResults] = useState<{ id: string; name: string; pro_id: string | null; pro_abbreviation: string | null }[]>([]);
   const [isAdding, setIsAdding] = useState(false);
-  const [newEntryPro, setNewEntryPro] = useState("");
+  const [newEntryProId, setNewEntryProId] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const debouncedSearch = useDebounce(search, 300);
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // Build local abbreviation map
+  const proAbbrMap = new Map(proOrgs.map((p) => [p.id, p.abbreviation || p.name]));
 
   // Sync external value changes
   useEffect(() => {
@@ -222,10 +229,16 @@ function InterestedPartyTypeahead({
         .ilike("name", `%${debouncedSearch}%`)
         .order("name")
         .limit(5);
-      setResults((data || []) as { id: string; name: string; pro_id: string | null }[]);
+      // Resolve pro_id UUIDs to abbreviations using local map
+      setResults(
+        ((data || []) as { id: string; name: string; pro_id: string | null }[]).map((r) => ({
+          ...r,
+          pro_abbreviation: r.pro_id ? (proAbbrMap.get(r.pro_id) || null) : null,
+        }))
+      );
     };
     fetchResults();
-  }, [debouncedSearch, partyType]);
+  }, [debouncedSearch, partyType, proAbbrMap]);
 
   // Click-outside to close
   useEffect(() => {
@@ -233,19 +246,19 @@ function InterestedPartyTypeahead({
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setOpen(false);
         setIsAdding(false);
-        setNewEntryPro("");
+        setNewEntryProId("");
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const handleSelect = (id: string, name: string, proId?: string | null) => {
-    setSearch(name);
-    onChange(id, name, proId);
+  const handleSelect = (r: { id: string; name: string; pro_abbreviation: string | null }) => {
+    setSearch(r.name);
+    onChange(r.id, r.name, r.pro_abbreviation);
     setOpen(false);
     setIsAdding(false);
-    setNewEntryPro("");
+    setNewEntryProId("");
   };
 
   const handleConfirmCreate = async () => {
@@ -254,12 +267,13 @@ function InterestedPartyTypeahead({
     try {
       const { data, error } = await supabase
         .from("interested_parties")
-        .insert({ name: search.trim(), party_type: partyType, pro_id: newEntryPro || null } as any)
+        .insert({ name: search.trim(), party_type: partyType, pro_id: newEntryProId || null } as any)
         .select("id, name, pro_id")
         .single();
       if (error) throw error;
       if (data) {
-        handleSelect(data.id, data.name, (data as any).pro_id);
+        const abbr = newEntryProId ? (proAbbrMap.get(newEntryProId) || null) : null;
+        handleSelect({ id: data.id, name: data.name, pro_abbreviation: abbr });
         toast.success(`Added ${data.name} as ${partyType}`);
       }
     } catch (err: any) {
@@ -301,13 +315,13 @@ function InterestedPartyTypeahead({
                   PRO
                 </label>
                 <select
-                  value={newEntryPro}
-                  onChange={(e) => setNewEntryPro(e.target.value)}
+                  value={newEntryProId}
+                  onChange={(e) => setNewEntryProId(e.target.value)}
                   className="mt-1 w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
                 >
                   <option value="">None / Unknown</option>
-                  {PRO_OPTIONS.filter(Boolean).map((pro) => (
-                    <option key={pro} value={pro}>{pro}</option>
+                  {proOrgs.map((org) => (
+                    <option key={org.id} value={org.id}>{org.abbreviation || org.name}</option>
                   ))}
                 </select>
               </div>
@@ -316,7 +330,7 @@ function InterestedPartyTypeahead({
                   type="button"
                   onClick={() => {
                     setIsAdding(false);
-                    setNewEntryPro("");
+                    setNewEntryProId("");
                   }}
                   className="text-[12px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
                 >
@@ -339,12 +353,12 @@ function InterestedPartyTypeahead({
                 <button
                   key={r.id}
                   type="button"
-                  onClick={() => handleSelect(r.id, r.name, r.pro_id)}
+                  onClick={() => handleSelect(r)}
                   className="w-full text-left px-3 py-2 text-[14px] text-foreground hover:bg-muted/50 cursor-pointer transition-colors flex items-center justify-between"
                 >
                   <span>{r.name}</span>
-                  {r.pro_id && (
-                    <span className="text-[11px] text-muted-foreground font-mono ml-2">{r.pro_id}</span>
+                  {r.pro_abbreviation && (
+                    <span className="text-[12px] text-muted-foreground ml-auto pl-2">{r.pro_abbreviation}</span>
                   )}
                 </button>
               ))}
@@ -374,6 +388,7 @@ export default function SongDetailPage() {
   const [editing, setEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [ownership, setOwnership] = useState<OwnershipRow[]>([]);
+  const [proOrgs, setProOrgs] = useState<ProOrg[]>([]);
   
   const [editedFields, setEditedFields] = useState<EditableFields>({
     title: "",
@@ -416,6 +431,21 @@ export default function SongDetailPage() {
     }
   }, [songId, navigate]);
 
+  // ── Fetch PRO organizations ───────────────────────────────
+  useEffect(() => {
+    const fetchProOrgs = async () => {
+      const { data } = await supabase
+        .from("pro_organizations")
+        .select("id, name, abbreviation")
+        .order("name");
+      setProOrgs((data || []) as ProOrg[]);
+    };
+    fetchProOrgs();
+  }, []);
+
+  // Build PRO abbreviation lookup map
+  const proAbbrMap = new Map(proOrgs.map((p) => [p.id, p.abbreviation || p.name]));
+
   // ── Fetch ownership rows ─────────────────────────────────
   const fetchOwnership = useCallback(async () => {
     if (!songId) return;
@@ -431,7 +461,7 @@ export default function SongDetailPage() {
       if (error) throw error;
       const ownershipData = (data || []) as unknown as Omit<OwnershipRow, "pro">[];
 
-      // Look up PRO from interested_parties for each publisher
+      // Resolve PRO UUID to abbreviation for each publisher
       if (ownershipData.length > 0) {
         const publisherNames = [...new Set(ownershipData.map((o) => o.publisher?.name).filter(Boolean))] as string[];
         const { data: publisherPros } = await supabase
@@ -441,7 +471,10 @@ export default function SongDetailPage() {
           .eq("party_type", "publisher");
 
         const proMap = new Map(
-          ((publisherPros || []) as { name: string; pro_id: string | null }[]).map((p) => [p.name, p.pro_id])
+          ((publisherPros || []) as { name: string; pro_id: string | null }[]).map((p) => [
+            p.name,
+            p.pro_id ? (proAbbrMap.get(p.pro_id) || null) : null,
+          ])
         );
 
         setOwnership(
@@ -456,7 +489,7 @@ export default function SongDetailPage() {
     } catch (err: any) {
       console.error("Failed to fetch ownership:", err);
     }
-  }, [songId]);
+  }, [songId, proOrgs]);
 
 
   useEffect(() => {
@@ -525,16 +558,7 @@ export default function SongDetailPage() {
       // 2. Save ownership changes
       await saveOwnershipChanges();
 
-      // 3. Update PROs on interested_parties
-      for (const o of editedFields.ownership.filter((r) => !r._deleted)) {
-        if (o.publisher_name.trim()) {
-          await supabase
-            .from("interested_parties")
-            .update({ pro_id: o.pro || null } as any)
-            .eq("name", o.publisher_name.trim())
-            .eq("party_type", "publisher");
-        }
-      }
+      // PRO is managed on the Publishers page — no update here
 
       toast.success("Song updated");
       setEditing(false);
@@ -866,30 +890,20 @@ export default function SongDetailPage() {
                     <div className="flex-1">
                       <InterestedPartyTypeahead
                         value={row.publisher_name}
-                        onChange={(id, name, proId) => {
+                        onChange={(id, name, proAbbr) => {
                           const updated = [...editedFields.ownership];
-                          updated[index] = { ...updated[index], publisher_id: id, publisher_name: name, pro: proId || null };
+                          updated[index] = { ...updated[index], publisher_id: id, publisher_name: name, pro: proAbbr || null };
                           updateField("ownership", updated);
                         }}
                         partyType="publisher"
+                        proOrgs={proOrgs}
                         placeholder="Type to search publishers…"
                       />
                     </div>
                     <div className="w-[100px]">
-                      <select
-                        value={row.pro || ""}
-                        onChange={(e) => {
-                          const updated = [...editedFields.ownership];
-                          updated[index] = { ...updated[index], pro: e.target.value || null };
-                          updateField("ownership", updated);
-                        }}
-                        className="w-full text-[12px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
-                      >
-                        <option value="">—</option>
-                        {PRO_OPTIONS.filter(Boolean).map((pro) => (
-                          <option key={pro} value={pro}>{pro}</option>
-                        ))}
-                      </select>
+                      <span className="text-[12px] text-muted-foreground px-2 py-1 h-8 flex items-center">
+                        {row.pro || "—"}
+                      </span>
                     </div>
                     <div className="w-[100px]">
                       <select
