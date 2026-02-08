@@ -414,10 +414,10 @@ export default function RightsWritersPage() {
           <AppTable columns={["40%", "20%", "20%", "20%"]}>
             <AppTableHeader>
               <AppTableRow header>
-                <AppTableHead>Name</AppTableHead>
+                <AppTableHead className="pl-5">Name</AppTableHead>
                 <AppTableHead>PRO</AppTableHead>
                 <AppTableHead className="hidden sm:table-cell">IPI Number</AppTableHead>
-                <AppTableHead className="text-right">Songs</AppTableHead>
+                <AppTableHead className="text-right pr-5">Songs</AppTableHead>
               </AppTableRow>
             </AppTableHeader>
             <AppTableBody>
@@ -442,10 +442,10 @@ export default function RightsWritersPage() {
                       clickable
                       onClick={() => handleEdit(writer)}
                     >
-                      <AppTableCell>{writer.name}</AppTableCell>
+                      <AppTableCell className="pl-5">{writer.name}</AppTableCell>
                       <AppTableCell muted>{writer.pro || "—"}</AppTableCell>
                       <AppTableCell muted className="hidden sm:table-cell">{writer.ipi_number || writer.cae_number || "—"}</AppTableCell>
-                      <AppTableCell muted className="text-right tabular-nums">{songCount}</AppTableCell>
+                      <AppTableCell muted className="text-right pr-5 tabular-nums">{songCount}</AppTableCell>
                     </AppTableRow>
                   );
                 })

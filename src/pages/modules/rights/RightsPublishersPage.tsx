@@ -240,10 +240,10 @@ export default function RightsPublishersPage() {
           <AppTable columns={["40%", "20%", "20%", "20%"]}>
             <AppTableHeader>
               <AppTableRow header>
-                <AppTableHead>Name</AppTableHead>
+                <AppTableHead className="pl-5">Name</AppTableHead>
                 <AppTableHead>PRO</AppTableHead>
                 <AppTableHead className="hidden sm:table-cell">IPI Number</AppTableHead>
-                <AppTableHead className="text-right">Songs</AppTableHead>
+                <AppTableHead className="text-right pr-5">Songs</AppTableHead>
               </AppTableRow>
             </AppTableHeader>
             <AppTableBody>
@@ -271,12 +271,12 @@ export default function RightsPublishersPage() {
                     clickable
                     onClick={() => handleEdit(publisher)}
                   >
-                    <AppTableCell>{publisher.name}</AppTableCell>
+                    <AppTableCell className="pl-5">{publisher.name}</AppTableCell>
                     <AppTableCell muted>{publisher.pro_id || "—"}</AppTableCell>
                     <AppTableCell muted className="hidden sm:table-cell">
                       —
                     </AppTableCell>
-                    <AppTableCell muted className="text-right">
+                    <AppTableCell muted className="text-right pr-5 tabular-nums">
                       {songCountMap.get(publisher.id) || 0}
                     </AppTableCell>
                   </AppTableRow>
