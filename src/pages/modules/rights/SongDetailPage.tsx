@@ -490,7 +490,7 @@ export default function SongDetailPage() {
   const fetchSongWriters = useCallback(async () => {
     if (!songId) return;
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("song_writers")
         .select(`
           id,
@@ -524,7 +524,7 @@ export default function SongDetailPage() {
   const fetchOwnership = useCallback(async () => {
     if (!songId) return;
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("song_ownership")
         .select(`
           id,
@@ -565,7 +565,7 @@ export default function SongDetailPage() {
   // ── Fetch Tribes entities ────────────────────────────────
   useEffect(() => {
     const fetchTribesEntities = async () => {
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from("tribes_entities")
         .select("id, pro, entity_name, ipi_number")
         .eq("is_active", true);
@@ -710,7 +710,7 @@ export default function SongDetailPage() {
     if (!songId) return;
 
     // Delete existing song_writers for this song
-    await supabase.from("song_writers").delete().eq("song_id", songId);
+    await (supabase as any).from("song_writers").delete().eq("song_id", songId);
 
     // Insert updated writer records
     const writerRecords = editedFields.writers
@@ -723,7 +723,7 @@ export default function SongDetailPage() {
       }));
 
     if (writerRecords.length > 0) {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("song_writers")
         .insert(writerRecords);
 
@@ -739,10 +739,10 @@ export default function SongDetailPage() {
     if (!songId) return;
 
     // Delete existing ownership for this song
-    await supabase.from("song_ownership").delete().eq("song_id", songId);
+    await (supabase as any).from("song_ownership").delete().eq("song_id", songId);
 
     // Get the just-inserted song_writers to map song_writer_id
-    const { data: currentSongWriters } = await supabase
+    const { data: currentSongWriters } = await (supabase as any)
       .from("song_writers")
       .select("id, writer_id")
       .eq("song_id", songId);
@@ -760,7 +760,7 @@ export default function SongDetailPage() {
       }));
 
     if (ownershipRecords.length > 0) {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("song_ownership")
         .insert(ownershipRecords);
 
