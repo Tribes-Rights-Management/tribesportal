@@ -29,30 +29,22 @@ import { toast } from "sonner";
 
 const ITEMS_PER_PAGE = 50;
 
-const PRO_OPTIONS = [
-  { value: "", label: "Not specified" },
-  { value: "ASCAP", label: "ASCAP" },
-  { value: "BMI", label: "BMI" },
-  { value: "SESAC", label: "SESAC" },
-  { value: "GMR", label: "GMR" },
-  { value: "SOCAN", label: "SOCAN" },
-  { value: "PRS", label: "PRS" },
-  { value: "APRA", label: "APRA" },
-  { value: "GEMA", label: "GEMA" },
-  { value: "SACEM", label: "SACEM" },
-  { value: "JASRAC", label: "JASRAC" },
-  { value: "Other", label: "Other" },
-];
+interface ProOrg {
+  id: string;
+  name: string;
+}
 
 interface Publisher {
   id: string;
   name: string;
   pro_id: string | null;
   email: string | null;
+  pro_name: string | null;
 }
 
 export default function RightsPublishersPage() {
   const [publishers, setPublishers] = useState<Publisher[]>([]);
+  const [proOrgs, setProOrgs] = useState<ProOrg[]>([]);
   const [songCountMap, setSongCountMap] = useState<Map<string, number>>(new Map());
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -67,9 +59,24 @@ export default function RightsPublishersPage() {
   // Form state
   const [formData, setFormData] = useState({
     name: "",
-    pro: "",
+    pro_id: null as string | null,
     email: "",
   });
+
+  // Fetch PRO organizations lookup
+  useEffect(() => {
+    const fetchProOrgs = async () => {
+      const { data } = await supabase
+        .from("pro_organizations")
+        .select("id, name")
+        .order("name");
+      setProOrgs((data || []) as ProOrg[]);
+    };
+    fetchProOrgs();
+  }, []);
+
+  // Build PRO name lookup map
+  const proNameMap = new Map(proOrgs.map((p) => [p.id, p.name]));
 
   // Fetch publishers + song counts
   const fetchPublishers = useCallback(async () => {
@@ -87,7 +94,12 @@ export default function RightsPublishersPage() {
       ]);
 
       if (publishersRes.error) throw publishersRes.error;
-      setPublishers((publishersRes.data || []) as Publisher[]);
+      setPublishers(
+        ((publishersRes.data || []) as any[]).map((p) => ({
+          ...p,
+          pro_name: null,
+        })) as Publisher[]
+      );
 
       // Build song count map by publisher_id
       const countMap = new Map<string, number>();
@@ -127,7 +139,7 @@ export default function RightsPublishersPage() {
 
   const handleCreate = () => {
     setEditing(null);
-    setFormData({ name: "", pro: "", email: "" });
+    setFormData({ name: "", pro_id: null, email: "" });
     setFormError(null);
     setPanelOpen(true);
   };
@@ -136,7 +148,7 @@ export default function RightsPublishersPage() {
     setEditing(publisher);
     setFormData({
       name: publisher.name,
-      pro: publisher.pro_id || "",
+      pro_id: publisher.pro_id || null,
       email: publisher.email || "",
     });
     setFormError(null);
@@ -158,7 +170,7 @@ export default function RightsPublishersPage() {
           .from("interested_parties")
           .update({
             name: formData.name.trim(),
-            pro_id: formData.pro || null,
+            pro_id: formData.pro_id || null,
             email: formData.email.trim() || null,
           })
           .eq("id", editing.id);
@@ -170,7 +182,7 @@ export default function RightsPublishersPage() {
           .insert({
             name: formData.name.trim(),
             party_type: "publisher",
-            pro_id: formData.pro || null,
+            pro_id: formData.pro_id || null,
             email: formData.email.trim() || null,
           });
         if (error) throw error;
@@ -274,7 +286,7 @@ export default function RightsPublishersPage() {
                     onClick={() => handleEdit(publisher)}
                   >
                     <AppTableCell className="pl-5">{publisher.name}</AppTableCell>
-                    <AppTableCell muted>{publisher.pro_id || "—"}</AppTableCell>
+                    <AppTableCell muted>{(publisher.pro_id && proNameMap.get(publisher.pro_id)) || "—"}</AppTableCell>
                     <AppTableCell muted className="hidden sm:table-cell">
                       —
                     </AppTableCell>
@@ -353,15 +365,16 @@ export default function RightsPublishersPage() {
               PRO
             </label>
             <select
-              value={formData.pro}
+              value={formData.pro_id || ""}
               onChange={(e) =>
-                setFormData({ ...formData, pro: e.target.value })
+                setFormData({ ...formData, pro_id: e.target.value || null })
               }
               className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             >
-              {PRO_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
+              <option value="">Not specified</option>
+              {proOrgs.map((org) => (
+                <option key={org.id} value={org.id}>
+                  {org.name}
                 </option>
               ))}
             </select>
