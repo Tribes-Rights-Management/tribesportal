@@ -9,9 +9,10 @@ import { toast } from "sonner";
 /**
  * SONG DETAIL PAGE — Individual song view within Rights Catalog
  * 
- * Route: /rights/catalog/:songId
+ * Route: /rights/catalog/:songId/:songSlug?
  * Shows all metadata, writers, status, and related information for a single song.
  * Back arrow returns to /rights/catalog.
+ * The slug is optional — if missing or mismatched, it's silently corrected via replaceState.
  */
 
 interface SongDetail {
@@ -59,6 +60,16 @@ export default function SongDetailPage() {
         
         if (error) throw error;
         setSong(data as SongDetail);
+
+        // Silently update URL to include/correct slug without navigation
+        const titleSlug = (data as any).title
+          ?.toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '') || 'untitled';
+        const expectedPath = `/rights/catalog/${songId}/${titleSlug}`;
+        if (window.location.pathname !== expectedPath) {
+          window.history.replaceState(null, '', expectedPath);
+        }
       } catch (err: any) {
         console.error("Failed to fetch song:", err);
         toast.error("Song not found");

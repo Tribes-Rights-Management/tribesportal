@@ -277,7 +277,7 @@ const App = () => (
           <Route path="queue/:queueId" element={<RightsQueueDetailPage />} />
           <Route path="clients" element={<RightsClientsPage />} />
           <Route path="catalog" element={<RightsCatalogPage />} />
-          <Route path="catalog/:songId" element={<SongDetailPage />} />
+          <Route path="catalog/:songId/:songSlug?" element={<SongDetailPage />} />
           <Route path="writers" element={<RightsWritersPage />} />
           <Route path="songs/submit" element={<SongSubmitPage />} />
           <Route path="contracts" element={<RightsContractsPage />} />

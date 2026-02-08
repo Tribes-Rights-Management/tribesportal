@@ -298,8 +298,11 @@ export default function RightsCatalogPage() {
     setLastSelectedIndex(index);
   };
 
-  const handleSongClick = (songId: string) => {
-    navigate(`/rights/catalog/${songId}`);
+  const toSlug = (title: string) =>
+    title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled';
+
+  const handleSongClick = (songId: string, title?: string) => {
+    navigate(`/rights/catalog/${songId}/${toSlug(title || '')}`);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -396,7 +399,7 @@ export default function RightsCatalogPage() {
               subtitle={song.songwriters.join(" / ")}
               meta={format(new Date(song.addedAt), "MMM d, yyyy")}
               status={getStatusText(song.status)}
-              onClick={() => handleSongClick(song.id)}
+              onClick={() => handleSongClick(song.id, song.title)}
             />
           )}
           renderTable={() => (
@@ -438,7 +441,7 @@ export default function RightsCatalogPage() {
                         if (e.metaKey || e.ctrlKey || e.shiftKey) {
                           handleRowSelect(song.id, index, e);
                         } else {
-                          handleSongClick(song.id);
+                          handleSongClick(song.id, song.title);
                         }
                       }}
                       className={cn(selectedSongs.has(song.id) && "bg-muted/50")}
