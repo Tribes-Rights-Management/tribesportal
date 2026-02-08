@@ -12,11 +12,13 @@ import { cn } from "@/lib/utils";
  * Route: /rights/catalog/:songId/:songSlug?
  * Five-section composition record:
  *   1. Overview (Title, Language, Alternate Title, Duration)
- *   2. Songwriters (metadata.writers — CRUD)
- *   3. Ownership (song_ownership table — CRUD with typeahead publisher from `publishers` table)
+ *   2. Songwriters (song_writers junction table → writers)
+ *   3. Ownership (song_ownership → publishers, tribes_entities)
  *   4. Label Copy (placeholder)
  *   5. Lyrics (metadata.lyrics)
  */
+
+// ── Interfaces ──────────────────────────────────────────────
 
 interface SongDetail {
   id: string;
@@ -33,27 +35,26 @@ interface SongDetail {
   alternate_titles: string[] | null;
 }
 
-interface OwnershipRow {
-  id: string;
-  song_id: string;
-  publisher_id: string;
-  controlled: boolean;
-  ownership_percentage: number;
-  territory: string | null;
-  notes: string | null;
-  effective_from: string | null;
-  effective_to: string | null;
-  publisher_name: string;
-  pro: string | null;
+interface SongWriter {
+  id?: string;
+  writer_id: string | null;
+  name: string;
+  pro: string;
+  ipi_number: string;
+  share: number;
+  credit: string;
 }
 
-interface EditableOwnershipRow {
+interface SongOwnershipRow {
   id?: string;
+  song_writer_id: string | null;
   publisher_id: string;
   publisher_name: string;
-  controlled: boolean;
-  ownership_percentage: number;
   pro: string | null;
+  ownership_percentage: number;
+  tribes_administered: boolean;
+  administrator_entity_id: string | null;
+  administrator_name: string | null;
   territory: string;
   _isNew?: boolean;
   _deleted?: boolean;
@@ -65,8 +66,8 @@ interface EditableFields {
   is_active: boolean;
   lyrics: string;
   alternate_titles: string;
-  writers: { name: string; ipi: string; split: number }[];
-  ownership: EditableOwnershipRow[];
+  writers: SongWriter[];
+  ownership: SongOwnershipRow[];
 }
 
 // ── PRO text abbreviation options ────────────────────────────
@@ -200,12 +201,10 @@ function PublisherTypeahead({
   const debouncedSearch = useDebounce(search, 300);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Sync external value changes
   useEffect(() => {
     setSearch(value);
   }, [value]);
 
-  // Query publishers table on debounced search
   useEffect(() => {
     if (!debouncedSearch || debouncedSearch.length < 1) {
       setResults([]);
@@ -224,7 +223,6 @@ function PublisherTypeahead({
     fetchResults();
   }, [debouncedSearch]);
 
-  // Click-outside to close
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
@@ -293,7 +291,6 @@ function PublisherTypeahead({
       {showDropdown && (
         <div className="absolute left-0 right-0 top-full mt-1 bg-card border border-border rounded shadow-sm z-10 max-h-[280px] overflow-y-auto">
           {isAdding ? (
-            /* ── Inline PRO capture form ── */
             <div className="p-3 space-y-3">
               <p className="text-[13px] text-foreground font-medium">
                 Adding: &quot;{search.trim()}&quot;
@@ -335,7 +332,6 @@ function PublisherTypeahead({
               </div>
             </div>
           ) : (
-            /* ── Normal search results ── */
             <>
               {results.map((r) => (
                 <button
@@ -380,7 +376,17 @@ export default function SongDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [ownership, setOwnership] = useState<OwnershipRow[]>([]);
+
+  // Writers from song_writers junction table
+  const [songWriters, setSongWriters] = useState<SongWriter[]>([]);
+
+  // Ownership from song_ownership table
+  const [ownership, setOwnership] = useState<SongOwnershipRow[]>([]);
+
+  // Tribes entities for auto-resolution
+  const [tribesEntities, setTribesEntities] = useState<Record<string, { id: string; entity_name: string; ipi_number: string }>>({});
+
+  // Algolia writer search state
   const [writerSearchResults, setWriterSearchResults] = useState<Record<number, any[]>>({});
   const [activeWriterSearch, setActiveWriterSearch] = useState<number | null>(null);
 
@@ -410,19 +416,36 @@ export default function SongDetailPage() {
     }
   };
 
-  const selectWriter = (index: number, hit: any) => {
+  const selectWriter = async (index: number, hit: any) => {
     const updated = [...editedFields.writers];
     updated[index] = {
       ...updated[index],
       name: hit.name,
-      ipi: hit.ipi_number || "",
-      split: updated[index].split,
+      pro: hit.pro || "",
+      ipi_number: hit.ipi_number || "",
+      writer_id: null,
     };
+
+    // Look up writer UUID from the writers table
+    try {
+      const { data: writerRecord } = await supabase
+        .from("writers")
+        .select("id")
+        .eq("name", hit.name)
+        .maybeSingle();
+
+      if (writerRecord) {
+        updated[index].writer_id = writerRecord.id;
+      }
+    } catch (err) {
+      console.error("Writer lookup error:", err);
+    }
+
     updateField("writers", updated);
     setWriterSearchResults(prev => ({ ...prev, [index]: [] }));
     setActiveWriterSearch(null);
   };
-  
+
   const [editedFields, setEditedFields] = useState<EditableFields>({
     title: "",
     language: "",
@@ -450,7 +473,6 @@ export default function SongDetailPage() {
       if (error) throw error;
       setSong(data as SongDetail);
 
-      // Silently update URL to include/correct slug
       const expectedPath = `/rights/catalog/${songId}/${toSlug((data as any).title)}`;
       if (window.location.pathname !== expectedPath) {
         window.history.replaceState(null, "", expectedPath);
@@ -464,33 +486,74 @@ export default function SongDetailPage() {
     }
   }, [songId, navigate]);
 
-  // ── Fetch ownership rows (from publishers table) ─────────
-  const fetchOwnership = useCallback(async () => {
+  // ── Fetch writers from song_writers junction table ────────
+  const fetchSongWriters = useCallback(async () => {
     if (!songId) return;
     try {
       const { data, error } = await supabase
-        .from("song_ownership")
+        .from("song_writers")
         .select(`
-          id, song_id, publisher_id, controlled, ownership_percentage, territory, notes, effective_from, effective_to,
-          publisher:publishers!song_ownership_publisher_id_fkey(id, name, pro)
+          id,
+          song_id,
+          writer_id,
+          share,
+          credit,
+          writer:writers!song_writers_writer_id_fkey(id, name, pro, ipi_number)
         `)
         .eq("song_id", songId)
         .order("created_at", { ascending: true });
 
       if (error) throw error;
 
-      const enriched: OwnershipRow[] = ((data || []) as any[]).map((o) => ({
+      const enriched: SongWriter[] = ((data || []) as any[]).map((sw) => ({
+        id: sw.id,
+        writer_id: sw.writer_id,
+        name: sw.writer?.name || "",
+        pro: sw.writer?.pro || "",
+        ipi_number: sw.writer?.ipi_number || "",
+        share: Number(sw.share),
+        credit: sw.credit || "both",
+      }));
+      setSongWriters(enriched);
+    } catch (err: any) {
+      console.error("Failed to fetch song writers:", err);
+    }
+  }, [songId]);
+
+  // ── Fetch ownership rows ─────────────────────────────────
+  const fetchOwnership = useCallback(async () => {
+    if (!songId) return;
+    try {
+      const { data, error } = await supabase
+        .from("song_ownership")
+        .select(`
+          id,
+          song_writer_id,
+          publisher_id,
+          ownership_percentage,
+          tribes_administered,
+          administrator_entity_id,
+          territory,
+          notes,
+          publisher:publishers!song_ownership_publisher_id_fkey(id, name, pro),
+          administrator:tribes_entities!song_ownership_administrator_entity_id_fkey(entity_name, ipi_number)
+        `)
+        .eq("song_id", songId)
+        .order("created_at", { ascending: true });
+
+      if (error) throw error;
+
+      const enriched: SongOwnershipRow[] = ((data || []) as any[]).map((o) => ({
         id: o.id,
-        song_id: o.song_id,
+        song_writer_id: o.song_writer_id || null,
         publisher_id: o.publisher_id,
-        controlled: o.controlled,
-        ownership_percentage: o.ownership_percentage,
-        territory: o.territory,
-        notes: o.notes,
-        effective_from: o.effective_from,
-        effective_to: o.effective_to,
         publisher_name: o.publisher?.name || "Unknown",
         pro: o.publisher?.pro || null,
+        ownership_percentage: Number(o.ownership_percentage),
+        tribes_administered: o.tribes_administered ?? false,
+        administrator_entity_id: o.administrator_entity_id || null,
+        administrator_name: o.administrator?.entity_name || null,
+        territory: o.territory || "",
       }));
 
       setOwnership(enriched);
@@ -499,11 +562,26 @@ export default function SongDetailPage() {
     }
   }, [songId]);
 
+  // ── Fetch Tribes entities ────────────────────────────────
+  useEffect(() => {
+    const fetchTribesEntities = async () => {
+      const { data } = await supabase
+        .from("tribes_entities")
+        .select("id, pro, entity_name, ipi_number")
+        .eq("is_active", true);
+
+      const map: Record<string, any> = {};
+      (data || []).forEach((e: any) => { map[e.pro] = e; });
+      setTribesEntities(map);
+    };
+    fetchTribesEntities();
+  }, []);
 
   useEffect(() => {
     fetchSong();
+    fetchSongWriters();
     fetchOwnership();
-  }, [fetchSong, fetchOwnership]);
+  }, [fetchSong, fetchSongWriters, fetchOwnership]);
 
   // Populate edit fields when entering edit mode
   useEffect(() => {
@@ -515,41 +593,80 @@ export default function SongDetailPage() {
         is_active: song.is_active,
         lyrics: metadata.lyrics || "",
         alternate_titles: song.alternate_titles?.join(", ") || "",
-        writers: (metadata.writers || []).map((w: any) => ({
-          name: w.name || "",
-          ipi: w.ipi || "",
-          split: w.split ?? 0,
+        writers: songWriters.map((sw) => ({
+          id: sw.id,
+          writer_id: sw.writer_id,
+          name: sw.name,
+          pro: sw.pro,
+          ipi_number: sw.ipi_number,
+          share: sw.share,
+          credit: sw.credit,
         })),
         ownership: ownership.map((o) => ({
           id: o.id,
+          song_writer_id: o.song_writer_id,
           publisher_id: o.publisher_id,
           publisher_name: o.publisher_name,
-          controlled: o.controlled ?? true,
+          pro: o.pro,
           ownership_percentage: o.ownership_percentage,
-          pro: o.pro || null,
-          territory: o.territory || "",
+          tribes_administered: o.tribes_administered,
+          administrator_entity_id: o.administrator_entity_id,
+          administrator_name: o.administrator_name,
+          territory: o.territory,
         })),
       });
     }
-  }, [editing, song, ownership]);
+  }, [editing, song, songWriters, ownership]);
 
   const updateField = (field: keyof EditableFields, value: any) => {
     setEditedFields((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // ── Tribes Administration Toggle ──────────────────────────
+  const handleTribesToggle = (index: number, value: boolean) => {
+    const updated = [...editedFields.ownership];
+    const row = updated[index];
+
+    if (value && row.pro) {
+      const entity = tribesEntities[row.pro];
+      updated[index] = {
+        ...row,
+        tribes_administered: true,
+        administrator_entity_id: entity?.id || null,
+        administrator_name: entity?.entity_name || "No Tribes entity for this PRO",
+      };
+    } else {
+      updated[index] = {
+        ...row,
+        tribes_administered: false,
+        administrator_entity_id: null,
+        administrator_name: null,
+      };
+    }
+    updateField("ownership", updated);
   };
 
   // ── Save handler ─────────────────────────────────────────
   const handleSave = async () => {
     if (!songId || !song) return;
 
+    // Validate writer share total
+    const writerTotal = editedFields.writers.reduce((sum, w) => sum + (w.share || 0), 0);
+    if (editedFields.writers.length > 0 && writerTotal !== 100) {
+      toast.error(`Writer shares must total exactly 100.00% (currently ${writerTotal.toFixed(2)}%)`);
+      return;
+    }
+
     setIsSaving(true);
     try {
-      // 1. Update song record
+      // 1. Update song record (NO writers in metadata anymore)
       const currentMetadata = (song.metadata as Record<string, any>) || {};
-      const updatedMetadata = {
+      const updatedMetadata: Record<string, any> = {
         ...currentMetadata,
         lyrics: editedFields.lyrics || undefined,
-        writers: editedFields.writers,
       };
+      // Remove legacy writers from metadata
+      delete updatedMetadata.writers;
 
       const { error: songError } = await supabase
         .from("songs")
@@ -566,19 +683,21 @@ export default function SongDetailPage() {
 
       if (songError) throw songError;
 
-      // 2. Save ownership changes
+      // 2. Save writers to song_writers table
+      await saveSongWriters();
+
+      // 3. Save ownership changes
       await saveOwnershipChanges();
 
       toast.success("Song updated");
       setEditing(false);
 
-      // Update slug if title changed
       if (editedFields.title !== song.title) {
         const newSlug = toSlug(editedFields.title);
         window.history.replaceState(null, "", `/rights/catalog/${songId}/${newSlug}`);
       }
 
-      await Promise.all([fetchSong(), fetchOwnership()]);
+      await Promise.all([fetchSong(), fetchSongWriters(), fetchOwnership()]);
     } catch (err: any) {
       console.error("Failed to save song:", err);
       toast.error("Failed to save changes");
@@ -587,40 +706,68 @@ export default function SongDetailPage() {
     }
   };
 
+  const saveSongWriters = async () => {
+    if (!songId) return;
+
+    // Delete existing song_writers for this song
+    await supabase.from("song_writers").delete().eq("song_id", songId);
+
+    // Insert updated writer records
+    const writerRecords = editedFields.writers
+      .filter((w) => w.writer_id && w.name.trim())
+      .map((w) => ({
+        song_id: songId,
+        writer_id: w.writer_id!,
+        share: w.share,
+        credit: w.credit || "both",
+      }));
+
+    if (writerRecords.length > 0) {
+      const { error } = await supabase
+        .from("song_writers")
+        .insert(writerRecords);
+
+      if (error) {
+        console.error("Error saving writers:", error);
+        toast.error("Failed to save writers");
+        throw error;
+      }
+    }
+  };
+
   const saveOwnershipChanges = async () => {
     if (!songId) return;
 
-    const activeRows = editedFields.ownership.filter((r) => !r._deleted);
-    const deletedRows = editedFields.ownership.filter((r) => r._deleted && r.id);
+    // Delete existing ownership for this song
+    await supabase.from("song_ownership").delete().eq("song_id", songId);
 
-    // Delete removed rows
-    for (const row of deletedRows) {
-      await supabase.from("song_ownership").delete().eq("id", row.id!);
-    }
+    // Get the just-inserted song_writers to map song_writer_id
+    const { data: currentSongWriters } = await supabase
+      .from("song_writers")
+      .select("id, writer_id")
+      .eq("song_id", songId);
 
-    // Upsert active rows
-    for (const row of activeRows) {
-      if (!row.publisher_id) continue; // skip rows with no publisher selected
-
-      const payload = {
+    const ownershipRecords = editedFields.ownership
+      .filter((o) => o.publisher_id && !o._deleted)
+      .map((o) => ({
         song_id: songId,
-        publisher_id: row.publisher_id,
-        controlled: row.controlled,
-        ownership_percentage: row.ownership_percentage,
-        territory: row.territory || null,
-      };
+        song_writer_id: o.song_writer_id || null,
+        publisher_id: o.publisher_id,
+        ownership_percentage: o.ownership_percentage,
+        tribes_administered: o.tribes_administered,
+        administrator_entity_id: o.tribes_administered ? o.administrator_entity_id : null,
+        territory: o.territory || null,
+      }));
 
-      if (row.id && !row._isNew) {
-        // Update existing
-        await supabase
-          .from("song_ownership")
-          .update(payload)
-          .eq("id", row.id);
-      } else {
-        // Insert new
-        await supabase
-          .from("song_ownership")
-          .insert(payload);
+    if (ownershipRecords.length > 0) {
+      const { error } = await supabase
+        .from("song_ownership")
+        .insert(ownershipRecords);
+
+      if (error) {
+        console.error("Error saving ownership:", error);
+        toast.error("Failed to save ownership");
+        throw error;
       }
     }
   };
@@ -660,8 +807,6 @@ export default function SongDetailPage() {
   }
 
   const metadata = (song.metadata as Record<string, any>) || {};
-  const writers: { name?: string; ipi?: string; split?: number }[] =
-    metadata.writers || [];
 
   const formatDuration = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -670,6 +815,11 @@ export default function SongDetailPage() {
   };
 
   const displayTitle = editing ? editedFields.title || song.title : song.title;
+
+  // Writer share total
+  const writerTotal = editing
+    ? editedFields.writers.reduce((sum, w) => sum + (w.share || 0), 0)
+    : songWriters.reduce((sum, w) => sum + w.share, 0);
 
   // Ownership total
   const ownershipTotal = editing
@@ -753,11 +903,11 @@ export default function SongDetailPage() {
           </div>
         </SectionPanel>
 
-        {/* ─── 2. SONGWRITERS ───────────────────────────── */}
+        {/* ─── 2. SONGWRITERS (from song_writers table) ──── */}
         <SectionPanel title="Songwriters">
           {editing ? (
             <div className="space-y-3">
-              {/* Column headers for edit mode */}
+              {/* Column headers */}
               <div className="flex items-center gap-3">
                 <div className="flex-1">
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Writer</span>
@@ -808,7 +958,7 @@ export default function SongDetailPage() {
                   </div>
                   <div className="w-[140px]">
                     <input
-                      value={writer.ipi}
+                      value={writer.ipi_number}
                       readOnly
                       tabIndex={-1}
                       placeholder="—"
@@ -818,10 +968,10 @@ export default function SongDetailPage() {
                   <div className="w-[70px]">
                     <input
                       type="number"
-                      value={writer.split}
+                      value={writer.share}
                       onChange={(e) => {
                         const updated = [...editedFields.writers];
-                        updated[index] = { ...updated[index], split: Number(e.target.value) };
+                        updated[index] = { ...updated[index], share: Number(e.target.value) };
                         updateField("writers", updated);
                       }}
                       placeholder="%"
@@ -840,9 +990,31 @@ export default function SongDetailPage() {
                   </button>
                 </div>
               ))}
+              {/* Writer total */}
+              <div className="flex items-center gap-3 pt-2 border-t border-border">
+                <div className="flex-1" />
+                <div className="w-[140px]" />
+                <div className="w-[70px]">
+                  <span className={cn(
+                    "text-[13px] font-semibold block text-right pr-2",
+                    writerTotal === 100 ? "text-[hsl(var(--success))]" : "text-destructive"
+                  )}>
+                    {writerTotal.toFixed(2)}%
+                  </span>
+                </div>
+                <div className="w-[22px]" />
+              </div>
               <button
                 onClick={() => {
-                  const updated = [...editedFields.writers, { name: "", ipi: "", split: 0 }];
+                  const updated = [...editedFields.writers, {
+                    id: undefined,
+                    writer_id: null,
+                    name: "",
+                    pro: "",
+                    ipi_number: "",
+                    share: 0,
+                    credit: "both",
+                  }];
                   updateField("writers", updated);
                 }}
                 className="text-[12px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors mt-1"
@@ -851,7 +1023,7 @@ export default function SongDetailPage() {
               </button>
             </div>
           ) : (
-            writers.length > 0 ? (
+            songWriters.length > 0 ? (
               <div>
                 {/* Column headers */}
                 <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
@@ -863,28 +1035,36 @@ export default function SongDetailPage() {
                 </div>
                 {/* Writer rows */}
                 <div className="divide-y divide-border">
-                  {writers.map((writer, index) => (
+                  {songWriters.map((sw, index) => (
                     <div
-                      key={index}
+                      key={sw.id || index}
                       className="flex items-center justify-between py-2.5"
                     >
                       <span className="text-[15px] text-foreground font-medium">
-                        {writer.name || "Unknown"}
+                        {sw.name || "Unknown"}
                       </span>
                       <div className="flex items-center gap-4">
-                        {writer.ipi && (
+                        {sw.ipi_number && (
                           <span className="text-[13px] text-muted-foreground font-mono w-[120px] text-right">
-                            {writer.ipi}
+                            {sw.ipi_number}
                           </span>
                         )}
-                        {writer.split != null && (
-                          <span className="text-[13px] text-muted-foreground w-[50px] text-right">
-                            {writer.split}%
-                          </span>
-                        )}
+                        <span className="text-[13px] text-muted-foreground w-[50px] text-right">
+                          {sw.share}%
+                        </span>
                       </div>
                     </div>
                   ))}
+                </div>
+                {/* Writer total */}
+                <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-border">
+                  <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Total</span>
+                  <span className={cn(
+                    "text-[13px] font-semibold w-[50px] text-right",
+                    writerTotal === 100 ? "text-[hsl(var(--success))]" : "text-destructive"
+                  )}>
+                    {writerTotal.toFixed(2)}%
+                  </span>
                 </div>
               </div>
             ) : (
@@ -902,11 +1082,11 @@ export default function SongDetailPage() {
                 <div className="flex-1">
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Publisher</span>
                 </div>
-                <div className="w-[100px]">
+                <div className="w-[80px]">
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">PRO</span>
                 </div>
-                <div className="w-[100px]">
-                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Controlled</span>
+                <div className="w-[120px]">
+                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Administered</span>
                 </div>
                 <div className="w-[70px]">
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Share %</span>
@@ -917,65 +1097,80 @@ export default function SongDetailPage() {
                 .map((row, index) => ({ row, index }))
                 .filter(({ row }) => !row._deleted)
                 .map(({ row, index }) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <div className="flex-1">
-                      <PublisherTypeahead
-                        value={row.publisher_name}
-                        onChange={(publisherId, name, pro) => {
+                  <div key={index}>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <PublisherTypeahead
+                          value={row.publisher_name}
+                          onChange={(publisherId, name, pro) => {
+                            const updated = [...editedFields.ownership];
+                            updated[index] = {
+                              ...updated[index],
+                              publisher_id: publisherId,
+                              publisher_name: name,
+                              pro: pro || null,
+                              // Re-resolve Tribes entity if administered
+                              ...(updated[index].tribes_administered && pro ? {
+                                administrator_entity_id: tribesEntities[pro]?.id || null,
+                                administrator_name: tribesEntities[pro]?.entity_name || "No Tribes entity for this PRO",
+                              } : {}),
+                            };
+                            updateField("ownership", updated);
+                          }}
+                          placeholder="Type to search publishers…"
+                        />
+                      </div>
+                      <div className="w-[80px]">
+                        <span className="text-[12px] text-muted-foreground px-2 py-1 h-8 flex items-center">
+                          {row.pro || "—"}
+                        </span>
+                      </div>
+                      <div className="w-[120px]">
+                        <select
+                          value={row.tribes_administered ? "yes" : "no"}
+                          onChange={(e) => handleTribesToggle(index, e.target.value === "yes")}
+                          className="w-full text-[12px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+                        >
+                          <option value="yes">Yes</option>
+                          <option value="no">No</option>
+                        </select>
+                      </div>
+                      <div className="w-[70px]">
+                        <input
+                          type="number"
+                          value={row.ownership_percentage}
+                          onChange={(e) => {
+                            const updated = [...editedFields.ownership];
+                            updated[index] = { ...updated[index], ownership_percentage: Number(e.target.value) };
+                            updateField("ownership", updated);
+                          }}
+                          placeholder="%"
+                          className="w-full text-[12px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 text-right focus:outline-none focus:border-primary/40 transition-colors"
+                        />
+                      </div>
+                      <button
+                        onClick={() => {
                           const updated = [...editedFields.ownership];
-                          updated[index] = { ...updated[index], publisher_id: publisherId, publisher_name: name, pro: pro || null };
+                          if (row.id && !row._isNew) {
+                            updated[index] = { ...updated[index], _deleted: true };
+                          } else {
+                            updated.splice(index, 1);
+                          }
                           updateField("ownership", updated);
                         }}
-                        placeholder="Type to search publishers…"
-                      />
-                    </div>
-                    <div className="w-[100px]">
-                      <span className="text-[12px] text-muted-foreground px-2 py-1 h-8 flex items-center">
-                        {row.pro || "—"}
-                      </span>
-                    </div>
-                    <div className="w-[100px]">
-                      <select
-                        value={row.controlled ? "yes" : "no"}
-                        onChange={(e) => {
-                          const updated = [...editedFields.ownership];
-                          updated[index] = { ...updated[index], controlled: e.target.value === "yes" };
-                          updateField("ownership", updated);
-                        }}
-                        className="w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+                        className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                        title="Remove ownership"
                       >
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                      </select>
+                        <span className="text-[14px]">×</span>
+                      </button>
                     </div>
-                    <div className="w-[70px]">
-                      <input
-                        type="number"
-                        value={row.ownership_percentage}
-                        onChange={(e) => {
-                          const updated = [...editedFields.ownership];
-                          updated[index] = { ...updated[index], ownership_percentage: Number(e.target.value) };
-                          updateField("ownership", updated);
-                        }}
-                        placeholder="%"
-                        className="w-full text-[12px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 text-right focus:outline-none focus:border-primary/40 transition-colors"
-                      />
-                    </div>
-                    <button
-                      onClick={() => {
-                        const updated = [...editedFields.ownership];
-                        if (row.id && !row._isNew) {
-                          updated[index] = { ...updated[index], _deleted: true };
-                        } else {
-                          updated.splice(index, 1);
-                        }
-                        updateField("ownership", updated);
-                      }}
-                      className="text-muted-foreground hover:text-destructive transition-colors p-1"
-                      title="Remove ownership"
-                    >
-                      <span className="text-[14px]">×</span>
-                    </button>
+                    {/* Administrator display (only when tribes_administered) */}
+                    {row.tribes_administered && (
+                      <div className="ml-0 mt-1 mb-1 pl-2 border-l-2 border-border">
+                        <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground mr-2">Administrator:</span>
+                        <span className="text-[12px] text-foreground">{row.administrator_name || "—"}</span>
+                      </div>
+                    )}
                   </div>
                 ))}
               {/* Total row */}
@@ -983,8 +1178,8 @@ export default function SongDetailPage() {
                 <div className="flex-1 text-right">
                   <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Total</span>
                 </div>
-                <div className="w-[100px]" />
-                <div className="w-[100px]" />
+                <div className="w-[80px]" />
+                <div className="w-[120px]" />
                 <div className="w-[70px]">
                   <span className={cn(
                     "text-[13px] font-semibold block text-right pr-2",
@@ -1000,9 +1195,12 @@ export default function SongDetailPage() {
                   const updated = [...editedFields.ownership, {
                     publisher_id: "",
                     publisher_name: "",
-                    controlled: true,
-                    ownership_percentage: 0,
                     pro: null,
+                    ownership_percentage: 0,
+                    tribes_administered: false,
+                    administrator_entity_id: null,
+                    administrator_name: null,
+                    song_writer_id: null,
                     territory: "",
                     _isNew: true,
                   }];
@@ -1021,8 +1219,9 @@ export default function SongDetailPage() {
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Publisher</span>
                   <div className="flex items-center gap-4">
                     <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[80px] text-center">PRO</span>
-                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[100px] text-center">Controlled</span>
-                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[60px] text-right">Percentage</span>
+                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[100px] text-center">Administered</span>
+                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[60px] text-right">Share</span>
+                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[140px] text-right">Administrator</span>
                   </div>
                 </div>
                 {/* Ownership rows */}
@@ -1037,10 +1236,13 @@ export default function SongDetailPage() {
                           {row.pro || "—"}
                         </span>
                         <span className="text-[13px] text-muted-foreground w-[100px] text-center">
-                          {row.controlled ? "Yes" : "No"}
+                          {row.tribes_administered ? "Yes" : "No"}
                         </span>
                         <span className="text-[13px] text-muted-foreground w-[60px] text-right">
                           {row.ownership_percentage}%
+                        </span>
+                        <span className="text-[13px] text-muted-foreground w-[140px] text-right">
+                          {row.tribes_administered ? row.administrator_name || "—" : "—"}
                         </span>
                       </div>
                     </div>
@@ -1058,6 +1260,7 @@ export default function SongDetailPage() {
                     )}>
                       {ownershipTotal}%
                     </span>
+                    <span className="w-[140px]" />
                   </div>
                 </div>
               </div>
