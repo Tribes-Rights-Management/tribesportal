@@ -4,7 +4,7 @@ import { ArrowLeft, Check, ChevronRight, Plus, Trash2, HelpCircle, Upload, Send 
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AppSelect } from "@/components/app-ui/AppSelect";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ALGOLIA CONFIG
@@ -1023,28 +1023,24 @@ export default function SongSubmitPage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Language</label>
-                <Select value={data.language} onValueChange={(value) => setData(prev => ({ ...prev, language: value }))}>
-                  <SelectTrigger className="h-12 px-4 bg-card border border-[var(--border-subtle)] rounded-xl">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover">
-                    {LANGUAGES.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <AppSelect
+                  value={data.language}
+                  onChange={(val) => setData(prev => ({ ...prev, language: val }))}
+                  options={LANGUAGES.map(l => ({ value: l, label: l }))}
+                  placeholder="Select language"
+                  fullWidth
+                />
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Song Type <span className="text-destructive">*</span></label>
-                <select
+                <AppSelect
                   value={data.songType}
-                  onChange={(e) => setData(prev => ({ ...prev, songType: e.target.value as SongData["songType"] }))}
-                  className="w-full h-10 px-3 text-sm bg-card border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
-                >
-                  <option value="">Select song type</option>
-                  {SONG_TYPES.map(t => (
-                    <option key={t.value} value={t.value}>{t.label}</option>
-                  ))}
-                </select>
+                  onChange={(val) => setData(prev => ({ ...prev, songType: val as SongData["songType"] }))}
+                  options={SONG_TYPES}
+                  placeholder="Select song type"
+                  fullWidth
+                />
                 {["public_domain", "derivative", "medley"].includes(data.songType) && (
                   <div className="space-y-2 mt-4">
                     <label className="text-sm font-medium text-[var(--btn-text)]">Original work title <span className="text-destructive">*</span></label>
@@ -1169,16 +1165,16 @@ export default function SongSubmitPage() {
                               </div>
                               <div className="w-[160px]">
                                 <label className="block text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] mb-1">Credit *</label>
-                                <Select value={w.credit} onValueChange={(value) => updateWriter(w.id, { credit: value as Writer["credit"] })}>
-                                  <SelectTrigger className="h-9 px-3 bg-card border border-[var(--border-subtle)] rounded-lg">
-                                    <SelectValue placeholder="Select..." />
-                                  </SelectTrigger>
-                                  <SelectContent className="bg-popover">
-                                    <SelectItem value="both">Writer & Composer</SelectItem>
-                                    <SelectItem value="lyrics">Writer</SelectItem>
-                                    <SelectItem value="music">Composer</SelectItem>
-                                  </SelectContent>
-                                </Select>
+                                <AppSelect
+                                  value={w.credit}
+                                  onChange={(val) => updateWriter(w.id, { credit: val as Writer["credit"] })}
+                                  options={[
+                                    { value: "both", label: "Writer & Composer" },
+                                    { value: "lyrics", label: "Writer" },
+                                    { value: "music", label: "Composer" },
+                                  ]}
+                                  placeholder="Credit"
+                                />
                               </div>
                             </div>
 
@@ -1232,17 +1228,16 @@ export default function SongSubmitPage() {
                                     </span>
                                     
                                     {/* Administrator toggle */}
-                                    <div className="w-[120px] shrink-0">
-                                      <select
+                                    <div className="w-[160px] shrink-0">
+                                      <AppSelect
                                         value={pub.tribes_administered ? "tribes" : "other"}
-                                        onChange={(e) => {
-                                          updatePublisher(w.id, pub.id, { tribes_administered: e.target.value === "tribes" });
-                                        }}
-                                        className="w-full h-9 px-2 text-sm bg-card border border-border rounded-lg"
-                                      >
-                                        <option value="other">Other</option>
-                                        <option value="tribes">Tribes</option>
-                                      </select>
+                                        onChange={(val) => updatePublisher(w.id, pub.id, { tribes_administered: val === "tribes" })}
+                                        options={[
+                                          { value: "other", label: "Other" },
+                                          { value: "tribes", label: "Tribes" },
+                                        ]}
+                                        placeholder="Administrator"
+                                      />
                                     </div>
                                     
                                     {/* Show resolved Tribes entity inline */}
@@ -1324,21 +1319,14 @@ export default function SongSubmitPage() {
                           </button>
                         </div>
                         
-                        <Select 
-                          value={section.type} 
-                          onValueChange={(value) => setParsedSections(prev => 
-                            prev.map(s => s.id === section.id ? { ...s, type: value } : s)
+                        <AppSelect
+                          value={section.type}
+                          onChange={(val) => setParsedSections(prev => 
+                            prev.map(s => s.id === section.id ? { ...s, type: val } : s)
                           )}
-                        >
-                          <SelectTrigger className="w-48 h-10 bg-card border border-[var(--border-subtle)] rounded-lg">
-                            <SelectValue placeholder="Section type" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-popover">
-                            {SECTION_HEADINGS.map(h => (
-                              <SelectItem key={h} value={h}>{h}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          options={SECTION_HEADINGS.map(h => ({ value: h, label: h }))}
+                          placeholder="Section type"
+                        />
                         
                         <textarea
                           value={section.lyrics}
@@ -1401,16 +1389,12 @@ export default function SongSubmitPage() {
                       {data.lyricsSections.map((s) => (
                         <div key={s.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
                           <div className="flex items-center justify-between">
-                            <Select value={s.type} onValueChange={(value) => updateLyricSection(s.id, { type: value as LyricSection["type"] })}>
-                              <SelectTrigger className="h-10 px-3 bg-card border border-[var(--border-subtle)] rounded-lg w-40">
-                                <SelectValue placeholder="Select section..." />
-                              </SelectTrigger>
-                              <SelectContent className="bg-popover">
-                                {LYRIC_SECTION_TYPES.map(t => (
-                                  <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                            <AppSelect
+                              value={s.type}
+                              onChange={(val) => updateLyricSection(s.id, { type: val as LyricSection["type"] })}
+                              options={LYRIC_SECTION_TYPES}
+                              placeholder="Select section..."
+                            />
                             <button onClick={() => removeLyricSection(s.id)} className="p-1 text-[var(--btn-text-muted)] hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
                           </div>
                           <textarea value={s.content} onChange={(e) => updateLyricSection(s.id, { content: e.target.value })} placeholder="Enter lyrics..." rows={4} className="w-full px-3 py-2 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg resize-y" />
