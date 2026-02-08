@@ -10,12 +10,12 @@ import { cn } from "@/lib/utils";
  * SONG DETAIL PAGE — Individual song view within Rights Catalog
  *
  * Route: /rights/catalog/:songId/:songSlug?
- * Shows all metadata, writers, status, and related information for a single song.
- * Back arrow returns to /rights/catalog.
- * The slug is optional — if missing or mismatched, it's silently corrected via replaceState.
- *
- * Visual: Cardless institutional layout with border-top section separators,
- * two-column metadata grid on desktop, and left-border lyrics accent.
+ * Five-section composition record:
+ *   1. Overview (Title, Language, Alternate Title, Duration, CCLI Song ID)
+ *   2. Songwriters (metadata.writers — CRUD)
+ *   3. Ownership (song_ownership table — CRUD with publisher/administrator)
+ *   4. Registration & Identifiers (ISWC + CCLI Song ID — read-only reference)
+ *   5. Lyrics (metadata.lyrics)
  */
 
 interface SongDetail {
@@ -25,11 +25,43 @@ interface SongDetail {
   created_at: string;
   is_active: boolean;
   iswc: string | null;
+  ccli_song_id: string | null;
   language: string | null;
   genre: string | null;
   duration_seconds: number | null;
   release_date: string | null;
   alternate_titles: string[] | null;
+}
+
+interface OwnershipRow {
+  id: string;
+  song_id: string;
+  publisher_id: string;
+  administrator_id: string | null;
+  ownership_percentage: number;
+  territory: string | null;
+  notes: string | null;
+  effective_from: string | null;
+  effective_to: string | null;
+  publisher?: { id: string; name: string };
+  administrator?: { id: string; name: string } | null;
+}
+
+interface EditableOwnershipRow {
+  id?: string;
+  publisher_id: string;
+  publisher_name: string;
+  administrator_id: string;
+  administrator_name: string;
+  ownership_percentage: number;
+  territory: string;
+  _isNew?: boolean;
+  _deleted?: boolean;
+}
+
+interface PublisherOption {
+  id: string;
+  name: string;
 }
 
 interface EditableFields {
@@ -39,6 +71,7 @@ interface EditableFields {
   lyrics: string;
   alternate_titles: string;
   writers: { name: string; ipi: string; split: number }[];
+  ownership: EditableOwnershipRow[];
 }
 
 // ── Slug helper ──────────────────────────────────────────────
@@ -148,6 +181,37 @@ function SectionPanel({ title, children }: { title: string; children: React.Reac
   );
 }
 
+// ── Publisher Select ────────────────────────────────────────
+function PublisherSelect({
+  value,
+  publishers,
+  onChange,
+  placeholder = "Select publisher…",
+}: {
+  value: string;
+  publishers: PublisherOption[];
+  onChange: (id: string, name: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => {
+        const pub = publishers.find((p) => p.id === e.target.value);
+        onChange(e.target.value, pub?.name || "");
+      }}
+      className="w-full text-[13px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+    >
+      <option value="">{placeholder}</option>
+      {publishers.map((p) => (
+        <option key={p.id} value={p.id}>
+          {p.name}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 // ── Main Component ──────────────────────────────────────────
 export default function SongDetailPage() {
   const { songId } = useParams<{ songId: string }>();
@@ -156,6 +220,8 @@ export default function SongDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [ownership, setOwnership] = useState<OwnershipRow[]>([]);
+  const [publishers, setPublishers] = useState<PublisherOption[]>([]);
   const [editedFields, setEditedFields] = useState<EditableFields>({
     title: "",
     language: "",
@@ -163,8 +229,10 @@ export default function SongDetailPage() {
     lyrics: "",
     alternate_titles: "",
     writers: [],
+    ownership: [],
   });
 
+  // ── Fetch song ───────────────────────────────────────────
   const fetchSong = useCallback(async () => {
     if (!songId) return;
 
@@ -173,7 +241,7 @@ export default function SongDetailPage() {
       const { data, error } = await supabase
         .from("songs")
         .select(
-          "id, title, metadata, created_at, is_active, iswc, language, genre, duration_seconds, release_date, alternate_titles"
+          "id, title, metadata, created_at, is_active, iswc, ccli_song_id, language, genre, duration_seconds, release_date, alternate_titles"
         )
         .eq("id", songId)
         .single();
@@ -195,9 +263,52 @@ export default function SongDetailPage() {
     }
   }, [songId, navigate]);
 
+  // ── Fetch ownership rows ─────────────────────────────────
+  const fetchOwnership = useCallback(async () => {
+    if (!songId) return;
+    try {
+      const { data, error } = await supabase
+        .from("song_ownership")
+        .select(
+          "id, song_id, publisher_id, administrator_id, ownership_percentage, territory, notes, effective_from, effective_to, publisher:publishers!song_ownership_publisher_id_fkey(id, name), administrator:publishers!song_ownership_administrator_id_fkey(id, name)"
+        )
+        .eq("song_id", songId)
+        .order("created_at", { ascending: true });
+
+      if (error) throw error;
+      setOwnership((data || []) as unknown as OwnershipRow[]);
+    } catch (err: any) {
+      console.error("Failed to fetch ownership:", err);
+    }
+  }, [songId]);
+
+  // ── Fetch publishers for dropdowns ───────────────────────
+  const fetchPublishers = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from("publishers")
+        .select("id, name")
+        .eq("is_active", true)
+        .order("name");
+
+      if (error) throw error;
+      setPublishers(data || []);
+    } catch (err: any) {
+      console.error("Failed to fetch publishers:", err);
+    }
+  }, []);
+
   useEffect(() => {
     fetchSong();
-  }, [fetchSong]);
+    fetchOwnership();
+  }, [fetchSong, fetchOwnership]);
+
+  // Fetch publishers when entering edit mode
+  useEffect(() => {
+    if (editing) {
+      fetchPublishers();
+    }
+  }, [editing, fetchPublishers]);
 
   // Populate edit fields when entering edit mode
   useEffect(() => {
@@ -210,19 +321,30 @@ export default function SongDetailPage() {
         lyrics: metadata.lyrics || "",
         alternate_titles: song.alternate_titles?.join(", ") || "",
         writers: metadata.writers || [],
+        ownership: ownership.map((o) => ({
+          id: o.id,
+          publisher_id: o.publisher_id,
+          publisher_name: o.publisher?.name || "",
+          administrator_id: o.administrator_id || "",
+          administrator_name: o.administrator?.name || "",
+          ownership_percentage: o.ownership_percentage,
+          territory: o.territory || "",
+        })),
       });
     }
-  }, [editing, song]);
+  }, [editing, song, ownership]);
 
   const updateField = (field: keyof EditableFields, value: any) => {
     setEditedFields((prev) => ({ ...prev, [field]: value }));
   };
 
+  // ── Save handler ─────────────────────────────────────────
   const handleSave = async () => {
     if (!songId || !song) return;
 
     setIsSaving(true);
     try {
+      // 1. Update song record
       const currentMetadata = (song.metadata as Record<string, any>) || {};
       const updatedMetadata = {
         ...currentMetadata,
@@ -230,7 +352,7 @@ export default function SongDetailPage() {
         writers: editedFields.writers,
       };
 
-      const { error } = await supabase
+      const { error: songError } = await supabase
         .from("songs")
         .update({
           title: editedFields.title,
@@ -243,7 +365,10 @@ export default function SongDetailPage() {
         })
         .eq("id", songId);
 
-      if (error) throw error;
+      if (songError) throw songError;
+
+      // 2. Save ownership changes
+      await saveOwnershipChanges();
 
       toast.success("Song updated");
       setEditing(false);
@@ -254,12 +379,50 @@ export default function SongDetailPage() {
         window.history.replaceState(null, "", `/rights/catalog/${songId}/${newSlug}`);
       }
 
-      await fetchSong();
+      await Promise.all([fetchSong(), fetchOwnership()]);
     } catch (err: any) {
       console.error("Failed to save song:", err);
       toast.error("Failed to save changes");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const saveOwnershipChanges = async () => {
+    if (!songId) return;
+
+    const activeRows = editedFields.ownership.filter((r) => !r._deleted);
+    const deletedRows = editedFields.ownership.filter((r) => r._deleted && r.id);
+
+    // Delete removed rows
+    for (const row of deletedRows) {
+      await supabase.from("song_ownership").delete().eq("id", row.id!);
+    }
+
+    // Upsert active rows
+    for (const row of activeRows) {
+      if (!row.publisher_id) continue; // skip rows with no publisher selected
+
+      const payload = {
+        song_id: songId,
+        publisher_id: row.publisher_id,
+        administrator_id: row.administrator_id || null,
+        ownership_percentage: row.ownership_percentage,
+        territory: row.territory || null,
+      };
+
+      if (row.id && !row._isNew) {
+        // Update existing
+        await supabase
+          .from("song_ownership")
+          .update(payload)
+          .eq("id", row.id);
+      } else {
+        // Insert new
+        await supabase
+          .from("song_ownership")
+          .insert(payload);
+      }
     }
   };
 
@@ -309,6 +472,11 @@ export default function SongDetailPage() {
 
   const displayTitle = editing ? editedFields.title || song.title : song.title;
 
+  // Ownership total
+  const ownershipTotal = editing
+    ? editedFields.ownership.filter((r) => !r._deleted).reduce((sum, r) => sum + (r.ownership_percentage || 0), 0)
+    : ownership.reduce((sum, r) => sum + r.ownership_percentage, 0);
+
   // ── Action slot: status badge + edit/save buttons ─────────
   const actionSlot = (
     <div className="flex items-center gap-3">
@@ -342,7 +510,7 @@ export default function SongDetailPage() {
       action={actionSlot}
     >
       <div>
-        {/* ── Overview — two-column metadata grid ────────── */}
+        {/* ─── 1. OVERVIEW ──────────────────────────────── */}
         <SectionPanel title="Overview">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             {editing ? (
@@ -386,7 +554,7 @@ export default function SongDetailPage() {
           </div>
         </SectionPanel>
 
-        {/* ── Songwriters ────────────────────────────────── */}
+        {/* ─── 2. SONGWRITERS ───────────────────────────── */}
         <SectionPanel title="Songwriters">
           {editing ? (
             <div className="space-y-3">
@@ -504,7 +672,186 @@ export default function SongDetailPage() {
           )}
         </SectionPanel>
 
-        {/* ── Lyrics ─────────────────────────────────────── */}
+        {/* ─── 3. OWNERSHIP ─────────────────────────────── */}
+        <SectionPanel title="Ownership">
+          {editing ? (
+            <div className="space-y-3">
+              {/* Column headers */}
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Publisher</span>
+                </div>
+                <div className="flex-1">
+                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Administrator</span>
+                </div>
+                <div className="w-[70px]">
+                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Share %</span>
+                </div>
+                <div className="w-[22px]" />
+              </div>
+              {editedFields.ownership
+                .map((row, index) => ({ row, index }))
+                .filter(({ row }) => !row._deleted)
+                .map(({ row, index }) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <PublisherSelect
+                        value={row.publisher_id}
+                        publishers={publishers}
+                        onChange={(id, name) => {
+                          const updated = [...editedFields.ownership];
+                          updated[index] = { ...updated[index], publisher_id: id, publisher_name: name };
+                          updateField("ownership", updated);
+                        }}
+                        placeholder="Select publisher…"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <PublisherSelect
+                        value={row.administrator_id}
+                        publishers={publishers}
+                        onChange={(id, name) => {
+                          const updated = [...editedFields.ownership];
+                          updated[index] = { ...updated[index], administrator_id: id, administrator_name: name };
+                          updateField("ownership", updated);
+                        }}
+                        placeholder="Select administrator…"
+                      />
+                    </div>
+                    <div className="w-[70px]">
+                      <input
+                        type="number"
+                        value={row.ownership_percentage}
+                        onChange={(e) => {
+                          const updated = [...editedFields.ownership];
+                          updated[index] = { ...updated[index], ownership_percentage: Number(e.target.value) };
+                          updateField("ownership", updated);
+                        }}
+                        placeholder="%"
+                        className="w-full text-[12px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 text-right focus:outline-none focus:border-primary/40 transition-colors"
+                      />
+                    </div>
+                    <button
+                      onClick={() => {
+                        const updated = [...editedFields.ownership];
+                        if (row.id && !row._isNew) {
+                          updated[index] = { ...updated[index], _deleted: true };
+                        } else {
+                          updated.splice(index, 1);
+                        }
+                        updateField("ownership", updated);
+                      }}
+                      className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                      title="Remove ownership"
+                    >
+                      <span className="text-[14px]">×</span>
+                    </button>
+                  </div>
+                ))}
+              {/* Total row */}
+              <div className="flex items-center gap-3 pt-2 border-t border-border">
+                <div className="flex-1" />
+                <div className="flex-1 text-right">
+                  <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Total</span>
+                </div>
+                <div className="w-[70px]">
+                  <span className={cn(
+                    "text-[13px] font-semibold block text-right pr-2",
+                    ownershipTotal === 100 ? "text-[hsl(var(--success))]" : "text-destructive"
+                  )}>
+                    {ownershipTotal}%
+                  </span>
+                </div>
+                <div className="w-[22px]" />
+              </div>
+              <button
+                onClick={() => {
+                  const updated = [...editedFields.ownership, {
+                    publisher_id: "",
+                    publisher_name: "",
+                    administrator_id: "",
+                    administrator_name: "",
+                    ownership_percentage: 0,
+                    territory: "",
+                    _isNew: true,
+                  }];
+                  updateField("ownership", updated);
+                }}
+                className="text-[12px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors mt-1"
+              >
+                + Add Ownership
+              </button>
+            </div>
+          ) : (
+            ownership.length > 0 ? (
+              <div>
+                {/* Column headers */}
+                <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
+                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Publisher</span>
+                  <div className="flex items-center gap-4">
+                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[160px] text-right">Administrator</span>
+                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[60px] text-right">Share</span>
+                  </div>
+                </div>
+                {/* Ownership rows */}
+                <div className="divide-y divide-border">
+                  {ownership.map((row) => (
+                    <div key={row.id} className="flex items-center justify-between py-2.5">
+                      <span className="text-[15px] text-foreground font-medium">
+                        {row.publisher?.name || "Unknown Publisher"}
+                      </span>
+                      <div className="flex items-center gap-4">
+                        <span className="text-[13px] text-muted-foreground w-[160px] text-right">
+                          {row.administrator?.name || <span className="text-muted-foreground/50">—</span>}
+                        </span>
+                        <span className="text-[13px] text-muted-foreground w-[60px] text-right">
+                          {row.ownership_percentage}%
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Total row */}
+                <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-border">
+                  <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Total</span>
+                  <div className="flex items-center gap-4">
+                    <span className="w-[160px]" />
+                    <span className={cn(
+                      "text-[13px] font-semibold w-[60px] text-right",
+                      ownershipTotal === 100 ? "text-[hsl(var(--success))]" : "text-destructive"
+                    )}>
+                      {ownershipTotal}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className="text-[13px] text-muted-foreground/50">No ownership records</p>
+            )
+          )}
+        </SectionPanel>
+
+        {/* ─── 4. REGISTRATION & IDENTIFIERS ────────────── */}
+        <SectionPanel title="Registration & Identifiers">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            <DetailRow label="ISWC">
+              {song.iswc ? (
+                <span className="font-mono">{song.iswc}</span>
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </DetailRow>
+            <DetailRow label="CCLI Song ID">
+              {song.ccli_song_id ? (
+                <span className="font-mono">{song.ccli_song_id}</span>
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </DetailRow>
+          </div>
+        </SectionPanel>
+
+        {/* ─── 5. LYRICS ────────────────────────────────── */}
         {(metadata.lyrics || editing) && (
           <SectionPanel title="Lyrics">
             {editing ? (
