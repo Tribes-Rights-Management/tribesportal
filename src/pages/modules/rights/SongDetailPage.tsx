@@ -133,13 +133,18 @@ function StatusBadge({ active }: { active: boolean }) {
   );
 }
 
-// ── Section Header ──────────────────────────────────────────
-function SectionHeader({ title }: { title: string }) {
+// ── Section Panel ───────────────────────────────────────────
+function SectionPanel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="border-t border-border pt-5 mt-2">
-      <h2 className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground mb-3">
-        {title}
-      </h2>
+    <div className="mt-5 rounded border border-border bg-card">
+      <div className="px-5 py-3 border-b border-border bg-muted/30">
+        <h2 className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
+          {title}
+        </h2>
+      </div>
+      <div className="px-5 py-4">
+        {children}
+      </div>
     </div>
   );
 }
@@ -338,109 +343,60 @@ export default function SongDetailPage() {
       backLink={{ to: "/rights/catalog", label: "Catalog" }}
       action={actionSlot}
     >
-      <div className="mt-4">
+      <div>
         {/* ── Overview — two-column metadata grid ────────── */}
-        <SectionHeader title="Overview" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-          {editing ? (
-            <DetailRow
-              label="Title"
-              editing
-              value={editedFields.title}
-              onValueChange={(v) => updateField("title", v)}
-            />
-          ) : (
-            <DetailRow label="Title">{song.title}</DetailRow>
-          )}
-
-          <div className="py-2.5">
-            <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
-              Status
-            </span>
+        <SectionPanel title="Overview">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             {editing ? (
-              <StatusSelect
-                value={editedFields.is_active}
-                onChange={(v) => updateField("is_active", v)}
+              <DetailRow
+                label="Title"
+                editing
+                value={editedFields.title}
+                onValueChange={(v) => updateField("title", v)}
               />
             ) : (
-              <div className="text-[14px] mt-0.5">
-                {song.is_active ? (
-                  <span className="text-[hsl(var(--success))]">Active</span>
-                ) : (
-                  <span className="text-muted-foreground">Inactive</span>
-                )}
-              </div>
+              <DetailRow label="Title">{song.title}</DetailRow>
+            )}
+
+            {(song.language || editing) && (
+              <DetailRow
+                label="Language"
+                editing={editing}
+                value={editedFields.language}
+                onValueChange={(v) => updateField("language", v)}
+              >
+                {song.language || "—"}
+              </DetailRow>
+            )}
+
+            {(song.iswc || editing) && (
+              <DetailRow
+                label="ISWC"
+                editing={editing}
+                value={editedFields.iswc}
+                onValueChange={(v) => updateField("iswc", v)}
+              >
+                <span className="font-mono">{song.iswc || "—"}</span>
+              </DetailRow>
+            )}
+
+            <DetailRow label="Alternate Title">
+              {song.alternate_titles && song.alternate_titles.length > 0
+                ? song.alternate_titles.join(", ")
+                : <span className="text-muted-foreground/50">—</span>}
+            </DetailRow>
+
+            {song.duration_seconds != null && (
+              <DetailRow label="Duration">
+                {formatDuration(song.duration_seconds)}
+              </DetailRow>
             )}
           </div>
-
-          <DetailRow label="Added">
-            {format(new Date(song.created_at), "MMMM d, yyyy")}
-          </DetailRow>
-
-          {(song.language || editing) && (
-            <DetailRow
-              label="Language"
-              editing={editing}
-              value={editedFields.language}
-              onValueChange={(v) => updateField("language", v)}
-            >
-              {song.language || "—"}
-            </DetailRow>
-          )}
-
-          {(song.genre || editing) && (
-            <DetailRow
-              label="Genre"
-              editing={editing}
-              value={editedFields.genre}
-              onValueChange={(v) => updateField("genre", v)}
-            >
-              {song.genre || "—"}
-            </DetailRow>
-          )}
-
-          {(song.release_date || editing) && (
-            <DetailRow
-              label="Release Date"
-              editing={editing}
-              value={editedFields.release_date}
-              onValueChange={(v) => updateField("release_date", v)}
-              type="date"
-            >
-              {song.release_date
-                ? format(new Date(song.release_date), "MMMM d, yyyy")
-                : "—"}
-            </DetailRow>
-          )}
-
-          {(song.iswc || editing) && (
-            <DetailRow
-              label="ISWC"
-              editing={editing}
-              value={editedFields.iswc}
-              onValueChange={(v) => updateField("iswc", v)}
-            >
-              <span className="font-mono">{song.iswc || "—"}</span>
-            </DetailRow>
-          )}
-
-          {song.duration_seconds != null && (
-            <DetailRow label="Duration">
-              {formatDuration(song.duration_seconds)}
-            </DetailRow>
-          )}
-
-          {song.alternate_titles && song.alternate_titles.length > 0 && (
-            <DetailRow label="Alternate Titles">
-              {song.alternate_titles.join(", ")}
-            </DetailRow>
-          )}
-        </div>
+        </SectionPanel>
 
         {/* ── Songwriters ────────────────────────────────── */}
         {writers.length > 0 && (
-          <>
-            <SectionHeader title="Songwriters" />
+          <SectionPanel title="Songwriters">
             <div className="divide-y divide-border">
               {writers.map((writer, index) => (
                 <div
@@ -465,13 +421,12 @@ export default function SongDetailPage() {
                 </div>
               ))}
             </div>
-          </>
+          </SectionPanel>
         )}
 
         {/* ── Lyrics ─────────────────────────────────────── */}
         {(metadata.lyrics || editing) && (
-          <>
-            <SectionHeader title="Lyrics" />
+          <SectionPanel title="Lyrics">
             {editing ? (
               <textarea
                 value={editedFields.lyrics}
@@ -480,13 +435,11 @@ export default function SongDetailPage() {
                 placeholder="Enter lyrics…"
               />
             ) : (
-              <div className="pl-4 border-l-2 border-border">
-                <pre className="text-[13px] text-foreground/80 whitespace-pre-wrap font-sans leading-relaxed">
-                  {metadata.lyrics}
-                </pre>
-              </div>
+              <pre className="text-[13px] text-foreground/80 whitespace-pre-wrap font-sans leading-relaxed">
+                {metadata.lyrics}
+              </pre>
             )}
-          </>
+          </SectionPanel>
         )}
 
         {/* Bottom breathing room */}
