@@ -33,7 +33,7 @@ interface RecentSong {
   addedAt: string;
 }
 
-interface CatalogueSong {
+interface CatalogSong {
   id: string;
   title: string;
   artist: string;
@@ -83,11 +83,11 @@ export function useSongQueue() {
 }
 
 /**
- * Song catalogue hook
+ * Song catalog hook
  * Returns all songs in the catalog
  */
-export function useSongCatalogue() {
-  const data: CatalogueSong[] = [];
+export function useSongCatalog() {
+  const data: CatalogSong[] = [];
 
   return {
     data,

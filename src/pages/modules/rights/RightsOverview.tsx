@@ -59,7 +59,7 @@ export default function RightsOverview() {
         <AppStatCard label="Active Clients" value={clientCount ?? "—"} onClick={() => navigate("/rights/clients")} />
         <AppStatCard label="Active Contracts" value={contractCount ?? "—"} onClick={() => navigate("/rights/contracts")} />
         <AppStatCard label="Songs in Queue" value={queueStats?.total ?? "—"} loading={statsLoading} onClick={() => navigate("/rights/queue")} />
-        <AppStatCard label="Catalogue" value={songCount ?? "—"} onClick={() => navigate("/rights/catalogue")} />
+        <AppStatCard label="Catalog" value={songCount ?? "—"} onClick={() => navigate("/rights/catalog")} />
       </AppStatCardGrid>
 
       {/* Queue preview table */}

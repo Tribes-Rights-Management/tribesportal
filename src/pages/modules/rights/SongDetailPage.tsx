@@ -7,11 +7,11 @@ import { ContentPanel } from "@/components/ui/page-shell";
 import { toast } from "sonner";
 
 /**
- * SONG DETAIL PAGE — Individual song view within Rights Catalogue
+ * SONG DETAIL PAGE — Individual song view within Rights Catalog
  * 
- * Route: /rights/catalogue/:songId
+ * Route: /rights/catalog/:songId
  * Shows all metadata, writers, status, and related information for a single song.
- * Back arrow returns to /rights/catalogue.
+ * Back arrow returns to /rights/catalog.
  */
 
 interface SongDetail {
@@ -62,7 +62,7 @@ export default function SongDetailPage() {
       } catch (err: any) {
         console.error("Failed to fetch song:", err);
         toast.error("Song not found");
-        navigate("/rights/catalogue");
+        navigate("/rights/catalog");
       } finally {
         setIsLoading(false);
       }
@@ -75,7 +75,7 @@ export default function SongDetailPage() {
     return (
       <AppPageLayout
         title="Loading…"
-        backLink={{ to: "/rights/catalogue", label: "Catalogue" }}
+        backLink={{ to: "/rights/catalog", label: "Catalog" }}
       >
         <AppSection spacing="md">
           <p className="text-sm text-muted-foreground">Loading song details…</p>
@@ -88,7 +88,7 @@ export default function SongDetailPage() {
     return (
       <AppPageLayout
         title="Not Found"
-        backLink={{ to: "/rights/catalogue", label: "Catalogue" }}
+        backLink={{ to: "/rights/catalog", label: "Catalog" }}
       >
         <AppSection spacing="md">
           <p className="text-sm text-muted-foreground">This song could not be found.</p>
@@ -109,7 +109,7 @@ export default function SongDetailPage() {
   return (
     <AppPageLayout
       title={song.title}
-      backLink={{ to: "/rights/catalogue", label: "Catalogue" }}
+      backLink={{ to: "/rights/catalog", label: "Catalog" }}
     >
       <div className="space-y-6 mt-4">
         {/* Overview */}

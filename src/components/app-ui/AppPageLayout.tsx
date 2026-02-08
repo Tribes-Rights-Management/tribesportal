@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
  * 
  * USAGE:
  *   <AppPageLayout
- *     title="Catalogue"
+ *     title="Catalog"
  *     action={<AppButton>Add Song</AppButton>}
  *   >
  *     {/* page body content *\/}

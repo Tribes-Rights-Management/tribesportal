@@ -60,7 +60,7 @@ const consoleNav: NavItem[] = [
  */
 const adminNav: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true, section: "main" },
-  { to: "/admin/catalogue", label: "Catalogue", icon: Music, section: "main" },
+  { to: "/admin/catalog", label: "Catalog", icon: Music, section: "main" },
   { to: "/admin/documents", label: "Documents", icon: FileText, section: "main" },
   { to: "/admin/payments", label: "Payments", icon: CreditCard, section: "secondary" },
   { to: "/admin/settings", label: "Settings", icon: Settings2, section: "settings" },
@@ -84,7 +84,7 @@ const rightsNav: NavItem[] = [
   { to: "/rights", label: "Overview", icon: LayoutDashboard, exact: true, section: "main" },
   { to: "/rights/queue", label: "Queue", icon: ListTodo, section: "main" },
   { to: "/rights/clients", label: "Clients", icon: Users, section: "main" },
-  { to: "/rights/catalogue", label: "Catalogue", icon: Music, section: "main" },
+  { to: "/rights/catalog", label: "Catalog", icon: Music, section: "main" },
   { to: "/rights/writers", label: "Writers", icon: PenTool, section: "main" },
   { to: "/rights/contracts", label: "Contracts", icon: Briefcase, section: "main" },
   { to: "/rights/documents", label: "Documents", icon: FileText, section: "main" },
