@@ -64,6 +64,7 @@ import {
   RightsDocumentsPage,
   RightsSettingsPage,
   SongSubmitPage,
+  SongDetailPage,
 } from "@/pages/modules/rights";
 
 // App pages - Access states
@@ -276,6 +277,7 @@ const App = () => (
           <Route path="queue/:queueId" element={<RightsQueueDetailPage />} />
           <Route path="clients" element={<RightsClientsPage />} />
           <Route path="catalogue" element={<RightsCataloguePage />} />
+          <Route path="catalogue/:songId" element={<SongDetailPage />} />
           <Route path="writers" element={<RightsWritersPage />} />
           <Route path="songs/submit" element={<SongSubmitPage />} />
           <Route path="contracts" element={<RightsContractsPage />} />
