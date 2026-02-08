@@ -243,7 +243,7 @@ export default function RightsPublishersPage() {
                 <AppTableHead className="pl-5">Name</AppTableHead>
                 <AppTableHead>PRO</AppTableHead>
                 <AppTableHead className="hidden sm:table-cell">IPI Number</AppTableHead>
-                <AppTableHead className="text-right pr-5">Songs</AppTableHead>
+                <AppTableHead className="text-right pr-10">Songs</AppTableHead>
               </AppTableRow>
             </AppTableHeader>
             <AppTableBody>
@@ -276,7 +276,7 @@ export default function RightsPublishersPage() {
                     <AppTableCell muted className="hidden sm:table-cell">
                       —
                     </AppTableCell>
-                    <AppTableCell muted className="text-right pr-5 tabular-nums">
+                    <AppTableCell muted className="text-right pr-10 tabular-nums">
                       {songCountMap.get(publisher.id) || 0}
                     </AppTableCell>
                   </AppTableRow>

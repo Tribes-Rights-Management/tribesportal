@@ -417,7 +417,7 @@ export default function RightsWritersPage() {
                 <AppTableHead className="pl-5">Name</AppTableHead>
                 <AppTableHead>PRO</AppTableHead>
                 <AppTableHead className="hidden sm:table-cell">IPI Number</AppTableHead>
-                <AppTableHead className="text-right pr-5">Songs</AppTableHead>
+                <AppTableHead className="text-right pr-10">Songs</AppTableHead>
               </AppTableRow>
             </AppTableHeader>
             <AppTableBody>
@@ -445,7 +445,7 @@ export default function RightsWritersPage() {
                       <AppTableCell className="pl-5">{writer.name}</AppTableCell>
                       <AppTableCell muted>{writer.pro || "—"}</AppTableCell>
                       <AppTableCell muted className="hidden sm:table-cell">{writer.ipi_number || writer.cae_number || "—"}</AppTableCell>
-                      <AppTableCell muted className="text-right pr-5 tabular-nums">{songCount}</AppTableCell>
+                      <AppTableCell muted className="text-right pr-10 tabular-nums">{songCount}</AppTableCell>
                     </AppTableRow>
                   );
                 })
