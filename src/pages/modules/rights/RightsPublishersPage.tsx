@@ -22,30 +22,27 @@ import { toast } from "sonner";
 /**
  * RIGHTS PUBLISHERS PAGE — Staff Management View
  *
- * Registry of all publishers (interested_parties where party_type = 'publisher').
- * Uses Supabase directly (smaller dataset than writers).
- * Displays: Name, PRO, IPI Number, Songs count
+ * Registry of all publishers from the `publishers` table.
+ * Displays: Name, PRO (text abbreviation), IPI Number, Songs count
  */
 
 const ITEMS_PER_PAGE = 50;
 
-interface ProOrg {
-  id: string;
-  name: string;
-  abbreviation: string | null;
-}
+const PRO_OPTIONS = [
+  "ASCAP", "BMI", "SESAC", "GMR", "SOCAN", "PRS", "APRA", "GEMA", "SACEM", "JASRAC",
+];
 
 interface Publisher {
   id: string;
   name: string;
-  pro_id: string | null;
+  pro: string | null;
+  ipi_number: string | null;
   email: string | null;
-  pro_name: string | null;
+  is_active: boolean;
 }
 
 export default function RightsPublishersPage() {
   const [publishers, setPublishers] = useState<Publisher[]>([]);
-  const [proOrgs, setProOrgs] = useState<ProOrg[]>([]);
   const [songCountMap, setSongCountMap] = useState<Map<string, number>>(new Map());
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,24 +57,10 @@ export default function RightsPublishersPage() {
   // Form state
   const [formData, setFormData] = useState({
     name: "",
-    pro_id: null as string | null,
+    pro: null as string | null,
+    ipi_number: "",
     email: "",
   });
-
-  // Fetch PRO organizations lookup
-  useEffect(() => {
-    const fetchProOrgs = async () => {
-      const { data } = await supabase
-        .from("pro_organizations")
-        .select("id, name, abbreviation")
-        .order("name");
-      setProOrgs((data || []) as ProOrg[]);
-    };
-    fetchProOrgs();
-  }, []);
-
-  // Build PRO name lookup map
-  const proAbbrMap = new Map(proOrgs.map((p) => [p.id, p.abbreviation || p.name]));
 
   // Fetch publishers + song counts
   const fetchPublishers = useCallback(async () => {
@@ -85,9 +68,9 @@ export default function RightsPublishersPage() {
     try {
       const [publishersRes, songCountsRes] = await Promise.all([
         supabase
-          .from("interested_parties")
-          .select("id, name, pro_id, email")
-          .eq("party_type", "publisher")
+          .from("publishers")
+          .select("id, name, pro, ipi_number, email, is_active")
+          .eq("is_active", true)
           .order("name", { ascending: true }),
         supabase
           .from("song_ownership")
@@ -95,12 +78,7 @@ export default function RightsPublishersPage() {
       ]);
 
       if (publishersRes.error) throw publishersRes.error;
-      setPublishers(
-        ((publishersRes.data || []) as any[]).map((p) => ({
-          ...p,
-          pro_name: null,
-        })) as Publisher[]
-      );
+      setPublishers((publishersRes.data || []) as Publisher[]);
 
       // Build song count map by publisher_id
       const countMap = new Map<string, number>();
@@ -140,7 +118,7 @@ export default function RightsPublishersPage() {
 
   const handleCreate = () => {
     setEditing(null);
-    setFormData({ name: "", pro_id: null, email: "" });
+    setFormData({ name: "", pro: null, ipi_number: "", email: "" });
     setFormError(null);
     setPanelOpen(true);
   };
@@ -149,7 +127,8 @@ export default function RightsPublishersPage() {
     setEditing(publisher);
     setFormData({
       name: publisher.name,
-      pro_id: publisher.pro_id || null,
+      pro: publisher.pro || null,
+      ipi_number: publisher.ipi_number || "",
       email: publisher.email || "",
     });
     setFormError(null);
@@ -168,10 +147,11 @@ export default function RightsPublishersPage() {
     try {
       if (editing) {
         const { error } = await supabase
-          .from("interested_parties")
+          .from("publishers")
           .update({
             name: formData.name.trim(),
-            pro_id: formData.pro_id || null,
+            pro: formData.pro || null,
+            ipi_number: formData.ipi_number?.trim() || null,
             email: formData.email.trim() || null,
           })
           .eq("id", editing.id);
@@ -179,12 +159,13 @@ export default function RightsPublishersPage() {
         toast.success("Publisher updated");
       } else {
         const { error } = await supabase
-          .from("interested_parties")
+          .from("publishers")
           .insert({
             name: formData.name.trim(),
-            party_type: "publisher",
-            pro_id: formData.pro_id || null,
+            pro: formData.pro || null,
+            ipi_number: formData.ipi_number?.trim() || null,
             email: formData.email.trim() || null,
+            is_active: true,
           });
         if (error) throw error;
         toast.success("Publisher added");
@@ -206,7 +187,7 @@ export default function RightsPublishersPage() {
     setSaving(true);
     try {
       const { error } = await supabase
-        .from("interested_parties")
+        .from("publishers")
         .delete()
         .eq("id", editing.id);
       if (error) throw error;
@@ -287,9 +268,9 @@ export default function RightsPublishersPage() {
                     onClick={() => handleEdit(publisher)}
                   >
                     <AppTableCell className="pl-5">{publisher.name}</AppTableCell>
-                    <AppTableCell muted>{(publisher.pro_id && proAbbrMap.get(publisher.pro_id)) || "—"}</AppTableCell>
+                    <AppTableCell muted>{publisher.pro || "—"}</AppTableCell>
                     <AppTableCell muted className="hidden sm:table-cell">
-                      —
+                      {publisher.ipi_number || "—"}
                     </AppTableCell>
                     <AppTableCell muted className="text-right pr-10 tabular-nums">
                       {songCountMap.get(publisher.id) || 0}
@@ -366,19 +347,34 @@ export default function RightsPublishersPage() {
               PRO
             </label>
             <select
-              value={formData.pro_id || ""}
+              value={formData.pro || ""}
               onChange={(e) =>
-                setFormData({ ...formData, pro_id: e.target.value || null })
+                setFormData({ ...formData, pro: e.target.value || null })
               }
               className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             >
               <option value="">Not specified</option>
-              {proOrgs.map((org) => (
-                <option key={org.id} value={org.id}>
-                  {org.abbreviation || org.name}
+              {PRO_OPTIONS.map((pro) => (
+                <option key={pro} value={pro}>
+                  {pro}
                 </option>
               ))}
             </select>
+          </div>
+
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+              IPI Number
+            </label>
+            <input
+              type="text"
+              value={formData.ipi_number}
+              onChange={(e) =>
+                setFormData({ ...formData, ipi_number: e.target.value })
+              }
+              placeholder="e.g., 00123456789"
+              className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            />
           </div>
 
           <div>

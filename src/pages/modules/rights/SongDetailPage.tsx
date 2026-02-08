@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
  * Five-section composition record:
  *   1. Overview (Title, Language, Alternate Title, Duration)
  *   2. Songwriters (metadata.writers — CRUD)
- *   3. Ownership (song_ownership table — CRUD with typeahead publisher/administrator)
+ *   3. Ownership (song_ownership table — CRUD with typeahead publisher from `publishers` table)
  *   4. Label Copy (placeholder)
  *   5. Lyrics (metadata.lyrics)
  */
@@ -43,7 +43,7 @@ interface OwnershipRow {
   notes: string | null;
   effective_from: string | null;
   effective_to: string | null;
-  publisher?: { id: string; name: string };
+  publisher_name: string;
   pro: string | null;
 }
 
@@ -59,7 +59,6 @@ interface EditableOwnershipRow {
   _deleted?: boolean;
 }
 
-
 interface EditableFields {
   title: string;
   language: string;
@@ -69,6 +68,11 @@ interface EditableFields {
   writers: { name: string; ipi: string; split: number }[];
   ownership: EditableOwnershipRow[];
 }
+
+// ── PRO text abbreviation options ────────────────────────────
+const PRO_OPTIONS = [
+  "ASCAP", "BMI", "SESAC", "GMR", "SOCAN", "PRS", "APRA", "GEMA", "SACEM", "JASRAC",
+];
 
 // ── Slug helper ──────────────────────────────────────────────
 function toSlug(title: string) {
@@ -177,45 +181,31 @@ function SectionPanel({ title, children }: { title: string; children: React.Reac
   );
 }
 
-// ── PRO Organization type ───────────────────────────────────
-interface ProOrg {
-  id: string;
-  name: string;
-  abbreviation: string | null;
-}
-
-// ── Interested Party Typeahead ──────────────────────────────
-function InterestedPartyTypeahead({
+// ── Publisher Typeahead (searches `publishers` table) ────────
+function PublisherTypeahead({
   value,
   onChange,
-  partyType,
-  proOrgs,
-  placeholder = "Type to search…",
+  placeholder = "Type to search publishers…",
 }: {
   value: string;
-  onChange: (id: string, name: string, proAbbr?: string | null) => void;
-  partyType: "publisher" | "administrator";
-  proOrgs: ProOrg[];
+  onChange: (publisherId: string, name: string, pro: string | null) => void;
   placeholder?: string;
 }) {
   const [search, setSearch] = useState(value);
   const [open, setOpen] = useState(false);
-  const [results, setResults] = useState<{ id: string; name: string; pro_id: string | null; pro_abbreviation: string | null }[]>([]);
+  const [results, setResults] = useState<{ id: string; name: string; pro: string | null }[]>([]);
   const [isAdding, setIsAdding] = useState(false);
-  const [newEntryProId, setNewEntryProId] = useState("");
+  const [newEntryPro, setNewEntryPro] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const debouncedSearch = useDebounce(search, 300);
   const wrapperRef = useRef<HTMLDivElement>(null);
-
-  // Build local abbreviation map
-  const proAbbrMap = new Map(proOrgs.map((p) => [p.id, p.abbreviation || p.name]));
 
   // Sync external value changes
   useEffect(() => {
     setSearch(value);
   }, [value]);
 
-  // Query interested_parties on debounced search
+  // Query publishers table on debounced search
   useEffect(() => {
     if (!debouncedSearch || debouncedSearch.length < 1) {
       setResults([]);
@@ -223,22 +213,16 @@ function InterestedPartyTypeahead({
     }
     const fetchResults = async () => {
       const { data } = await supabase
-        .from("interested_parties")
-        .select("id, name, pro_id")
-        .eq("party_type", partyType)
+        .from("publishers")
+        .select("id, name, pro")
         .ilike("name", `%${debouncedSearch}%`)
+        .eq("is_active", true)
         .order("name")
-        .limit(5);
-      // Resolve pro_id UUIDs to abbreviations using local map
-      setResults(
-        ((data || []) as { id: string; name: string; pro_id: string | null }[]).map((r) => ({
-          ...r,
-          pro_abbreviation: r.pro_id ? (proAbbrMap.get(r.pro_id) || null) : null,
-        }))
-      );
+        .limit(10);
+      setResults((data || []) as { id: string; name: string; pro: string | null }[]);
     };
     fetchResults();
-  }, [debouncedSearch, partyType, proAbbrMap]);
+  }, [debouncedSearch]);
 
   // Click-outside to close
   useEffect(() => {
@@ -246,19 +230,19 @@ function InterestedPartyTypeahead({
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setOpen(false);
         setIsAdding(false);
-        setNewEntryProId("");
+        setNewEntryPro("");
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const handleSelect = (r: { id: string; name: string; pro_abbreviation: string | null }) => {
+  const handleSelect = (r: { id: string; name: string; pro: string | null }) => {
     setSearch(r.name);
-    onChange(r.id, r.name, r.pro_abbreviation);
+    onChange(r.id, r.name, r.pro);
     setOpen(false);
     setIsAdding(false);
-    setNewEntryProId("");
+    setNewEntryPro("");
   };
 
   const handleConfirmCreate = async () => {
@@ -266,19 +250,23 @@ function InterestedPartyTypeahead({
     setIsCreating(true);
     try {
       const { data, error } = await supabase
-        .from("interested_parties")
-        .insert({ name: search.trim(), party_type: partyType, pro_id: newEntryProId || null } as any)
-        .select("id, name, pro_id")
+        .from("publishers")
+        .insert({
+          name: search.trim(),
+          pro: newEntryPro || null,
+          is_active: true,
+          is_controlled: false,
+        } as any)
+        .select("id, name, pro")
         .single();
       if (error) throw error;
       if (data) {
-        const abbr = newEntryProId ? (proAbbrMap.get(newEntryProId) || null) : null;
-        handleSelect({ id: data.id, name: data.name, pro_abbreviation: abbr });
-        toast.success(`Added ${data.name} as ${partyType}`);
+        handleSelect({ id: data.id, name: data.name, pro: data.pro });
+        toast.success(`Added "${data.name}" as publisher`);
       }
     } catch (err: any) {
-      console.error("Failed to create interested party:", err);
-      toast.error("Failed to add entry");
+      console.error("Failed to create publisher:", err);
+      toast.error("Failed to add publisher");
     } finally {
       setIsCreating(false);
     }
@@ -315,13 +303,13 @@ function InterestedPartyTypeahead({
                   PRO
                 </label>
                 <select
-                  value={newEntryProId}
-                  onChange={(e) => setNewEntryProId(e.target.value)}
+                  value={newEntryPro}
+                  onChange={(e) => setNewEntryPro(e.target.value)}
                   className="mt-1 w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
                 >
                   <option value="">None / Unknown</option>
-                  {proOrgs.map((org) => (
-                    <option key={org.id} value={org.id}>{org.abbreviation || org.name}</option>
+                  {PRO_OPTIONS.map((pro) => (
+                    <option key={pro} value={pro}>{pro}</option>
                   ))}
                 </select>
               </div>
@@ -330,7 +318,7 @@ function InterestedPartyTypeahead({
                   type="button"
                   onClick={() => {
                     setIsAdding(false);
-                    setNewEntryProId("");
+                    setNewEntryPro("");
                   }}
                   className="text-[12px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
                 >
@@ -357,8 +345,8 @@ function InterestedPartyTypeahead({
                   className="w-full text-left px-3 py-2 text-[14px] text-foreground hover:bg-muted/50 cursor-pointer transition-colors flex items-center justify-between"
                 >
                   <span>{r.name}</span>
-                  {r.pro_abbreviation && (
-                    <span className="text-[12px] text-muted-foreground ml-auto pl-2">{r.pro_abbreviation}</span>
+                  {r.pro && (
+                    <span className="text-[12px] text-muted-foreground ml-auto pl-2">{r.pro}</span>
                   )}
                 </button>
               ))}
@@ -368,7 +356,7 @@ function InterestedPartyTypeahead({
                   onClick={() => setIsAdding(true)}
                   className="w-full text-left px-3 py-2 text-[12px] text-[var(--app-focus)] hover:bg-muted/50 cursor-pointer font-medium transition-colors"
                 >
-                  + Add &quot;{search.trim()}&quot; as new {partyType}
+                  + Add &quot;{search.trim()}&quot; as new publisher
                 </button>
               )}
             </>
@@ -388,7 +376,6 @@ export default function SongDetailPage() {
   const [editing, setEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [ownership, setOwnership] = useState<OwnershipRow[]>([]);
-  const [proOrgs, setProOrgs] = useState<ProOrg[]>([]);
   
   const [editedFields, setEditedFields] = useState<EditableFields>({
     title: "",
@@ -431,72 +418,46 @@ export default function SongDetailPage() {
     }
   }, [songId, navigate]);
 
-  // ── Fetch PRO organizations ───────────────────────────────
-  useEffect(() => {
-    const fetchProOrgs = async () => {
-      const { data } = await supabase
-        .from("pro_organizations")
-        .select("id, name, abbreviation")
-        .order("name");
-      setProOrgs((data || []) as ProOrg[]);
-    };
-    fetchProOrgs();
-  }, []);
-
-  // Build PRO abbreviation lookup map
-  const proAbbrMap = new Map(proOrgs.map((p) => [p.id, p.abbreviation || p.name]));
-
-  // ── Fetch ownership rows ─────────────────────────────────
+  // ── Fetch ownership rows (from publishers table) ─────────
   const fetchOwnership = useCallback(async () => {
     if (!songId) return;
     try {
       const { data, error } = await supabase
         .from("song_ownership")
-        .select(
-          "id, song_id, publisher_id, controlled, ownership_percentage, territory, notes, effective_from, effective_to, publisher:publishers!song_ownership_publisher_id_fkey(id, name)"
-        )
+        .select(`
+          id, song_id, publisher_id, controlled, ownership_percentage, territory, notes, effective_from, effective_to,
+          publisher:publishers!song_ownership_publisher_id_fkey(id, name, pro)
+        `)
         .eq("song_id", songId)
         .order("created_at", { ascending: true });
 
       if (error) throw error;
-      const ownershipData = (data || []) as unknown as Omit<OwnershipRow, "pro">[];
 
-      // Resolve PRO UUID to abbreviation for each publisher
-      if (ownershipData.length > 0) {
-        const publisherNames = [...new Set(ownershipData.map((o) => o.publisher?.name).filter(Boolean))] as string[];
-        const { data: publisherPros } = await supabase
-          .from("interested_parties")
-          .select("name, pro_id")
-          .in("name", publisherNames)
-          .eq("party_type", "publisher");
+      const enriched: OwnershipRow[] = ((data || []) as any[]).map((o) => ({
+        id: o.id,
+        song_id: o.song_id,
+        publisher_id: o.publisher_id,
+        controlled: o.controlled,
+        ownership_percentage: o.ownership_percentage,
+        territory: o.territory,
+        notes: o.notes,
+        effective_from: o.effective_from,
+        effective_to: o.effective_to,
+        publisher_name: o.publisher?.name || "Unknown",
+        pro: o.publisher?.pro || null,
+      }));
 
-        const proMap = new Map(
-          ((publisherPros || []) as { name: string; pro_id: string | null }[]).map((p) => [
-            p.name,
-            p.pro_id ? (proAbbrMap.get(p.pro_id) || null) : null,
-          ])
-        );
-
-        setOwnership(
-          ownershipData.map((o) => ({
-            ...o,
-            pro: proMap.get(o.publisher?.name || "") || null,
-          }))
-        );
-      } else {
-        setOwnership([]);
-      }
+      setOwnership(enriched);
     } catch (err: any) {
       console.error("Failed to fetch ownership:", err);
     }
-  }, [songId, proOrgs]);
+  }, [songId]);
 
 
   useEffect(() => {
     fetchSong();
     fetchOwnership();
   }, [fetchSong, fetchOwnership]);
-
 
   // Populate edit fields when entering edit mode
   useEffect(() => {
@@ -512,7 +473,7 @@ export default function SongDetailPage() {
         ownership: ownership.map((o) => ({
           id: o.id,
           publisher_id: o.publisher_id,
-          publisher_name: o.publisher?.name || "",
+          publisher_name: o.publisher_name,
           controlled: o.controlled ?? true,
           ownership_percentage: o.ownership_percentage,
           pro: o.pro || null,
@@ -557,8 +518,6 @@ export default function SongDetailPage() {
 
       // 2. Save ownership changes
       await saveOwnershipChanges();
-
-      // PRO is managed on the Publishers page — no update here
 
       toast.success("Song updated");
       setEditing(false);
@@ -888,15 +847,13 @@ export default function SongDetailPage() {
                 .map(({ row, index }) => (
                   <div key={index} className="flex items-center gap-3">
                     <div className="flex-1">
-                      <InterestedPartyTypeahead
+                      <PublisherTypeahead
                         value={row.publisher_name}
-                        onChange={(id, name, proAbbr) => {
+                        onChange={(publisherId, name, pro) => {
                           const updated = [...editedFields.ownership];
-                          updated[index] = { ...updated[index], publisher_id: id, publisher_name: name, pro: proAbbr || null };
+                          updated[index] = { ...updated[index], publisher_id: publisherId, publisher_name: name, pro: pro || null };
                           updateField("ownership", updated);
                         }}
-                        partyType="publisher"
-                        proOrgs={proOrgs}
                         placeholder="Type to search publishers…"
                       />
                     </div>
@@ -1001,7 +958,7 @@ export default function SongDetailPage() {
                   {ownership.map((row) => (
                     <div key={row.id} className="flex items-center justify-between py-2.5">
                       <span className="text-[15px] text-foreground font-medium">
-                        {row.publisher?.name || "Unknown Publisher"}
+                        {row.publisher_name || "Unknown Publisher"}
                       </span>
                       <div className="flex items-center gap-4">
                         <span className="text-[13px] text-muted-foreground w-[80px] text-center">
