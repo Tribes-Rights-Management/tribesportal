@@ -32,6 +32,7 @@ const ITEMS_PER_PAGE = 50;
 interface ProOrg {
   id: string;
   name: string;
+  abbreviation: string | null;
 }
 
 interface Publisher {
@@ -68,7 +69,7 @@ export default function RightsPublishersPage() {
     const fetchProOrgs = async () => {
       const { data } = await supabase
         .from("pro_organizations")
-        .select("id, name")
+        .select("id, name, abbreviation")
         .order("name");
       setProOrgs((data || []) as ProOrg[]);
     };
@@ -76,7 +77,7 @@ export default function RightsPublishersPage() {
   }, []);
 
   // Build PRO name lookup map
-  const proNameMap = new Map(proOrgs.map((p) => [p.id, p.name]));
+  const proAbbrMap = new Map(proOrgs.map((p) => [p.id, p.abbreviation || p.name]));
 
   // Fetch publishers + song counts
   const fetchPublishers = useCallback(async () => {
@@ -286,7 +287,7 @@ export default function RightsPublishersPage() {
                     onClick={() => handleEdit(publisher)}
                   >
                     <AppTableCell className="pl-5">{publisher.name}</AppTableCell>
-                    <AppTableCell muted>{(publisher.pro_id && proNameMap.get(publisher.pro_id)) || "—"}</AppTableCell>
+                    <AppTableCell muted>{(publisher.pro_id && proAbbrMap.get(publisher.pro_id)) || "—"}</AppTableCell>
                     <AppTableCell muted className="hidden sm:table-cell">
                       —
                     </AppTableCell>
@@ -374,7 +375,7 @@ export default function RightsPublishersPage() {
               <option value="">Not specified</option>
               {proOrgs.map((org) => (
                 <option key={org.id} value={org.id}>
-                  {org.name}
+                  {org.abbreviation || org.name}
                 </option>
               ))}
             </select>
