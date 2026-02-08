@@ -252,7 +252,7 @@ export default function SongSubmitPage() {
   // ── Fetch Tribes entities on mount ────────────────────────
   useEffect(() => {
     const fetchTribesEntities = async () => {
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from("tribes_entities")
         .select("id, pro, entity_name, ipi_number")
         .eq("is_active", true);
@@ -546,14 +546,14 @@ export default function SongSubmitPage() {
 
       let insertedWriters: { id: string; writer_id: string }[] = [];
       if (writerRecords.length > 0) {
-        const { data: swData, error: writerError } = await supabase
+        const { data: swData, error: writerError } = await (supabase as any)
           .from("song_writers")
           .insert(writerRecords)
           .select("id, writer_id");
 
         if (writerError) {
-          console.error("Writer save error:", writerError);
-          toast.error("Failed to save writers");
+          console.error("Writer save error:", JSON.stringify(writerError));
+          toast.error("Failed to save writers: " + (writerError.message || "Unknown error"));
           return;
         }
         insertedWriters = swData || [];
@@ -587,13 +587,13 @@ export default function SongSubmitPage() {
       }
 
       if (ownershipRecords.length > 0) {
-        const { error: ownershipError } = await supabase
+        const { error: ownershipError } = await (supabase as any)
           .from("song_ownership")
           .insert(ownershipRecords);
 
         if (ownershipError) {
-          console.error("Ownership save error:", ownershipError);
-          toast.error("Failed to save ownership");
+          console.error("Ownership save error:", JSON.stringify(ownershipError));
+          toast.error("Failed to save ownership: " + (ownershipError.message || "Unknown error"));
           return;
         }
       }
