@@ -37,22 +37,20 @@ interface OwnershipRow {
   id: string;
   song_id: string;
   publisher_id: string;
-  administrator_id: string | null;
+  controlled: boolean;
   ownership_percentage: number;
   territory: string | null;
   notes: string | null;
   effective_from: string | null;
   effective_to: string | null;
   publisher?: { id: string; name: string };
-  administrator?: { id: string; name: string } | null;
 }
 
 interface EditableOwnershipRow {
   id?: string;
   publisher_id: string;
   publisher_name: string;
-  administrator_id: string;
-  administrator_name: string;
+  controlled: boolean;
   ownership_percentage: number;
   territory: string;
   _isNew?: boolean;
@@ -362,7 +360,7 @@ export default function SongDetailPage() {
       const { data, error } = await supabase
         .from("song_ownership")
         .select(
-          "id, song_id, publisher_id, administrator_id, ownership_percentage, territory, notes, effective_from, effective_to, publisher:publishers!song_ownership_publisher_id_fkey(id, name), administrator:publishers!song_ownership_administrator_id_fkey(id, name)"
+          "id, song_id, publisher_id, controlled, ownership_percentage, territory, notes, effective_from, effective_to, publisher:publishers!song_ownership_publisher_id_fkey(id, name)"
         )
         .eq("song_id", songId)
         .order("created_at", { ascending: true });
@@ -396,8 +394,7 @@ export default function SongDetailPage() {
           id: o.id,
           publisher_id: o.publisher_id,
           publisher_name: o.publisher?.name || "",
-          administrator_id: o.administrator_id || "",
-          administrator_name: o.administrator?.name || "",
+          controlled: o.controlled ?? true,
           ownership_percentage: o.ownership_percentage,
           territory: o.territory || "",
         })),
@@ -477,7 +474,7 @@ export default function SongDetailPage() {
       const payload = {
         song_id: songId,
         publisher_id: row.publisher_id,
-        administrator_id: row.administrator_id || null,
+        controlled: row.controlled,
         ownership_percentage: row.ownership_percentage,
         territory: row.territory || null,
       };
@@ -752,8 +749,8 @@ export default function SongDetailPage() {
                 <div className="flex-1">
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Publisher</span>
                 </div>
-                <div className="flex-1">
-                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Administrator</span>
+                <div className="w-[100px]">
+                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Controlled</span>
                 </div>
                 <div className="w-[70px]">
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Share %</span>
@@ -777,17 +774,19 @@ export default function SongDetailPage() {
                         placeholder="Type to search publishers…"
                       />
                     </div>
-                    <div className="flex-1">
-                      <InterestedPartyTypeahead
-                        value={row.administrator_name}
-                        onChange={(id, name) => {
+                    <div className="w-[100px]">
+                      <select
+                        value={row.controlled ? "yes" : "no"}
+                        onChange={(e) => {
                           const updated = [...editedFields.ownership];
-                          updated[index] = { ...updated[index], administrator_id: id, administrator_name: name };
+                          updated[index] = { ...updated[index], controlled: e.target.value === "yes" };
                           updateField("ownership", updated);
                         }}
-                        partyType="administrator"
-                        placeholder="Type to search administrators…"
-                      />
+                        className="w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+                      >
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
                     </div>
                     <div className="w-[70px]">
                       <input
@@ -821,10 +820,10 @@ export default function SongDetailPage() {
                 ))}
               {/* Total row */}
               <div className="flex items-center gap-3 pt-2 border-t border-border">
-                <div className="flex-1" />
                 <div className="flex-1 text-right">
                   <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Total</span>
                 </div>
+                <div className="w-[100px]" />
                 <div className="w-[70px]">
                   <span className={cn(
                     "text-[13px] font-semibold block text-right pr-2",
@@ -840,8 +839,7 @@ export default function SongDetailPage() {
                   const updated = [...editedFields.ownership, {
                     publisher_id: "",
                     publisher_name: "",
-                    administrator_id: "",
-                    administrator_name: "",
+                    controlled: true,
                     ownership_percentage: 0,
                     territory: "",
                     _isNew: true,
@@ -860,8 +858,8 @@ export default function SongDetailPage() {
                 <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Publisher</span>
                   <div className="flex items-center gap-4">
-                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[160px] text-right">Administrator</span>
-                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[60px] text-right">Share</span>
+                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[100px] text-center">Controlled</span>
+                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[60px] text-right">Percentage</span>
                   </div>
                 </div>
                 {/* Ownership rows */}
@@ -872,8 +870,8 @@ export default function SongDetailPage() {
                         {row.publisher?.name || "Unknown Publisher"}
                       </span>
                       <div className="flex items-center gap-4">
-                        <span className="text-[13px] text-muted-foreground w-[160px] text-right">
-                          {row.administrator?.name || <span className="text-muted-foreground/50">—</span>}
+                        <span className="text-[13px] text-muted-foreground w-[100px] text-center">
+                          {row.controlled ? "Yes" : "No"}
                         </span>
                         <span className="text-[13px] text-muted-foreground w-[60px] text-right">
                           {row.ownership_percentage}%
@@ -886,7 +884,7 @@ export default function SongDetailPage() {
                 <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-border">
                   <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Total</span>
                   <div className="flex items-center gap-4">
-                    <span className="w-[160px]" />
+                    <span className="w-[100px]" />
                     <span className={cn(
                       "text-[13px] font-semibold w-[60px] text-right",
                       ownershipTotal === 100 ? "text-[hsl(var(--success))]" : "text-destructive"
