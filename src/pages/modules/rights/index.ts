@@ -11,6 +11,7 @@ export { default as RightsQueueDetailPage } from "./RightsQueueDetailPage";
 export { default as RightsClientsPage } from "./RightsClientsPage";
 export { default as RightsCatalogPage } from "./RightsCatalogPage";
 export { default as RightsWritersPage } from "./RightsWritersPage";
+export { default as RightsPublishersPage } from "./RightsPublishersPage";
 export { default as RightsContractsPage } from "./RightsContractsPage";
 export { default as RightsDocumentsPage } from "./RightsDocumentsPage";
 export { default as RightsSettingsPage } from "./RightsSettingsPage";
