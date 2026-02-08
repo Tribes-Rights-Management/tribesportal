@@ -153,24 +153,26 @@ export default function RightsPublishersPage() {
     setFormError(null);
 
     try {
-      const payload = {
-        name: formData.name.trim(),
-        party_type: "publisher" as const,
-        pro_id: formData.pro || null,
-        email: formData.email.trim() || null,
-      };
-
       if (editing) {
         const { error } = await supabase
           .from("interested_parties")
-          .update(payload as any)
+          .update({
+            name: formData.name.trim(),
+            pro_id: formData.pro || null,
+            email: formData.email.trim() || null,
+          })
           .eq("id", editing.id);
         if (error) throw error;
         toast.success("Publisher updated");
       } else {
         const { error } = await supabase
           .from("interested_parties")
-          .insert(payload as any);
+          .insert({
+            name: formData.name.trim(),
+            party_type: "publisher",
+            pro_id: formData.pro || null,
+            email: formData.email.trim() || null,
+          });
         if (error) throw error;
         toast.success("Publisher added");
       }
