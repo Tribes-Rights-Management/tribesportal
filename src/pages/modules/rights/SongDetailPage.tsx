@@ -44,6 +44,7 @@ interface OwnershipRow {
   effective_from: string | null;
   effective_to: string | null;
   publisher?: { id: string; name: string };
+  pro: string | null;
 }
 
 interface EditableOwnershipRow {
@@ -52,6 +53,7 @@ interface EditableOwnershipRow {
   publisher_name: string;
   controlled: boolean;
   ownership_percentage: number;
+  pro: string | null;
   territory: string;
   _isNew?: boolean;
   _deleted?: boolean;
@@ -175,6 +177,11 @@ function SectionPanel({ title, children }: { title: string; children: React.Reac
   );
 }
 
+// ── PRO options ─────────────────────────────────────────────
+const PRO_OPTIONS = [
+  "", "ASCAP", "BMI", "SESAC", "GMR", "SOCAN", "PRS", "APRA", "GEMA", "SACEM", "JASRAC", "Other",
+];
+
 // ── Interested Party Typeahead ──────────────────────────────
 function InterestedPartyTypeahead({
   value,
@@ -183,13 +190,15 @@ function InterestedPartyTypeahead({
   placeholder = "Type to search…",
 }: {
   value: string;
-  onChange: (id: string, name: string) => void;
+  onChange: (id: string, name: string, proId?: string | null) => void;
   partyType: "publisher" | "administrator";
   placeholder?: string;
 }) {
   const [search, setSearch] = useState(value);
   const [open, setOpen] = useState(false);
-  const [results, setResults] = useState<{ id: string; name: string }[]>([]);
+  const [results, setResults] = useState<{ id: string; name: string; pro_id: string | null }[]>([]);
+  const [isAdding, setIsAdding] = useState(false);
+  const [newEntryPro, setNewEntryPro] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const debouncedSearch = useDebounce(search, 300);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -208,12 +217,12 @@ function InterestedPartyTypeahead({
     const fetchResults = async () => {
       const { data } = await supabase
         .from("interested_parties")
-        .select("id, name")
+        .select("id, name, pro_id")
         .eq("party_type", partyType)
         .ilike("name", `%${debouncedSearch}%`)
         .order("name")
         .limit(5);
-      setResults(data || []);
+      setResults((data || []) as { id: string; name: string; pro_id: string | null }[]);
     };
     fetchResults();
   }, [debouncedSearch, partyType]);
@@ -223,30 +232,34 @@ function InterestedPartyTypeahead({
     const handler = (e: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setOpen(false);
+        setIsAdding(false);
+        setNewEntryPro("");
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const handleSelect = (id: string, name: string) => {
+  const handleSelect = (id: string, name: string, proId?: string | null) => {
     setSearch(name);
-    onChange(id, name);
+    onChange(id, name, proId);
     setOpen(false);
+    setIsAdding(false);
+    setNewEntryPro("");
   };
 
-  const handleCreate = async () => {
+  const handleConfirmCreate = async () => {
     if (!search.trim() || isCreating) return;
     setIsCreating(true);
     try {
       const { data, error } = await supabase
         .from("interested_parties")
-        .insert({ name: search.trim(), party_type: partyType } as any)
-        .select("id, name")
+        .insert({ name: search.trim(), party_type: partyType, pro_id: newEntryPro || null } as any)
+        .select("id, name, pro_id")
         .single();
       if (error) throw error;
       if (data) {
-        handleSelect(data.id, data.name);
+        handleSelect(data.id, data.name, (data as any).pro_id);
         toast.success(`Added ${data.name} as ${partyType}`);
       }
     } catch (err: any) {
@@ -269,32 +282,82 @@ function InterestedPartyTypeahead({
         onChange={(e) => {
           setSearch(e.target.value);
           setOpen(true);
+          setIsAdding(false);
         }}
         onFocus={() => search.length >= 1 && setOpen(true)}
         placeholder={placeholder}
         className="w-full text-[13px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
       />
       {showDropdown && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-card border border-border rounded shadow-sm z-10 max-h-[200px] overflow-y-auto">
-          {results.map((r) => (
-            <button
-              key={r.id}
-              type="button"
-              onClick={() => handleSelect(r.id, r.name)}
-              className="w-full text-left px-3 py-2 text-[14px] text-foreground hover:bg-muted/50 cursor-pointer transition-colors"
-            >
-              {r.name}
-            </button>
-          ))}
-          {noExactMatch && search.trim().length > 0 && (
-            <button
-              type="button"
-              onClick={handleCreate}
-              disabled={isCreating}
-              className="w-full text-left px-3 py-2 text-[12px] text-[var(--app-focus)] hover:bg-muted/50 cursor-pointer font-medium transition-colors"
-            >
-              {isCreating ? "Adding…" : `+ Add "${search.trim()}" as new ${partyType}`}
-            </button>
+        <div className="absolute left-0 right-0 top-full mt-1 bg-card border border-border rounded shadow-sm z-10 max-h-[280px] overflow-y-auto">
+          {isAdding ? (
+            /* ── Inline PRO capture form ── */
+            <div className="p-3 space-y-3">
+              <p className="text-[13px] text-foreground font-medium">
+                Adding: &quot;{search.trim()}&quot;
+              </p>
+              <div>
+                <label className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                  PRO
+                </label>
+                <select
+                  value={newEntryPro}
+                  onChange={(e) => setNewEntryPro(e.target.value)}
+                  className="mt-1 w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+                >
+                  <option value="">None / Unknown</option>
+                  {PRO_OPTIONS.filter(Boolean).map((pro) => (
+                    <option key={pro} value={pro}>{pro}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-2 justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAdding(false);
+                    setNewEntryPro("");
+                  }}
+                  className="text-[12px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmCreate}
+                  disabled={isCreating}
+                  className="text-[12px] font-medium text-primary-foreground bg-foreground rounded px-3 py-1 hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {isCreating ? "Adding…" : "Add Publisher"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* ── Normal search results ── */
+            <>
+              {results.map((r) => (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => handleSelect(r.id, r.name, r.pro_id)}
+                  className="w-full text-left px-3 py-2 text-[14px] text-foreground hover:bg-muted/50 cursor-pointer transition-colors flex items-center justify-between"
+                >
+                  <span>{r.name}</span>
+                  {r.pro_id && (
+                    <span className="text-[11px] text-muted-foreground font-mono ml-2">{r.pro_id}</span>
+                  )}
+                </button>
+              ))}
+              {noExactMatch && search.trim().length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setIsAdding(true)}
+                  className="w-full text-left px-3 py-2 text-[12px] text-[var(--app-focus)] hover:bg-muted/50 cursor-pointer font-medium transition-colors"
+                >
+                  + Add &quot;{search.trim()}&quot; as new {partyType}
+                </button>
+              )}
+            </>
           )}
         </div>
       )}
@@ -366,7 +429,30 @@ export default function SongDetailPage() {
         .order("created_at", { ascending: true });
 
       if (error) throw error;
-      setOwnership((data || []) as unknown as OwnershipRow[]);
+      const ownershipData = (data || []) as unknown as Omit<OwnershipRow, "pro">[];
+
+      // Look up PRO from interested_parties for each publisher
+      if (ownershipData.length > 0) {
+        const publisherNames = [...new Set(ownershipData.map((o) => o.publisher?.name).filter(Boolean))] as string[];
+        const { data: publisherPros } = await supabase
+          .from("interested_parties")
+          .select("name, pro_id")
+          .in("name", publisherNames)
+          .eq("party_type", "publisher");
+
+        const proMap = new Map(
+          ((publisherPros || []) as { name: string; pro_id: string | null }[]).map((p) => [p.name, p.pro_id])
+        );
+
+        setOwnership(
+          ownershipData.map((o) => ({
+            ...o,
+            pro: proMap.get(o.publisher?.name || "") || null,
+          }))
+        );
+      } else {
+        setOwnership([]);
+      }
     } catch (err: any) {
       console.error("Failed to fetch ownership:", err);
     }
@@ -396,6 +482,7 @@ export default function SongDetailPage() {
           publisher_name: o.publisher?.name || "",
           controlled: o.controlled ?? true,
           ownership_percentage: o.ownership_percentage,
+          pro: o.pro || null,
           territory: o.territory || "",
         })),
       });
@@ -749,6 +836,9 @@ export default function SongDetailPage() {
                 <div className="flex-1">
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Publisher</span>
                 </div>
+                <div className="w-[80px]">
+                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">PRO</span>
+                </div>
                 <div className="w-[100px]">
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Controlled</span>
                 </div>
@@ -765,14 +855,19 @@ export default function SongDetailPage() {
                     <div className="flex-1">
                       <InterestedPartyTypeahead
                         value={row.publisher_name}
-                        onChange={(id, name) => {
+                        onChange={(id, name, proId) => {
                           const updated = [...editedFields.ownership];
-                          updated[index] = { ...updated[index], publisher_id: id, publisher_name: name };
+                          updated[index] = { ...updated[index], publisher_id: id, publisher_name: name, pro: proId || null };
                           updateField("ownership", updated);
                         }}
                         partyType="publisher"
                         placeholder="Type to search publishers…"
                       />
+                    </div>
+                    <div className="w-[80px] flex items-center justify-center">
+                      <span className="text-[12px] text-muted-foreground font-mono">
+                        {row.pro || "—"}
+                      </span>
                     </div>
                     <div className="w-[100px]">
                       <select
@@ -823,6 +918,7 @@ export default function SongDetailPage() {
                 <div className="flex-1 text-right">
                   <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Total</span>
                 </div>
+                <div className="w-[80px]" />
                 <div className="w-[100px]" />
                 <div className="w-[70px]">
                   <span className={cn(
@@ -841,6 +937,7 @@ export default function SongDetailPage() {
                     publisher_name: "",
                     controlled: true,
                     ownership_percentage: 0,
+                    pro: null,
                     territory: "",
                     _isNew: true,
                   }];
@@ -858,6 +955,7 @@ export default function SongDetailPage() {
                 <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Publisher</span>
                   <div className="flex items-center gap-4">
+                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[80px] text-center">PRO</span>
                     <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[100px] text-center">Controlled</span>
                     <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[60px] text-right">Percentage</span>
                   </div>
@@ -870,6 +968,9 @@ export default function SongDetailPage() {
                         {row.publisher?.name || "Unknown Publisher"}
                       </span>
                       <div className="flex items-center gap-4">
+                        <span className="text-[13px] text-muted-foreground w-[80px] text-center">
+                          {row.pro || "—"}
+                        </span>
                         <span className="text-[13px] text-muted-foreground w-[100px] text-center">
                           {row.controlled ? "Yes" : "No"}
                         </span>
@@ -884,6 +985,7 @@ export default function SongDetailPage() {
                 <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-border">
                   <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Total</span>
                   <div className="flex items-center gap-4">
+                    <span className="w-[80px]" />
                     <span className="w-[100px]" />
                     <span className={cn(
                       "text-[13px] font-semibold w-[60px] text-right",
