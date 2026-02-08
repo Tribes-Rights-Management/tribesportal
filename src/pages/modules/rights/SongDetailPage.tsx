@@ -390,6 +390,19 @@ export default function SongDetailPage() {
         <SectionPanel title="Songwriters">
           {editing ? (
             <div className="space-y-3">
+              {/* Column headers for edit mode */}
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">Writer</span>
+                </div>
+                <div className="w-[140px]">
+                  <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">IPI Number</span>
+                </div>
+                <div className="w-[70px]">
+                  <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">Share %</span>
+                </div>
+                <div className="w-[22px]" />
+              </div>
               {editedFields.writers.map((writer, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <div className="flex-1">
@@ -407,13 +420,10 @@ export default function SongDetailPage() {
                   <div className="w-[140px]">
                     <input
                       value={writer.ipi}
-                      onChange={(e) => {
-                        const updated = [...editedFields.writers];
-                        updated[index] = { ...updated[index], ipi: e.target.value };
-                        updateField("writers", updated);
-                      }}
-                      placeholder="IPI #"
-                      className="w-full text-[12px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 font-mono focus:outline-none focus:border-primary/40 transition-colors"
+                      readOnly
+                      tabIndex={-1}
+                      placeholder="—"
+                      className="w-full text-[12px] text-muted-foreground bg-muted/40 border border-border rounded px-2 py-1 h-8 font-mono cursor-not-allowed"
                     />
                   </div>
                   <div className="w-[70px]">
@@ -453,29 +463,40 @@ export default function SongDetailPage() {
             </div>
           ) : (
             writers.length > 0 ? (
-              <div className="divide-y divide-border">
-                {writers.map((writer, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between py-2.5"
-                  >
-                    <span className="text-[14px] text-foreground font-medium">
-                      {writer.name || "Unknown"}
-                    </span>
-                    <div className="flex items-center gap-4">
-                      {writer.ipi && (
-                        <span className="text-[12px] text-muted-foreground font-mono">
-                          {writer.ipi}
-                        </span>
-                      )}
-                      {writer.split != null && (
-                        <span className="text-[12px] text-muted-foreground">
-                          {writer.split}%
-                        </span>
-                      )}
-                    </div>
+              <div>
+                {/* Column headers */}
+                <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
+                  <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">Writer</span>
+                  <div className="flex items-center gap-4">
+                    <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground w-[120px] text-right">IPI Number</span>
+                    <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground w-[50px] text-right">Share</span>
                   </div>
-                ))}
+                </div>
+                {/* Writer rows */}
+                <div className="divide-y divide-border">
+                  {writers.map((writer, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between py-2.5"
+                    >
+                      <span className="text-[14px] text-foreground font-medium">
+                        {writer.name || "Unknown"}
+                      </span>
+                      <div className="flex items-center gap-4">
+                        {writer.ipi && (
+                          <span className="text-[12px] text-muted-foreground font-mono w-[120px] text-right">
+                            {writer.ipi}
+                          </span>
+                        )}
+                        {writer.split != null && (
+                          <span className="text-[12px] text-muted-foreground w-[50px] text-right">
+                            {writer.split}%
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             ) : (
               <p className="text-[13px] text-muted-foreground/50">No songwriters added</p>
