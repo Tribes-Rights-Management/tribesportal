@@ -2677,6 +2677,73 @@ export type Database = {
           },
         ]
       }
+      song_ownership: {
+        Row: {
+          administrator_id: string | null
+          created_at: string
+          created_by: string | null
+          effective_from: string | null
+          effective_to: string | null
+          id: string
+          notes: string | null
+          ownership_percentage: number
+          publisher_id: string
+          song_id: string
+          territory: string | null
+          updated_at: string
+        }
+        Insert: {
+          administrator_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          id?: string
+          notes?: string | null
+          ownership_percentage?: number
+          publisher_id: string
+          song_id: string
+          territory?: string | null
+          updated_at?: string
+        }
+        Update: {
+          administrator_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          id?: string
+          notes?: string | null
+          ownership_percentage?: number
+          publisher_id?: string
+          song_id?: string
+          territory?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_ownership_administrator_id_fkey"
+            columns: ["administrator_id"]
+            isOneToOne: false
+            referencedRelation: "publishers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_ownership_publisher_id_fkey"
+            columns: ["publisher_id"]
+            isOneToOne: false
+            referencedRelation: "publishers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_ownership_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       song_publishers: {
         Row: {
           administered_by: string | null
@@ -3009,6 +3076,7 @@ export type Database = {
       songs: {
         Row: {
           alternate_titles: string[] | null
+          ccli_song_id: string | null
           created_at: string
           created_by: string | null
           duration_seconds: number | null
@@ -3027,6 +3095,7 @@ export type Database = {
         }
         Insert: {
           alternate_titles?: string[] | null
+          ccli_song_id?: string | null
           created_at?: string
           created_by?: string | null
           duration_seconds?: number | null
@@ -3045,6 +3114,7 @@ export type Database = {
         }
         Update: {
           alternate_titles?: string[] | null
+          ccli_song_id?: string | null
           created_at?: string
           created_by?: string | null
           duration_seconds?: number | null
