@@ -67,6 +67,7 @@ export default function RightsWritersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [writerSongCountMap, setWriterSongCountMap] = useState<Map<string, number>>(new Map());
   
   // Debounce search query for Algolia
   const debouncedSearch = useDebounce(searchQuery, 300);
@@ -204,9 +205,36 @@ export default function RightsWritersPage() {
     }
   }, [currentPage, debouncedSearch, searchAlgolia]);
 
+  // Fetch song counts per writer (once on mount)
+  const fetchSongCounts = useCallback(async () => {
+    try {
+      const { data: songsData } = await supabase
+        .from("songs")
+        .select("metadata");
+
+      const countMap = new Map<string, number>();
+      (songsData || []).forEach((song) => {
+        const writers: { name?: string }[] = (song.metadata as any)?.writers || [];
+        writers.forEach((w) => {
+          if (w.name) {
+            const normalized = w.name.trim().toLowerCase();
+            countMap.set(normalized, (countMap.get(normalized) || 0) + 1);
+          }
+        });
+      });
+      setWriterSongCountMap(countMap);
+    } catch (err) {
+      console.error("Error fetching song counts:", err);
+    }
+  }, []);
+
   useEffect(() => {
     fetchWriters();
   }, [fetchWriters]);
+
+  useEffect(() => {
+    fetchSongCounts();
+  }, [fetchSongCounts]);
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
@@ -383,39 +411,44 @@ export default function RightsWritersPage() {
       {/* Table */}
       <div className="overflow-x-auto -mx-4 sm:mx-0">
         <div className="px-4 sm:px-0">
-          <AppTable columns={["50%", "25%", "25%"]}>
+          <AppTable columns={["40%", "20%", "20%", "20%"]}>
             <AppTableHeader>
               <AppTableRow header>
                 <AppTableHead>Name</AppTableHead>
                 <AppTableHead>PRO</AppTableHead>
                 <AppTableHead className="hidden sm:table-cell">IPI Number</AppTableHead>
+                <AppTableHead className="text-right">Songs</AppTableHead>
               </AppTableRow>
             </AppTableHeader>
             <AppTableBody>
               {loading ? (
                 <tr>
-                  <td colSpan={3} className="text-center py-8 text-muted-foreground text-sm">
+                  <td colSpan={4} className="text-center py-8 text-muted-foreground text-sm">
                     Loading...
                   </td>
                 </tr>
               ) : writers.length === 0 ? (
-                <AppTableEmpty colSpan={3}>
+                <AppTableEmpty colSpan={4}>
                   <p className="text-[13px] text-muted-foreground">
                     {searchQuery ? "No writers match your search" : "No writers in the system"}
                   </p>
                 </AppTableEmpty>
               ) : (
-                writers.map((writer) => (
-                  <AppTableRow
-                    key={writer.id}
-                    clickable
-                    onClick={() => handleEdit(writer)}
-                  >
-                    <AppTableCell>{writer.name}</AppTableCell>
-                    <AppTableCell muted>{writer.pro || "—"}</AppTableCell>
-                    <AppTableCell muted className="hidden sm:table-cell">{writer.ipi_number || writer.cae_number || "—"}</AppTableCell>
-                  </AppTableRow>
-                ))
+                writers.map((writer) => {
+                  const songCount = writerSongCountMap.get(writer.name.trim().toLowerCase()) || 0;
+                  return (
+                    <AppTableRow
+                      key={writer.id}
+                      clickable
+                      onClick={() => handleEdit(writer)}
+                    >
+                      <AppTableCell>{writer.name}</AppTableCell>
+                      <AppTableCell muted>{writer.pro || "—"}</AppTableCell>
+                      <AppTableCell muted className="hidden sm:table-cell">{writer.ipi_number || writer.cae_number || "—"}</AppTableCell>
+                      <AppTableCell muted className="text-right tabular-nums">{songCount}</AppTableCell>
+                    </AppTableRow>
+                  );
+                })
               )}
             </AppTableBody>
           </AppTable>
