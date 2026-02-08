@@ -90,7 +90,7 @@ function DetailRow({
           />
         )
       ) : (
-        <div className="text-[14px] text-foreground mt-0.5">{children}</div>
+        <div className="text-[15px] text-foreground font-medium mt-0.5">{children}</div>
       )}
     </div>
   );
@@ -137,7 +137,7 @@ function SectionPanel({ title, children }: { title: string; children: React.Reac
   return (
     <div className="mt-5 rounded border border-border bg-card">
       <div className="px-5 py-3 border-b border-border bg-muted/30">
-        <h2 className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
+        <h2 className="text-[12px] uppercase tracking-wider font-semibold text-muted-foreground">
           {title}
         </h2>
       </div>
@@ -375,7 +375,7 @@ export default function SongDetailPage() {
             >
               {song.alternate_titles && song.alternate_titles.length > 0
                 ? song.alternate_titles.join(", ")
-                : <span className="text-muted-foreground/50">—</span>}
+                : <span className="text-muted-foreground">—</span>}
             </DetailRow>
 
             {song.duration_seconds != null && (
@@ -393,13 +393,13 @@ export default function SongDetailPage() {
               {/* Column headers for edit mode */}
               <div className="flex items-center gap-3">
                 <div className="flex-1">
-                  <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">Writer</span>
+                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Writer</span>
                 </div>
                 <div className="w-[140px]">
-                  <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">IPI Number</span>
+                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">IPI Number</span>
                 </div>
                 <div className="w-[70px]">
-                  <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">Share %</span>
+                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Share %</span>
                 </div>
                 <div className="w-[22px]" />
               </div>
@@ -466,10 +466,10 @@ export default function SongDetailPage() {
               <div>
                 {/* Column headers */}
                 <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
-                  <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">Writer</span>
+                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Writer</span>
                   <div className="flex items-center gap-4">
-                    <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground w-[120px] text-right">IPI Number</span>
-                    <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground w-[50px] text-right">Share</span>
+                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[120px] text-right">IPI Number</span>
+                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[50px] text-right">Share</span>
                   </div>
                 </div>
                 {/* Writer rows */}
@@ -479,17 +479,17 @@ export default function SongDetailPage() {
                       key={index}
                       className="flex items-center justify-between py-2.5"
                     >
-                      <span className="text-[14px] text-foreground font-medium">
+                      <span className="text-[15px] text-foreground font-medium">
                         {writer.name || "Unknown"}
                       </span>
                       <div className="flex items-center gap-4">
                         {writer.ipi && (
-                          <span className="text-[12px] text-muted-foreground font-mono w-[120px] text-right">
+                          <span className="text-[13px] text-muted-foreground font-mono w-[120px] text-right">
                             {writer.ipi}
                           </span>
                         )}
                         {writer.split != null && (
-                          <span className="text-[12px] text-muted-foreground w-[50px] text-right">
+                          <span className="text-[13px] text-muted-foreground w-[50px] text-right">
                             {writer.split}%
                           </span>
                         )}
@@ -525,7 +525,7 @@ export default function SongDetailPage() {
                 placeholder="Enter lyrics…"
               />
             ) : (
-              <pre className="text-[13px] text-foreground/80 whitespace-pre-wrap font-sans leading-relaxed">
+              <pre className="text-[14px] text-foreground/90 whitespace-pre-wrap font-sans leading-relaxed">
                 {metadata.lyrics}
               </pre>
             )}
