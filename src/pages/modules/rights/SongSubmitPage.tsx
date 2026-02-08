@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, ChevronRight, Plus, Trash2, HelpCircle, Upload, Send } from "lucide-react";
 import { toast } from "sonner";
@@ -18,6 +18,15 @@ const ALGOLIA_INDEX = "writers";
 // TYPES
 // ═══════════════════════════════════════════════════════════════════════════════
 
+interface PublisherEntry {
+  id: string;
+  publisher_id: string | null;
+  name: string;
+  pro: string;
+  share: number;
+  tribes_administered: boolean;
+}
+
 interface Writer {
   id: string;
   name: string;
@@ -27,6 +36,8 @@ interface Writer {
   credit: "lyrics" | "music" | "both" | "";
   controlled: boolean;
   fromDatabase: boolean;
+  writer_id: string | null;
+  publishers: PublisherEntry[];
 }
 
 interface LyricSection {
@@ -82,6 +93,8 @@ const SONG_TYPES = [
 
 const PRO_OPTIONS = ["ASCAP", "BMI", "SESAC", "GMR", "PRS", "APRA", "SOCAN", "GEMA", "SACEM", "Other"];
 
+const US_PROS = ["ASCAP", "BMI", "SESAC", "GMR"];
+
 const LYRIC_SECTION_TYPES = [
   { value: "verse", label: "Verse" },
   { value: "chorus", label: "Chorus" },
@@ -106,6 +119,32 @@ interface ParsedSection {
   lyrics: string;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const newPublisher = (): PublisherEntry => ({
+  id: crypto.randomUUID(),
+  publisher_id: null,
+  name: "",
+  pro: "",
+  share: 0,
+  tribes_administered: false,
+});
+
+const newWriter = (): Writer => ({
+  id: crypto.randomUUID(),
+  name: "",
+  pro: "",
+  ipi: "",
+  split: 0,
+  credit: "",
+  controlled: false,
+  fromDatabase: false,
+  writer_id: null,
+  publishers: [newPublisher()],
+});
+
 const formatLyricsForDisplay = (lyrics: string): string => {
   const lines = lyrics.split('\n');
   const formatted: string[] = [];
@@ -117,7 +156,6 @@ const formatLyricsForDisplay = (lyrics: string): string => {
       trimmedLine.toLowerCase().startsWith(heading.toLowerCase() + ' ')
     );
     
-    // Add empty line before section headings (except first line)
     if (isHeading && index > 0 && formatted[formatted.length - 1]?.trim() !== '') {
       formatted.push('');
     }
@@ -135,28 +173,23 @@ const parseLyricsIntoSections = (fullLyrics: string): ParsedSection[] => {
   lines.forEach((line) => {
     const trimmedLine = line.trim();
     
-    // Check if this line is a section heading
     const matchedHeading = SECTION_HEADINGS.find(heading => 
       trimmedLine.toLowerCase() === heading.toLowerCase() ||
       !!trimmedLine.toLowerCase().match(new RegExp(`^${heading.toLowerCase()}\\s*\\d*$`))
     );
     
     if (matchedHeading || SECTION_HEADINGS.some(h => trimmedLine.toLowerCase().startsWith(h.toLowerCase() + ' '))) {
-      // Save previous section if exists
       if (currentSection && currentSection.lyrics.trim()) {
         sections.push(currentSection);
       }
-      // Start new section
       currentSection = {
         id: crypto.randomUUID(),
         type: trimmedLine,
         lyrics: ''
       };
     } else if (currentSection) {
-      // Add line to current section
       currentSection.lyrics += (currentSection.lyrics ? '\n' : '') + line;
     } else if (trimmedLine) {
-      // No section heading yet, create a default "Verse" section
       currentSection = {
         id: crypto.randomUUID(),
         type: 'Verse',
@@ -165,7 +198,6 @@ const parseLyricsIntoSections = (fullLyrics: string): ParsedSection[] => {
     }
   });
   
-  // Don't forget the last section
   if (currentSection && currentSection.lyrics.trim()) {
     sections.push(currentSection);
   }
@@ -188,6 +220,13 @@ export default function SongSubmitPage() {
   const [parsedSections, setParsedSections] = useState<ParsedSection[]>([]);
   const [showParsedPreview, setShowParsedPreview] = useState(false);
   const [activeWriterSearch, setActiveWriterSearch] = useState<string | null>(null);
+
+  // Publisher search state
+  const [publisherSearchResults, setPublisherSearchResults] = useState<Record<string, any[]>>({});
+  const [activePublisherSearch, setActivePublisherSearch] = useState<string | null>(null);
+
+  // Tribes entities for auto-resolution
+  const [tribesEntities, setTribesEntities] = useState<Record<string, { id: string; entity_name: string; ipi_number: string }>>({});
   
   const [data, setData] = useState<SongData>({
     title: "",
@@ -199,7 +238,7 @@ export default function SongSubmitPage() {
     releaseStatus: null,
     publicationYear: "",
     creationYear: "",
-    writers: [{ id: crypto.randomUUID(), name: "", pro: "", ipi: "", split: 0, credit: "", controlled: false, fromDatabase: false }],
+    writers: [newWriter()],
     lyricsEntryMode: "paste",
     lyricsFull: "",
     lyricsSections: [],
@@ -212,11 +251,26 @@ export default function SongSubmitPage() {
     termsAccepted: false,
   });
 
-  // Writer management
+  // ── Fetch Tribes entities on mount ────────────────────────
+  useEffect(() => {
+    const fetchTribesEntities = async () => {
+      const { data } = await supabase
+        .from("tribes_entities")
+        .select("id, pro, entity_name, ipi_number")
+        .eq("is_active", true);
+
+      const map: Record<string, any> = {};
+      (data || []).forEach((e: any) => { map[e.pro] = e; });
+      setTribesEntities(map);
+    };
+    fetchTribesEntities();
+  }, []);
+
+  // ── Writer management ─────────────────────────────────────
   const addWriter = () => {
     setData(prev => ({
       ...prev,
-      writers: [...prev.writers, { id: crypto.randomUUID(), name: "", pro: "", ipi: "", split: 0, credit: "", controlled: false, fromDatabase: false }]
+      writers: [...prev.writers, newWriter()]
     }));
   };
 
@@ -233,7 +287,7 @@ export default function SongSubmitPage() {
     }
   };
 
-  // Algolia writer search
+  // ── Algolia writer search ─────────────────────────────────
   const searchWriters = async (query: string, writerId: string) => {
     if (!query.trim() || query.length < 2) {
       setWriterSearchResults(prev => ({ ...prev, [writerId]: [] }));
@@ -253,25 +307,103 @@ export default function SongSubmitPage() {
           body: JSON.stringify({ query, hitsPerPage: 8 }),
         }
       );
-      const data = await response.json();
-      setWriterSearchResults(prev => ({ ...prev, [writerId]: data.hits || [] }));
+      const respData = await response.json();
+      setWriterSearchResults(prev => ({ ...prev, [writerId]: respData.hits || [] }));
     } catch (error) {
       console.error("Writer search error:", error);
     }
   };
 
-  const selectWriterFromDatabase = (writerId: string, hit: any) => {
+  const selectWriterFromDatabase = async (writerId: string, hit: any) => {
+    // Look up writer UUID from writers table
+    let writerDbId: string | null = null;
+    try {
+      const { data: writerRecord } = await supabase
+        .from("writers")
+        .select("id")
+        .eq("name", hit.name)
+        .maybeSingle();
+      writerDbId = writerRecord?.id || null;
+    } catch (err) {
+      console.error("Writer lookup error:", err);
+    }
+
     updateWriter(writerId, {
       name: hit.name,
       pro: hit.pro || "",
       ipi: hit.ipi_number || "",
       fromDatabase: true,
+      writer_id: writerDbId,
     });
     setWriterSearchResults(prev => ({ ...prev, [writerId]: [] }));
     setActiveWriterSearch(null);
   };
 
-  // Lyric section management
+  // ── Publisher search and management ───────────────────────
+  const searchPublishers = async (query: string, pubId: string) => {
+    if (!query.trim() || query.length < 2) {
+      setPublisherSearchResults(prev => ({ ...prev, [pubId]: [] }));
+      return;
+    }
+    const { data } = await supabase
+      .from("publishers")
+      .select("id, name, pro")
+      .ilike("name", `%${query}%`)
+      .eq("is_active", true)
+      .limit(8);
+    setPublisherSearchResults(prev => ({ ...prev, [pubId]: data || [] }));
+  };
+
+  const selectPublisher = (writerId: string, pubId: string, result: any, writerPro: string) => {
+    updatePublisher(writerId, pubId, {
+      publisher_id: result.id,
+      name: result.name,
+      pro: result.pro || "",
+    });
+    setPublisherSearchResults(prev => ({ ...prev, [pubId]: [] }));
+    setActivePublisherSearch(null);
+
+    // PRO mismatch warning for US PROs
+    const publisherPro = result.pro || "";
+    if (US_PROS.includes(writerPro) && US_PROS.includes(publisherPro) && writerPro !== publisherPro) {
+      toast.warning(`PRO mismatch: ${writerPro} writer with ${publisherPro} publisher`);
+    }
+  };
+
+  const updatePublisher = (writerId: string, pubId: string, updates: Partial<PublisherEntry>) => {
+    setData(prev => ({
+      ...prev,
+      writers: prev.writers.map(w =>
+        w.id === writerId
+          ? { ...w, publishers: w.publishers.map(p => p.id === pubId ? { ...p, ...updates } : p) }
+          : w
+      ),
+    }));
+  };
+
+  const addPublisher = (writerId: string) => {
+    setData(prev => ({
+      ...prev,
+      writers: prev.writers.map(w =>
+        w.id === writerId
+          ? { ...w, publishers: [...w.publishers, newPublisher()] }
+          : w
+      ),
+    }));
+  };
+
+  const removePublisher = (writerId: string, pubId: string) => {
+    setData(prev => ({
+      ...prev,
+      writers: prev.writers.map(w =>
+        w.id === writerId
+          ? { ...w, publishers: w.publishers.filter(p => p.id !== pubId) }
+          : w
+      ),
+    }));
+  };
+
+  // ── Lyric section management ──────────────────────────────
   const addLyricSection = () => {
     setData(prev => ({
       ...prev,
@@ -290,7 +422,7 @@ export default function SongSubmitPage() {
     setData(prev => ({ ...prev, lyricsSections: prev.lyricsSections.filter(s => s.id !== id) }));
   };
 
-  // Validation
+  // ── Validation ────────────────────────────────────────────
   const canAdvanceStep = (): boolean => {
     switch (step) {
       case 1:
@@ -303,7 +435,11 @@ export default function SongSubmitPage() {
         const hasWriters = data.writers.length > 0 && 
           data.writers.every(w => w.name && w.split > 0 && w.credit && w.pro) &&
           Math.abs(totalSplit - 100) < 0.01;
-        return hasTitle && hasAltHandled && hasType && hasOriginal && data.releaseStatus !== null && hasYear && hasWriters;
+        // Check each writer has at least one publisher with a publisher_id
+        const hasPublishers = data.writers.every(w => 
+          w.publishers.some(p => p.publisher_id)
+        );
+        return hasTitle && hasAltHandled && hasType && hasOriginal && data.releaseStatus !== null && hasYear && hasWriters && hasPublishers;
       case 2:
         if (data.songType === "instrumental") return true;
         const hasLyrics = data.lyricsEntryMode === "paste" ? !!data.lyricsFull : data.lyricsSections.length > 0 && data.lyricsSections.every(s => s.type && s.content);
@@ -322,20 +458,18 @@ export default function SongSubmitPage() {
   };
 
   const goToNextStep = () => {
-    // Special handling for lyrics step with paste mode - show parsed preview first
     if (step === 2 && data.lyricsEntryMode === 'paste' && data.lyricsFull.trim() && !showParsedPreview) {
       const sections = parseLyricsIntoSections(data.lyricsFull);
       if (sections.length > 0) {
         setParsedSections(sections);
         setShowParsedPreview(true);
-        return; // Don't advance to next step yet
+        return;
       }
     }
     if (step < 5 && canAdvanceStep()) setStep((step + 1) as FlowStep);
   };
 
   const confirmParsedSections = () => {
-    // Convert parsed sections to the lyricsSections format and continue
     const convertedSections: LyricSection[] = parsedSections.map(s => ({
       id: s.id,
       type: s.type.toLowerCase().replace(/\s+\d*$/, '').replace(/[- ]/g, '-') as LyricSection["type"],
@@ -351,12 +485,29 @@ export default function SongSubmitPage() {
     else navigate("/rights/catalog");
   };
 
+  // ── Submit ────────────────────────────────────────────────
   const submit = async () => {
+    // Validate writer total
+    const writerTotal = data.writers.reduce((sum, w) => sum + (w.split || 0), 0);
+    if (writerTotal !== 100) {
+      toast.error(`Writer shares must total exactly 100.00% (currently ${writerTotal.toFixed(2)}%)`);
+      return;
+    }
+
+    // Check each writer has at least one publisher
+    for (const writer of data.writers) {
+      if (!writer.publishers.some(p => p.publisher_id)) {
+        toast.error(`${writer.name || "Each writer"} must have at least one publisher`);
+        return;
+      }
+    }
+
     setIsSubmitting(true);
     try {
       const year = data.releaseStatus === "no" ? data.creationYear : data.publicationYear;
       const lyrics = data.lyricsEntryMode === "paste" ? data.lyricsFull : data.lyricsSections.map(s => `[${s.type?.toUpperCase()}]\n${s.content}`).join("\n\n");
       
+      // 1. Create the song — NO writers in metadata
       const songPayload = {
         title: data.title,
         alternate_titles: data.hasAlternateTitle && data.alternateTitle ? [data.alternateTitle] : null,
@@ -375,21 +526,86 @@ export default function SongSubmitPage() {
           has_chord_chart: data.hasChordChart,
           copyright_status: data.copyrightStatus,
           wants_copyright_filing: data.wantsCopyrightFiling,
-          writers: data.writers.map(w => ({
-            name: w.name, pro: w.pro, ipi: w.ipi, split: w.split, credit: w.credit, controlled: w.controlled,
-          })),
+          // NO writers here — they go to song_writers table
         },
         is_active: false,
       };
       const { data: insertedData, error } = await supabase.from("songs").insert(songPayload as any).select("id").single();
       
       if (error) throw error;
-      setSubmittedSongId(insertedData?.id || null);
+      const newSongId = insertedData?.id;
+      if (!newSongId) throw new Error("No song ID returned");
+
+      // 2. Save writers to song_writers table
+      const writerRecords = data.writers
+        .filter(w => w.writer_id && w.name.trim())
+        .map(w => ({
+          song_id: newSongId,
+          writer_id: w.writer_id!,
+          share: w.split,
+          credit: w.credit || "both",
+        }));
+
+      let insertedWriters: { id: string; writer_id: string }[] = [];
+      if (writerRecords.length > 0) {
+        const { data: swData, error: writerError } = await supabase
+          .from("song_writers")
+          .insert(writerRecords)
+          .select("id, writer_id");
+
+        if (writerError) {
+          console.error("Writer save error:", writerError);
+          toast.error("Failed to save writers");
+          return;
+        }
+        insertedWriters = swData || [];
+      }
+
+      // 3. Build writer_id → song_writer_id map
+      const songWriterMap = new Map(
+        insertedWriters.map(sw => [sw.writer_id, sw.id])
+      );
+
+      // 4. Save ownership (publishers + Tribes administration)
+      const ownershipRecords: any[] = [];
+      for (const writer of data.writers) {
+        for (const pub of writer.publishers) {
+          if (!pub.publisher_id) continue;
+
+          const songWriterId = writer.writer_id ? songWriterMap.get(writer.writer_id) : null;
+          const tribesEntity = pub.tribes_administered && pub.pro
+            ? tribesEntities[pub.pro]
+            : null;
+
+          ownershipRecords.push({
+            song_id: newSongId,
+            song_writer_id: songWriterId || null,
+            publisher_id: pub.publisher_id,
+            ownership_percentage: pub.share || writer.split,
+            tribes_administered: pub.tribes_administered,
+            administrator_entity_id: tribesEntity?.id || null,
+          });
+        }
+      }
+
+      if (ownershipRecords.length > 0) {
+        const { error: ownershipError } = await supabase
+          .from("song_ownership")
+          .insert(ownershipRecords);
+
+        if (ownershipError) {
+          console.error("Ownership save error:", ownershipError);
+          toast.error("Failed to save ownership");
+          return;
+        }
+      }
+
+      setSubmittedSongId(newSongId);
       setSubmissionComplete(true);
       window.scrollTo(0, 0);
        
-       // Fire and forget: send confirmation emails
-       sendConfirmationEmails(data);
+      // Fire and forget: send confirmation emails
+      sendConfirmationEmails(data);
     } catch (err: any) {
       toast.error(err.message || "Failed to submit");
     } finally {
@@ -413,7 +629,7 @@ export default function SongSubmitPage() {
       releaseStatus: null,
       publicationYear: "",
       creationYear: "",
-      writers: [{ id: crypto.randomUUID(), name: "", pro: "", ipi: "", split: 0, credit: "", controlled: false, fromDatabase: false }],
+      writers: [newWriter()],
       lyricsEntryMode: "paste",
       lyricsFull: "",
       lyricsSections: [],
@@ -430,14 +646,12 @@ export default function SongSubmitPage() {
   const totalSplit = data.writers.reduce((s, w) => s + w.split, 0);
   const splitValid = Math.abs(totalSplit - 100) < 0.01;
 
-   // Fire and forget email sending - pass full song data for detailed email
+   // Fire and forget email sending
    const sendConfirmationEmails = async (songData: SongData) => {
      try {
-       // Get current user's email
        const { data: { user } } = await supabase.auth.getUser();
        if (!user?.email) return;
  
-       // Get super_admin emails from company_users
        const { data: adminUsers } = await supabase
          .from("company_users")
          .select("user_id")
@@ -446,7 +660,6 @@ export default function SongSubmitPage() {
  
        const adminEmails: string[] = [];
        if (adminUsers && adminUsers.length > 0) {
-         // Fetch emails from auth.users via RPC or user_profiles
          const { data: profiles } = await supabase
            .from("user_profiles")
            .select("email")
@@ -457,19 +670,11 @@ export default function SongSubmitPage() {
          }
        }
  
-       // Build recipient list (deduplicated)
        const recipients = [...new Set([user.email, ...adminEmails])];
-       
-       // Build writer names separated by backslash
        const writerNames = songData.writers.map(w => w.name).join(" \\ ");
-       
-       // Get song type label
        const songTypeLabel = SONG_TYPES.find(t => t.value === songData.songType)?.label || songData.songType;
-       
-       // Get year
        const year = songData.releaseStatus === "no" ? songData.creationYear : songData.publicationYear;
        
-       // Build writers section
        const writersSection = songData.writers.map(w => {
          const creditLabel = w.credit === "both" 
            ? "Wrote the words, Composed the music" 
@@ -479,15 +684,11 @@ export default function SongSubmitPage() {
          return `${w.name} — ${creditLabel} — ${w.split}% — ${w.pro}`;
        }).join("\n");
        
-       // Build lyrics text
        const lyricsText = songData.lyricsEntryMode === "paste" 
          ? songData.lyricsFull 
          : songData.lyricsSections.map(s => `[${s.type?.toUpperCase()}]\n${s.content}`).join("\n\n");
        
-       // Chord chart status
        const chordChartStatus = songData.hasChordChart ? "Yes" : "No";
-       
-       // Copyright status
        const copyrightStatus = songData.copyrightStatus === "yes" 
          ? "Yes" 
          : songData.copyrightStatus === "no" 
@@ -514,7 +715,6 @@ export default function SongSubmitPage() {
  Chord Chart: ${chordChartStatus}
  Copyright Filed: ${copyrightStatus}`;
  
-       // Fire and forget - don't await
        supabase.functions.invoke("send-support-email", {
          body: {
            to: recipients,
@@ -552,7 +752,8 @@ export default function SongSubmitPage() {
         const hasWriters = data.writers.length > 0 && 
           data.writers.every(w => w.name && w.split > 0 && w.credit && w.pro) &&
           Math.abs(data.writers.reduce((s, w) => s + w.split, 0) - 100) < 0.01;
-        return hasTitle && hasAltHandled && hasType && hasOriginal && data.releaseStatus !== null && hasYear && hasWriters;
+        const hasPublishers = data.writers.every(w => w.publishers.some(p => p.publisher_id));
+        return hasTitle && hasAltHandled && hasType && hasOriginal && data.releaseStatus !== null && hasYear && hasWriters && hasPublishers;
       case 2:
         if (data.songType === "instrumental") return true;
         const hasLyrics = data.lyricsEntryMode === "paste" ? !!data.lyricsFull : data.lyricsSections.length > 0 && data.lyricsSections.every(s => s.type && s.content);
@@ -571,9 +772,7 @@ export default function SongSubmitPage() {
   };
 
   const canNavigateToStep = (targetStep: number): boolean => {
-    // Can always go back
     if (targetStep < step) return true;
-    // Can only go forward if all previous steps are complete
     for (let i = 1; i < targetStep; i++) {
       if (!isStepComplete(i)) return false;
     }
@@ -603,7 +802,7 @@ export default function SongSubmitPage() {
       {/* Main Content with Side Stepper */}
       <div className="flex-1 flex overflow-hidden">
         
-        {/* Side Stepper - Hidden on mobile and when submission complete */}
+        {/* Side Stepper */}
         {!submissionComplete && (
         <aside className="hidden md:flex w-56 shrink-0 border-r border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex-col pt-6">
           <nav className="flex flex-col">
@@ -653,7 +852,7 @@ export default function SongSubmitPage() {
         </aside>
         )}
 
-        {/* Mobile Progress Bar - Hidden when submission complete */}
+        {/* Mobile Progress Bar */}
         {!submissionComplete && (
         <div className="md:hidden absolute top-14 left-0 right-0 h-1 bg-[var(--border-subtle)] z-10">
           <div className="h-full bg-[var(--btn-text)] transition-all" style={{ width: `${(step / 5) * 100}%` }} />
@@ -709,9 +908,16 @@ export default function SongSubmitPage() {
                   <div>
                     <p className="text-xs font-semibold text-[var(--btn-text)]">Registered Songwriters</p>
                     {data.writers.map((w) => (
-                      <p key={w.id} className="text-sm text-[var(--btn-text-muted)]">
-                        {w.name} ({w.credit === 'both' ? 'Wrote the lyrics, Composed the music' : w.credit === 'lyrics' ? 'Wrote the lyrics' : 'Composed the music'}) — {w.split}%
-                      </p>
+                      <div key={w.id} className="mt-1">
+                        <p className="text-sm text-[var(--btn-text-muted)]">
+                          {w.name} ({w.credit === 'both' ? 'Wrote the lyrics, Composed the music' : w.credit === 'lyrics' ? 'Wrote the lyrics' : 'Composed the music'}) — {w.split}%
+                        </p>
+                        {w.publishers.filter(p => p.publisher_id).map(pub => (
+                          <p key={pub.id} className="text-xs text-[var(--btn-text-muted)] ml-4">
+                            Publisher: {pub.name} ({pub.pro || "—"}) {pub.tribes_administered ? "— Tribes administered" : ""}
+                          </p>
+                        ))}
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -812,141 +1018,79 @@ export default function SongSubmitPage() {
                     </button>
                   ))}
                 </div>
-                {data.hasAlternateTitle && (
-                  <input type="text" value={data.alternateTitle} onChange={(e) => setData(prev => ({ ...prev, alternateTitle: e.target.value }))} placeholder="Enter alternate title" className="w-full h-11 px-4 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
+                {data.hasAlternateTitle === true && (
+                  <input type="text" value={data.alternateTitle} onChange={(e) => setData(prev => ({ ...prev, alternateTitle: e.target.value }))} placeholder="Enter alternate title" className="w-full h-12 px-4 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
                 )}
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Language</label>
                 <Select value={data.language} onValueChange={(value) => setData(prev => ({ ...prev, language: value }))}>
-                  <SelectTrigger className="w-full h-12 px-4 bg-card border border-[var(--border-subtle)] rounded-xl">
-                    <SelectValue placeholder="Select language..." />
+                  <SelectTrigger className="h-12 px-4 bg-card border border-[var(--border-subtle)] rounded-xl">
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-popover">
-                    {LANGUAGES.map(lang => (
-                      <SelectItem key={lang} value={lang}>{lang}</SelectItem>
-                    ))}
+                    {LANGUAGES.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-[var(--btn-text)]">Song Type <span className="text-destructive">*</span></label>
-                <Select value={data.songType} onValueChange={(value) => setData(prev => ({ ...prev, songType: value as SongData["songType"] }))}>
-                  <SelectTrigger className="w-full h-12 px-4 bg-card border border-[var(--border-subtle)] rounded-xl">
-                    <SelectValue placeholder="Select type..." />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover">
-                    {SONG_TYPES.map(t => (
-                      <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {["public_domain", "derivative", "medley"].includes(data.songType) && (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-[var(--btn-text)]">
-                    {data.songType === "public_domain" && "Enter the title of the original public domain song"}
-                    {data.songType === "derivative" && "Enter the title of the original composition"}
-                    {data.songType === "medley" && "Enter the titles of other copyrights used"}
-                    <span className="text-destructive">*</span>
-                  </label>
-                  <input type="text" value={data.originalWorkTitle} onChange={(e) => setData(prev => ({ ...prev, originalWorkTitle: e.target.value }))} placeholder="Original work title(s)" className="w-full h-11 px-4 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
-                </div>
-              )}
 
               <div className="space-y-3">
-                <label className="text-sm font-medium text-[var(--btn-text)]">Has this song been recorded and released? <span className="text-destructive">*</span></label>
+                <label className="text-sm font-medium text-[var(--btn-text)]">Song Type <span className="text-destructive">*</span></label>
                 <div className="flex flex-wrap gap-3">
-                  {[{ v: "yes" as const, l: "Yes" }, { v: "no" as const, l: "No" }, { v: "youtube_only" as const, l: "Yes - YouTube Only" }].map(o => (
+                  {SONG_TYPES.map(t => (
+                    <button key={t.value} onClick={() => setData(prev => ({ ...prev, songType: t.value as SongData["songType"] }))} className={cn("px-4 py-2.5 text-sm font-medium rounded-xl border-2", data.songType === t.value ? "border-[var(--btn-text)] bg-[var(--btn-text)] text-white" : "border-[var(--border-subtle)] text-[var(--btn-text)]")}>
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+                {["public_domain", "derivative", "medley"].includes(data.songType) && (
+                  <div className="space-y-2 mt-4">
+                    <label className="text-sm font-medium text-[var(--btn-text)]">Original work title <span className="text-destructive">*</span></label>
+                    <input type="text" value={data.originalWorkTitle} onChange={(e) => setData(prev => ({ ...prev, originalWorkTitle: e.target.value }))} placeholder="Enter the original work title" className="w-full h-12 px-4 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-[var(--btn-text)]">Has this song been released/recorded? <span className="text-destructive">*</span></label>
+                <div className="flex flex-wrap gap-3">
+                  {[{ v: "yes" as const, l: "Yes" }, { v: "no" as const, l: "No" }, { v: "youtube_only" as const, l: "YouTube Only" }].map(o => (
                     <button key={o.v} onClick={() => setData(prev => ({ ...prev, releaseStatus: o.v }))} className={cn("px-5 py-2.5 text-sm font-medium rounded-xl border-2", data.releaseStatus === o.v ? "border-[var(--btn-text)] bg-[var(--btn-text)] text-white" : "border-[var(--border-subtle)] text-[var(--btn-text)]")}>
                       {o.l}
                     </button>
                   ))}
                 </div>
+                {data.releaseStatus === "no" ? (
+                  <div className="space-y-2 mt-4">
+                    <label className="text-sm font-medium text-[var(--btn-text)]">Creation Year <span className="text-destructive">*</span></label>
+                    <input type="text" value={data.creationYear} onChange={(e) => setData(prev => ({ ...prev, creationYear: e.target.value }))} placeholder="e.g. 2024" className="w-full h-12 px-4 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
+                  </div>
+                ) : data.releaseStatus !== null && (
+                  <div className="space-y-2 mt-4">
+                    <label className="text-sm font-medium text-[var(--btn-text)]">First Publication Year <span className="text-destructive">*</span></label>
+                    <input type="text" value={data.publicationYear} onChange={(e) => setData(prev => ({ ...prev, publicationYear: e.target.value }))} placeholder="e.g. 2024" className="w-full h-12 px-4 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
+                  </div>
+                )}
               </div>
 
-              {data.releaseStatus && (
-                <div className="space-y-2 mt-8">
-                  <label className="block text-sm font-medium text-[var(--btn-text)]">
-                    {data.releaseStatus === "no" ? "Song creation year" : data.releaseStatus === "youtube_only" ? "First publication year on YouTube" : "First publication year"}
-                    <span className="text-destructive"> *</span>
-                  </label>
-                  <input type="number" min="1900" max={new Date().getFullYear()} value={data.releaseStatus === "no" ? data.creationYear : data.publicationYear} onChange={(e) => setData(prev => ({ ...prev, [data.releaseStatus === "no" ? "creationYear" : "publicationYear"]: e.target.value }))} placeholder={new Date().getFullYear().toString()} className="w-32 h-11 px-4 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-xl focus:outline-none" />
-                </div>
-              )}
-
-              <div className="space-y-4 mt-8">
+              {/* WRITERS SECTION */}
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-[var(--btn-text)]">Writers <span className="text-destructive">*</span></label>
-                  <span className={cn("text-xs font-medium", splitValid ? "text-success" : "text-warning")}>Total: {totalSplit.toFixed(2)}%</span>
+                  <label className="text-sm font-medium text-[var(--btn-text)]">
+                    Songwriters <span className="text-destructive">*</span>
+                  </label>
+                  <span className={cn(
+                    "text-sm font-medium",
+                    splitValid ? "text-[hsl(var(--success))]" : "text-destructive"
+                  )}>
+                    Total: {totalSplit.toFixed(2)}%
+                  </span>
                 </div>
                 <div className="space-y-4">
                   {data.writers.map((w, i) => (
-                    w.fromDatabase && w.name ? (
-                      // Selected writer chip view
                       <div key={w.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-medium text-[var(--btn-text-muted)]">Writer {i + 1}</span>
-                        </div>
-                        <div className="flex items-center justify-between p-3 bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg">
-                          <span className="font-medium text-sm">{w.name}</span>
-                          <div className="flex items-center gap-4">
-                            <label className="flex items-center gap-1.5 text-sm">
-                              <input type="checkbox" checked={w.credit === "lyrics" || w.credit === "both"} onChange={(e) => {
-                                const hasMusic = w.credit === "music" || w.credit === "both";
-                                const newCredit = e.target.checked ? (hasMusic ? "both" : "lyrics") : (hasMusic ? "music" : "");
-                                updateWriter(w.id, { credit: newCredit as Writer["credit"] });
-                              }} className="h-4 w-4 rounded" />
-                              Lyrics
-                            </label>
-                            <label className="flex items-center gap-1.5 text-sm">
-                              <input type="checkbox" checked={w.credit === "music" || w.credit === "both"} onChange={(e) => {
-                                const hasLyrics = w.credit === "lyrics" || w.credit === "both";
-                                const newCredit = e.target.checked ? (hasLyrics ? "both" : "music") : (hasLyrics ? "lyrics" : "");
-                                updateWriter(w.id, { credit: newCredit as Writer["credit"] });
-                              }} className="h-4 w-4 rounded" />
-                              Music
-                            </label>
-                            <button onClick={() => updateWriter(w.id, { name: "", pro: "", ipi: "", fromDatabase: false })} className="text-xs text-[var(--btn-text-muted)] hover:text-destructive flex items-center gap-1">
-                              <Trash2 className="h-3 w-3" /> Remove
-                            </button>
-                          </div>
-                        </div>
-                        
-                        {/* PRO field - disabled when from database */}
-                        <div className="grid grid-cols-3 gap-3">
-                          <div className="relative">
-                            <Select value={w.pro} onValueChange={(value) => updateWriter(w.id, { pro: value })} disabled={w.fromDatabase}>
-                              <SelectTrigger className={`h-10 px-3 bg-card border border-[var(--border-subtle)] rounded-lg ${w.fromDatabase ? 'opacity-70 cursor-not-allowed' : ''}`}>
-                                <SelectValue placeholder="PRO" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-popover">
-                                {PRO_OPTIONS.map(p => (
-                                  <SelectItem key={p} value={p}>{p}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <input type="number" step="0.01" value={w.split || ""} onChange={(e) => updateWriter(w.id, { split: parseFloat(e.target.value) || 0 })} placeholder="Split % *" className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg" />
-                          <div>{/* Credit is now in the chip above */}</div>
-                        </div>
-                        
-                        <div className="flex items-center gap-2">
-                          <input type="checkbox" id={`ctrl-${w.id}`} checked={w.controlled} onChange={(e) => updateWriter(w.id, { controlled: e.target.checked })} className="h-4 w-4 rounded" />
-                          <label htmlFor={`ctrl-${w.id}`} className="text-sm text-[var(--btn-text)]">I control rights for this writer</label>
-                          <div className="group relative">
-                            <HelpCircle className="h-4 w-4 text-[var(--btn-text-muted)] cursor-help" />
-                            <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-[var(--btn-text)] text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none z-10">Do you control the rights of this song for this songwriter?</div>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      // Search input view
-                      <div key={w.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
-                        <div className="flex items-center justify-between">
+                        <div className="flex justify-between items-center">
                           <span className="text-xs font-medium text-[var(--btn-text-muted)]">Writer {i + 1}</span>
                           {data.writers.length > 1 && <button onClick={() => removeWriter(w.id)} className="p-1 text-[var(--btn-text-muted)] hover:text-destructive"><Trash2 className="h-4 w-4" /></button>}
                         </div>
@@ -956,7 +1100,7 @@ export default function SongSubmitPage() {
                             type="text"
                             value={w.name}
                             onChange={(e) => {
-                              updateWriter(w.id, { name: e.target.value, fromDatabase: false });
+                              updateWriter(w.id, { name: e.target.value, fromDatabase: false, writer_id: null });
                               searchWriters(e.target.value, w.id);
                               setActiveWriterSearch(w.id);
                             }}
@@ -994,8 +1138,8 @@ export default function SongSubmitPage() {
                           </a>
                         </p>
                         
-                        {/* Show PRO/Split/Credit fields only when not actively searching (dropdown closed) */}
-                        {w.name && !w.fromDatabase && activeWriterSearch !== w.id && (
+                        {/* Show PRO/Split/Credit fields only when not actively searching */}
+                        {w.name && activeWriterSearch !== w.id && (
                           <>
                             <div className="grid grid-cols-3 gap-3">
                               <Select value={w.pro} onValueChange={(value) => updateWriter(w.id, { pro: value })}>
@@ -1020,6 +1164,106 @@ export default function SongSubmitPage() {
                                 </SelectContent>
                               </Select>
                             </div>
+
+                            {/* Publisher(s) for this writer */}
+                            <div className="ml-2 mt-3 space-y-2 border-l-2 border-border pl-4">
+                              <span className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] font-medium">
+                                Publisher
+                              </span>
+                              
+                              {w.publishers.map((pub) => (
+                                <div key={pub.id} className="space-y-1">
+                                  <div className="flex items-center gap-3">
+                                    {/* Publisher typeahead */}
+                                    <div className="flex-1 relative">
+                                      <input
+                                        type="text"
+                                        value={pub.name}
+                                        onChange={(e) => {
+                                          updatePublisher(w.id, pub.id, { name: e.target.value, publisher_id: null });
+                                          searchPublishers(e.target.value, pub.id);
+                                          setActivePublisherSearch(pub.id);
+                                        }}
+                                        onFocus={() => setActivePublisherSearch(pub.id)}
+                                        onBlur={() => setTimeout(() => setActivePublisherSearch(null), 200)}
+                                        placeholder="Search publishers..."
+                                        className="w-full h-9 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
+                                      />
+                                      
+                                      {/* Publisher dropdown results */}
+                                      {activePublisherSearch === pub.id && publisherSearchResults[pub.id]?.length > 0 && (
+                                        <div className="absolute z-20 w-full mt-1 bg-card border border-[var(--border-subtle)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                          {publisherSearchResults[pub.id].map((result: any) => (
+                                            <button
+                                              key={result.id}
+                                              type="button"
+                                              onMouseDown={(e) => e.preventDefault()}
+                                              onClick={() => selectPublisher(w.id, pub.id, result, w.pro)}
+                                              className="w-full px-3 py-2 text-left hover:bg-[var(--muted-wash)] border-b border-[var(--border-subtle)] last:border-b-0 flex items-center justify-between"
+                                            >
+                                              <span className="text-[13px] text-[var(--btn-text)]">{result.name}</span>
+                                              <span className="text-[11px] text-[var(--btn-text-muted)]">{result.pro || "—"}</span>
+                                            </button>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                    
+                                    {/* PRO (read-only) */}
+                                    <span className="text-[11px] text-[var(--btn-text-muted)] w-[60px] text-center shrink-0">
+                                      {pub.pro || "—"}
+                                    </span>
+                                    
+                                    {/* Tribes administered toggle */}
+                                    <div className="w-[140px] shrink-0">
+                                      <select
+                                        value={pub.tribes_administered ? "yes" : "no"}
+                                        onChange={(e) => {
+                                          updatePublisher(w.id, pub.id, { tribes_administered: e.target.value === "yes" });
+                                        }}
+                                        className="w-full h-9 px-2 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg"
+                                      >
+                                        <option value="no">Self-administered</option>
+                                        <option value="yes">Tribes administers</option>
+                                      </select>
+                                    </div>
+                                    
+                                    {/* Remove publisher button */}
+                                    {w.publishers.length > 1 && (
+                                      <button
+                                        type="button"
+                                        onClick={() => removePublisher(w.id, pub.id)}
+                                        className="text-[var(--btn-text-muted)] hover:text-destructive p-1 shrink-0"
+                                      >
+                                        <span className="text-sm">×</span>
+                                      </button>
+                                    )}
+                                  </div>
+                                  
+                                  {/* Show resolved Tribes entity */}
+                                  {pub.tribes_administered && pub.pro && tribesEntities[pub.pro] && (
+                                    <p className="text-[11px] text-[var(--btn-text-muted)] italic ml-1">
+                                      → {tribesEntities[pub.pro].entity_name}
+                                    </p>
+                                  )}
+                                  {pub.tribes_administered && pub.pro && !tribesEntities[pub.pro] && (
+                                    <p className="text-[11px] text-destructive italic ml-1">
+                                      No Tribes entity for this PRO
+                                    </p>
+                                  )}
+                                </div>
+                              ))}
+                              
+                              {/* Add another publisher */}
+                              <button
+                                type="button"
+                                onClick={() => addPublisher(w.id)}
+                                className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]"
+                              >
+                                + Add Publisher
+                              </button>
+                            </div>
+
                             <div className="flex items-center gap-2">
                               <input type="checkbox" id={`ctrl-${w.id}`} checked={w.controlled} onChange={(e) => updateWriter(w.id, { controlled: e.target.checked })} className="h-4 w-4 rounded" />
                               <label htmlFor={`ctrl-${w.id}`} className="text-sm text-[var(--btn-text)]">I control rights for this writer</label>
@@ -1028,7 +1272,7 @@ export default function SongSubmitPage() {
                         )}
                       </div>
                     )
-                  ))}
+                  )}
                   <button onClick={addWriter} className="w-full py-3 text-sm font-medium text-[var(--btn-text)] border-2 border-dashed border-[var(--border-subtle)] rounded-xl hover:border-[var(--btn-text)]/30 flex items-center justify-center gap-2">
                     <Plus className="h-4 w-4" /> Add Writer
                   </button>
@@ -1101,7 +1345,7 @@ export default function SongSubmitPage() {
                 </div>
               )}
               
-              {/* Regular Lyrics Entry (hidden when showing preview) */}
+              {/* Regular Lyrics Entry */}
               {!showParsedPreview && data.songType !== "instrumental" && (
                 <>
                   <div className="flex gap-3">
@@ -1297,25 +1541,33 @@ export default function SongSubmitPage() {
                 </div>
               </div>
 
-              {/* Writers */}
+              {/* Writers + Publishers */}
               <div className="bg-card border border-[var(--border-subtle)] rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-3 bg-[var(--muted-wash)] border-b border-[var(--border-subtle)]">
-                  <h3 className="text-sm font-semibold text-[var(--btn-text)]">Writers</h3>
+                  <h3 className="text-sm font-semibold text-[var(--btn-text)]">Writers & Publishers</h3>
                   <button onClick={() => goToStep(1)} className="text-xs text-[var(--app-focus)] hover:underline">Edit</button>
                 </div>
                 <div className="px-5 py-4 space-y-3">
                   {data.writers.map((w) => (
-                    <div key={w.id} className="flex justify-between text-sm">
-                      <span className="text-[var(--btn-text)] font-medium">{w.name}</span>
-                      <span className="text-[var(--btn-text-muted)]">
-                        {w.pro} · {w.split}% · {w.credit === "both" ? "Lyrics & Music" : w.credit === "lyrics" ? "Lyrics" : w.credit === "music" ? "Music" : "—"}
-                      </span>
+                    <div key={w.id} className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-[var(--btn-text)] font-medium">{w.name}</span>
+                        <span className="text-[var(--btn-text-muted)]">
+                          {w.pro} · {w.split}% · {w.credit === "both" ? "Lyrics & Music" : w.credit === "lyrics" ? "Lyrics" : w.credit === "music" ? "Music" : "—"}
+                        </span>
+                      </div>
+                      {w.publishers.filter(p => p.publisher_id).map(pub => (
+                        <div key={pub.id} className="flex justify-between text-xs ml-4 text-[var(--btn-text-muted)]">
+                          <span>Publisher: {pub.name} ({pub.pro || "—"})</span>
+                          <span>{pub.tribes_administered ? "Tribes administered" : "Self-administered"}</span>
+                        </div>
+                      ))}
                     </div>
                   ))}
                   <div className="flex justify-between text-sm border-t border-[var(--border-subtle)] pt-3">
                     <span className="text-[var(--btn-text-muted)]">Total Split</span>
-                    <span className={cn("font-semibold", data.writers.reduce((sum, w) => sum + w.split, 0) === 100 ? "text-success" : "text-warning")}>
-                      {data.writers.reduce((sum, w) => sum + w.split, 0)}%
+                    <span className={cn("font-semibold", splitValid ? "text-success" : "text-warning")}>
+                      {totalSplit.toFixed(2)}%
                     </span>
                   </div>
                 </div>
@@ -1409,7 +1661,7 @@ export default function SongSubmitPage() {
           )}
           </div>
 
-          {/* Footer Actions - Hidden when submission complete */}
+          {/* Footer Actions */}
           {!submissionComplete && (
             <div className="shrink-0 border-t border-[var(--border-subtle)] bg-[var(--topbar-bg)] p-4 sm:px-6">
               <div className="w-full flex items-center justify-between">
