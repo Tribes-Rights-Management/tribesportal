@@ -1151,20 +1151,20 @@ export default function SongSubmitPage() {
                             )}
 
                             {/* Split + Credit row */}
-                            <div className="flex items-end gap-3">
+                            <div className="flex items-end gap-3 mb-4">
                               <div className="w-[120px]">
-                                <label className="block text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] mb-1">Split % *</label>
+                                <label className="block text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] mb-1.5">Split % <span className="text-destructive">*</span></label>
                                 <input
                                   type="number"
                                   step="0.01"
                                   value={w.split || ""}
                                   onChange={(e) => updateWriter(w.id, { split: parseFloat(e.target.value) || 0 })}
                                   placeholder="0.00"
-                                  className="w-full h-9 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg text-right focus:outline-none focus:ring-1 focus:ring-ring"
+                                  className="w-full h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg text-right focus:outline-none focus:ring-1 focus:ring-ring"
                                 />
                               </div>
-                              <div className="w-[160px]">
-                                <label className="block text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] mb-1">Credit *</label>
+                              <div>
+                                <label className="block text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] mb-1.5">Credit <span className="text-destructive">*</span></label>
                                 <AppSelect
                                   value={w.credit}
                                   onChange={(val) => updateWriter(w.id, { credit: val as Writer["credit"] })}
@@ -1173,7 +1173,8 @@ export default function SongSubmitPage() {
                                     { value: "lyrics", label: "Writer" },
                                     { value: "music", label: "Composer" },
                                   ]}
-                                  placeholder="Credit"
+                                  placeholder="Select one"
+                                  className="min-w-[200px]"
                                 />
                               </div>
                             </div>
