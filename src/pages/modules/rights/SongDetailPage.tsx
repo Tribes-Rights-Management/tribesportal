@@ -525,6 +525,17 @@ export default function SongDetailPage() {
       // 2. Save ownership changes
       await saveOwnershipChanges();
 
+      // 3. Update PROs on interested_parties
+      for (const o of editedFields.ownership.filter((r) => !r._deleted)) {
+        if (o.publisher_name.trim()) {
+          await supabase
+            .from("interested_parties")
+            .update({ pro_id: o.pro || null } as any)
+            .eq("name", o.publisher_name.trim())
+            .eq("party_type", "publisher");
+        }
+      }
+
       toast.success("Song updated");
       setEditing(false);
 
@@ -836,7 +847,7 @@ export default function SongDetailPage() {
                 <div className="flex-1">
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Publisher</span>
                 </div>
-                <div className="w-[80px]">
+                <div className="w-[100px]">
                   <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">PRO</span>
                 </div>
                 <div className="w-[100px]">
@@ -864,10 +875,21 @@ export default function SongDetailPage() {
                         placeholder="Type to search publishers…"
                       />
                     </div>
-                    <div className="w-[80px] flex items-center justify-center">
-                      <span className="text-[12px] text-muted-foreground font-mono">
-                        {row.pro || "—"}
-                      </span>
+                    <div className="w-[100px]">
+                      <select
+                        value={row.pro || ""}
+                        onChange={(e) => {
+                          const updated = [...editedFields.ownership];
+                          updated[index] = { ...updated[index], pro: e.target.value || null };
+                          updateField("ownership", updated);
+                        }}
+                        className="w-full text-[12px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+                      >
+                        <option value="">—</option>
+                        {PRO_OPTIONS.filter(Boolean).map((pro) => (
+                          <option key={pro} value={pro}>{pro}</option>
+                        ))}
+                      </select>
                     </div>
                     <div className="w-[100px]">
                       <select
@@ -918,7 +940,7 @@ export default function SongDetailPage() {
                 <div className="flex-1 text-right">
                   <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Total</span>
                 </div>
-                <div className="w-[80px]" />
+                <div className="w-[100px]" />
                 <div className="w-[100px]" />
                 <div className="w-[70px]">
                   <span className={cn(
