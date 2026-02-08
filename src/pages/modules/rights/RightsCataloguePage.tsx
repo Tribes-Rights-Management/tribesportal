@@ -453,8 +453,13 @@ export default function RightsCataloguePage() {
                     <AppTableRow
                       key={song.id}
                       clickable
-                      onClick={(e) => handleRowSelect(song.id, index, e)}
-                      onDoubleClick={() => handleSongClick(song.id)}
+                      onClick={(e) => {
+                        if (e.metaKey || e.ctrlKey || e.shiftKey) {
+                          handleRowSelect(song.id, index, e);
+                        } else {
+                          handleSongClick(song.id);
+                        }
+                      }}
                       className={cn(selectedSongs.has(song.id) && "bg-muted/50")}
                     >
                       <AppTableCell>
