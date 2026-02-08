@@ -34,7 +34,6 @@ interface Writer {
   ipi: string;
   split: number;
   credit: "lyrics" | "music" | "both" | "";
-  controlled: boolean;
   fromDatabase: boolean;
   writer_id: string | null;
   publishers: PublisherEntry[];
@@ -91,7 +90,7 @@ const SONG_TYPES = [
   { value: "medley", label: "Medley/Mashup" },
 ];
 
-const PRO_OPTIONS = ["ASCAP", "BMI", "SESAC", "GMR", "PRS", "APRA", "SOCAN", "GEMA", "SACEM", "Other"];
+
 
 const US_PROS = ["ASCAP", "BMI", "SESAC", "GMR"];
 
@@ -139,7 +138,6 @@ const newWriter = (): Writer => ({
   ipi: "",
   split: 0,
   credit: "",
-  controlled: false,
   fromDatabase: false,
   writer_id: null,
   publishers: [newPublisher()],
@@ -433,7 +431,7 @@ export default function SongSubmitPage() {
         const hasYear = data.releaseStatus === "no" ? !!data.creationYear : !!data.publicationYear;
         const totalSplit = data.writers.reduce((s, w) => s + w.split, 0);
         const hasWriters = data.writers.length > 0 && 
-          data.writers.every(w => w.name && w.split > 0 && w.credit && w.pro) &&
+          data.writers.every(w => w.name && w.split > 0 && w.credit) &&
           Math.abs(totalSplit - 100) < 0.01;
         // Check each writer has at least one publisher with a publisher_id
         const hasPublishers = data.writers.every(w => 
@@ -750,7 +748,7 @@ export default function SongSubmitPage() {
         const hasOriginal = !["public_domain", "derivative", "medley"].includes(data.songType) || !!data.originalWorkTitle;
         const hasYear = data.releaseStatus === "no" ? !!data.creationYear : !!data.publicationYear;
         const hasWriters = data.writers.length > 0 && 
-          data.writers.every(w => w.name && w.split > 0 && w.credit && w.pro) &&
+          data.writers.every(w => w.name && w.split > 0 && w.credit) &&
           Math.abs(data.writers.reduce((s, w) => s + w.split, 0) - 100) < 0.01;
         const hasPublishers = data.writers.every(w => w.publishers.some(p => p.publisher_id));
         return hasTitle && hasAltHandled && hasType && hasOriginal && data.releaseStatus !== null && hasYear && hasWriters && hasPublishers;
@@ -1138,41 +1136,57 @@ export default function SongSubmitPage() {
                           </a>
                         </p>
                         
-                        {/* Show PRO/Split/Credit fields only when not actively searching */}
+                        {/* Show fields only when not actively searching */}
                         {w.name && activeWriterSearch !== w.id && (
                           <>
-                            <div className="grid grid-cols-3 gap-3">
-                              <Select value={w.pro} onValueChange={(value) => updateWriter(w.id, { pro: value })}>
-                                <SelectTrigger className="h-10 px-3 bg-card border border-[var(--border-subtle)] rounded-lg">
-                                  <SelectValue placeholder="PRO *" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-popover">
-                                  {PRO_OPTIONS.map(p => (
-                                    <SelectItem key={p} value={p}>{p}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <input type="number" step="0.01" value={w.split || ""} onChange={(e) => updateWriter(w.id, { split: parseFloat(e.target.value) || 0 })} placeholder="Split % *" className="h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg" />
-                              <Select value={w.credit} onValueChange={(value) => updateWriter(w.id, { credit: value as Writer["credit"] })}>
-                                <SelectTrigger className="h-10 px-3 bg-card border border-[var(--border-subtle)] rounded-lg">
-                                  <SelectValue placeholder="Credit *" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-popover">
-                                  <SelectItem value="lyrics">Lyrics</SelectItem>
-                                  <SelectItem value="music">Music</SelectItem>
-                                  <SelectItem value="both">Both</SelectItem>
-                                </SelectContent>
-                              </Select>
+                            {/* PRO + IPI display (read-only, shown after writer is selected) */}
+                            {w.fromDatabase && (
+                              <div className="flex items-center gap-3 text-[12px] text-[var(--btn-text-muted)]">
+                                {w.pro && (
+                                  <span className="bg-[var(--muted-wash)] border border-[var(--border-subtle)] px-2 py-0.5 rounded font-medium text-[11px]">{w.pro}</span>
+                                )}
+                                {w.ipi && (
+                                  <span className="font-mono text-[11px]">{w.ipi}</span>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Split + Credit row */}
+                            <div className="flex items-end gap-3">
+                              <div className="w-[120px]">
+                                <label className="block text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] mb-1">Split % *</label>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  value={w.split || ""}
+                                  onChange={(e) => updateWriter(w.id, { split: parseFloat(e.target.value) || 0 })}
+                                  placeholder="0.00"
+                                  className="w-full h-9 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg text-right focus:outline-none focus:ring-1 focus:ring-ring"
+                                />
+                              </div>
+                              <div className="w-[160px]">
+                                <label className="block text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] mb-1">Credit *</label>
+                                <Select value={w.credit} onValueChange={(value) => updateWriter(w.id, { credit: value as Writer["credit"] })}>
+                                  <SelectTrigger className="h-9 px-3 bg-card border border-[var(--border-subtle)] rounded-lg">
+                                    <SelectValue placeholder="Select..." />
+                                  </SelectTrigger>
+                                  <SelectContent className="bg-popover">
+                                    <SelectItem value="both">Writer & Composer</SelectItem>
+                                    <SelectItem value="lyrics">Writer</SelectItem>
+                                    <SelectItem value="music">Composer</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
                             </div>
 
-                            {/* Publisher(s) for this writer */}
-                            <div className="ml-2 mt-3 space-y-2 border-l-2 border-border pl-4">
-                              <span className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] font-medium">
+                            {/* Publisher section — subtle card */}
+                            <div className="bg-[var(--muted-wash)]/50 border border-[var(--border-subtle)]/40 rounded-lg p-3 mt-1">
+                              <span className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] font-medium block mb-2">
                                 Publisher
                               </span>
                               
                               {w.publishers.map((pub) => (
-                                <div key={pub.id} className="space-y-1">
+                                <div key={pub.id} className="mb-2 last:mb-0">
                                   <div className="flex items-center gap-3">
                                     {/* Publisher typeahead */}
                                     <div className="flex-1 relative">
@@ -1209,13 +1223,13 @@ export default function SongSubmitPage() {
                                       )}
                                     </div>
                                     
-                                    {/* PRO (read-only) */}
-                                    <span className="text-[11px] text-[var(--btn-text-muted)] w-[60px] text-center shrink-0">
+                                    {/* PRO badge (read-only) */}
+                                    <span className="text-[11px] text-[var(--btn-text-muted)] bg-[var(--muted-wash)] border border-[var(--border-subtle)] px-2 py-1 rounded min-w-[50px] text-center shrink-0">
                                       {pub.pro || "—"}
                                     </span>
                                     
-                                    {/* Tribes administered toggle */}
-                                    <div className="w-[140px] shrink-0">
+                                    {/* Tribes administration toggle */}
+                                    <div className="w-[160px] shrink-0">
                                       <select
                                         value={pub.tribes_administered ? "yes" : "no"}
                                         onChange={(e) => {
@@ -1239,34 +1253,27 @@ export default function SongSubmitPage() {
                                       </button>
                                     )}
                                   </div>
-                                  
-                                  {/* Show resolved Tribes entity */}
-                                  {pub.tribes_administered && pub.pro && tribesEntities[pub.pro] && (
-                                    <p className="text-[11px] text-[var(--btn-text-muted)] italic ml-1">
-                                      → {tribesEntities[pub.pro].entity_name}
-                                    </p>
-                                  )}
-                                  {pub.tribes_administered && pub.pro && !tribesEntities[pub.pro] && (
-                                    <p className="text-[11px] text-destructive italic ml-1">
-                                      No Tribes entity for this PRO
-                                    </p>
-                                  )}
                                 </div>
                               ))}
+
+                              {/* Show resolved Tribes entity below when administered */}
+                              {w.publishers.some(p => p.tribes_administered && p.pro) && (
+                                <div className="mt-1 text-[11px] text-[var(--btn-text-muted)] italic pl-1">
+                                  {w.publishers
+                                    .filter(p => p.tribes_administered && p.pro)
+                                    .map(p => `→ ${tribesEntities[p.pro]?.entity_name || "No Tribes entity for this PRO"}`)
+                                    .join(", ")}
+                                </div>
+                              )}
                               
                               {/* Add another publisher */}
                               <button
                                 type="button"
                                 onClick={() => addPublisher(w.id)}
-                                className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]"
+                                className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] hover:text-[var(--btn-text)] mt-2"
                               >
                                 + Add Publisher
                               </button>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <input type="checkbox" id={`ctrl-${w.id}`} checked={w.controlled} onChange={(e) => updateWriter(w.id, { controlled: e.target.checked })} className="h-4 w-4 rounded" />
-                              <label htmlFor={`ctrl-${w.id}`} className="text-sm text-[var(--btn-text)]">I control rights for this writer</label>
                             </div>
                           </>
                         )}
