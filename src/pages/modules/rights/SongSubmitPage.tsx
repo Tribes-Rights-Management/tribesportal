@@ -264,6 +264,16 @@ export default function SongSubmitPage() {
     fetchTribesEntities();
   }, []);
 
+  // ── Auto-sync single publisher share to writer's split ────
+  useEffect(() => {
+    data.writers.forEach(w => {
+      if (w.publishers.length === 1 && w.publishers[0].share !== w.split) {
+        updatePublisher(w.id, w.publishers[0].id, { share: w.split });
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.writers.map(w => `${w.id}:${w.split}:${w.publishers.length}`).join(',')]);
+
   // ── Writer management ─────────────────────────────────────
   const addWriter = () => {
     setData(prev => ({
@@ -1185,13 +1195,31 @@ export default function SongSubmitPage() {
                                 <span className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] font-medium">
                                   Publisher
                                 </span>
+                                {w.publishers.length > 1 && (() => {
+                                  const pubTotal = w.publishers.reduce((s, p) => s + (p.share || 0), 0);
+                                  const pubValid = Math.abs(pubTotal - w.split) < 0.01;
+                                  return (
+                                    <span className={cn("text-[11px] font-medium", pubValid ? "text-[hsl(var(--success))]" : "text-destructive")}>
+                                      {pubTotal.toFixed(2)}% / {w.split.toFixed(2)}%
+                                    </span>
+                                  );
+                                })()}
                               </div>
 
-                              <div className="space-y-4">
-                                {w.publishers.map((pub) => (
-                                  <div key={pub.id} className="bg-[var(--muted-wash)]/30 rounded-lg p-3 space-y-3">
+                              <div className="space-y-3">
+                                {w.publishers.map((pub, pubIndex) => (
+                                  <div key={pub.id} className="space-y-2.5">
 
-                                    {/* ROW 1: Publisher name + PRO badge + remove */}
+                                    {/* Column headers above first publisher */}
+                                    {pubIndex === 0 && (
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="flex-1 text-[10px] uppercase tracking-wider text-[var(--btn-text-muted)]/60">Name</span>
+                                        <span className="w-[80px] text-[10px] uppercase tracking-wider text-[var(--btn-text-muted)]/60 text-right shrink-0">Share %</span>
+                                        {w.publishers.length > 1 && <span className="w-[28px] shrink-0" />}
+                                      </div>
+                                    )}
+
+                                    {/* Publisher name + PRO badge + share + remove */}
                                     <div className="flex items-center gap-2">
                                       <div className="flex-1 relative">
                                         <input
@@ -1234,6 +1262,19 @@ export default function SongSubmitPage() {
                                         </span>
                                       )}
 
+                                      {/* Share % */}
+                                      <div className="w-[80px] shrink-0">
+                                        <input
+                                          type="number"
+                                          step="0.01"
+                                          value={pub.share || ""}
+                                          onChange={(e) => updatePublisher(w.id, pub.id, { share: Number(e.target.value) })}
+                                          placeholder="%"
+                                          className="w-full h-10 px-2 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg text-right focus:outline-none focus:ring-1 focus:ring-ring"
+                                          readOnly={w.publishers.length === 1}
+                                        />
+                                      </div>
+
                                       {/* Remove button */}
                                       {w.publishers.length > 1 && (
                                         <button
@@ -1246,12 +1287,10 @@ export default function SongSubmitPage() {
                                       )}
                                     </div>
 
-                                    {/* ROW 2: Administrator dropdown (only after publisher selected) */}
+                                    {/* Administrator row — only after publisher selected */}
                                     {pub.publisher_id && (
-                                      <div className="flex items-center gap-3">
-                                        <label className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] font-medium shrink-0">
-                                          Administrator
-                                        </label>
+                                      <div className="flex items-center gap-2 pl-0.5">
+                                        <span className="text-[11px] text-[var(--btn-text-muted)]">Administrator:</span>
                                         <AppSelect
                                           value={pub.tribes_administered ? "tribes" : "other"}
                                           onChange={(val) => updatePublisher(w.id, pub.id, { tribes_administered: val === "tribes" })}
@@ -1260,25 +1299,29 @@ export default function SongSubmitPage() {
                                             { value: "tribes", label: "Tribes" },
                                           ]}
                                           placeholder="Select"
-                                          className="min-w-[140px]"
+                                          className="min-w-[120px]"
                                         />
+                                        {/* Resolved entity — inline */}
+                                        {pub.tribes_administered && pub.pro && tribesEntities[pub.pro] && (
+                                          <span className="text-[11px] text-[var(--btn-text-muted)] italic">
+                                            → {tribesEntities[pub.pro].entity_name}
+                                          </span>
+                                        )}
                                       </div>
                                     )}
 
-                                    {/* ROW 3: Resolved Tribes entity */}
-                                    {pub.tribes_administered && pub.pro && tribesEntities[pub.pro] && (
-                                      <div className="text-[12px] text-[var(--btn-text-muted)] italic pl-0.5">
-                                        → {tribesEntities[pub.pro].entity_name}
-                                      </div>
+                                    {/* Divider between multiple publishers */}
+                                    {pubIndex < w.publishers.length - 1 && (
+                                      <div className="border-b border-[var(--border-subtle)]" />
                                     )}
                                   </div>
                                 ))}
 
-                                {/* Add publisher button */}
+                                {/* Add publisher */}
                                 <button
                                   type="button"
                                   onClick={() => addPublisher(w.id)}
-                                  className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] hover:text-[var(--btn-text)] transition-colors"
+                                  className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] hover:text-[var(--btn-text)] transition-colors pt-1"
                                 >
                                   + Add Publisher
                                 </button>
