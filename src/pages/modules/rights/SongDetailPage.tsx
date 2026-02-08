@@ -469,7 +469,11 @@ export default function SongDetailPage() {
         is_active: song.is_active,
         lyrics: metadata.lyrics || "",
         alternate_titles: song.alternate_titles?.join(", ") || "",
-        writers: metadata.writers || [],
+        writers: (metadata.writers || []).map((w: any) => ({
+          name: w.name || "",
+          ipi: w.ipi || "",
+          split: w.split ?? 0,
+        })),
         ownership: ownership.map((o) => ({
           id: o.id,
           publisher_id: o.publisher_id,
