@@ -164,17 +164,31 @@ export default function RightsCatalogPage() {
     try {
       const { data, error } = await supabase
         .from("songs")
-        .select("id, title, metadata, created_at, is_active")
+        .select(`
+          id,
+          title,
+          metadata,
+          created_at,
+          is_active,
+          song_writers (
+            id,
+            share,
+            writers (
+              id,
+              name
+            )
+          )
+        `)
         .eq("is_active", true)
         .order("created_at", { ascending: false });
       
       if (error) throw error;
       
       // Transform data to match CatalogSong interface
-      const transformedSongs: CatalogSong[] = (data || []).map((song) => {
-        const metadata = song.metadata as Record<string, any> || {};
-        const writers = metadata.writers || [];
-        const songwriters = writers.map((w: { name?: string }) => w.name || "Unknown").filter(Boolean);
+      const transformedSongs: CatalogSong[] = (data || []).map((song: any) => {
+        const songwriters = (song.song_writers || [])
+          .map((sw: any) => sw.writers?.name)
+          .filter(Boolean);
         
         return {
           id: song.id,
