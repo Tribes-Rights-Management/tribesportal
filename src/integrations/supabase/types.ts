@@ -2679,6 +2679,7 @@ export type Database = {
       }
       song_ownership: {
         Row: {
+          administrator_entity_id: string | null
           administrator_id: string | null
           controlled: boolean
           created_at: string
@@ -2690,10 +2691,13 @@ export type Database = {
           ownership_percentage: number
           publisher_id: string
           song_id: string
+          song_writer_id: string | null
           territory: string | null
+          tribes_administered: boolean
           updated_at: string
         }
         Insert: {
+          administrator_entity_id?: string | null
           administrator_id?: string | null
           controlled?: boolean
           created_at?: string
@@ -2705,10 +2709,13 @@ export type Database = {
           ownership_percentage?: number
           publisher_id: string
           song_id: string
+          song_writer_id?: string | null
           territory?: string | null
+          tribes_administered?: boolean
           updated_at?: string
         }
         Update: {
+          administrator_entity_id?: string | null
           administrator_id?: string | null
           controlled?: boolean
           created_at?: string
@@ -2720,10 +2727,19 @@ export type Database = {
           ownership_percentage?: number
           publisher_id?: string
           song_id?: string
+          song_writer_id?: string | null
           territory?: string | null
+          tribes_administered?: boolean
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "song_ownership_administrator_entity_id_fkey"
+            columns: ["administrator_entity_id"]
+            isOneToOne: false
+            referencedRelation: "tribes_entities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "song_ownership_administrator_id_fkey"
             columns: ["administrator_id"]
@@ -2743,6 +2759,13 @@ export type Database = {
             columns: ["song_id"]
             isOneToOne: false
             referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_ownership_song_writer_id_fkey"
+            columns: ["song_writer_id"]
+            isOneToOne: false
+            referencedRelation: "song_writers"
             referencedColumns: ["id"]
           },
         ]
@@ -3390,6 +3413,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tribes_entities: {
+        Row: {
+          created_at: string
+          entity_name: string
+          id: string
+          ipi_number: string
+          is_active: boolean
+          pro: string
+        }
+        Insert: {
+          created_at?: string
+          entity_name: string
+          id?: string
+          ipi_number: string
+          is_active?: boolean
+          pro: string
+        }
+        Update: {
+          created_at?: string
+          entity_name?: string
+          id?: string
+          ipi_number?: string
+          is_active?: boolean
+          pro?: string
+        }
+        Relationships: []
       }
       user_preferences: {
         Row: {
