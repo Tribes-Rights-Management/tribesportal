@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils";
  * 
  * Structure:
  * - Outer wrapper: flex, items-start, min-height 44px (tap target), clickable
- * - Tap-target wrapper: 44x44 invisible hit area containing the 18x18 visual box
+ * - Tap-target wrapper: 36x36 invisible hit area containing the 14x14 visual box
  * - Native input: opacity:0, appearance:none, positioned over tap target
- * - Visual box: 18x18, border only, no fill, SVG checkmark when checked
+ * - Visual box: 14x14, border only, no fill, SVG checkmark when checked
  * - Label: leading-relaxed, top-aligned with visual box
  */
 
@@ -48,7 +48,7 @@ export function TribesCheckbox({
       {/* Tap target wrapper: 44x44 invisible, contains 18x18 visual box */}
       <span 
         className="relative shrink-0 flex items-start justify-center"
-        style={{ width: '44px', height: '44px', marginLeft: '-13px', marginTop: '-13px' }}
+        style={{ width: '36px', height: '36px', marginLeft: '-11px', marginTop: '-11px' }}
       >
         {/* Native input: covers full tap target, invisible */}
         <input
@@ -62,8 +62,8 @@ export function TribesCheckbox({
           data-tribes-checkbox
           className="peer absolute inset-0 m-0 p-0 cursor-pointer"
           style={{ 
-            width: '44px', 
-            height: '44px', 
+            width: '36px', 
+            height: '36px', 
             opacity: 0,
             WebkitAppearance: 'none', 
             appearance: 'none',
@@ -79,10 +79,10 @@ export function TribesCheckbox({
             "peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-[hsl(var(--tribes-checkbox-focus))] peer-focus-visible:outline-offset-2",
           )}
           style={{ 
-            width: '18px', 
-            height: '18px', 
-            top: '13px', 
-            left: '13px',
+            width: '14px', 
+            height: '14px', 
+            top: '11px', 
+            left: '11px',
           }}
           aria-hidden="true"
         >
