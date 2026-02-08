@@ -1179,99 +1179,110 @@ export default function SongSubmitPage() {
                               </div>
                             </div>
 
-                            {/* Publisher section — subtle card */}
-                            <div className="bg-[var(--muted-wash)]/50 border border-[var(--border-subtle)]/40 rounded-lg p-3 mt-1">
-                              <span className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] font-medium block mb-2">
-                                Publisher
-                              </span>
-                              
-                              {w.publishers.map((pub) => (
-                                <div key={pub.id} className="mb-2 last:mb-0">
-                                  <div className="flex items-center gap-3">
-                                    {/* Publisher typeahead */}
-                                    <div className="flex-1 relative">
-                                      <input
-                                        type="text"
-                                        value={pub.name}
-                                        onChange={(e) => {
-                                          updatePublisher(w.id, pub.id, { name: e.target.value, publisher_id: null });
-                                          searchPublishers(e.target.value, pub.id);
-                                          setActivePublisherSearch(pub.id);
-                                        }}
-                                        onFocus={() => setActivePublisherSearch(pub.id)}
-                                        onBlur={() => setTimeout(() => setActivePublisherSearch(null), 200)}
-                                        placeholder="Search publishers..."
-                                        className="w-full h-9 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
-                                      />
-                                      
-                                      {/* Publisher dropdown results */}
-                                      {activePublisherSearch === pub.id && publisherSearchResults[pub.id]?.length > 0 && (
-                                        <div className="absolute z-20 w-full mt-1 bg-card border border-[var(--border-subtle)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                                          {publisherSearchResults[pub.id].map((result: any) => (
-                                            <button
-                                              key={result.id}
-                                              type="button"
-                                              onMouseDown={(e) => e.preventDefault()}
-                                              onClick={() => selectPublisher(w.id, pub.id, result, w.pro)}
-                                              className="w-full px-3 py-2 text-left hover:bg-[var(--muted-wash)] border-b border-[var(--border-subtle)] last:border-b-0 flex items-center justify-between"
-                                            >
-                                              <span className="text-[13px] text-[var(--btn-text)]">{result.name}</span>
-                                              <span className="text-[11px] text-[var(--btn-text-muted)]">{result.pro || "—"}</span>
-                                            </button>
-                                          ))}
-                                        </div>
+                            {/* Publisher section */}
+                            <div className="border border-[var(--border-subtle)] rounded-lg p-4 mt-3">
+                              <div className="flex items-center justify-between mb-3">
+                                <span className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] font-medium">
+                                  Publisher
+                                </span>
+                              </div>
+
+                              <div className="space-y-4">
+                                {w.publishers.map((pub) => (
+                                  <div key={pub.id} className="bg-[var(--muted-wash)]/30 rounded-lg p-3 space-y-3">
+
+                                    {/* ROW 1: Publisher name + PRO badge + remove */}
+                                    <div className="flex items-center gap-2">
+                                      <div className="flex-1 relative">
+                                        <input
+                                          type="text"
+                                          value={pub.name}
+                                          onChange={(e) => {
+                                            updatePublisher(w.id, pub.id, { name: e.target.value, publisher_id: null });
+                                            searchPublishers(e.target.value, pub.id);
+                                            setActivePublisherSearch(pub.id);
+                                          }}
+                                          onFocus={() => setActivePublisherSearch(pub.id)}
+                                          onBlur={() => setTimeout(() => setActivePublisherSearch(null), 200)}
+                                          placeholder="Search publishers..."
+                                          className="w-full h-10 px-3 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
+                                        />
+
+                                        {/* Publisher dropdown results */}
+                                        {activePublisherSearch === pub.id && publisherSearchResults[pub.id]?.length > 0 && (
+                                          <div className="absolute z-20 w-full mt-1 bg-card border border-[var(--border-subtle)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                            {publisherSearchResults[pub.id].map((result: any) => (
+                                              <button
+                                                key={result.id}
+                                                type="button"
+                                                onMouseDown={(e) => e.preventDefault()}
+                                                onClick={() => selectPublisher(w.id, pub.id, result, w.pro)}
+                                                className="w-full px-3 py-2.5 text-left hover:bg-[var(--muted-wash)] border-b border-[var(--border-subtle)] last:border-b-0 flex items-center justify-between"
+                                              >
+                                                <span className="text-[13px] text-[var(--btn-text)]">{result.name}</span>
+                                                <span className="text-[11px] text-[var(--btn-text-muted)]">{result.pro || "—"}</span>
+                                              </button>
+                                            ))}
+                                          </div>
+                                        )}
+                                      </div>
+
+                                      {/* PRO badge */}
+                                      {pub.pro && (
+                                        <span className="text-[11px] text-[var(--btn-text-muted)] bg-[var(--muted-wash)] border border-[var(--border-subtle)] px-2.5 py-1.5 rounded font-medium shrink-0">
+                                          {pub.pro}
+                                        </span>
+                                      )}
+
+                                      {/* Remove button */}
+                                      {w.publishers.length > 1 && (
+                                        <button
+                                          type="button"
+                                          onClick={() => removePublisher(w.id, pub.id)}
+                                          className="text-[var(--btn-text-muted)] hover:text-destructive p-1 shrink-0"
+                                        >
+                                          <span className="text-lg leading-none">×</span>
+                                        </button>
                                       )}
                                     </div>
-                                    
-                                    {/* PRO badge (read-only) */}
-                                    <span className="text-[11px] text-[var(--btn-text-muted)] bg-[var(--muted-wash)] border border-[var(--border-subtle)] px-2 py-1 rounded min-w-[50px] text-center shrink-0">
-                                      {pub.pro || "—"}
-                                    </span>
-                                    
-                                    {/* Administrator toggle */}
-                                    <div className="w-[160px] shrink-0">
-                                      <AppSelect
-                                        value={pub.tribes_administered ? "tribes" : "other"}
-                                        onChange={(val) => updatePublisher(w.id, pub.id, { tribes_administered: val === "tribes" })}
-                                        options={[
-                                          { value: "other", label: "Other" },
-                                          { value: "tribes", label: "Tribes" },
-                                        ]}
-                                        placeholder="Administrator"
-                                      />
-                                    </div>
-                                    
-                                    {/* Show resolved Tribes entity inline */}
-                                    {pub.tribes_administered && pub.pro && tribesEntities[pub.pro] && (
-                                      <span className="text-[11px] text-muted-foreground italic whitespace-nowrap shrink-0">
-                                        → {tribesEntities[pub.pro].entity_name}
-                                      </span>
+
+                                    {/* ROW 2: Administrator dropdown (only after publisher selected) */}
+                                    {pub.publisher_id && (
+                                      <div className="flex items-center gap-3">
+                                        <label className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] font-medium shrink-0">
+                                          Administrator
+                                        </label>
+                                        <AppSelect
+                                          value={pub.tribes_administered ? "tribes" : "other"}
+                                          onChange={(val) => updatePublisher(w.id, pub.id, { tribes_administered: val === "tribes" })}
+                                          options={[
+                                            { value: "other", label: "Other" },
+                                            { value: "tribes", label: "Tribes" },
+                                          ]}
+                                          placeholder="Select"
+                                          className="min-w-[140px]"
+                                        />
+                                      </div>
                                     )}
-                                    
-                                    {/* Remove publisher button */}
-                                    {w.publishers.length > 1 && (
-                                      <button
-                                        type="button"
-                                        onClick={() => removePublisher(w.id, pub.id)}
-                                        className="text-[var(--btn-text-muted)] hover:text-destructive p-1 shrink-0"
-                                      >
-                                        <span className="text-sm">×</span>
-                                      </button>
+
+                                    {/* ROW 3: Resolved Tribes entity */}
+                                    {pub.tribes_administered && pub.pro && tribesEntities[pub.pro] && (
+                                      <div className="text-[12px] text-[var(--btn-text-muted)] italic pl-0.5">
+                                        → {tribesEntities[pub.pro].entity_name}
+                                      </div>
                                     )}
                                   </div>
-                                </div>
-                              ))}
+                                ))}
 
-                              
-                              
-                              {/* Add another publisher */}
-                              <button
-                                type="button"
-                                onClick={() => addPublisher(w.id)}
-                                className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] hover:text-[var(--btn-text)] mt-2"
-                              >
-                                + Add Publisher
-                              </button>
+                                {/* Add publisher button */}
+                                <button
+                                  type="button"
+                                  onClick={() => addPublisher(w.id)}
+                                  className="text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] hover:text-[var(--btn-text)] transition-colors"
+                                >
+                                  + Add Publisher
+                                </button>
+                              </div>
                             </div>
                           </>
                         )}
