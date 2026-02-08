@@ -435,17 +435,7 @@ export default function SongSubmitPage() {
         }
       }
 
-      // 3. Activate the song now that all data is saved
-      const { error: activateError } = await supabase
-        .from("songs")
-        .update({ is_active: true })
-        .eq("id", newSongId);
-
-      if (activateError) {
-        console.error("Failed to activate song:", JSON.stringify(activateError));
-        toast.error("Song saved but failed to activate. Contact support.");
-      }
-
+      // Song stays is_active: false — Tribes staff activates from Queue
       setSubmittedSongId(newSongId);
       setSubmissionComplete(true);
       window.scrollTo(0, 0);
