@@ -84,7 +84,7 @@ export default function TribesAdminDashboard() {
       <AppSectionGrid columns={2}>
         <AppListCard title="Quick Actions" className="h-full">
           <AppListRow title="Submit New Song" subtitle="Add a song to the catalog" onClick={() => navigate("/rights/songs/submit")} />
-          <AppListRow title="View Catalogue" subtitle="Browse your registered songs" onClick={() => navigate("/admin/catalogue")} />
+          <AppListRow title="View Catalog" subtitle="Browse your registered songs" onClick={() => navigate("/admin/catalog")} />
           <AppListRow title="Manage Documents" subtitle="Contracts and agreements" onClick={() => navigate("/admin/documents")} />
         </AppListCard>
       </AppSectionGrid>

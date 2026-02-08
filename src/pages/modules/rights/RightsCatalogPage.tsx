@@ -35,15 +35,15 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 
 /**
- * RIGHTS CATALOGUE PAGE — STAFF MANAGEMENT VIEW
+ * RIGHTS CATALOG PAGE — STAFF MANAGEMENT VIEW
  * 
- * Master catalogue for Tribes staff with full CRUD operations.
+ * Master catalog for Tribes staff with full CRUD operations.
  * Includes multi-select, bulk delete, and all management features.
  */
 
 const ITEMS_PER_PAGE = 50;
 
-type CatalogueStatus = "all" | "active" | "pending" | "inactive";
+type CatalogStatus = "all" | "active" | "pending" | "inactive";
 type SortOption = "a-z" | "newest" | "oldest";
 
 const sortLabels: Record<SortOption, string> = {
@@ -52,7 +52,7 @@ const sortLabels: Record<SortOption, string> = {
   "oldest": "Oldest first",
 };
 
-interface CatalogueSong {
+interface CatalogSong {
   id: string;
   title: string;
   songwriters: string[];
@@ -60,7 +60,7 @@ interface CatalogueSong {
   addedAt: string;
 }
 
-const getStatusText = (status: CatalogueSong["status"]) => {
+const getStatusText = (status: CatalogSong["status"]) => {
   switch (status) {
     case "active":
       return <span className="text-[11px] font-medium text-[hsl(var(--success))]">Active</span>;
@@ -73,7 +73,7 @@ const getStatusText = (status: CatalogueSong["status"]) => {
   }
 };
 
-const statusFilters: { value: CatalogueStatus; label: string }[] = [
+const statusFilters: { value: CatalogStatus; label: string }[] = [
   { value: "all", label: "All" },
   { value: "active", label: "Active" },
   { value: "pending", label: "Pending" },
@@ -105,12 +105,10 @@ function SortDropdown({
 
       {isOpen && (
         <>
-          {/* Backdrop */}
           <div 
             className="fixed inset-0 z-40" 
             onClick={() => setIsOpen(false)} 
           />
-          {/* Dropdown */}
           <div className="absolute right-0 top-full mt-1 z-50 bg-background border border-border rounded-lg shadow-lg overflow-hidden min-w-[160px]">
             {options.map((option) => (
               <button
@@ -138,7 +136,7 @@ function SortDropdown({
   );
 }
 
-export default function RightsCataloguePage() {
+export default function RightsCatalogPage() {
   const navigate = useNavigate();
   const { isPlatformAdmin } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -147,7 +145,7 @@ export default function RightsCataloguePage() {
   const [sortBy, setSortBy] = useState<SortOption>("a-z");
   
   // Data state
-  const [songs, setSongs] = useState<CatalogueSong[]>([]);
+  const [songs, setSongs] = useState<CatalogSong[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
   // Selection state
@@ -158,7 +156,7 @@ export default function RightsCataloguePage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   
-  const statusFilter = (searchParams.get("status") as CatalogueStatus) || "all";
+  const statusFilter = (searchParams.get("status") as CatalogStatus) || "all";
 
   // Fetch songs from database
   const fetchSongs = useCallback(async () => {
@@ -172,9 +170,8 @@ export default function RightsCataloguePage() {
       
       if (error) throw error;
       
-      // Transform data to match CatalogueSong interface
-      const transformedSongs: CatalogueSong[] = (data || []).map((song) => {
-        // Extract writers from metadata
+      // Transform data to match CatalogSong interface
+      const transformedSongs: CatalogSong[] = (data || []).map((song) => {
         const metadata = song.metadata as Record<string, any> || {};
         const writers = metadata.writers || [];
         const songwriters = writers.map((w: { name?: string }) => w.name || "Unknown").filter(Boolean);
@@ -191,18 +188,17 @@ export default function RightsCataloguePage() {
       setSongs(transformedSongs);
     } catch (err: any) {
       console.error("Failed to fetch songs:", err);
-      toast.error("Failed to load catalogue");
+      toast.error("Failed to load catalog");
     } finally {
       setIsLoading(false);
     }
   }, []);
   
-  // Fetch songs on mount
   useEffect(() => {
     fetchSongs();
   }, [fetchSongs]);
 
-  const handleStatusChange = (value: CatalogueStatus) => {
+  const handleStatusChange = (value: CatalogStatus) => {
     if (value === "all") {
       searchParams.delete("status");
     } else {
@@ -246,12 +242,11 @@ export default function RightsCataloguePage() {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedSongs = filteredSongs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  // Reset to page 1 if current page exceeds total pages
   if (currentPage > totalPages && totalPages > 0) {
     setCurrentPage(1);
   }
 
-  // Clear selection when filters, search, pagination, or sort changes
+  // Clear selection when filters change
   useEffect(() => {
     setSelectedSongs(new Set());
     setLastSelectedIndex(null);
@@ -260,21 +255,16 @@ export default function RightsCataloguePage() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Only handle if not in an input
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
-      
-      // Cmd/Ctrl + A: Select all
       if ((e.metaKey || e.ctrlKey) && e.key === 'a') {
         e.preventDefault();
         setSelectedSongs(new Set(paginatedSongs.map(s => s.id)));
       }
-      // Escape: Clear selection
       if (e.key === 'Escape') {
         setSelectedSongs(new Set());
       }
-      // Delete/Backspace: Show delete confirmation (admin only)
       if ((e.key === 'Delete' || e.key === 'Backspace') && selectedSongs.size > 0 && isPlatformAdmin) {
         setShowDeleteDialog(true);
       }
@@ -288,21 +278,18 @@ export default function RightsCataloguePage() {
     const newSelection = new Set(selectedSongs);
     
     if (event.metaKey || event.ctrlKey) {
-      // Cmd/Ctrl + Click: Toggle individual row
       if (newSelection.has(songId)) {
         newSelection.delete(songId);
       } else {
         newSelection.add(songId);
       }
     } else if (event.shiftKey && lastSelectedIndex !== null) {
-      // Shift + Click: Select range
       const start = Math.min(lastSelectedIndex, index);
       const end = Math.max(lastSelectedIndex, index);
       for (let i = start; i <= end; i++) {
         newSelection.add(paginatedSongs[i].id);
       }
     } else {
-      // Regular click: Clear selection and select only this row
       newSelection.clear();
       newSelection.add(songId);
     }
@@ -312,7 +299,7 @@ export default function RightsCataloguePage() {
   };
 
   const handleSongClick = (songId: string) => {
-    navigate(`/rights/catalogue/${songId}`);
+    navigate(`/rights/catalog/${songId}`);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -323,7 +310,6 @@ export default function RightsCataloguePage() {
   const handleDeleteSongs = async () => {
     setIsDeleting(true);
     try {
-      // Soft delete by setting is_active to false
       const { error } = await supabase
         .from("songs")
         .update({ is_active: false })
@@ -332,12 +318,8 @@ export default function RightsCataloguePage() {
       if (error) throw error;
       
       toast.success(`${selectedSongs.size} ${selectedSongs.size === 1 ? 'song' : 'songs'} deleted`);
-      
-      // Clear selection
       setSelectedSongs(new Set());
       setShowDeleteDialog(false);
-      
-      // Refresh the list
       fetchSongs();
     } catch (error) {
       toast.error('Failed to delete songs');
@@ -346,13 +328,12 @@ export default function RightsCataloguePage() {
     }
   };
 
-  // Check if all visible songs are selected
   const allSelected = paginatedSongs.length > 0 && paginatedSongs.every(s => selectedSongs.has(s.id));
   const someSelected = paginatedSongs.some(s => selectedSongs.has(s.id)) && !allSelected;
 
   return (
     <AppPageLayout
-      title="Catalogue"
+      title="Catalog"
       action={
         <AppButton
           intent="secondary"
@@ -365,7 +346,7 @@ export default function RightsCataloguePage() {
       }
     >
 
-      {/* Search - Outside AppSection */}
+      {/* Search */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-4 mb-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -407,7 +388,7 @@ export default function RightsCataloguePage() {
         <AppResponsiveList
           items={paginatedSongs}
           keyExtractor={(song) => song.id}
-          emptyMessage={searchQuery ? "No songs match your search" : "No songs in catalogue"}
+          emptyMessage={searchQuery ? "No songs match your search" : "No songs in catalog"}
           className="[&_.md\\:hidden]:space-y-2"
           renderCard={(song) => (
             <AppItemCard
@@ -445,7 +426,7 @@ export default function RightsCataloguePage() {
                 {paginatedSongs.length === 0 ? (
                   <AppTableEmpty colSpan={5}>
                     <span className="text-muted-foreground text-sm">
-                      {searchQuery ? "No songs match your search" : "No songs in catalogue"}
+                      {searchQuery ? "No songs match your search" : "No songs in catalog"}
                     </span>
                   </AppTableEmpty>
                 ) : (
@@ -526,7 +507,7 @@ export default function RightsCataloguePage() {
               Delete {selectedSongs.size} {selectedSongs.size === 1 ? 'song' : 'songs'}?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the selected songs from the catalogue.
+              This action cannot be undone. This will permanently delete the selected songs from the catalog.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

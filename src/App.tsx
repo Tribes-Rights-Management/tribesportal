@@ -58,7 +58,7 @@ import {
   RightsQueuePage,
   RightsQueueDetailPage,
   RightsClientsPage,
-  RightsCataloguePage,
+  RightsCatalogPage,
   RightsWritersPage,
   RightsContractsPage,
   RightsDocumentsPage,
@@ -79,7 +79,7 @@ import { TribesAdminProtectedRoute } from "@/components/tribes-admin/TribesAdmin
 import { TribesAdminLayout } from "@/layouts/TribesAdminLayout";
 import {
   TribesAdminDashboard,
-  TribesAdminCataloguePage,
+  TribesAdminCatalogPage,
   TribesAdminDocumentsPage,
   TribesAdminRoyaltiesPage,
   TribesAdminSettingsPage,
@@ -276,8 +276,8 @@ const App = () => (
           <Route path="queue" element={<RightsQueuePage />} />
           <Route path="queue/:queueId" element={<RightsQueueDetailPage />} />
           <Route path="clients" element={<RightsClientsPage />} />
-          <Route path="catalogue" element={<RightsCataloguePage />} />
-          <Route path="catalogue/:songId" element={<SongDetailPage />} />
+          <Route path="catalog" element={<RightsCatalogPage />} />
+          <Route path="catalog/:songId" element={<SongDetailPage />} />
           <Route path="writers" element={<RightsWritersPage />} />
           <Route path="songs/submit" element={<SongSubmitPage />} />
           <Route path="contracts" element={<RightsContractsPage />} />
@@ -292,7 +292,7 @@ const App = () => (
         ═══════════════════════════════════════════════════════════════════════ */}
         <Route path="/admin" element={<TribesAdminProtectedRoute><TribesAdminLayout /></TribesAdminProtectedRoute>}>
           <Route index element={<TribesAdminDashboard />} />
-          <Route path="catalogue" element={<TribesAdminCataloguePage />} />
+          <Route path="catalog" element={<TribesAdminCatalogPage />} />
           <Route path="documents" element={<TribesAdminDocumentsPage />} />
           <Route path="payments" element={<TribesAdminRoyaltiesPage />} />
           <Route path="settings" element={<TribesAdminSettingsPage />} />

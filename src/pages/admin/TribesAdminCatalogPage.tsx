@@ -20,16 +20,16 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * ADMIN CATALOGUE PAGE — CLIENT-FACING VIEW
+ * ADMIN CATALOG PAGE — CLIENT-FACING VIEW
  * 
- * Read-only catalogue view for clients.
+ * Read-only catalog view for clients.
  * Shows songs associated with the client's account.
  * No multi-select, no delete functionality.
  */
 
 const ITEMS_PER_PAGE = 50;
 
-type CatalogueStatus = "all" | "active" | "pending" | "inactive";
+type CatalogStatus = "all" | "active" | "pending" | "inactive";
 type SortOption = "a-z" | "newest" | "oldest";
 
 const sortLabels: Record<SortOption, string> = {
@@ -38,7 +38,7 @@ const sortLabels: Record<SortOption, string> = {
   "oldest": "Oldest first",
 };
 
-interface CatalogueSong {
+interface CatalogSong {
   id: string;
   title: string;
   artist: string;
@@ -49,7 +49,7 @@ interface CatalogueSong {
 }
 
 // Mock data - will be replaced with client-specific data
-const mockCatalogueSongs: CatalogueSong[] = Array.from({ length: 47 }, (_, i) => ({
+const mockCatalogSongs: CatalogSong[] = Array.from({ length: 47 }, (_, i) => ({
   id: String(i + 1),
   title: ["Midnight Dreams", "Electric Soul", "Ocean Breeze", "City Lights", "Mountain High", "Sunset Boulevard", "Starlight", "Thunder Road", "Silver Moon", "Golden Hour"][i % 10],
   artist: ["Luna Wave", "The Frequency", "Coastal Sounds", "Urban Echo", "Summit", "Horizon", "Velvet", "Chrome Hearts", "Neon Lights", "Desert Rose"][i % 10],
@@ -65,7 +65,7 @@ const mockCatalogueSongs: CatalogueSong[] = Array.from({ length: 47 }, (_, i) =>
   addedAt: new Date(2026, 0, 28 - (i % 30)).toISOString(),
 }));
 
-const getStatusText = (status: CatalogueSong["status"]) => {
+const getStatusText = (status: CatalogSong["status"]) => {
   switch (status) {
     case "active":
       return <span className="text-[11px] font-medium text-[hsl(var(--success))]">Active</span>;
@@ -78,7 +78,7 @@ const getStatusText = (status: CatalogueSong["status"]) => {
   }
 };
 
-const statusFilters: { value: CatalogueStatus; label: string }[] = [
+const statusFilters: { value: CatalogStatus; label: string }[] = [
   { value: "all", label: "All" },
   { value: "active", label: "Active" },
   { value: "pending", label: "Pending" },
@@ -110,12 +110,10 @@ function SortDropdown({
 
       {isOpen && (
         <>
-          {/* Backdrop */}
           <div 
             className="fixed inset-0 z-40" 
             onClick={() => setIsOpen(false)} 
           />
-          {/* Dropdown */}
           <div className="absolute right-0 top-full mt-1 z-50 bg-background border border-border rounded-lg shadow-lg overflow-hidden min-w-[160px]">
             {options.map((option) => (
               <button
@@ -143,16 +141,16 @@ function SortDropdown({
   );
 }
 
-export default function TribesAdminCataloguePage() {
+export default function TribesAdminCatalogPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<SortOption>("a-z");
   
-  const statusFilter = (searchParams.get("status") as CatalogueStatus) || "all";
+  const statusFilter = (searchParams.get("status") as CatalogStatus) || "all";
 
-  const handleStatusChange = (value: CatalogueStatus) => {
+  const handleStatusChange = (value: CatalogStatus) => {
     if (value === "all") {
       searchParams.delete("status");
     } else {
@@ -164,8 +162,8 @@ export default function TribesAdminCataloguePage() {
 
   // Filter by status
   let filteredSongs = statusFilter === "all"
-    ? mockCatalogueSongs
-    : mockCatalogueSongs.filter(song => song.status === statusFilter);
+    ? mockCatalogSongs
+    : mockCatalogSongs.filter(song => song.status === statusFilter);
 
   // Filter by search query
   if (searchQuery.trim()) {
@@ -197,13 +195,12 @@ export default function TribesAdminCataloguePage() {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedSongs = filteredSongs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  // Reset to page 1 if current page exceeds total pages
   if (currentPage > totalPages && totalPages > 0) {
     setCurrentPage(1);
   }
 
   const handleSongClick = (songId: string) => {
-    navigate(`/admin/catalogue/${songId}`);
+    navigate(`/admin/catalog/${songId}`);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -212,10 +209,10 @@ export default function TribesAdminCataloguePage() {
   };
 
   return (
-    <AppPageLayout title="My Catalogue">
+    <AppPageLayout title="My Catalog">
 
       <AppSection spacing="none">
-        {/* Search Input - subtle bottom border */}
+        {/* Search Input */}
         <div className="relative mb-2">
           <input
             type="text"
@@ -262,7 +259,7 @@ export default function TribesAdminCataloguePage() {
         <AppResponsiveList
           items={paginatedSongs}
           keyExtractor={(song) => song.id}
-          emptyMessage={searchQuery ? "No songs match your search" : "No songs in your catalogue"}
+          emptyMessage={searchQuery ? "No songs match your search" : "No songs in your catalog"}
           className="[&_.md\\:hidden]:space-y-2"
           renderCard={(song) => (
             <AppItemCard
@@ -287,7 +284,7 @@ export default function TribesAdminCataloguePage() {
                 {paginatedSongs.length === 0 ? (
                   <AppTableEmpty colSpan={4}>
                     <span className="text-muted-foreground text-sm">
-                      {searchQuery ? "No songs match your search" : "No songs in your catalogue"}
+                      {searchQuery ? "No songs match your search" : "No songs in your catalog"}
                     </span>
                   </AppTableEmpty>
                 ) : (

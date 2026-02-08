@@ -348,7 +348,7 @@ export default function SongSubmitPage() {
 
   const goToPrevStep = () => {
     if (step > 1) setStep((step - 1) as FlowStep);
-    else navigate("/rights/catalogue");
+    else navigate("/rights/catalog");
   };
 
   const submit = async () => {
@@ -594,7 +594,7 @@ export default function SongSubmitPage() {
     <div className="h-full flex flex-col bg-[var(--page-bg)]">
       {/* Header */}
       <header className="shrink-0 h-14 border-b border-[var(--border-subtle)] bg-[var(--topbar-bg)] flex items-center px-[20px] sm:px-6">
-        <button onClick={() => navigate("/rights/catalogue")} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
+        <button onClick={() => navigate("/rights/catalog")} className="p-2 -ml-2 rounded-lg hover:bg-[var(--muted-wash)] text-[var(--btn-text-muted)] hover:text-[var(--btn-text)]">
           <ArrowLeft className="h-5 w-5" />
         </button>
         <span className="ml-3 text-sm font-medium text-[var(--btn-text)]">Add Song</span>
@@ -674,7 +674,7 @@ export default function SongSubmitPage() {
                 </div>
                 <h2 className="text-xl font-semibold text-[var(--btn-text)]">Song Submitted Successfully</h2>
                 <p className="text-sm text-[var(--btn-text-muted)] max-w-md mx-auto">
-                  Your song has been submitted for review. We've emailed a confirmation to your primary email address. You can track the status of your submission in your catalogue.
+                  Your song has been submitted for review. We've emailed a confirmation to your primary email address. You can track the status of your submission in your catalog.
                 </p>
               </div>
 
@@ -774,10 +774,10 @@ export default function SongSubmitPage() {
               {/* Action Buttons */}
               <div className="flex items-center justify-center gap-4 pt-4 pb-8">
                 <button 
-                  onClick={() => navigate('/rights/catalogue')}
+                  onClick={() => navigate('/rights/catalog')}
                   className="px-5 py-2.5 text-sm font-medium rounded-xl border border-[var(--border-subtle)] text-[var(--btn-text)] hover:bg-[var(--muted-wash)]"
                 >
-                  View Catalogue
+                  View Catalog
                 </button>
                 <button 
                   onClick={resetForm}
