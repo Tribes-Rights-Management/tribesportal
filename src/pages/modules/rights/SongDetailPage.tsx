@@ -34,12 +34,11 @@ interface SongDetail {
 
 interface EditableFields {
   title: string;
-  iswc: string;
   language: string;
-  genre: string;
-  release_date: string;
   is_active: boolean;
   lyrics: string;
+  alternate_titles: string;
+  writers: { name: string; ipi: string; split: number }[];
 }
 
 // ── Slug helper ──────────────────────────────────────────────
@@ -159,12 +158,11 @@ export default function SongDetailPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [editedFields, setEditedFields] = useState<EditableFields>({
     title: "",
-    iswc: "",
     language: "",
-    genre: "",
-    release_date: "",
     is_active: true,
     lyrics: "",
+    alternate_titles: "",
+    writers: [],
   });
 
   const fetchSong = useCallback(async () => {
@@ -207,17 +205,16 @@ export default function SongDetailPage() {
       const metadata = (song.metadata as Record<string, any>) || {};
       setEditedFields({
         title: song.title || "",
-        iswc: song.iswc || "",
         language: song.language || "",
-        genre: song.genre || "",
-        release_date: song.release_date || "",
         is_active: song.is_active,
         lyrics: metadata.lyrics || "",
+        alternate_titles: song.alternate_titles?.join(", ") || "",
+        writers: metadata.writers || [],
       });
     }
   }, [editing, song]);
 
-  const updateField = (field: keyof EditableFields, value: string | boolean) => {
+  const updateField = (field: keyof EditableFields, value: any) => {
     setEditedFields((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -230,17 +227,18 @@ export default function SongDetailPage() {
       const updatedMetadata = {
         ...currentMetadata,
         lyrics: editedFields.lyrics || undefined,
+        writers: editedFields.writers,
       };
 
       const { error } = await supabase
         .from("songs")
         .update({
           title: editedFields.title,
-          iswc: editedFields.iswc || null,
           language: editedFields.language || null,
-          genre: editedFields.genre || null,
-          release_date: editedFields.release_date || null,
           is_active: editedFields.is_active,
+          alternate_titles: editedFields.alternate_titles
+            ? editedFields.alternate_titles.split(",").map((t: string) => t.trim()).filter(Boolean)
+            : null,
           metadata: updatedMetadata as any,
         })
         .eq("id", songId);
@@ -369,18 +367,12 @@ export default function SongDetailPage() {
               </DetailRow>
             )}
 
-            {(song.iswc || editing) && (
-              <DetailRow
-                label="ISWC"
-                editing={editing}
-                value={editedFields.iswc}
-                onValueChange={(v) => updateField("iswc", v)}
-              >
-                <span className="font-mono">{song.iswc || "—"}</span>
-              </DetailRow>
-            )}
-
-            <DetailRow label="Alternate Title">
+            <DetailRow
+              label="Alternate Title"
+              editing={editing}
+              value={editedFields.alternate_titles}
+              onValueChange={(v) => updateField("alternate_titles", v)}
+            >
               {song.alternate_titles && song.alternate_titles.length > 0
                 ? song.alternate_titles.join(", ")
                 : <span className="text-muted-foreground/50">—</span>}
@@ -395,43 +387,120 @@ export default function SongDetailPage() {
         </SectionPanel>
 
         {/* ── Songwriters ────────────────────────────────── */}
-        {writers.length > 0 && (
-          <SectionPanel title="Songwriters">
-            <div className="divide-y divide-border">
-              {writers.map((writer, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between py-2.5"
-                >
-                  <span className="text-[14px] text-foreground font-medium">
-                    {writer.name || "Unknown"}
-                  </span>
-                  <div className="flex items-center gap-4">
-                    {writer.ipi && (
-                      <span className="text-[12px] text-muted-foreground font-mono">
-                        {writer.ipi}
-                      </span>
-                    )}
-                    {writer.split != null && (
-                      <span className="text-[12px] text-muted-foreground">
-                        {writer.split}%
-                      </span>
-                    )}
+        <SectionPanel title="Songwriters">
+          {editing ? (
+            <div className="space-y-3">
+              {editedFields.writers.map((writer, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <input
+                      value={writer.name}
+                      onChange={(e) => {
+                        const updated = [...editedFields.writers];
+                        updated[index] = { ...updated[index], name: e.target.value };
+                        updateField("writers", updated);
+                      }}
+                      placeholder="Writer name"
+                      className="w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+                    />
                   </div>
+                  <div className="w-[140px]">
+                    <input
+                      value={writer.ipi}
+                      onChange={(e) => {
+                        const updated = [...editedFields.writers];
+                        updated[index] = { ...updated[index], ipi: e.target.value };
+                        updateField("writers", updated);
+                      }}
+                      placeholder="IPI #"
+                      className="w-full text-[12px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 font-mono focus:outline-none focus:border-primary/40 transition-colors"
+                    />
+                  </div>
+                  <div className="w-[70px]">
+                    <input
+                      type="number"
+                      value={writer.split}
+                      onChange={(e) => {
+                        const updated = [...editedFields.writers];
+                        updated[index] = { ...updated[index], split: Number(e.target.value) };
+                        updateField("writers", updated);
+                      }}
+                      placeholder="%"
+                      className="w-full text-[12px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 text-right focus:outline-none focus:border-primary/40 transition-colors"
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      const updated = editedFields.writers.filter((_, i) => i !== index);
+                      updateField("writers", updated);
+                    }}
+                    className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                    title="Remove writer"
+                  >
+                    <span className="text-[14px]">×</span>
+                  </button>
                 </div>
               ))}
+              <button
+                onClick={() => {
+                  const updated = [...editedFields.writers, { name: "", ipi: "", split: 0 }];
+                  updateField("writers", updated);
+                }}
+                className="text-[12px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors mt-1"
+              >
+                + Add Writer
+              </button>
             </div>
-          </SectionPanel>
-        )}
+          ) : (
+            writers.length > 0 ? (
+              <div className="divide-y divide-border">
+                {writers.map((writer, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between py-2.5"
+                  >
+                    <span className="text-[14px] text-foreground font-medium">
+                      {writer.name || "Unknown"}
+                    </span>
+                    <div className="flex items-center gap-4">
+                      {writer.ipi && (
+                        <span className="text-[12px] text-muted-foreground font-mono">
+                          {writer.ipi}
+                        </span>
+                      )}
+                      {writer.split != null && (
+                        <span className="text-[12px] text-muted-foreground">
+                          {writer.split}%
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-[13px] text-muted-foreground/50">No songwriters added</p>
+            )
+          )}
+        </SectionPanel>
 
         {/* ── Lyrics ─────────────────────────────────────── */}
         {(metadata.lyrics || editing) && (
           <SectionPanel title="Lyrics">
             {editing ? (
               <textarea
+                ref={(el) => {
+                  if (el) {
+                    el.style.height = 'auto';
+                    el.style.height = el.scrollHeight + 'px';
+                  }
+                }}
                 value={editedFields.lyrics}
-                onChange={(e) => updateField("lyrics", e.target.value)}
-                className="w-full text-[13px] text-foreground bg-transparent border border-border rounded px-3 py-2 min-h-[160px] resize-y focus:outline-none focus:border-primary/40 transition-colors font-sans leading-relaxed"
+                onChange={(e) => {
+                  updateField("lyrics", e.target.value);
+                  e.target.style.height = 'auto';
+                  e.target.style.height = e.target.scrollHeight + 'px';
+                }}
+                className="w-full text-[13px] text-foreground bg-transparent border border-border rounded px-3 py-2 min-h-[400px] resize-y focus:outline-none focus:border-primary/40 transition-colors font-sans leading-relaxed overflow-hidden"
                 placeholder="Enter lyrics…"
               />
             ) : (
