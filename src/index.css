@@ -1561,7 +1561,7 @@ html[data-ui-density="compact"] {
   /* CRITICAL: Radix checkbox renders as button â€” prevent inflation */
   button[role="checkbox"] {
     min-height: unset;
-    height: 18px;
+    height: 14px;
     align-items: center;
   }
   

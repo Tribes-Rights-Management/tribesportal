@@ -95,7 +95,7 @@ export function AppCheckboxGroup({
               >
                 <div
                   className={cn(
-                    "h-4 w-4 rounded border flex items-center justify-center transition-colors",
+                    "h-[14px] w-[14px] rounded border flex items-center justify-center transition-colors",
                     isChecked
                       ? "bg-primary border-primary"
                       : error
@@ -104,7 +104,7 @@ export function AppCheckboxGroup({
                   )}
                 >
                   {isChecked && (
-                    <Check className="h-3 w-3 text-primary-foreground" strokeWidth={2.5} />
+                    <Check className="h-[10px] w-[10px] text-primary-foreground" strokeWidth={2.5} />
                   )}
                 </div>
                 <span className="text-[13px]">{option.label}</span>
@@ -129,14 +129,14 @@ export function AppCheckboxGroup({
               >
                 <div
                   className={cn(
-                    "h-4 w-4 rounded border flex items-center justify-center transition-colors shrink-0",
+                    "h-[14px] w-[14px] rounded border flex items-center justify-center transition-colors shrink-0",
                     isChecked
                       ? "bg-primary border-primary"
                       : "border-muted-foreground/40"
                   )}
                 >
                   {isChecked && (
-                    <Check className="h-3 w-3 text-primary-foreground" strokeWidth={2.5} />
+                    <Check className="h-[10px] w-[10px] text-primary-foreground" strokeWidth={2.5} />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">

@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
  * - White/transparent interior (NEVER filled)
  * - Checked: dark checkmark only, background stays white
  * - Indeterminate: horizontal line (Minus icon) for "some selected"
- * - Larger hit area for accessibility (18x18)
+ * - Compact institutional size (14x14) with adequate hit area via padding
  */
 
 const Checkbox = React.forwardRef<
@@ -26,7 +26,7 @@ const Checkbox = React.forwardRef<
     ref={ref}
     checked={checked}
     className={cn(
-      "peer h-[18px] w-[18px] shrink-0 bg-background transition-colors duration-100 ease-out",
+      "peer h-[14px] w-[14px] shrink-0 bg-background transition-colors duration-100 ease-out",
       "data-[state=checked]:bg-background",
       "data-[state=indeterminate]:bg-background",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
@@ -36,15 +36,15 @@ const Checkbox = React.forwardRef<
     style={{ 
       borderRadius: 0,
       border: 'none',
-      boxShadow: 'inset 0 0 0 1.5px #888',
+      boxShadow: 'inset 0 0 0 1px #888',
     }}
     {...props}
   >
     <CheckboxPrimitive.Indicator className={cn("flex items-center justify-center text-foreground")}>
       {checked === "indeterminate" ? (
-        <Minus className="h-3 w-3" strokeWidth={2.5} />
+        <Minus className="h-[10px] w-[10px]" strokeWidth={2.5} />
       ) : (
-        <Check className="h-3 w-3" strokeWidth={2.5} />
+        <Check className="h-[10px] w-[10px]" strokeWidth={2.5} />
       )}
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
