@@ -912,7 +912,7 @@ export default function SongSubmitPage() {
                         </p>
                         {w.publishers.filter(p => p.publisher_id).map(pub => (
                           <p key={pub.id} className="text-xs text-[var(--btn-text-muted)] ml-4">
-                            Publisher: {pub.name} ({pub.pro || "—"}) {pub.tribes_administered ? "— Tribes administered" : ""}
+                            Publisher: {pub.name} ({pub.pro || "—"}) {pub.tribes_administered ? "— Tribes" : ""}
                           </p>
                         ))}
                       </div>
@@ -1033,15 +1033,18 @@ export default function SongSubmitPage() {
                 </Select>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Song Type <span className="text-destructive">*</span></label>
-                <div className="flex flex-wrap gap-3">
+                <select
+                  value={data.songType}
+                  onChange={(e) => setData(prev => ({ ...prev, songType: e.target.value as SongData["songType"] }))}
+                  className="w-full h-10 px-3 text-sm bg-card border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
+                >
+                  <option value="">Select song type</option>
                   {SONG_TYPES.map(t => (
-                    <button key={t.value} onClick={() => setData(prev => ({ ...prev, songType: t.value as SongData["songType"] }))} className={cn("px-4 py-2.5 text-sm font-medium rounded-xl border-2", data.songType === t.value ? "border-[var(--btn-text)] bg-[var(--btn-text)] text-white" : "border-[var(--border-subtle)] text-[var(--btn-text)]")}>
-                      {t.label}
-                    </button>
+                    <option key={t.value} value={t.value}>{t.label}</option>
                   ))}
-                </div>
+                </select>
                 {["public_domain", "derivative", "medley"].includes(data.songType) && (
                   <div className="space-y-2 mt-4">
                     <label className="text-sm font-medium text-[var(--btn-text)]">Original work title <span className="text-destructive">*</span></label>
@@ -1228,19 +1231,26 @@ export default function SongSubmitPage() {
                                       {pub.pro || "—"}
                                     </span>
                                     
-                                    {/* Tribes administration toggle */}
-                                    <div className="w-[160px] shrink-0">
+                                    {/* Administrator toggle */}
+                                    <div className="w-[120px] shrink-0">
                                       <select
-                                        value={pub.tribes_administered ? "yes" : "no"}
+                                        value={pub.tribes_administered ? "tribes" : "other"}
                                         onChange={(e) => {
-                                          updatePublisher(w.id, pub.id, { tribes_administered: e.target.value === "yes" });
+                                          updatePublisher(w.id, pub.id, { tribes_administered: e.target.value === "tribes" });
                                         }}
-                                        className="w-full h-9 px-2 text-sm bg-[var(--card-bg)] border border-[var(--border-subtle)] rounded-lg"
+                                        className="w-full h-9 px-2 text-sm bg-card border border-border rounded-lg"
                                       >
-                                        <option value="no">Self-administered</option>
-                                        <option value="yes">Tribes administers</option>
+                                        <option value="other">Other</option>
+                                        <option value="tribes">Tribes</option>
                                       </select>
                                     </div>
+                                    
+                                    {/* Show resolved Tribes entity inline */}
+                                    {pub.tribes_administered && pub.pro && tribesEntities[pub.pro] && (
+                                      <span className="text-[11px] text-muted-foreground italic whitespace-nowrap shrink-0">
+                                        → {tribesEntities[pub.pro].entity_name}
+                                      </span>
+                                    )}
                                     
                                     {/* Remove publisher button */}
                                     {w.publishers.length > 1 && (
@@ -1256,15 +1266,7 @@ export default function SongSubmitPage() {
                                 </div>
                               ))}
 
-                              {/* Show resolved Tribes entity below when administered */}
-                              {w.publishers.some(p => p.tribes_administered && p.pro) && (
-                                <div className="mt-1 text-[11px] text-[var(--btn-text-muted)] italic pl-1">
-                                  {w.publishers
-                                    .filter(p => p.tribes_administered && p.pro)
-                                    .map(p => `→ ${tribesEntities[p.pro]?.entity_name || "No Tribes entity for this PRO"}`)
-                                    .join(", ")}
-                                </div>
-                              )}
+                              
                               
                               {/* Add another publisher */}
                               <button
@@ -1566,7 +1568,7 @@ export default function SongSubmitPage() {
                       {w.publishers.filter(p => p.publisher_id).map(pub => (
                         <div key={pub.id} className="flex justify-between text-xs ml-4 text-[var(--btn-text-muted)]">
                           <span>Publisher: {pub.name} ({pub.pro || "—"})</span>
-                          <span>{pub.tribes_administered ? "Tribes administered" : "Self-administered"}</span>
+                          <span>{pub.tribes_administered ? "Tribes" : "Other"}</span>
                         </div>
                       ))}
                     </div>
