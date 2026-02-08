@@ -237,7 +237,7 @@ export default function RightsPublishersPage() {
       {/* Table */}
       <div className="overflow-x-auto -mx-4 sm:mx-0">
         <div className="px-4 sm:px-0">
-          <AppTable columns={["40%", "20%", "20%", "20%"]}>
+          <AppTable columns={["45%", "20%", "25%", "10%"]}>
             <AppTableHeader>
               <AppTableRow header>
                 <AppTableHead className="pl-5">Name</AppTableHead>
