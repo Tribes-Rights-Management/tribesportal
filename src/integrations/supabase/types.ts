@@ -2680,6 +2680,7 @@ export type Database = {
       song_ownership: {
         Row: {
           administrator_id: string | null
+          controlled: boolean
           created_at: string
           created_by: string | null
           effective_from: string | null
@@ -2694,6 +2695,7 @@ export type Database = {
         }
         Insert: {
           administrator_id?: string | null
+          controlled?: boolean
           created_at?: string
           created_by?: string | null
           effective_from?: string | null
@@ -2708,6 +2710,7 @@ export type Database = {
         }
         Update: {
           administrator_id?: string | null
+          controlled?: boolean
           created_at?: string
           created_by?: string | null
           effective_from?: string | null
