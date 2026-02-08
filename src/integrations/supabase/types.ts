@@ -3052,6 +3052,7 @@ export type Database = {
           id: string
           share: number
           song_id: string
+          tribes_administered: boolean
           updated_at: string | null
           writer_id: string
         }
@@ -3061,6 +3062,7 @@ export type Database = {
           id?: string
           share?: number
           song_id: string
+          tribes_administered?: boolean
           updated_at?: string | null
           writer_id: string
         }
@@ -3070,6 +3072,7 @@ export type Database = {
           id?: string
           share?: number
           song_id?: string
+          tribes_administered?: boolean
           updated_at?: string | null
           writer_id?: string
         }
