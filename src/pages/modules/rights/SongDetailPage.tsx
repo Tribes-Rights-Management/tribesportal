@@ -367,6 +367,11 @@ function PublisherTypeahead({
   );
 }
 
+// ── Algolia writer search constants ─────────────────────────
+const ALGOLIA_APP_ID = "8WVEYVACJ3";
+const ALGOLIA_SEARCH_KEY = "00c22202043b8d20f009257782838d48";
+const ALGOLIA_INDEX = "writers";
+
 // ── Main Component ──────────────────────────────────────────
 export default function SongDetailPage() {
   const { songId } = useParams<{ songId: string }>();
@@ -376,6 +381,47 @@ export default function SongDetailPage() {
   const [editing, setEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [ownership, setOwnership] = useState<OwnershipRow[]>([]);
+  const [writerSearchResults, setWriterSearchResults] = useState<Record<number, any[]>>({});
+  const [activeWriterSearch, setActiveWriterSearch] = useState<number | null>(null);
+
+  // ── Algolia writer search ─────────────────────────────────
+  const searchWriters = async (query: string, index: number) => {
+    if (!query.trim() || query.length < 2) {
+      setWriterSearchResults(prev => ({ ...prev, [index]: [] }));
+      return;
+    }
+    try {
+      const response = await fetch(
+        `https://${ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}/query`,
+        {
+          method: "POST",
+          headers: {
+            "X-Algolia-API-Key": ALGOLIA_SEARCH_KEY,
+            "X-Algolia-Application-Id": ALGOLIA_APP_ID,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query, hitsPerPage: 8 }),
+        }
+      );
+      const data = await response.json();
+      setWriterSearchResults(prev => ({ ...prev, [index]: data.hits || [] }));
+    } catch (error) {
+      console.error("Writer search error:", error);
+    }
+  };
+
+  const selectWriter = (index: number, hit: any) => {
+    const updated = [...editedFields.writers];
+    updated[index] = {
+      ...updated[index],
+      name: hit.name,
+      ipi: hit.ipi_number || "",
+      split: updated[index].split,
+    };
+    updateField("writers", updated);
+    setWriterSearchResults(prev => ({ ...prev, [index]: [] }));
+    setActiveWriterSearch(null);
+  };
   
   const [editedFields, setEditedFields] = useState<EditableFields>({
     title: "",
@@ -726,17 +772,39 @@ export default function SongDetailPage() {
               </div>
               {editedFields.writers.map((writer, index) => (
                 <div key={index} className="flex items-center gap-3">
-                  <div className="flex-1">
+                  <div className="flex-1 relative">
                     <input
                       value={writer.name}
                       onChange={(e) => {
                         const updated = [...editedFields.writers];
                         updated[index] = { ...updated[index], name: e.target.value };
                         updateField("writers", updated);
+                        searchWriters(e.target.value, index);
+                        setActiveWriterSearch(index);
                       }}
-                      placeholder="Writer name"
+                      onFocus={() => setActiveWriterSearch(index)}
+                      onBlur={() => setTimeout(() => setActiveWriterSearch(null), 200)}
+                      placeholder="Type to search writers..."
                       className="w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
                     />
+                    {activeWriterSearch === index && writerSearchResults[index]?.length > 0 && (
+                      <div className="absolute z-20 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        {writerSearchResults[index].map((hit: any) => (
+                          <button
+                            key={hit.objectID}
+                            type="button"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => selectWriter(index, hit)}
+                            className="w-full px-3 py-2 text-left hover:bg-muted/50 border-b border-border last:border-b-0 transition-colors flex items-center justify-between gap-3"
+                          >
+                            <span className="font-medium text-[13px] text-foreground">{hit.name}</span>
+                            <span className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded shrink-0">
+                              {hit.pro || "—"}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="w-[140px]">
                     <input
