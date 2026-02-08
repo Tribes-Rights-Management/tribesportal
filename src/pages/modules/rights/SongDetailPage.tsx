@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
+import { useDebounce } from "@/hooks/useDebounce";
 import { AppPageLayout, AppSection } from "@/components/app-ui";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -11,10 +11,10 @@ import { cn } from "@/lib/utils";
  *
  * Route: /rights/catalog/:songId/:songSlug?
  * Five-section composition record:
- *   1. Overview (Title, Language, Alternate Title, Duration, CCLI Song ID)
+ *   1. Overview (Title, Language, Alternate Title, Duration)
  *   2. Songwriters (metadata.writers — CRUD)
- *   3. Ownership (song_ownership table — CRUD with publisher/administrator)
- *   4. Registration & Identifiers (ISWC + CCLI Song ID — read-only reference)
+ *   3. Ownership (song_ownership table — CRUD with typeahead publisher/administrator)
+ *   4. Label Copy (placeholder)
  *   5. Lyrics (metadata.lyrics)
  */
 
@@ -59,10 +59,6 @@ interface EditableOwnershipRow {
   _deleted?: boolean;
 }
 
-interface PublisherOption {
-  id: string;
-  name: string;
-}
 
 interface EditableFields {
   title: string;
@@ -181,34 +177,130 @@ function SectionPanel({ title, children }: { title: string; children: React.Reac
   );
 }
 
-// ── Publisher Select ────────────────────────────────────────
-function PublisherSelect({
+// ── Interested Party Typeahead ──────────────────────────────
+function InterestedPartyTypeahead({
   value,
-  publishers,
   onChange,
-  placeholder = "Select publisher…",
+  partyType,
+  placeholder = "Type to search…",
 }: {
   value: string;
-  publishers: PublisherOption[];
   onChange: (id: string, name: string) => void;
+  partyType: "publisher" | "administrator";
   placeholder?: string;
 }) {
+  const [search, setSearch] = useState(value);
+  const [open, setOpen] = useState(false);
+  const [results, setResults] = useState<{ id: string; name: string }[]>([]);
+  const [isCreating, setIsCreating] = useState(false);
+  const debouncedSearch = useDebounce(search, 300);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // Sync external value changes
+  useEffect(() => {
+    setSearch(value);
+  }, [value]);
+
+  // Query interested_parties on debounced search
+  useEffect(() => {
+    if (!debouncedSearch || debouncedSearch.length < 1) {
+      setResults([]);
+      return;
+    }
+    const fetchResults = async () => {
+      const { data } = await supabase
+        .from("interested_parties")
+        .select("id, name")
+        .eq("party_type", partyType)
+        .ilike("name", `%${debouncedSearch}%`)
+        .order("name")
+        .limit(5);
+      setResults(data || []);
+    };
+    fetchResults();
+  }, [debouncedSearch, partyType]);
+
+  // Click-outside to close
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const handleSelect = (id: string, name: string) => {
+    setSearch(name);
+    onChange(id, name);
+    setOpen(false);
+  };
+
+  const handleCreate = async () => {
+    if (!search.trim() || isCreating) return;
+    setIsCreating(true);
+    try {
+      const { data, error } = await supabase
+        .from("interested_parties")
+        .insert({ name: search.trim(), party_type: partyType } as any)
+        .select("id, name")
+        .single();
+      if (error) throw error;
+      if (data) {
+        handleSelect(data.id, data.name);
+        toast.success(`Added ${data.name} as ${partyType}`);
+      }
+    } catch (err: any) {
+      console.error("Failed to create interested party:", err);
+      toast.error("Failed to add entry");
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const showDropdown = open && search.length >= 1;
+  const noExactMatch = results.length === 0 || !results.some(
+    (r) => r.name.toLowerCase() === search.trim().toLowerCase()
+  );
+
   return (
-    <select
-      value={value}
-      onChange={(e) => {
-        const pub = publishers.find((p) => p.id === e.target.value);
-        onChange(e.target.value, pub?.name || "");
-      }}
-      className="w-full text-[13px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
-    >
-      <option value="">{placeholder}</option>
-      {publishers.map((p) => (
-        <option key={p.id} value={p.id}>
-          {p.name}
-        </option>
-      ))}
-    </select>
+    <div ref={wrapperRef} className="relative">
+      <input
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setOpen(true);
+        }}
+        onFocus={() => search.length >= 1 && setOpen(true)}
+        placeholder={placeholder}
+        className="w-full text-[13px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+      />
+      {showDropdown && (
+        <div className="absolute left-0 right-0 top-full mt-1 bg-card border border-border rounded shadow-sm z-10 max-h-[200px] overflow-y-auto">
+          {results.map((r) => (
+            <button
+              key={r.id}
+              type="button"
+              onClick={() => handleSelect(r.id, r.name)}
+              className="w-full text-left px-3 py-2 text-[14px] text-foreground hover:bg-muted/50 cursor-pointer transition-colors"
+            >
+              {r.name}
+            </button>
+          ))}
+          {noExactMatch && search.trim().length > 0 && (
+            <button
+              type="button"
+              onClick={handleCreate}
+              disabled={isCreating}
+              className="w-full text-left px-3 py-2 text-[12px] text-[var(--app-focus)] hover:bg-muted/50 cursor-pointer font-medium transition-colors"
+            >
+              {isCreating ? "Adding…" : `+ Add "${search.trim()}" as new ${partyType}`}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -221,7 +313,7 @@ export default function SongDetailPage() {
   const [editing, setEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [ownership, setOwnership] = useState<OwnershipRow[]>([]);
-  const [publishers, setPublishers] = useState<PublisherOption[]>([]);
+  
   const [editedFields, setEditedFields] = useState<EditableFields>({
     title: "",
     language: "",
@@ -282,33 +374,12 @@ export default function SongDetailPage() {
     }
   }, [songId]);
 
-  // ── Fetch publishers for dropdowns ───────────────────────
-  const fetchPublishers = useCallback(async () => {
-    try {
-      const { data, error } = await supabase
-        .from("publishers")
-        .select("id, name")
-        .eq("is_active", true)
-        .order("name");
-
-      if (error) throw error;
-      setPublishers(data || []);
-    } catch (err: any) {
-      console.error("Failed to fetch publishers:", err);
-    }
-  }, []);
 
   useEffect(() => {
     fetchSong();
     fetchOwnership();
   }, [fetchSong, fetchOwnership]);
 
-  // Fetch publishers when entering edit mode
-  useEffect(() => {
-    if (editing) {
-      fetchPublishers();
-    }
-  }, [editing, fetchPublishers]);
 
   // Populate edit fields when entering edit mode
   useEffect(() => {
@@ -695,27 +766,27 @@ export default function SongDetailPage() {
                 .map(({ row, index }) => (
                   <div key={index} className="flex items-center gap-3">
                     <div className="flex-1">
-                      <PublisherSelect
-                        value={row.publisher_id}
-                        publishers={publishers}
+                      <InterestedPartyTypeahead
+                        value={row.publisher_name}
                         onChange={(id, name) => {
                           const updated = [...editedFields.ownership];
                           updated[index] = { ...updated[index], publisher_id: id, publisher_name: name };
                           updateField("ownership", updated);
                         }}
-                        placeholder="Select publisher…"
+                        partyType="publisher"
+                        placeholder="Type to search publishers…"
                       />
                     </div>
                     <div className="flex-1">
-                      <PublisherSelect
-                        value={row.administrator_id}
-                        publishers={publishers}
+                      <InterestedPartyTypeahead
+                        value={row.administrator_name}
                         onChange={(id, name) => {
                           const updated = [...editedFields.ownership];
                           updated[index] = { ...updated[index], administrator_id: id, administrator_name: name };
                           updateField("ownership", updated);
                         }}
-                        placeholder="Select administrator…"
+                        partyType="administrator"
+                        placeholder="Type to search administrators…"
                       />
                     </div>
                     <div className="w-[70px]">
@@ -831,24 +902,9 @@ export default function SongDetailPage() {
           )}
         </SectionPanel>
 
-        {/* ─── 4. REGISTRATION & IDENTIFIERS ────────────── */}
-        <SectionPanel title="Registration & Identifiers">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            <DetailRow label="ISWC">
-              {song.iswc ? (
-                <span className="font-mono">{song.iswc}</span>
-              ) : (
-                <span className="text-muted-foreground">—</span>
-              )}
-            </DetailRow>
-            <DetailRow label="CCLI Song ID">
-              {song.ccli_song_id ? (
-                <span className="font-mono">{song.ccli_song_id}</span>
-              ) : (
-                <span className="text-muted-foreground">—</span>
-              )}
-            </DetailRow>
-          </div>
+        {/* ─── 4. LABEL COPY (placeholder) ──────────────── */}
+        <SectionPanel title="Label Copy">
+          <p className="text-[13px] text-muted-foreground/50">No label copy information</p>
         </SectionPanel>
 
         {/* ─── 5. LYRICS ────────────────────────────────── */}
