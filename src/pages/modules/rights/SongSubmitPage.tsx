@@ -380,69 +380,68 @@ export default function SongSubmitPage() {
 
     setIsSubmitting(true);
     try {
-      const year = data.releaseStatus === "no" ? data.creationYear : data.publicationYear;
-      const lyrics = data.lyricsEntryMode === "paste" ? data.lyricsFull : data.lyricsSections.map(s => `[${s.type?.toUpperCase()}]\n${s.content}`).join("\n\n");
-      
-      // 1. Create the song
-      const songPayload = {
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) throw new Error("Not authenticated");
+
+      const lyrics = data.lyricsEntryMode === "paste"
+        ? data.lyricsFull
+        : data.lyricsSections.map(s => `[${s.type?.toUpperCase()}]\n${s.content}`).join("\n\n");
+
+      // Build the submission payload — all form data as JSON
+      const submittedData = {
         title: data.title,
         alternate_titles: data.hasAlternateTitle && data.alternateTitle ? [data.alternateTitle] : null,
         language: data.language,
-        genre: data.songType || "original",
-        release_date: data.releaseStatus !== "no" && year ? `${year}-01-01` : null,
-        metadata: {
-          song_type: data.songType,
-          original_work_title: data.originalWorkTitle || null,
-          release_status: data.releaseStatus,
-          publication_year: data.publicationYear || null,
-          creation_year: data.creationYear || null,
-          lyrics,
-          lyrics_sections: data.lyricsSections,
-          lyrics_confirmed: data.lyricsConfirmed,
-          has_chord_chart: data.hasChordChart,
-          copyright_status: data.copyrightStatus,
-          wants_copyright_filing: data.wantsCopyrightFiling,
-        },
-        is_active: false,
+        song_type: data.songType,
+        original_work_title: data.originalWorkTitle || null,
+        release_status: data.releaseStatus,
+        publication_year: data.publicationYear || null,
+        creation_year: data.creationYear || null,
+        lyrics,
+        lyrics_sections: data.lyricsSections,
+        lyrics_confirmed: data.lyricsConfirmed,
+        has_chord_chart: data.hasChordChart,
+        chord_chart_file: data.chordChartFile?.name || null,
+        copyright_status: data.copyrightStatus,
+        wants_copyright_filing: data.wantsCopyrightFiling,
+        writers: data.writers
+          .filter(w => w.writer_id && w.name.trim())
+          .map(w => ({
+            writer_id: w.writer_id,
+            name: w.name,
+            pro: w.pro,
+            ipi: w.ipi,
+            split: w.split,
+            credit: w.credit,
+            tribes_administered: w.tribes_administered,
+          })),
       };
-      const { data: insertedData, error } = await supabase.from("songs").insert(songPayload as any).select("id").single();
-      
-      if (error) throw error;
-      const newSongId = insertedData?.id;
-      if (!newSongId) throw new Error("No song ID returned");
 
-      // 2. Save writers to song_writers table (with tribes_administered)
-      const writerRecords = data.writers
-        .filter(w => w.writer_id && w.name.trim())
-        .map(w => ({
-          song_id: newSongId,
-          writer_id: w.writer_id!,
-          share: w.split,
-          credit: w.credit || "both",
-          tribes_administered: w.tribes_administered,
-        }));
+      // Insert into song_queue — no songs/song_writers records until staff approval
+      const { data: queueData, error: queueError } = await (supabase as any)
+        .from("song_queue")
+        .insert({
+          submitted_by: user.id,
+          submitted_data: submittedData,
+          current_data: submittedData,
+          status: "submitted",
+        })
+        .select("id")
+        .single();
 
-      if (writerRecords.length > 0) {
-        const { error: writerError } = await (supabase as any)
-          .from("song_writers")
-          .insert(writerRecords);
-
-        if (writerError) {
-          console.error("Writer save error:", JSON.stringify(writerError));
-          toast.error("Failed to save writers: " + (writerError.message || "Unknown error"));
-          await supabase.from("songs").delete().eq("id", newSongId);
-          return;
-        }
+      if (queueError) {
+        console.error("Queue insert error:", JSON.stringify(queueError));
+        throw new Error(queueError.message || "Failed to submit song");
       }
 
-      // Song stays is_active: false — Tribes staff activates from Queue
-      setSubmittedSongId(newSongId);
+      setSubmittedSongId(queueData.id);
       setSubmissionComplete(true);
       window.scrollTo(0, 0);
-       
+
       // Fire and forget: send confirmation emails
       sendConfirmationEmails(data);
     } catch (err: any) {
+      console.error("Submit error:", err);
       toast.error(err.message || "Failed to submit");
     } finally {
       setIsSubmitting(false);
@@ -709,7 +708,7 @@ export default function SongSubmitPage() {
                 </div>
                 <h2 className="text-xl font-semibold text-[var(--btn-text)]">Song Submitted Successfully</h2>
                 <p className="text-sm text-[var(--btn-text-muted)] max-w-md mx-auto">
-                  Your song has been submitted for review. We've emailed a confirmation to your primary email address. You can track the status of your submission in your catalog.
+                  Your song has been submitted for review. We've emailed a confirmation to your primary email address. You can track the status of your submission in your queue.
                 </p>
               </div>
 
