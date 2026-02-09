@@ -3720,6 +3720,7 @@ export type Database = {
       }
     }
     Functions: {
+      approve_queue_item: { Args: { p_queue_id: string }; Returns: string }
       archive_help_article: { Args: { _article_id: string }; Returns: boolean }
       archive_old_notifications: { Args: never; Returns: number }
       can_access_context: {
@@ -3929,6 +3930,10 @@ export type Database = {
           subtitle: string
           title: string
         }[]
+      }
+      submit_song_to_queue: {
+        Args: { p_submitted_data: Json }
+        Returns: string
       }
       user_has_client_access: {
         Args: { p_client_account_id: string; p_user_id: string }
