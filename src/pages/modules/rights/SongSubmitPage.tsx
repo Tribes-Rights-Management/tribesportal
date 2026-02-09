@@ -417,24 +417,18 @@ export default function SongSubmitPage() {
           })),
       };
 
-      // Insert into song_queue — no songs/song_writers records until staff approval
-      const { data: queueData, error: queueError } = await (supabase as any)
-        .from("song_queue")
-        .insert({
-          submitted_by: user.id,
-          submitted_data: submittedData,
-          current_data: submittedData,
-          status: "submitted",
-        })
-        .select("id")
-        .single();
+      // Single RPC call — server handles validation, client_account_id resolution, and insert
+      const { data: queueId, error: rpcError } = await supabase.rpc(
+        "submit_song_to_queue" as any,
+        { p_submitted_data: submittedData as any }
+      );
 
-      if (queueError) {
-        console.error("Queue insert error:", JSON.stringify(queueError));
-        throw new Error(queueError.message || "Failed to submit song");
+      if (rpcError) {
+        console.error("RPC submit error:", JSON.stringify(rpcError));
+        throw new Error(rpcError.message || "Failed to submit song");
       }
 
-      setSubmittedSongId(queueData.id);
+      setSubmittedSongId(queueId);
       setSubmissionComplete(true);
       window.scrollTo(0, 0);
 
