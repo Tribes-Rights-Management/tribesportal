@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AppButton } from "@/components/app-ui";
 import { Textarea } from "@/components/ui/textarea";
 import { useUpdateQueueStatus } from "@/hooks/use-song-queue";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 /**
@@ -21,6 +22,28 @@ export function QueueStatusControl({ queueId, currentStatus, onStatusChange }: Q
   const [showRevisionInput, setShowRevisionInput] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [revisionRequest, setRevisionRequest] = useState("");
+  const [isApproving, setIsApproving] = useState(false);
+
+  const handleApprove = async () => {
+    setIsApproving(true);
+    try {
+      const { error } = await supabase.rpc("approve_queue_item", {
+        p_queue_id: queueId,
+      });
+
+      if (error) {
+        toast.error(`Approval failed: ${error.message}`);
+        return;
+      }
+
+      toast.success("Song approved and added to catalog");
+      onStatusChange?.();
+    } catch (err: any) {
+      toast.error(err.message || "Approval failed");
+    } finally {
+      setIsApproving(false);
+    }
+  };
 
   const handleStatusChange = (newStatus: string, extra?: { rejectionReason?: string; revisionRequest?: string }) => {
     updateStatus.mutate(
@@ -114,8 +137,8 @@ export function QueueStatusControl({ queueId, currentStatus, onStatusChange }: Q
             <>
               <AppButton
                 size="sm"
-                onClick={() => handleStatusChange("approved")}
-                loading={updateStatus.isPending}
+                onClick={handleApprove}
+                loading={isApproving}
               >
                 Complete Registration
               </AppButton>
