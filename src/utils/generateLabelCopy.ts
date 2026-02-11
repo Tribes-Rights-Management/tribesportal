@@ -29,7 +29,7 @@ export function generateLabelCopy(input: LabelCopyInput): string | null {
 
   const yearStr = year || "—";
 
-  return `© ${yearStr} ${publisherString} (adm. at TribesRightsManagement.com). All rights reserved. Used by permission.`;
+  return `© ${yearStr} ${publisherString} (adm. at TribesRightsManagement.com). All rights reserved.`;
 }
 
 /**
@@ -67,7 +67,7 @@ export function generateLabelCopyFromSongData(song: {
     publisher: { name: string; pro: string } | null;
   }>;
 }): string | null {
-  const year = song.metadata?.publication_year || song.metadata?.creation_year;
+  const year = song.metadata?.publication_year || song.metadata?.creation_year || song.metadata?.year_written;
 
   const publishers: LabelCopyPublisher[] = [];
   for (const o of (song.ownership || [])) {
