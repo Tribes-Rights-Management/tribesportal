@@ -85,12 +85,20 @@ export default function RightsQueueDetailPage() {
               <AppCardBody>
                 <AppDetailRowGroup>
                   <AppDetailRow label="Title" value={title} />
-                  <AppDetailRow label="Alternate Title" value={songData.alternateTitle || "—"} />
+                  <AppDetailRow label="Alternate Title" value={
+                    songData.alternate_titles?.length > 0 ? songData.alternate_titles.join(", ") : "—"
+                  } />
                   <AppDetailRow label="Language" value={songData.language || "—"} />
-                  <AppDetailRow label="Song Type" value={songData.songType || "—"} />
-                  <AppDetailRow label="Publication Year" value={songData.publicationYear || songData.creationYear || "—"} />
-                  <AppDetailRow label="Copyright Status" value={songData.copyrightStatus || "—"} />
-                  <AppDetailRow label="Chord Chart" value={songData.hasChordChart ? "Yes" : "No"} />
+                  <AppDetailRow label="Song Type" value={songData.song_type || "—"} />
+                  <AppDetailRow label="Release Status" value={songData.release_status || "—"} />
+                  <AppDetailRow label="Publication Year" value={songData.publication_year || songData.creation_year || "—"} />
+                  <AppDetailRow label="Copyright Status" value={songData.copyright_status || "—"} />
+                  <AppDetailRow label="Copyright Filing Requested" value={
+                    songData.wants_copyright_filing === true ? "Yes" : songData.wants_copyright_filing === false ? "No" : "—"
+                  } />
+                  <AppDetailRow label="Chord Chart" value={
+                    songData.has_chord_chart ? (songData.chord_chart_file || "Yes") : "No"
+                  } />
                 </AppDetailRowGroup>
               </AppCardBody>
             </AppCard>
@@ -104,16 +112,19 @@ export default function RightsQueueDetailPage() {
                 ) : (
                   <div className="space-y-2">
                     {writers.map((w: any, i: number) => (
-                      <div key={i} className="flex items-center justify-between py-1.5 border-b border-border/50 last:border-0">
+                      <div key={i} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
                         <div>
                           <span className="text-[13px] font-medium">{w.name}</span>
                           <span className="text-[12px] text-muted-foreground ml-2">
-                            {w.credit === "both" ? "Words & Music" : w.credit === "lyrics" ? "Words" : "Music"}
+                            {w.credit === "both" ? "Writer & Composer" : w.credit === "writer" ? "Writer" : "Composer"}
                           </span>
+                          {w.pro && (
+                            <span className="text-[11px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded ml-2">{w.pro}</span>
+                          )}
                         </div>
                         <div className="flex items-center gap-3 text-[12px] text-muted-foreground">
                           <span>{w.split}%</span>
-                          <span>{w.pro}</span>
+                          <span>{w.tribes_administered ? "Tribes" : "Other"}</span>
                         </div>
                       </div>
                     ))}
@@ -123,12 +134,15 @@ export default function RightsQueueDetailPage() {
             </AppCard>
 
             {/* Lyrics */}
-            {(songData.lyricsFull || songData.lyricsSections?.length > 0) && (
+            {(songData.lyrics || songData.lyrics_sections?.length > 0) && (
               <AppCard>
                 <AppCardBody>
                   <h3 className="text-sm font-medium mb-3">Lyrics</h3>
                   <pre className="text-[13px] text-muted-foreground whitespace-pre-wrap font-sans leading-relaxed max-h-[400px] overflow-y-auto">
-                    {songData.lyricsFull || songData.lyricsSections?.map((s: any) => `[${s.type}]\n${s.content}`).join("\n\n")}
+                    {songData.lyrics_sections?.length > 0
+                      ? songData.lyrics_sections.map((s: any) => `[${s.type?.toUpperCase()}]\n${s.content}`).join("\n\n")
+                      : songData.lyrics
+                    }
                   </pre>
                 </AppCardBody>
               </AppCard>
