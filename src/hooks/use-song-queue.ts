@@ -30,6 +30,55 @@ export interface QueueItem {
   message_count?: number;
 }
 
+/** Batch-resolve submitter names from user_profiles */
+async function resolveSubmitterNames(submitterIds: string[]): Promise<Record<string, string>> {
+  const unique = [...new Set(submitterIds.filter(Boolean))];
+  if (unique.length === 0) return {};
+
+  const { data: profiles } = await supabase
+    .from("user_profiles")
+    .select("user_id, full_name, email")
+    .in("user_id", unique);
+
+  if (!profiles) return {};
+  return Object.fromEntries(
+    profiles.map((p: any) => [p.user_id, p.full_name || p.email || "Unknown"])
+  );
+}
+
+/** Map raw queue rows + submitter lookup into QueueItem[] */
+function mapQueueItems(items: any[], submitterMap: Record<string, string>): QueueItem[] {
+  return items.map((item: any) => ({
+    ...item,
+    client_name: item.client_accounts?.name || submitterMap[item.submitted_by] || "Unknown",
+  })) as QueueItem[];
+}
+
+const QUEUE_SELECT = `
+  id, status, submitted_at, submitted_by, client_account_id,
+  submitted_data, current_data, admin_notes, approved_song_id,
+  rejection_reason, revision_request, revision_requested_at,
+  revision_submitted_at, reviewed_at, reviewed_by, updated_at,
+  client_accounts!song_queue_client_account_id_fkey(name)
+`;
+
+const QUEUE_SELECT_CLIENT = `
+  id, status, submitted_at, submitted_by, client_account_id,
+  submitted_data, current_data, approved_song_id,
+  revision_request, revision_requested_at, revision_submitted_at,
+  updated_at,
+  client_accounts!song_queue_client_account_id_fkey(name)
+`;
+
+const QUEUE_SELECT_DETAIL = `
+  id, status, submitted_at, submitted_by, client_account_id,
+  submitted_data, current_data, admin_notes, approved_song_id,
+  rejection_reason, revision_request, revision_requested_at,
+  revision_requested_by, revision_submitted_at, reviewed_at,
+  reviewed_by, updated_at,
+  client_accounts!song_queue_client_account_id_fkey(name)
+`;
+
 /** Fetch all queue items (staff view — all clients) */
 export function useStaffQueue(statusFilter?: string) {
   return useQuery({
@@ -37,14 +86,7 @@ export function useStaffQueue(statusFilter?: string) {
     queryFn: async () => {
       let query = supabase
         .from("song_queue")
-        .select(`
-          id, status, submitted_at, submitted_by, client_account_id,
-          submitted_data, current_data, admin_notes, approved_song_id,
-          rejection_reason, revision_request, revision_requested_at,
-          revision_submitted_at, reviewed_at, reviewed_by, updated_at,
-          client_accounts!song_queue_client_account_id_fkey(name),
-          user_profiles!song_queue_submitted_by_fkey(full_name, email)
-        `)
+        .select(QUEUE_SELECT)
         .order("submitted_at", { ascending: false });
 
       if (statusFilter && statusFilter !== "all") {
@@ -54,13 +96,9 @@ export function useStaffQueue(statusFilter?: string) {
       const { data, error } = await query;
       if (error) throw error;
 
-      return (data || []).map((item: any) => ({
-        ...item,
-        client_name: item.client_accounts?.name
-          || item.user_profiles?.full_name
-          || item.user_profiles?.email
-          || "Unknown",
-      })) as QueueItem[];
+      const items = data || [];
+      const submitterMap = await resolveSubmitterNames(items.map((i: any) => i.submitted_by));
+      return mapQueueItems(items, submitterMap);
     },
   });
 }
@@ -74,25 +112,15 @@ export function useClientQueue() {
       if (!user?.id) return [];
       const { data, error } = await supabase
         .from("song_queue")
-        .select(`
-          id, status, submitted_at, submitted_by, client_account_id,
-          submitted_data, current_data, approved_song_id,
-          revision_request, revision_requested_at, revision_submitted_at,
-          updated_at,
-          client_accounts!song_queue_client_account_id_fkey(name),
-          user_profiles!song_queue_submitted_by_fkey(full_name, email)
-        `)
+        .select(QUEUE_SELECT_CLIENT)
         .eq("submitted_by", user.id)
         .order("submitted_at", { ascending: false });
 
       if (error) throw error;
-      return (data || []).map((item: any) => ({
-        ...item,
-        client_name: item.client_accounts?.name
-          || item.user_profiles?.full_name
-          || item.user_profiles?.email
-          || "Unknown",
-      })) as QueueItem[];
+
+      const items = data || [];
+      const submitterMap = await resolveSubmitterNames(items.map((i: any) => i.submitted_by));
+      return mapQueueItems(items, submitterMap);
     },
     enabled: !!user?.id,
   });
@@ -106,26 +134,16 @@ export function useQueueItem(queueId: string | undefined) {
       if (!queueId) return null;
       const { data, error } = await supabase
         .from("song_queue")
-        .select(`
-          id, status, submitted_at, submitted_by, client_account_id,
-          submitted_data, current_data, admin_notes, approved_song_id,
-          rejection_reason, revision_request, revision_requested_at,
-          revision_requested_by, revision_submitted_at, reviewed_at,
-          reviewed_by, updated_at,
-          client_accounts!song_queue_client_account_id_fkey(name),
-          user_profiles!song_queue_submitted_by_fkey(full_name, email)
-        `)
+        .select(QUEUE_SELECT_DETAIL)
         .eq("id", queueId)
         .single();
 
       if (error) throw error;
       const d = data as any;
+      const submitterMap = await resolveSubmitterNames([d.submitted_by]);
       return {
         ...data,
-        client_name: d.client_accounts?.name
-          || d.user_profiles?.full_name
-          || d.user_profiles?.email
-          || "Unknown",
+        client_name: d.client_accounts?.name || submitterMap[d.submitted_by] || "Unknown",
       } as QueueItem;
     },
     enabled: !!queueId,
