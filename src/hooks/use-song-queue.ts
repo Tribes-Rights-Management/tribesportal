@@ -61,8 +61,7 @@ const QUEUE_SELECT = `
   submitted_data, current_data, admin_notes, approved_song_id,
   rejection_reason, revision_request, revision_requested_at,
   revision_submitted_at, reviewed_at, reviewed_by, updated_at, deal_id,
-  client_accounts!song_queue_client_account_id_fkey(name),
-  deals(name)
+  client_accounts!song_queue_client_account_id_fkey(name)
 `;
 
 const QUEUE_SELECT_CLIENT = `

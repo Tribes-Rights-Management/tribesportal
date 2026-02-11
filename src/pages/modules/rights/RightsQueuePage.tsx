@@ -132,7 +132,7 @@ export default function RightsQueuePage() {
                         <AppTableCell muted>{item.submission_number}</AppTableCell>
                          <AppTableCell className="font-medium">{getSongTitle(item)}</AppTableCell>
                          <AppTableCell muted>{item.client_name}</AppTableCell>
-                         <AppTableCell muted>{(item as any).deals?.name || '—'}</AppTableCell>
+                         <AppTableCell muted>—</AppTableCell>
                          <AppTableCell muted className="max-w-[200px] truncate">{getWriterNames(item)}</AppTableCell>
                          <AppTableCell align="center"><QueueStatusBadge status={item.status} /></AppTableCell>
                          <AppTableCell muted>{format(new Date(item.submitted_at), "MMM d, yyyy")}</AppTableCell>
