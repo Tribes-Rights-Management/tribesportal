@@ -13,10 +13,11 @@ import { toast } from "sonner";
 interface QueueStatusControlProps {
   queueId: string;
   currentStatus: string;
+  songData?: any;
   onStatusChange?: () => void;
 }
 
-export function QueueStatusControl({ queueId, currentStatus, onStatusChange }: QueueStatusControlProps) {
+export function QueueStatusControl({ queueId, currentStatus, songData, onStatusChange }: QueueStatusControlProps) {
   const updateStatus = useUpdateQueueStatus();
   const [showRejectInput, setShowRejectInput] = useState(false);
   const [showRevisionInput, setShowRevisionInput] = useState(false);
@@ -25,6 +26,16 @@ export function QueueStatusControl({ queueId, currentStatus, onStatusChange }: Q
   const [isApproving, setIsApproving] = useState(false);
 
   const handleApprove = async () => {
+    // Warn if no publishers assigned
+    const writers = songData?.writers || [];
+    const hasPublishers = writers.some((w: any) => w.publishers?.length > 0);
+    if (!hasPublishers) {
+      const proceed = window.confirm(
+        "No publishers have been assigned. Approve without publisher data?"
+      );
+      if (!proceed) return;
+    }
+
     setIsApproving(true);
     try {
       const { error } = await supabase.rpc("approve_queue_item", {
