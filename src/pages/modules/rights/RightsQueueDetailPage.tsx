@@ -299,7 +299,7 @@ export default function RightsQueueDetailPage() {
                     <AppDetailRow label="Language" value={songData.language || "—"} />
                     <AppDetailRow label="Song Type" value={capitalize(songData.song_type)} />
                     <AppDetailRow label="Release Status" value={capitalize(songData.release_status)} />
-                    <AppDetailRow label="Publication Year" value={songData.publication_year || songData.creation_year || "—"} />
+                    <AppDetailRow label="Publication Year" value={songData.publication_year || "—"} />
                     <AppDetailRow label="Copyright Status" value={capitalize(songData.copyright_status)} />
                     <AppDetailRow label="Chord Chart" value={
                       songData.chord_chart_path ? (
@@ -457,7 +457,7 @@ export default function RightsQueueDetailPage() {
 
             {/* Controlled Label Copy — auto-generated from selected deals */}
             {(() => {
-              const year = songData?.publication_year || songData?.creation_year || songData?.yearWritten || '';
+              const year = songData?.publication_year || '';
               const writers = songData?.writers || [];
               const allDealPublishers: string[] = [];
 
