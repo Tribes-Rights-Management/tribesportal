@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 /**
  * SONG DETAIL PAGE — Individual song view within Rights Catalog
  *
- * Route: /rights/catalog/:songId/:songSlug?
+ * Route: /rights/catalog/:songNumber/:songSlug?
  * Five-section composition record:
  *   1. Overview (Title, Language, Alternate Title, Duration)
  *   2. Songwriters (song_writers junction table → writers)
@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 
 interface SongDetail {
   id: string;
+  song_number: number;
   title: string;
   metadata: Record<string, any>;
   created_at: string;
@@ -370,8 +371,9 @@ const ALGOLIA_INDEX = "writers";
 
 // ── Main Component ──────────────────────────────────────────
 export default function SongDetailPage() {
-  const { songId } = useParams<{ songId: string }>();
+  const { songNumber } = useParams<{ songNumber: string }>();
   const navigate = useNavigate();
+  const [songId, setSongId] = useState<string | null>(null);
   const [song, setSong] = useState<SongDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -458,22 +460,24 @@ export default function SongDetailPage() {
 
   // ── Fetch song ───────────────────────────────────────────
   const fetchSong = useCallback(async () => {
-    if (!songId) return;
+    if (!songNumber) return;
 
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("songs")
         .select(
-          "id, title, metadata, created_at, is_active, iswc, ccli_song_id, language, genre, duration_seconds, release_date, alternate_titles"
+          "id, song_number, title, metadata, created_at, is_active, iswc, ccli_song_id, language, genre, duration_seconds, release_date, alternate_titles"
         )
-        .eq("id", songId)
+        .eq("song_number", parseInt(songNumber))
         .single();
 
       if (error) throw error;
-      setSong(data as SongDetail);
+      const songData = data as any;
+      setSongId(songData.id);
+      setSong(songData as SongDetail);
 
-      const expectedPath = `/rights/catalog/${songId}/${toSlug((data as any).title)}`;
+      const expectedPath = `/rights/catalog/${songNumber}/${toSlug(songData.title)}`;
       if (window.location.pathname !== expectedPath) {
         window.history.replaceState(null, "", expectedPath);
       }
@@ -484,7 +488,7 @@ export default function SongDetailPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [songId, navigate]);
+  }, [songNumber, navigate]);
 
   // ── Fetch writers from song_writers junction table ────────
   const fetchSongWriters = useCallback(async () => {
@@ -694,7 +698,7 @@ export default function SongDetailPage() {
 
       if (editedFields.title !== song.title) {
         const newSlug = toSlug(editedFields.title);
-        window.history.replaceState(null, "", `/rights/catalog/${songId}/${newSlug}`);
+        window.history.replaceState(null, "", `/rights/catalog/${songNumber}/${newSlug}`);
       }
 
       await Promise.all([fetchSong(), fetchSongWriters(), fetchOwnership()]);

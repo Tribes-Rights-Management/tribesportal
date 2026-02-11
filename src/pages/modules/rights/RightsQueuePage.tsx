@@ -105,13 +105,14 @@ export default function RightsQueuePage() {
                 subtitle={item.client_name || "Unknown client"}
                 meta={<span>{format(new Date(item.submitted_at), "MMM d, yyyy")}</span>}
                 status={<QueueStatusBadge status={item.status} />}
-                onClick={() => navigate(`/rights/queue/${item.id}`)}
+                onClick={() => navigate(`/rights/queue/${item.submission_number}`)}
               />
             )}
             renderTable={() => (
               <AppTable>
                 <AppTableHeader>
                   <AppTableRow>
+                    <AppTableHead>#</AppTableHead>
                     <AppTableHead>Title</AppTableHead>
                     <AppTableHead>Client</AppTableHead>
                     <AppTableHead>Songwriters</AppTableHead>
@@ -121,12 +122,13 @@ export default function RightsQueuePage() {
                 </AppTableHeader>
                 <AppTableBody>
                   {paginatedItems.length === 0 ? (
-                    <AppTableEmpty colSpan={5}>
+                    <AppTableEmpty colSpan={6}>
                       <span className="text-muted-foreground text-sm">No submissions found</span>
                     </AppTableEmpty>
                   ) : (
                     paginatedItems.map(item => (
-                      <AppTableRow key={item.id} clickable onClick={() => navigate(`/rights/queue/${item.id}`)}>
+                      <AppTableRow key={item.id} clickable onClick={() => navigate(`/rights/queue/${item.submission_number}`)}>
+                        <AppTableCell muted>{item.submission_number}</AppTableCell>
                         <AppTableCell className="font-medium">{getSongTitle(item)}</AppTableCell>
                         <AppTableCell muted>{item.client_name}</AppTableCell>
                         <AppTableCell muted className="max-w-[200px] truncate">{getWriterNames(item)}</AppTableCell>

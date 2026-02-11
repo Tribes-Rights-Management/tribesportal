@@ -275,10 +275,10 @@ const App = () => (
         }>
           <Route index element={<RightsOverview />} />
           <Route path="queue" element={<RightsQueuePage />} />
-          <Route path="queue/:queueId" element={<RightsQueueDetailPage />} />
+          <Route path="queue/:submissionId" element={<RightsQueueDetailPage />} />
           <Route path="clients" element={<RightsClientsPage />} />
           <Route path="catalog" element={<RightsCatalogPage />} />
-          <Route path="catalog/:songId/:songSlug?" element={<SongDetailPage />} />
+          <Route path="catalog/:songNumber/:songSlug?" element={<SongDetailPage />} />
           <Route path="writers" element={<RightsWritersPage />} />
           <Route path="publishers" element={<RightsPublishersPage />} />
           <Route path="songs/submit" element={<SongSubmitPage />} />

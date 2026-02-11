@@ -69,7 +69,7 @@ export default function TribesAdminDashboard() {
               </AppTableEmpty>
             ) : (
               topQueue.map(item => (
-                <AppTableRow key={item.id} clickable onClick={() => navigate(`/admin/queue/${item.id}`)}>
+                <AppTableRow key={item.id} clickable onClick={() => navigate(`/admin/queue/${item.submission_number || item.id}`)}>
                   <AppTableCell className="font-medium">{getSongTitle(item)}</AppTableCell>
                   <AppTableCell muted>{getWriters(item)}</AppTableCell>
                   <AppTableCell align="center"><QueueStatusBadge status={item.status} clientFacing /></AppTableCell>
