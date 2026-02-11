@@ -47,7 +47,7 @@ export default function RightsQueueDetailPage() {
   // Extract writer IDs from submission data for deal filtering
   const submittedWriterIds = useMemo(() => {
     const w = item?.current_data?.writers || item?.submitted_data?.writers || [];
-    return w.map((wr: any) => wr.id).filter(Boolean) as string[];
+    return w.map((wr: any) => wr.writer_id || wr.id).filter(Boolean) as string[];
   }, [item?.current_data, item?.submitted_data]);
 
   // Fetch active deals filtered by submitted writers
@@ -332,8 +332,9 @@ export default function RightsQueueDetailPage() {
               <AppCardBody>
                 <h3 className="text-sm font-medium mb-4">Publishing & Administration</h3>
                 {writers.map((writer: any, wIndex: number) => {
-                  const writerDeals = writer.id ? getDealsForWriter(writer.id) : [];
-                  const writerDeal = writer.id ? getDealForWriter(writer.id) : null;
+                  const writerId = writer.writer_id || writer.id;
+                   const writerDeals = writerId ? getDealsForWriter(writerId) : [];
+                   const writerDeal = writerId ? getDealForWriter(writerId) : null;
 
                   return (
                     <div key={wIndex} className="mb-5 last:mb-0">
@@ -350,14 +351,14 @@ export default function RightsQueueDetailPage() {
                       <div className="pl-4 mt-2">
                         {!writerDeal ? (
                           <div>
-                            {!writer.id ? (
+                            {!writerId ? (
                               <p className="text-xs text-muted-foreground italic">Writer not linked to database record.</p>
                             ) : writerDeals.length === 0 ? (
                               <p className="text-xs text-muted-foreground italic">No active deals for this writer.</p>
                             ) : (
                               <AppSelect
                                 value="none"
-                                onChange={(val) => handleSelectDeal(writer.id, val)}
+                                onChange={(val) => handleSelectDeal(writerId, val)}
                                 options={[
                                   { value: 'none', label: 'Select a deal...' },
                                   ...writerDeals.map((deal: any) => ({
@@ -381,7 +382,7 @@ export default function RightsQueueDetailPage() {
                               </span>
                               <button
                                 type="button"
-                                onClick={() => handleRemoveDeal(writer.id)}
+                                onClick={() => handleRemoveDeal(writerId)}
                                 className="text-xs text-muted-foreground hover:text-destructive"
                               >
                                 Remove
