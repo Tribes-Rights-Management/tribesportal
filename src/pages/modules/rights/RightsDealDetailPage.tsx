@@ -98,7 +98,7 @@ function TerritoryGrid({
                 />
                 <span className="text-xs font-semibold uppercase tracking-wider text-foreground">{region}</span>
               </label>
-              <div className="space-y-0.5 max-h-[400px] overflow-y-auto pr-1">
+              <div className="space-y-0.5">
                 {countries.map((country) => (
                   <label key={country.code} className="flex items-center gap-2 cursor-pointer py-0.5">
                     <input
