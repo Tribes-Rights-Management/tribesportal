@@ -396,10 +396,11 @@ export default function RightsQueueDetailPage() {
                                       })
                                       .join(' / ') || 'No publishers';
                                     const territory = deal.territory || 'World';
-                                    return { value: deal.id, label: `${deal.writers?.name || 'Unknown'} / ${pubs} – ${territory}` };
+                                    return { value: deal.id, label: `${deal.writers?.name || 'Unknown'} – ${pubs} – ${territory}` };
                                   }),
                                 ]}
                                 fullWidth
+                                className="text-muted-foreground"
                               />
                             )}
                           </div>
@@ -408,8 +409,8 @@ export default function RightsQueueDetailPage() {
                             {/* Deal header with remove */}
                             <div className="flex items-center justify-between">
                               <span className="text-xs text-muted-foreground">
-                                Deal: <span className="font-medium text-foreground">
-                                  {writerDeal.writers?.name || 'Unknown'} / {writerDeal.deal_publishers
+                                Deal: <span className="font-medium text-muted-foreground">
+                                  {writerDeal.writers?.name || 'Unknown'} – {writerDeal.deal_publishers
                                     ?.map((dp: any) => {
                                       const name = dp.publishers?.name || dp.publisher_name || 'Unknown';
                                       const pro = dp.publishers?.pro || dp.publisher_pro || '';
