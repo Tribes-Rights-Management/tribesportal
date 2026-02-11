@@ -383,6 +383,25 @@ export default function SongSubmitPage() {
       const user = (await supabase.auth.getUser()).data.user;
       if (!user) throw new Error("Not authenticated");
 
+      // Upload chord chart to storage if provided
+      let chordChartPath: string | null = null;
+      if (data.chordChartFile) {
+        const file = data.chordChartFile;
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${crypto.randomUUID()}.${fileExt}`;
+        const filePath = `chord-charts/${fileName}`;
+        const { error: uploadError } = await supabase.storage
+          .from("song-documents")
+          .upload(filePath, file);
+        if (uploadError) {
+          console.error("Upload error:", uploadError);
+          toast.error("Failed to upload chord chart");
+          setIsSubmitting(false);
+          return;
+        }
+        chordChartPath = filePath;
+      }
+
       const lyrics = data.lyricsEntryMode === "paste"
         ? data.lyricsFull
         : data.lyricsSections.map(s => `[${s.type?.toUpperCase()}]\n${s.content}`).join("\n\n");
@@ -402,6 +421,7 @@ export default function SongSubmitPage() {
         lyrics_confirmed: data.lyricsConfirmed,
         has_chord_chart: data.hasChordChart,
         chord_chart_file: data.chordChartFile?.name || null,
+        chord_chart_path: chordChartPath,
         copyright_status: data.copyrightStatus,
         wants_copyright_filing: data.wantsCopyrightFiling,
         writers: data.writers
