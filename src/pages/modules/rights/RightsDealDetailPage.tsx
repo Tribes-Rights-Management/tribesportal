@@ -16,6 +16,109 @@ interface DealPublisher {
   administrator_entity_id: string | null;
 }
 
+interface Territory {
+  code: string;
+  name: string;
+  region: string;
+}
+
+function generateTerritorySummary(
+  mode: string,
+  selectedCodes: string[],
+  allTerritories: Territory[]
+): string {
+  if (mode === "world") return "World";
+  const names = selectedCodes
+    .map((code) => allTerritories.find((t) => t.code === code)?.name)
+    .filter(Boolean);
+  if (mode === "world_except") {
+    if (names.length <= 3) return `World except ${names.join(", ")}`;
+    return `World except ${names.length} territories`;
+  }
+  if (names.length <= 3) return names.join(", ");
+  return `${names.length} territories`;
+}
+
+function TerritoryGrid({
+  territories,
+  selectedCodes,
+  onToggle,
+  onToggleRegion,
+  onSelectAll,
+  onClearAll,
+  mode,
+}: {
+  territories: Territory[];
+  selectedCodes: string[];
+  onToggle: (code: string) => void;
+  onToggleRegion: (region: string, codes: string[]) => void;
+  onSelectAll: () => void;
+  onClearAll: () => void;
+  mode: string;
+}) {
+  const regions = ["Africa", "Americas", "Asia", "Europe", "Oceania"];
+  const grouped = regions.map((region) => ({
+    region,
+    countries: territories.filter((t) => t.region === region),
+  }));
+
+  return (
+    <div>
+      <div className="flex items-center gap-3 mb-4 pb-3 border-b border-border/50">
+        <button type="button" onClick={onSelectAll} className="text-xs text-primary hover:underline">
+          Select All
+        </button>
+        <button type="button" onClick={onClearAll} className="text-xs text-muted-foreground hover:underline">
+          Clear All
+        </button>
+        <span className="text-[11px] text-muted-foreground ml-auto">
+          {mode === "world_except"
+            ? `${territories.length - selectedCodes.length} of ${territories.length} territories included`
+            : `${selectedCodes.length} of ${territories.length} territories selected`}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        {grouped.map(({ region, countries }) => {
+          const regionCodes = countries.map((c) => c.code);
+          const allChecked = regionCodes.length > 0 && regionCodes.every((c) => selectedCodes.includes(c));
+          const someChecked = regionCodes.some((c) => selectedCodes.includes(c));
+
+          return (
+            <div key={region}>
+              <label className="flex items-center gap-2 mb-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={allChecked}
+                  ref={(el) => {
+                    if (el) el.indeterminate = someChecked && !allChecked;
+                  }}
+                  onChange={() => onToggleRegion(region, regionCodes)}
+                  className="rounded border-border"
+                />
+                <span className="text-xs font-semibold uppercase tracking-wider text-foreground">{region}</span>
+              </label>
+              <div className="space-y-0.5 max-h-[400px] overflow-y-auto pr-1">
+                {countries.map((country) => (
+                  <label key={country.code} className="flex items-center gap-2 cursor-pointer py-0.5">
+                    <input
+                      type="checkbox"
+                      checked={selectedCodes.includes(country.code)}
+                      onChange={() => onToggle(country.code)}
+                      className="rounded border-border"
+                    />
+                    <span className="text-[12px] text-foreground/80">{country.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function RightsDealDetailPage() {
   const { dealNumber } = useParams();
   const navigate = useNavigate();
@@ -28,7 +131,6 @@ export default function RightsDealDetailPage() {
   const [writerIpi, setWriterIpi] = useState("");
   const [writerSearch, setWriterSearch] = useState("");
   const [showWriterResults, setShowWriterResults] = useState(false);
-  const [territory, setTerritory] = useState("World");
   const [writerShare, setWriterShare] = useState(100);
   const [notes, setNotes] = useState("");
   const [publishers, setPublishers] = useState<DealPublisher[]>([]);
@@ -37,6 +139,13 @@ export default function RightsDealDetailPage() {
   const [pubSearchIndex, setPubSearchIndex] = useState<number | null>(null);
   const [pubSearchQuery, setPubSearchQuery] = useState("");
 
+  // Tab state
+  const [activeTab, setActiveTab] = useState<"contract" | "territories" | "songs">("contract");
+
+  // Territory state
+  const [territoryMode, setTerritoryMode] = useState<string>("world");
+  const [selectedTerritories, setSelectedTerritories] = useState<string[]>([]);
+
   const { data: existingDeal } = useQuery({
     queryKey: ["deal-detail", dealNumber],
     queryFn: async () => {
@@ -44,7 +153,7 @@ export default function RightsDealDetailPage() {
       const { data, error } = await supabase
         .from("deals")
         .select(`
-          id, deal_number, name, territory, status, writer_share,
+          id, deal_number, name, territory, territory_mode, status, writer_share,
           effective_date, end_date, notes, created_at, writer_id,
           writers (id, name, pro, ipi_number),
           deal_publishers (
@@ -61,12 +170,12 @@ export default function RightsDealDetailPage() {
   });
 
   useEffect(() => {
-    if (existingDeal) {
+    if (!existingDeal) return;
+    (async () => {
       setWriterId(existingDeal.writer_id);
       setWriterName((existingDeal as any).writers?.name || "");
       setWriterPro((existingDeal as any).writers?.pro || "");
       setWriterIpi((existingDeal as any).writers?.ipi_number || "");
-      setTerritory(existingDeal.territory);
       setWriterShare(existingDeal.writer_share);
       setNotes(existingDeal.notes || "");
       setPublishers(
@@ -82,7 +191,19 @@ export default function RightsDealDetailPage() {
             administrator_entity_id: p.administrator_entity_id,
           }))
       );
-    }
+
+      // Load territory data
+      setTerritoryMode((existingDeal as any).territory_mode || "world");
+      if ((existingDeal as any).territory_mode && (existingDeal as any).territory_mode !== "world") {
+        const { data: dealTerrs } = await supabase
+          .from("deal_territories")
+          .select("territory_code")
+          .eq("deal_id", existingDeal.id);
+        if (dealTerrs) {
+          setSelectedTerritories(dealTerrs.map((t: any) => t.territory_code));
+        }
+      }
+    })();
   }, [existingDeal]);
 
   const { data: writerResults } = useQuery({
@@ -151,6 +272,19 @@ export default function RightsDealDetailPage() {
       const { data, error } = await supabase.from("tribes_entities").select("*");
       if (error) throw error;
       return data;
+    },
+  });
+
+  const { data: allTerritories } = useQuery({
+    queryKey: ["territories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("territories")
+        .select("code, name, region")
+        .order("region")
+        .order("sort_order");
+      if (error) throw error;
+      return (data || []) as Territory[];
     },
   });
 
@@ -226,18 +360,20 @@ export default function RightsDealDetailPage() {
     if (!sharesValid) { toast.error(`Publisher shares must total ${writerShare}%`); return; }
 
     setSaving(true);
-    const dealName = `${writerName} — ${territory} Deal`;
+    const territorySummary = generateTerritorySummary(territoryMode, selectedTerritories, allTerritories || []);
+    const dealName = `${writerName} — ${territorySummary} Deal`;
 
     try {
       if (isNew) {
-        console.log("Creating new deal...", { writerId, dealName, territory, writerShare });
+        console.log("Creating new deal...", { writerId, dealName, territoryMode, writerShare });
 
         const { data: newDeal, error: dealError } = await supabase
           .from("deals")
           .insert({
             writer_id: writerId,
             name: dealName,
-            territory,
+            territory_mode: territoryMode,
+            territory: territorySummary,
             status: "active",
             writer_share: writerShare,
             notes: notes || null,
@@ -254,6 +390,7 @@ export default function RightsDealDetailPage() {
 
         console.log("Deal created:", newDeal);
 
+        // Insert publishers
         const pubRows = publishers.map((p, i) => ({
           deal_id: newDeal.id,
           publisher_id: p.publisher_id,
@@ -273,6 +410,15 @@ export default function RightsDealDetailPage() {
           return;
         }
 
+        // Save territories
+        if (territoryMode !== "world" && selectedTerritories.length > 0) {
+          const terrRows = selectedTerritories.map((code) => ({
+            deal_id: newDeal.id,
+            territory_code: code,
+          }));
+          await supabase.from("deal_territories").insert(terrRows);
+        }
+
         toast.success("Deal created");
         queryClient.invalidateQueries({ queryKey: ["deals"] });
         navigate(`/rights/parties/deals/${newDeal.deal_number}`);
@@ -282,15 +428,16 @@ export default function RightsDealDetailPage() {
           .update({
             writer_id: writerId,
             name: dealName,
-            territory,
+            territory_mode: territoryMode,
+            territory: territorySummary,
             writer_share: writerShare,
             notes: notes || null,
           } as any)
           .eq("id", (existingDeal as any)!.id);
         if (dealError) throw dealError;
 
+        // Replace publishers
         await supabase.from("deal_publishers").delete().eq("deal_id", (existingDeal as any)!.id);
-
         const pubRows = publishers.map((p, i) => ({
           deal_id: (existingDeal as any)!.id,
           publisher_id: p.publisher_id,
@@ -305,6 +452,16 @@ export default function RightsDealDetailPage() {
         if (pubRows.length > 0) {
           const { error: pubError } = await supabase.from("deal_publishers").insert(pubRows as any);
           if (pubError) throw pubError;
+        }
+
+        // Replace territories
+        await supabase.from("deal_territories").delete().eq("deal_id", (existingDeal as any)!.id);
+        if (territoryMode !== "world" && selectedTerritories.length > 0) {
+          const terrRows = selectedTerritories.map((code) => ({
+            deal_id: (existingDeal as any)!.id,
+            territory_code: code,
+          }));
+          await supabase.from("deal_territories").insert(terrRows);
         }
 
         toast.success("Deal updated");
@@ -359,8 +516,8 @@ export default function RightsDealDetailPage() {
           <button onClick={() => navigate("/rights/parties?tab=deals")} className="text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-5 w-5" />
           </button>
-           <h1 className="text-lg font-semibold text-foreground">
-             {isNew ? "New Deal" : `Deal #${existingDeal?.deal_number || dealNumber}`}
+          <h1 className="text-lg font-semibold text-foreground">
+            {isNew ? "New Deal" : `Deal #${existingDeal?.deal_number || dealNumber}`}
           </h1>
         </div>
         <div className="flex items-center gap-2">
@@ -383,10 +540,9 @@ export default function RightsDealDetailPage() {
       <AppCard className="mb-4">
         <AppCardBody>
           <h3 className="text-sm font-medium mb-4">Deal Info</h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Writer search */}
-            <div className="lg:col-span-1">
+            <div>
               <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">Writer *</label>
               {writerId ? (
                 <div className="flex items-center gap-2 h-9 px-3 bg-muted/30 border border-border rounded-lg">
@@ -435,14 +591,6 @@ export default function RightsDealDetailPage() {
                   className="w-full h-9 px-3 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring" />
                 <span className="text-sm text-muted-foreground">%</span>
               </div>
-            </div>
-
-            {/* Territory */}
-            <div>
-              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">Territory *</label>
-              <input type="text" value={territory}
-                onChange={(e) => setTerritory(e.target.value)}
-                className="w-full h-9 px-3 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
           </div>
         </AppCardBody>
@@ -548,38 +696,133 @@ export default function RightsDealDetailPage() {
         </AppCardBody>
       </AppCard>
 
-      {/* Notes */}
-      <AppCard className="mb-4">
-        <AppCardBody>
-          <h3 className="text-sm font-medium mb-3">Notes</h3>
-          <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
-            rows={3} placeholder="Internal notes about this deal..."
-            className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring resize-none" />
-        </AppCardBody>
-      </AppCard>
+      {/* Tabs */}
+      <div className="mt-6 border-b border-border">
+        <div className="flex gap-6">
+          {(["contract", "territories", "songs"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`pb-2.5 text-sm font-medium transition-colors relative ${
+                activeTab === tab
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground/70"
+              }`}
+            >
+              {tab === "contract" ? "Contract" : tab === "territories" ? "Territories" : "Associated Songs"}
+              {activeTab === tab && (
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-foreground" />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      {/* Associated Songs (edit mode only) */}
-      {!isNew && existingDeal && (
-        <AppCard className="mb-4">
-          <AppCardBody>
-            <h3 className="text-sm font-medium mb-3">Associated Songs</h3>
-            {!associatedSongs || associatedSongs.length === 0 ? (
-              <p className="text-sm text-muted-foreground italic">No songs associated with this deal yet.</p>
-            ) : (
-              <div className="space-y-2">
-                {associatedSongs.map((sw: any) => (
-                  <div key={sw.id} className="flex items-center justify-between py-1.5">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs text-muted-foreground">#{sw.songs?.song_number}</span>
-                      <span className="text-sm">{sw.songs?.title || "Untitled"}</span>
-                    </div>
-                    <span className="text-sm text-muted-foreground">{sw.share}%</span>
-                  </div>
-                ))}
-              </div>
+      {/* Contract Tab */}
+      {activeTab === "contract" && (
+        <div className="mt-4 space-y-4">
+          <div>
+            <label className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground block mb-1.5">
+              Notes
+            </label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Internal notes about this deal..."
+              rows={4}
+              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring resize-none"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Territories Tab */}
+      {activeTab === "territories" && (
+        <div className="mt-4">
+          <div className="flex items-center gap-3 mb-4">
+            <select
+              value={territoryMode}
+              onChange={(e) => {
+                setTerritoryMode(e.target.value);
+                if (e.target.value === "world") {
+                  setSelectedTerritories([]);
+                }
+              }}
+              className="h-9 px-3 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
+            >
+              <option value="world">World (All Territories)</option>
+              <option value="world_except">World Except...</option>
+              <option value="selected">Selected Territories Only</option>
+            </select>
+
+            {territoryMode !== "world" && (
+              <span className="text-[11px] text-muted-foreground">
+                {selectedTerritories.length} {territoryMode === "world_except" ? "excluded" : "selected"}
+              </span>
             )}
-          </AppCardBody>
-        </AppCard>
+          </div>
+
+          {territoryMode !== "world" && allTerritories && (
+            <TerritoryGrid
+              territories={allTerritories}
+              selectedCodes={selectedTerritories}
+              onToggle={(code: string) => {
+                setSelectedTerritories((prev) =>
+                  prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]
+                );
+              }}
+              onToggleRegion={(_region: string, codes: string[]) => {
+                const allSelected = codes.every((c) => selectedTerritories.includes(c));
+                if (allSelected) {
+                  setSelectedTerritories((prev) => prev.filter((c) => !codes.includes(c)));
+                } else {
+                  setSelectedTerritories((prev) => [...new Set([...prev, ...codes])]);
+                }
+              }}
+              onSelectAll={() => {
+                if (allTerritories) setSelectedTerritories(allTerritories.map((t) => t.code));
+              }}
+              onClearAll={() => setSelectedTerritories([])}
+              mode={territoryMode}
+            />
+          )}
+
+          {territoryMode === "world" && (
+            <p className="text-sm text-muted-foreground">
+              This deal covers all CISAC-approved territories worldwide.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Associated Songs Tab */}
+      {activeTab === "songs" && (
+        <div className="mt-4">
+          {isNew ? (
+            <p className="text-sm text-muted-foreground">
+              Save this deal first to associate songs.
+            </p>
+          ) : associatedSongs && associatedSongs.length > 0 ? (
+            <div className="space-y-2">
+              {associatedSongs.map((sw: any) => (
+                <div
+                  key={sw.id}
+                  className="flex items-center justify-between py-2 px-3 rounded-lg border border-border/50 hover:bg-muted/30 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground">#{sw.songs?.song_number}</span>
+                    <span className="text-sm">{sw.songs?.title || "Untitled"}</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">{sw.share}%</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              No songs are using this deal yet.
+            </p>
+          )}
+        </div>
       )}
     </AppPageContainer>
   );

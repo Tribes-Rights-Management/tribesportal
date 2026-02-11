@@ -1021,6 +1021,39 @@ export type Database = {
           },
         ]
       }
+      deal_territories: {
+        Row: {
+          deal_id: string
+          id: string
+          territory_code: string
+        }
+        Insert: {
+          deal_id: string
+          id?: string
+          territory_code: string
+        }
+        Update: {
+          deal_id?: string
+          id?: string
+          territory_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_territories_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_territories_territory_code_fkey"
+            columns: ["territory_code"]
+            isOneToOne: false
+            referencedRelation: "territories"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
       deals: {
         Row: {
           created_at: string
@@ -1033,6 +1066,7 @@ export type Database = {
           notes: string | null
           status: string
           territory: string
+          territory_mode: string
           updated_at: string
           writer_id: string
           writer_share: number
@@ -1048,6 +1082,7 @@ export type Database = {
           notes?: string | null
           status?: string
           territory?: string
+          territory_mode?: string
           updated_at?: string
           writer_id: string
           writer_share?: number
@@ -1063,6 +1098,7 @@ export type Database = {
           notes?: string | null
           status?: string
           territory?: string
+          territory_mode?: string
           updated_at?: string
           writer_id?: string
           writer_share?: number
@@ -3496,6 +3532,27 @@ export type Database = {
           name?: string
           slug?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      territories: {
+        Row: {
+          code: string
+          name: string
+          region: string
+          sort_order: number | null
+        }
+        Insert: {
+          code: string
+          name: string
+          region: string
+          sort_order?: number | null
+        }
+        Update: {
+          code?: string
+          name?: string
+          region?: string
+          sort_order?: number | null
         }
         Relationships: []
       }
