@@ -25,12 +25,10 @@ export default function RightsDealDetailPage() {
   const [writerId, setWriterId] = useState<string | null>(null);
   const [writerName, setWriterName] = useState("");
   const [writerPro, setWriterPro] = useState("");
+  const [writerIpi, setWriterIpi] = useState("");
   const [writerSearch, setWriterSearch] = useState("");
   const [showWriterResults, setShowWriterResults] = useState(false);
   const [territory, setTerritory] = useState("World");
-  const [status, setStatus] = useState("active");
-  const [effectiveDate, setEffectiveDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [writerShare, setWriterShare] = useState(100);
   const [notes, setNotes] = useState("");
   const [publishers, setPublishers] = useState<DealPublisher[]>([]);
@@ -67,10 +65,8 @@ export default function RightsDealDetailPage() {
       setWriterId(existingDeal.writer_id);
       setWriterName((existingDeal as any).writers?.name || "");
       setWriterPro((existingDeal as any).writers?.pro || "");
+      setWriterIpi((existingDeal as any).writers?.ipi_number || "");
       setTerritory(existingDeal.territory);
-      setStatus(existingDeal.status);
-      setEffectiveDate(existingDeal.effective_date || "");
-      setEndDate(existingDeal.end_date || "");
       setWriterShare(existingDeal.writer_share);
       setNotes(existingDeal.notes || "");
       setPublishers(
@@ -128,6 +124,7 @@ export default function RightsDealDetailPage() {
     setWriterId(writer.id);
     setWriterName(writer.name);
     setWriterPro(writer.pro || "");
+    setWriterIpi(writer.ipi_number || "");
     setWriterSearch("");
     setShowWriterResults(false);
   };
@@ -136,6 +133,7 @@ export default function RightsDealDetailPage() {
     setWriterId(null);
     setWriterName("");
     setWriterPro("");
+    setWriterIpi("");
   };
 
   const addPublisher = () => {
@@ -203,9 +201,7 @@ export default function RightsDealDetailPage() {
             writer_id: writerId,
             name: dealName,
             territory,
-            status,
-            effective_date: effectiveDate || null,
-            end_date: endDate || null,
+            status: "active",
             writer_share: writerShare,
             notes: notes || null,
           } as any)
@@ -237,9 +233,6 @@ export default function RightsDealDetailPage() {
             writer_id: writerId,
             name: dealName,
             territory,
-            status,
-            effective_date: effectiveDate || null,
-            end_date: endDate || null,
             writer_share: writerShare,
             notes: notes || null,
           } as any)
@@ -339,9 +332,9 @@ export default function RightsDealDetailPage() {
         <AppCardBody>
           <h3 className="text-sm font-medium mb-4">Deal Info</h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Writer search */}
-            <div>
+            <div className="lg:col-span-1">
               <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">Writer *</label>
               {writerId ? (
                 <div className="flex items-center gap-2 h-9 px-3 bg-muted/30 border border-border rounded-lg">
@@ -374,6 +367,12 @@ export default function RightsDealDetailPage() {
               )}
             </div>
 
+            {/* Writer IPI */}
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">Writer IPI</label>
+              <div className="h-9 flex items-center text-sm text-muted-foreground">{writerIpi || "—"}</div>
+            </div>
+
             {/* Writer share */}
             <div>
               <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">Writer Share *</label>
@@ -391,35 +390,6 @@ export default function RightsDealDetailPage() {
               <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">Territory *</label>
               <input type="text" value={territory}
                 onChange={(e) => setTerritory(e.target.value)}
-                className="w-full h-9 px-3 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Status */}
-            <div>
-              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">Status *</label>
-              <select value={status} onChange={(e) => setStatus(e.target.value)}
-                className="w-full h-9 px-3 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring">
-                <option value="active">Active</option>
-                <option value="expired">Expired</option>
-                <option value="terminated">Terminated</option>
-              </select>
-            </div>
-
-            {/* Effective date */}
-            <div>
-              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">Effective Date</label>
-              <input type="date" value={effectiveDate}
-                onChange={(e) => setEffectiveDate(e.target.value)}
-                className="w-full h-9 px-3 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring" />
-            </div>
-
-            {/* End date */}
-            <div>
-              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">End Date</label>
-              <input type="date" value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
                 className="w-full h-9 px-3 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
           </div>

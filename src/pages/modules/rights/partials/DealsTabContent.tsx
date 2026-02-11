@@ -15,13 +15,12 @@ import {
 
 export default function DealsTabContent() {
   const navigate = useNavigate();
-  const [statusFilter, setStatusFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: deals, isLoading } = useQuery({
-    queryKey: ["deals", statusFilter],
+    queryKey: ["deals"],
     queryFn: async () => {
-      let query = supabase
+      const { data, error } = await supabase
         .from("deals")
         .select(`
           id, deal_number, name, territory, status, writer_share,
@@ -31,11 +30,6 @@ export default function DealsTabContent() {
         `)
         .order("deal_number", { ascending: false });
 
-      if (statusFilter !== "all") {
-        query = query.eq("status", statusFilter);
-      }
-
-      const { data, error } = await query;
       if (error) throw error;
       return data;
     },
@@ -67,29 +61,8 @@ export default function DealsTabContent() {
     );
   });
 
-  const statusColors: Record<string, string> = {
-    active: "bg-emerald-500/10 text-emerald-600",
-    expired: "bg-muted text-muted-foreground",
-    terminated: "bg-destructive/10 text-destructive",
-  };
-
   return (
     <>
-      {/* Status filter */}
-      <div className="flex items-center gap-4 mb-4">
-        {["all", "active", "expired", "terminated"].map((s) => (
-          <button
-            key={s}
-            onClick={() => setStatusFilter(s)}
-            className={`text-xs font-medium uppercase tracking-wider transition-colors ${
-              statusFilter === s ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {s === "all" ? "All" : s.charAt(0).toUpperCase() + s.slice(1)}
-          </button>
-        ))}
-      </div>
-
       {/* Action bar */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4">
         <div className="relative flex-1">
@@ -124,14 +97,13 @@ export default function DealsTabContent() {
       ) : (
         <div className="overflow-x-auto -mx-4 sm:mx-0">
           <div className="px-4 sm:px-0">
-            <AppTable columns={["8%", "28%", "28%", "12%", "12%", "12%"]}>
+            <AppTable columns={["8%", "30%", "32%", "15%", "15%"]}>
               <AppTableHeader>
                 <AppTableRow header>
                   <AppTableHead className="pl-5">#</AppTableHead>
                   <AppTableHead>Writer</AppTableHead>
                   <AppTableHead>Publishers</AppTableHead>
                   <AppTableHead>Territory</AppTableHead>
-                  <AppTableHead>Status</AppTableHead>
                   <AppTableHead className="text-right pr-5">Songs</AppTableHead>
                 </AppTableRow>
               </AppTableHeader>
@@ -163,11 +135,6 @@ export default function DealsTabContent() {
                         {publisherDisplay || <span className="italic">None</span>}
                       </AppTableCell>
                       <AppTableCell muted>{deal.territory}</AppTableCell>
-                      <AppTableCell>
-                        <span className={`text-[11px] font-medium px-2 py-0.5 rounded ${statusColors[deal.status] || "bg-muted text-muted-foreground"}`}>
-                          {deal.status.charAt(0).toUpperCase() + deal.status.slice(1)}
-                        </span>
-                      </AppTableCell>
                       <AppTableCell muted className="text-right pr-5 tabular-nums">
                         {songCounts?.[deal.id] || 0}
                       </AppTableCell>
