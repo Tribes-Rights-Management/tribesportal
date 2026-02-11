@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { generateLabelCopyFromQueueData } from "@/utils/generateLabelCopy";
 import { useParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import {
@@ -450,6 +451,37 @@ export default function RightsQueueDetailPage() {
                 ))}
               </AppCardBody>
             </AppCard>
+
+            {/* Controlled Label Copy — auto-generated preview */}
+            {(() => {
+              const labelCopy = generateLabelCopyFromQueueData(songData);
+              return (
+                <AppCard>
+                  <AppCardBody>
+                    <h3 className="text-sm font-medium mb-3">Controlled Label Copy</h3>
+                    {labelCopy ? (
+                      <div className="flex items-start justify-between gap-4">
+                        <p className="text-[13px] text-foreground leading-relaxed">{labelCopy}</p>
+                        <AppButton
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            navigator.clipboard.writeText(labelCopy);
+                            toast.success("Label copy copied to clipboard");
+                          }}
+                        >
+                          Copy
+                        </AppButton>
+                      </div>
+                    ) : (
+                      <p className="text-[12px] text-muted-foreground italic">
+                        Add Tribes-administered publishers to auto-generate label copy.
+                      </p>
+                    )}
+                  </AppCardBody>
+                </AppCard>
+              );
+            })()}
 
             {/* Lyrics */}
             {(songData.lyrics || songData.lyrics_sections?.length > 0) && (

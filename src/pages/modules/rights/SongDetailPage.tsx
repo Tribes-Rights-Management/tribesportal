@@ -5,6 +5,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { AppPageLayout, AppSection } from "@/components/app-ui";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { generateLabelCopyFromSongData } from "@/utils/generateLabelCopy";
 
 /**
  * SONG DETAIL PAGE — Individual song view within Rights Catalog
@@ -1274,9 +1275,33 @@ export default function SongDetailPage() {
           )}
         </SectionPanel>
 
-        {/* ─── 4. LABEL COPY (placeholder) ──────────────── */}
-        <SectionPanel title="Label Copy">
-          <p className="text-[13px] text-muted-foreground/50">No label copy information</p>
+        {/* ─── 4. LABEL COPY ──────────────────────────── */}
+        <SectionPanel title="Controlled Label Copy">
+          {(() => {
+            const labelCopy = generateLabelCopyFromSongData({
+              metadata: song.metadata,
+              ownership: ownership.map((o) => ({
+                tribes_administered: o.tribes_administered,
+                publisher: o.publisher_name ? { name: o.publisher_name, pro: o.pro || "" } : null,
+              })),
+            });
+            return labelCopy ? (
+              <div className="flex items-start justify-between gap-4">
+                <p className="text-[14px] text-foreground leading-relaxed">{labelCopy}</p>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(labelCopy);
+                    toast.success("Label copy copied to clipboard");
+                  }}
+                  className="text-[12px] text-primary hover:underline whitespace-nowrap"
+                >
+                  Copy
+                </button>
+              </div>
+            ) : (
+              <p className="text-[13px] text-muted-foreground/50">No Tribes-administered publishers on this song.</p>
+            );
+          })()}
         </SectionPanel>
 
         {/* ─── 5. LYRICS ────────────────────────────────── */}
