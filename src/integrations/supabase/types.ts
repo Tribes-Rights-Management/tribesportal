@@ -2849,6 +2849,7 @@ export type Database = {
           revision_requested_by: string | null
           revision_submitted_at: string | null
           status: Database["public"]["Enums"]["song_queue_status"]
+          submission_number: number | null
           submitted_at: string
           submitted_by: string
           submitted_data: Json
@@ -2868,6 +2869,7 @@ export type Database = {
           revision_requested_by?: string | null
           revision_submitted_at?: string | null
           status?: Database["public"]["Enums"]["song_queue_status"]
+          submission_number?: number | null
           submitted_at?: string
           submitted_by: string
           submitted_data: Json
@@ -2887,6 +2889,7 @@ export type Database = {
           revision_requested_by?: string | null
           revision_submitted_at?: string | null
           status?: Database["public"]["Enums"]["song_queue_status"]
+          submission_number?: number | null
           submitted_at?: string
           submitted_by?: string
           submitted_data?: Json
@@ -3109,6 +3112,7 @@ export type Database = {
           published_at: string | null
           published_by: string | null
           release_date: string | null
+          song_number: number | null
           source_queue_id: string | null
           title: string
           updated_at: string
@@ -3128,6 +3132,7 @@ export type Database = {
           published_at?: string | null
           published_by?: string | null
           release_date?: string | null
+          song_number?: number | null
           source_queue_id?: string | null
           title: string
           updated_at?: string
@@ -3147,6 +3152,7 @@ export type Database = {
           published_at?: string | null
           published_by?: string | null
           release_date?: string | null
+          song_number?: number | null
           source_queue_id?: string | null
           title?: string
           updated_at?: string

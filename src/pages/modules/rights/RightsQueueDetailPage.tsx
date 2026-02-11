@@ -9,6 +9,7 @@ import {
   AppSection,
   AppDetailRow,
   AppDetailRowGroup,
+  AppSelect,
 } from "@/components/app-ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -145,10 +146,49 @@ export default function RightsQueueDetailPage() {
                   <div className="space-y-4">
                     {editField("title", "Title")}
                     {editField("language", "Language")}
-                    {editField("song_type", "Song Type")}
-                    {editField("release_status", "Release Status")}
+                    <div>
+                      <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">Song Type</label>
+                      <AppSelect
+                        value={editData?.song_type || ""}
+                        onChange={(val) => setEditData({ ...editData, song_type: val })}
+                        options={[
+                          { value: "original", label: "Original" },
+                          { value: "instrumental", label: "Instrumental" },
+                          { value: "public_domain", label: "Public Domain" },
+                          { value: "original_adaptation", label: "Original Adaptation" },
+                          { value: "derivative", label: "Derivative Work" },
+                          { value: "medley_mashup", label: "Medley/Mashup" },
+                        ]}
+                        fullWidth
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">Release Status</label>
+                      <AppSelect
+                        value={editData?.release_status || ""}
+                        onChange={(val) => setEditData({ ...editData, release_status: val })}
+                        options={[
+                          { value: "yes", label: "Yes" },
+                          { value: "no", label: "No" },
+                        ]}
+                        fullWidth
+                      />
+                    </div>
                     {editField("publication_year", "Publication Year")}
-                    {editField("copyright_status", "Copyright Status")}
+                    <div>
+                      <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">Copyright Status</label>
+                      <AppSelect
+                        value={editData?.copyright_status || ""}
+                        onChange={(val) => setEditData({ ...editData, copyright_status: val })}
+                        options={[
+                          { value: "registered", label: "Registered" },
+                          { value: "pending", label: "Pending" },
+                          { value: "unknown", label: "Unknown" },
+                          { value: "unregistered", label: "Unregistered" },
+                        ]}
+                        fullWidth
+                      />
+                    </div>
                   </div>
                 ) : (
                   <AppDetailRowGroup>
