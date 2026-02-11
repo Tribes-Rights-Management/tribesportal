@@ -59,8 +59,8 @@ import {
   RightsQueueDetailPage,
   RightsClientsPage,
   RightsCatalogPage,
-  RightsWritersPage,
-  RightsPublishersPage,
+  RightsPartiesPage,
+  RightsDealDetailPage,
   RightsContractsPage,
   RightsDocumentsPage,
   RightsSettingsPage,
@@ -279,8 +279,11 @@ const App = () => (
           <Route path="clients" element={<RightsClientsPage />} />
           <Route path="catalog" element={<RightsCatalogPage />} />
           <Route path="catalog/:songNumber/:songSlug?" element={<SongDetailPage />} />
-          <Route path="writers" element={<RightsWritersPage />} />
-          <Route path="publishers" element={<RightsPublishersPage />} />
+          <Route path="parties" element={<RightsPartiesPage />} />
+          <Route path="parties/deals/new" element={<RightsDealDetailPage />} />
+          <Route path="parties/deals/:dealNumber" element={<RightsDealDetailPage />} />
+          <Route path="writers" element={<Navigate to="/rights/parties?tab=writers" replace />} />
+          <Route path="publishers" element={<Navigate to="/rights/parties?tab=publishers" replace />} />
           <Route path="songs/submit" element={<SongSubmitPage />} />
           <Route path="contracts" element={<RightsContractsPage />} />
           <Route path="documents" element={<RightsDocumentsPage />} />
