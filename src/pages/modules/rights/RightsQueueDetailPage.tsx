@@ -17,7 +17,11 @@ import { QueueStatusControl } from "@/components/queue/QueueStatusControl";
 import { QueueMessageThread } from "@/components/queue/QueueMessageThread";
 import { useQueueItem, useUpdateQueueStatus } from "@/hooks/use-song-queue";
 import { useQueueMessages } from "@/hooks/use-queue-messages";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+const capitalize = (val: string | undefined | null) =>
+  val ? val.charAt(0).toUpperCase() + val.slice(1) : "—";
 
 /**
  * RIGHTS QUEUE DETAIL PAGE — Staff view of a single queue item
@@ -30,6 +34,9 @@ export default function RightsQueueDetailPage() {
   const updateStatus = useUpdateQueueStatus();
   const [adminNotes, setAdminNotes] = useState("");
   const [notesEditing, setNotesEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState<any>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   if (isLoading) {
     return (
@@ -51,6 +58,33 @@ export default function RightsQueueDetailPage() {
   const writers = songData.writers || [];
   const title = songData.title || "Untitled";
 
+  const startEditing = () => {
+    setEditData({ ...songData });
+    setIsEditing(true);
+  };
+
+  const saveEdits = async () => {
+    setIsSaving(true);
+    try {
+      const { error } = await (supabase as any)
+        .from("song_queue")
+        .update({
+          current_data: editData,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", item.id);
+
+      if (error) throw error;
+      toast.success("Changes saved");
+      setIsEditing(false);
+      refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSaveNotes = () => {
     updateStatus.mutate(
       { queueId: item.id, status: item.status, notes: adminNotes },
@@ -60,6 +94,17 @@ export default function RightsQueueDetailPage() {
       }
     );
   };
+
+  const editField = (key: string, label: string) => (
+    <div key={key}>
+      <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">{label}</label>
+      <input
+        className="w-full h-10 px-3 rounded-md border border-border bg-background text-sm"
+        value={editData?.[key] || ""}
+        onChange={(e) => setEditData({ ...editData, [key]: e.target.value })}
+      />
+    </div>
+  );
 
   return (
     <AppPageLayout
@@ -81,25 +126,46 @@ export default function RightsQueueDetailPage() {
 
         <TabsContent value="details">
           <div className="space-y-4">
+            {/* Song Details Card */}
             <AppCard>
               <AppCardBody>
-                <AppDetailRowGroup>
-                  <AppDetailRow label="Title" value={title} />
-                  <AppDetailRow label="Alternate Title" value={
-                    songData.alternate_titles?.length > 0 ? songData.alternate_titles.join(", ") : "—"
-                  } />
-                  <AppDetailRow label="Language" value={songData.language || "—"} />
-                  <AppDetailRow label="Song Type" value={songData.song_type || "—"} />
-                  <AppDetailRow label="Release Status" value={songData.release_status || "—"} />
-                  <AppDetailRow label="Publication Year" value={songData.publication_year || songData.creation_year || "—"} />
-                  <AppDetailRow label="Copyright Status" value={songData.copyright_status || "—"} />
-                  <AppDetailRow label="Copyright Filing Requested" value={
-                    songData.wants_copyright_filing === true ? "Yes" : songData.wants_copyright_filing === false ? "No" : "—"
-                  } />
-                  <AppDetailRow label="Chord Chart" value={
-                    songData.has_chord_chart ? (songData.chord_chart_file || "Yes") : "No"
-                  } />
-                </AppDetailRowGroup>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-medium">Song Details</h3>
+                  {!isEditing ? (
+                    <AppButton size="sm" variant="ghost" onClick={startEditing}>Edit</AppButton>
+                  ) : (
+                    <div className="flex gap-2">
+                      <AppButton size="sm" onClick={saveEdits} loading={isSaving}>Save</AppButton>
+                      <AppButton size="sm" variant="ghost" onClick={() => setIsEditing(false)}>Cancel</AppButton>
+                    </div>
+                  )}
+                </div>
+
+                {isEditing ? (
+                  <div className="space-y-4">
+                    {editField("title", "Title")}
+                    {editField("language", "Language")}
+                    {editField("song_type", "Song Type")}
+                    {editField("release_status", "Release Status")}
+                    {editField("publication_year", "Publication Year")}
+                    {editField("copyright_status", "Copyright Status")}
+                  </div>
+                ) : (
+                  <AppDetailRowGroup>
+                    <AppDetailRow label="Title" value={title} />
+                    <AppDetailRow label="Alternate Title" value={
+                      songData.alternate_titles?.length > 0 ? songData.alternate_titles.join(", ") : "—"
+                    } />
+                    <AppDetailRow label="Language" value={songData.language || "—"} />
+                    <AppDetailRow label="Song Type" value={capitalize(songData.song_type)} />
+                    <AppDetailRow label="Release Status" value={capitalize(songData.release_status)} />
+                    <AppDetailRow label="Publication Year" value={songData.publication_year || songData.creation_year || "—"} />
+                    <AppDetailRow label="Copyright Status" value={capitalize(songData.copyright_status)} />
+                    <AppDetailRow label="Chord Chart" value={
+                      songData.has_chord_chart ? (songData.chord_chart_file || "Yes") : "No"
+                    } />
+                  </AppDetailRowGroup>
+                )}
               </AppCardBody>
             </AppCard>
 
