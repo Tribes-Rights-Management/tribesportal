@@ -430,7 +430,7 @@ export default function SongSubmitPage() {
 
       setSubmittedSongId(queueId);
       setSubmissionComplete(true);
-      window.scrollTo(0, 0);
+      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
 
       // Fire and forget: send confirmation emails
       sendConfirmationEmails(data);

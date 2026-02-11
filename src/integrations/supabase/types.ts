@@ -2838,7 +2838,7 @@ export type Database = {
         Row: {
           admin_notes: string | null
           approved_song_id: string | null
-          client_account_id: string
+          client_account_id: string | null
           current_data: Json
           id: string
           rejection_reason: string | null
@@ -2857,7 +2857,7 @@ export type Database = {
         Insert: {
           admin_notes?: string | null
           approved_song_id?: string | null
-          client_account_id: string
+          client_account_id?: string | null
           current_data: Json
           id?: string
           rejection_reason?: string | null
@@ -2876,7 +2876,7 @@ export type Database = {
         Update: {
           admin_notes?: string | null
           approved_song_id?: string | null
-          client_account_id?: string
+          client_account_id?: string | null
           current_data?: Json
           id?: string
           rejection_reason?: string | null
