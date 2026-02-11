@@ -412,7 +412,6 @@ export default function RightsQueueDetailPage() {
                       {writer.pro && (
                         <span className="text-[11px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{writer.pro}</span>
                       )}
-                      <span className="text-[12px] text-muted-foreground ml-auto">{writer.split}%</span>
                     </div>
 
                     {(writer.publishers || []).length === 0 ? (
