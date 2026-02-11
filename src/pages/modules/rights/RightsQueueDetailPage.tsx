@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { generateLabelCopyFromQueueData } from "@/utils/generateLabelCopy";
 import { useParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
@@ -136,18 +136,27 @@ export default function RightsQueueDetailPage() {
   const [isEditingPublishers, setIsEditingPublishers] = useState(false);
   const [editableWriters, setEditableWriters] = useState<any[]>([]);
 
-  // Fetch all active deals
+  // Extract writer IDs from submission data for deal filtering
+  const submittedWriterIds = useMemo(() => {
+    const w = item?.current_data?.writers || item?.submitted_data?.writers || [];
+    return w.map((wr: any) => wr.id).filter(Boolean) as string[];
+  }, [item?.current_data, item?.submitted_data]);
+
+  // Fetch active deals filtered by submitted writers
   const { data: deals } = useQuery({
-    queryKey: ['deals-for-queue'],
+    queryKey: ['deals-for-queue', submittedWriterIds],
     queryFn: async () => {
+      if (submittedWriterIds.length === 0) return [];
       const { data, error } = await supabase
         .from('deals')
         .select('id, name, deal_number, territory, territory_mode, writer_id, writer_share, writers(id, name, pro, ipi_number), deal_publishers(*, publishers:publisher_id(id, name, pro, ipi_number))')
+        .in('writer_id', submittedWriterIds)
         .eq('status', 'active')
         .order('name');
       if (error) throw error;
       return data || [];
     },
+    enabled: submittedWriterIds.length > 0,
   });
 
   const selectedDeal = deals?.find((d: any) => d.id === selectedDealId) || null;
@@ -460,8 +469,15 @@ export default function RightsQueueDetailPage() {
                 <AppCardBody>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-medium">Publishing & Administration</h3>
-                    <button onClick={startEditingPublishers} className="text-xs text-primary hover:underline">Edit</button>
+                    {!selectedDealId && (
+                      <button onClick={startEditingPublishers} className="text-xs text-primary hover:underline">Edit</button>
+                    )}
                   </div>
+                  {selectedDealId && (
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Publisher data sourced from deal. Remove the deal to edit manually.
+                    </p>
+                  )}
                   {writers.map((writer: any, wIndex: number) => (
                     <div key={wIndex} className="mb-5 last:mb-0">
                       <div className="flex items-center justify-between mb-2 pb-2 border-b border-border/50">
@@ -642,40 +658,52 @@ export default function RightsQueueDetailPage() {
               <label className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground block mb-2">
                 Associated Deal
               </label>
-              <AppSelect
-                value={selectedDealId || 'none'}
-                onChange={(val) => handleDealSelect(val === 'none' ? null : val)}
-                options={[
-                  { value: 'none', label: 'No deal selected' },
-                  ...(deals || []).map((deal: any) => ({
-                    value: deal.id,
-                    label: `${deal.name} — ${deal.writers?.name || 'Unknown'} (${deal.territory || 'World'})`,
-                  })),
-                ]}
-                fullWidth
-              />
-              {selectedDeal && (
-                <div className="mt-3 p-3 rounded-md bg-muted/30 border border-border/50 space-y-1">
-                  <div className="text-xs">
-                    <span className="text-muted-foreground">Writer:</span>{' '}
-                    <span className="font-medium">{selectedDeal.writers?.name}</span>
-                    {selectedDeal.writers?.pro && (
-                      <span className="text-muted-foreground"> ({selectedDeal.writers.pro})</span>
-                    )}
-                  </div>
-                  <div className="text-xs">
-                    <span className="text-muted-foreground">Territory:</span>{' '}
-                    <span className="font-medium">{selectedDeal.territory || 'World'}</span>
-                  </div>
-                  {selectedDeal.deal_publishers?.length > 0 && (
-                    <div className="text-xs">
-                      <span className="text-muted-foreground">Publishers:</span>{' '}
-                      <span className="font-medium">
-                        {selectedDeal.deal_publishers.map((dp: any) => dp.publisher_name || dp.publishers?.name).filter(Boolean).join(', ')}
-                      </span>
+              {submittedWriterIds.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No writers found in submission.</p>
+              ) : !deals || deals.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No active deals found for this songwriter.</p>
+              ) : (
+                <>
+                  <AppSelect
+                    value={selectedDealId || 'none'}
+                    onChange={(val) => handleDealSelect(val === 'none' ? null : val)}
+                    options={[
+                      { value: 'none', label: 'No deal selected' },
+                      ...(deals || []).map((deal: any) => ({
+                        value: deal.id,
+                        label: `${deal.name} — ${deal.writers?.name || 'Unknown'} (${deal.territory || 'World'})`,
+                      })),
+                    ]}
+                    fullWidth
+                  />
+                  {selectedDeal && (
+                    <div className="mt-3 p-3 rounded-md bg-muted/30 border border-border/50 space-y-1.5">
+                      <div className="text-xs">
+                        <span className="text-muted-foreground">Writer:</span>{' '}
+                        <span className="font-medium">{selectedDeal.writers?.name}</span>
+                        {selectedDeal.writers?.pro && (
+                          <span className="text-muted-foreground"> ({selectedDeal.writers.pro})</span>
+                        )}
+                      </div>
+                      <div className="text-xs">
+                        <span className="text-muted-foreground">Share:</span>{' '}
+                        <span className="font-medium">{selectedDeal.writer_share}%</span>
+                      </div>
+                      <div className="text-xs">
+                        <span className="text-muted-foreground">Territory:</span>{' '}
+                        <span className="font-medium">{selectedDeal.territory || 'World'}</span>
+                      </div>
+                      {selectedDeal.deal_publishers?.length > 0 && (
+                        <div className="text-xs">
+                          <span className="text-muted-foreground">Publishers:</span>{' '}
+                          <span className="font-medium">
+                            {selectedDeal.deal_publishers.map((dp: any) => dp.publisher_name || dp.publishers?.name || 'Unknown').filter(Boolean).join(', ')}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   )}
-                </div>
+                </>
               )}
             </div>
 
