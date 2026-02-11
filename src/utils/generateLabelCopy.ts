@@ -37,7 +37,7 @@ export function generateLabelCopy(input: LabelCopyInput): string | null {
  */
 export function generateLabelCopyFromQueueData(songData: any): string | null {
   const writers = songData?.writers || [];
-  const year = songData?.publication_year || songData?.creation_year;
+  const year = songData?.publication_year;
 
   const allPublishers: LabelCopyPublisher[] = [];
   for (const writer of writers) {
@@ -67,7 +67,7 @@ export function generateLabelCopyFromSongData(song: {
     publisher: { name: string; pro: string } | null;
   }>;
 }): string | null {
-  const year = song.metadata?.publication_year || song.metadata?.creation_year || song.metadata?.year_written;
+  const year = song.metadata?.publication_year;
 
   const publishers: LabelCopyPublisher[] = [];
   for (const o of (song.ownership || [])) {
