@@ -55,14 +55,40 @@ export default function RightsQueueDetailPage() {
     queryKey: ['deals-for-queue', submittedWriterIds],
     queryFn: async () => {
       if (submittedWriterIds.length === 0) return [];
+      // Fetch deals
       const { data, error } = await supabase
         .from('deals')
-        .select('id, name, deal_number, territory, territory_mode, writer_id, writer_share, writers(id, name, pro, ipi_number), deal_publishers(*, publishers:publisher_id(id, name, pro, ipi_number))')
+        .select('id, name, deal_number, territory, territory_mode, writer_id, writer_share, status')
         .in('writer_id', submittedWriterIds)
         .eq('status', 'active')
         .order('name');
-      if (error) throw error;
-      return data || [];
+      if (error) { console.error('Deals query error:', error); return []; }
+      if (!data || data.length === 0) return [];
+
+      // Fetch writers
+      const writerIds = [...new Set(data.map(d => d.writer_id).filter(Boolean))];
+      const { data: writers } = await supabase
+        .from('writers')
+        .select('id, name, pro, ipi_number')
+        .in('id', writerIds);
+
+      // Fetch deal_publishers (no FK to publishers table — data is inline)
+      const dealIds = data.map(d => d.id);
+      const { data: dealPubs } = await supabase
+        .from('deal_publishers')
+        .select('id, deal_id, publisher_name, publisher_pro, publisher_ipi, publisher_id, share, tribes_administered, administrator_entity_id, sort_order')
+        .in('deal_id', dealIds)
+        .order('sort_order');
+
+      return data.map(deal => ({
+        ...deal,
+        writers: writers?.find(w => w.id === deal.writer_id) || null,
+        deal_publishers: (dealPubs?.filter(dp => dp.deal_id === deal.id) || []).map(dp => ({
+          ...dp,
+          // Normalize publisher fields for UI consistency
+          publishers: { id: dp.publisher_id, name: dp.publisher_name, pro: dp.publisher_pro, ipi_number: dp.publisher_ipi },
+        })),
+      }));
     },
     enabled: submittedWriterIds.length > 0,
   });
