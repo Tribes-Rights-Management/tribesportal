@@ -643,10 +643,10 @@ export default function RightsQueueDetailPage() {
                 Associated Deal
               </label>
               <AppSelect
-                value={selectedDealId || ''}
-                onChange={(val) => handleDealSelect(val || null)}
+                value={selectedDealId || 'none'}
+                onChange={(val) => handleDealSelect(val === 'none' ? null : val)}
                 options={[
-                  { value: '', label: 'No deal selected' },
+                  { value: 'none', label: 'No deal selected' },
                   ...(deals || []).map((deal: any) => ({
                     value: deal.id,
                     label: `${deal.name} — ${deal.writers?.name || 'Unknown'} (${deal.territory || 'World'})`,
