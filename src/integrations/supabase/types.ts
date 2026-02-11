@@ -964,6 +964,119 @@ export type Database = {
           },
         ]
       }
+      deal_publishers: {
+        Row: {
+          administrator_entity_id: string | null
+          created_at: string
+          deal_id: string
+          id: string
+          publisher_id: string | null
+          publisher_ipi: string | null
+          publisher_name: string
+          publisher_pro: string | null
+          share: number
+          sort_order: number
+          tribes_administered: boolean
+        }
+        Insert: {
+          administrator_entity_id?: string | null
+          created_at?: string
+          deal_id: string
+          id?: string
+          publisher_id?: string | null
+          publisher_ipi?: string | null
+          publisher_name: string
+          publisher_pro?: string | null
+          share?: number
+          sort_order?: number
+          tribes_administered?: boolean
+        }
+        Update: {
+          administrator_entity_id?: string | null
+          created_at?: string
+          deal_id?: string
+          id?: string
+          publisher_id?: string | null
+          publisher_ipi?: string | null
+          publisher_name?: string
+          publisher_pro?: string | null
+          share?: number
+          sort_order?: number
+          tribes_administered?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_publishers_administrator_entity_id_fkey"
+            columns: ["administrator_entity_id"]
+            isOneToOne: false
+            referencedRelation: "tribes_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_publishers_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deals: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deal_number: number | null
+          effective_date: string | null
+          end_date: string | null
+          id: string
+          name: string
+          notes: string | null
+          status: string
+          territory: string
+          updated_at: string
+          writer_id: string
+          writer_share: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deal_number?: number | null
+          effective_date?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          status?: string
+          territory?: string
+          updated_at?: string
+          writer_id: string
+          writer_share?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deal_number?: number | null
+          effective_date?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: string
+          territory?: string
+          updated_at?: string
+          writer_id?: string
+          writer_share?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deals_writer_id_fkey"
+            columns: ["writer_id"]
+            isOneToOne: false
+            referencedRelation: "writers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       disclosure_exports: {
         Row: {
           completed_at: string | null
@@ -3052,6 +3165,7 @@ export type Database = {
         Row: {
           created_at: string | null
           credit: string | null
+          deal_id: string | null
           id: string
           share: number
           song_id: string
@@ -3062,6 +3176,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           credit?: string | null
+          deal_id?: string | null
           id?: string
           share?: number
           song_id: string
@@ -3072,6 +3187,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           credit?: string | null
+          deal_id?: string | null
           id?: string
           share?: number
           song_id?: string
@@ -3080,6 +3196,13 @@ export type Database = {
           writer_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "song_writers_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "song_writers_song_id_fkey"
             columns: ["song_id"]
