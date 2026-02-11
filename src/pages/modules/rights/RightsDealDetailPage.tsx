@@ -102,14 +102,45 @@ export default function RightsDealDetailPage() {
     queryKey: ["pub-search", pubSearchQuery],
     queryFn: async () => {
       if (pubSearchQuery.length < 2) return [];
-      const { data, error } = await supabase
+
+      const { data: publishers, error } = await supabase
         .from("interested_parties")
-        .select("id, name, pro, interested_party_ipi_numbers(ipi_number)")
+        .select("id, name, pro_id")
         .eq("party_type", "publisher")
         .ilike("name", `%${pubSearchQuery}%`)
         .limit(8);
-      if (error) throw error;
-      return data;
+
+      if (error) { console.error("Publisher search error:", error); return []; }
+      if (!publishers || publishers.length === 0) return [];
+
+      const proIds = [...new Set(publishers.map(p => p.pro_id).filter(Boolean))] as string[];
+      let proMap: Record<string, string> = {};
+      if (proIds.length > 0) {
+        const { data: pros } = await supabase
+          .from("pro_organizations")
+          .select("id, abbreviation")
+          .in("id", proIds);
+        if (pros) proMap = Object.fromEntries(pros.map(p => [p.id, p.abbreviation]));
+      }
+
+      const pubIds = publishers.map(p => p.id);
+      let ipiMap: Record<string, string> = {};
+      const { data: ipis } = await supabase
+        .from("interested_party_ipi_numbers")
+        .select("interested_party_id, ipi_number")
+        .in("interested_party_id", pubIds);
+      if (ipis) {
+        ipis.forEach((ipi: any) => {
+          if (!ipiMap[ipi.interested_party_id]) ipiMap[ipi.interested_party_id] = ipi.ipi_number;
+        });
+      }
+
+      return publishers.map(p => ({
+        id: p.id,
+        name: p.name,
+        pro: proMap[p.pro_id || ""] || "",
+        ipi_number: ipiMap[p.id] || "",
+      }));
     },
     enabled: pubSearchQuery.length >= 2 && pubSearchIndex !== null,
   });
@@ -439,6 +470,7 @@ export default function RightsDealDetailPage() {
                             updatePublisher(index, "publisher_name", e.target.value);
                           }}
                           onFocus={() => setPubSearchIndex(index)}
+                          onBlur={() => setTimeout(() => setPubSearchIndex(null), 200)}
                           placeholder="Search publishers..."
                           className="w-full h-9 px-3 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring" />
                         {pubSearchIndex === index && pubResults && pubResults.length > 0 && (
