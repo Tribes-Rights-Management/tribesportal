@@ -132,7 +132,7 @@ export default function RightsQueueDetailPage() {
 
   // Publisher editing state
   const [isEditingPublishers, setIsEditingPublishers] = useState(false);
-  const [publisherData, setPublisherData] = useState<any[]>([]);
+  const [editableWriters, setEditableWriters] = useState<any[]>([]);
 
   if (isLoading) {
     return (
@@ -202,44 +202,76 @@ export default function RightsQueueDetailPage() {
     </div>
   );
 
-  // Publisher helpers
-  const addPublisher = (writerIndex: number, pub: any) => {
-    const updated = [...publisherData];
-    if (!updated[writerIndex].publishers) {
-      updated[writerIndex].publishers = [];
+  // Publisher handlers
+  const handlePublisherChange = (wIndex: number, pIndex: number, field: string, value: any) => {
+    setEditableWriters(prev => {
+      const updated = [...prev];
+      updated[wIndex] = { ...updated[wIndex], publishers: [...updated[wIndex].publishers] };
+      updated[wIndex].publishers[pIndex] = { ...updated[wIndex].publishers[pIndex], [field]: value };
+      return updated;
+    });
+  };
+
+  const handleAddPublisher = (wIndex: number, pub: any) => {
+    setEditableWriters(prev => {
+      const updated = [...prev];
+      updated[wIndex] = {
+        ...updated[wIndex],
+        publishers: [...(updated[wIndex].publishers || []), pub],
+      };
+      return updated;
+    });
+  };
+
+  const handleRemovePublisher = (wIndex: number, pIndex: number) => {
+    setEditableWriters(prev => {
+      const updated = [...prev];
+      updated[wIndex] = {
+        ...updated[wIndex],
+        publishers: updated[wIndex].publishers.filter((_: any, i: number) => i !== pIndex),
+      };
+      return updated;
+    });
+  };
+
+  const handleSavePublishers = async () => {
+    for (const writer of editableWriters) {
+      const total = (writer.publishers || []).reduce((sum: number, p: any) => sum + (p.share || 0), 0);
+      if (writer.publishers?.length > 0 && total !== writer.split) {
+        toast.error(`Publisher shares for ${writer.name} must equal ${writer.split}%`);
+        return;
+      }
     }
-    updated[writerIndex].publishers.push(pub);
-    setPublisherData(updated);
-  };
 
-  const removePublisher = (writerIndex: number, pubIndex: number) => {
-    const updated = [...publisherData];
-    updated[writerIndex].publishers.splice(pubIndex, 1);
-    setPublisherData(updated);
-  };
+    const currentData = { ...songData };
+    currentData.writers = currentData.writers.map((w: any, i: number) => ({
+      ...w,
+      publishers: editableWriters[i]?.publishers || [],
+    }));
 
-  const savePublishers = async () => {
-    try {
-      const updatedData = { ...songData, writers: publisherData };
-      const { error } = await (supabase as any)
-        .from("song_queue")
-        .update({
-          current_data: updatedData,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", item.id);
+    const { error } = await (supabase as any)
+      .from("song_queue")
+      .update({ current_data: currentData, updated_at: new Date().toISOString() })
+      .eq("id", item.id);
 
-      if (error) throw error;
-      toast.success("Publishers saved");
-      setIsEditingPublishers(false);
-      refetch();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to save");
+    if (error) {
+      toast.error("Failed to save publishers");
+      return;
     }
+
+    toast.success("Publishers saved");
+    setIsEditingPublishers(false);
+    refetch();
   };
 
-  // Data source for publisher section (edit vs read mode)
-  const pubViewWriters = isEditingPublishers ? publisherData : writers;
+  const startEditingPublishers = () => {
+    const w = songData?.writers || [];
+    setEditableWriters(w.map((wr: any) => ({
+      ...wr,
+      publishers: wr.publishers ? [...wr.publishers.map((p: any) => ({ ...p }))] : [],
+    })));
+    setIsEditingPublishers(true);
+  };
 
   return (
     <AppPageLayout
@@ -388,68 +420,111 @@ export default function RightsQueueDetailPage() {
             </AppCard>
 
             {/* Publishing & Administration */}
-            <AppCard>
-              <AppCardBody>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-medium">Publishing & Administration</h3>
-                  {!isEditingPublishers ? (
-                    <AppButton size="sm" variant="ghost" onClick={() => {
-                      setPublisherData(JSON.parse(JSON.stringify(writers)));
-                      setIsEditingPublishers(true);
-                    }}>Edit</AppButton>
-                  ) : (
-                    <div className="flex gap-2">
-                      <AppButton size="sm" onClick={savePublishers}>Save</AppButton>
-                      <AppButton size="sm" variant="ghost" onClick={() => setIsEditingPublishers(false)}>Cancel</AppButton>
-                    </div>
-                  )}
-                </div>
-
-                {pubViewWriters.map((writer: any, wi: number) => (
-                  <div key={wi} className="mb-6 last:mb-0">
-                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/50">
-                      <span className="text-[13px] font-medium">{writer.name}</span>
-                      {writer.pro && (
-                        <span className="text-[11px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{writer.pro}</span>
+            {!isEditingPublishers ? (
+              <AppCard>
+                <AppCardBody>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-medium">Publishing & Administration</h3>
+                    <button onClick={startEditingPublishers} className="text-xs text-primary hover:underline">Edit</button>
+                  </div>
+                  {writers.map((writer: any, wIndex: number) => (
+                    <div key={wIndex} className="mb-5 last:mb-0">
+                      <div className="flex items-center justify-between mb-2 pb-2 border-b border-border/50">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">{writer.name}</span>
+                          <span className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded">{writer.pro || "—"}</span>
+                        </div>
+                        <span className="text-sm text-muted-foreground">{writer.split}%</span>
+                      </div>
+                      {writer.publishers && writer.publishers.length > 0 ? (
+                        <div className="pl-4 space-y-1.5">
+                          {writer.publishers.map((pub: any, pIndex: number) => (
+                            <div key={pIndex} className="flex items-center justify-between py-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm">{pub.name}</span>
+                                <span className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded">{pub.pro || "—"}</span>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <span className="text-sm">{pub.share}%</span>
+                                {pub.tribes_administered && (
+                                  <span className="text-[11px] text-muted-foreground font-medium">Tribes</span>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                          {writer.publishers.length > 1 && (
+                            <div className="flex justify-end pt-1 border-t border-border/30">
+                              <span className={`text-[11px] ${
+                                writer.publishers.reduce((sum: number, p: any) => sum + (p.share || 0), 0) === writer.split
+                                  ? 'text-muted-foreground'
+                                  : 'text-destructive font-medium'
+                              }`}>
+                                Total: {writer.publishers.reduce((sum: number, p: any) => sum + (p.share || 0), 0)}% of {writer.split}%
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="pl-4">
+                          <p className="text-sm text-muted-foreground italic">No publishers assigned</p>
+                        </div>
                       )}
                     </div>
-
-                    {(writer.publishers || []).length === 0 ? (
-                      <p className="text-[12px] text-muted-foreground italic ml-4">No publishers assigned</p>
-                    ) : (
-                      <div className="space-y-2 ml-4">
-                        {(writer.publishers || []).map((pub: any, pi: number) => (
-                          <div key={pi} className="flex items-center justify-between py-1.5 bg-muted/30 rounded px-3">
+                  ))}
+                </AppCardBody>
+              </AppCard>
+            ) : (
+              <AppCard>
+                <AppCardBody>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-medium">Publishing & Administration</h3>
+                    <div className="flex items-center gap-2">
+                      <button onClick={handleSavePublishers} className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded-md hover:opacity-90">Save</button>
+                      <button onClick={() => setIsEditingPublishers(false)} className="text-xs text-muted-foreground hover:text-foreground">Cancel</button>
+                    </div>
+                  </div>
+                  {editableWriters.map((writer: any, wIndex: number) => (
+                    <div key={wIndex} className="mb-6 last:mb-0">
+                      <div className="flex items-center justify-between mb-3 pb-2 border-b border-border/50">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">{writer.name}</span>
+                          <span className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded">{writer.pro || "—"}</span>
+                        </div>
+                        <span className="text-sm text-muted-foreground">{writer.split}%</span>
+                      </div>
+                      <div className="pl-4 space-y-3">
+                        {(writer.publishers || []).map((pub: any, pIndex: number) => (
+                          <div key={pIndex} className="flex items-center justify-between py-1.5 bg-muted/30 rounded px-3">
                             <div className="flex items-center gap-2">
-                              <span className="text-[13px]">{pub.name}</span>
-                              {pub.pro && (
-                                <span className="text-[11px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{pub.pro}</span>
-                              )}
+                              <span className="text-sm">{pub.name}</span>
+                              <span className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded">{pub.pro || "—"}</span>
                             </div>
                             <div className="flex items-center gap-3 text-[12px] text-muted-foreground">
                               <span>{pub.share}%</span>
                               <span>{pub.tribes_administered ? "Tribes" : "Other"}</span>
-                              {isEditingPublishers && (
-                                <button
-                                  className="text-destructive hover:text-destructive/80 text-xs"
-                                  onClick={() => removePublisher(wi, pi)}
-                                >×</button>
-                              )}
+                              <button
+                                className="text-destructive hover:text-destructive/80 text-xs"
+                                onClick={() => handleRemovePublisher(wIndex, pIndex)}
+                              >×</button>
                             </div>
                           </div>
                         ))}
+                        <AddPublisherInline onAdd={(pub) => handleAddPublisher(wIndex, pub)} />
+                        {(writer.publishers || []).length > 0 && (() => {
+                          const total = (writer.publishers || []).reduce((sum: number, p: any) => sum + (p.share || 0), 0);
+                          const match = total === writer.split;
+                          return (
+                            <div className={`text-[11px] text-right ${match ? 'text-muted-foreground' : 'text-destructive font-medium'}`}>
+                              Publisher total: {total}% {!match && `(must equal ${writer.split}%)`}
+                            </div>
+                          );
+                        })()}
                       </div>
-                    )}
-
-                    {isEditingPublishers && (
-                      <div className="ml-4 mt-2">
-                        <AddPublisherInline onAdd={(pub) => addPublisher(wi, pub)} />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </AppCardBody>
-            </AppCard>
+                    </div>
+                  ))}
+                </AppCardBody>
+              </AppCard>
+            )}
 
             {/* Controlled Label Copy — auto-generated preview */}
             {(() => {
