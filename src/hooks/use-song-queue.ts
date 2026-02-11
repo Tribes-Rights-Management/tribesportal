@@ -29,6 +29,7 @@ export interface QueueItem {
   updated_at: string;
   submitter_email?: string;
   message_count?: number;
+  deal_id: string | null;
 }
 
 /** Batch-resolve submitter names from user_profiles */
@@ -59,8 +60,9 @@ const QUEUE_SELECT = `
   id, submission_number, status, submitted_at, submitted_by, client_account_id,
   submitted_data, current_data, admin_notes, approved_song_id,
   rejection_reason, revision_request, revision_requested_at,
-  revision_submitted_at, reviewed_at, reviewed_by, updated_at,
-  client_accounts!song_queue_client_account_id_fkey(name)
+  revision_submitted_at, reviewed_at, reviewed_by, updated_at, deal_id,
+  client_accounts!song_queue_client_account_id_fkey(name),
+  deals(name)
 `;
 
 const QUEUE_SELECT_CLIENT = `
@@ -76,7 +78,7 @@ const QUEUE_SELECT_DETAIL = `
   submitted_data, current_data, admin_notes, approved_song_id,
   rejection_reason, revision_request, revision_requested_at,
   revision_requested_by, revision_submitted_at, reviewed_at,
-  reviewed_by, updated_at,
+  reviewed_by, updated_at, deal_id,
   client_accounts!song_queue_client_account_id_fkey(name)
 `;
 

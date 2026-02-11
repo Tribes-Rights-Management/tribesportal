@@ -113,27 +113,29 @@ export default function RightsQueuePage() {
                 <AppTableHeader>
                   <AppTableRow>
                     <AppTableHead>#</AppTableHead>
-                    <AppTableHead>Title</AppTableHead>
-                    <AppTableHead>Client</AppTableHead>
-                    <AppTableHead>Songwriters</AppTableHead>
-                    <AppTableHead align="center">Status</AppTableHead>
-                    <AppTableHead>Submitted</AppTableHead>
+                     <AppTableHead>Title</AppTableHead>
+                     <AppTableHead>Client</AppTableHead>
+                     <AppTableHead>Deal</AppTableHead>
+                     <AppTableHead>Songwriters</AppTableHead>
+                     <AppTableHead align="center">Status</AppTableHead>
+                     <AppTableHead>Submitted</AppTableHead>
                   </AppTableRow>
                 </AppTableHeader>
                 <AppTableBody>
                   {paginatedItems.length === 0 ? (
-                    <AppTableEmpty colSpan={6}>
-                      <span className="text-muted-foreground text-sm">No submissions found</span>
+                     <AppTableEmpty colSpan={7}>
+                       <span className="text-muted-foreground text-sm">No submissions found</span>
                     </AppTableEmpty>
                   ) : (
                     paginatedItems.map(item => (
                       <AppTableRow key={item.id} clickable onClick={() => navigate(`/rights/queue/${item.submission_number}`)}>
                         <AppTableCell muted>{item.submission_number}</AppTableCell>
-                        <AppTableCell className="font-medium">{getSongTitle(item)}</AppTableCell>
-                        <AppTableCell muted>{item.client_name}</AppTableCell>
-                        <AppTableCell muted className="max-w-[200px] truncate">{getWriterNames(item)}</AppTableCell>
-                        <AppTableCell align="center"><QueueStatusBadge status={item.status} /></AppTableCell>
-                        <AppTableCell muted>{format(new Date(item.submitted_at), "MMM d, yyyy")}</AppTableCell>
+                         <AppTableCell className="font-medium">{getSongTitle(item)}</AppTableCell>
+                         <AppTableCell muted>{item.client_name}</AppTableCell>
+                         <AppTableCell muted>{(item as any).deals?.name || '—'}</AppTableCell>
+                         <AppTableCell muted className="max-w-[200px] truncate">{getWriterNames(item)}</AppTableCell>
+                         <AppTableCell align="center"><QueueStatusBadge status={item.status} /></AppTableCell>
+                         <AppTableCell muted>{format(new Date(item.submitted_at), "MMM d, yyyy")}</AppTableCell>
                       </AppTableRow>
                     ))
                   )}

@@ -2989,6 +2989,7 @@ export type Database = {
           approved_song_id: string | null
           client_account_id: string | null
           current_data: Json
+          deal_id: string | null
           id: string
           rejection_reason: string | null
           reviewed_at: string | null
@@ -3009,6 +3010,7 @@ export type Database = {
           approved_song_id?: string | null
           client_account_id?: string | null
           current_data: Json
+          deal_id?: string | null
           id?: string
           rejection_reason?: string | null
           reviewed_at?: string | null
@@ -3029,6 +3031,7 @@ export type Database = {
           approved_song_id?: string | null
           client_account_id?: string | null
           current_data?: Json
+          deal_id?: string | null
           id?: string
           rejection_reason?: string | null
           reviewed_at?: string | null
@@ -3057,6 +3060,13 @@ export type Database = {
             columns: ["client_account_id"]
             isOneToOne: false
             referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_queue_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
             referencedColumns: ["id"]
           },
         ]
