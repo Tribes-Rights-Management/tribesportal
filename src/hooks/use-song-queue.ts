@@ -92,6 +92,8 @@ export function useStaffQueue(statusFilter?: string) {
 
       if (statusFilter && statusFilter !== "all") {
         query = query.eq("status", statusFilter as any);
+      } else {
+        query = query.not("status", "in", '("approved","rejected")');
       }
 
       const { data, error } = await query;
@@ -163,7 +165,7 @@ export function useQueueStats() {
       if (error) throw error;
       const items = data || [];
       return {
-        total: items.length,
+        total: items.filter(i => !["approved", "rejected"].includes(i.status)).length,
         submitted: items.filter(i => i.status === "submitted" || i.status === "pending").length,
         in_review: items.filter(i => i.status === "in_review").length,
         needs_revision: items.filter(i => i.status === "needs_revision").length,
