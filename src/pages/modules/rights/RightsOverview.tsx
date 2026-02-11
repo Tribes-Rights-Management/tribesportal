@@ -86,7 +86,7 @@ export default function RightsOverview() {
               </AppTableEmpty>
             ) : (
               topQueue.map(item => (
-                <AppTableRow key={item.id} clickable onClick={() => navigate(`/rights/queue/${item.id}`)}>
+                <AppTableRow key={item.id} clickable onClick={() => navigate(`/rights/queue/${item.submission_number}`)}>
                   <AppTableCell className="font-medium">{getSongTitle(item)}</AppTableCell>
                   <AppTableCell muted>{item.client_name}</AppTableCell>
                   <AppTableCell align="center"><QueueStatusBadge status={item.status} /></AppTableCell>

@@ -10,6 +10,7 @@ import type { Json } from "@/integrations/supabase/types";
 
 export interface QueueItem {
   id: string;
+  submission_number: number;
   status: string;
   submitted_at: string;
   submitted_by: string;
@@ -55,7 +56,7 @@ function mapQueueItems(items: any[], submitterMap: Record<string, string>): Queu
 }
 
 const QUEUE_SELECT = `
-  id, status, submitted_at, submitted_by, client_account_id,
+  id, submission_number, status, submitted_at, submitted_by, client_account_id,
   submitted_data, current_data, admin_notes, approved_song_id,
   rejection_reason, revision_request, revision_requested_at,
   revision_submitted_at, reviewed_at, reviewed_by, updated_at,
@@ -63,7 +64,7 @@ const QUEUE_SELECT = `
 `;
 
 const QUEUE_SELECT_CLIENT = `
-  id, status, submitted_at, submitted_by, client_account_id,
+  id, submission_number, status, submitted_at, submitted_by, client_account_id,
   submitted_data, current_data, approved_song_id,
   revision_request, revision_requested_at, revision_submitted_at,
   updated_at,
@@ -71,7 +72,7 @@ const QUEUE_SELECT_CLIENT = `
 `;
 
 const QUEUE_SELECT_DETAIL = `
-  id, status, submitted_at, submitted_by, client_account_id,
+  id, submission_number, status, submitted_at, submitted_by, client_account_id,
   submitted_data, current_data, admin_notes, approved_song_id,
   rejection_reason, revision_request, revision_requested_at,
   revision_requested_by, revision_submitted_at, reviewed_at,
@@ -126,27 +127,27 @@ export function useClientQueue() {
   });
 }
 
-/** Fetch a single queue item by ID */
-export function useQueueItem(queueId: string | undefined) {
+/** Fetch a single queue item by submission_number */
+export function useQueueItem(submissionNumber: string | undefined) {
   return useQuery({
-    queryKey: ["song-queue", "item", queueId],
+    queryKey: ["song-queue", "item", submissionNumber],
     queryFn: async () => {
-      if (!queueId) return null;
-      const { data, error } = await supabase
+      if (!submissionNumber) return null;
+      const { data, error } = await (supabase as any)
         .from("song_queue")
         .select(QUEUE_SELECT_DETAIL)
-        .eq("id", queueId)
+        .eq("submission_number", parseInt(submissionNumber))
         .single();
 
       if (error) throw error;
       const d = data as any;
       const submitterMap = await resolveSubmitterNames([d.submitted_by]);
       return {
-        ...data,
+        ...(d as object),
         client_name: d.client_accounts?.name || submitterMap[d.submitted_by] || "Unknown",
       } as QueueItem;
     },
-    enabled: !!queueId,
+    enabled: !!submissionNumber,
   });
 }
 

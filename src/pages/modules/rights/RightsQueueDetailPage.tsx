@@ -27,10 +27,10 @@ const capitalize = (val: string | undefined | null) =>
  * RIGHTS QUEUE DETAIL PAGE — Staff view of a single queue item
  */
 export default function RightsQueueDetailPage() {
-  const { queueId } = useParams<{ queueId: string }>();
+  const { submissionId } = useParams<{ submissionId: string }>();
   const navigate = useNavigate();
-  const { data: item, isLoading, refetch } = useQueueItem(queueId);
-  const { data: messages = [] } = useQueueMessages(queueId);
+  const { data: item, isLoading, refetch } = useQueueItem(submissionId);
+  const { data: messages = [] } = useQueueMessages(item?.id);
   const updateStatus = useUpdateQueueStatus();
   const [adminNotes, setAdminNotes] = useState("");
   const [notesEditing, setNotesEditing] = useState(false);

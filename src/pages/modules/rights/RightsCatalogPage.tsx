@@ -54,6 +54,7 @@ const sortLabels: Record<SortOption, string> = {
 
 interface CatalogSong {
   id: string;
+  song_number: number;
   title: string;
   songwriters: string[];
   status: "active" | "pending" | "inactive";
@@ -166,6 +167,7 @@ export default function RightsCatalogPage() {
         .from("songs")
         .select(`
           id,
+          song_number,
           title,
           metadata,
           created_at,
@@ -192,6 +194,7 @@ export default function RightsCatalogPage() {
         
         return {
           id: song.id,
+          song_number: song.song_number,
           title: song.title,
           songwriters,
           status: "active" as const,
@@ -315,8 +318,8 @@ export default function RightsCatalogPage() {
   const toSlug = (title: string) =>
     title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled';
 
-  const handleSongClick = (songId: string, title?: string) => {
-    navigate(`/rights/catalog/${songId}/${toSlug(title || '')}`);
+  const handleSongClick = (songNumber: number, title?: string) => {
+    navigate(`/rights/catalog/${songNumber}/${toSlug(title || '')}`);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -413,7 +416,7 @@ export default function RightsCatalogPage() {
               subtitle={song.songwriters.join(" / ")}
               meta={format(new Date(song.addedAt), "MMM d, yyyy")}
               status={getStatusText(song.status)}
-              onClick={() => handleSongClick(song.id, song.title)}
+              onClick={() => handleSongClick(song.song_number, song.title)}
             />
           )}
           renderTable={() => (
@@ -455,7 +458,7 @@ export default function RightsCatalogPage() {
                         if (e.metaKey || e.ctrlKey || e.shiftKey) {
                           handleRowSelect(song.id, index, e);
                         } else {
-                          handleSongClick(song.id, song.title);
+                          handleSongClick(song.song_number, song.title);
                         }
                       }}
                       className={cn(selectedSongs.has(song.id) && "bg-muted/50")}
