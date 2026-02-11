@@ -20,7 +20,7 @@ export default function RightsDealDetailPage() {
   const { dealNumber } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const isNew = dealNumber === "new";
+  const isNew = dealNumber === "new" || !dealNumber;
 
   const [writerId, setWriterId] = useState<string | null>(null);
   const [writerName, setWriterName] = useState("");
@@ -230,6 +230,8 @@ export default function RightsDealDetailPage() {
 
     try {
       if (isNew) {
+        console.log("Creating new deal...", { writerId, dealName, territory, writerShare });
+
         const { data: newDeal, error: dealError } = await supabase
           .from("deals")
           .insert({
@@ -242,7 +244,15 @@ export default function RightsDealDetailPage() {
           } as any)
           .select("id, deal_number")
           .single();
-        if (dealError) throw dealError;
+
+        if (dealError) {
+          console.error("Deal insert error:", dealError);
+          toast.error("Failed to create deal: " + dealError.message);
+          setSaving(false);
+          return;
+        }
+
+        console.log("Deal created:", newDeal);
 
         const pubRows = publishers.map((p, i) => ({
           deal_id: newDeal.id,
@@ -256,7 +266,12 @@ export default function RightsDealDetailPage() {
           sort_order: i,
         }));
         const { error: pubError } = await supabase.from("deal_publishers").insert(pubRows as any);
-        if (pubError) throw pubError;
+        if (pubError) {
+          console.error("Publisher insert error:", pubError);
+          toast.error("Failed to save publishers: " + pubError.message);
+          setSaving(false);
+          return;
+        }
 
         toast.success("Deal created");
         queryClient.invalidateQueries({ queryKey: ["deals"] });
@@ -297,6 +312,7 @@ export default function RightsDealDetailPage() {
         queryClient.invalidateQueries({ queryKey: ["deal-detail", dealNumber] });
       }
     } catch (err: any) {
+      console.error("Save error:", err);
       toast.error(err.message || "Failed to save deal");
     } finally {
       setSaving(false);
