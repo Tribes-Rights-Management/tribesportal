@@ -162,7 +162,21 @@ export default function RightsQueueDetailPage() {
                     <AppDetailRow label="Publication Year" value={songData.publication_year || songData.creation_year || "—"} />
                     <AppDetailRow label="Copyright Status" value={capitalize(songData.copyright_status)} />
                     <AppDetailRow label="Chord Chart" value={
-                      songData.has_chord_chart ? (songData.chord_chart_file || "Yes") : "No"
+                      songData.chord_chart_path ? (
+                        <button
+                          className="text-sm text-primary hover:underline cursor-pointer"
+                          onClick={async () => {
+                            const { data } = await supabase.storage
+                              .from("song-documents")
+                              .createSignedUrl(songData.chord_chart_path, 60);
+                            if (data?.signedUrl) {
+                              window.open(data.signedUrl, "_blank");
+                            }
+                          }}
+                        >
+                          {songData.chord_chart_file || "Download"}
+                        </button>
+                      ) : songData.has_chord_chart ? "Yes (not uploaded)" : "No"
                     } />
                   </AppDetailRowGroup>
                 )}
