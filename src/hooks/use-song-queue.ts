@@ -42,7 +42,8 @@ export function useStaffQueue(statusFilter?: string) {
           submitted_data, current_data, admin_notes, approved_song_id,
           rejection_reason, revision_request, revision_requested_at,
           revision_submitted_at, reviewed_at, reviewed_by, updated_at,
-          client_accounts!song_queue_client_account_id_fkey(name)
+          client_accounts!song_queue_client_account_id_fkey(name),
+          user_profiles!song_queue_submitted_by_fkey(full_name, email)
         `)
         .order("submitted_at", { ascending: false });
 
@@ -55,7 +56,10 @@ export function useStaffQueue(statusFilter?: string) {
 
       return (data || []).map((item: any) => ({
         ...item,
-        client_name: item.client_accounts?.name || "Unknown",
+        client_name: item.client_accounts?.name
+          || item.user_profiles?.full_name
+          || item.user_profiles?.email
+          || "Unknown",
       })) as QueueItem[];
     },
   });
@@ -75,7 +79,8 @@ export function useClientQueue() {
           submitted_data, current_data, approved_song_id,
           revision_request, revision_requested_at, revision_submitted_at,
           updated_at,
-          client_accounts!song_queue_client_account_id_fkey(name)
+          client_accounts!song_queue_client_account_id_fkey(name),
+          user_profiles!song_queue_submitted_by_fkey(full_name, email)
         `)
         .eq("submitted_by", user.id)
         .order("submitted_at", { ascending: false });
@@ -83,7 +88,10 @@ export function useClientQueue() {
       if (error) throw error;
       return (data || []).map((item: any) => ({
         ...item,
-        client_name: item.client_accounts?.name || "Unknown",
+        client_name: item.client_accounts?.name
+          || item.user_profiles?.full_name
+          || item.user_profiles?.email
+          || "Unknown",
       })) as QueueItem[];
     },
     enabled: !!user?.id,
@@ -104,13 +112,21 @@ export function useQueueItem(queueId: string | undefined) {
           rejection_reason, revision_request, revision_requested_at,
           revision_requested_by, revision_submitted_at, reviewed_at,
           reviewed_by, updated_at,
-          client_accounts!song_queue_client_account_id_fkey(name)
+          client_accounts!song_queue_client_account_id_fkey(name),
+          user_profiles!song_queue_submitted_by_fkey(full_name, email)
         `)
         .eq("id", queueId)
         .single();
 
       if (error) throw error;
-      return { ...data, client_name: (data as any).client_accounts?.name || "Unknown" } as QueueItem;
+      const d = data as any;
+      return {
+        ...data,
+        client_name: d.client_accounts?.name
+          || d.user_profiles?.full_name
+          || d.user_profiles?.email
+          || "Unknown",
+      } as QueueItem;
     },
     enabled: !!queueId,
   });
