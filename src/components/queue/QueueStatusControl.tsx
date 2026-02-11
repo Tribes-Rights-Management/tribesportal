@@ -15,9 +15,11 @@ interface QueueStatusControlProps {
   currentStatus: string;
   songData?: any;
   onStatusChange?: () => void;
+  /** Whether a deal with publishers has been selected for this submission */
+  hasDealSelected?: boolean;
 }
 
-export function QueueStatusControl({ queueId, currentStatus, songData, onStatusChange }: QueueStatusControlProps) {
+export function QueueStatusControl({ queueId, currentStatus, songData, onStatusChange, hasDealSelected }: QueueStatusControlProps) {
   const updateStatus = useUpdateQueueStatus();
   const [showRejectInput, setShowRejectInput] = useState(false);
   const [showRevisionInput, setShowRevisionInput] = useState(false);
@@ -26,10 +28,10 @@ export function QueueStatusControl({ queueId, currentStatus, songData, onStatusC
   const [isApproving, setIsApproving] = useState(false);
 
   const handleApprove = async () => {
-    // Warn if no publishers assigned
+    // Warn if no publishers assigned and no deal selected
     const writers = songData?.writers || [];
     const hasPublishers = writers.some((w: any) => w.publishers?.length > 0);
-    if (!hasPublishers) {
+    if (!hasDealSelected && !hasPublishers) {
       const proceed = window.confirm(
         "No publishers have been assigned. Approve without publisher data?"
       );

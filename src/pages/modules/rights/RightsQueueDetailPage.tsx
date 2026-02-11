@@ -554,7 +554,7 @@ export default function RightsQueueDetailPage() {
 
             {/* Status Controls */}
             <AppSection spacing="md">
-              <QueueStatusControl queueId={item.id} currentStatus={item.status} songData={songData} onStatusChange={() => refetch()} />
+              <QueueStatusControl queueId={item.id} currentStatus={item.status} songData={songData} onStatusChange={() => refetch()} hasDealSelected={Object.keys(writerDealMap).length > 0} />
             </AppSection>
           </div>
         </TabsContent>
