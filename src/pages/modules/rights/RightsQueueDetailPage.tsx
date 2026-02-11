@@ -24,6 +24,96 @@ import { toast } from "sonner";
 const capitalize = (val: string | undefined | null) =>
   val ? val.charAt(0).toUpperCase() + val.slice(1) : "—";
 
+/* ── Inline Publisher Search ─────────────────────────────────── */
+function AddPublisherInline({ onAdd }: { onAdd: (pub: any) => void }) {
+  const [searching, setSearching] = useState(false);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<any[]>([]);
+  const [share, setShare] = useState("");
+  const [tribesAdmin, setTribesAdmin] = useState(true);
+
+  const searchPublishers = async (q: string) => {
+    setQuery(q);
+    if (q.length < 2) { setResults([]); return; }
+    const { data } = await supabase
+      .from("publishers")
+      .select("id, name, pro")
+      .ilike("name", `%${q}%`)
+      .limit(5);
+    setResults(data || []);
+  };
+
+  const selectPublisher = (pub: any) => {
+    onAdd({
+      publisher_id: pub.id,
+      name: pub.name,
+      pro: pub.pro,
+      share: parseFloat(share) || 0,
+      tribes_administered: tribesAdmin,
+    });
+    setQuery(""); setResults([]); setShare(""); setSearching(false);
+  };
+
+  if (!searching) {
+    return (
+      <button className="text-[12px] text-primary hover:underline" onClick={() => setSearching(true)}>
+        + Add Publisher
+      </button>
+    );
+  }
+
+  return (
+    <div className="space-y-2 p-3 border border-border rounded-md bg-background">
+      <input
+        className="w-full h-9 px-3 rounded-md border border-border bg-background text-sm"
+        placeholder="Search publishers..."
+        value={query}
+        onChange={(e) => searchPublishers(e.target.value)}
+        autoFocus
+      />
+      {results.length > 0 && (
+        <div className="border border-border rounded-md overflow-hidden">
+          {results.map((r) => (
+            <button
+              key={r.id}
+              className="w-full text-left px-3 py-2 text-sm hover:bg-muted flex justify-between"
+              onClick={() => selectPublisher(r)}
+            >
+              <span>{r.name}</span>
+              <span className="text-muted-foreground text-xs">{r.pro}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      <div className="flex gap-2">
+        <div className="w-[100px]">
+          <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Share %</label>
+          <input
+            className="w-full h-9 px-3 rounded-md border border-border bg-background text-sm"
+            type="number"
+            value={share}
+            onChange={(e) => setShare(e.target.value)}
+            placeholder="50"
+          />
+        </div>
+        <div>
+          <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Administrator</label>
+          <AppSelect
+            value={tribesAdmin ? "tribes" : "other"}
+            onChange={(val) => setTribesAdmin(val === "tribes")}
+            options={[
+              { value: "tribes", label: "Tribes" },
+              { value: "other", label: "Other" },
+            ]}
+            className="min-w-[120px]"
+          />
+        </div>
+      </div>
+      <button className="text-[12px] text-muted-foreground hover:underline" onClick={() => setSearching(false)}>Cancel</button>
+    </div>
+  );
+}
+
 /**
  * RIGHTS QUEUE DETAIL PAGE — Staff view of a single queue item
  */
@@ -38,6 +128,10 @@ export default function RightsQueueDetailPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Publisher editing state
+  const [isEditingPublishers, setIsEditingPublishers] = useState(false);
+  const [publisherData, setPublisherData] = useState<any[]>([]);
 
   if (isLoading) {
     return (
@@ -106,6 +200,45 @@ export default function RightsQueueDetailPage() {
       />
     </div>
   );
+
+  // Publisher helpers
+  const addPublisher = (writerIndex: number, pub: any) => {
+    const updated = [...publisherData];
+    if (!updated[writerIndex].publishers) {
+      updated[writerIndex].publishers = [];
+    }
+    updated[writerIndex].publishers.push(pub);
+    setPublisherData(updated);
+  };
+
+  const removePublisher = (writerIndex: number, pubIndex: number) => {
+    const updated = [...publisherData];
+    updated[writerIndex].publishers.splice(pubIndex, 1);
+    setPublisherData(updated);
+  };
+
+  const savePublishers = async () => {
+    try {
+      const updatedData = { ...songData, writers: publisherData };
+      const { error } = await (supabase as any)
+        .from("song_queue")
+        .update({
+          current_data: updatedData,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", item.id);
+
+      if (error) throw error;
+      toast.success("Publishers saved");
+      setIsEditingPublishers(false);
+      refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save");
+    }
+  };
+
+  // Data source for publisher section (edit vs read mode)
+  const pubViewWriters = isEditingPublishers ? publisherData : writers;
 
   return (
     <AppPageLayout
@@ -253,6 +386,71 @@ export default function RightsQueueDetailPage() {
               </AppCardBody>
             </AppCard>
 
+            {/* Publishing & Administration */}
+            <AppCard>
+              <AppCardBody>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-medium">Publishing & Administration</h3>
+                  {!isEditingPublishers ? (
+                    <AppButton size="sm" variant="ghost" onClick={() => {
+                      setPublisherData(JSON.parse(JSON.stringify(writers)));
+                      setIsEditingPublishers(true);
+                    }}>Edit</AppButton>
+                  ) : (
+                    <div className="flex gap-2">
+                      <AppButton size="sm" onClick={savePublishers}>Save</AppButton>
+                      <AppButton size="sm" variant="ghost" onClick={() => setIsEditingPublishers(false)}>Cancel</AppButton>
+                    </div>
+                  )}
+                </div>
+
+                {pubViewWriters.map((writer: any, wi: number) => (
+                  <div key={wi} className="mb-6 last:mb-0">
+                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/50">
+                      <span className="text-[13px] font-medium">{writer.name}</span>
+                      {writer.pro && (
+                        <span className="text-[11px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{writer.pro}</span>
+                      )}
+                      <span className="text-[12px] text-muted-foreground ml-auto">{writer.split}%</span>
+                    </div>
+
+                    {(writer.publishers || []).length === 0 ? (
+                      <p className="text-[12px] text-muted-foreground italic ml-4">No publishers assigned</p>
+                    ) : (
+                      <div className="space-y-2 ml-4">
+                        {(writer.publishers || []).map((pub: any, pi: number) => (
+                          <div key={pi} className="flex items-center justify-between py-1.5 bg-muted/30 rounded px-3">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[13px]">{pub.name}</span>
+                              {pub.pro && (
+                                <span className="text-[11px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{pub.pro}</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-3 text-[12px] text-muted-foreground">
+                              <span>{pub.share}%</span>
+                              <span>{pub.tribes_administered ? "Tribes" : "Other"}</span>
+                              {isEditingPublishers && (
+                                <button
+                                  className="text-destructive hover:text-destructive/80 text-xs"
+                                  onClick={() => removePublisher(wi, pi)}
+                                >×</button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {isEditingPublishers && (
+                      <div className="ml-4 mt-2">
+                        <AddPublisherInline onAdd={(pub) => addPublisher(wi, pub)} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </AppCardBody>
+            </AppCard>
+
             {/* Lyrics */}
             {(songData.lyrics || songData.lyrics_sections?.length > 0) && (
               <AppCard>
@@ -300,7 +498,7 @@ export default function RightsQueueDetailPage() {
 
             {/* Status Controls */}
             <AppSection spacing="md">
-              <QueueStatusControl queueId={item.id} currentStatus={item.status} onStatusChange={() => refetch()} />
+              <QueueStatusControl queueId={item.id} currentStatus={item.status} songData={songData} onStatusChange={() => refetch()} />
             </AppSection>
           </div>
         </TabsContent>
