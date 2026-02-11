@@ -387,10 +387,17 @@ export default function RightsQueueDetailPage() {
                                 onChange={(val) => handleSelectDeal(writerId, val)}
                                 options={[
                                   { value: 'none', label: 'Select a deal...' },
-                                  ...writerDeals.map((deal: any) => ({
-                                    value: deal.id,
-                                    label: `${deal.name} — ${deal.territory || 'World'}`,
-                                  })),
+                                  ...writerDeals.map((deal: any) => {
+                                    const pubs = deal.deal_publishers
+                                      ?.map((dp: any) => {
+                                        const name = dp.publishers?.name || dp.publisher_name || 'Unknown';
+                                        const pro = dp.publishers?.pro || dp.publisher_pro || '';
+                                        return pro ? `${name} (${pro})` : name;
+                                      })
+                                      .join(' / ') || 'No publishers';
+                                    const territory = deal.territory || 'World';
+                                    return { value: deal.id, label: `${deal.writers?.name || 'Unknown'} / ${pubs} – ${territory}` };
+                                  }),
                                 ]}
                                 fullWidth
                               />
@@ -401,10 +408,15 @@ export default function RightsQueueDetailPage() {
                             {/* Deal header with remove */}
                             <div className="flex items-center justify-between">
                               <span className="text-xs text-muted-foreground">
-                                Deal: <span className="font-medium text-foreground">{writerDeal.name}</span>
-                                {writerDeal.territory && (
-                                  <span className="ml-2 text-muted-foreground">({writerDeal.territory})</span>
-                                )}
+                                Deal: <span className="font-medium text-foreground">
+                                  {writerDeal.writers?.name || 'Unknown'} / {writerDeal.deal_publishers
+                                    ?.map((dp: any) => {
+                                      const name = dp.publishers?.name || dp.publisher_name || 'Unknown';
+                                      const pro = dp.publishers?.pro || dp.publisher_pro || '';
+                                      return pro ? `${name} (${pro})` : name;
+                                    })
+                                    .join(' / ') || 'No publishers'} – {writerDeal.territory || 'World'}
+                                </span>
                               </span>
                               <button
                                 type="button"
