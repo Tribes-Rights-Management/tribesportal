@@ -476,7 +476,7 @@ export default function RightsQueueDetailPage() {
               });
 
               const labelCopy = allDealPublishers.length > 0
-                ? `© ${year} ${allDealPublishers.join(' / ')} (adm. at TribesRightsManagement.com).`
+                ? `© ${year} ${allDealPublishers.join(' / ')} (adm. at TribesRightsManagement.com). All rights reserved.`
                 : null;
 
               return (
