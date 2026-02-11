@@ -455,16 +455,37 @@ export default function RightsQueueDetailPage() {
               </AppCardBody>
             </AppCard>
 
-            {/* Controlled Label Copy — auto-generated preview */}
+            {/* Controlled Label Copy — auto-generated from selected deals */}
             {(() => {
-              const labelCopy = generateLabelCopyFromQueueData(songData);
+              const year = songData?.publication_year || songData?.creation_year || songData?.yearWritten || '';
+              const writers = songData?.writers || [];
+              const allDealPublishers: string[] = [];
+
+              writers.forEach((writer: any) => {
+                const writerId = writer.writer_id || writer.id;
+                const deal = getDealForWriter(writerId);
+                if (deal?.deal_publishers) {
+                  deal.deal_publishers.forEach((dp: any) => {
+                    const name = dp.publishers?.name || dp.publisher_name;
+                    const pro = dp.publishers?.pro || dp.publisher_pro || '';
+                    if (name) {
+                      allDealPublishers.push(pro ? `${name} (${pro})` : name);
+                    }
+                  });
+                }
+              });
+
+              const labelCopy = allDealPublishers.length > 0
+                ? `© ${year} ${allDealPublishers.join(' / ')} (adm. at TribesRightsManagement.com).`
+                : null;
+
               return (
                 <AppCard>
                   <AppCardBody>
                     <h3 className="text-sm font-medium mb-3">Controlled Label Copy</h3>
                     {labelCopy ? (
                       <div className="flex items-start justify-between gap-4">
-                        <p className="text-[13px] text-foreground leading-relaxed">{labelCopy}</p>
+                        <p className="text-[13px] text-foreground leading-relaxed select-all">{labelCopy}</p>
                         <AppButton
                           size="sm"
                           variant="ghost"
