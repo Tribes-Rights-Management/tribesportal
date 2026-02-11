@@ -103,8 +103,11 @@ export default function RightsDealDetailPage() {
     queryFn: async () => {
       if (pubSearchQuery.length < 2) return [];
       const { data, error } = await supabase
-        .from("publishers").select("id, name, pro, ipi_number")
-        .ilike("name", `%${pubSearchQuery}%`).limit(8);
+        .from("interested_parties")
+        .select("id, name, pro, interested_party_ipi_numbers(ipi_number)")
+        .eq("party_type", "publisher")
+        .ilike("name", `%${pubSearchQuery}%`)
+        .limit(8);
       if (error) throw error;
       return data;
     },
@@ -149,13 +152,14 @@ export default function RightsDealDetailPage() {
   };
 
   const selectPublisher = (index: number, pub: any) => {
+    const ipi = pub.ipi_number || pub.interested_party_ipi_numbers?.[0]?.ipi_number || "";
     const updated = [...publishers];
     updated[index] = {
       ...updated[index],
       publisher_id: pub.id,
       publisher_name: pub.name,
       publisher_pro: pub.pro || "",
-      publisher_ipi: pub.ipi_number || "",
+      publisher_ipi: ipi,
     };
     if (updated[index].tribes_administered && pub.pro) {
       const entity = tribesEntities?.find((e: any) => e.pro === pub.pro);
@@ -226,7 +230,7 @@ export default function RightsDealDetailPage() {
         toast.success("Deal created");
         queryClient.invalidateQueries({ queryKey: ["deals"] });
         navigate(`/rights/parties/deals/${newDeal.deal_number}`);
-      } else {
+      } else if (existingDeal) {
         const { error: dealError } = await supabase
           .from("deals")
           .update({
@@ -287,16 +291,17 @@ export default function RightsDealDetailPage() {
   };
 
   const { data: associatedSongs } = useQuery({
-    queryKey: ["deal-songs", (existingDeal as any)?.id],
+    queryKey: ["deal-songs", existingDeal?.id],
     queryFn: async () => {
+      if (!existingDeal?.id) return [];
       const { data, error } = await supabase
         .from("song_writers")
         .select(`id, share, songs (id, title, song_number), writers (name)`)
-        .eq("deal_id", (existingDeal as any)!.id);
+        .eq("deal_id", existingDeal.id);
       if (error) throw error;
       return data;
     },
-    enabled: !!(existingDeal as any)?.id,
+    enabled: !!existingDeal?.id,
   });
 
   return (
@@ -307,12 +312,12 @@ export default function RightsDealDetailPage() {
           <button onClick={() => navigate("/rights/parties?tab=deals")} className="text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <h1 className="text-lg font-semibold text-foreground">
-            {isNew ? "New Deal" : `Deal #${dealNumber}`}
+           <h1 className="text-lg font-semibold text-foreground">
+             {isNew ? "New Deal" : `Deal #${existingDeal?.deal_number || dealNumber}`}
           </h1>
         </div>
         <div className="flex items-center gap-2">
-          {!isNew && (
+          {!isNew && existingDeal && (
             <button onClick={handleDelete} className="text-xs text-destructive hover:text-destructive/80 transition-colors mr-2">
               Delete
             </button>
@@ -506,7 +511,7 @@ export default function RightsDealDetailPage() {
       </AppCard>
 
       {/* Associated Songs (edit mode only) */}
-      {!isNew && (
+      {!isNew && existingDeal && (
         <AppCard className="mb-4">
           <AppCardBody>
             <h3 className="text-sm font-medium mb-3">Associated Songs</h3>
