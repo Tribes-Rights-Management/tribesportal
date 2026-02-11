@@ -27,7 +27,7 @@ const capitalize = (val: string | undefined | null) =>
   val ? val.charAt(0).toUpperCase() + val.slice(1) : "—";
 
 /* ── Inline Publisher Search ─────────────────────────────────── */
-function AddPublisherInline({ onAdd }: { onAdd: (pub: any) => void }) {
+function AddPublisherInline({ onAdd, defaultShare }: { onAdd: (pub: any) => void; defaultShare?: number }) {
   const [searching, setSearching] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
@@ -50,7 +50,7 @@ function AddPublisherInline({ onAdd }: { onAdd: (pub: any) => void }) {
       publisher_id: pub.id,
       name: pub.name,
       pro: pub.pro,
-      share: parseFloat(share) || 0,
+      share: parseFloat(share) || defaultShare || 0,
       tribes_administered: tribesAdmin,
     });
     setQuery(""); setResults([]); setShare(""); setSearching(false);
@@ -95,7 +95,7 @@ function AddPublisherInline({ onAdd }: { onAdd: (pub: any) => void }) {
             type="number"
             value={share}
             onChange={(e) => setShare(e.target.value)}
-            placeholder="50"
+            placeholder={String(defaultShare || 100)}
           />
         </div>
         <div>
@@ -544,7 +544,7 @@ export default function RightsQueueDetailPage() {
                             </div>
                           </div>
                         ))}
-                        <AddPublisherInline onAdd={(pub) => handleAddPublisher(wIndex, pub)} />
+                        <AddPublisherInline onAdd={(pub) => handleAddPublisher(wIndex, pub)} defaultShare={writer.split} />
                         {(writer.publishers || []).length > 0 && (() => {
                           const total = (writer.publishers || []).reduce((sum: number, p: any) => sum + (p.share || 0), 0);
                           const match = total === writer.split;
