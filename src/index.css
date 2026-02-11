@@ -109,17 +109,13 @@ nav,
    TOUCH FEEDBACK — Native iOS-like press states
    ───────────────────────────────────────────────────────────────────────────── */
 button,
-a,
-[role="button"],
-[tabindex="0"] {
+a {
   transition: transform 0.1s ease, opacity 0.1s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
 button:active,
-a:active,
-[role="button"]:active,
-[tabindex="0"]:active {
+a:active {
   transform: scale(0.98);
 }
 
