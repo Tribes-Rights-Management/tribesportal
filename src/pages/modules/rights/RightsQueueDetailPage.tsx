@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { generateLabelCopyFromQueueData } from "@/utils/generateLabelCopy";
 import { useParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
 import {
   AppPageLayout,
   AppButton,
@@ -129,10 +130,44 @@ export default function RightsQueueDetailPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [selectedDealId, setSelectedDealId] = useState<string | null>(null);
 
   // Publisher editing state
   const [isEditingPublishers, setIsEditingPublishers] = useState(false);
   const [editableWriters, setEditableWriters] = useState<any[]>([]);
+
+  // Fetch all active deals
+  const { data: deals } = useQuery({
+    queryKey: ['deals-for-queue'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('deals')
+        .select('id, name, deal_number, territory, territory_mode, writer_id, writer_share, writers(id, name, pro, ipi_number), deal_publishers(*, publishers:publisher_id(id, name, pro, ipi_number))')
+        .eq('status', 'active')
+        .order('name');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const selectedDeal = deals?.find((d: any) => d.id === selectedDealId) || null;
+
+  // Load deal_id from queue item
+  useEffect(() => {
+    if (item?.deal_id) {
+      setSelectedDealId(item.deal_id);
+    }
+  }, [item?.deal_id]);
+
+  const handleDealSelect = async (dealId: string | null) => {
+    setSelectedDealId(dealId);
+    if (item?.id) {
+      await (supabase as any)
+        .from('song_queue')
+        .update({ deal_id: dealId })
+        .eq('id', item.id);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -601,6 +636,48 @@ export default function RightsQueueDetailPage() {
                 )}
               </AppCardBody>
             </AppCard>
+
+            {/* Deal Association */}
+            <div className="rounded-lg border border-border bg-card p-4">
+              <label className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground block mb-2">
+                Associated Deal
+              </label>
+              <AppSelect
+                value={selectedDealId || ''}
+                onChange={(val) => handleDealSelect(val || null)}
+                options={[
+                  { value: '', label: 'No deal selected' },
+                  ...(deals || []).map((deal: any) => ({
+                    value: deal.id,
+                    label: `${deal.name} — ${deal.writers?.name || 'Unknown'} (${deal.territory || 'World'})`,
+                  })),
+                ]}
+                fullWidth
+              />
+              {selectedDeal && (
+                <div className="mt-3 p-3 rounded-md bg-muted/30 border border-border/50 space-y-1">
+                  <div className="text-xs">
+                    <span className="text-muted-foreground">Writer:</span>{' '}
+                    <span className="font-medium">{selectedDeal.writers?.name}</span>
+                    {selectedDeal.writers?.pro && (
+                      <span className="text-muted-foreground"> ({selectedDeal.writers.pro})</span>
+                    )}
+                  </div>
+                  <div className="text-xs">
+                    <span className="text-muted-foreground">Territory:</span>{' '}
+                    <span className="font-medium">{selectedDeal.territory || 'World'}</span>
+                  </div>
+                  {selectedDeal.deal_publishers?.length > 0 && (
+                    <div className="text-xs">
+                      <span className="text-muted-foreground">Publishers:</span>{' '}
+                      <span className="font-medium">
+                        {selectedDeal.deal_publishers.map((dp: any) => dp.publisher_name || dp.publishers?.name).filter(Boolean).join(', ')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Status Controls */}
             <AppSection spacing="md">
