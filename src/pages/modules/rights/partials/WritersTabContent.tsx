@@ -22,7 +22,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 const ITEMS_PER_PAGE = 50;
 
 const ALGOLIA_APP_ID = "8WVEYVACJ3";
-const ALGOLIA_SEARCH_KEY = "00c22202043b8d20f009257782838d48";
+const ALGOLIA_SEARCH_KEY = "7f00c268627682cfec8adac8f1686033";
 const ALGOLIA_INDEX = "writers";
 
 interface Writer {
