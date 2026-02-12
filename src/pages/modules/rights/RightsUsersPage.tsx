@@ -1,9 +1,11 @@
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import {
+  AppPageLayout,
   AppListToolbar,
   AppTable,
   AppTableHeader,
@@ -18,14 +20,15 @@ import {
   AppSelect,
 } from "@/components/app-ui";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogBody,
-  DialogFooter,
-} from "@/components/ui/dialog";
+  AppModal,
+  AppModalBody,
+  AppModalFooter,
+  AppModalAction,
+  AppModalCancel,
+  AppModalField,
+  AppModalFields,
+} from "@/components/ui/app-modal";
+import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
@@ -71,7 +74,6 @@ export default function RightsUsersPage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
   const [inviteOpen, setInviteOpen] = useState(false);
 
   // Invite form state
@@ -179,10 +181,6 @@ export default function RightsUsersPage() {
     const combined = [...members, ...pendingInvites];
     let filtered = combined;
 
-    if (statusFilter !== "all") {
-      filtered = filtered.filter(u => u.status === statusFilter);
-    }
-
     if (search.trim()) {
       const q = search.toLowerCase();
       filtered = filtered.filter(u =>
@@ -193,7 +191,7 @@ export default function RightsUsersPage() {
     }
 
     return filtered;
-  }, [members, pendingInvites, search, statusFilter]);
+  }, [members, pendingInvites, search]);
 
   const handleInvite = async () => {
     if (!inviteEmail.trim() || !inviteClientId || !user) return;
@@ -249,36 +247,45 @@ export default function RightsUsersPage() {
     });
   };
 
-  const inputClass =
-    "w-full h-10 px-3 text-sm bg-background border border-border rounded-md focus:outline-none focus:border-foreground transition-colors";
+  const count = allUsers.length;
 
   return (
-    <>
+    <AppPageLayout title="Users">
       <AppListToolbar
         placeholder="Search by name, email, or client..."
         searchValue={search}
         onSearchChange={setSearch}
-        count={allUsers.length > 0 ? `${allUsers.length} user${allUsers.length !== 1 ? "s" : ""}` : undefined}
+        count={`${count} ${count === 1 ? "user" : "users"}`}
         action={
           <AppButton intent="primary" size="sm" onClick={() => setInviteOpen(true)}>
+            <Plus className="h-4 w-4" />
             Invite User
           </AppButton>
         }
       />
 
       {isLoading ? (
-        <div className="py-16 text-center text-sm text-muted-foreground">Loading…</div>
+        <AppEmptyState message="Loading users..." size="lg" />
       ) : allUsers.length === 0 ? (
-        <AppEmptyState
-          icon="users"
-          message="No users yet"
-          description="Invite users to grant them portal access to client accounts."
-          action={
-            <AppButton intent="primary" size="sm" onClick={() => setInviteOpen(true)}>
-              Invite User
-            </AppButton>
-          }
-        />
+        <AppTable columns={["35%", "25%", "15%", "15%", "10%"]}>
+          <AppTableHeader>
+            <AppTableRow header>
+              <AppTableHead>Name</AppTableHead>
+              <AppTableHead>Clients</AppTableHead>
+              <AppTableHead>Role</AppTableHead>
+              <AppTableHead>Status</AppTableHead>
+              <AppTableHead>Added</AppTableHead>
+            </AppTableRow>
+          </AppTableHeader>
+          <AppTableBody>
+            <AppTableEmpty colSpan={5}>
+              <AppEmptyState
+                message={search ? "No users match your search" : "No users yet"}
+                description={search ? "Try a different search term." : "Invite users to grant them portal access to client accounts."}
+              />
+            </AppTableEmpty>
+          </AppTableBody>
+        </AppTable>
       ) : (
         <AppTable columns={["35%", "25%", "15%", "15%", "10%"]}>
           <AppTableHeader>
@@ -333,49 +340,49 @@ export default function RightsUsersPage() {
       )}
 
       {/* Invite User Modal */}
-      <Dialog open={inviteOpen} onOpenChange={(open) => { if (!open) { setInviteOpen(false); resetInviteForm(); } }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Invite User</DialogTitle>
-            <DialogDescription>
-              Send a portal invitation to grant access to a client account.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogBody>
-            <div className="space-y-4">
-              <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1 block">Email</label>
-                <input
-                  type="email"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="user@example.com"
-                  className={inputClass}
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1 block">Client</label>
-                <AppSelect
-                  value={inviteClientId}
-                  onChange={setInviteClientId}
-                  placeholder="Select a client"
-                  options={clientAccounts.map(c => ({ value: c.id, label: c.name }))}
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1 block">Role</label>
-                <AppSelect
-                  value={inviteRole}
-                  onChange={setInviteRole}
-                  options={[
-                    { value: "owner", label: "Owner" },
-                    { value: "team", label: "Team" },
-                    { value: "viewer", label: "Viewer" },
-                  ]}
-                />
-              </div>
-              <div className="space-y-3">
-                <label className="text-xs font-medium text-muted-foreground block">Permissions</label>
+      <AppModal
+        open={inviteOpen}
+        onOpenChange={(open) => { if (!open) { setInviteOpen(false); resetInviteForm(); } }}
+        title="Invite User"
+        preventClose={inviting}
+        maxWidth="sm"
+      >
+        <AppModalBody>
+          <AppModalFields>
+            <AppModalField label="Email" htmlFor="invite-email">
+              <Input
+                id="invite-email"
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="user@example.com"
+                className="h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px]"
+              />
+            </AppModalField>
+
+            <AppModalField label="Client" htmlFor="invite-client">
+              <AppSelect
+                value={inviteClientId}
+                onChange={setInviteClientId}
+                placeholder="Select a client"
+                options={clientAccounts.map(c => ({ value: c.id, label: c.name }))}
+              />
+            </AppModalField>
+
+            <AppModalField label="Role" htmlFor="invite-role">
+              <AppSelect
+                value={inviteRole}
+                onChange={setInviteRole}
+                options={[
+                  { value: "owner", label: "Owner" },
+                  { value: "team", label: "Team" },
+                  { value: "viewer", label: "Viewer" },
+                ]}
+              />
+            </AppModalField>
+
+            <AppModalField label="Permissions" htmlFor="invite-perms">
+              <div className="space-y-3 pt-1">
                 <div className="flex items-center gap-2">
                   <Checkbox id="perm-songs" checked={canSubmitSongs} onCheckedChange={(v) => setCanSubmitSongs(!!v)} />
                   <Label htmlFor="perm-songs" className="text-sm">Can submit songs</Label>
@@ -393,23 +400,27 @@ export default function RightsUsersPage() {
                   <Label htmlFor="perm-exports" className="text-sm">Can download exports</Label>
                 </div>
               </div>
-            </div>
-          </DialogBody>
-          <DialogFooter>
-            <AppButton intent="secondary" onClick={() => { setInviteOpen(false); resetInviteForm(); }}>
-              Cancel
-            </AppButton>
-            <AppButton
-              intent="primary"
-              onClick={handleInvite}
-              loading={inviting}
-              disabled={!inviteEmail.trim() || !inviteClientId}
-            >
-              Send Invitation
-            </AppButton>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+            </AppModalField>
+          </AppModalFields>
+        </AppModalBody>
+
+        <AppModalFooter>
+          <AppModalAction
+            onClick={handleInvite}
+            disabled={!inviteEmail.trim() || !inviteClientId}
+            loading={inviting}
+            loadingText="Sending…"
+          >
+            Send Invitation
+          </AppModalAction>
+          <AppModalCancel
+            onClick={() => { setInviteOpen(false); resetInviteForm(); }}
+            disabled={inviting}
+          >
+            Cancel
+          </AppModalCancel>
+        </AppModalFooter>
+      </AppModal>
+    </AppPageLayout>
   );
 }
