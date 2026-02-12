@@ -45,7 +45,7 @@ export function AppShell({
           <AppHeader showSidebarColumn={false} />
         </header>
 
-        <main style={{ backgroundColor: '#FFFFFF' }}>
+        <main className="flex-1" style={{ backgroundColor: '#FFFFFF', minHeight: 'calc(100dvh - var(--header-height))' }}>
           {children}
           {footer}
         </main>
@@ -105,6 +105,7 @@ export function AppShell({
         style={{
           marginLeft: isMobile ? 0 : 'var(--sidebar-width)',
           backgroundColor: '#FFFFFF',
+          minHeight: 'calc(100dvh - var(--header-height))',
         }}
       >
         {children}
