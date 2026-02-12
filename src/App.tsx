@@ -61,11 +61,11 @@ import {
   RightsCatalogPage,
   RightsPartiesPage,
   RightsDealDetailPage,
-  
   RightsSettingsPage,
   SongSubmitPage,
   SongDetailPage,
 } from "@/pages/modules/rights";
+import RightsClientDetailPage from "@/pages/modules/rights/RightsClientDetailPage";
 
 // App pages - Access states
 import PendingApprovalPage from "@/pages/app/PendingApprovalPage";
@@ -276,6 +276,7 @@ const App = () => (
           <Route path="queue" element={<RightsQueuePage />} />
           <Route path="queue/:submissionId" element={<RightsQueueDetailPage />} />
           <Route path="clients" element={<RightsClientsPage />} />
+          <Route path="clients/:clientId" element={<RightsClientDetailPage />} />
           <Route path="catalog" element={<RightsCatalogPage />} />
           <Route path="catalog/:songNumber/:songSlug?" element={<SongDetailPage />} />
           <Route path="parties" element={<RightsPartiesPage />} />
