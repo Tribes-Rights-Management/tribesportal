@@ -58,6 +58,7 @@ import {
   RightsQueuePage,
   RightsQueueDetailPage,
   RightsClientsPage,
+  RightsUsersPage,
   RightsCatalogPage,
   RightsPartiesPage,
   RightsDealDetailPage,
@@ -277,6 +278,7 @@ const App = () => (
           <Route path="queue/:submissionId" element={<RightsQueueDetailPage />} />
           <Route path="clients" element={<RightsClientsPage />} />
           <Route path="clients/:clientId" element={<RightsClientDetailPage />} />
+          <Route path="users" element={<RightsUsersPage />} />
           <Route path="catalog" element={<RightsCatalogPage />} />
           <Route path="catalog/:songNumber/:songSlug?" element={<SongDetailPage />} />
           <Route path="parties" element={<RightsPartiesPage />} />

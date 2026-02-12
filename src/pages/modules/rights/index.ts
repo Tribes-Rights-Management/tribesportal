@@ -9,6 +9,7 @@ export { default as RightsOverview } from "./RightsOverview";
 export { default as RightsQueuePage } from "./RightsQueuePage";
 export { default as RightsQueueDetailPage } from "./RightsQueueDetailPage";
 export { default as RightsClientsPage } from "./RightsClientsPage";
+export { default as RightsUsersPage } from "./RightsUsersPage";
 export { default as RightsCatalogPage } from "./RightsCatalogPage";
 export { default as RightsWritersPage } from "./RightsWritersPage";
 export { default as RightsPublishersPage } from "./RightsPublishersPage";
