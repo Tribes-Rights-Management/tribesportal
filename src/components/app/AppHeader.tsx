@@ -31,9 +31,13 @@ import {
 interface AppHeaderProps {
   /** Show the 2-column grid layout (for pages with sidebar) */
   showSidebarColumn?: boolean;
+  /** Render only the sidebar logo area (used inside fixed sidebar) */
+  sidebarOnly?: boolean;
+  /** Render only the content-area icons (used when logo is in fixed sidebar) */
+  contentOnly?: boolean;
 }
 
-export function AppHeader({ showSidebarColumn = false }: AppHeaderProps) {
+export function AppHeader({ showSidebarColumn = false, sidebarOnly = false, contentOnly = false }: AppHeaderProps) {
   const isMobile = useIsMobile();
   const [searchOpen, setSearchOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -79,26 +83,37 @@ export function AppHeader({ showSidebarColumn = false }: AppHeaderProps) {
     </div>
   );
 
-  // Two-column layout (for pages with sidebar)
+  // Sidebar-only mode: just render the logo for the fixed sidebar
+  if (sidebarOnly) {
+    return <>{logoArea}</>;
+  }
+
+  // Content-only mode: just render the right icons (logo is in fixed sidebar)
+  if (contentOnly) {
+    return (
+      <>
+        {rightIcons}
+        <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
+      </>
+    );
+  }
+
+  // Two-column layout (legacy — kept for compatibility)
   if (showSidebarColumn) {
     return (
       <>
-        {/* Logo column - matches sidebar width */}
         <div 
           className="h-full flex items-center"
           style={{ backgroundColor: CSS_VARS.SIDEBAR_BG }}
         >
           {logoArea}
         </div>
-
-        {/* Content column */}
         <div 
           className="h-full flex items-center justify-end"
           style={{ backgroundColor: CSS_VARS.TOPBAR_BG, paddingRight: 24 }}
         >
           {rightIcons}
         </div>
-
         <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
       </>
     );
