@@ -19,12 +19,15 @@ import {
   AppEmptyState,
 } from "@/components/app-ui";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogBody,
-} from "@/components/ui/dialog";
+  AppModal,
+  AppModalBody,
+  AppModalFooter,
+  AppModalAction,
+  AppModalCancel,
+  AppModalField,
+  AppModalFields,
+} from "@/components/ui/app-modal";
+import { Input } from "@/components/ui/input";
 
 const statusVariant: Record<string, "default" | "warning"> = {
   active: "default",
@@ -188,81 +191,77 @@ export default function RightsClientsPage() {
         </AppTable>
       )}
 
-      {/* Add Client Dialog */}
-      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Client</DialogTitle>
-          </DialogHeader>
-          <DialogBody>
-            <div className="space-y-4">
-              <div>
-                <label className="text-[13px] font-medium text-foreground mb-1.5 block">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  value={formName}
-                  onChange={(e) => setFormName(e.target.value)}
-                  placeholder="Client name"
-                  className="w-full h-12 px-4 text-sm bg-white border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors"
-                />
-              </div>
-              <div>
-                <label className="text-[13px] font-medium text-foreground mb-1.5 block">
-                  Primary Email
-                </label>
-                <input
-                  type="email"
-                  value={formEmail}
-                  onChange={(e) => setFormEmail(e.target.value)}
-                  placeholder="email@example.com"
-                  className="w-full h-12 px-4 text-sm bg-white border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors"
-                />
-              </div>
-              <div>
-                <label className="text-[13px] font-medium text-foreground mb-1.5 block">
-                  Phone
-                </label>
-                <input
-                  type="tel"
-                  value={formPhone}
-                  onChange={(e) => setFormPhone(e.target.value)}
-                  placeholder="+1 (555) 000-0000"
-                  className="w-full h-12 px-4 text-sm bg-white border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors"
-                />
-              </div>
-              <div>
-                <label className="text-[13px] font-medium text-foreground mb-1.5 block">
-                  Notes
-                </label>
-                <textarea
-                  value={formNotes}
-                  onChange={(e) => setFormNotes(e.target.value)}
-                  placeholder="Optional notes..."
-                  rows={3}
-                  className="w-full min-h-[80px] py-3 px-4 text-sm bg-white border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors resize-none"
-                />
-              </div>
-            </div>
-            <div className="flex gap-3 mt-8">
-              <AppButton intent="secondary" size="lg" fullWidth onClick={() => setShowCreateDialog(false)}>
-                Cancel
-              </AppButton>
-              <AppButton
-                intent="primary"
-                size="lg"
-                fullWidth
-                onClick={() => createMutation.mutate()}
-                disabled={!formName.trim()}
-                loading={createMutation.isPending}
-              >
-                Create Client
-              </AppButton>
-            </div>
-          </DialogBody>
-        </DialogContent>
-      </Dialog>
+      <AppModal
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+        title="Add Client"
+        preventClose={createMutation.isPending}
+        maxWidth="sm"
+      >
+        <AppModalBody>
+          <AppModalFields>
+            <AppModalField label="Name" htmlFor="client-name">
+              <Input
+                id="client-name"
+                value={formName}
+                onChange={(e) => setFormName(e.target.value)}
+                placeholder="Client name"
+                className="h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px]"
+              />
+            </AppModalField>
+
+            <AppModalField label="Primary email" htmlFor="client-email">
+              <Input
+                id="client-email"
+                type="email"
+                value={formEmail}
+                onChange={(e) => setFormEmail(e.target.value)}
+                placeholder="email@example.com"
+                className="h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px]"
+              />
+            </AppModalField>
+
+            <AppModalField label="Phone" htmlFor="client-phone">
+              <Input
+                id="client-phone"
+                type="tel"
+                value={formPhone}
+                onChange={(e) => setFormPhone(e.target.value)}
+                placeholder="+1 (555) 000-0000"
+                className="h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px]"
+              />
+            </AppModalField>
+
+            <AppModalField label="Notes" htmlFor="client-notes">
+              <textarea
+                id="client-notes"
+                value={formNotes}
+                onChange={(e) => setFormNotes(e.target.value)}
+                placeholder="Optional notes"
+                rows={3}
+                className="w-full px-3 py-2.5 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px] resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </AppModalField>
+          </AppModalFields>
+        </AppModalBody>
+
+        <AppModalFooter>
+          <AppModalAction
+            onClick={() => createMutation.mutate()}
+            disabled={!formName.trim()}
+            loading={createMutation.isPending}
+            loadingText="Creating…"
+          >
+            Add Client
+          </AppModalAction>
+          <AppModalCancel
+            onClick={() => { setShowCreateDialog(false); resetForm(); }}
+            disabled={createMutation.isPending}
+          >
+            Cancel
+          </AppModalCancel>
+        </AppModalFooter>
+      </AppModal>
     </AppPageLayout>
   );
 }
