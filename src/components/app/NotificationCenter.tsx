@@ -221,7 +221,7 @@ function CategoryGroup({ category, notifications, onNotificationClick }: Categor
           <Icon size={14} style={{ color: 'var(--tribes-text-muted)' }} />
           <span 
             className={cn(
-              "text-[12px] uppercase tracking-wider",
+              "text-[12px] tracking-[0.03em]",
               isEscalated && "font-medium"
             )}
             style={{ color: isEscalated ? 'var(--tribes-text)' : 'var(--tribes-text-muted)' }}
@@ -243,7 +243,7 @@ function CategoryGroup({ category, notifications, onNotificationClick }: Categor
           )}
           {isEscalated && (
             <span 
-              className="text-[10px] uppercase tracking-wide font-medium"
+              className="text-[10px] font-medium"
               style={{ color: 'var(--warning, #fbbf24)' }}
             >
               Escalated
@@ -378,7 +378,7 @@ function NotificationPanelContent({
         style={{ borderColor: 'var(--tribes-border)' }}
       >
         <span 
-          className="text-[11px] uppercase tracking-wider font-medium"
+          className="text-[12px] font-medium"
           style={{ color: 'var(--tribes-text-muted)' }}
         >
           Notifications

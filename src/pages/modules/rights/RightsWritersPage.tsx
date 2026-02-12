@@ -499,7 +499,7 @@ export default function RightsWritersPage() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+              <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">
                 First Name *
               </label>
               <input
@@ -511,7 +511,7 @@ export default function RightsWritersPage() {
               />
             </div>
             <div>
-              <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+              <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">
                 Last Name
               </label>
               <input
@@ -525,7 +525,7 @@ export default function RightsWritersPage() {
           </div>
 
           <div>
-            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+            <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">
               PRO
             </label>
             <select
@@ -540,7 +540,7 @@ export default function RightsWritersPage() {
           </div>
 
           <div>
-            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+            <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">
               IPI Number
             </label>
             <input
@@ -553,7 +553,7 @@ export default function RightsWritersPage() {
           </div>
 
           <div>
-            <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">
+            <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">
               Email
             </label>
             <input

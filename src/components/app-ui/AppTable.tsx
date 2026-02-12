@@ -237,7 +237,7 @@ export function AppTableHead({
     <th
       className={cn(
         "py-2.5 px-4",
-        "text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]",
+        "text-[12px] font-medium text-[#9CA3AF]",
         alignClasses[align],
         className
       )}
@@ -247,7 +247,7 @@ export function AppTableHead({
         <button
           onClick={onSort}
           className={cn(
-            "flex items-center hover:text-foreground transition-colors uppercase",
+            "flex items-center hover:text-foreground transition-colors",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded",
             align === "right" && "ml-auto"
           )}

@@ -36,7 +36,7 @@ export function AppShell({
           style={{ 
             height: LAYOUT.HEADER_HEIGHT,
             backgroundColor: CSS_VARS.TOPBAR_BG,
-            borderBottom: '1px solid #E5E7EB',
+            borderBottom: '1px solid #EBEBEB',
             boxShadow: '0 1px 0 rgba(0,0,0,0.06)',
           }}
         >
@@ -69,7 +69,7 @@ export function AppShell({
           gridColumn: '1 / -1',
           gridRow: '1',
           backgroundColor: CSS_VARS.TOPBAR_BG,
-          borderBottom: '1px solid #E5E7EB',
+          borderBottom: '1px solid #EBEBEB',
           boxShadow: '0 1px 0 rgba(0,0,0,0.06)',
         }}
       >
