@@ -112,7 +112,7 @@ export function AppPanel({
         aria-labelledby="panel-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border/60">
+        <div className="flex items-center justify-between p-4 border-b border-border">
           <div>
             <h2
               id="panel-title"
@@ -142,7 +142,7 @@ export function AppPanel({
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-2 p-4 border-t border-border/60">
+          <div className="flex items-center justify-end gap-3 p-4 border-t border-border">
             {footer}
           </div>
         )}

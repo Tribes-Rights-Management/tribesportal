@@ -160,8 +160,8 @@ export function AppTableRow({
       className={cn(
         header 
           ? "border-b border-[var(--app-surface-border)]" 
-          : "border-b border-[var(--app-surface-border)]/50",
-        clickable && "cursor-pointer hover:bg-muted/30 transition-colors",
+          : "border-b border-[var(--app-surface-border)]",
+        clickable && "cursor-pointer hover:bg-[#F9FAFB] transition-colors",
         className
       )}
       role={clickable ? "button" : undefined}
@@ -237,7 +237,7 @@ export function AppTableHead({
     <th
       className={cn(
         "py-2.5 px-4",
-        "text-[10px] uppercase tracking-[0.1em] font-medium text-[#9CA3AF]",
+        "text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]",
         alignClasses[align],
         className
       )}
@@ -292,7 +292,7 @@ export function AppTableCell({
   return (
     <td
       className={cn(
-        "py-3 px-4 text-sm",
+        "py-2.5 px-4 text-sm",
         muted ? "text-muted-foreground" : "text-foreground",
         mono && "font-mono text-[13px]",
         alignClasses[align],
