@@ -190,7 +190,7 @@ export default function RightsClientsPage() {
 
       {/* Add Client Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Client</DialogTitle>
           </DialogHeader>
@@ -205,7 +205,7 @@ export default function RightsClientsPage() {
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
                   placeholder="Client name"
-                  className="w-full h-11 px-3 text-sm bg-background border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors"
+                  className="w-full h-12 px-4 text-sm bg-white border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors"
                 />
               </div>
               <div>
@@ -217,7 +217,7 @@ export default function RightsClientsPage() {
                   value={formEmail}
                   onChange={(e) => setFormEmail(e.target.value)}
                   placeholder="email@example.com"
-                  className="w-full h-11 px-3 text-sm bg-background border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors"
+                  className="w-full h-12 px-4 text-sm bg-white border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors"
                 />
               </div>
               <div>
@@ -229,7 +229,7 @@ export default function RightsClientsPage() {
                   value={formPhone}
                   onChange={(e) => setFormPhone(e.target.value)}
                   placeholder="+1 (555) 000-0000"
-                  className="w-full h-11 px-3 text-sm bg-background border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors"
+                  className="w-full h-12 px-4 text-sm bg-white border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors"
                 />
               </div>
               <div>
@@ -241,17 +241,18 @@ export default function RightsClientsPage() {
                   onChange={(e) => setFormNotes(e.target.value)}
                   placeholder="Optional notes..."
                   rows={3}
-                  className="w-full px-3 py-2.5 text-sm bg-background border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors resize-none"
+                  className="w-full min-h-[80px] py-3 px-4 text-sm bg-white border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors resize-none"
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-3 pt-4 border-t border-border mt-6">
-              <AppButton intent="secondary" size="sm" onClick={() => setShowCreateDialog(false)}>
+            <div className="flex gap-3 mt-8">
+              <AppButton intent="secondary" size="lg" fullWidth onClick={() => setShowCreateDialog(false)}>
                 Cancel
               </AppButton>
               <AppButton
                 intent="primary"
-                size="sm"
+                size="lg"
+                fullWidth
                 onClick={() => createMutation.mutate()}
                 disabled={!formName.trim()}
                 loading={createMutation.isPending}

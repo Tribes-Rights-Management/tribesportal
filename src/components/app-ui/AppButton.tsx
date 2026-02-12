@@ -86,7 +86,7 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
       xs: "h-[28px] px-3 text-[12px] gap-1 rounded-[6px]",
       sm: "h-[36px] px-4 text-[13px] gap-1.5 rounded-[6px]",
       md: "h-[40px] px-5 text-[14px] gap-2 rounded-[6px]",
-      lg: "h-[44px] px-6 text-[15px] gap-2.5 rounded-[6px]",
+      lg: "h-12 px-6 text-[15px] gap-2.5 rounded-xl",
     };
 
     // Icon utility classes - enforce consistent sizing and stroke width
