@@ -80,7 +80,7 @@ export { AppSettingsCard, AppSettingsFooter } from "./AppSettingsCard";
 export { AppSearchInput } from "./AppSearchInput";
 export { AppSelect } from "./AppSelect";
 export { AppCheckboxGroup, type CheckboxOption } from "./AppCheckboxGroup";
-export { AppInput, AppTextarea } from "./AppInput";
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DROPDOWNS
@@ -116,7 +116,7 @@ export { AppPagination } from "./AppPagination";
 // ─────────────────────────────────────────────────────────────────────────────
 export { AppAlert } from "./AppAlert";
 export { AppEmptyState } from "./AppEmptyState";
-export { AppDivider } from "./AppDivider";
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FILTERS
