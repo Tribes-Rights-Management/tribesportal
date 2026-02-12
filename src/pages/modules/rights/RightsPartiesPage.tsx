@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { AppPageContainer, AppPageHeader } from "@/components/app-ui";
+import { AppPageLayout } from "@/components/app-ui";
 import WritersTabContent from "./partials/WritersTabContent";
 import PublishersTabContent from "./partials/PublishersTabContent";
 import DealsTabContent from "./partials/DealsTabContent";
@@ -15,19 +15,17 @@ export default function RightsPartiesPage() {
   const activeTab = searchParams.get("tab") || "writers";
 
   return (
-    <AppPageContainer>
-      <AppPageHeader title="Parties" />
-
-      {/* Tab bar — institutional weight */}
+    <AppPageLayout title="Parties">
+      {/* Tab bar */}
       <div className="flex items-center gap-1 border-b border-[var(--border-subtle)] mt-2 mb-5">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setSearchParams({ tab: tab.key })}
-            className={`px-4 py-2.5 text-sm transition-colors relative ${
+            className={`px-4 py-2.5 text-sm font-medium transition-colors relative ${
               activeTab === tab.key
-                ? "font-semibold text-foreground"
-                : "font-medium text-muted-foreground hover:text-foreground"
+                ? "text-foreground font-semibold"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             {tab.label}
@@ -41,6 +39,6 @@ export default function RightsPartiesPage() {
       {activeTab === "writers" && <WritersTabContent />}
       {activeTab === "publishers" && <PublishersTabContent />}
       {activeTab === "deals" && <DealsTabContent />}
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }
