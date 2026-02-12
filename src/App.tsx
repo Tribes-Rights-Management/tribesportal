@@ -62,7 +62,6 @@ import {
   RightsPartiesPage,
   RightsDealDetailPage,
   
-  RightsDocumentsPage,
   RightsSettingsPage,
   SongSubmitPage,
   SongDetailPage,
@@ -286,7 +285,7 @@ const App = () => (
           <Route path="publishers" element={<Navigate to="/rights/parties?tab=publishers" replace />} />
           <Route path="songs/submit" element={<SongSubmitPage />} />
           
-          <Route path="documents" element={<RightsDocumentsPage />} />
+          
           <Route path="settings" element={<RightsSettingsPage />} />
         </Route>
 

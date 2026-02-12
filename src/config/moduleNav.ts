@@ -88,7 +88,7 @@ const rightsNav: NavItem[] = [
   { to: "/rights/catalog", label: "Catalog", icon: Music, section: "main" },
   { to: "/rights/parties", label: "Parties", icon: Users, section: "main" },
   
-  { to: "/rights/documents", label: "Documents", icon: FileText, section: "main" },
+  
   { to: "/rights/settings", label: "Settings", icon: Settings2, section: "settings" },
 ];
 
