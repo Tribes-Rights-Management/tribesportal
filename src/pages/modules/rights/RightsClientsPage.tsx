@@ -23,9 +23,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogBody,
-  DialogFooter,
 } from "@/components/ui/dialog";
 
 const statusVariant: Record<string, "default" | "warning"> = {
@@ -192,27 +190,26 @@ export default function RightsClientsPage() {
 
       {/* Add Client Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Add Client</DialogTitle>
-            <DialogDescription>Create a new client account.</DialogDescription>
           </DialogHeader>
           <DialogBody>
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                  Name <span className="text-destructive">*</span>
+                <label className="text-[13px] font-medium text-foreground mb-1.5 block">
+                  Name
                 </label>
                 <input
                   type="text"
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
                   placeholder="Client name"
-                  className="w-full h-10 px-3 text-sm bg-background border border-border rounded-md focus:outline-none focus:border-foreground transition-colors"
+                  className="w-full h-11 px-3 text-sm bg-background border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                <label className="text-[13px] font-medium text-foreground mb-1.5 block">
                   Primary Email
                 </label>
                 <input
@@ -220,11 +217,11 @@ export default function RightsClientsPage() {
                   value={formEmail}
                   onChange={(e) => setFormEmail(e.target.value)}
                   placeholder="email@example.com"
-                  className="w-full h-10 px-3 text-sm bg-background border border-border rounded-md focus:outline-none focus:border-foreground transition-colors"
+                  className="w-full h-11 px-3 text-sm bg-background border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                <label className="text-[13px] font-medium text-foreground mb-1.5 block">
                   Phone
                 </label>
                 <input
@@ -232,11 +229,11 @@ export default function RightsClientsPage() {
                   value={formPhone}
                   onChange={(e) => setFormPhone(e.target.value)}
                   placeholder="+1 (555) 000-0000"
-                  className="w-full h-10 px-3 text-sm bg-background border border-border rounded-md focus:outline-none focus:border-foreground transition-colors"
+                  className="w-full h-11 px-3 text-sm bg-background border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                <label className="text-[13px] font-medium text-foreground mb-1.5 block">
                   Notes
                 </label>
                 <textarea
@@ -244,24 +241,25 @@ export default function RightsClientsPage() {
                   onChange={(e) => setFormNotes(e.target.value)}
                   placeholder="Optional notes..."
                   rows={3}
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:border-foreground transition-colors resize-none"
+                  className="w-full px-3 py-2.5 text-sm bg-background border border-[var(--border-subtle)] rounded-lg focus:outline-none focus:border-[var(--border-strong)] focus:ring-0 transition-colors resize-none"
                 />
               </div>
             </div>
+            <div className="flex justify-end gap-3 pt-4 border-t border-border mt-6">
+              <AppButton intent="secondary" size="sm" onClick={() => setShowCreateDialog(false)}>
+                Cancel
+              </AppButton>
+              <AppButton
+                intent="primary"
+                size="sm"
+                onClick={() => createMutation.mutate()}
+                disabled={!formName.trim()}
+                loading={createMutation.isPending}
+              >
+                Create Client
+              </AppButton>
+            </div>
           </DialogBody>
-          <DialogFooter>
-            <AppButton intent="secondary" onClick={() => setShowCreateDialog(false)}>
-              Cancel
-            </AppButton>
-            <AppButton
-              intent="primary"
-              onClick={() => createMutation.mutate()}
-              disabled={!formName.trim()}
-              loading={createMutation.isPending}
-            >
-              Create Client
-            </AppButton>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </AppPageLayout>
