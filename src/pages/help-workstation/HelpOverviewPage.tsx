@@ -136,7 +136,7 @@ export default function HelpOverviewPage() {
       title="Overview"
       action={
         <AppButton
-          intent="secondary"
+          intent="primary"
           size="sm"
           onClick={() => navigate("/help/articles/new")}
         >
