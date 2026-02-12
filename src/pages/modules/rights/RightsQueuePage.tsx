@@ -13,10 +13,6 @@ import {
   AppTableEmpty,
   AppResponsiveList,
   AppItemCard,
-  AppFilterDrawer,
-  AppFilterSection,
-  AppFilterOption,
-  AppFilterTrigger,
   AppPagination,
   AppStatCard,
   AppStatCardGrid,
@@ -34,22 +30,17 @@ type StatusFilter = "all" | "submitted" | "pending" | "in_review" | "needs_revis
 export default function RightsQueuePage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [filterOpen, setFilterOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const statusFilter = (searchParams.get("status") as StatusFilter) || "all";
   const { data: queueItems = [], isLoading } = useStaffQueue(statusFilter === "all" ? undefined : statusFilter);
   const { data: stats } = useQueueStats();
 
-  const hasActiveFilters = statusFilter !== "all";
-
   const handleStatusChange = (value: StatusFilter) => {
     if (value === "all") { searchParams.delete("status"); } else { searchParams.set("status", value); }
     setSearchParams(searchParams);
     setCurrentPage(1);
   };
-
-  const handleClearFilters = () => { searchParams.delete("status"); setSearchParams(searchParams); setCurrentPage(1); };
 
   const totalItems = queueItems.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
@@ -72,10 +63,7 @@ export default function RightsQueuePage() {
   ];
 
   return (
-    <AppPageLayout
-      title="Queue"
-      action={<AppFilterTrigger onClick={() => setFilterOpen(true)} hasActiveFilters={hasActiveFilters} />}
-    >
+    <AppPageLayout title="Queue">
       <AppSection spacing="md">
         <AppStatCardGrid columns={4}>
           <AppStatCard label="Submitted" value={stats?.submitted || 0} loading={!stats} onClick={() => handleStatusChange("submitted")} />
@@ -148,18 +136,6 @@ export default function RightsQueuePage() {
         <AppPagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       </AppSection>
 
-      <AppFilterDrawer open={filterOpen} onOpenChange={setFilterOpen} hasActiveFilters={hasActiveFilters} onClearFilters={handleClearFilters}>
-        <AppFilterSection title="Status">
-          {statusOptions.map((opt) => (
-            <AppFilterOption
-              key={opt.value}
-              label={`${opt.label} (${opt.count})`}
-              selected={statusFilter === opt.value}
-              onClick={() => handleStatusChange(opt.value)}
-            />
-          ))}
-        </AppFilterSection>
-      </AppFilterDrawer>
     </AppPageLayout>
   );
 }
