@@ -393,6 +393,7 @@ export default function SongDetailPage() {
   // Algolia writer search state
   const [writerSearchResults, setWriterSearchResults] = useState<Record<number, any[]>>({});
   const [activeWriterSearch, setActiveWriterSearch] = useState<number | null>(null);
+  const [lyricsExpanded, setLyricsExpanded] = useState(false);
 
   // ── Algolia writer search ─────────────────────────────────
   const searchWriters = async (query: string, index: number) => {
@@ -1029,49 +1030,59 @@ export default function SongDetailPage() {
             </div>
           ) : (
             songWriters.length > 0 ? (
-              <div>
-                {/* Column headers */}
-                <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
-                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Writer</span>
-                  <div className="flex items-center gap-4">
-                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[120px] text-right">IPI Number</span>
-                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[50px] text-right">Share</span>
+              <>
+                {/* Desktop: existing table layout */}
+                <div className="hidden md:block">
+                  {/* Column headers */}
+                  <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
+                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Writer</span>
+                    <div className="flex items-center gap-4">
+                      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[120px] text-right">IPI Number</span>
+                      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[50px] text-right">Share</span>
+                    </div>
+                  </div>
+                  <div className="divide-y divide-border">
+                    {songWriters.map((sw, index) => (
+                      <div key={sw.id || index} className="flex items-center justify-between py-2.5">
+                        <span className="text-[14px] text-foreground font-medium">{sw.name || "Unknown"}</span>
+                        <div className="flex items-center gap-4">
+                          {sw.ipi_number && (
+                            <span className="text-[13px] text-[#6B7280] font-mono w-[120px] text-right">{sw.ipi_number}</span>
+                          )}
+                          <span className="text-[13px] text-[#6B7280] w-[50px] text-right">{sw.share}%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-border">
+                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]">Total</span>
+                    <span className={cn("text-[13px] font-semibold w-[50px] text-right", writerTotal === 100 ? "text-emerald-600" : "text-red-600")}>{writerTotal.toFixed(2)}%</span>
                   </div>
                 </div>
-                {/* Writer rows */}
-                <div className="divide-y divide-border">
-                  {songWriters.map((sw, index) => (
-                    <div
-                      key={sw.id || index}
-                      className="flex items-center justify-between py-2.5"
-                    >
-                      <span className="text-[14px] text-foreground font-medium">
-                        {sw.name || "Unknown"}
-                      </span>
-                      <div className="flex items-center gap-4">
-                        {sw.ipi_number && (
-                          <span className="text-[13px] text-[#6B7280] font-mono w-[120px] text-right">
-                            {sw.ipi_number}
-                          </span>
-                        )}
-                        <span className="text-[13px] text-[#6B7280] w-[50px] text-right">
-                          {sw.share}%
-                        </span>
+
+                {/* Mobile: stacked card layout */}
+                <div className="md:hidden -mx-5 -mb-4">
+                  <div className="rounded-xl border border-border overflow-hidden mx-4 mb-4">
+                    {songWriters.map((sw, index) => (
+                      <div key={sw.id || index} className={`px-4 py-3.5 ${index < songWriters.length - 1 ? "border-b border-zinc-100" : ""}`}>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 min-w-0 mr-3">
+                            <span className="text-[14px] font-medium text-zinc-900">{sw.name || "Unknown"}</span>
+                            {sw.ipi_number && (
+                              <div className="mt-1 text-[12px] text-zinc-400 font-mono">{sw.ipi_number}</div>
+                            )}
+                          </div>
+                          <span className="text-[18px] font-semibold tabular-nums text-zinc-900 shrink-0">{sw.share}%</span>
+                        </div>
                       </div>
+                    ))}
+                    <div className="flex items-center justify-between px-4 py-3 bg-zinc-50 border-t border-zinc-100">
+                      <span className="text-[11px] font-semibold tracking-[0.06em] uppercase text-zinc-400">Total</span>
+                      <span className={cn("text-[15px] font-bold tabular-nums", writerTotal === 100 ? "text-emerald-600" : "text-red-500")}>{writerTotal.toFixed(2)}%</span>
                     </div>
-                  ))}
+                  </div>
                 </div>
-                {/* Writer total */}
-                <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-border">
-                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]">Total</span>
-                  <span className={cn(
-                    "text-[13px] font-semibold w-[50px] text-right",
-                    writerTotal === 100 ? "text-emerald-600" : "text-red-600"
-                  )}>
-                    {writerTotal.toFixed(2)}%
-                  </span>
-                </div>
-              </div>
+              </>
             ) : (
               <p className="text-[13px] text-muted-foreground/50">No songwriters added</p>
             )
@@ -1218,57 +1229,67 @@ export default function SongDetailPage() {
             </div>
           ) : (
             ownership.length > 0 ? (
-              <div>
-                {/* Column headers */}
-                <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
-                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Publisher</span>
-                  <div className="flex items-center gap-4">
-                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[80px] text-center">PRO</span>
-                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[100px] text-center">Administered</span>
-                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[60px] text-right">Share</span>
-                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[140px] text-right">Administrator</span>
-                  </div>
-                </div>
-                {/* Ownership rows */}
-                <div className="divide-y divide-border">
-                  {ownership.map((row) => (
-                    <div key={row.id} className="flex items-center justify-between py-2.5">
-                      <span className="text-[14px] text-foreground font-medium">
-                        {row.publisher_name || "Unknown Publisher"}
-                      </span>
-                      <div className="flex items-center gap-4">
-                        <span className="text-[13px] text-[#6B7280] w-[80px] text-center">
-                          {row.pro || "—"}
-                        </span>
-                        <span className="text-[13px] text-[#6B7280] w-[100px] text-center">
-                          {row.tribes_administered ? "Yes" : "No"}
-                        </span>
-                        <span className="text-[13px] text-[#6B7280] w-[60px] text-right">
-                          {row.ownership_percentage}%
-                        </span>
-                        <span className="text-[13px] text-[#6B7280] w-[140px] text-right">
-                          {row.tribes_administered ? row.administrator_name || "—" : "—"}
-                        </span>
-                      </div>
+              <>
+                {/* Desktop: existing table layout */}
+                <div className="hidden md:block">
+                  <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
+                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Publisher</span>
+                    <div className="flex items-center gap-4">
+                      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[80px] text-center">PRO</span>
+                      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[100px] text-center">Administered</span>
+                      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[60px] text-right">Share</span>
+                      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[140px] text-right">Administrator</span>
                     </div>
-                  ))}
-                </div>
-                {/* Total row */}
-                <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-border">
-                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]">Total</span>
-                  <div className="flex items-center gap-4">
-                    <span className="w-[80px]" />
-                    <span className="w-[100px]" />
-                    <span className={cn(
-                      "text-[13px] font-semibold w-[60px] text-right",
-                      ownershipTotal === 100 ? "text-emerald-600" : "text-red-600"
-                    )}>
-                      {ownershipTotal}%
-                    </span>
-                    <span className="w-[140px]" />
+                  </div>
+                  <div className="divide-y divide-border">
+                    {ownership.map((row) => (
+                      <div key={row.id} className="flex items-center justify-between py-2.5">
+                        <span className="text-[14px] text-foreground font-medium">{row.publisher_name || "Unknown Publisher"}</span>
+                        <div className="flex items-center gap-4">
+                          <span className="text-[13px] text-[#6B7280] w-[80px] text-center">{row.pro || "—"}</span>
+                          <span className="text-[13px] text-[#6B7280] w-[100px] text-center">{row.tribes_administered ? "Yes" : "No"}</span>
+                          <span className="text-[13px] text-[#6B7280] w-[60px] text-right">{row.ownership_percentage}%</span>
+                          <span className="text-[13px] text-[#6B7280] w-[140px] text-right">{row.tribes_administered ? row.administrator_name || "—" : "—"}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-border">
+                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]">Total</span>
+                    <div className="flex items-center gap-4">
+                      <span className="w-[80px]" />
+                      <span className="w-[100px]" />
+                      <span className={cn("text-[13px] font-semibold w-[60px] text-right", ownershipTotal === 100 ? "text-emerald-600" : "text-red-600")}>{ownershipTotal}%</span>
+                      <span className="w-[140px]" />
+                    </div>
                   </div>
                 </div>
-              </div>
+
+                {/* Mobile: stacked card layout */}
+                <div className="md:hidden -mx-5 -mb-4">
+                  <div className="rounded-xl border border-border overflow-hidden mx-4 mb-4">
+                    {ownership.map((row, index) => (
+                      <div key={row.id} className={`px-4 py-3.5 ${index < ownership.length - 1 ? "border-b border-zinc-100" : ""}`}>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 min-w-0 mr-3">
+                            <span className="text-[14px] font-medium text-zinc-900 block">{row.publisher_name || "Unknown Publisher"}</span>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-[12px] text-zinc-400">{row.pro || "—"}</span>
+                              <span className="text-zinc-200">·</span>
+                              <span className="text-[12px] text-zinc-400">{row.tribes_administered ? "Administered" : "Not administered"}</span>
+                            </div>
+                          </div>
+                          <span className="text-[18px] font-semibold tabular-nums text-zinc-900 shrink-0">{row.ownership_percentage}%</span>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex items-center justify-between px-4 py-3 bg-zinc-50 border-t border-zinc-100">
+                      <span className="text-[11px] font-semibold tracking-[0.06em] uppercase text-zinc-400">Total</span>
+                      <span className={cn("text-[15px] font-bold tabular-nums", ownershipTotal === 100 ? "text-emerald-600" : "text-red-500")}>{ownershipTotal}%</span>
+                    </div>
+                  </div>
+                </div>
+              </>
             ) : (
               <p className="text-[13px] text-muted-foreground/50">No ownership records</p>
             )
@@ -1330,9 +1351,29 @@ export default function SongDetailPage() {
                 placeholder="Enter lyrics…"
               />
             ) : (
-              <pre className="text-[14px] text-[#374151] whitespace-pre-wrap font-sans leading-relaxed">
-                {metadata.lyrics}
-              </pre>
+              <>
+                {/* Desktop: full lyrics */}
+                <pre className="hidden md:block text-[14px] text-[#374151] whitespace-pre-wrap font-sans leading-relaxed">
+                  {metadata.lyrics}
+                </pre>
+                {/* Mobile: collapsible lyrics */}
+                <div className="md:hidden -mx-5 -mb-4">
+                  <div className="px-4 pb-4">
+                    <div className={cn("relative", !lyricsExpanded && "max-h-[120px] overflow-hidden")}>
+                      <pre className="text-[13px] leading-relaxed text-zinc-700 whitespace-pre-wrap font-sans">{metadata.lyrics}</pre>
+                      {!lyricsExpanded && (
+                        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent" />
+                      )}
+                    </div>
+                    <button
+                      onClick={() => setLyricsExpanded(!lyricsExpanded)}
+                      className="mt-2 text-[13px] font-medium text-zinc-500"
+                    >
+                      {lyricsExpanded ? "Show less" : "Show all lyrics"}
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
           </SectionPanel>
         )}
