@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, ArrowUpDown, Check, Search } from "lucide-react";
+import { Plus, ArrowUpDown, Check } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +9,7 @@ import {
   AppPageLayout,
   AppSection,
   AppButton,
+  AppListToolbar,
   AppTable,
   AppTableHeader,
   AppTableBody,
@@ -366,22 +367,12 @@ export default function RightsCatalogPage() {
       }
     >
 
-      {/* Search */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-4 mb-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search by title, writer, or lyric..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="w-full h-10 pl-9 pr-3 text-sm bg-transparent border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-muted-foreground/20"
-          />
-        </div>
-        <span className="text-[13px] text-muted-foreground">
-          {totalItems} {totalItems === 1 ? "song" : "songs"}
-        </span>
-      </div>
+      <AppListToolbar
+        placeholder="Search by title, writer, or lyric..."
+        searchValue={searchQuery}
+        onSearchChange={(v) => { setSearchQuery(v); setCurrentPage(1); }}
+        count={`${totalItems} ${totalItems === 1 ? "song" : "songs"}`}
+      />
 
       <AppSection spacing="none">
         {/* Filter Chips Row with Sort */}

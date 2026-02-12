@@ -2,9 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import {
+  AppButton,
+  AppListToolbar,
   AppTable,
   AppTableHeader,
   AppTableBody,
@@ -121,26 +123,17 @@ export default function DealsTabContent() {
 
   return (
     <>
-      {/* Action bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by writer or publisher..."
-            className="w-full h-9 px-3 pl-9 text-sm bg-transparent border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-muted-foreground/20"
-          />
-        </div>
-        <button
-          onClick={() => navigate("/rights/parties/deals/new")}
-          className="flex items-center gap-1.5 text-[12px] uppercase tracking-wider font-medium text-foreground hover:text-foreground/80 transition-colors"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          New Deal
-        </button>
-      </div>
+      <AppListToolbar
+        placeholder="Search by writer or publisher..."
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        action={
+          <AppButton intent="secondary" size="sm" onClick={() => navigate("/rights/parties/deals/new")}>
+            <Plus className="h-4 w-4" />
+            New Deal
+          </AppButton>
+        }
+      />
 
       {/* Table */}
       {loading ? (

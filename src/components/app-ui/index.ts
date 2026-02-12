@@ -64,6 +64,7 @@ export { AppResponsiveList, AppItemCard } from "./AppResponsiveList";
 // PAGE STRUCTURE
 // ─────────────────────────────────────────────────────────────────────────────
 export { AppPageLayout } from "./AppPageLayout";
+export { AppListToolbar } from "./AppListToolbar";
 export { AppSectionHeader } from "./AppSectionHeader";
 export { AppSection, AppSectionGrid } from "./AppSection";
 export { 
