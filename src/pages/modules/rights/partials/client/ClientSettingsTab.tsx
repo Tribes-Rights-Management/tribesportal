@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
 import {
   AppSettingsCard,
   AppDetailRow,
   AppButton,
-  AppChip,
 } from "@/components/app-ui";
 import {
   Dialog,
@@ -24,11 +22,9 @@ interface ClientSettingsTabProps {
 }
 
 export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
-  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
   const [confirmAction, setConfirmAction] = useState<string | null>(null);
-  const [inviting, setInviting] = useState(false);
 
   // Form state
   const [name, setName] = useState(client.name);
@@ -92,92 +88,6 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
       toast({ description: "Failed to update status", variant: "destructive" });
     },
   });
-
-  // --- Portal Access queries ---
-  const { data: invitation, refetch: refetchInvite } = useQuery({
-    queryKey: ["client-invitation", client.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("client_invitations")
-        .select("id, email, token, expires_at, accepted_at, created_at")
-        .eq("client_account_id", client.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: existingUser } = useQuery({
-    queryKey: ["client-user-lookup", client.primary_email],
-    queryFn: async () => {
-      if (!client.primary_email) return null;
-      const { data } = await supabase
-        .from("user_profiles")
-        .select("id, email, full_name, status")
-        .eq("email", client.primary_email.toLowerCase())
-        .maybeSingle();
-      return data;
-    },
-    enabled: !!client.primary_email,
-  });
-
-  const handleInvite = async () => {
-    if (!client.primary_email || !user) return;
-    setInviting(true);
-    try {
-      const array = new Uint8Array(32);
-      crypto.getRandomValues(array);
-      const token = Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 7);
-
-      const { error } = await supabase.from("client_invitations").insert({
-        client_account_id: client.id,
-        email: client.primary_email.toLowerCase().trim(),
-        invited_by: user.id,
-        token,
-        role: "client",
-        expires_at: expiresAt.toISOString(),
-      });
-      if (error) throw error;
-
-      const inviteUrl = `${window.location.origin}/invite/accept?token=${token}`;
-      console.log("Client invite URL:", inviteUrl);
-
-      toast({ description: `Invitation sent to ${client.primary_email}` });
-      refetchInvite();
-    } catch (err: any) {
-      console.error("Failed to create invitation:", err);
-      toast({ description: "Failed to send invitation", variant: "destructive" });
-    } finally {
-      setInviting(false);
-    }
-  };
-
-  const handleCopyInviteLink = () => {
-    if (!invitation?.token) return;
-    const url = `${window.location.origin}/invite/accept?token=${invitation.token}`;
-    navigator.clipboard.writeText(url);
-    toast({ description: "Invite link copied to clipboard" });
-  };
-
-  const handleResend = async () => {
-    if (!invitation?.id) return;
-    setInviting(true);
-    try {
-      await supabase.from("client_invitations").delete().eq("id", invitation.id);
-      await handleInvite();
-    } finally {
-      setInviting(false);
-    }
-  };
-
-  // --- Determine portal access state ---
-  const invitationExpired = invitation?.expires_at && !invitation.accepted_at && new Date(invitation.expires_at) < new Date();
-  const invitationPending = invitation && !invitation.accepted_at && !invitationExpired;
-  const hasPortalAccess = existingUser && invitation?.accepted_at;
 
   const inputClass =
     "w-full h-10 px-3 text-sm bg-background border border-border rounded-md focus:outline-none focus:border-foreground transition-colors";
@@ -266,50 +176,6 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
               }
             />
             <AppDetailRow label="Notes" value={client.notes || "—"} />
-          </>
-        )}
-      </AppSettingsCard>
-
-      {/* Portal Access */}
-      <AppSettingsCard title="Portal Access">
-        {hasPortalAccess ? (
-          <>
-            <AppDetailRow label="Status" value={<AppChip status="pass" label="Active" />} />
-            <AppDetailRow label="User" value={existingUser.full_name || existingUser.email} />
-            <AppDetailRow label="Accepted" value={new Date(invitation.accepted_at!).toLocaleDateString()} />
-          </>
-        ) : invitationPending ? (
-          <>
-            <AppDetailRow label="Status" value={<AppChip status="pending" label="Pending" />} />
-            <AppDetailRow label="Sent to" value={invitation.email} />
-            <AppDetailRow label="Expires" value={new Date(invitation.expires_at!).toLocaleDateString()} />
-            <div className="px-4 py-3 flex items-center gap-2">
-              <AppButton intent="secondary" size="sm" onClick={handleCopyInviteLink}>
-                Copy Invite Link
-              </AppButton>
-              <AppButton intent="secondary" size="sm" onClick={handleResend} loading={inviting}>
-                Resend
-              </AppButton>
-            </div>
-          </>
-        ) : (
-          <>
-            {client.primary_email ? (
-              <div className="px-4 py-3 space-y-2">
-                <AppButton intent="primary" size="sm" onClick={handleInvite} loading={inviting}>
-                  Grant Portal Access
-                </AppButton>
-                <p className="text-xs text-muted-foreground">
-                  Sends an invitation to {client.primary_email}
-                </p>
-              </div>
-            ) : (
-              <div className="px-4 py-3">
-                <p className="text-xs text-muted-foreground">
-                  Add an email address to this client before granting portal access.
-                </p>
-              </div>
-            )}
           </>
         )}
       </AppSettingsCard>

@@ -5,6 +5,7 @@ import {
   CreditCard,
   FolderOpen,
   Users,
+  UserCircle,
   CheckSquare,
   Building2,
   Shield,
@@ -85,10 +86,9 @@ const rightsNav: NavItem[] = [
   { to: "/rights", label: "Overview", icon: LayoutDashboard, exact: true, section: "main" },
   { to: "/rights/queue", label: "Queue", icon: ListTodo, section: "main" },
   { to: "/rights/clients", label: "Clients", icon: Users, section: "main" },
+  { to: "/rights/users", label: "Users", icon: UserCircle, section: "main" },
   { to: "/rights/catalog", label: "Catalog", icon: Music, section: "main" },
   { to: "/rights/parties", label: "Parties", icon: Users, section: "main" },
-  
-  
   { to: "/rights/settings", label: "Settings", icon: Settings2, section: "settings" },
 ];
 
