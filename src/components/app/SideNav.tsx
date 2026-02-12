@@ -65,8 +65,8 @@ function SideNavLink({
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]",
           // Active: subtle left border, near-black text, visible wash
           isActive
-            ? "font-medium text-[#111827] border-l-[2px] border-l-[#111827] bg-[#F3F4F6]"
-            : "font-normal text-[#6B7280] hover:text-[#374151] hover:bg-black/[0.03]"
+            ? "font-medium text-[#111827] bg-[#EAECEF] rounded-lg"
+            : "font-normal text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] rounded-lg"
         )
       }
     >
