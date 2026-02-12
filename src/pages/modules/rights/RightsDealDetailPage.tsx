@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { AppPageContainer, AppCard, AppCardBody } from "@/components/app-ui";
+import { AppPageLayout } from "@/components/app-ui";
+import { AppCard, AppCardBody } from "@/components/app-ui";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, X, Search } from "lucide-react";
+import { Plus, X, Search } from "lucide-react";
 
 const syncDealToAlgolia = async (dealId: string, action: 'upsert' | 'delete' = 'upsert') => {
   try {
@@ -522,17 +523,10 @@ export default function RightsDealDetailPage() {
   });
 
   return (
-    <AppPageContainer>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/rights/parties?tab=deals")} className="text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <h1 className="text-lg font-semibold text-foreground">
-            {isNew ? "New Deal" : `Deal #${existingDeal?.deal_number || dealNumber}`}
-          </h1>
-        </div>
+    <AppPageLayout
+      title={isNew ? "New Deal" : `Deal #${existingDeal?.deal_number || dealNumber}`}
+      backLink={{ to: "/rights/parties?tab=deals", label: "Back to Deals" }}
+      action={
         <div className="flex items-center gap-2">
           {!isNew && existingDeal && (
             <button onClick={handleDelete} className="text-xs text-destructive hover:text-destructive/80 transition-colors mr-2">
@@ -547,7 +541,8 @@ export default function RightsDealDetailPage() {
             {saving ? "Saving..." : isNew ? "Create Deal" : "Save Changes"}
           </button>
         </div>
-      </div>
+      }
+    >
 
       {/* Tabs */}
       <div className="border-b border-border mb-4">
@@ -832,6 +827,6 @@ export default function RightsDealDetailPage() {
           )}
         </div>
       )}
-    </AppPageContainer>
+    </AppPageLayout>
   );
 }
