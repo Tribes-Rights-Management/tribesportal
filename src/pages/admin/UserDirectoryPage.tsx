@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { ChevronRight, Copy, X, AlertCircle } from "lucide-react";
+import { ChevronRight, Copy, AlertCircle, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { AppPageLayout } from "@/components/app-ui";
 import { ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  AppModal,
+  AppModalBody,
+  AppModalFooter,
+  AppModalAction,
+  AppModalCancel,
+} from "@/components/ui/app-modal";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 
 import type { Database } from "@/integrations/supabase/types";
@@ -52,6 +58,34 @@ export default function UserDirectoryPage() {
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<UserWithProfile | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+    setDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("user_profiles")
+        .delete()
+        .eq("user_id", selectedUser.user_id);
+      if (error) throw error;
+
+      toast({ description: `${selectedUser.email} has been deleted` });
+      setConfirmDelete(false);
+      setModalOpen(false);
+      setSelectedUser(null);
+      fetchUsers();
+    } catch (err: any) {
+      toast({
+        title: "Failed to delete user",
+        description: err.message || "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -344,176 +378,224 @@ export default function UserDirectoryPage() {
       </ContentPanel>
 
       {/* Member Details Modal */}
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent 
-          className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0"
-          hideDefaultClose
-        >
-          {selectedUser && (
-            <>
-              {/* Clean header: email + copy + close */}
-              <DialogHeader className="px-6 pt-6 pb-5 border-b" style={{ borderColor: 'var(--platform-border)' }}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <DialogTitle 
-                      className="text-[16px] font-medium"
-                      style={{ color: 'var(--platform-text)' }}
-                    >
-                      {selectedUser.email}
-                    </DialogTitle>
-                    <button
-                      onClick={() => handleCopyEmail(selectedUser.email)}
-                      className="p-1 rounded transition-colors"
-                      style={{ color: 'var(--platform-text-muted)' }}
-                      onMouseEnter={(e) => e.currentTarget.style.color = 'var(--platform-text-secondary)'}
-                      onMouseLeave={(e) => e.currentTarget.style.color = 'var(--platform-text-muted)'}
-                      title="Copy email"
-                    >
-                      <Copy className="h-3 w-3" strokeWidth={1.5} />
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => setModalOpen(false)}
-                    className="p-1.5 rounded transition-colors row-hover"
-                    style={{ color: 'var(--platform-text-secondary)' }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--platform-text)'}
-                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--platform-text-secondary)'}
-                  >
-                    <X className="h-4 w-4" strokeWidth={1.5} />
-                  </button>
-                </div>
-              </DialogHeader>
+      <AppModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        title={selectedUser?.email || "User Details"}
+        maxWidth="lg"
+      >
+        {selectedUser && (
+          <AppModalBody>
+            <div className="space-y-6">
+              {/* Email + Copy */}
+              <div className="flex items-center gap-2">
+                <span className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>
+                  {selectedUser.email}
+                </span>
+                <button
+                  onClick={() => handleCopyEmail(selectedUser.email)}
+                  className="p-1 rounded transition-colors"
+                  style={{ color: 'var(--platform-text-muted)' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--platform-text-secondary)'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--platform-text-muted)'}
+                  title="Copy email"
+                >
+                  <Copy className="h-3 w-3" strokeWidth={1.5} />
+                </button>
+              </div>
 
-              {/* Modal Body */}
-              <div className="px-6 py-5 space-y-6">
-                
-                {/* Identity Section - no redundant email */}
-                <section className="pb-5 border-b" style={{ borderColor: 'var(--platform-border)' }}>
-                  <h3 
-                    className="text-[11px] uppercase tracking-wider font-medium mb-4"
-                    style={{ color: 'var(--platform-text-muted)' }}
-                  >
-                    Identity
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-[13px]" style={{ color: 'var(--platform-text-muted)' }}>
-                        Account Created
-                      </span>
-                      <span className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>
-                        {formatDate(selectedUser.created_at)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-[13px]" style={{ color: 'var(--platform-text-muted)' }}>
-                        Account Status
-                      </span>
-                      <span 
-                        className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
-                        style={{ 
-                          backgroundColor: getStatusStyle(selectedUser.status).bg,
-                          color: getStatusStyle(selectedUser.status).text,
-                        }}
-                      >
-                        {formatStatus(selectedUser.status)}
-                      </span>
-                    </div>
-                  </div>
-                </section>
-
-                {/* Platform Authority Section */}
-                <section className="pb-5 border-b" style={{ borderColor: 'var(--platform-border)' }}>
-                  <h3 
-                    className="text-[11px] uppercase tracking-wider font-medium mb-4"
-                    style={{ color: 'var(--platform-text-muted)' }}
-                  >
-                    Platform Authority
-                  </h3>
-                  
-                  {isCurrentUser(selectedUser) && (
-                    <div 
-                      className="flex items-start gap-2.5 px-3 py-2.5 rounded mb-4"
-                      style={{ 
-                        backgroundColor: 'var(--warning-bg)',
-                        borderLeft: '2px solid var(--warning-border)'
-                      }}
-                    >
-                      <AlertCircle 
-                        className="h-3.5 w-3.5 shrink-0 mt-0.5" 
-                        strokeWidth={1.5}
-                        style={{ color: 'var(--warning-text)' }}
-                      />
-                      <span className="text-[12px]" style={{ color: 'var(--warning-text)' }}>
-                        You cannot modify your own access
-                      </span>
-                    </div>
-                  )}
-                  
+              {/* Identity Section */}
+              <section className="pb-5 border-b" style={{ borderColor: 'var(--platform-border)' }}>
+                <h3 
+                  className="text-[11px] uppercase tracking-wider font-medium mb-4"
+                  style={{ color: 'var(--platform-text-muted)' }}
+                >
+                  Identity
+                </h3>
+                <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-[13px]" style={{ color: 'var(--platform-text-muted)' }}>
-                      Platform Role
+                      Account Created
+                    </span>
+                    <span className="text-[14px]" style={{ color: 'var(--platform-text-secondary)' }}>
+                      {formatDate(selectedUser.created_at)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[13px]" style={{ color: 'var(--platform-text-muted)' }}>
+                      Account Status
                     </span>
                     <span 
                       className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
                       style={{ 
-                        backgroundColor: 'rgba(255,255,255,0.06)',
-                        color: 'var(--platform-text)',
+                        backgroundColor: getStatusStyle(selectedUser.status).bg,
+                        color: getStatusStyle(selectedUser.status).text,
                       }}
                     >
-                      {formatPlatformRole(selectedUser.platform_role)}
+                      {formatStatus(selectedUser.status)}
                     </span>
                   </div>
-                </section>
+                </div>
+              </section>
 
-                {/* Organization Memberships Section */}
-                <section>
-                  <h3 
-                    className="text-[11px] uppercase tracking-wider font-medium mb-4"
+              {/* Platform Authority Section */}
+              <section className="pb-5 border-b" style={{ borderColor: 'var(--platform-border)' }}>
+                <h3 
+                  className="text-[11px] uppercase tracking-wider font-medium mb-4"
+                  style={{ color: 'var(--platform-text-muted)' }}
+                >
+                  Platform Authority
+                </h3>
+                
+                {isCurrentUser(selectedUser) && (
+                  <div 
+                    className="flex items-start gap-2.5 px-3 py-2.5 rounded mb-4"
+                    style={{ 
+                      backgroundColor: 'var(--warning-bg)',
+                      borderLeft: '2px solid var(--warning-border)'
+                    }}
+                  >
+                    <AlertCircle 
+                      className="h-3.5 w-3.5 shrink-0 mt-0.5" 
+                      strokeWidth={1.5}
+                      style={{ color: 'var(--warning-text)' }}
+                    />
+                    <span className="text-[12px]" style={{ color: 'var(--warning-text)' }}>
+                      You cannot modify your own access
+                    </span>
+                  </div>
+                )}
+                
+                <div className="flex justify-between items-center">
+                  <span className="text-[13px]" style={{ color: 'var(--platform-text-muted)' }}>
+                    Platform Role
+                  </span>
+                  <span 
+                    className="inline-flex items-center px-2.5 py-1 rounded text-[12px] font-medium"
+                    style={{ 
+                      backgroundColor: 'rgba(255,255,255,0.06)',
+                      color: 'var(--platform-text)',
+                    }}
+                  >
+                    {formatPlatformRole(selectedUser.platform_role)}
+                  </span>
+                </div>
+              </section>
+
+              {/* Organization Memberships Section */}
+              <section>
+                <h3 
+                  className="text-[11px] uppercase tracking-wider font-medium mb-4"
+                  style={{ color: 'var(--platform-text-muted)' }}
+                >
+                  Organization Memberships
+                </h3>
+                
+                {selectedUser.memberships.length === 0 ? (
+                  <p 
+                    className="text-[13px] py-4"
                     style={{ color: 'var(--platform-text-muted)' }}
                   >
-                    Organization Memberships
-                  </h3>
-                  
-                  {selectedUser.memberships.length === 0 ? (
-                    <p 
-                      className="text-[13px] py-4"
-                      style={{ color: 'var(--platform-text-muted)' }}
-                    >
-                      No organization memberships
-                    </p>
-                  ) : (
-                    <div className="space-y-2">
-                      {selectedUser.memberships.map((m) => (
-                        <div 
-                          key={m.id}
-                          className="flex items-center justify-between px-3 py-3 rounded-lg"
-                          style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}
+                    No organization memberships
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {selectedUser.memberships.map((m) => (
+                      <div 
+                        key={m.id}
+                        className="flex items-center justify-between px-3 py-3 rounded-lg"
+                        style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}
+                      >
+                        <span 
+                          className="text-[14px] font-medium"
+                          style={{ color: 'var(--platform-text)' }}
                         >
-                          <span 
-                            className="text-[14px] font-medium"
-                            style={{ color: 'var(--platform-text)' }}
-                          >
-                            {m.tenant_name}
-                          </span>
-                          <span 
-                            className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium"
-                            style={{ 
-                              backgroundColor: getStatusStyle(m.status).bg,
-                              color: getStatusStyle(m.status).text,
-                            }}
-                          >
-                            {formatStatus(m.status)}
-                          </span>
-                        </div>
-                      ))}
+                          {m.tenant_name}
+                        </span>
+                        <span 
+                          className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium"
+                          style={{ 
+                            backgroundColor: getStatusStyle(m.status).bg,
+                            color: getStatusStyle(m.status).text,
+                          }}
+                        >
+                          {formatStatus(m.status)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+
+              {/* Danger Zone — only for non-self users */}
+              {!isCurrentUser(selectedUser) && (
+                <section className="pt-5 border-t" style={{ borderColor: 'var(--platform-border)' }}>
+                  <h3 
+                    className="text-[11px] uppercase tracking-wider font-medium mb-4"
+                    style={{ color: 'hsl(var(--destructive))' }}
+                  >
+                    Danger zone
+                  </h3>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[14px] font-medium" style={{ color: 'var(--platform-text)' }}>
+                        Delete user
+                      </p>
+                      <p className="text-[13px]" style={{ color: 'var(--platform-text-muted)' }}>
+                        Permanently remove this user and all their data
+                      </p>
                     </div>
-                  )}
+                    <button
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-[13px] font-medium transition-colors"
+                      style={{ 
+                        backgroundColor: 'hsl(var(--destructive) / 0.1)',
+                        color: 'hsl(var(--destructive))',
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--destructive) / 0.2)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--destructive) / 0.1)'}
+                      onClick={() => setConfirmDelete(true)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
+                      Delete user
+                    </button>
+                  </div>
                 </section>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+              )}
+            </div>
+          </AppModalBody>
+        )}
+      </AppModal>
+
+      {/* Delete Confirmation Modal */}
+      <AppModal
+        open={confirmDelete}
+        onOpenChange={setConfirmDelete}
+        title="Delete user"
+        maxWidth="sm"
+        preventClose={deleting}
+      >
+        <AppModalBody>
+          <p className="text-[14px] leading-relaxed" style={{ color: 'var(--platform-text-secondary)' }}>
+            This will permanently delete <strong style={{ color: 'var(--platform-text)' }}>{selectedUser?.email}</strong> and remove all their memberships and data. This action cannot be undone.
+          </p>
+        </AppModalBody>
+        <AppModalFooter>
+          <AppModalAction
+            variant="destructive"
+            onClick={handleDeleteUser}
+            loading={deleting}
+            loadingText="Deleting…"
+          >
+            Delete user
+          </AppModalAction>
+          <AppModalCancel
+            onClick={() => setConfirmDelete(false)}
+            disabled={deleting}
+          >
+            Cancel
+          </AppModalCancel>
+        </AppModalFooter>
+      </AppModal>
     </AppPageLayout>
   );
 }
