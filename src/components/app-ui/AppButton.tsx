@@ -99,20 +99,20 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
     const getIntentClasses = () => {
       switch (intent) {
         case "primary":
-          // Neutral grey fill — visible on both grey canvas and white cards (NO BLACK)
+          // Dark grey fill — Harvey.ai-like confident primary
           return cn(
-            "bg-[var(--btn-bg)] text-[var(--btn-text)]",
-            "font-medium",
-            !isDisabled && "hover:bg-[var(--btn-bg-hover)]",
-            isDisabled && "text-muted-foreground/50 bg-muted/30"
+            "bg-[var(--btn-primary-bg)] text-[var(--btn-primary-text)]",
+            "font-medium shadow-sm",
+            !isDisabled && "hover:bg-[var(--btn-primary-bg-hover)] active:bg-[#111827]",
+            isDisabled && "bg-[var(--btn-primary-bg)]/30 text-white/50"
           );
         case "secondary":
-          // Outline variant — transparent with subtle border
+          // White with visible border — clear secondary hierarchy
           return cn(
-            "bg-[var(--btn-outline-bg)] text-[var(--btn-text)] border border-[var(--btn-outline-border)]",
-            "font-medium",
-            !isDisabled && "hover:bg-[var(--btn-outline-hover-bg)]",
-            isDisabled && "text-muted-foreground/50 border-border/50"
+            "bg-white text-[var(--btn-text)] border border-[var(--border-subtle)]",
+            "font-medium shadow-sm",
+            !isDisabled && "hover:bg-[#F9FAFB] hover:border-[var(--border-strong)]",
+            isDisabled && "text-muted-foreground/50 border-border/50 bg-white/50"
           );
         case "tertiary":
           return cn(

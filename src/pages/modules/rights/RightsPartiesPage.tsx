@@ -18,21 +18,21 @@ export default function RightsPartiesPage() {
     <AppPageContainer>
       <AppPageHeader title="Parties" />
 
-      {/* Tab bar */}
-      <div className="flex items-center gap-1 border-b border-border mt-2 mb-5">
+      {/* Tab bar — institutional weight */}
+      <div className="flex items-center gap-1 border-b border-[var(--border-subtle)] mt-2 mb-5">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setSearchParams({ tab: tab.key })}
-            className={`px-4 py-2.5 text-sm font-medium transition-colors relative ${
+            className={`px-4 py-2.5 text-sm transition-colors relative ${
               activeTab === tab.key
-                ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground"
+                ? "font-semibold text-foreground"
+                : "font-medium text-muted-foreground hover:text-foreground"
             }`}
           >
             {tab.label}
             {activeTab === tab.key && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-foreground rounded-t" />
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1F2937] rounded-t" />
             )}
           </button>
         ))}

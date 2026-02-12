@@ -30,8 +30,8 @@ export const LAYOUT = {
    * Header height — fixed across all layouts
    * 56px = 3.5rem = h-14 in Tailwind
    */
-  HEADER_HEIGHT: "56px",
-  HEADER_HEIGHT_PX: 56,
+  HEADER_HEIGHT: "60px",
+  HEADER_HEIGHT_PX: 60,
   
   /**
    * Sidebar horizontal padding
@@ -42,7 +42,7 @@ export const LAYOUT = {
   /**
    * Content area horizontal padding
    */
-  CONTENT_PADDING_X: "24px", // px-6
+  CONTENT_PADDING_X: "28px", // Slightly more generous
   CONTENT_PADDING_X_MOBILE: "20px", // p-[20px]
   
   /**
@@ -68,8 +68,8 @@ export const BRAND = {
    * Height: 18px for tighter feel
    * Width: auto, max 80px
    */
-  LOGO_HEIGHT: "18px",
-  LOGO_HEIGHT_PX: 18,
+  LOGO_HEIGHT: "20px",
+  LOGO_HEIGHT_PX: 20,
   LOGO_MAX_WIDTH: "80px",
   LOGO_MAX_WIDTH_PX: 80,
   

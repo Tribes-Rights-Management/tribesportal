@@ -23,16 +23,16 @@ export default {
       // NOTE: Custom spacing removed to restore Tailwind defaults
       // (h-4 = 16px, not 32px). Add only NEW custom values if needed.
       fontSize: {
-        /* Institutional typography scale — Apple/Bloomberg density */
-        "2xs": ["10px", { lineHeight: "1.3" }],
-        "xs": ["11px", { lineHeight: "1.35" }],
-        "sm": ["13px", { lineHeight: "1.4" }],
-        "base": ["14px", { lineHeight: "1.4" }],
-        "lg": ["15px", { lineHeight: "1.35" }],
-        "xl": ["17px", { lineHeight: "1.3" }],
-        "2xl": ["20px", { lineHeight: "1.2" }],
-        "3xl": ["26px", { lineHeight: "1.15" }],
-        "4xl": ["32px", { lineHeight: "1.1" }],
+        /* Institutional typography scale — Bloomberg/Harvey.ai density */
+        "2xs": ["10px", { lineHeight: "1.4" }],
+        "xs": ["11px", { lineHeight: "1.45" }],
+        "sm": ["13px", { lineHeight: "1.5" }],
+        "base": ["14px", { lineHeight: "1.5" }],
+        "lg": ["16px", { lineHeight: "1.45" }],
+        "xl": ["18px", { lineHeight: "1.35" }],
+        "2xl": ["22px", { lineHeight: "1.25" }],
+        "3xl": ["28px", { lineHeight: "1.2" }],
+        "4xl": ["36px", { lineHeight: "1.1" }],
       },
       colors: {
         /* ═══════════════════════════════════════════════════════════════════════

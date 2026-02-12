@@ -236,8 +236,8 @@ export function AppTableHead({
   return (
     <th
       className={cn(
-        "py-[14px] px-4",
-        "text-xs uppercase tracking-wider font-medium text-muted-foreground",
+        "py-3 px-4",
+        "text-[11px] uppercase tracking-[0.06em] font-semibold text-muted-foreground/60",
         alignClasses[align],
         className
       )}
@@ -292,7 +292,7 @@ export function AppTableCell({
   return (
     <td
       className={cn(
-        "py-[14px] px-4 text-sm",
+        "py-3 px-4 text-sm",
         muted ? "text-muted-foreground" : "text-foreground",
         mono && "font-mono text-[13px]",
         alignClasses[align],
@@ -319,7 +319,7 @@ interface AppTableEmptyProps {
 export function AppTableEmpty({ colSpan, children, className }: AppTableEmptyProps) {
   return (
     <tr>
-      <td colSpan={colSpan} className={cn("text-center py-16", className)}>
+      <td colSpan={colSpan} className={cn("text-center py-20", className)}>
         {children}
       </td>
     </tr>
