@@ -6,12 +6,12 @@ import { useIsMobile } from "@/hooks/use-mobile";
 /**
  * APP SHELL — FIXED SIDEBAR + STICKY HEADER + NATURAL SCROLL
  * 
- * Uses the industry-standard layout pattern:
- * - Sidebar: position:fixed, h-dvh, scrolls independently
+ * Layout pattern:
+ * - Sidebar: position:fixed, h-dvh, own scroll context
  * - Header: position:sticky, stays visible on scroll
- * - Main: normal document flow, body handles scrolling
+ * - Main: plain flowing content, browser handles scrolling
  * 
- * Layout dimensions are centralized in @/config/layout.ts
+ * NO CSS Grid. NO overflow on main. NO h-screen on container.
  */
 
 interface AppShellProps {
@@ -28,15 +28,15 @@ export function AppShell({
   footer,
 }: AppShellProps) {
   const isMobile = useIsMobile();
-  const marginLeft = showSidebar && !isMobile ? LAYOUT.SIDEBAR_WIDTH : 0;
 
+  // No-sidebar layout (mobile, or pages without nav)
   if (!showSidebar) {
     return (
-      <div className="min-h-dvh w-full" style={{ backgroundColor: CSS_VARS.PAGE_BG }}>
+      <div className="min-h-screen w-full" style={{ backgroundColor: CSS_VARS.PAGE_BG }}>
         <header
           className="sticky top-0 z-40 flex items-center w-full border-b"
           style={{
-            height: LAYOUT.HEADER_HEIGHT,
+            height: 'var(--header-height)',
             backgroundColor: CSS_VARS.TOPBAR_BG,
             borderColor: '#EBEBEB',
             boxShadow: '0 1px 0 rgba(0,0,0,0.06)',
@@ -45,7 +45,7 @@ export function AppShell({
           <AppHeader showSidebarColumn={false} />
         </header>
 
-        <main className="w-full" style={{ backgroundColor: '#FFFFFF' }}>
+        <main style={{ backgroundColor: '#FFFFFF' }}>
           {children}
           {footer}
         </main>
@@ -53,46 +53,45 @@ export function AppShell({
     );
   }
 
+  // Sidebar layout
   return (
-    <div className="min-h-dvh w-full" style={{ backgroundColor: CSS_VARS.PAGE_BG }}>
-      {/* Fixed sidebar — scrolls independently, hidden on mobile */}
+    <div className="min-h-screen w-full" style={{ backgroundColor: CSS_VARS.PAGE_BG }}>
+      {/* Fixed sidebar — own scroll context, hidden on mobile */}
       {!isMobile && (
         <aside
           className="fixed top-0 left-0 z-30 h-dvh overflow-y-auto overflow-x-hidden flex flex-col"
           style={{
-            width: LAYOUT.SIDEBAR_WIDTH,
+            width: 'var(--sidebar-width)',
             backgroundColor: CSS_VARS.SIDEBAR_BG,
             borderRight: '1px solid #E5E7EB',
           }}
         >
-          {/* Sidebar header area — logo */}
+          {/* Sidebar header — logo */}
           <div
             className="shrink-0 flex items-center"
             style={{
-              height: LAYOUT.HEADER_HEIGHT,
+              height: 'var(--header-height)',
               backgroundColor: CSS_VARS.SIDEBAR_BG,
             }}
           >
             <AppHeader showSidebarColumn={true} sidebarOnly />
           </div>
-          {/* Sidebar nav content */}
           {sidebarContent}
         </aside>
       )}
 
-      {/* Sticky header */}
+      {/* Sticky header — offsets past fixed sidebar on desktop */}
       <header
         className="sticky top-0 z-40 flex items-center border-b"
         style={{
-          height: LAYOUT.HEADER_HEIGHT,
-          marginLeft,
+          height: 'var(--header-height)',
+          marginLeft: isMobile ? 0 : 'var(--sidebar-width)',
           backgroundColor: CSS_VARS.TOPBAR_BG,
           borderColor: '#EBEBEB',
           boxShadow: '0 1px 0 rgba(0,0,0,0.06)',
         }}
       >
-        {showSidebar && !isMobile ? (
-          /* Content-area only (logo is in sidebar) */
+        {!isMobile ? (
           <div className="w-full h-full flex items-center justify-end" style={{ paddingRight: 24 }}>
             <AppHeader showSidebarColumn={true} contentOnly />
           </div>
@@ -101,10 +100,10 @@ export function AppShell({
         )}
       </header>
 
-      {/* Main content — natural document flow */}
+      {/* Main content — plain flowing content, browser scrolls naturally */}
       <main
         style={{
-          marginLeft,
+          marginLeft: isMobile ? 0 : 'var(--sidebar-width)',
           backgroundColor: '#FFFFFF',
         }}
       >

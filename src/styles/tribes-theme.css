@@ -21,6 +21,9 @@
  */
 
 :root {
+  /* Layout dimensions — referenced by AppShell via CSS vars */
+  --sidebar-width: 200px;
+  --header-height: 56px;
   /* ═══════════════════════════════════════════════════════════════════════════
      MERCURY + STRIPE CHROME SYSTEM — Global Neutral Tokens (SINGLE SOURCE)
      
