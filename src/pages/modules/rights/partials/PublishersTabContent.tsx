@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import {
   AppButton,
+  AppListToolbar,
   AppTable,
   AppTableHeader,
   AppTableBody,
@@ -224,19 +225,18 @@ export default function PublishersTabContent() {
 
   return (
     <>
-      {/* Action bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input type="text" placeholder="Search publishers..." value={searchQuery} onChange={handleSearchChange}
-            className="w-full h-10 pl-9 pr-3 text-sm bg-transparent border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-muted-foreground/20" />
-        </div>
-        <span className="text-[13px] text-muted-foreground">{totalCount.toLocaleString()} publishers</span>
-        <AppButton intent="secondary" size="sm" onClick={handleCreate}>
-          <Plus className="h-4 w-4" />
-          Add Publisher
-        </AppButton>
-      </div>
+      <AppListToolbar
+        placeholder="Search publishers..."
+        searchValue={searchQuery}
+        onSearchChange={(v) => { setSearchQuery(v); setCurrentPage(1); }}
+        count={`${totalCount.toLocaleString()} publishers`}
+        action={
+          <AppButton intent="secondary" size="sm" onClick={handleCreate}>
+            <Plus className="h-4 w-4" />
+            Add Publisher
+          </AppButton>
+        }
+      />
 
       {/* Table */}
       <div className="overflow-x-auto -mx-4 sm:mx-0">
