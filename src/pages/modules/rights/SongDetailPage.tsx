@@ -108,7 +108,7 @@ function DetailRow({
 }) {
   return (
     <div className="py-2.5">
-      <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">
         {label}
       </span>
       {editing && onValueChange ? (
@@ -116,18 +116,18 @@ function DetailRow({
           <textarea
             value={value}
             onChange={(e) => onValueChange(e.target.value)}
-            className="mt-1 w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1.5 min-h-[60px] resize-y focus:outline-none focus:border-primary/40 transition-colors"
+            className="mt-1 w-full text-[14px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1.5 min-h-[60px] resize-y focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
           />
         ) : (
           <input
             type={type}
             value={value}
             onChange={(e) => onValueChange(e.target.value)}
-            className="mt-1 w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+            className="mt-1 w-full text-[14px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
           />
         )
       ) : (
-        <div className="text-[15px] text-foreground font-medium mt-0.5">{children}</div>
+        <div className="text-[15px] text-foreground font-medium mt-1">{children}</div>
       )}
     </div>
   );
@@ -145,7 +145,7 @@ function StatusSelect({
     <select
       value={value ? "active" : "inactive"}
       onChange={(e) => onChange(e.target.value === "active")}
-      className="mt-1 w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+      className="mt-1 w-full text-[14px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
     >
       <option value="active">Active</option>
       <option value="inactive">Inactive</option>
@@ -158,10 +158,10 @@ function StatusBadge({ active }: { active: boolean }) {
   return (
     <span
       className={cn(
-        "text-[11px] uppercase tracking-wider font-medium px-2 py-0.5 rounded-sm",
+        "text-[11px] uppercase tracking-[0.05em] font-medium px-2.5 py-1 rounded-md",
         active
-          ? "text-[hsl(var(--success))] bg-[hsl(var(--success)/0.08)]"
-          : "text-muted-foreground bg-muted"
+          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+          : "text-muted-foreground bg-muted border border-border"
       )}
     >
       {active ? "Active" : "Inactive"}
@@ -172,9 +172,9 @@ function StatusBadge({ active }: { active: boolean }) {
 // ── Section Panel ───────────────────────────────────────────
 function SectionPanel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="mt-5 rounded border border-border bg-card">
-      <div className="px-5 py-3 border-b border-border bg-muted/30">
-        <h2 className="text-[12px] uppercase tracking-wider font-semibold text-muted-foreground">
+    <div className="mt-4 rounded-lg border border-[var(--border-subtle)]">
+      <div className="px-5 py-3 border-b border-[var(--border-subtle)]">
+        <h2 className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]">
           {title}
         </h2>
       </div>
@@ -289,7 +289,7 @@ function PublisherTypeahead({
         }}
         onFocus={() => search.length >= 1 && setOpen(true)}
         placeholder={placeholder}
-        className="w-full text-[13px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+        className="w-full text-[13px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
       />
       {showDropdown && (
         <div className="absolute left-0 right-0 top-full mt-1 bg-card border border-border rounded shadow-sm z-10 max-h-[280px] overflow-y-auto">
@@ -299,13 +299,13 @@ function PublisherTypeahead({
                 Adding: &quot;{search.trim()}&quot;
               </p>
               <div>
-                <label className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                <label className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">
                   PRO
                 </label>
                 <select
                   value={newEntryPro}
                   onChange={(e) => setNewEntryPro(e.target.value)}
-                  className="mt-1 w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+                  className="mt-1 w-full text-[14px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
                 >
                   <option value="">None / Unknown</option>
                   {PRO_OPTIONS.map((pro) => (
@@ -841,8 +841,7 @@ export default function SongDetailPage() {
           onClick={handleSave}
           disabled={isSaving}
           className={cn(
-            "text-[12px] uppercase tracking-wider px-3 py-1.5 rounded transition-colors",
-            "text-foreground bg-primary/10 hover:bg-primary/20",
+            "text-[13px] font-medium px-4 py-1.5 rounded-md bg-[#1F2937] text-white hover:bg-[#374151] transition-colors shadow-sm",
             isSaving && "opacity-50 cursor-not-allowed"
           )}
         >
@@ -851,7 +850,7 @@ export default function SongDetailPage() {
       )}
       <button
         onClick={editing ? handleCancel : () => setEditing(true)}
-        className="text-[12px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+        className="text-[13px] font-medium px-4 py-1.5 rounded-md border border-[var(--border-subtle)] text-[#374151] bg-white hover:bg-[#F9FAFB] hover:border-[var(--border-strong)] transition-colors shadow-sm"
       >
         {editing ? "Cancel" : "Edit"}
       </button>
@@ -898,7 +897,7 @@ export default function SongDetailPage() {
             >
               {song.alternate_titles && song.alternate_titles.length > 0
                 ? song.alternate_titles.join(", ")
-                : <span className="text-muted-foreground">—</span>}
+                : <span className="text-[#D1D5DB]">—</span>}
             </DetailRow>
 
             {song.duration_seconds != null && (
@@ -916,13 +915,13 @@ export default function SongDetailPage() {
               {/* Column headers */}
               <div className="flex items-center gap-3">
                 <div className="flex-1">
-                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Writer</span>
+                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Writer</span>
                 </div>
                 <div className="w-[140px]">
-                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">IPI Number</span>
+                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">IPI Number</span>
                 </div>
                 <div className="w-[70px]">
-                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Share %</span>
+                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Share %</span>
                 </div>
                 <div className="w-[22px]" />
               </div>
@@ -941,7 +940,7 @@ export default function SongDetailPage() {
                       onFocus={() => setActiveWriterSearch(index)}
                       onBlur={() => setTimeout(() => setActiveWriterSearch(null), 200)}
                       placeholder="Type to search writers..."
-                      className="w-full text-[14px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+                      className="w-full text-[14px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
                     />
                     {activeWriterSearch === index && writerSearchResults[index]?.length > 0 && (
                       <div className="absolute z-20 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
@@ -981,7 +980,7 @@ export default function SongDetailPage() {
                         updateField("writers", updated);
                       }}
                       placeholder="%"
-                      className="w-full text-[12px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 text-right focus:outline-none focus:border-primary/40 transition-colors"
+                      className="w-full text-[12px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 text-right focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
                     />
                   </div>
                   <button
@@ -1001,12 +1000,12 @@ export default function SongDetailPage() {
                 <div className="flex-1" />
                 <div className="w-[140px]" />
                 <div className="w-[70px]">
-                  <span className={cn(
-                    "text-[13px] font-semibold block text-right pr-2",
-                    writerTotal === 100 ? "text-[hsl(var(--success))]" : "text-destructive"
-                  )}>
-                    {writerTotal.toFixed(2)}%
-                  </span>
+                    <span className={cn(
+                      "text-[13px] font-semibold block text-right pr-2",
+                      writerTotal === 100 ? "text-emerald-600" : "text-red-600"
+                    )}>
+                      {writerTotal.toFixed(2)}%
+                    </span>
                 </div>
                 <div className="w-[22px]" />
               </div>
@@ -1023,7 +1022,7 @@ export default function SongDetailPage() {
                   }];
                   updateField("writers", updated);
                 }}
-                className="text-[12px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors mt-1"
+                className="text-[13px] font-medium text-[#6B7280] hover:text-[#374151] transition-colors mt-1"
               >
                 + Add Writer
               </button>
@@ -1033,10 +1032,10 @@ export default function SongDetailPage() {
               <div>
                 {/* Column headers */}
                 <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
-                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Writer</span>
+                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Writer</span>
                   <div className="flex items-center gap-4">
-                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[120px] text-right">IPI Number</span>
-                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[50px] text-right">Share</span>
+                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[120px] text-right">IPI Number</span>
+                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[50px] text-right">Share</span>
                   </div>
                 </div>
                 {/* Writer rows */}
@@ -1046,16 +1045,16 @@ export default function SongDetailPage() {
                       key={sw.id || index}
                       className="flex items-center justify-between py-2.5"
                     >
-                      <span className="text-[15px] text-foreground font-medium">
+                      <span className="text-[14px] text-foreground font-medium">
                         {sw.name || "Unknown"}
                       </span>
                       <div className="flex items-center gap-4">
                         {sw.ipi_number && (
-                          <span className="text-[13px] text-muted-foreground font-mono w-[120px] text-right">
+                          <span className="text-[13px] text-[#6B7280] font-mono w-[120px] text-right">
                             {sw.ipi_number}
                           </span>
                         )}
-                        <span className="text-[13px] text-muted-foreground w-[50px] text-right">
+                        <span className="text-[13px] text-[#6B7280] w-[50px] text-right">
                           {sw.share}%
                         </span>
                       </div>
@@ -1064,10 +1063,10 @@ export default function SongDetailPage() {
                 </div>
                 {/* Writer total */}
                 <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-border">
-                  <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Total</span>
+                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]">Total</span>
                   <span className={cn(
                     "text-[13px] font-semibold w-[50px] text-right",
-                    writerTotal === 100 ? "text-[hsl(var(--success))]" : "text-destructive"
+                    writerTotal === 100 ? "text-emerald-600" : "text-red-600"
                   )}>
                     {writerTotal.toFixed(2)}%
                   </span>
@@ -1086,16 +1085,16 @@ export default function SongDetailPage() {
               {/* Column headers */}
               <div className="flex items-center gap-3">
                 <div className="flex-1">
-                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Publisher</span>
+                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Publisher</span>
                 </div>
                 <div className="w-[80px]">
-                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">PRO</span>
+                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">PRO</span>
                 </div>
                 <div className="w-[120px]">
-                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Administered</span>
+                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Administered</span>
                 </div>
                 <div className="w-[70px]">
-                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Share %</span>
+                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Share %</span>
                 </div>
                 <div className="w-[22px]" />
               </div>
@@ -1135,7 +1134,7 @@ export default function SongDetailPage() {
                         <select
                           value={row.tribes_administered ? "yes" : "no"}
                           onChange={(e) => handleTribesToggle(index, e.target.value === "yes")}
-                          className="w-full text-[12px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 focus:outline-none focus:border-primary/40 transition-colors"
+                          className="w-full text-[12px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
                         >
                           <option value="yes">Yes</option>
                           <option value="no">No</option>
@@ -1151,7 +1150,7 @@ export default function SongDetailPage() {
                             updateField("ownership", updated);
                           }}
                           placeholder="%"
-                          className="w-full text-[12px] text-foreground bg-transparent border border-border rounded px-2 py-1 h-8 text-right focus:outline-none focus:border-primary/40 transition-colors"
+                          className="w-full text-[12px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 text-right focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
                         />
                       </div>
                       <button
@@ -1173,7 +1172,7 @@ export default function SongDetailPage() {
                     {/* Administrator display (only when tribes_administered) */}
                     {row.tribes_administered && (
                       <div className="ml-0 mt-1 mb-1 pl-2 border-l-2 border-border">
-                        <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground mr-2">Administrator:</span>
+                        <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] mr-2">Administrator:</span>
                         <span className="text-[12px] text-foreground">{row.administrator_name || "—"}</span>
                       </div>
                     )}
@@ -1182,14 +1181,14 @@ export default function SongDetailPage() {
               {/* Total row */}
               <div className="flex items-center gap-3 pt-2 border-t border-border">
                 <div className="flex-1 text-right">
-                  <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Total</span>
+                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]">Total</span>
                 </div>
                 <div className="w-[80px]" />
                 <div className="w-[120px]" />
                 <div className="w-[70px]">
-                  <span className={cn(
-                    "text-[13px] font-semibold block text-right pr-2",
-                    ownershipTotal === 100 ? "text-[hsl(var(--success))]" : "text-destructive"
+                    <span className={cn(
+                      "text-[13px] font-semibold block text-right pr-2",
+                      ownershipTotal === 100 ? "text-emerald-600" : "text-red-600"
                   )}>
                     {ownershipTotal}%
                   </span>
@@ -1212,7 +1211,7 @@ export default function SongDetailPage() {
                   }];
                   updateField("ownership", updated);
                 }}
-                className="text-[12px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors mt-1"
+                className="text-[13px] font-medium text-[#6B7280] hover:text-[#374151] transition-colors mt-1"
               >
                 + Add Ownership
               </button>
@@ -1222,32 +1221,32 @@ export default function SongDetailPage() {
               <div>
                 {/* Column headers */}
                 <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
-                  <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">Publisher</span>
+                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Publisher</span>
                   <div className="flex items-center gap-4">
-                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[80px] text-center">PRO</span>
-                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[100px] text-center">Administered</span>
-                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[60px] text-right">Share</span>
-                    <span className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground w-[140px] text-right">Administrator</span>
+                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[80px] text-center">PRO</span>
+                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[100px] text-center">Administered</span>
+                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[60px] text-right">Share</span>
+                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[140px] text-right">Administrator</span>
                   </div>
                 </div>
                 {/* Ownership rows */}
                 <div className="divide-y divide-border">
                   {ownership.map((row) => (
                     <div key={row.id} className="flex items-center justify-between py-2.5">
-                      <span className="text-[15px] text-foreground font-medium">
+                      <span className="text-[14px] text-foreground font-medium">
                         {row.publisher_name || "Unknown Publisher"}
                       </span>
                       <div className="flex items-center gap-4">
-                        <span className="text-[13px] text-muted-foreground w-[80px] text-center">
+                        <span className="text-[13px] text-[#6B7280] w-[80px] text-center">
                           {row.pro || "—"}
                         </span>
-                        <span className="text-[13px] text-muted-foreground w-[100px] text-center">
+                        <span className="text-[13px] text-[#6B7280] w-[100px] text-center">
                           {row.tribes_administered ? "Yes" : "No"}
                         </span>
-                        <span className="text-[13px] text-muted-foreground w-[60px] text-right">
+                        <span className="text-[13px] text-[#6B7280] w-[60px] text-right">
                           {row.ownership_percentage}%
                         </span>
-                        <span className="text-[13px] text-muted-foreground w-[140px] text-right">
+                        <span className="text-[13px] text-[#6B7280] w-[140px] text-right">
                           {row.tribes_administered ? row.administrator_name || "—" : "—"}
                         </span>
                       </div>
@@ -1256,13 +1255,13 @@ export default function SongDetailPage() {
                 </div>
                 {/* Total row */}
                 <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-border">
-                  <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Total</span>
+                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]">Total</span>
                   <div className="flex items-center gap-4">
                     <span className="w-[80px]" />
                     <span className="w-[100px]" />
                     <span className={cn(
                       "text-[13px] font-semibold w-[60px] text-right",
-                      ownershipTotal === 100 ? "text-[hsl(var(--success))]" : "text-destructive"
+                      ownershipTotal === 100 ? "text-emerald-600" : "text-red-600"
                     )}>
                       {ownershipTotal}%
                     </span>
@@ -1299,7 +1298,7 @@ export default function SongDetailPage() {
                     navigator.clipboard.writeText(labelCopy);
                     toast.success("Label copy copied to clipboard");
                   }}
-                  className="text-[12px] text-primary hover:underline whitespace-nowrap"
+                  className="text-[12px] font-medium px-3 py-1 rounded-md border border-[var(--border-subtle)] text-[#374151] bg-white hover:bg-[#F9FAFB] shadow-sm transition-colors whitespace-nowrap"
                 >
                   Copy
                 </button>
@@ -1327,11 +1326,11 @@ export default function SongDetailPage() {
                   e.target.style.height = 'auto';
                   e.target.style.height = e.target.scrollHeight + 'px';
                 }}
-                className="w-full text-[13px] text-foreground bg-transparent border border-border rounded px-3 py-2 min-h-[400px] resize-y focus:outline-none focus:border-primary/40 transition-colors font-sans leading-relaxed overflow-hidden"
+                className="w-full text-[13px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-3 py-2 min-h-[400px] resize-y focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors font-sans leading-relaxed overflow-hidden"
                 placeholder="Enter lyrics…"
               />
             ) : (
-              <pre className="text-[14px] text-foreground/90 whitespace-pre-wrap font-sans leading-relaxed">
+              <pre className="text-[14px] text-[#374151] whitespace-pre-wrap font-sans leading-relaxed">
                 {metadata.lyrics}
               </pre>
             )}
