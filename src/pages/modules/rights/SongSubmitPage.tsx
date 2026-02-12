@@ -521,7 +521,7 @@ export default function SongSubmitPage() {
        const recipients = [...new Set([user.email, ...adminEmails])];
        const writerNames = songData.writers.map(w => w.name).join(" \\ ");
        const songTypeLabel = SONG_TYPES.find(t => t.value === songData.songType)?.label || songData.songType;
-       const year = songData.releaseStatus === "no" ? songData.creationYear : songData.publicationYear;
+       const year = songData.publicationYear || songData.creationYear;
        
        const writersSection = songData.writers.map(w => {
          const creditLabel = w.credit === "both" 

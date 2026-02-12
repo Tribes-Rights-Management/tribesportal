@@ -5,7 +5,8 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { AppPageLayout, AppSection } from "@/components/app-ui";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { generateLabelCopyFromSongData } from "@/utils/generateLabelCopy";
+import { generateLabelCopy as generateLabelCopySchema, getPublicationYear } from "@/types/song-schema";
+import type { Song as SongSchema } from "@/types/song-schema";
 
 /**
  * SONG DETAIL PAGE — Individual song view within Rights Catalog
@@ -1278,13 +1279,18 @@ export default function SongDetailPage() {
         {/* ─── 4. LABEL COPY ──────────────────────────── */}
         <SectionPanel title="Controlled Label Copy">
           {(() => {
-            const labelCopy = generateLabelCopyFromSongData({
-              metadata: song.metadata,
-              ownership: ownership.map((o) => ({
-                tribes_administered: o.tribes_administered,
-                publisher: o.publisher_name ? { name: o.publisher_name, pro: o.pro || "" } : null,
-              })),
-            });
+            const year = song.metadata?.publication_year ?? null;
+            const tribesPublishers = ownership
+              .filter((o) => o.tribes_administered && o.publisher_name)
+              .reduce((acc, o) => {
+                if (!acc.some(p => p.name === o.publisher_name)) {
+                  acc.push({ name: o.publisher_name!, pro: o.pro || null });
+                }
+                return acc;
+              }, [] as Array<{ name: string; pro: string | null }>);
+            const labelCopy = tribesPublishers.length > 0
+              ? generateLabelCopySchema(year, tribesPublishers)
+              : null;
             return labelCopy ? (
               <div className="flex items-start justify-between gap-4">
                 <p className="text-[14px] text-foreground leading-relaxed">{labelCopy}</p>

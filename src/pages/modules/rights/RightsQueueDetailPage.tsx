@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { generateLabelCopyFromQueueData } from "@/utils/generateLabelCopy";
+import { generateLabelCopy as generateLabelCopySchema } from "@/types/song-schema";
+import type { SongSubmissionData, QueueWriter } from "@/types/song-schema";
 import { useParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
@@ -358,7 +359,7 @@ export default function RightsQueueDetailPage() {
               <AppCardBody>
                 <h3 className="text-sm font-medium mb-4">Publishing & Administration</h3>
                 {writers.map((writer: any, wIndex: number) => {
-                  const writerId = writer.writer_id || writer.id;
+                  const writerId = writer.writer_id;
                    const writerDeals = writerId ? getDealsForWriter(writerId) : [];
                    const writerDeal = writerId ? getDealForWriter(writerId) : null;
 
@@ -457,26 +458,26 @@ export default function RightsQueueDetailPage() {
 
             {/* Controlled Label Copy — auto-generated from selected deals */}
             {(() => {
-              const year = songData?.publication_year || '';
-              const writers = songData?.writers || [];
-              const allDealPublishers: string[] = [];
+              const year = (songData as SongSubmissionData)?.publication_year || '';
+              const writers = (songData as SongSubmissionData)?.writers || [];
+              const allDealPublishers: Array<{ name: string; pro?: string | null }> = [];
 
-              writers.forEach((writer: any) => {
-                const writerId = writer.writer_id || writer.id;
+              writers.forEach((writer: QueueWriter) => {
+                const writerId = writer.writer_id;
                 const deal = getDealForWriter(writerId);
                 if (deal?.deal_publishers) {
                   deal.deal_publishers.forEach((dp: any) => {
                     const name = dp.publishers?.name || dp.publisher_name;
-                    const pro = dp.publishers?.pro || dp.publisher_pro || '';
-                    if (name) {
-                      allDealPublishers.push(pro ? `${name} (${pro})` : name);
+                    const pro = dp.publishers?.pro || dp.publisher_pro || null;
+                    if (name && !allDealPublishers.some(p => p.name === name)) {
+                      allDealPublishers.push({ name, pro });
                     }
                   });
                 }
               });
 
               const labelCopy = allDealPublishers.length > 0
-                ? `© ${year} ${allDealPublishers.join(' / ')} (adm. at TribesRightsManagement.com). All rights reserved.`
+                ? generateLabelCopySchema(year || null, allDealPublishers)
                 : null;
 
               return (
