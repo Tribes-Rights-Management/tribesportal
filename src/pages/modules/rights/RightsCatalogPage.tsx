@@ -353,25 +353,23 @@ export default function RightsCatalogPage() {
   const someSelected = paginatedSongs.some(s => selectedSongs.has(s.id)) && !allSelected;
 
   return (
-    <AppPageLayout
-      title="Catalog"
-      action={
-        <AppButton
-          intent="primary"
-          size="sm"
-          onClick={() => navigate("/rights/songs/submit")}
-        >
-          <Plus className="h-4 w-4" />
-          Add Song
-        </AppButton>
-      }
-    >
+    <AppPageLayout title="Catalog">
 
       <AppListToolbar
         placeholder="Search by title, writer, or lyric..."
         searchValue={searchQuery}
         onSearchChange={(v) => { setSearchQuery(v); setCurrentPage(1); }}
         count={`${totalItems} ${totalItems === 1 ? "song" : "songs"}`}
+        action={
+          <AppButton
+            intent="primary"
+            size="sm"
+            onClick={() => navigate("/rights/songs/submit")}
+          >
+            <Plus className="h-4 w-4" />
+            Add Song
+          </AppButton>
+        }
       />
 
       <AppSection spacing="none">
