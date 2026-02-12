@@ -236,8 +236,8 @@ export function AppTableHead({
   return (
     <th
       className={cn(
-        "py-3 px-4",
-        "text-[11px] uppercase tracking-[0.06em] font-semibold text-muted-foreground/60",
+        "py-2.5 px-4",
+        "text-[10px] uppercase tracking-[0.1em] font-medium text-[#9CA3AF]",
         alignClasses[align],
         className
       )}

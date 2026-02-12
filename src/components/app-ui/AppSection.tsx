@@ -66,7 +66,7 @@ export function AppSection({
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
             {title && (
-              <h2 className="text-xs uppercase tracking-wider font-medium text-muted-foreground mb-1">
+              <h2 className="text-[15px] font-semibold text-[#111827] tracking-[-0.01em] mb-1">
                 {title}
               </h2>
             )}

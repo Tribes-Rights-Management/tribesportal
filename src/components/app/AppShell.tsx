@@ -36,13 +36,13 @@ export function AppShell({
           style={{ 
             height: LAYOUT.HEADER_HEIGHT,
             backgroundColor: CSS_VARS.TOPBAR_BG,
-            borderBottom: `1px solid ${CSS_VARS.BORDER_SUBTLE}`,
+            borderBottom: '1px solid #E5E7EB',
           }}
         >
           <AppHeader showSidebarColumn={false} />
         </header>
         
-        <main className="flex-1 min-w-0 w-full max-w-full overflow-y-auto overflow-x-hidden flex flex-col">
+        <main className="flex-1 min-w-0 w-full max-w-full overflow-y-auto overflow-x-hidden flex flex-col" style={{ backgroundColor: '#FFFFFF' }}>
           <div className="flex-1 min-w-0 w-full max-w-full">
             {children}
           </div>
@@ -68,7 +68,7 @@ export function AppShell({
           gridColumn: '1 / -1',
           gridRow: '1',
           backgroundColor: CSS_VARS.TOPBAR_BG,
-          borderBottom: `1px solid ${CSS_VARS.BORDER_SUBTLE}`,
+          borderBottom: '1px solid #E5E7EB',
         }}
       >
         <div 
@@ -99,6 +99,7 @@ export function AppShell({
           gridColumn: '2',
           gridRow: '2',
           minHeight: 0,
+          backgroundColor: '#FFFFFF',
         }}
       >
         <div className="flex-1 min-w-0 w-full max-w-full">

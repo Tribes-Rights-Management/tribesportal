@@ -39,26 +39,26 @@
      ───────────────────────────────────────────────────────────────────────── */
   
   /* Layer 0: App canvas — overall app background behind everything */
-  --app-canvas: #F3F4F6;
-  --page-bg: #F3F4F6;
-  --app-bg: #F3F4F6;
-  --app-canvas-bg: #F3F4F6;
+  --app-canvas: #F4F5F7;
+  --page-bg: #F4F5F7;
+  --app-bg: #F4F5F7;
+  --app-canvas-bg: #F4F5F7;
   
-  /* Layer 1: Content area — main content region (off-white, not pure white) */
-  --content-bg: #FAFAFA;
+  /* Layer 1: Content area — PURE WHITE for Harvey.ai-like hierarchy */
+  --content-bg: #FFFFFF;
   
-  /* Layer 2: Sidebar — Mercury-like neutral grey (R≈G≈B, NO blue tint) */
-  --sidebar-bg: #EEF0F2;
-  --app-sidebar-bg: #EEF0F2;
+  /* Layer 2: Sidebar — slightly darker for clear separation */
+  --sidebar-bg: #F4F5F7;
+  --app-sidebar-bg: #F4F5F7;
   
-  /* Layer 3: Top bar/header — one notch off white */
-  --topbar-bg: #FCFCFD;
-  --app-header-bg: #FCFCFD;
+  /* Layer 3: Top bar/header — pure white to match content */
+  --topbar-bg: #FFFFFF;
+  --app-header-bg: #FFFFFF;
   
-  /* Layer 4: Cards, tables, panels — one notch off white (NOT pure white) */
-  --card-bg: #FCFCFD;
-  --panel-bg: #FCFCFD;
-  --app-surface-bg: #FCFCFD;
+  /* Layer 4: Cards, tables, panels — pure white */
+  --card-bg: #FFFFFF;
+  --panel-bg: #FFFFFF;
+  --app-surface-bg: #FFFFFF;
   
   /* Muted wash — for active pills, hover backgrounds */
   --muted-wash: #F2F3F5;
