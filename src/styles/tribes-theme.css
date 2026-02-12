@@ -66,10 +66,10 @@
   /* ─────────────────────────────────────────────────────────────────────────
      BORDER TOKENS — Two-tier system
      ───────────────────────────────────────────────────────────────────────── */
-  --border-subtle: #E2E5EA;
+  --border-subtle: #E5E7EB;
   --border-strong: #D1D5DB;
-  --app-surface-border: #E2E5EA;
-  --app-chrome-border: #E6E8EC;
+  --app-surface-border: #E5E7EB;
+  --app-chrome-border: #E5E7EB;
   
   /* Radius: Stripe-like restraint (6-10px) */
   --app-radius: 8px;
@@ -235,7 +235,7 @@
   --tribes-border-strong: #D1D5DB;
 
   /* Soft shadow: very minimal for Mercury-like feel */
-  --tribes-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --tribes-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
 
   /* ─────────────────────────────────────────────────────────────────────────
      INTERACTIVE STATES — Clear hover/focus feedback

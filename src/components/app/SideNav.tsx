@@ -58,14 +58,14 @@ function SideNavLink({
       className={({ isActive }) =>
         cn(
           // Left-aligned row — 38px height, 13px text
-          "flex items-center justify-start gap-3 px-4 py-[9px] text-[13px] rounded-md text-left w-full",
+          "flex items-center justify-start gap-3 px-4 py-[8px] text-[13px] rounded-md text-left w-full",
           // Transition
           "transition-colors duration-150",
           // Focus ring: brand blue
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]",
-          // Active: subtle left border, near-black text, barely perceptible wash
+          // Active: subtle left border, near-black text, visible wash
           isActive
-            ? "font-semibold text-[#111827] border-l-[2.5px] border-l-[#111827] bg-black/[0.04]"
+            ? "font-semibold text-[#111827] border-l-[2px] border-l-[#111827] bg-[#F3F4F6]"
             : "font-normal text-[#6B7280] hover:text-[#374151] hover:bg-black/[0.03]"
         )
       }

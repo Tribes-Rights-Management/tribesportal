@@ -37,6 +37,7 @@ export function AppShell({
             height: LAYOUT.HEADER_HEIGHT,
             backgroundColor: CSS_VARS.TOPBAR_BG,
             borderBottom: '1px solid #E5E7EB',
+            boxShadow: '0 1px 0 rgba(0,0,0,0.06)',
           }}
         >
           <AppHeader showSidebarColumn={false} />
@@ -69,6 +70,7 @@ export function AppShell({
           gridRow: '1',
           backgroundColor: CSS_VARS.TOPBAR_BG,
           borderBottom: '1px solid #E5E7EB',
+          boxShadow: '0 1px 0 rgba(0,0,0,0.06)',
         }}
       >
         <div 
@@ -87,7 +89,7 @@ export function AppShell({
           gridColumn: '1',
           gridRow: '2',
           backgroundColor: CSS_VARS.SIDEBAR_BG,
-          borderRight: `1px solid ${CSS_VARS.BORDER_SUBTLE}`,
+          borderRight: '1px solid #E5E7EB',
         }}
       >
         {sidebarContent}

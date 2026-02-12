@@ -84,9 +84,9 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
     // Size-based classes - institutional padding and radius
     const sizeClasses = {
       xs: "h-[28px] px-3 text-[12px] gap-1 rounded-[6px]",
-      sm: "h-[36px] px-4 text-[13px] gap-1.5 rounded-[6px]",
-      md: "h-[40px] px-5 text-[14px] gap-2 rounded-[6px]",
-      lg: "h-12 px-6 text-[15px] gap-2.5 rounded-xl",
+      sm: "h-[34px] px-4 text-[13px] gap-1.5 rounded-[6px]",
+      md: "h-[38px] px-5 text-[14px] gap-2 rounded-[8px]",
+      lg: "h-[44px] px-6 text-[15px] gap-2.5 rounded-[8px]",
     };
 
     // Icon utility classes - enforce consistent sizing and stroke width
@@ -99,10 +99,10 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
     const getIntentClasses = () => {
       switch (intent) {
         case "primary":
-          // Dark grey fill — Harvey.ai-like confident primary
+          // Dark grey fill — institutional confident primary
           return cn(
             "bg-[var(--btn-primary-bg)] text-[var(--btn-primary-text)]",
-            "font-medium shadow-sm",
+            "font-medium shadow-[0_1px_2px_rgba(0,0,0,0.12)]",
             !isDisabled && "hover:bg-[var(--btn-primary-bg-hover)] active:bg-[#111827]",
             isDisabled && "bg-[var(--btn-primary-bg)]/30 text-white/50"
           );

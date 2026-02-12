@@ -114,10 +114,7 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-button:active,
-a:active {
-  transform: scale(0.98);
-}
+/* Institutional software does not bounce — removed scale(0.98) */
 
 /* Exclude editor from scale transform */
 .ProseMirror:active,
@@ -142,7 +139,7 @@ a:active {
 
 /* Page header zone — CANONICAL vertical position for all page titles */
 .page-header-zone {
-  padding-top: 32px;      /* More breathing room — title floats with authority */
+  padding-top: 24px;      /* Tight coupling to header chrome */
   padding-bottom: 8px;    /* Tighter bottom gap */
 }
 
@@ -170,12 +167,12 @@ a:active {
   border-bottom: 1px solid hsl(var(--border));
 }
 
-/* Page title typography — Harvey.ai-like commanding presence */
+/* Page title typography — Institutional confidence, not startup bold */
 .page-title {
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
   color: #111827;
   white-space: nowrap;
 }
@@ -362,8 +359,8 @@ select option {
 @layer base {
   :root {
     /* Header height for content clearance calculations */
-    --header-height: 64px;
-    --header-h: 60px; /* Elevated from 56px for more authority */
+    --header-height: 56px;
+    --header-h: 56px;
 
     /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        CANONICAL VISUAL TOKENS â€” TRIBES INSTITUTIONAL UI (LOCKED)

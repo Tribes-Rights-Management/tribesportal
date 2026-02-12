@@ -30,8 +30,8 @@ export const LAYOUT = {
    * Header height — fixed across all layouts
    * 56px = 3.5rem = h-14 in Tailwind
    */
-  HEADER_HEIGHT: "60px",
-  HEADER_HEIGHT_PX: 60,
+  HEADER_HEIGHT: "56px",
+  HEADER_HEIGHT_PX: 56,
   
   /**
    * Sidebar horizontal padding
