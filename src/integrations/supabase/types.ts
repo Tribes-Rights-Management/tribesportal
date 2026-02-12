@@ -595,6 +595,56 @@ export type Database = {
         }
         Relationships: []
       }
+      client_documents: {
+        Row: {
+          client_account_id: string
+          created_at: string | null
+          document_type: string | null
+          file_name: string
+          file_path: string
+          file_size: number | null
+          file_type: string | null
+          id: string
+          notes: string | null
+          updated_at: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          client_account_id: string
+          created_at?: string | null
+          document_type?: string | null
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          notes?: string | null
+          updated_at?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          client_account_id?: string
+          created_at?: string | null
+          document_type?: string | null
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          notes?: string | null
+          updated_at?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_documents_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_invitations: {
         Row: {
           accepted_at: string | null
