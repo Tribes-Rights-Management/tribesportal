@@ -64,13 +64,13 @@ interface CatalogSong {
 const getStatusText = (status: CatalogSong["status"]) => {
   switch (status) {
     case "active":
-      return <span className="text-[11px] font-medium text-[hsl(var(--success))]">Active</span>;
+      return <span className="text-[12px] font-medium text-[#6B7280]">Active</span>;
     case "pending":
-      return <span className="text-[11px] font-medium text-[hsl(var(--warning))]">Pending</span>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[12px] font-medium bg-amber-50 text-amber-700 border border-amber-200">Pending</span>;
     case "inactive":
-      return <span className="text-[11px] font-medium text-muted-foreground">Inactive</span>;
+      return <span className="text-[12px] font-medium text-[#9CA3AF]">Inactive</span>;
     default:
-      return <span className="text-[11px] font-medium text-muted-foreground">{status}</span>;
+      return <span className="text-[12px] font-medium text-[#9CA3AF]">{status}</span>;
   }
 };
 
@@ -356,7 +356,7 @@ export default function RightsCatalogPage() {
       title="Catalog"
       action={
         <AppButton
-          intent="secondary"
+          intent="primary"
           size="sm"
           onClick={() => navigate("/rights/songs/submit")}
         >

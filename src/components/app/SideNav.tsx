@@ -57,21 +57,21 @@ function SideNavLink({
       end={exact}
       className={({ isActive }) =>
         cn(
-          // Left-aligned row — 40px height for comfortable click targets
-          "flex items-center justify-start gap-3 px-4 h-10 text-[13px] rounded-md text-left w-full",
+          // Left-aligned row — 38px height, 13px text
+          "flex items-center justify-start gap-3 px-4 py-[9px] text-[13px] rounded-md text-left w-full",
           // Transition
           "transition-colors duration-150",
           // Focus ring: brand blue
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]",
-          // Active/hover states — darker wash, stronger weight
+          // Active: subtle left border, near-black text, barely perceptible wash
           isActive
-            ? "font-semibold text-foreground bg-[#E5E7EB] border-l-[3px] border-l-[#374151]"
-            : "font-medium text-[#4B5563] hover:text-foreground hover:bg-muted/50"
+            ? "font-semibold text-[#111827] border-l-[2.5px] border-l-[#111827] bg-black/[0.04]"
+            : "font-normal text-[#6B7280] hover:text-[#374151] hover:bg-black/[0.03]"
         )
       }
     >
-      {/* Icon: 16px (h-4 w-4) — STRICT */}
-      <Icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+      {/* Icon: 18px — STRICT */}
+      <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.5} />
       <span className="truncate text-left">{label}</span>
     </NavLink>
   );

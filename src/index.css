@@ -173,10 +173,10 @@ a:active {
 /* Page title typography — Harvey.ai-like commanding presence */
 .page-title {
   font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 1.15;
-  color: var(--tribes-fg);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: #111827;
   white-space: nowrap;
 }
 

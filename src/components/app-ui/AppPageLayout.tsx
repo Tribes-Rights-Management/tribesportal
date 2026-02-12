@@ -72,7 +72,7 @@ export function AppPageLayout({
       {/* ZONE 1: Page Header — fixed position, never affected by body container */}
       <div
         className={cn(
-          "page-header-zone px-[20px] sm:px-6 lg:px-10 mx-auto w-full",
+          "page-header-zone px-6 sm:px-8 lg:px-10 xl:px-12 mx-auto w-full",
           maxWidthClasses[maxWidth]
         )}
       >
@@ -104,7 +104,7 @@ export function AppPageLayout({
       {/* ZONE 2: Page Body — content area with consistent top spacing */}
       <div
         className={cn(
-          "pt-6 px-[20px] sm:px-6 lg:px-10 mx-auto w-full",
+          "pt-6 px-6 sm:px-8 lg:px-10 xl:px-12 mx-auto w-full",
           maxWidthClasses[maxWidth],
           bodyClassName
         )}
