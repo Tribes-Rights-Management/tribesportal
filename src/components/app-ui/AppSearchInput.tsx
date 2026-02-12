@@ -100,7 +100,7 @@ export function AppSearchInput({
     onBlur?.();
   };
 
-  const heightClass = size === "sm" ? "h-9" : "h-10";
+  const heightClass = size === "sm" ? "h-9" : "h-11";
 
   return (
     <div className={cn("relative", className)}>
@@ -128,8 +128,8 @@ export function AppSearchInput({
         className={cn(
           // Base styles (Stripe-like pill)
           "w-full text-base sm:text-[13px] text-foreground", // 16px on mobile to prevent Safari zoom
-          // Rounded corners: 10-12px (Stripe-like, not fully rounded)
-          "rounded-xl",
+          // Rounded corners: 8px (institutional, not playful)
+          "rounded-lg",
           heightClass,
           "placeholder:text-[#9CA3AF]",
           // Background: light grey fill, white on focus
@@ -143,8 +143,9 @@ export function AppSearchInput({
           value ? "pr-9" : (rightHint ? "pr-14" : "pr-4")
         )}
         style={{
-          backgroundColor: isFocused ? '#FFFFFF' : '#F3F4F6',
-          borderColor: isFocused ? '#E6E8EC' : 'transparent',
+          backgroundColor: '#FFFFFF',
+          borderColor: isFocused ? 'var(--border-strong)' : 'var(--border-subtle)',
+          boxShadow: isFocused ? '0 1px 3px rgba(0,0,0,0.08)' : '0 1px 2px rgba(0,0,0,0.04)',
         }}
       />
       

@@ -66,9 +66,9 @@
   /* ─────────────────────────────────────────────────────────────────────────
      BORDER TOKENS — Two-tier system
      ───────────────────────────────────────────────────────────────────────── */
-  --border-subtle: #E6E8EC;
-  --border-strong: #D9DDE3;
-  --app-surface-border: #E6E8EC;
+  --border-subtle: #E2E5EA;
+  --border-strong: #D1D5DB;
+  --app-surface-border: #E2E5EA;
   --app-chrome-border: #E6E8EC;
   
   /* Radius: Stripe-like restraint (6-10px) */
@@ -91,6 +91,11 @@
   --btn-border: transparent;
   --btn-border-hover: transparent;
   --btn-text: #1F2937;
+  
+  /* Primary button tokens — dark grey (Harvey.ai-like) */
+  --btn-primary-bg: #1F2937;
+  --btn-primary-bg-hover: #374151;
+  --btn-primary-text: #FFFFFF;
   --btn-text-muted: #6B7280;
   --btn-disabled-opacity: 0.5;
   

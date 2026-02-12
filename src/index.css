@@ -142,8 +142,8 @@ a:active {
 
 /* Page header zone — CANONICAL vertical position for all page titles */
 .page-header-zone {
-  padding-top: 24px;      /* Space from top nav to title */
-  padding-bottom: 16px;   /* Space from title to body content */
+  padding-top: 32px;      /* More breathing room — title floats with authority */
+  padding-bottom: 8px;    /* Tighter bottom gap */
 }
 
 /* Page header — standard (no back button) — deprecated, kept for compat */
@@ -170,13 +170,13 @@ a:active {
   border-bottom: 1px solid hsl(var(--border));
 }
 
-/* Page title typography */
+/* Page title typography — Harvey.ai-like commanding presence */
 .page-title {
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-  color: var(--platform-text);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  color: var(--tribes-fg);
   white-space: nowrap;
 }
 
@@ -363,8 +363,7 @@ select option {
   :root {
     /* Header height for content clearance calculations */
     --header-height: 64px;
-    /* Mobile-aware header height variable used by hero sections */
-    --header-h: 56px; /* Mobile: 56px (h-14) */
+    --header-h: 60px; /* Elevated from 56px for more authority */
 
     /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        CANONICAL VISUAL TOKENS â€” TRIBES INSTITUTIONAL UI (LOCKED)

@@ -49,19 +49,19 @@ interface AppStatCardProps {
 
 const sizeConfig: Record<StatCardSize, { padding: string; valueSize: string; labelSize: string }> = {
   sm: {
-    padding: "p-3",
-    valueSize: "text-xl sm:text-2xl",
-    labelSize: "text-xs",
+    padding: "p-4",
+    valueSize: "text-2xl font-bold tracking-tight",
+    labelSize: "text-[11px]",
   },
   md: {
-    padding: "p-4",
-    valueSize: "text-2xl sm:text-3xl",
-    labelSize: "text-xs",
+    padding: "p-5",
+    valueSize: "text-3xl font-bold tracking-tight",
+    labelSize: "text-[11px]",
   },
   lg: {
-    padding: "p-5",
-    valueSize: "text-3xl sm:text-4xl",
-    labelSize: "text-xs",
+    padding: "p-6",
+    valueSize: "text-4xl font-bold tracking-tight",
+    labelSize: "text-[11px]",
   },
 };
 
@@ -91,10 +91,10 @@ export function AppStatCard({
       tabIndex={isClickable ? 0 : undefined}
       onKeyDown={isClickable ? (e) => e.key === "Enter" && onClick?.() : undefined}
     >
-      <p className={cn(config.labelSize, "uppercase tracking-wider font-medium text-muted-foreground mb-1.5")}>
+      <p className={cn(config.labelSize, "uppercase tracking-[0.08em] font-semibold text-muted-foreground/70 mb-2")}>
         {label}
       </p>
-      <p className={cn(config.valueSize, "font-semibold text-foreground leading-none")}>
+      <p className={cn(config.valueSize, "text-foreground leading-none")}>
         {loading ? "—" : value}
       </p>
       {subtitle && (

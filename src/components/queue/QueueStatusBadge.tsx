@@ -25,19 +25,19 @@ const statusConfig: Record<QueueStatus, {
     internalLabel: "Submitted",
     clientLabel: "Submitted",
     icon: <Circle className="h-3 w-3" />,
-    classes: "bg-muted/50 text-muted-foreground border-border/50",
+    classes: "bg-muted/40 text-muted-foreground border-border/40",
   },
   pending: {
     internalLabel: "Pending",
     clientLabel: "Submitted",
     icon: <Clock className="h-3 w-3" />,
-    classes: "bg-muted/50 text-muted-foreground border-border/50",
+    classes: "bg-muted/40 text-muted-foreground border-border/40",
   },
   in_review: {
     internalLabel: "In Review",
     clientLabel: "In Review",
     icon: <Eye className="h-3 w-3" />,
-    classes: "bg-blue-500/8 text-blue-600 dark:text-blue-400 border-blue-500/20",
+    classes: "bg-amber-500/8 text-amber-600 dark:text-amber-400 border-amber-500/20",
   },
   needs_revision: {
     internalLabel: "Needs Revision",
@@ -49,7 +49,7 @@ const statusConfig: Record<QueueStatus, {
     internalLabel: "Approved",
     clientLabel: "Delivered for Registration",
     icon: <CheckCircle className="h-3 w-3" />,
-    classes: "bg-emerald-500/8 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+    classes: "bg-muted/30 text-muted-foreground border-border/30",
   },
   rejected: {
     internalLabel: "Rejected",

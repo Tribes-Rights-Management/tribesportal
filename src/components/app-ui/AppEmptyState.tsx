@@ -69,21 +69,21 @@ export function AppEmptyState({
   // Max icon size: 28px (lg), not 32px
   const sizeClasses = {
     sm: {
-      wrapper: "py-6",
-      icon: "h-5 w-5",      // 20px (was h-6 = 24px)
+      wrapper: "py-8",
+      icon: "h-5 w-5",
       message: "text-[12px]",
       description: "text-xs",
     },
     md: {
-      wrapper: "py-10",
-      icon: "h-6 w-6",      // 24px (was h-7 = 28px)
-      message: "text-[13px]",
+      wrapper: "py-16",
+      icon: "h-6 w-6",
+      message: "text-sm",
       description: "text-[12px]",
     },
     lg: {
-      wrapper: "py-16",
-      icon: "h-7 w-7",      // 28px (was h-8 = 32px)
-      message: "text-[14px]",
+      wrapper: "py-20",
+      icon: "h-6 w-6",
+      message: "text-sm",
       description: "text-[13px]",
     },
   };
@@ -103,10 +103,10 @@ export function AppEmptyState({
       ) : (
         <Icon
           className={cn(styles.icon, "text-muted-foreground/40 mb-3")}
-          strokeWidth={1.0}
+          strokeWidth={1.25}
         />
       )}
-      <p className={cn(styles.message, "text-muted-foreground font-medium")}>
+      <p className={cn(styles.message, "text-muted-foreground/60 font-medium")}>
         {message}
       </p>
       {description && (
