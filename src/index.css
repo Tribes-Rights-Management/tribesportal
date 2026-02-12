@@ -67,9 +67,9 @@ body {
 
 /* ─────────────────────────────────────────────────────────────────────────────
    SCROLL CONTAINERS — Smooth momentum scrolling
+   NOTE: Do NOT target <main> here — it uses natural body scroll.
    ───────────────────────────────────────────────────────────────────────────── */
 .scroll-container,
-main,
 [data-scroll],
 [data-radix-scroll-area-viewport] {
   -webkit-overflow-scrolling: touch;
