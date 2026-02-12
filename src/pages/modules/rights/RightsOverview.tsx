@@ -34,13 +34,6 @@ export default function RightsOverview() {
     },
   });
 
-  const { data: contractCount } = useQuery({
-    queryKey: ["rights-stats", "contracts"],
-    queryFn: async () => {
-      const { count } = await supabase.from("contracts").select("*", { count: "exact", head: true }).eq("status", "active");
-      return count || 0;
-    },
-  });
 
   const { data: songCount } = useQuery({
     queryKey: ["rights-stats", "songs"],
@@ -55,9 +48,9 @@ export default function RightsOverview() {
 
   return (
     <AppPageLayout title="Overview">
-      <AppStatCardGrid columns={4} className="mb-6">
+      <AppStatCardGrid columns={3} className="mb-6">
         <AppStatCard label="Active Clients" value={clientCount ?? "—"} onClick={() => navigate("/rights/clients")} />
-        <AppStatCard label="Active Contracts" value={contractCount ?? "—"} onClick={() => navigate("/rights/contracts")} />
+        
         <AppStatCard label="Songs in Queue" value={queueStats?.total ?? "—"} loading={statsLoading} onClick={() => navigate("/rights/queue")} />
         <AppStatCard label="Catalog" value={songCount ?? "—"} onClick={() => navigate("/rights/catalog")} />
       </AppStatCardGrid>
