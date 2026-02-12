@@ -169,10 +169,10 @@ a {
 
 /* Page title typography — Institutional confidence, not startup bold */
 .page-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.2;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
   color: #111827;
   white-space: nowrap;
 }

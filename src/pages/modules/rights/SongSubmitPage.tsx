@@ -1001,7 +1001,7 @@ export default function SongSubmitPage() {
                             {/* Split + Credit + Administrator row */}
                             <div className="flex items-end gap-3">
                               <div className="w-[100px]">
-                                <label className="block text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] mb-1.5">Split % <span className="text-destructive">*</span></label>
+                                <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Split % <span className="text-destructive">*</span></label>
                                 <input
                                   type="number"
                                   step="0.01"
@@ -1012,7 +1012,7 @@ export default function SongSubmitPage() {
                                 />
                               </div>
                               <div>
-                                <label className="block text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] mb-1.5">Credit <span className="text-destructive">*</span></label>
+                                <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Credit <span className="text-destructive">*</span></label>
                                 <AppSelect
                                   value={w.credit}
                                   onChange={(val) => updateWriter(w.id, { credit: val as Writer["credit"] })}
@@ -1026,7 +1026,7 @@ export default function SongSubmitPage() {
                                 />
                               </div>
                               <div>
-                                <label className="block text-[11px] uppercase tracking-wider text-[var(--btn-text-muted)] mb-1.5">Administrator</label>
+                                <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Administrator</label>
                                 <AppSelect
                                   value={w.tribes_administered ? "tribes" : "other"}
                                   onChange={(val) => updateWriter(w.id, { tribes_administered: val === "tribes" })}

@@ -104,7 +104,7 @@ export function AppPageLayout({
       {/* ZONE 2: Page Body — content area with consistent top spacing */}
       <div
         className={cn(
-          "pt-4 px-6 sm:px-8 mx-auto w-full",
+          "pt-5 px-6 sm:px-8 mx-auto w-full",
           maxWidthClasses[maxWidth],
           bodyClassName
         )}

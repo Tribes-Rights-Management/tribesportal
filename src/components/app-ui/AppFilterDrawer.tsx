@@ -89,7 +89,7 @@ interface AppFilterSectionProps {
 export function AppFilterSection({ title, children }: AppFilterSectionProps) {
   return (
     <div className="space-y-3">
-      <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+      <h3 className="text-[12px] font-medium text-[#9CA3AF]">
         {title}
       </h3>
       {children}

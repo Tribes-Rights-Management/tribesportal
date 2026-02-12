@@ -199,7 +199,7 @@ export default function RightsQueueDetailPage() {
 
   const editField = (key: string, label: string) => (
     <div key={key}>
-      <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">{label}</label>
+      <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">{label}</label>
       <input
         className="w-full h-10 px-3 rounded-md border border-border bg-background text-sm"
         value={editData?.[key] || ""}
@@ -248,7 +248,7 @@ export default function RightsQueueDetailPage() {
                     {editField("title", "Title")}
                     {editField("language", "Language")}
                     <div>
-                      <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">Song Type</label>
+                      <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Song Type</label>
                       <AppSelect
                         value={editData?.song_type || ""}
                         onChange={(val) => setEditData({ ...editData, song_type: val })}
@@ -264,7 +264,7 @@ export default function RightsQueueDetailPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">Release Status</label>
+                      <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Release Status</label>
                       <AppSelect
                         value={editData?.release_status || ""}
                         onChange={(val) => setEditData({ ...editData, release_status: val })}
@@ -277,7 +277,7 @@ export default function RightsQueueDetailPage() {
                     </div>
                     {editField("publication_year", "Publication Year")}
                     <div>
-                      <label className="block text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">Copyright Status</label>
+                      <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Copyright Status</label>
                       <AppSelect
                         value={editData?.copyright_status || ""}
                         onChange={(val) => setEditData({ ...editData, copyright_status: val })}

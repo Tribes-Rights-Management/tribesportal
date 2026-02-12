@@ -61,7 +61,7 @@ export function AppCheckboxGroup({
   return (
     <div className={cn("space-y-2", className)}>
       {label && (
-        <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2 font-medium">
+        <label className="block text-[12px] text-[#9CA3AF] mb-2 font-medium">
           {label}
           {required && <span className="text-destructive ml-1">*</span>}
         </label>
