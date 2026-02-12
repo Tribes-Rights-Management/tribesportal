@@ -17,8 +17,13 @@ import {
 } from "@/components/app-ui";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const ITEMS_PER_PAGE = 50;
+
+const ALGOLIA_APP_ID = "8WVEYVACJ3";
+const ALGOLIA_SEARCH_KEY = "00c22202043b8d20f009257782838d48";
+const ALGOLIA_INDEX = "publishers";
 
 const PRO_OPTIONS = [
   "ASCAP", "BMI", "SESAC", "GMR", "SOCAN", "PRS", "APRA", "GEMA", "SACEM", "JASRAC",
@@ -39,6 +44,9 @@ export default function PublishersTabContent() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const debouncedSearch = useDebounce(searchQuery, 300);
 
   const [panelOpen, setPanelOpen] = useState(false);
   const [editing, setEditing] = useState<Publisher | null>(null);
@@ -52,34 +60,102 @@ export default function PublishersTabContent() {
     email: "",
   });
 
+  const syncPublisherToAlgolia = async (publisherId: string, action: 'upsert' | 'delete' = 'upsert') => {
+    try {
+      await supabase.functions.invoke('sync-publishers-algolia', {
+        body: { action, publisher_id: publisherId }
+      });
+    } catch (err) {
+      console.error('Publisher Algolia sync error:', err);
+    }
+  };
+
+  const searchAlgolia = useCallback(async (query: string, page: number) => {
+    if (!ALGOLIA_SEARCH_KEY) return null;
+    try {
+      const response = await fetch(
+        `https://${ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}/query`,
+        {
+          method: "POST",
+          headers: {
+            "X-Algolia-API-Key": ALGOLIA_SEARCH_KEY,
+            "X-Algolia-Application-Id": ALGOLIA_APP_ID,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query, page: page - 1, hitsPerPage: ITEMS_PER_PAGE }),
+        }
+      );
+      if (!response.ok) throw new Error("Algolia search failed");
+      const data = await response.json();
+      return {
+        hits: data.hits.map((hit: any) => ({
+          id: hit.objectID,
+          name: hit.name,
+          pro: hit.pro || null,
+          ipi_number: hit.ipi_number || null,
+          email: hit.email || null,
+          is_active: hit.is_active ?? true,
+        })),
+        totalCount: data.nbHits,
+      };
+    } catch (error) {
+      console.error("Algolia search error:", error);
+      return null;
+    }
+  }, []);
+
   const fetchPublishers = useCallback(async () => {
     setLoading(true);
     try {
-      const [publishersRes, songCountsRes] = await Promise.all([
-        supabase.from("publishers").select("id, name, pro, ipi_number, email, is_active")
-          .eq("is_active", true).order("name", { ascending: true }),
-        supabase.from("song_ownership").select("publisher_id"),
-      ]);
-      if (publishersRes.error) throw publishersRes.error;
-      setPublishers((publishersRes.data || []) as Publisher[]);
+      // Use Algolia for search queries
+      if (debouncedSearch.trim()) {
+        const algoliaResult = await searchAlgolia(debouncedSearch, currentPage);
+        if (algoliaResult) {
+          setPublishers(algoliaResult.hits);
+          setTotalCount(algoliaResult.totalCount);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Supabase fallback for browsing
+      let countQuery = supabase.from("publishers").select("*", { count: "exact", head: true }).eq("is_active", true);
+      if (debouncedSearch.trim()) countQuery = countQuery.ilike("name", `%${debouncedSearch.trim()}%`);
+      const { count } = await countQuery;
+      setTotalCount(count || 0);
+
+      const from = (currentPage - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+      let query = supabase.from("publishers").select("id, name, pro, ipi_number, email, is_active")
+        .eq("is_active", true).order("name", { ascending: true }).range(from, to);
+      if (debouncedSearch.trim()) query = query.ilike("name", `%${debouncedSearch.trim()}%`);
+      const { data, error } = await query;
+      if (error) throw error;
+      setPublishers((data || []) as Publisher[]);
+    } catch (err) {
+      console.error("Error fetching publishers:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, debouncedSearch, searchAlgolia]);
+
+  const fetchSongCounts = useCallback(async () => {
+    try {
+      const { data } = await supabase.from("song_ownership").select("publisher_id");
       const countMap = new Map<string, number>();
-      ((songCountsRes.data || []) as { publisher_id: string }[]).forEach((sc) => {
+      ((data || []) as { publisher_id: string }[]).forEach((sc) => {
         countMap.set(sc.publisher_id, (countMap.get(sc.publisher_id) || 0) + 1);
       });
       setSongCountMap(countMap);
-    } catch (err) { console.error("Error fetching publishers:", err); }
-    finally { setLoading(false); }
+    } catch (err) {
+      console.error("Error fetching song counts:", err);
+    }
   }, []);
 
   useEffect(() => { fetchPublishers(); }, [fetchPublishers]);
+  useEffect(() => { fetchSongCounts(); }, [fetchSongCounts]);
 
-  const filtered = searchQuery.trim()
-    ? publishers.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    : publishers;
-
-  const totalCount = filtered.length;
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-  const paged = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -115,14 +191,16 @@ export default function PublishersTabContent() {
         }).eq("id", editing.id);
         if (error) throw error;
         toast.success("Publisher updated");
+        syncPublisherToAlgolia(editing.id, 'upsert');
       } else {
-        const { error } = await supabase.from("publishers").insert({
+        const { data: newPub, error } = await supabase.from("publishers").insert({
           name: formData.name.trim(), pro: formData.pro || null,
           ipi_number: formData.ipi_number?.trim() || null, email: formData.email.trim() || null,
           is_active: true,
-        });
+        }).select("id").single();
         if (error) throw error;
         toast.success("Publisher added");
+        if (newPub?.id) syncPublisherToAlgolia(newPub.id, 'upsert');
       }
       setPanelOpen(false);
       fetchPublishers();
@@ -137,6 +215,7 @@ export default function PublishersTabContent() {
       const { error } = await supabase.from("publishers").delete().eq("id", editing.id);
       if (error) throw error;
       toast.success("Publisher deleted");
+      syncPublisherToAlgolia(editing.id, 'delete');
       setPanelOpen(false);
       fetchPublishers();
     } catch (err) { console.error("Error deleting publisher:", err); setFormError("Failed to delete publisher"); }
@@ -174,14 +253,14 @@ export default function PublishersTabContent() {
             <AppTableBody>
               {loading ? (
                 <tr><td colSpan={4} className="text-center py-8 text-muted-foreground text-sm">Loading...</td></tr>
-              ) : paged.length === 0 ? (
+              ) : publishers.length === 0 ? (
                 <AppTableEmpty colSpan={4}>
                   <p className="text-[13px] text-muted-foreground">
                     {searchQuery ? "No publishers match your search" : "No publishers in the system"}
                   </p>
                 </AppTableEmpty>
               ) : (
-                paged.map((publisher) => (
+                publishers.map((publisher) => (
                   <AppTableRow key={publisher.id} clickable onClick={() => handleEdit(publisher)}>
                     <AppTableCell className="pl-5">{publisher.name}</AppTableCell>
                     <AppTableCell muted>{publisher.pro || "—"}</AppTableCell>

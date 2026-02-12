@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, Plus } from "lucide-react";
+import { useDebounce } from "@/hooks/useDebounce";
 import {
   AppTable,
   AppTableHeader,
@@ -13,9 +14,69 @@ import {
   AppTableEmpty,
 } from "@/components/app-ui";
 
+const ALGOLIA_APP_ID = "8WVEYVACJ3";
+const ALGOLIA_SEARCH_KEY = "00c22202043b8d20f009257782838d48";
+const ALGOLIA_INDEX = "deals";
+
 export default function DealsTabContent() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [algoliaResults, setAlgoliaResults] = useState<any[] | null>(null);
+  const [algoliaSearching, setAlgoliaSearching] = useState(false);
+
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
+  const searchAlgolia = useCallback(async (query: string) => {
+    if (!ALGOLIA_SEARCH_KEY || !query.trim()) {
+      setAlgoliaResults(null);
+      return;
+    }
+    setAlgoliaSearching(true);
+    try {
+      const response = await fetch(
+        `https://${ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}/query`,
+        {
+          method: "POST",
+          headers: {
+            "X-Algolia-API-Key": ALGOLIA_SEARCH_KEY,
+            "X-Algolia-Application-Id": ALGOLIA_APP_ID,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query, hitsPerPage: 100 }),
+        }
+      );
+      if (!response.ok) throw new Error("Algolia search failed");
+      const data = await response.json();
+      setAlgoliaResults(data.hits.map((hit: any) => ({
+        id: hit.objectID,
+        deal_number: hit.deal_number,
+        name: hit.name,
+        territory: hit.territory,
+        status: hit.status,
+        writer_share: hit.writer_share,
+        writers: { name: hit.writer_name, pro: hit.writer_pro },
+        deal_publishers: (hit.publishers || []).map((p: any) => ({
+          publisher_name: p.name,
+          publisher_pro: p.pro,
+          share: p.share,
+          tribes_administered: p.tribes_administered,
+        })),
+      })));
+    } catch (error) {
+      console.error("Algolia search error:", error);
+      setAlgoliaResults(null);
+    } finally {
+      setAlgoliaSearching(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (debouncedSearch.trim()) {
+      searchAlgolia(debouncedSearch);
+    } else {
+      setAlgoliaResults(null);
+    }
+  }, [debouncedSearch, searchAlgolia]);
 
   const { data: deals, isLoading } = useQuery({
     queryKey: ["deals"],
@@ -51,15 +112,12 @@ export default function DealsTabContent() {
     },
   });
 
-  const filteredDeals = (deals || []).filter((deal: any) => {
-    if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      deal.writers?.name?.toLowerCase().includes(q) ||
-      deal.deal_publishers?.some((p: any) => p.publisher_name?.toLowerCase().includes(q)) ||
-      deal.name?.toLowerCase().includes(q)
-    );
-  });
+  // Use Algolia results when searching, otherwise show all from Supabase
+  const displayDeals = debouncedSearch.trim() && algoliaResults !== null
+    ? algoliaResults
+    : (deals || []);
+
+  const loading = isLoading || algoliaSearching;
 
   return (
     <>
@@ -85,13 +143,13 @@ export default function DealsTabContent() {
       </div>
 
       {/* Table */}
-      {isLoading ? (
+      {loading ? (
         <p className="text-sm text-muted-foreground py-8 text-center">Loading deals...</p>
-      ) : filteredDeals.length === 0 ? (
+      ) : displayDeals.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-sm font-medium text-foreground">No deals found</p>
           <p className="text-[13px] text-muted-foreground mt-1">
-            Create a deal to define reusable writer–publisher–administrator relationships.
+            {searchQuery ? "No deals match your search" : "Create a deal to define reusable writer–publisher–administrator relationships."}
           </p>
         </div>
       ) : (
@@ -108,7 +166,7 @@ export default function DealsTabContent() {
                 </AppTableRow>
               </AppTableHeader>
               <AppTableBody>
-                {filteredDeals.map((deal: any) => {
+                {displayDeals.map((deal: any) => {
                   const publishers = deal.deal_publishers || [];
                   const publisherDisplay = publishers.length > 2
                     ? `${publishers[0].publisher_name}, ${publishers[1].publisher_name} +${publishers.length - 2}`

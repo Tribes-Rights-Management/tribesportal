@@ -6,6 +6,16 @@ import { AppPageContainer, AppCard, AppCardBody } from "@/components/app-ui";
 import { toast } from "sonner";
 import { ArrowLeft, Plus, X, Search } from "lucide-react";
 
+const syncDealToAlgolia = async (dealId: string, action: 'upsert' | 'delete' = 'upsert') => {
+  try {
+    await supabase.functions.invoke('sync-deals-algolia', {
+      body: { action, deal_id: dealId }
+    });
+  } catch (err) {
+    console.error('Deal Algolia sync error:', err);
+  }
+};
+
 interface DealPublisher {
   publisher_id: string | null;
   publisher_name: string;
@@ -420,6 +430,7 @@ export default function RightsDealDetailPage() {
         }
 
         toast.success("Deal created");
+        syncDealToAlgolia(newDeal.id, 'upsert');
         queryClient.invalidateQueries({ queryKey: ["deals"] });
         navigate(`/rights/parties/deals/${newDeal.deal_number}`);
       } else if (existingDeal) {
@@ -465,6 +476,7 @@ export default function RightsDealDetailPage() {
         }
 
         toast.success("Deal updated");
+        syncDealToAlgolia((existingDeal as any)!.id, 'upsert');
         queryClient.invalidateQueries({ queryKey: ["deals"] });
         queryClient.invalidateQueries({ queryKey: ["deal-detail", dealNumber] });
       }
@@ -490,6 +502,7 @@ export default function RightsDealDetailPage() {
     const { error } = await supabase.from("deals").delete().eq("id", (existingDeal as any).id);
     if (error) { toast.error("Failed to delete deal"); return; }
     toast.success("Deal deleted");
+    syncDealToAlgolia((existingDeal as any).id, 'delete');
     queryClient.invalidateQueries({ queryKey: ["deals"] });
     navigate("/rights/parties?tab=deals");
   };
