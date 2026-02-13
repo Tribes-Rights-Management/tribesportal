@@ -405,7 +405,7 @@ export default function RightsCatalogPage() {
             />
           )}
           renderTable={() => (
-            <AppTable columns={["40px", "10%", "25%", "25%", "15%", "25%"]}>
+            <AppTable columns={["40px", "10%", "25%", "28%", "12%", "20%"]}>
               <AppTableHeader>
                 <AppTableRow>
                   <AppTableHead>
