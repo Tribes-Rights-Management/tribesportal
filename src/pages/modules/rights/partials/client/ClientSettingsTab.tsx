@@ -8,14 +8,10 @@ import {
   AppButton,
 } from "@/components/app-ui";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogBody,
-  DialogFooter,
-} from "@/components/ui/dialog";
+  AppModal,
+  AppModalBody,
+  AppModalFooter,
+} from "@/components/ui/app-modal";
 
 interface ClientSettingsTabProps {
   client: any;
@@ -203,34 +199,32 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
       </AppSettingsCard>
 
       {/* Confirm Dialog */}
-      <Dialog open={!!confirmAction} onOpenChange={() => setConfirmAction(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {confirmAction === "archived" ? "Archive Client" : confirmAction === "suspended" ? "Suspend Client" : "Reactivate Client"}
-            </DialogTitle>
-            <DialogDescription>
-              {confirmAction === "archived"
-                ? "This will archive the client account. It can be restored later."
-                : confirmAction === "suspended"
-                ? "This will suspend the client's access to the portal."
-                : "This will restore the client's access."}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <AppButton intent="secondary" onClick={() => setConfirmAction(null)}>
-              Cancel
-            </AppButton>
-            <AppButton
-              intent={confirmAction === "archived" || confirmAction === "suspended" ? "danger" : "primary"}
-              onClick={() => confirmAction && statusMutation.mutate(confirmAction)}
-              loading={statusMutation.isPending}
-            >
-              Confirm
-            </AppButton>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AppModal
+        open={!!confirmAction}
+        onOpenChange={() => setConfirmAction(null)}
+        title={confirmAction === "archived" ? "Archive Client" : confirmAction === "suspended" ? "Suspend Client" : "Reactivate Client"}
+        description={
+          confirmAction === "archived"
+            ? "This will archive the client account. It can be restored later."
+            : confirmAction === "suspended"
+            ? "This will suspend the client's access to the portal."
+            : "This will restore the client's access."
+        }
+        maxWidth="sm"
+      >
+        <AppModalFooter>
+          <AppButton intent="secondary" onClick={() => setConfirmAction(null)}>
+            Cancel
+          </AppButton>
+          <AppButton
+            intent={confirmAction === "archived" || confirmAction === "suspended" ? "danger" : "primary"}
+            onClick={() => confirmAction && statusMutation.mutate(confirmAction)}
+            loading={statusMutation.isPending}
+          >
+            Confirm
+          </AppButton>
+        </AppModalFooter>
+      </AppModal>
     </div>
   );
 }

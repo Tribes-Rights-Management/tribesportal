@@ -29,13 +29,10 @@ import {
   TableEmptyRow 
 } from "@/components/ui/table";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+  AppModal,
+  AppModalBody,
+  AppModalFooter,
+} from "@/components/ui/app-modal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -137,16 +134,15 @@ function CreateExportDialog({ open, onOpenChange }: CreateExportDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-lg mx-4 sm:mx-auto">
-        <DialogHeader>
-          <DialogTitle>Create Data Room Export</DialogTitle>
-          <DialogDescription>
-            Generate a formal, immutable disclosure package for audits or compliance.
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-4 py-4">
+    <AppModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Create Data Room Export"
+      description="Generate a formal, immutable disclosure package for audits or compliance."
+      maxWidth="lg"
+    >
+      <AppModalBody>
+        <div className="space-y-4">
           {/* Export Type */}
           <div className="space-y-2">
             <Label>Export Type</Label>
@@ -232,17 +228,17 @@ function CreateExportDialog({ open, onOpenChange }: CreateExportDialogProps) {
             </p>
           </div>
         </div>
-        
-        <DialogFooter>
-          <ConsoleButton intent="secondary" onClick={() => onOpenChange(false)}>
-            Cancel
-          </ConsoleButton>
-          <ConsoleButton onClick={handleCreate} disabled={createExport.isPending}>
-            {createExport.isPending ? "Creating..." : "Create Export"}
-          </ConsoleButton>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </AppModalBody>
+      
+      <AppModalFooter>
+        <ConsoleButton intent="secondary" onClick={() => onOpenChange(false)}>
+          Cancel
+        </ConsoleButton>
+        <ConsoleButton onClick={handleCreate} disabled={createExport.isPending}>
+          {createExport.isPending ? "Creating..." : "Create Export"}
+        </ConsoleButton>
+      </AppModalFooter>
+    </AppModal>
   );
 }
 
