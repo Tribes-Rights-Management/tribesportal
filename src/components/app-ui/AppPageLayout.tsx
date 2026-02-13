@@ -37,7 +37,7 @@ type MaxWidth = "sm" | "md" | "lg" | "xl" | "2xl" | "full";
 
 interface AppPageLayoutProps {
   /** Page title (required) */
-  title: string;
+  title: React.ReactNode;
   /** Optional subtitle below title */
   subtitle?: string;
   /** Optional className for the subtitle */
