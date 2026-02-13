@@ -65,7 +65,7 @@ export function AppCardHeader({
     <div
       className={cn(
         "flex items-center justify-between gap-3",
-        "px-4 py-3 border-b border-[var(--app-surface-border)]/60",
+        "px-5 py-3 border-b border-[var(--app-surface-border)]/60",
         className
       )}
       {...props}
@@ -107,7 +107,7 @@ export function AppCardBody({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("px-4 py-3", className)} {...props} />;
+  return <div className={cn("px-5 py-4", className)} {...props} />;
 }
 
 export function AppCardFooter({
@@ -118,7 +118,7 @@ export function AppCardFooter({
     <div
       className={cn(
         "flex items-center justify-end gap-2",
-        "px-4 py-3 border-t border-[var(--app-surface-border)]/60",
+        "px-5 py-3 border-t border-[var(--app-surface-border)]/60",
         className
       )}
       {...props}

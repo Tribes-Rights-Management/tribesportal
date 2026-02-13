@@ -54,7 +54,7 @@ export function AppSettingsCard({
       )}
     >
       {/* Header — matches AppListCard styling */}
-      <div className="px-4 py-3 border-b border-border/60 flex items-center justify-between gap-3">
+      <div className="px-5 py-3 border-b border-border/60 flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
           <h2 className="text-[12px] font-medium text-[#9CA3AF]">
             {title}
