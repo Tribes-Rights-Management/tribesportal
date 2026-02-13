@@ -141,15 +141,15 @@ function StatusBadge({ active }: { active: boolean }) {
   );
 }
 
-// ── Label Copy Display with icon copy button ────────────────
-function LabelCopyDisplay({ text }: { text: string }) {
+// ── Reusable copy icon button ────────────────────────────────
+function CopyIconButton({ text, label = "Copy to clipboard", successMessage = "Copied to clipboard" }: { text: string; label?: string; successMessage?: string }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
-      toast.success("Label copy copied to clipboard");
+      toast.success(successMessage);
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error("Failed to copy");
@@ -157,15 +157,22 @@ function LabelCopyDisplay({ text }: { text: string }) {
   };
 
   return (
+    <button
+      onClick={handleCopy}
+      className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors shrink-0"
+      aria-label={label}
+    >
+      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+    </button>
+  );
+}
+
+// ── Label Copy Display with icon copy button ────────────────
+function LabelCopyDisplay({ text }: { text: string }) {
+  return (
     <div className="flex items-start gap-2">
       <p className="text-sm text-foreground leading-relaxed flex-1">{text}</p>
-      <button
-        onClick={handleCopy}
-        className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors shrink-0"
-        aria-label="Copy to clipboard"
-      >
-        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-      </button>
+      <CopyIconButton text={text} successMessage="Label copy copied to clipboard" />
     </div>
   );
 }
@@ -922,104 +929,198 @@ export default function SongDetailPage() {
           </AppCardHeader>
           <AppCardBody className={editing ? undefined : "p-0"}>
             {editing ? (
-              <div className="space-y-3">
-                {/* Column headers */}
-                <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <span className="text-xs font-medium text-muted-foreground">Writer</span>
-                  </div>
-                  <div className="w-[140px]">
-                    <span className="text-xs font-medium text-muted-foreground">IPI Number</span>
-                  </div>
-                  <div className="w-[70px]">
-                    <span className="text-xs font-medium text-muted-foreground">Share %</span>
-                  </div>
-                  <div className="w-[22px]" />
-                </div>
-                {editedFields.writers.map((writer, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <div className="flex-1 relative">
-                      <input
-                        value={writer.name}
-                        onChange={(e) => {
-                          const updated = [...editedFields.writers];
-                          updated[index] = { ...updated[index], name: e.target.value };
-                          updateField("writers", updated);
-                          searchWriters(e.target.value, index);
-                          setActiveWriterSearch(index);
-                        }}
-                        onFocus={() => setActiveWriterSearch(index)}
-                        onBlur={() => setTimeout(() => setActiveWriterSearch(null), 200)}
-                        placeholder="Type to search writers..."
-                        className={editInputClass}
-                      />
-                      {activeWriterSearch === index && writerSearchResults[index]?.length > 0 && (
-                        <div className="absolute z-20 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                          {writerSearchResults[index].map((hit: any) => (
-                            <button
-                              key={hit.objectID}
-                              type="button"
-                              onMouseDown={(e) => e.preventDefault()}
-                              onClick={() => selectWriter(index, hit)}
-                              className="w-full px-3 py-2 text-left hover:bg-muted/50 border-b border-border last:border-b-0 transition-colors flex items-center justify-between gap-3"
-                            >
-                              <span className="font-medium text-sm text-foreground">{hit.name}</span>
-                              <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded shrink-0">
-                                {hit.pro || "—"}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
+              <div>
+                {/* ── Desktop edit layout ── */}
+                <div className="hidden md:block space-y-3">
+                  {/* Column headers */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <span className="text-xs font-medium text-muted-foreground">Writer</span>
                     </div>
                     <div className="w-[140px]">
-                      <input
-                        value={writer.ipi_number}
-                        readOnly
-                        tabIndex={-1}
-                        placeholder="—"
-                        className="w-full text-xs text-muted-foreground bg-muted/40 border border-border rounded-lg px-3 h-10 font-mono cursor-not-allowed"
-                      />
+                      <span className="text-xs font-medium text-muted-foreground">IPI Number</span>
                     </div>
                     <div className="w-[70px]">
-                      <input
-                        type="number"
-                        value={writer.share}
-                        onChange={(e) => {
-                          const updated = [...editedFields.writers];
-                          updated[index] = { ...updated[index], share: Number(e.target.value) };
+                      <span className="text-xs font-medium text-muted-foreground">Share %</span>
+                    </div>
+                    <div className="w-[22px]" />
+                  </div>
+                  {editedFields.writers.map((writer, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="flex-1 relative">
+                        <input
+                          value={writer.name}
+                          onChange={(e) => {
+                            const updated = [...editedFields.writers];
+                            updated[index] = { ...updated[index], name: e.target.value };
+                            updateField("writers", updated);
+                            searchWriters(e.target.value, index);
+                            setActiveWriterSearch(index);
+                          }}
+                          onFocus={() => setActiveWriterSearch(index)}
+                          onBlur={() => setTimeout(() => setActiveWriterSearch(null), 200)}
+                          placeholder="Type to search writers..."
+                          className={editInputClass}
+                        />
+                        {activeWriterSearch === index && writerSearchResults[index]?.length > 0 && (
+                          <div className="absolute z-20 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                            {writerSearchResults[index].map((hit: any) => (
+                              <button
+                                key={hit.objectID}
+                                type="button"
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick={() => selectWriter(index, hit)}
+                                className="w-full px-3 py-2 text-left hover:bg-muted/50 border-b border-border last:border-b-0 transition-colors flex items-center justify-between gap-3"
+                              >
+                                <span className="font-medium text-sm text-foreground">{hit.name}</span>
+                                <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded shrink-0">
+                                  {hit.pro || "—"}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div className="w-[140px]">
+                        <input
+                          value={writer.ipi_number}
+                          readOnly
+                          tabIndex={-1}
+                          placeholder="—"
+                          className="w-full text-xs text-muted-foreground bg-muted/40 border border-border rounded-lg px-3 h-10 font-mono cursor-not-allowed"
+                        />
+                      </div>
+                      <div className="w-[70px]">
+                        <input
+                          type="number"
+                          value={writer.share}
+                          onChange={(e) => {
+                            const updated = [...editedFields.writers];
+                            updated[index] = { ...updated[index], share: Number(e.target.value) };
+                            updateField("writers", updated);
+                          }}
+                          placeholder="%"
+                          className={cn(editInputClass, "text-right")}
+                        />
+                      </div>
+                      <button
+                        onClick={() => {
+                          const updated = editedFields.writers.filter((_, i) => i !== index);
                           updateField("writers", updated);
                         }}
-                        placeholder="%"
-                        className={cn(editInputClass, "text-right")}
-                      />
+                        className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                        title="Remove writer"
+                      >
+                        <span className="text-sm">×</span>
+                      </button>
                     </div>
-                    <button
-                      onClick={() => {
-                        const updated = editedFields.writers.filter((_, i) => i !== index);
-                        updateField("writers", updated);
-                      }}
-                      className="text-muted-foreground hover:text-destructive transition-colors p-1"
-                      title="Remove writer"
-                    >
-                      <span className="text-sm">×</span>
-                    </button>
+                  ))}
+                  {/* Writer total */}
+                  <div className="flex items-center gap-3 pt-2 border-t border-border">
+                    <div className="flex-1" />
+                    <div className="w-[140px]" />
+                    <div className="w-[70px]">
+                      <span className={cn(
+                        "text-sm font-semibold block text-right pr-2",
+                        writerTotal === 100 ? "text-emerald-600" : "text-red-600"
+                      )}>
+                        {writerTotal.toFixed(2)}%
+                      </span>
+                    </div>
+                    <div className="w-[22px]" />
                   </div>
-                ))}
-                {/* Writer total */}
-                <div className="flex items-center gap-3 pt-2 border-t border-border">
-                  <div className="flex-1" />
-                  <div className="w-[140px]" />
-                  <div className="w-[70px]">
+                </div>
+
+                {/* ── Mobile edit layout ── */}
+                <div className="md:hidden space-y-4">
+                  {editedFields.writers.map((writer, index) => (
+                    <div key={index} className="border border-[var(--app-surface-border)] rounded-lg p-3 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-muted-foreground">Writer {index + 1}</span>
+                        <button
+                          onClick={() => {
+                            const updated = editedFields.writers.filter((_, i) => i !== index);
+                            updateField("writers", updated);
+                          }}
+                          className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                        >
+                          <span className="text-sm">×</span>
+                        </button>
+                      </div>
+                      <div className="relative">
+                        <input
+                          value={writer.name}
+                          onChange={(e) => {
+                            const updated = [...editedFields.writers];
+                            updated[index] = { ...updated[index], name: e.target.value };
+                            updateField("writers", updated);
+                            searchWriters(e.target.value, index);
+                            setActiveWriterSearch(index);
+                          }}
+                          onFocus={() => setActiveWriterSearch(index)}
+                          onBlur={() => setTimeout(() => setActiveWriterSearch(null), 200)}
+                          placeholder="Writer name"
+                          className={editInputClass}
+                        />
+                        {activeWriterSearch === index && writerSearchResults[index]?.length > 0 && (
+                          <div className="absolute z-20 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                            {writerSearchResults[index].map((hit: any) => (
+                              <button
+                                key={hit.objectID}
+                                type="button"
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick={() => selectWriter(index, hit)}
+                                className="w-full px-3 py-2 text-left hover:bg-muted/50 border-b border-border last:border-b-0 transition-colors flex items-center justify-between gap-3"
+                              >
+                                <span className="font-medium text-sm text-foreground">{hit.name}</span>
+                                <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded shrink-0">
+                                  {hit.pro || "—"}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="flex-1">
+                          <label className="text-xs text-muted-foreground mb-1 block">IPI Number</label>
+                          <input
+                            value={writer.ipi_number}
+                            readOnly
+                            tabIndex={-1}
+                            placeholder="—"
+                            className="w-full text-xs text-muted-foreground bg-muted/40 border border-border rounded-lg px-3 h-10 font-mono cursor-not-allowed"
+                          />
+                        </div>
+                        <div className="w-24">
+                          <label className="text-xs text-muted-foreground mb-1 block">Share %</label>
+                          <input
+                            type="number"
+                            value={writer.share}
+                            onChange={(e) => {
+                              const updated = [...editedFields.writers];
+                              updated[index] = { ...updated[index], share: Number(e.target.value) };
+                              updateField("writers", updated);
+                            }}
+                            placeholder="%"
+                            className={cn(editInputClass, "text-right")}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {/* Mobile total */}
+                  <div className="flex items-center justify-between px-1 pt-1">
+                    <span className="text-xs font-medium text-muted-foreground">Total</span>
                     <span className={cn(
-                      "text-sm font-semibold block text-right pr-2",
+                      "text-sm font-semibold tabular-nums",
                       writerTotal === 100 ? "text-emerald-600" : "text-red-600"
                     )}>
                       {writerTotal.toFixed(2)}%
                     </span>
                   </div>
-                  <div className="w-[22px]" />
                 </div>
+
                 <button
                   onClick={() => {
                     const updated = [...editedFields.writers, {
@@ -1033,7 +1134,7 @@ export default function SongDetailPage() {
                     }];
                     updateField("writers", updated);
                   }}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mt-1"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mt-3"
                 >
                   + Add Writer
                 </button>
@@ -1111,119 +1212,214 @@ export default function SongDetailPage() {
           </AppCardHeader>
           <AppCardBody className={editing ? undefined : "p-0"}>
             {editing ? (
-              <div className="space-y-3">
-                {/* Column headers */}
-                <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <span className="text-xs font-medium text-muted-foreground">Publisher</span>
+              <div>
+                {/* ── Desktop edit layout ── */}
+                <div className="hidden md:block space-y-3">
+                  {/* Column headers */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <span className="text-xs font-medium text-muted-foreground">Publisher</span>
+                    </div>
+                    <div className="w-[80px]">
+                      <span className="text-xs font-medium text-muted-foreground">PRO</span>
+                    </div>
+                    <div className="w-[120px]">
+                      <span className="text-xs font-medium text-muted-foreground">Administered</span>
+                    </div>
+                    <div className="w-[70px]">
+                      <span className="text-xs font-medium text-muted-foreground">Share %</span>
+                    </div>
+                    <div className="w-[22px]" />
                   </div>
-                  <div className="w-[80px]">
-                    <span className="text-xs font-medium text-muted-foreground">PRO</span>
-                  </div>
-                  <div className="w-[120px]">
-                    <span className="text-xs font-medium text-muted-foreground">Administered</span>
-                  </div>
-                  <div className="w-[70px]">
-                    <span className="text-xs font-medium text-muted-foreground">Share %</span>
-                  </div>
-                  <div className="w-[22px]" />
-                </div>
-                {editedFields.ownership
-                  .map((row, index) => ({ row, index }))
-                  .filter(({ row }) => !row._deleted)
-                  .map(({ row, index }) => (
-                    <div key={index}>
-                      <div className="flex items-center gap-3">
-                        <div className="flex-1">
-                          <PublisherTypeahead
-                            value={row.publisher_name}
-                            onChange={(publisherId, name, pro) => {
+                  {editedFields.ownership
+                    .map((row, index) => ({ row, index }))
+                    .filter(({ row }) => !row._deleted)
+                    .map(({ row, index }) => (
+                      <div key={index}>
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1">
+                            <PublisherTypeahead
+                              value={row.publisher_name}
+                              onChange={(publisherId, name, pro) => {
+                                const updated = [...editedFields.ownership];
+                                updated[index] = {
+                                  ...updated[index],
+                                  publisher_id: publisherId,
+                                  publisher_name: name,
+                                  pro: pro || null,
+                                  ...(updated[index].tribes_administered && pro ? {
+                                    administrator_entity_id: tribesEntities[pro]?.id || null,
+                                    administrator_name: tribesEntities[pro]?.entity_name || "No Tribes entity for this PRO",
+                                  } : {}),
+                                };
+                                updateField("ownership", updated);
+                              }}
+                              placeholder="Type to search publishers…"
+                            />
+                          </div>
+                          <div className="w-[80px]">
+                            <span className="text-xs text-muted-foreground px-2 h-10 flex items-center">
+                              {row.pro || "—"}
+                            </span>
+                          </div>
+                          <div className="w-[120px]">
+                            <select
+                              value={row.tribes_administered ? "yes" : "no"}
+                              onChange={(e) => handleTribesToggle(index, e.target.value === "yes")}
+                              className={editInputClass}
+                            >
+                              <option value="yes">Yes</option>
+                              <option value="no">No</option>
+                            </select>
+                          </div>
+                          <div className="w-[70px]">
+                            <input
+                              type="number"
+                              value={row.ownership_percentage}
+                              onChange={(e) => {
+                                const updated = [...editedFields.ownership];
+                                updated[index] = { ...updated[index], ownership_percentage: Number(e.target.value) };
+                                updateField("ownership", updated);
+                              }}
+                              placeholder="%"
+                              className={cn(editInputClass, "text-right")}
+                            />
+                          </div>
+                          <button
+                            onClick={() => {
                               const updated = [...editedFields.ownership];
-                              updated[index] = {
-                                ...updated[index],
-                                publisher_id: publisherId,
-                                publisher_name: name,
-                                pro: pro || null,
-                                ...(updated[index].tribes_administered && pro ? {
-                                  administrator_entity_id: tribesEntities[pro]?.id || null,
-                                  administrator_name: tribesEntities[pro]?.entity_name || "No Tribes entity for this PRO",
-                                } : {}),
-                              };
+                              if (row.id && !row._isNew) {
+                                updated[index] = { ...updated[index], _deleted: true };
+                              } else {
+                                updated.splice(index, 1);
+                              }
                               updateField("ownership", updated);
                             }}
-                            placeholder="Type to search publishers…"
-                          />
-                        </div>
-                        <div className="w-[80px]">
-                          <span className="text-xs text-muted-foreground px-2 h-10 flex items-center">
-                            {row.pro || "—"}
-                          </span>
-                        </div>
-                        <div className="w-[120px]">
-                          <select
-                            value={row.tribes_administered ? "yes" : "no"}
-                            onChange={(e) => handleTribesToggle(index, e.target.value === "yes")}
-                            className={editInputClass}
+                            className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                            title="Remove ownership"
                           >
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                          </select>
+                            <span className="text-sm">×</span>
+                          </button>
                         </div>
-                        <div className="w-[70px]">
-                          <input
-                            type="number"
-                            value={row.ownership_percentage}
-                            onChange={(e) => {
+                        {row.tribes_administered && (
+                          <div className="ml-0 mt-1 mb-1 pl-2 border-l-2 border-border">
+                            <span className="text-xs font-medium text-muted-foreground mr-2">Administrator:</span>
+                            <span className="text-xs text-foreground">{row.administrator_name || "—"}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  {/* Total row */}
+                  <div className="flex items-center gap-3 pt-2 border-t border-border">
+                    <div className="flex-1 text-right">
+                      <span className="text-xs font-medium text-muted-foreground">Total</span>
+                    </div>
+                    <div className="w-[80px]" />
+                    <div className="w-[120px]" />
+                    <div className="w-[70px]">
+                      <span className={cn(
+                        "text-sm font-semibold block text-right pr-2",
+                        ownershipTotal === 100 ? "text-emerald-600" : "text-red-600"
+                      )}>
+                        {ownershipTotal}%
+                      </span>
+                    </div>
+                    <div className="w-[22px]" />
+                  </div>
+                </div>
+
+                {/* ── Mobile edit layout ── */}
+                <div className="md:hidden space-y-4">
+                  {editedFields.ownership
+                    .map((row, index) => ({ row, index }))
+                    .filter(({ row }) => !row._deleted)
+                    .map(({ row, index }) => (
+                      <div key={index} className="border border-[var(--app-surface-border)] rounded-lg p-3 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-muted-foreground">Publisher {index + 1}</span>
+                          <button
+                            onClick={() => {
                               const updated = [...editedFields.ownership];
-                              updated[index] = { ...updated[index], ownership_percentage: Number(e.target.value) };
+                              if (row.id && !row._isNew) {
+                                updated[index] = { ...updated[index], _deleted: true };
+                              } else {
+                                updated.splice(index, 1);
+                              }
                               updateField("ownership", updated);
                             }}
-                            placeholder="%"
-                            className={cn(editInputClass, "text-right")}
-                          />
+                            className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                          >
+                            <span className="text-sm">×</span>
+                          </button>
                         </div>
-                        <button
-                          onClick={() => {
+                        <PublisherTypeahead
+                          value={row.publisher_name}
+                          onChange={(publisherId, name, pro) => {
                             const updated = [...editedFields.ownership];
-                            if (row.id && !row._isNew) {
-                              updated[index] = { ...updated[index], _deleted: true };
-                            } else {
-                              updated.splice(index, 1);
-                            }
+                            updated[index] = {
+                              ...updated[index],
+                              publisher_id: publisherId,
+                              publisher_name: name,
+                              pro: pro || null,
+                              ...(updated[index].tribes_administered && pro ? {
+                                administrator_entity_id: tribesEntities[pro]?.id || null,
+                                administrator_name: tribesEntities[pro]?.entity_name || "No Tribes entity for this PRO",
+                              } : {}),
+                            };
                             updateField("ownership", updated);
                           }}
-                          className="text-muted-foreground hover:text-destructive transition-colors p-1"
-                          title="Remove ownership"
-                        >
-                          <span className="text-sm">×</span>
-                        </button>
-                      </div>
-                      {/* Administrator display (only when tribes_administered) */}
-                      {row.tribes_administered && (
-                        <div className="ml-0 mt-1 mb-1 pl-2 border-l-2 border-border">
-                          <span className="text-xs font-medium text-muted-foreground mr-2">Administrator:</span>
-                          <span className="text-xs text-foreground">{row.administrator_name || "—"}</span>
+                          placeholder="Type to search publishers…"
+                        />
+                        <div className="flex gap-3">
+                          <div className="w-20">
+                            <label className="text-xs text-muted-foreground mb-1 block">PRO</label>
+                            <span className="text-sm text-muted-foreground h-10 flex items-center">{row.pro || "—"}</span>
+                          </div>
+                          <div className="flex-1">
+                            <label className="text-xs text-muted-foreground mb-1 block">Administered</label>
+                            <select
+                              value={row.tribes_administered ? "yes" : "no"}
+                              onChange={(e) => handleTribesToggle(index, e.target.value === "yes")}
+                              className={editInputClass}
+                            >
+                              <option value="yes">Yes</option>
+                              <option value="no">No</option>
+                            </select>
+                          </div>
+                          <div className="w-24">
+                            <label className="text-xs text-muted-foreground mb-1 block">Share %</label>
+                            <input
+                              type="number"
+                              value={row.ownership_percentage}
+                              onChange={(e) => {
+                                const updated = [...editedFields.ownership];
+                                updated[index] = { ...updated[index], ownership_percentage: Number(e.target.value) };
+                                updateField("ownership", updated);
+                              }}
+                              placeholder="%"
+                              className={cn(editInputClass, "text-right")}
+                            />
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  ))}
-                {/* Total row */}
-                <div className="flex items-center gap-3 pt-2 border-t border-border">
-                  <div className="flex-1 text-right">
+                        {row.tribes_administered && (
+                          <div className="text-xs text-muted-foreground">
+                            Administrator: <span className="text-foreground">{row.administrator_name || "—"}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  {/* Mobile total */}
+                  <div className="flex items-center justify-between px-1 pt-1">
                     <span className="text-xs font-medium text-muted-foreground">Total</span>
-                  </div>
-                  <div className="w-[80px]" />
-                  <div className="w-[120px]" />
-                  <div className="w-[70px]">
                     <span className={cn(
-                      "text-sm font-semibold block text-right pr-2",
+                      "text-sm font-semibold tabular-nums",
                       ownershipTotal === 100 ? "text-emerald-600" : "text-red-600"
                     )}>
                       {ownershipTotal}%
                     </span>
                   </div>
-                  <div className="w-[22px]" />
                 </div>
+
                 <button
                   onClick={() => {
                     const updated = [...editedFields.ownership, {
@@ -1240,7 +1436,7 @@ export default function SongDetailPage() {
                     }];
                     updateField("ownership", updated);
                   }}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mt-1"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mt-3"
                 >
                   + Add Ownership
                 </button>
@@ -1355,7 +1551,12 @@ export default function SongDetailPage() {
         {(metadata.lyrics || editing) && (
           <AppCard className="mt-5">
             <AppCardHeader>
-              <AppCardTitle>Lyrics</AppCardTitle>
+              <div className="flex items-center justify-between w-full">
+                <AppCardTitle>Lyrics</AppCardTitle>
+                {metadata.lyrics && !editing && (
+                  <CopyIconButton text={metadata.lyrics} successMessage="Lyrics copied to clipboard" label="Copy lyrics" />
+                )}
+              </div>
             </AppCardHeader>
             <AppCardBody>
               {editing ? (
