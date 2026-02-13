@@ -1287,7 +1287,7 @@ export default function SongDetailPage() {
                       <span className="text-xs font-medium text-muted-foreground">PRO</span>
                     </div>
                     <div className="w-[120px]">
-                      <span className="text-xs font-medium text-muted-foreground">Administered</span>
+                      <span className="text-xs font-medium text-muted-foreground">Controlled</span>
                     </div>
                     <div className="w-[70px]">
                       <span className="text-xs font-medium text-muted-foreground">Share %</span>
@@ -1331,8 +1331,8 @@ export default function SongDetailPage() {
                               onChange={(e) => handleTribesToggle(index, e.target.value === "yes")}
                               className={editInputClass}
                             >
-                              <option value="yes">Yes</option>
-                              <option value="no">No</option>
+                              <option value="yes">Y</option>
+                              <option value="no">N</option>
                             </select>
                           </div>
                           <div className="w-[70px]">
@@ -1439,14 +1439,14 @@ export default function SongDetailPage() {
                             <span className="text-sm text-muted-foreground h-10 flex items-center">{row.pro || "—"}</span>
                           </div>
                           <div className="flex-1">
-                            <label className="text-xs text-muted-foreground mb-1 block">Administered</label>
+                            <label className="text-xs text-muted-foreground mb-1 block">Controlled</label>
                             <select
                               value={row.tribes_administered ? "yes" : "no"}
                               onChange={(e) => handleTribesToggle(index, e.target.value === "yes")}
                               className={editInputClass}
                             >
-                              <option value="yes">Yes</option>
-                              <option value="no">No</option>
+                              <option value="yes">Y</option>
+                              <option value="no">N</option>
                             </select>
                           </div>
                           <div className="w-24">
@@ -1513,7 +1513,7 @@ export default function SongDetailPage() {
                       <span className="text-xs font-medium text-muted-foreground">Publisher</span>
                       <div className="flex items-center gap-6">
                         <span className="text-xs font-medium text-muted-foreground w-[80px] text-center">PRO</span>
-                        <span className="text-xs font-medium text-muted-foreground w-[100px] text-center">Administered</span>
+                        <span className="text-xs font-medium text-muted-foreground w-[100px] text-center">Controlled</span>
                         <span className="text-xs font-medium text-muted-foreground w-[60px] text-right">Share</span>
                         <span className="text-xs font-medium text-muted-foreground w-[140px] text-right">Administrator</span>
                       </div>
@@ -1524,13 +1524,7 @@ export default function SongDetailPage() {
                           <span className="text-sm font-medium text-foreground">{row.publisher_name || "Unknown Publisher"}</span>
                           <div className="flex items-center gap-6">
                             <span className="text-sm text-muted-foreground w-[80px] text-center">{row.pro || "—"}</span>
-                            <span className="w-[100px] text-center">
-                              {row.tribes_administered ? (
-                                <span className="text-xs text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">Administered</span>
-                              ) : (
-                                <span className="text-xs text-muted-foreground">—</span>
-                              )}
-                            </span>
+                            <span className="text-sm text-muted-foreground w-[100px] text-center">{row.tribes_administered ? "Y" : "N"}</span>
                             <span className="text-sm text-muted-foreground tabular-nums whitespace-nowrap w-[60px] text-right">{row.ownership_percentage}%</span>
                             <span className="text-sm text-muted-foreground w-[140px] text-right">{row.tribes_administered ? row.administrator_name || "—" : "—"}</span>
                           </div>
@@ -1558,8 +1552,12 @@ export default function SongDetailPage() {
                               <span className="text-[15px] font-semibold text-foreground block">{row.publisher_name || "Unknown Publisher"}</span>
                               <div className="flex items-center gap-2 mt-0.5">
                                 <span className="text-xs text-muted-foreground">{row.pro || "—"}</span>
-                                <span className="text-muted-foreground/30">·</span>
-                                <span className="text-xs text-muted-foreground">{row.tribes_administered ? "Administered" : "Not administered"}</span>
+                                {row.tribes_administered && (
+                                  <>
+                                    <span className="text-muted-foreground/30">·</span>
+                                    <span className="text-xs text-muted-foreground">Controlled</span>
+                                  </>
+                                )}
                               </div>
                             </div>
                             <span className="text-[20px] font-bold tabular-nums text-foreground shrink-0">{row.ownership_percentage}%</span>
@@ -1583,32 +1581,39 @@ export default function SongDetailPage() {
         </AppCard>
 
         {/* ─── 4. LABEL COPY ──────────────────────────── */}
-        <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-          <AppCardHeader className="bg-muted/30 border-b border-border/60 px-6 py-3.5">
-            <AppCardTitle className="text-sm font-semibold text-foreground">Controlled Label Copy</AppCardTitle>
-          </AppCardHeader>
-          <AppCardBody className="px-6 py-5">
-            {(() => {
-              const year = song.metadata?.publication_year ?? null;
-              const tribesPublishers = ownership
-                .filter((o) => o.tribes_administered && o.publisher_name)
-                .reduce((acc, o) => {
-                  if (!acc.some(p => p.name === o.publisher_name)) {
-                    acc.push({ name: o.publisher_name!, pro: o.pro || null });
-                  }
-                  return acc;
-                }, [] as Array<{ name: string; pro: string | null }>);
-              const labelCopy = tribesPublishers.length > 0
-                ? generateLabelCopySchema(year, tribesPublishers)
-                : null;
-              return labelCopy ? (
-                <LabelCopyDisplay text={labelCopy} />
-              ) : (
-                <p className="text-sm text-muted-foreground">No Tribes-administered publishers on this song.</p>
-              );
-            })()}
-          </AppCardBody>
-        </AppCard>
+        {(() => {
+          const year = song.metadata?.publication_year ?? null;
+          const tribesPublishers = ownership
+            .filter((o) => o.tribes_administered && o.publisher_name)
+            .reduce((acc, o) => {
+              if (!acc.some(p => p.name === o.publisher_name)) {
+                acc.push({ name: o.publisher_name!, pro: o.pro || null });
+              }
+              return acc;
+            }, [] as Array<{ name: string; pro: string | null }>);
+          const labelCopy = tribesPublishers.length > 0
+            ? generateLabelCopySchema(year, tribesPublishers)
+            : null;
+          return (
+            <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+              <AppCardHeader className="bg-muted/30 border-b border-border/60 px-6 py-3.5">
+                <div className="flex items-center justify-between w-full">
+                  <AppCardTitle className="text-sm font-semibold text-foreground">Controlled Label Copy</AppCardTitle>
+                  {labelCopy && !editing && (
+                    <CopyIconButton text={labelCopy} successMessage="Label copy copied to clipboard" label="Copy label copy" />
+                  )}
+                </div>
+              </AppCardHeader>
+              <AppCardBody className="px-6 py-5">
+                {labelCopy ? (
+                  <p className="text-sm text-foreground leading-relaxed">{labelCopy}</p>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No Tribes-administered publishers on this song.</p>
+                )}
+              </AppCardBody>
+            </AppCard>
+          );
+        })()}
 
         {/* ─── 5. LYRICS ────────────────────────────────── */}
         {(metadata.lyrics || editing) && (
