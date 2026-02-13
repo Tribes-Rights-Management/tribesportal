@@ -46,12 +46,30 @@ export default function RightsOverview() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("songs")
-        .select("id, title, song_number, created_at")
+        .select(`
+          id, title, song_number, created_at, updated_at,
+          song_writers (
+            id,
+            writers ( name )
+          ),
+          song_ownership (
+            ownership_percentage,
+            tribes_administered
+          )
+        `)
         .eq("is_active", true)
         .order("created_at", { ascending: false })
         .limit(5);
       if (error) throw error;
-      return data || [];
+      return (data || []).map((song: any) => ({
+        ...song,
+        songwriters: (song.song_writers || [])
+          .map((sw: any) => sw.writers?.name)
+          .filter(Boolean),
+        control: (song.song_ownership || [])
+          .filter((o: any) => o.tribes_administered)
+          .reduce((sum: number, o: any) => sum + (o.ownership_percentage || 0), 0),
+      }));
     },
   });
 
@@ -75,22 +93,26 @@ export default function RightsOverview() {
         <AppTable>
           <AppTableHeader>
             <AppTableRow>
+              <AppTableHead>ID</AppTableHead>
               <AppTableHead>Title</AppTableHead>
-              <AppTableHead>Song number</AppTableHead>
-              <AppTableHead>Added</AppTableHead>
+              <AppTableHead>Songwriters</AppTableHead>
+              <AppTableHead align="right">Control</AppTableHead>
+              <AppTableHead>Last updated</AppTableHead>
             </AppTableRow>
           </AppTableHeader>
           <AppTableBody>
             {recentSongs.length === 0 ? (
-              <AppTableEmpty colSpan={3}>
+              <AppTableEmpty colSpan={5}>
                 <span className="text-muted-foreground text-sm">No songs in catalog</span>
               </AppTableEmpty>
             ) : (
               recentSongs.map((song: any) => (
                 <AppTableRow key={song.id} clickable onClick={() => navigate(`/rights/catalog/${song.song_number}`)}>
-                  <AppTableCell className="font-medium">{song.title}</AppTableCell>
                   <AppTableCell muted>{song.song_number}</AppTableCell>
-                  <AppTableCell muted>{format(new Date(song.created_at), "MMM d, yyyy")}</AppTableCell>
+                  <AppTableCell className="font-medium">{song.title}</AppTableCell>
+                  <AppTableCell muted>{song.songwriters.join(" / ") || "—"}</AppTableCell>
+                  <AppTableCell align="right" muted>{song.control > 0 ? `${song.control}%` : "—"}</AppTableCell>
+                  <AppTableCell muted>{format(new Date(song.updated_at), "MMM d, yyyy")}</AppTableCell>
                 </AppTableRow>
               ))
             )}
