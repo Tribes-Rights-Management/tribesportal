@@ -132,7 +132,7 @@ export default function ClientOverviewTab({ client }: ClientOverviewTabProps) {
             />
           </AppDetailRowGroup>
           {client.notes && (
-            <div className="px-4 py-3 border-t border-border">
+            <div className="px-5 py-3 border-t border-border">
               <p className="text-xs uppercase tracking-wider font-semibold text-muted-foreground/60 mb-2">
                 Notes
               </p>

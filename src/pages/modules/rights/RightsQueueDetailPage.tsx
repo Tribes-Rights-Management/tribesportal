@@ -230,7 +230,7 @@ export default function RightsQueueDetailPage() {
           <div className="space-y-4">
             {/* Song Details Card */}
             <AppCard>
-              <AppCardBody>
+              <AppCardBody className={isEditing ? undefined : "p-0"}>
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-medium">Song Details</h3>
                   {!isEditing ? (

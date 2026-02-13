@@ -122,7 +122,7 @@ export function AppDetailRow({
     return (
       <div
         className={cn(
-          "px-4 py-3",
+          "px-5 py-3",
           "w-full max-w-full min-w-0",
           className
         )}
@@ -154,9 +154,9 @@ export function AppDetailRow({
   // Standard stacked layout - clean vertical flow
   return (
     <div
-      className={cn(
-        "px-4 py-3",
-        "w-full max-w-full min-w-0",
+        className={cn(
+          "px-5 py-3",
+          "w-full max-w-full min-w-0",
         isInteractive && "cursor-pointer hover:bg-accent/40 transition-colors duration-150",
         className
       )}
