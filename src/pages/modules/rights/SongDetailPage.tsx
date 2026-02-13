@@ -2,7 +2,16 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useDebounce } from "@/hooks/useDebounce";
-import { AppPageLayout, AppSection } from "@/components/app-ui";
+import {
+  AppPageLayout,
+  AppSection,
+  AppCard,
+  AppCardHeader,
+  AppCardTitle,
+  AppCardBody,
+  AppDetailRow,
+  AppDetailRowGroup,
+} from "@/components/app-ui";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { generateLabelCopy as generateLabelCopySchema, getPublicationYear } from "@/types/song-schema";
@@ -88,50 +97,12 @@ function toSlug(title: string) {
   );
 }
 
-// ── Detail Row (supports inline editing) ────────────────────
-function DetailRow({
-  label,
-  children,
-  editing = false,
-  value = "",
-  onValueChange,
-  multiline = false,
-  type = "text",
-}: {
-  label: string;
-  children?: React.ReactNode;
-  editing?: boolean;
-  value?: string;
-  onValueChange?: (val: string) => void;
-  multiline?: boolean;
-  type?: "text" | "date";
-}) {
-  return (
-    <div className="py-2.5">
-      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">
-        {label}
-      </span>
-      {editing && onValueChange ? (
-        multiline ? (
-          <textarea
-            value={value}
-            onChange={(e) => onValueChange(e.target.value)}
-            className="mt-1 w-full text-[14px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1.5 min-h-[60px] resize-y focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
-          />
-        ) : (
-          <input
-            type={type}
-            value={value}
-            onChange={(e) => onValueChange(e.target.value)}
-            className="mt-1 w-full text-[14px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
-          />
-        )
-      ) : (
-        <div className="text-[15px] text-foreground font-medium mt-1">{children}</div>
-      )}
-    </div>
-  );
-}
+// ── Edit-mode input styling ─────────────────────────────────
+const editInputClass =
+  "w-full text-sm text-foreground bg-white dark:bg-muted/30 border border-[var(--app-surface-border)] rounded-lg px-3 h-10 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary/40 transition-colors";
+
+const editTextareaClass =
+  "w-full text-sm text-foreground bg-white dark:bg-muted/30 border border-[var(--app-surface-border)] rounded-lg px-3 py-2 min-h-[60px] resize-y focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary/40 transition-colors";
 
 // ── Status Select (edit mode only) ──────────────────────────
 function StatusSelect({
@@ -145,7 +116,7 @@ function StatusSelect({
     <select
       value={value ? "active" : "inactive"}
       onChange={(e) => onChange(e.target.value === "active")}
-      className="mt-1 w-full text-[14px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
+      className={editInputClass}
     >
       <option value="active">Active</option>
       <option value="inactive">Inactive</option>
@@ -158,7 +129,7 @@ function StatusBadge({ active }: { active: boolean }) {
   return (
     <span
       className={cn(
-        "text-[11px] uppercase tracking-[0.05em] font-medium px-2.5 py-1 rounded-md",
+        "text-xs font-medium px-2.5 py-1 rounded-md",
         active
           ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
           : "text-muted-foreground bg-muted border border-border"
@@ -166,22 +137,6 @@ function StatusBadge({ active }: { active: boolean }) {
     >
       {active ? "Active" : "Inactive"}
     </span>
-  );
-}
-
-// ── Section Panel ───────────────────────────────────────────
-function SectionPanel({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="mt-4 rounded-lg border border-[var(--border-subtle)]">
-      <div className="px-5 py-3 border-b border-[var(--border-subtle)]">
-        <h2 className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]">
-          {title}
-        </h2>
-      </div>
-      <div className="px-5 py-4">
-        {children}
-      </div>
-    </div>
   );
 }
 
@@ -289,23 +244,23 @@ function PublisherTypeahead({
         }}
         onFocus={() => search.length >= 1 && setOpen(true)}
         placeholder={placeholder}
-        className="w-full text-[13px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
+        className="w-full text-sm text-foreground bg-white dark:bg-muted/30 border border-[var(--app-surface-border)] rounded-lg px-3 h-10 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary/40 transition-colors"
       />
       {showDropdown && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-card border border-border rounded shadow-sm z-10 max-h-[280px] overflow-y-auto">
+        <div className="absolute left-0 right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg z-10 max-h-[280px] overflow-y-auto">
           {isAdding ? (
             <div className="p-3 space-y-3">
-              <p className="text-[13px] text-foreground font-medium">
+              <p className="text-sm text-foreground font-medium">
                 Adding: &quot;{search.trim()}&quot;
               </p>
               <div>
-                <label className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">
+                <label className="text-xs font-medium text-muted-foreground">
                   PRO
                 </label>
                 <select
                   value={newEntryPro}
                   onChange={(e) => setNewEntryPro(e.target.value)}
-                  className="mt-1 w-full text-[14px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
+                  className={cn(editInputClass, "mt-1")}
                 >
                   <option value="">None / Unknown</option>
                   {PRO_OPTIONS.map((pro) => (
@@ -320,7 +275,7 @@ function PublisherTypeahead({
                     setIsAdding(false);
                     setNewEntryPro("");
                   }}
-                  className="text-[12px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
                 >
                   Cancel
                 </button>
@@ -328,7 +283,7 @@ function PublisherTypeahead({
                   type="button"
                   onClick={handleConfirmCreate}
                   disabled={isCreating}
-                  className="text-[12px] font-medium text-primary-foreground bg-foreground rounded px-3 py-1 hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="text-xs font-medium text-background bg-foreground rounded-lg px-3 py-1.5 hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   {isCreating ? "Adding…" : "Add Publisher"}
                 </button>
@@ -341,11 +296,11 @@ function PublisherTypeahead({
                   key={r.id}
                   type="button"
                   onClick={() => handleSelect(r)}
-                  className="w-full text-left px-3 py-2 text-[14px] text-foreground hover:bg-muted/50 cursor-pointer transition-colors flex items-center justify-between"
+                  className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted/50 cursor-pointer transition-colors flex items-center justify-between"
                 >
                   <span>{r.name}</span>
                   {r.pro && (
-                    <span className="text-[12px] text-muted-foreground ml-auto pl-2">{r.pro}</span>
+                    <span className="text-xs text-muted-foreground ml-auto pl-2">{r.pro}</span>
                   )}
                 </button>
               ))}
@@ -353,7 +308,7 @@ function PublisherTypeahead({
                 <button
                   type="button"
                   onClick={() => setIsAdding(true)}
-                  className="w-full text-left px-3 py-2 text-[12px] text-[var(--app-focus)] hover:bg-muted/50 cursor-pointer font-medium transition-colors"
+                  className="w-full text-left px-3 py-2 text-xs text-primary hover:bg-muted/50 cursor-pointer font-medium transition-colors"
                 >
                   + Add &quot;{search.trim()}&quot; as new publisher
                 </button>
@@ -842,7 +797,7 @@ export default function SongDetailPage() {
           onClick={handleSave}
           disabled={isSaving}
           className={cn(
-            "text-[13px] font-medium px-4 py-1.5 rounded-md bg-[#1F2937] text-white hover:bg-[#374151] transition-colors shadow-sm",
+            "text-sm font-medium px-4 py-2 rounded-lg bg-foreground text-background hover:opacity-90 shadow-sm transition-all",
             isSaving && "opacity-50 cursor-not-allowed"
           )}
         >
@@ -851,7 +806,7 @@ export default function SongDetailPage() {
       )}
       <button
         onClick={editing ? handleCancel : () => setEditing(true)}
-        className="text-[13px] font-medium px-4 py-1.5 rounded-md border border-[var(--border-subtle)] text-[#374151] bg-white hover:bg-[#F9FAFB] hover:border-[var(--border-strong)] transition-colors shadow-sm"
+        className="text-sm font-medium px-4 py-2 rounded-lg border border-[var(--app-surface-border)] text-foreground bg-white hover:bg-muted/50 shadow-sm transition-all"
       >
         {editing ? "Cancel" : "Edit"}
       </button>
@@ -864,522 +819,570 @@ export default function SongDetailPage() {
       backLink={{ to: "/rights/catalog", label: "Catalog" }}
       action={actionSlot}
     >
-      <div>
+      <div className="max-w-4xl">
         {/* ─── 1. OVERVIEW ──────────────────────────────── */}
-        <SectionPanel title="Overview">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            {editing ? (
-              <DetailRow
-                label="Title"
-                editing
-                value={editedFields.title}
-                onValueChange={(v) => updateField("title", v)}
-              />
-            ) : (
-              <DetailRow label="Title">{song.title}</DetailRow>
-            )}
-
-            {(song.language || editing) && (
-              <DetailRow
-                label="Language"
-                editing={editing}
-                value={editedFields.language}
-                onValueChange={(v) => updateField("language", v)}
-              >
-                {song.language || "—"}
-              </DetailRow>
-            )}
-
-            <DetailRow
-              label="Alternate Title"
-              editing={editing}
-              value={editedFields.alternate_titles}
-              onValueChange={(v) => updateField("alternate_titles", v)}
-            >
-              {song.alternate_titles && song.alternate_titles.length > 0
-                ? song.alternate_titles.join(", ")
-                : <span className="text-[#D1D5DB]">—</span>}
-            </DetailRow>
-
-            {song.duration_seconds != null && (
-              <DetailRow label="Duration">
-                {formatDuration(song.duration_seconds)}
-              </DetailRow>
-            )}
-          </div>
-        </SectionPanel>
+        <AppCard className="mt-5">
+          <AppCardHeader>
+            <AppCardTitle>Overview</AppCardTitle>
+          </AppCardHeader>
+          {editing ? (
+            <AppCardBody>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Title</label>
+                  <input
+                    type="text"
+                    value={editedFields.title}
+                    onChange={(e) => updateField("title", e.target.value)}
+                    className={editInputClass}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Language</label>
+                  <input
+                    type="text"
+                    value={editedFields.language}
+                    onChange={(e) => updateField("language", e.target.value)}
+                    className={editInputClass}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Alternate Title</label>
+                  <input
+                    type="text"
+                    value={editedFields.alternate_titles}
+                    onChange={(e) => updateField("alternate_titles", e.target.value)}
+                    className={editInputClass}
+                  />
+                </div>
+                {song.duration_seconds != null && (
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Duration</label>
+                    <div className="text-sm font-medium text-foreground h-10 flex items-center">
+                      {formatDuration(song.duration_seconds)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </AppCardBody>
+          ) : (
+            <AppCardBody className="p-0">
+              <AppDetailRowGroup>
+                <AppDetailRow label="Title" value={song.title} />
+                <AppDetailRow label="Language" value={song.language || "—"} />
+                <AppDetailRow
+                  label="Alternate Title"
+                  value={
+                    song.alternate_titles && song.alternate_titles.length > 0
+                      ? song.alternate_titles.join(", ")
+                      : "—"
+                  }
+                />
+                {song.duration_seconds != null && (
+                  <AppDetailRow label="Duration" value={formatDuration(song.duration_seconds)} />
+                )}
+              </AppDetailRowGroup>
+            </AppCardBody>
+          )}
+        </AppCard>
 
         {/* ─── 2. SONGWRITERS (from song_writers table) ──── */}
-        <SectionPanel title="Songwriters">
-          {editing ? (
-            <div className="space-y-3">
-              {/* Column headers */}
-              <div className="flex items-center gap-3">
-                <div className="flex-1">
-                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Writer</span>
-                </div>
-                <div className="w-[140px]">
-                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">IPI Number</span>
-                </div>
-                <div className="w-[70px]">
-                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Share %</span>
-                </div>
-                <div className="w-[22px]" />
-              </div>
-              {editedFields.writers.map((writer, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <div className="flex-1 relative">
-                    <input
-                      value={writer.name}
-                      onChange={(e) => {
-                        const updated = [...editedFields.writers];
-                        updated[index] = { ...updated[index], name: e.target.value };
-                        updateField("writers", updated);
-                        searchWriters(e.target.value, index);
-                        setActiveWriterSearch(index);
-                      }}
-                      onFocus={() => setActiveWriterSearch(index)}
-                      onBlur={() => setTimeout(() => setActiveWriterSearch(null), 200)}
-                      placeholder="Type to search writers..."
-                      className="w-full text-[14px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
-                    />
-                    {activeWriterSearch === index && writerSearchResults[index]?.length > 0 && (
-                      <div className="absolute z-20 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                        {writerSearchResults[index].map((hit: any) => (
-                          <button
-                            key={hit.objectID}
-                            type="button"
-                            onMouseDown={(e) => e.preventDefault()}
-                            onClick={() => selectWriter(index, hit)}
-                            className="w-full px-3 py-2 text-left hover:bg-muted/50 border-b border-border last:border-b-0 transition-colors flex items-center justify-between gap-3"
-                          >
-                            <span className="font-medium text-[13px] text-foreground">{hit.name}</span>
-                            <span className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded shrink-0">
-                              {hit.pro || "—"}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
+        <AppCard className="mt-5">
+          <AppCardHeader>
+            <AppCardTitle>Songwriters</AppCardTitle>
+          </AppCardHeader>
+          <AppCardBody className={editing ? undefined : "p-0"}>
+            {editing ? (
+              <div className="space-y-3">
+                {/* Column headers */}
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <span className="text-xs font-medium text-muted-foreground">Writer</span>
                   </div>
                   <div className="w-[140px]">
-                    <input
-                      value={writer.ipi_number}
-                      readOnly
-                      tabIndex={-1}
-                      placeholder="—"
-                      className="w-full text-[12px] text-muted-foreground bg-muted/40 border border-border rounded px-2 py-1 h-8 font-mono cursor-not-allowed"
-                    />
+                    <span className="text-xs font-medium text-muted-foreground">IPI Number</span>
                   </div>
                   <div className="w-[70px]">
-                    <input
-                      type="number"
-                      value={writer.share}
-                      onChange={(e) => {
-                        const updated = [...editedFields.writers];
-                        updated[index] = { ...updated[index], share: Number(e.target.value) };
+                    <span className="text-xs font-medium text-muted-foreground">Share %</span>
+                  </div>
+                  <div className="w-[22px]" />
+                </div>
+                {editedFields.writers.map((writer, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div className="flex-1 relative">
+                      <input
+                        value={writer.name}
+                        onChange={(e) => {
+                          const updated = [...editedFields.writers];
+                          updated[index] = { ...updated[index], name: e.target.value };
+                          updateField("writers", updated);
+                          searchWriters(e.target.value, index);
+                          setActiveWriterSearch(index);
+                        }}
+                        onFocus={() => setActiveWriterSearch(index)}
+                        onBlur={() => setTimeout(() => setActiveWriterSearch(null), 200)}
+                        placeholder="Type to search writers..."
+                        className={editInputClass}
+                      />
+                      {activeWriterSearch === index && writerSearchResults[index]?.length > 0 && (
+                        <div className="absolute z-20 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                          {writerSearchResults[index].map((hit: any) => (
+                            <button
+                              key={hit.objectID}
+                              type="button"
+                              onMouseDown={(e) => e.preventDefault()}
+                              onClick={() => selectWriter(index, hit)}
+                              className="w-full px-3 py-2 text-left hover:bg-muted/50 border-b border-border last:border-b-0 transition-colors flex items-center justify-between gap-3"
+                            >
+                              <span className="font-medium text-sm text-foreground">{hit.name}</span>
+                              <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded shrink-0">
+                                {hit.pro || "—"}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="w-[140px]">
+                      <input
+                        value={writer.ipi_number}
+                        readOnly
+                        tabIndex={-1}
+                        placeholder="—"
+                        className="w-full text-xs text-muted-foreground bg-muted/40 border border-border rounded-lg px-3 h-10 font-mono cursor-not-allowed"
+                      />
+                    </div>
+                    <div className="w-[70px]">
+                      <input
+                        type="number"
+                        value={writer.share}
+                        onChange={(e) => {
+                          const updated = [...editedFields.writers];
+                          updated[index] = { ...updated[index], share: Number(e.target.value) };
+                          updateField("writers", updated);
+                        }}
+                        placeholder="%"
+                        className={cn(editInputClass, "text-right")}
+                      />
+                    </div>
+                    <button
+                      onClick={() => {
+                        const updated = editedFields.writers.filter((_, i) => i !== index);
                         updateField("writers", updated);
                       }}
-                      placeholder="%"
-                      className="w-full text-[12px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 text-right focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
-                    />
+                      className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                      title="Remove writer"
+                    >
+                      <span className="text-sm">×</span>
+                    </button>
                   </div>
-                  <button
-                    onClick={() => {
-                      const updated = editedFields.writers.filter((_, i) => i !== index);
-                      updateField("writers", updated);
-                    }}
-                    className="text-muted-foreground hover:text-destructive transition-colors p-1"
-                    title="Remove writer"
-                  >
-                    <span className="text-[14px]">×</span>
-                  </button>
-                </div>
-              ))}
-              {/* Writer total */}
-              <div className="flex items-center gap-3 pt-2 border-t border-border">
-                <div className="flex-1" />
-                <div className="w-[140px]" />
-                <div className="w-[70px]">
+                ))}
+                {/* Writer total */}
+                <div className="flex items-center gap-3 pt-2 border-t border-border">
+                  <div className="flex-1" />
+                  <div className="w-[140px]" />
+                  <div className="w-[70px]">
                     <span className={cn(
-                      "text-[13px] font-semibold block text-right pr-2",
+                      "text-sm font-semibold block text-right pr-2",
                       writerTotal === 100 ? "text-emerald-600" : "text-red-600"
                     )}>
                       {writerTotal.toFixed(2)}%
                     </span>
-                </div>
-                <div className="w-[22px]" />
-              </div>
-              <button
-                onClick={() => {
-                  const updated = [...editedFields.writers, {
-                    id: undefined,
-                    writer_id: null,
-                    name: "",
-                    pro: "",
-                    ipi_number: "",
-                    share: 0,
-                    credit: "both",
-                  }];
-                  updateField("writers", updated);
-                }}
-                className="text-[13px] font-medium text-[#6B7280] hover:text-[#374151] transition-colors mt-1"
-              >
-                + Add Writer
-              </button>
-            </div>
-          ) : (
-            songWriters.length > 0 ? (
-              <>
-                {/* Desktop: existing table layout */}
-                <div className="hidden md:block">
-                  {/* Column headers */}
-                  <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
-                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Writer</span>
-                    <div className="flex items-center gap-4">
-                      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[120px] text-right">IPI Number</span>
-                      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[50px] text-right">Share</span>
-                    </div>
                   </div>
-                  <div className="divide-y divide-border">
-                    {songWriters.map((sw, index) => (
-                      <div key={sw.id || index} className="flex items-center justify-between py-2.5">
-                        <span className="text-[14px] text-foreground font-medium">{sw.name || "Unknown"}</span>
-                        <div className="flex items-center gap-4">
-                          {sw.ipi_number && (
-                            <span className="text-[13px] text-[#6B7280] font-mono w-[120px] text-right">{sw.ipi_number}</span>
-                          )}
-                          <span className="text-[13px] text-[#6B7280] w-[50px] text-right">{sw.share}%</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-border">
-                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]">Total</span>
-                    <span className={cn("text-[13px] font-semibold w-[50px] text-right", writerTotal === 100 ? "text-emerald-600" : "text-red-600")}>{writerTotal.toFixed(2)}%</span>
-                  </div>
+                  <div className="w-[22px]" />
                 </div>
-
-                {/* Mobile: stacked card layout */}
-                <div className="md:hidden -mx-5 -mb-4">
-                  <div className="rounded-xl border border-border overflow-hidden mx-4 mb-4">
-                    {songWriters.map((sw, index) => (
-                      <div key={sw.id || index} className={`px-4 py-3.5 ${index < songWriters.length - 1 ? "border-b border-zinc-100" : ""}`}>
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1 min-w-0 mr-3">
-                            <span className="text-[14px] font-medium text-zinc-900">{sw.name || "Unknown"}</span>
-                            {sw.ipi_number && (
-                              <div className="mt-1 text-[12px] text-zinc-400 font-mono">{sw.ipi_number}</div>
-                            )}
-                          </div>
-                          <span className="text-[18px] font-semibold tabular-nums text-zinc-900 shrink-0">{sw.share}%</span>
-                        </div>
-                      </div>
-                    ))}
-                    <div className="flex items-center justify-between px-4 py-3 bg-zinc-50 border-t border-zinc-100">
-                      <span className="text-[11px] font-semibold tracking-[0.06em] uppercase text-zinc-400">Total</span>
-                      <span className={cn("text-[15px] font-bold tabular-nums", writerTotal === 100 ? "text-emerald-600" : "text-red-500")}>{writerTotal.toFixed(2)}%</span>
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <p className="text-[13px] text-muted-foreground/50">No songwriters added</p>
-            )
-          )}
-        </SectionPanel>
-
-        {/* ─── 3. OWNERSHIP ─────────────────────────────── */}
-        <SectionPanel title="Ownership">
-          {editing ? (
-            <div className="space-y-3">
-              {/* Column headers */}
-              <div className="flex items-center gap-3">
-                <div className="flex-1">
-                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Publisher</span>
-                </div>
-                <div className="w-[80px]">
-                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">PRO</span>
-                </div>
-                <div className="w-[120px]">
-                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Administered</span>
-                </div>
-                <div className="w-[70px]">
-                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Share %</span>
-                </div>
-                <div className="w-[22px]" />
-              </div>
-              {editedFields.ownership
-                .map((row, index) => ({ row, index }))
-                .filter(({ row }) => !row._deleted)
-                .map(({ row, index }) => (
-                  <div key={index}>
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1">
-                        <PublisherTypeahead
-                          value={row.publisher_name}
-                          onChange={(publisherId, name, pro) => {
-                            const updated = [...editedFields.ownership];
-                            updated[index] = {
-                              ...updated[index],
-                              publisher_id: publisherId,
-                              publisher_name: name,
-                              pro: pro || null,
-                              // Re-resolve Tribes entity if administered
-                              ...(updated[index].tribes_administered && pro ? {
-                                administrator_entity_id: tribesEntities[pro]?.id || null,
-                                administrator_name: tribesEntities[pro]?.entity_name || "No Tribes entity for this PRO",
-                              } : {}),
-                            };
-                            updateField("ownership", updated);
-                          }}
-                          placeholder="Type to search publishers…"
-                        />
-                      </div>
-                      <div className="w-[80px]">
-                        <span className="text-[12px] text-muted-foreground px-2 py-1 h-8 flex items-center">
-                          {row.pro || "—"}
-                        </span>
-                      </div>
-                      <div className="w-[120px]">
-                        <select
-                          value={row.tribes_administered ? "yes" : "no"}
-                          onChange={(e) => handleTribesToggle(index, e.target.value === "yes")}
-                          className="w-full text-[12px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
-                        >
-                          <option value="yes">Yes</option>
-                          <option value="no">No</option>
-                        </select>
-                      </div>
-                      <div className="w-[70px]">
-                        <input
-                          type="number"
-                          value={row.ownership_percentage}
-                          onChange={(e) => {
-                            const updated = [...editedFields.ownership];
-                            updated[index] = { ...updated[index], ownership_percentage: Number(e.target.value) };
-                            updateField("ownership", updated);
-                          }}
-                          placeholder="%"
-                          className="w-full text-[12px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-2 py-1 h-8 text-right focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors"
-                        />
-                      </div>
-                      <button
-                        onClick={() => {
-                          const updated = [...editedFields.ownership];
-                          if (row.id && !row._isNew) {
-                            updated[index] = { ...updated[index], _deleted: true };
-                          } else {
-                            updated.splice(index, 1);
-                          }
-                          updateField("ownership", updated);
-                        }}
-                        className="text-muted-foreground hover:text-destructive transition-colors p-1"
-                        title="Remove ownership"
-                      >
-                        <span className="text-[14px]">×</span>
-                      </button>
-                    </div>
-                    {/* Administrator display (only when tribes_administered) */}
-                    {row.tribes_administered && (
-                      <div className="ml-0 mt-1 mb-1 pl-2 border-l-2 border-border">
-                        <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] mr-2">Administrator:</span>
-                        <span className="text-[12px] text-foreground">{row.administrator_name || "—"}</span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              {/* Total row */}
-              <div className="flex items-center gap-3 pt-2 border-t border-border">
-                <div className="flex-1 text-right">
-                  <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]">Total</span>
-                </div>
-                <div className="w-[80px]" />
-                <div className="w-[120px]" />
-                <div className="w-[70px]">
-                    <span className={cn(
-                      "text-[13px] font-semibold block text-right pr-2",
-                      ownershipTotal === 100 ? "text-emerald-600" : "text-red-600"
-                  )}>
-                    {ownershipTotal}%
-                  </span>
-                </div>
-                <div className="w-[22px]" />
-              </div>
-              <button
-                onClick={() => {
-                  const updated = [...editedFields.ownership, {
-                    publisher_id: "",
-                    publisher_name: "",
-                    pro: null,
-                    ownership_percentage: 0,
-                    tribes_administered: false,
-                    administrator_entity_id: null,
-                    administrator_name: null,
-                    song_writer_id: null,
-                    territory: "",
-                    _isNew: true,
-                  }];
-                  updateField("ownership", updated);
-                }}
-                className="text-[13px] font-medium text-[#6B7280] hover:text-[#374151] transition-colors mt-1"
-              >
-                + Add Ownership
-              </button>
-            </div>
-          ) : (
-            ownership.length > 0 ? (
-              <>
-                {/* Desktop: existing table layout */}
-                <div className="hidden md:block">
-                  <div className="flex items-center justify-between pb-2 mb-1 border-b border-border">
-                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF]">Publisher</span>
-                    <div className="flex items-center gap-4">
-                      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[80px] text-center">PRO</span>
-                      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[100px] text-center">Administered</span>
-                      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[60px] text-right">Share</span>
-                      <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#9CA3AF] w-[140px] text-right">Administrator</span>
-                    </div>
-                  </div>
-                  <div className="divide-y divide-border">
-                    {ownership.map((row) => (
-                      <div key={row.id} className="flex items-center justify-between py-2.5">
-                        <span className="text-[14px] text-foreground font-medium">{row.publisher_name || "Unknown Publisher"}</span>
-                        <div className="flex items-center gap-4">
-                          <span className="text-[13px] text-[#6B7280] w-[80px] text-center">{row.pro || "—"}</span>
-                          <span className="text-[13px] text-[#6B7280] w-[100px] text-center">{row.tribes_administered ? "Yes" : "No"}</span>
-                          <span className="text-[13px] text-[#6B7280] w-[60px] text-right">{row.ownership_percentage}%</span>
-                          <span className="text-[13px] text-[#6B7280] w-[140px] text-right">{row.tribes_administered ? row.administrator_name || "—" : "—"}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-border">
-                    <span className="text-[11px] uppercase tracking-[0.05em] font-medium text-[#6B7280]">Total</span>
-                    <div className="flex items-center gap-4">
-                      <span className="w-[80px]" />
-                      <span className="w-[100px]" />
-                      <span className={cn("text-[13px] font-semibold w-[60px] text-right", ownershipTotal === 100 ? "text-emerald-600" : "text-red-600")}>{ownershipTotal}%</span>
-                      <span className="w-[140px]" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Mobile: stacked card layout */}
-                <div className="md:hidden -mx-5 -mb-4">
-                  <div className="rounded-xl border border-border overflow-hidden mx-4 mb-4">
-                    {ownership.map((row, index) => (
-                      <div key={row.id} className={`px-4 py-3.5 ${index < ownership.length - 1 ? "border-b border-zinc-100" : ""}`}>
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1 min-w-0 mr-3">
-                            <span className="text-[14px] font-medium text-zinc-900 block">{row.publisher_name || "Unknown Publisher"}</span>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-[12px] text-zinc-400">{row.pro || "—"}</span>
-                              <span className="text-zinc-200">·</span>
-                              <span className="text-[12px] text-zinc-400">{row.tribes_administered ? "Administered" : "Not administered"}</span>
-                            </div>
-                          </div>
-                          <span className="text-[18px] font-semibold tabular-nums text-zinc-900 shrink-0">{row.ownership_percentage}%</span>
-                        </div>
-                      </div>
-                    ))}
-                    <div className="flex items-center justify-between px-4 py-3 bg-zinc-50 border-t border-zinc-100">
-                      <span className="text-[11px] font-semibold tracking-[0.06em] uppercase text-zinc-400">Total</span>
-                      <span className={cn("text-[15px] font-bold tabular-nums", ownershipTotal === 100 ? "text-emerald-600" : "text-red-500")}>{ownershipTotal}%</span>
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <p className="text-[13px] text-muted-foreground/50">No ownership records</p>
-            )
-          )}
-        </SectionPanel>
-
-        {/* ─── 4. LABEL COPY ──────────────────────────── */}
-        <SectionPanel title="Controlled Label Copy">
-          {(() => {
-            const year = song.metadata?.publication_year ?? null;
-            const tribesPublishers = ownership
-              .filter((o) => o.tribes_administered && o.publisher_name)
-              .reduce((acc, o) => {
-                if (!acc.some(p => p.name === o.publisher_name)) {
-                  acc.push({ name: o.publisher_name!, pro: o.pro || null });
-                }
-                return acc;
-              }, [] as Array<{ name: string; pro: string | null }>);
-            const labelCopy = tribesPublishers.length > 0
-              ? generateLabelCopySchema(year, tribesPublishers)
-              : null;
-            return labelCopy ? (
-              <div className="flex items-start justify-between gap-4">
-                <p className="text-[14px] text-foreground leading-relaxed">{labelCopy}</p>
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(labelCopy);
-                    toast.success("Label copy copied to clipboard");
+                    const updated = [...editedFields.writers, {
+                      id: undefined,
+                      writer_id: null,
+                      name: "",
+                      pro: "",
+                      ipi_number: "",
+                      share: 0,
+                      credit: "both",
+                    }];
+                    updateField("writers", updated);
                   }}
-                  className="text-[12px] font-medium px-3 py-1 rounded-md border border-[var(--border-subtle)] text-[#374151] bg-white hover:bg-[#F9FAFB] shadow-sm transition-colors whitespace-nowrap"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mt-1"
                 >
-                  Copy
+                  + Add Writer
                 </button>
               </div>
             ) : (
-              <p className="text-[13px] text-muted-foreground/50">No Tribes-administered publishers on this song.</p>
-            );
-          })()}
-        </SectionPanel>
+              songWriters.length > 0 ? (
+                <>
+                  {/* Desktop: table layout */}
+                  <div className="hidden md:block">
+                    {/* Column headers */}
+                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
+                      <span className="text-xs font-medium text-muted-foreground">Writer</span>
+                      <div className="flex items-center gap-6">
+                        <span className="text-xs font-medium text-muted-foreground w-[120px] text-right">IPI Number</span>
+                        <span className="text-xs font-medium text-muted-foreground w-[50px] text-right">Share</span>
+                      </div>
+                    </div>
+                    <div className="divide-y divide-border">
+                      {songWriters.map((sw, index) => (
+                        <div key={sw.id || index} className="flex items-center justify-between px-4 py-3">
+                          <span className="text-sm font-medium text-foreground">{sw.name || "Unknown"}</span>
+                          <div className="flex items-center gap-6">
+                            {sw.ipi_number ? (
+                              <span className="text-sm text-muted-foreground font-mono tabular-nums w-[120px] text-right">{sw.ipi_number}</span>
+                            ) : (
+                              <span className="w-[120px]" />
+                            )}
+                            <span className="text-sm text-muted-foreground tabular-nums w-[50px] text-right">{sw.share}%</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+                      <span className="text-xs font-medium text-muted-foreground">Total</span>
+                      <span className={cn("text-sm font-semibold tabular-nums w-[50px] text-right", writerTotal === 100 ? "text-emerald-600" : "text-red-600")}>{writerTotal.toFixed(2)}%</span>
+                    </div>
+                  </div>
+
+                  {/* Mobile: stacked card layout */}
+                  <div className="md:hidden">
+                    <div className="divide-y divide-border">
+                      {songWriters.map((sw, index) => (
+                        <div key={sw.id || index} className="px-4 py-3.5">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0 mr-3">
+                              <span className="text-[15px] font-semibold text-foreground">{sw.name || "Unknown"}</span>
+                              {sw.ipi_number && (
+                                <div className="mt-0.5 text-xs text-muted-foreground font-mono">{sw.ipi_number}</div>
+                              )}
+                            </div>
+                            <span className="text-[20px] font-bold tabular-nums text-foreground shrink-0">{sw.share}%</span>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="flex items-center justify-between px-4 py-3.5 bg-muted/50">
+                        <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Total</span>
+                        <span className={cn("text-[15px] font-bold tabular-nums", writerTotal === 100 ? "text-emerald-600" : "text-red-600")}>{writerTotal.toFixed(2)}%</span>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="px-4 py-6">
+                  <p className="text-sm text-muted-foreground">No songwriters added</p>
+                </div>
+              )
+            )}
+          </AppCardBody>
+        </AppCard>
+
+        {/* ─── 3. OWNERSHIP ─────────────────────────────── */}
+        <AppCard className="mt-5">
+          <AppCardHeader>
+            <AppCardTitle>Ownership</AppCardTitle>
+          </AppCardHeader>
+          <AppCardBody className={editing ? undefined : "p-0"}>
+            {editing ? (
+              <div className="space-y-3">
+                {/* Column headers */}
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <span className="text-xs font-medium text-muted-foreground">Publisher</span>
+                  </div>
+                  <div className="w-[80px]">
+                    <span className="text-xs font-medium text-muted-foreground">PRO</span>
+                  </div>
+                  <div className="w-[120px]">
+                    <span className="text-xs font-medium text-muted-foreground">Administered</span>
+                  </div>
+                  <div className="w-[70px]">
+                    <span className="text-xs font-medium text-muted-foreground">Share %</span>
+                  </div>
+                  <div className="w-[22px]" />
+                </div>
+                {editedFields.ownership
+                  .map((row, index) => ({ row, index }))
+                  .filter(({ row }) => !row._deleted)
+                  .map(({ row, index }) => (
+                    <div key={index}>
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1">
+                          <PublisherTypeahead
+                            value={row.publisher_name}
+                            onChange={(publisherId, name, pro) => {
+                              const updated = [...editedFields.ownership];
+                              updated[index] = {
+                                ...updated[index],
+                                publisher_id: publisherId,
+                                publisher_name: name,
+                                pro: pro || null,
+                                ...(updated[index].tribes_administered && pro ? {
+                                  administrator_entity_id: tribesEntities[pro]?.id || null,
+                                  administrator_name: tribesEntities[pro]?.entity_name || "No Tribes entity for this PRO",
+                                } : {}),
+                              };
+                              updateField("ownership", updated);
+                            }}
+                            placeholder="Type to search publishers…"
+                          />
+                        </div>
+                        <div className="w-[80px]">
+                          <span className="text-xs text-muted-foreground px-2 h-10 flex items-center">
+                            {row.pro || "—"}
+                          </span>
+                        </div>
+                        <div className="w-[120px]">
+                          <select
+                            value={row.tribes_administered ? "yes" : "no"}
+                            onChange={(e) => handleTribesToggle(index, e.target.value === "yes")}
+                            className={editInputClass}
+                          >
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                          </select>
+                        </div>
+                        <div className="w-[70px]">
+                          <input
+                            type="number"
+                            value={row.ownership_percentage}
+                            onChange={(e) => {
+                              const updated = [...editedFields.ownership];
+                              updated[index] = { ...updated[index], ownership_percentage: Number(e.target.value) };
+                              updateField("ownership", updated);
+                            }}
+                            placeholder="%"
+                            className={cn(editInputClass, "text-right")}
+                          />
+                        </div>
+                        <button
+                          onClick={() => {
+                            const updated = [...editedFields.ownership];
+                            if (row.id && !row._isNew) {
+                              updated[index] = { ...updated[index], _deleted: true };
+                            } else {
+                              updated.splice(index, 1);
+                            }
+                            updateField("ownership", updated);
+                          }}
+                          className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                          title="Remove ownership"
+                        >
+                          <span className="text-sm">×</span>
+                        </button>
+                      </div>
+                      {/* Administrator display (only when tribes_administered) */}
+                      {row.tribes_administered && (
+                        <div className="ml-0 mt-1 mb-1 pl-2 border-l-2 border-border">
+                          <span className="text-xs font-medium text-muted-foreground mr-2">Administrator:</span>
+                          <span className="text-xs text-foreground">{row.administrator_name || "—"}</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                {/* Total row */}
+                <div className="flex items-center gap-3 pt-2 border-t border-border">
+                  <div className="flex-1 text-right">
+                    <span className="text-xs font-medium text-muted-foreground">Total</span>
+                  </div>
+                  <div className="w-[80px]" />
+                  <div className="w-[120px]" />
+                  <div className="w-[70px]">
+                    <span className={cn(
+                      "text-sm font-semibold block text-right pr-2",
+                      ownershipTotal === 100 ? "text-emerald-600" : "text-red-600"
+                    )}>
+                      {ownershipTotal}%
+                    </span>
+                  </div>
+                  <div className="w-[22px]" />
+                </div>
+                <button
+                  onClick={() => {
+                    const updated = [...editedFields.ownership, {
+                      publisher_id: "",
+                      publisher_name: "",
+                      pro: null,
+                      ownership_percentage: 0,
+                      tribes_administered: false,
+                      administrator_entity_id: null,
+                      administrator_name: null,
+                      song_writer_id: null,
+                      territory: "",
+                      _isNew: true,
+                    }];
+                    updateField("ownership", updated);
+                  }}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mt-1"
+                >
+                  + Add Ownership
+                </button>
+              </div>
+            ) : (
+              ownership.length > 0 ? (
+                <>
+                  {/* Desktop: table layout */}
+                  <div className="hidden md:block">
+                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
+                      <span className="text-xs font-medium text-muted-foreground">Publisher</span>
+                      <div className="flex items-center gap-6">
+                        <span className="text-xs font-medium text-muted-foreground w-[80px] text-center">PRO</span>
+                        <span className="text-xs font-medium text-muted-foreground w-[100px] text-center">Administered</span>
+                        <span className="text-xs font-medium text-muted-foreground w-[60px] text-right">Share</span>
+                        <span className="text-xs font-medium text-muted-foreground w-[140px] text-right">Administrator</span>
+                      </div>
+                    </div>
+                    <div className="divide-y divide-border">
+                      {ownership.map((row) => (
+                        <div key={row.id} className="flex items-center justify-between px-4 py-3">
+                          <span className="text-sm font-medium text-foreground">{row.publisher_name || "Unknown Publisher"}</span>
+                          <div className="flex items-center gap-6">
+                            <span className="text-sm text-muted-foreground w-[80px] text-center">{row.pro || "—"}</span>
+                            <span className="w-[100px] text-center">
+                              {row.tribes_administered ? (
+                                <span className="text-xs text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">Administered</span>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">—</span>
+                              )}
+                            </span>
+                            <span className="text-sm text-muted-foreground tabular-nums w-[60px] text-right">{row.ownership_percentage}%</span>
+                            <span className="text-sm text-muted-foreground w-[140px] text-right">{row.tribes_administered ? row.administrator_name || "—" : "—"}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+                      <span className="text-xs font-medium text-muted-foreground">Total</span>
+                      <div className="flex items-center gap-6">
+                        <span className="w-[80px]" />
+                        <span className="w-[100px]" />
+                        <span className={cn("text-sm font-semibold tabular-nums w-[60px] text-right", ownershipTotal === 100 ? "text-emerald-600" : "text-red-600")}>{ownershipTotal}%</span>
+                        <span className="w-[140px]" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mobile: stacked card layout */}
+                  <div className="md:hidden">
+                    <div className="divide-y divide-border">
+                      {ownership.map((row, index) => (
+                        <div key={row.id} className="px-4 py-3.5">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0 mr-3">
+                              <span className="text-[15px] font-semibold text-foreground block">{row.publisher_name || "Unknown Publisher"}</span>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <span className="text-xs text-muted-foreground">{row.pro || "—"}</span>
+                                <span className="text-muted-foreground/30">·</span>
+                                <span className="text-xs text-muted-foreground">{row.tribes_administered ? "Administered" : "Not administered"}</span>
+                              </div>
+                            </div>
+                            <span className="text-[20px] font-bold tabular-nums text-foreground shrink-0">{row.ownership_percentage}%</span>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="flex items-center justify-between px-4 py-3.5 bg-muted/50">
+                        <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Total</span>
+                        <span className={cn("text-[15px] font-bold tabular-nums", ownershipTotal === 100 ? "text-emerald-600" : "text-red-600")}>{ownershipTotal}%</span>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="px-4 py-6">
+                  <p className="text-sm text-muted-foreground">No ownership records</p>
+                </div>
+              )
+            )}
+          </AppCardBody>
+        </AppCard>
+
+        {/* ─── 4. LABEL COPY ──────────────────────────── */}
+        <AppCard className="mt-5">
+          <AppCardHeader>
+            <AppCardTitle>Controlled Label Copy</AppCardTitle>
+          </AppCardHeader>
+          <AppCardBody>
+            {(() => {
+              const year = song.metadata?.publication_year ?? null;
+              const tribesPublishers = ownership
+                .filter((o) => o.tribes_administered && o.publisher_name)
+                .reduce((acc, o) => {
+                  if (!acc.some(p => p.name === o.publisher_name)) {
+                    acc.push({ name: o.publisher_name!, pro: o.pro || null });
+                  }
+                  return acc;
+                }, [] as Array<{ name: string; pro: string | null }>);
+              const labelCopy = tribesPublishers.length > 0
+                ? generateLabelCopySchema(year, tribesPublishers)
+                : null;
+              return labelCopy ? (
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                  <p className="text-sm text-foreground leading-relaxed">{labelCopy}</p>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(labelCopy);
+                      toast.success("Label copy copied to clipboard");
+                    }}
+                    className="text-xs font-medium px-3 py-1.5 rounded-lg border border-[var(--app-surface-border)] bg-white hover:bg-muted/50 transition-colors whitespace-nowrap self-start"
+                  >
+                    Copy
+                  </button>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">No Tribes-administered publishers on this song.</p>
+              );
+            })()}
+          </AppCardBody>
+        </AppCard>
 
         {/* ─── 5. LYRICS ────────────────────────────────── */}
         {(metadata.lyrics || editing) && (
-          <SectionPanel title="Lyrics">
-            {editing ? (
-              <textarea
-                ref={(el) => {
-                  if (el) {
-                    el.style.height = 'auto';
-                    el.style.height = el.scrollHeight + 'px';
-                  }
-                }}
-                value={editedFields.lyrics}
-                onChange={(e) => {
-                  updateField("lyrics", e.target.value);
-                  e.target.style.height = 'auto';
-                  e.target.style.height = e.target.scrollHeight + 'px';
-                }}
-                className="w-full text-[13px] text-foreground bg-white border border-[var(--border-subtle)] rounded-md px-3 py-2 min-h-[400px] resize-y focus:outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[#0071E3]/15 focus:ring-offset-0 transition-colors font-sans leading-relaxed overflow-hidden"
-                placeholder="Enter lyrics…"
-              />
-            ) : (
-              <>
-                {/* Desktop: full lyrics */}
-                <pre className="hidden md:block text-[14px] text-[#374151] whitespace-pre-wrap font-sans leading-relaxed">
-                  {metadata.lyrics}
-                </pre>
-                {/* Mobile: collapsible lyrics */}
-                <div className="md:hidden -mx-5 -mb-4">
-                  <div className="px-4 pb-4">
+          <AppCard className="mt-5">
+            <AppCardHeader>
+              <AppCardTitle>Lyrics</AppCardTitle>
+            </AppCardHeader>
+            <AppCardBody>
+              {editing ? (
+                <textarea
+                  ref={(el) => {
+                    if (el) {
+                      el.style.height = 'auto';
+                      el.style.height = el.scrollHeight + 'px';
+                    }
+                  }}
+                  value={editedFields.lyrics}
+                  onChange={(e) => {
+                    updateField("lyrics", e.target.value);
+                    e.target.style.height = 'auto';
+                    e.target.style.height = e.target.scrollHeight + 'px';
+                  }}
+                  className={cn(editTextareaClass, "min-h-[400px] font-sans leading-relaxed overflow-hidden")}
+                  placeholder="Enter lyrics…"
+                />
+              ) : (
+                <>
+                  {/* Desktop: full lyrics */}
+                  <pre className="hidden md:block text-sm text-foreground/80 whitespace-pre-wrap font-sans leading-relaxed py-1 px-1">
+                    {metadata.lyrics}
+                  </pre>
+                  {/* Mobile: collapsible lyrics */}
+                  <div className="md:hidden">
                     <div className={cn("relative", !lyricsExpanded && "max-h-[120px] overflow-hidden")}>
-                      <pre className="text-[13px] leading-relaxed text-zinc-700 whitespace-pre-wrap font-sans">{metadata.lyrics}</pre>
+                      <pre className="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap font-sans">{metadata.lyrics}</pre>
                       {!lyricsExpanded && (
-                        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[var(--app-surface-bg)] to-transparent" />
                       )}
                     </div>
                     <button
                       onClick={() => setLyricsExpanded(!lyricsExpanded)}
-                      className="mt-2 text-[13px] font-medium text-zinc-500"
+                      className="mt-2 text-sm font-medium text-primary"
                     >
                       {lyricsExpanded ? "Show less" : "Show all lyrics"}
                     </button>
                   </div>
-                </div>
-              </>
-            )}
-          </SectionPanel>
+                </>
+              )}
+            </AppCardBody>
+          </AppCard>
         )}
-
-        {/* Bottom breathing room */}
-        <div className="pb-8" />
       </div>
     </AppPageLayout>
   );
