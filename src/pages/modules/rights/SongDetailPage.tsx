@@ -897,7 +897,7 @@ export default function SongDetailPage() {
       backLink={{ to: "/rights/catalog", label: "Catalog" }}
       action={actionSlot}
     >
-      <div className={cn("max-w-4xl", editing && "pb-20 md:pb-0")}>
+      <div className={cn("max-w-6xl", editing && "pb-20 md:pb-0")}>
         {/* ── Mobile sticky edit bar ── */}
         {editing && (
           <div className="fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-[var(--app-surface-border)] px-4 py-3 flex gap-3 md:hidden" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
@@ -920,9 +920,9 @@ export default function SongDetailPage() {
           </div>
         )}
         {/* ─── 1. OVERVIEW ──────────────────────────────── */}
-        <AppCard className="mt-5">
-          <AppCardHeader>
-            <AppCardTitle>Overview</AppCardTitle>
+        <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+          <AppCardHeader className="bg-muted/30 border-b border-border/60 px-6 py-3.5">
+            <AppCardTitle className="text-sm font-semibold text-foreground">Overview</AppCardTitle>
           </AppCardHeader>
           {editing ? (
             <AppCardBody>
@@ -965,7 +965,7 @@ export default function SongDetailPage() {
               </div>
             </AppCardBody>
           ) : (
-            <AppCardBody className="p-0">
+            <AppCardBody className="px-6 py-5">
               <AppDetailRowGroup>
                 <AppDetailRow label="Title" value={song.title} />
                 <AppDetailRow label="Language" value={song.language || "—"} />
@@ -986,11 +986,11 @@ export default function SongDetailPage() {
         </AppCard>
 
         {/* ─── 2. SONGWRITERS (from song_writers table) ──── */}
-        <AppCard className="mt-5">
-          <AppCardHeader>
-            <AppCardTitle>Songwriters</AppCardTitle>
+        <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+          <AppCardHeader className="bg-muted/30 border-b border-border/60 px-6 py-3.5">
+            <AppCardTitle className="text-sm font-semibold text-foreground">Songwriters</AppCardTitle>
           </AppCardHeader>
-          <AppCardBody className={editing ? undefined : "p-0"}>
+          <AppCardBody className={editing ? "px-6 py-5" : "p-0"}>
             {editing ? (
               <div>
                 {/* ── Desktop edit layout ── */}
@@ -1084,7 +1084,7 @@ export default function SongDetailPage() {
                     <div className="w-[140px]" />
                     <div className="w-[70px]">
                       <span className={cn(
-                        "text-sm font-semibold block text-right pr-2",
+                        "text-sm font-semibold block text-right pr-2 whitespace-nowrap tabular-nums",
                         writerTotal === 100 ? "text-emerald-600" : "text-red-600"
                       )}>
                         {writerTotal.toFixed(2)}%
@@ -1225,14 +1225,14 @@ export default function SongDetailPage() {
                             ) : (
                               <span className="w-[120px]" />
                             )}
-                            <span className="text-sm text-muted-foreground tabular-nums w-[50px] text-right">{sw.share}%</span>
+                            <span className="text-sm text-muted-foreground tabular-nums whitespace-nowrap w-[50px] text-right">{sw.share}%</span>
                           </div>
                         </div>
                       ))}
                     </div>
                     <div className="flex items-center justify-between px-4 py-3 border-t border-border">
                       <span className="text-xs font-medium text-muted-foreground">Total</span>
-                      <span className={cn("text-sm font-semibold tabular-nums w-[50px] text-right", writerTotal === 100 ? "text-emerald-600" : "text-red-600")}>{writerTotal.toFixed(2)}%</span>
+                      <span className={cn("text-sm font-semibold tabular-nums whitespace-nowrap w-[50px] text-right", writerTotal === 100 ? "text-emerald-600" : "text-red-600")}>{writerTotal.toFixed(2)}%</span>
                     </div>
                   </div>
 
@@ -1269,11 +1269,11 @@ export default function SongDetailPage() {
         </AppCard>
 
         {/* ─── 3. OWNERSHIP ─────────────────────────────── */}
-        <AppCard className="mt-5">
-          <AppCardHeader>
-            <AppCardTitle>Ownership</AppCardTitle>
+        <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+          <AppCardHeader className="bg-muted/30 border-b border-border/60 px-6 py-3.5">
+            <AppCardTitle className="text-sm font-semibold text-foreground">Ownership</AppCardTitle>
           </AppCardHeader>
-          <AppCardBody className={editing ? undefined : "p-0"}>
+          <AppCardBody className={editing ? "px-6 py-5" : "p-0"}>
             {editing ? (
               <div>
                 {/* ── Desktop edit layout ── */}
@@ -1381,7 +1381,7 @@ export default function SongDetailPage() {
                     <div className="w-[120px]" />
                     <div className="w-[70px]">
                       <span className={cn(
-                        "text-sm font-semibold block text-right pr-2",
+                        "text-sm font-semibold block text-right pr-2 whitespace-nowrap tabular-nums",
                         ownershipTotal === 100 ? "text-emerald-600" : "text-red-600"
                       )}>
                         {ownershipTotal}%
@@ -1531,7 +1531,7 @@ export default function SongDetailPage() {
                                 <span className="text-xs text-muted-foreground">—</span>
                               )}
                             </span>
-                            <span className="text-sm text-muted-foreground tabular-nums w-[60px] text-right">{row.ownership_percentage}%</span>
+                            <span className="text-sm text-muted-foreground tabular-nums whitespace-nowrap w-[60px] text-right">{row.ownership_percentage}%</span>
                             <span className="text-sm text-muted-foreground w-[140px] text-right">{row.tribes_administered ? row.administrator_name || "—" : "—"}</span>
                           </div>
                         </div>
@@ -1542,7 +1542,7 @@ export default function SongDetailPage() {
                       <div className="flex items-center gap-6">
                         <span className="w-[80px]" />
                         <span className="w-[100px]" />
-                        <span className={cn("text-sm font-semibold tabular-nums w-[60px] text-right", ownershipTotal === 100 ? "text-emerald-600" : "text-red-600")}>{ownershipTotal}%</span>
+                        <span className={cn("text-sm font-semibold tabular-nums whitespace-nowrap w-[60px] text-right", ownershipTotal === 100 ? "text-emerald-600" : "text-red-600")}>{ownershipTotal}%</span>
                         <span className="w-[140px]" />
                       </div>
                     </div>
@@ -1583,11 +1583,11 @@ export default function SongDetailPage() {
         </AppCard>
 
         {/* ─── 4. LABEL COPY ──────────────────────────── */}
-        <AppCard className="mt-5">
-          <AppCardHeader>
-            <AppCardTitle>Controlled Label Copy</AppCardTitle>
+        <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+          <AppCardHeader className="bg-muted/30 border-b border-border/60 px-6 py-3.5">
+            <AppCardTitle className="text-sm font-semibold text-foreground">Controlled Label Copy</AppCardTitle>
           </AppCardHeader>
-          <AppCardBody>
+          <AppCardBody className="px-6 py-5">
             {(() => {
               const year = song.metadata?.publication_year ?? null;
               const tribesPublishers = ownership
@@ -1612,16 +1612,16 @@ export default function SongDetailPage() {
 
         {/* ─── 5. LYRICS ────────────────────────────────── */}
         {(metadata.lyrics || editing) && (
-          <AppCard className="mt-5">
-            <AppCardHeader>
+          <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <AppCardHeader className="bg-muted/30 border-b border-border/60 px-6 py-3.5">
               <div className="flex items-center justify-between w-full">
-                <AppCardTitle>Lyrics</AppCardTitle>
+                <AppCardTitle className="text-sm font-semibold text-foreground">Lyrics</AppCardTitle>
                 {metadata.lyrics && !editing && (
                   <CopyIconButton text={metadata.lyrics} successMessage="Lyrics copied to clipboard" label="Copy lyrics" />
                 )}
               </div>
             </AppCardHeader>
-            <AppCardBody>
+            <AppCardBody className="px-6 py-5">
               {editing ? (
                 <textarea
                   ref={(el) => {
