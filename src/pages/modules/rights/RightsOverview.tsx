@@ -46,7 +46,7 @@ export default function RightsOverview() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("songs")
-        .select("id, title, song_number, slug, created_at")
+        .select("id, title, song_number, created_at")
         .eq("is_active", true)
         .order("created_at", { ascending: false })
         .limit(5);
@@ -87,7 +87,7 @@ export default function RightsOverview() {
               </AppTableEmpty>
             ) : (
               recentSongs.map((song: any) => (
-                <AppTableRow key={song.id} clickable onClick={() => navigate(`/rights/catalog/${song.song_number}/${song.slug || ""}`)}>
+                <AppTableRow key={song.id} clickable onClick={() => navigate(`/rights/catalog/${song.song_number}`)}>
                   <AppTableCell className="font-medium">{song.title}</AppTableCell>
                   <AppTableCell muted>{song.song_number}</AppTableCell>
                   <AppTableCell muted>{format(new Date(song.created_at), "MMM d, yyyy")}</AppTableCell>
