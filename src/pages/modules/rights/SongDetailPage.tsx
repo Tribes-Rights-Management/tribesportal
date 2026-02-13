@@ -98,6 +98,10 @@ function toSlug(title: string) {
   );
 }
 
+function formatPercent(value: number): string {
+  return value % 1 === 0 ? `${value}%` : `${value.toFixed(2)}%`;
+}
+
 // ── Edit-mode input styling ─────────────────────────────────
 const editInputClass =
   "w-full text-sm text-foreground bg-white dark:bg-muted/30 border border-[var(--app-surface-border)] rounded-lg px-3 h-10 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary/40 transition-colors";
@@ -651,7 +655,7 @@ export default function SongDetailPage() {
     // Validate writer share total
     const writerTotal = editedFields.writers.reduce((sum, w) => sum + (w.share || 0), 0);
     if (editedFields.writers.length > 0 && writerTotal !== 100) {
-      toast.error(`Writer shares must total exactly 100.00% (currently ${writerTotal.toFixed(2)}%)`);
+      toast.error(`Writer shares must total exactly 100% (currently ${formatPercent(writerTotal)})`);
       return;
     }
 
@@ -1087,7 +1091,7 @@ export default function SongDetailPage() {
                         "text-sm font-semibold block text-right pr-2 whitespace-nowrap tabular-nums",
                         writerTotal === 100 ? "text-emerald-600" : "text-red-600"
                       )}>
-                        {writerTotal.toFixed(2)}%
+                        {formatPercent(writerTotal)}
                       </span>
                     </div>
                     <div className="w-[22px]" />
@@ -1179,7 +1183,7 @@ export default function SongDetailPage() {
                       "text-sm font-semibold tabular-nums",
                       writerTotal === 100 ? "text-emerald-600" : "text-red-600"
                     )}>
-                      {writerTotal.toFixed(2)}%
+                      {formatPercent(writerTotal)}
                     </span>
                   </div>
                 </div>
@@ -1225,14 +1229,14 @@ export default function SongDetailPage() {
                             ) : (
                               <span className="w-[120px]" />
                             )}
-                            <span className="text-sm text-muted-foreground tabular-nums whitespace-nowrap w-[50px] text-right">{sw.share}%</span>
+                            <span className="text-sm text-muted-foreground tabular-nums whitespace-nowrap w-[50px] text-right">{formatPercent(sw.share)}</span>
                           </div>
                         </div>
                       ))}
                     </div>
                     <div className="flex items-center justify-between px-4 py-3 border-t border-border">
                       <span className="text-xs font-medium text-muted-foreground">Total</span>
-                      <span className={cn("text-sm font-semibold tabular-nums whitespace-nowrap w-[50px] text-right", writerTotal === 100 ? "text-emerald-600" : "text-red-600")}>{writerTotal.toFixed(2)}%</span>
+                      <span className={cn("text-sm font-semibold tabular-nums whitespace-nowrap w-[50px] text-right", writerTotal === 100 ? "text-emerald-600" : "text-red-600")}>{formatPercent(writerTotal)}</span>
                     </div>
                   </div>
 
@@ -1248,13 +1252,13 @@ export default function SongDetailPage() {
                                 <div className="mt-0.5 text-xs text-muted-foreground font-mono">{sw.ipi_number}</div>
                               )}
                             </div>
-                            <span className="text-[20px] font-bold tabular-nums text-foreground shrink-0">{sw.share}%</span>
+                            <span className="text-[20px] font-bold tabular-nums text-foreground shrink-0">{formatPercent(sw.share)}</span>
                           </div>
                         </div>
                       ))}
                       <div className="flex items-center justify-between px-4 py-3.5 bg-muted/50">
                         <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Total</span>
-                        <span className={cn("text-[15px] font-bold tabular-nums", writerTotal === 100 ? "text-emerald-600" : "text-red-600")}>{writerTotal.toFixed(2)}%</span>
+                        <span className={cn("text-[15px] font-bold tabular-nums", writerTotal === 100 ? "text-emerald-600" : "text-red-600")}>{formatPercent(writerTotal)}</span>
                       </div>
                     </div>
                   </div>
@@ -1384,7 +1388,7 @@ export default function SongDetailPage() {
                         "text-sm font-semibold block text-right pr-2 whitespace-nowrap tabular-nums",
                         ownershipTotal === 100 ? "text-emerald-600" : "text-red-600"
                       )}>
-                        {ownershipTotal}%
+                        {formatPercent(ownershipTotal)}
                       </span>
                     </div>
                     <div className="w-[22px]" />
@@ -1478,7 +1482,7 @@ export default function SongDetailPage() {
                       "text-sm font-semibold tabular-nums",
                       ownershipTotal === 100 ? "text-emerald-600" : "text-red-600"
                     )}>
-                      {ownershipTotal}%
+                      {formatPercent(ownershipTotal)}
                     </span>
                   </div>
                 </div>
@@ -1525,7 +1529,7 @@ export default function SongDetailPage() {
                           <div className="flex items-center gap-6">
                             <span className="text-sm text-muted-foreground w-[80px] text-center">{row.pro || "—"}</span>
                             <span className="text-sm text-muted-foreground w-[100px] text-center">{row.tribes_administered ? "Y" : "N"}</span>
-                            <span className="text-sm text-muted-foreground tabular-nums whitespace-nowrap w-[60px] text-right">{row.ownership_percentage}%</span>
+                            <span className="text-sm text-muted-foreground tabular-nums whitespace-nowrap w-[60px] text-right">{formatPercent(row.ownership_percentage)}</span>
                             <span className="text-sm text-muted-foreground w-[140px] text-right">{row.tribes_administered ? row.administrator_name || "—" : "—"}</span>
                           </div>
                         </div>
@@ -1536,7 +1540,7 @@ export default function SongDetailPage() {
                       <div className="flex items-center gap-6">
                         <span className="w-[80px]" />
                         <span className="w-[100px]" />
-                        <span className={cn("text-sm font-semibold tabular-nums whitespace-nowrap w-[60px] text-right", ownershipTotal === 100 ? "text-emerald-600" : "text-red-600")}>{ownershipTotal}%</span>
+                        <span className={cn("text-sm font-semibold tabular-nums whitespace-nowrap w-[60px] text-right", ownershipTotal === 100 ? "text-emerald-600" : "text-red-600")}>{formatPercent(ownershipTotal)}</span>
                         <span className="w-[140px]" />
                       </div>
                     </div>
@@ -1560,13 +1564,13 @@ export default function SongDetailPage() {
                                 )}
                               </div>
                             </div>
-                            <span className="text-[20px] font-bold tabular-nums text-foreground shrink-0">{row.ownership_percentage}%</span>
+                            <span className="text-[20px] font-bold tabular-nums text-foreground shrink-0">{formatPercent(row.ownership_percentage)}</span>
                           </div>
                         </div>
                       ))}
                       <div className="flex items-center justify-between px-4 py-3.5 bg-muted/50">
                         <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Total</span>
-                        <span className={cn("text-[15px] font-bold tabular-nums", ownershipTotal === 100 ? "text-emerald-600" : "text-red-600")}>{ownershipTotal}%</span>
+                        <span className={cn("text-[15px] font-bold tabular-nums", ownershipTotal === 100 ? "text-emerald-600" : "text-red-600")}>{formatPercent(ownershipTotal)}</span>
                       </div>
                     </div>
                   </div>
