@@ -655,6 +655,14 @@ export default function SongDetailPage() {
       return;
     }
 
+    // Safety check: warn if all ownership would be removed
+    if (ownership.length > 0 && editedFields.ownership.filter(o => !o._deleted).length === 0) {
+      const confirmed = window.confirm(
+        "This will remove all ownership records. Are you sure?"
+      );
+      if (!confirmed) return;
+    }
+
     setIsSaving(true);
     try {
       // 1. Update song record (NO writers in metadata anymore)
@@ -707,66 +715,96 @@ export default function SongDetailPage() {
   const saveSongWriters = async () => {
     if (!songId) return;
 
-    // Delete existing song_writers for this song
-    await (supabase as any).from("song_writers").delete().eq("song_id", songId);
+    const editedWithIds = editedFields.writers.filter(w => w.id);
+    const existingIds = editedWithIds.map(w => w.id!);
 
-    // Insert updated writer records
-    const writerRecords = editedFields.writers
-      .filter((w) => w.writer_id && w.name.trim())
-      .map((w) => ({
-        song_id: songId,
-        writer_id: w.writer_id!,
-        share: w.share,
-        credit: w.credit || "both",
-      }));
+    // Find writers to delete (exist in DB but not in current edit list)
+    const { data: currentWriters } = await (supabase as any)
+      .from("song_writers")
+      .select("id")
+      .eq("song_id", songId);
 
-    if (writerRecords.length > 0) {
+    const currentIds = (currentWriters || []).map((w: any) => w.id);
+    const idsToDelete = currentIds.filter((id: string) => !existingIds.includes(id));
+
+    if (idsToDelete.length > 0) {
       const { error } = await (supabase as any)
         .from("song_writers")
-        .insert(writerRecords);
+        .delete()
+        .in("id", idsToDelete);
+      if (error) throw error;
+    }
 
-      if (error) {
-        console.error("Error saving writers:", error);
-        toast.error("Failed to save writers");
-        throw error;
-      }
+    // Update existing writers
+    for (const w of editedFields.writers.filter(w => w.id && w.writer_id)) {
+      const { error } = await (supabase as any)
+        .from("song_writers")
+        .update({ writer_id: w.writer_id!, share: w.share, credit: w.credit || "both" })
+        .eq("id", w.id!);
+      if (error) throw error;
+    }
+
+    // Insert new writers
+    const newWriters = editedFields.writers.filter(w => !w.id && w.writer_id && w.name.trim());
+    if (newWriters.length > 0) {
+      const { error } = await (supabase as any)
+        .from("song_writers")
+        .insert(newWriters.map(w => ({
+          song_id: songId,
+          writer_id: w.writer_id!,
+          share: w.share,
+          credit: w.credit || "both",
+        })));
+      if (error) throw error;
     }
   };
 
   const saveOwnershipChanges = async () => {
     if (!songId) return;
 
-    // Delete existing ownership for this song
-    await (supabase as any).from("song_ownership").delete().eq("song_id", songId);
+    const toDelete = editedFields.ownership.filter(o => o._deleted && o.id);
+    const toUpdate = editedFields.ownership.filter(o => !o._deleted && o.id && o.publisher_id);
+    const toInsert = editedFields.ownership.filter(o => !o._deleted && !o.id && o.publisher_id);
 
-    // Get the just-inserted song_writers to map song_writer_id
-    const { data: currentSongWriters } = await (supabase as any)
-      .from("song_writers")
-      .select("id, writer_id")
-      .eq("song_id", songId);
-
-    const ownershipRecords = editedFields.ownership
-      .filter((o) => o.publisher_id && !o._deleted)
-      .map((o) => ({
-        song_id: songId,
-        song_writer_id: o.song_writer_id || null,
-        publisher_id: o.publisher_id,
-        ownership_percentage: o.ownership_percentage,
-        tribes_administered: o.tribes_administered,
-        administrator_entity_id: o.tribes_administered ? o.administrator_entity_id : null,
-        territory: o.territory || null,
-      }));
-
-    if (ownershipRecords.length > 0) {
+    // Delete only explicitly removed rows
+    if (toDelete.length > 0) {
       const { error } = await (supabase as any)
         .from("song_ownership")
-        .insert(ownershipRecords);
+        .delete()
+        .in("id", toDelete.map(o => o.id!));
+      if (error) throw error;
+    }
 
-      if (error) {
-        console.error("Error saving ownership:", error);
-        toast.error("Failed to save ownership");
-        throw error;
-      }
+    // Update existing rows
+    for (const o of toUpdate) {
+      const { error } = await (supabase as any)
+        .from("song_ownership")
+        .update({
+          publisher_id: o.publisher_id,
+          ownership_percentage: o.ownership_percentage,
+          tribes_administered: o.tribes_administered,
+          administrator_entity_id: o.tribes_administered ? o.administrator_entity_id : null,
+          territory: o.territory || null,
+          song_writer_id: o.song_writer_id || null,
+        })
+        .eq("id", o.id!);
+      if (error) throw error;
+    }
+
+    // Insert new rows
+    if (toInsert.length > 0) {
+      const { error } = await (supabase as any)
+        .from("song_ownership")
+        .insert(toInsert.map(o => ({
+          song_id: songId,
+          publisher_id: o.publisher_id,
+          ownership_percentage: o.ownership_percentage,
+          tribes_administered: o.tribes_administered,
+          administrator_entity_id: o.tribes_administered ? o.administrator_entity_id : null,
+          territory: o.territory || null,
+          song_writer_id: o.song_writer_id || null,
+        })));
+      if (error) throw error;
     }
   };
 
