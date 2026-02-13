@@ -24,20 +24,6 @@ export default function RightsOverview() {
   const navigate = useNavigate();
   const { data: queueStats, isLoading: statsLoading } = useQueueStats();
 
-  const { data: recentSongs = [] } = useQuery({
-    queryKey: ["rights-recent-songs"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("songs")
-        .select("id, title, song_number, slug, created_at")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false })
-        .limit(5);
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
   const { data: clientCount } = useQuery({
     queryKey: ["rights-stats", "clients"],
     queryFn: async () => {
@@ -55,14 +41,30 @@ export default function RightsOverview() {
     },
   });
 
+  const { data: recentSongs = [] } = useQuery({
+    queryKey: ["rights-recent-songs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("songs")
+        .select("id, title, song_number, slug, created_at")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   return (
     <AppPageLayout title="Overview">
       <AppStatCardGrid columns={3} className="mb-6">
         <AppStatCard label="Active Clients" value={clientCount ?? "—"} onClick={() => navigate("/rights/clients")} />
+        
         <AppStatCard label="Songs in Queue" value={queueStats?.total ?? "—"} loading={statsLoading} onClick={() => navigate("/rights/queue")} />
         <AppStatCard label="Catalog" value={songCount ?? "—"} onClick={() => navigate("/rights/catalog")} />
       </AppStatCardGrid>
 
+      {/* Recently added songs */}
       <AppSection spacing="md">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-medium text-foreground">Recently added</h2>
@@ -85,9 +87,9 @@ export default function RightsOverview() {
               </AppTableEmpty>
             ) : (
               recentSongs.map((song: any) => (
-                <AppTableRow key={song.id} clickable onClick={() => navigate(`/rights/catalog/${song.song_number}/${song.slug}`)}>
+                <AppTableRow key={song.id} clickable onClick={() => navigate(`/rights/catalog/${song.song_number}/${song.slug || ""}`)}>
                   <AppTableCell className="font-medium">{song.title}</AppTableCell>
-                  <AppTableCell muted>{song.song_number ?? "—"}</AppTableCell>
+                  <AppTableCell muted>{song.song_number}</AppTableCell>
                   <AppTableCell muted>{format(new Date(song.created_at), "MMM d, yyyy")}</AppTableCell>
                 </AppTableRow>
               ))
