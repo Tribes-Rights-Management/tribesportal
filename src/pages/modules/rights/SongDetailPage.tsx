@@ -898,11 +898,14 @@ export default function SongDetailPage() {
   return (
     <AppPageLayout
       title={displayTitle}
-      subtitle={song.song_number ? String(song.song_number) : undefined}
-      subtitleClassName="font-mono"
       backLink={{ to: "/rights/catalog", label: "Catalog" }}
       action={actionSlot}
     >
+      {song.song_number && (
+        <div className="text-sm text-muted-foreground font-mono -mt-3 mb-4">
+          {song.song_number}
+        </div>
+      )}
       <div className={cn("max-w-6xl", editing && "pb-20 md:pb-0")}>
         {/* ── Mobile sticky edit bar ── */}
         {editing && (
