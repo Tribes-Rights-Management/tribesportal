@@ -902,7 +902,7 @@ export default function SongDetailPage() {
       action={actionSlot}
     >
       {song.song_number && (
-        <div className="text-sm text-muted-foreground font-mono -mt-3 mb-4">
+        <div className="text-sm text-muted-foreground font-mono -mt-4 mb-5">
           {song.song_number}
         </div>
       )}
