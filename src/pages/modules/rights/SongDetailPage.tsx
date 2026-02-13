@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { Copy, Check } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -140,7 +141,35 @@ function StatusBadge({ active }: { active: boolean }) {
   );
 }
 
-// ── Publisher Typeahead (searches `publishers` table) ────────
+// ── Label Copy Display with icon copy button ────────────────
+function LabelCopyDisplay({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      toast.success("Label copy copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Failed to copy");
+    }
+  };
+
+  return (
+    <div className="flex items-start gap-2">
+      <p className="text-sm text-foreground leading-relaxed flex-1">{text}</p>
+      <button
+        onClick={handleCopy}
+        className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors shrink-0"
+        aria-label="Copy to clipboard"
+      >
+        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+      </button>
+    </div>
+  );
+}
+
 function PublisherTypeahead({
   value,
   onChange,
@@ -1314,18 +1343,7 @@ export default function SongDetailPage() {
                 ? generateLabelCopySchema(year, tribesPublishers)
                 : null;
               return labelCopy ? (
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                  <p className="text-sm text-foreground leading-relaxed">{labelCopy}</p>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(labelCopy);
-                      toast.success("Label copy copied to clipboard");
-                    }}
-                    className="text-xs font-medium px-3 py-1.5 rounded-lg border border-[var(--app-surface-border)] bg-white hover:bg-muted/50 transition-colors whitespace-nowrap self-start"
-                  >
-                    Copy
-                  </button>
-                </div>
+                <LabelCopyDisplay text={labelCopy} />
               ) : (
                 <p className="text-sm text-muted-foreground">No Tribes-administered publishers on this song.</p>
               );
