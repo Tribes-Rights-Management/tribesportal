@@ -38,6 +38,10 @@ type MaxWidth = "sm" | "md" | "lg" | "xl" | "2xl" | "full";
 interface AppPageLayoutProps {
   /** Page title (required) */
   title: string;
+  /** Optional subtitle below title */
+  subtitle?: string;
+  /** Optional className for the subtitle */
+  subtitleClassName?: string;
   /** Optional action slot (buttons, filters, etc.) — rendered right-aligned */
   action?: React.ReactNode;
   /** Optional back link */
@@ -61,6 +65,8 @@ const maxWidthClasses: Record<MaxWidth, string> = {
 
 export function AppPageLayout({
   title,
+  subtitle,
+  subtitleClassName,
   action,
   backLink,
   maxWidth = "xl",
@@ -92,6 +98,11 @@ export function AppPageLayout({
           )}
           <div className="min-w-0 flex-1">
             <h1 className="page-title">{title}</h1>
+            {subtitle && (
+              <p className={cn("text-sm text-muted-foreground mt-0.5", subtitleClassName)}>
+                {subtitle}
+              </p>
+            )}
           </div>
           {action && (
             <div className="flex items-center gap-2 shrink-0">
