@@ -901,7 +901,7 @@ export default function SongDetailPage() {
         <div>
           <div>{displayTitle}</div>
           {song.song_number && (
-            <div className="text-sm font-normal text-muted-foreground font-mono mt-0.5">
+            <div className="text-sm font-normal text-muted-foreground mt-0.5">
               {song.song_number}
             </div>
           )}
@@ -1221,7 +1221,7 @@ export default function SongDetailPage() {
                   {/* Desktop: table layout */}
                   <div className="hidden md:block">
                     {/* Column headers */}
-                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
+                    <div className="flex items-center justify-between px-6 py-2.5 border-b border-border">
                       <span className="text-xs font-medium text-muted-foreground">Writer</span>
                       <div className="flex items-center gap-6">
                         <span className="text-xs font-medium text-muted-foreground w-[120px] text-right">IPI Number</span>
@@ -1230,7 +1230,7 @@ export default function SongDetailPage() {
                     </div>
                     <div className="divide-y divide-border">
                       {songWriters.map((sw, index) => (
-                        <div key={sw.id || index} className="flex items-center justify-between px-4 py-3">
+                        <div key={sw.id || index} className="flex items-center justify-between px-6 py-3">
                           <span className="text-sm font-medium text-foreground">{sw.name || "Unknown"}</span>
                           <div className="flex items-center gap-6">
                             {sw.ipi_number ? (
@@ -1243,7 +1243,7 @@ export default function SongDetailPage() {
                         </div>
                       ))}
                     </div>
-                    <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+                    <div className="flex items-center justify-between px-6 py-3 border-t border-border">
                       <span className="text-xs font-medium text-muted-foreground">Total</span>
                       <span className={cn("text-sm font-semibold tabular-nums whitespace-nowrap w-[50px] text-right", writerTotal === 100 ? "text-emerald-600" : "text-red-600")}>{formatPercent(writerTotal)}</span>
                     </div>
@@ -1253,7 +1253,7 @@ export default function SongDetailPage() {
                   <div className="md:hidden">
                     <div className="divide-y divide-border">
                       {songWriters.map((sw, index) => (
-                        <div key={sw.id || index} className="px-4 py-3.5">
+                        <div key={sw.id || index} className="px-6 py-3.5">
                           <div className="flex items-start justify-between">
                             <div className="flex-1 min-w-0 mr-3">
                               <span className="text-[15px] font-semibold text-foreground">{sw.name || "Unknown"}</span>
@@ -1265,7 +1265,7 @@ export default function SongDetailPage() {
                           </div>
                         </div>
                       ))}
-                      <div className="flex items-center justify-between px-4 py-3.5 bg-muted/50">
+                      <div className="flex items-center justify-between px-6 py-3.5 bg-muted/50">
                         <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Total</span>
                         <span className={cn("text-[15px] font-bold tabular-nums", writerTotal === 100 ? "text-emerald-600" : "text-red-600")}>{formatPercent(writerTotal)}</span>
                       </div>
@@ -1273,7 +1273,7 @@ export default function SongDetailPage() {
                   </div>
                 </>
               ) : (
-                <div className="px-4 py-6">
+                <div className="px-6 py-6">
                   <p className="text-sm text-muted-foreground">No songwriters added</p>
                 </div>
               )
@@ -1522,7 +1522,7 @@ export default function SongDetailPage() {
                 <>
                   {/* Desktop: table layout */}
                   <div className="hidden md:block">
-                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
+                    <div className="flex items-center justify-between px-6 py-2.5 border-b border-border">
                       <span className="text-xs font-medium text-muted-foreground">Publisher</span>
                       <div className="flex items-center gap-6">
                         <span className="text-xs font-medium text-muted-foreground w-[80px] text-center">PRO</span>
@@ -1533,7 +1533,7 @@ export default function SongDetailPage() {
                     </div>
                     <div className="divide-y divide-border">
                       {ownership.map((row) => (
-                        <div key={row.id} className="flex items-center justify-between px-4 py-3">
+                        <div key={row.id} className="flex items-center justify-between px-6 py-3">
                           <span className="text-sm font-medium text-foreground">{row.publisher_name || "Unknown Publisher"}</span>
                           <div className="flex items-center gap-6">
                             <span className="text-sm text-muted-foreground w-[80px] text-center">{row.pro || "—"}</span>
@@ -1544,7 +1544,7 @@ export default function SongDetailPage() {
                         </div>
                       ))}
                     </div>
-                    <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+                    <div className="flex items-center justify-between px-6 py-3 border-t border-border">
                       <span className="text-xs font-medium text-muted-foreground">Total</span>
                       <div className="flex items-center gap-6">
                         <span className="w-[80px]" />
@@ -1559,7 +1559,7 @@ export default function SongDetailPage() {
                   <div className="md:hidden">
                     <div className="divide-y divide-border">
                       {ownership.map((row, index) => (
-                        <div key={row.id} className="px-4 py-3.5">
+                        <div key={row.id} className="px-6 py-3.5">
                           <div className="flex items-start justify-between">
                             <div className="flex-1 min-w-0 mr-3">
                               <span className="text-[15px] font-semibold text-foreground block">{row.publisher_name || "Unknown Publisher"}</span>
@@ -1577,7 +1577,7 @@ export default function SongDetailPage() {
                           </div>
                         </div>
                       ))}
-                      <div className="flex items-center justify-between px-4 py-3.5 bg-muted/50">
+                      <div className="flex items-center justify-between px-6 py-3.5 bg-muted/50">
                         <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Total</span>
                         <span className={cn("text-[15px] font-bold tabular-nums", ownershipTotal === 100 ? "text-emerald-600" : "text-red-600")}>{formatPercent(ownershipTotal)}</span>
                       </div>
@@ -1585,7 +1585,7 @@ export default function SongDetailPage() {
                   </div>
                 </>
               ) : (
-                <div className="px-4 py-6">
+                <div className="px-6 py-6">
                   <p className="text-sm text-muted-foreground">No ownership records</p>
                 </div>
               )
