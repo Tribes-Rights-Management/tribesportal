@@ -898,6 +898,8 @@ export default function SongDetailPage() {
   return (
     <AppPageLayout
       title={displayTitle}
+      subtitle={song.song_number ? String(song.song_number) : undefined}
+      subtitleClassName="font-mono"
       backLink={{ to: "/rights/catalog", label: "Catalog" }}
       action={actionSlot}
     >
