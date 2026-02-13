@@ -55,9 +55,11 @@ const sortLabels: Record<SortOption, string> = {
 
 interface CatalogSong {
   id: string;
-  song_number: number;
+  song_number: number | null;
   title: string;
   songwriters: string[];
+  control: number;
+  updatedAt: string;
   status: "active" | "pending" | "inactive";
   addedAt: string;
 }
@@ -172,6 +174,7 @@ export default function RightsCatalogPage() {
           title,
           metadata,
           created_at,
+          updated_at,
           is_active,
           song_writers (
             id,
@@ -180,6 +183,10 @@ export default function RightsCatalogPage() {
               id,
               name
             )
+          ),
+          song_ownership (
+            ownership_percentage,
+            tribes_administered
           )
         `)
         .eq("is_active", true)
@@ -193,11 +200,17 @@ export default function RightsCatalogPage() {
           .map((sw: any) => sw.writers?.name)
           .filter(Boolean);
         
+        const control = (song.song_ownership || [])
+          .filter((o: any) => o.tribes_administered)
+          .reduce((sum: number, o: any) => sum + (o.ownership_percentage || 0), 0);
+        
         return {
           id: song.id,
           song_number: song.song_number,
           title: song.title,
           songwriters,
+          control,
+          updatedAt: song.updated_at || song.created_at,
           status: "active" as const,
           addedAt: song.created_at,
         };
@@ -373,24 +386,8 @@ export default function RightsCatalogPage() {
       />
 
       <AppSection spacing="none">
-        {/* Filter Chips Row with Sort */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            {statusFilters.map((filter) => (
-              <button
-                key={filter.value}
-                onClick={() => handleStatusChange(filter.value)}
-                className={cn(
-                  "text-[12px] transition-colors pb-0.5",
-                  statusFilter === filter.value
-                    ? "font-semibold text-foreground border-b border-foreground"
-                    : "font-normal text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
+        {/* Sort control */}
+        <div className="flex items-center justify-end mb-3">
           <SortDropdown value={sortBy} onChange={setSortBy} />
         </div>
 
@@ -403,13 +400,12 @@ export default function RightsCatalogPage() {
             <AppItemCard
               title={song.title}
               subtitle={song.songwriters.join(" / ")}
-              meta={format(new Date(song.addedAt), "MMM d, yyyy")}
-              status={getStatusText(song.status)}
+              meta={format(new Date(song.updatedAt), "MMM d, yyyy")}
               onClick={() => handleSongClick(song.song_number, song.title)}
             />
           )}
           renderTable={() => (
-            <AppTable columns={["40px", "30%", "30%", "15%", "25%"]}>
+            <AppTable columns={["40px", "10%", "25%", "25%", "15%", "25%"]}>
               <AppTableHeader>
                 <AppTableRow>
                   <AppTableHead>
@@ -425,15 +421,16 @@ export default function RightsCatalogPage() {
                       aria-label="Select all songs"
                     />
                   </AppTableHead>
+                  <AppTableHead>ID</AppTableHead>
                   <AppTableHead>Title</AppTableHead>
                   <AppTableHead>Songwriters</AppTableHead>
-                  <AppTableHead align="center">Status</AppTableHead>
-                  <AppTableHead>Added</AppTableHead>
+                  <AppTableHead align="right">Control</AppTableHead>
+                  <AppTableHead>Last updated</AppTableHead>
                 </AppTableRow>
               </AppTableHeader>
               <AppTableBody>
                 {paginatedSongs.length === 0 ? (
-                  <AppTableEmpty colSpan={5}>
+                  <AppTableEmpty colSpan={6}>
                     <span className="text-muted-foreground text-sm">
                       {searchQuery ? "No songs match your search" : "No songs in catalog"}
                     </span>
@@ -470,11 +467,12 @@ export default function RightsCatalogPage() {
                           />
                         </div>
                       </AppTableCell>
+                      <AppTableCell muted>{song.song_number}</AppTableCell>
                       <AppTableCell className="font-medium">{song.title}</AppTableCell>
-                      <AppTableCell muted>{song.songwriters.join(" / ")}</AppTableCell>
-                      <AppTableCell align="center">{getStatusText(song.status)}</AppTableCell>
+                      <AppTableCell muted>{song.songwriters.join(" / ") || "—"}</AppTableCell>
+                      <AppTableCell align="right" muted>{song.control > 0 ? `${song.control}%` : "—"}</AppTableCell>
                       <AppTableCell muted>
-                        {format(new Date(song.addedAt), "MMM d, yyyy")}
+                        {format(new Date(song.updatedAt), "MMM d, yyyy")}
                       </AppTableCell>
                     </AppTableRow>
                   ))
