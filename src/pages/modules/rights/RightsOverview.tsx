@@ -13,8 +13,7 @@ import {
   AppTableCell,
   AppTableEmpty,
 } from "@/components/app-ui";
-import { QueueStatusBadge } from "@/components/queue/QueueStatusBadge";
-import { useQueueStats, useStaffQueue } from "@/hooks/use-song-queue";
+import { useQueueStats } from "@/hooks/use-song-queue";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -24,7 +23,20 @@ import { supabase } from "@/integrations/supabase/client";
 export default function RightsOverview() {
   const navigate = useNavigate();
   const { data: queueStats, isLoading: statsLoading } = useQueueStats();
-  const { data: recentQueue = [] } = useStaffQueue();
+
+  const { data: recentSongs = [] } = useQuery({
+    queryKey: ["rights-recent-songs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("songs")
+        .select("id, title, song_number, slug, created_at")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      return data || [];
+    },
+  });
 
   const { data: clientCount } = useQuery({
     queryKey: ["rights-stats", "clients"],
@@ -43,23 +55,18 @@ export default function RightsOverview() {
     },
   });
 
-  const topQueue = recentQueue.slice(0, 5);
-  const getSongTitle = (item: any) => item.current_data?.title || item.submitted_data?.title || "Untitled";
-
   return (
     <AppPageLayout title="Overview">
       <AppStatCardGrid columns={3} className="mb-6">
         <AppStatCard label="Active Clients" value={clientCount ?? "—"} onClick={() => navigate("/rights/clients")} />
-        
         <AppStatCard label="Songs in Queue" value={queueStats?.total ?? "—"} loading={statsLoading} onClick={() => navigate("/rights/queue")} />
         <AppStatCard label="Catalog" value={songCount ?? "—"} onClick={() => navigate("/rights/catalog")} />
       </AppStatCardGrid>
 
-      {/* Queue preview table */}
       <AppSection spacing="md">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-medium text-foreground">Songs in Queue</h2>
-          <button onClick={() => navigate("/rights/queue")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+          <h2 className="text-sm font-medium text-foreground">Recently added</h2>
+          <button onClick={() => navigate("/rights/catalog")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
             View all →
           </button>
         </div>
@@ -67,23 +74,21 @@ export default function RightsOverview() {
           <AppTableHeader>
             <AppTableRow>
               <AppTableHead>Title</AppTableHead>
-              <AppTableHead>Client</AppTableHead>
-              <AppTableHead align="center">Status</AppTableHead>
-              <AppTableHead>Submitted</AppTableHead>
+              <AppTableHead>Song number</AppTableHead>
+              <AppTableHead>Added</AppTableHead>
             </AppTableRow>
           </AppTableHeader>
           <AppTableBody>
-            {topQueue.length === 0 ? (
-              <AppTableEmpty colSpan={4}>
-                <span className="text-muted-foreground text-sm">No songs in queue</span>
+            {recentSongs.length === 0 ? (
+              <AppTableEmpty colSpan={3}>
+                <span className="text-muted-foreground text-sm">No songs in catalog</span>
               </AppTableEmpty>
             ) : (
-              topQueue.map(item => (
-                <AppTableRow key={item.id} clickable onClick={() => navigate(`/rights/queue/${item.submission_number}`)}>
-                  <AppTableCell className="font-medium">{getSongTitle(item)}</AppTableCell>
-                  <AppTableCell muted>{item.client_name}</AppTableCell>
-                  <AppTableCell align="center"><QueueStatusBadge status={item.status} /></AppTableCell>
-                  <AppTableCell muted>{format(new Date(item.submitted_at), "MMM d, yyyy")}</AppTableCell>
+              recentSongs.map((song: any) => (
+                <AppTableRow key={song.id} clickable onClick={() => navigate(`/rights/catalog/${song.song_number}/${song.slug}`)}>
+                  <AppTableCell className="font-medium">{song.title}</AppTableCell>
+                  <AppTableCell muted>{song.song_number ?? "—"}</AppTableCell>
+                  <AppTableCell muted>{format(new Date(song.created_at), "MMM d, yyyy")}</AppTableCell>
                 </AppTableRow>
               ))
             )}
