@@ -90,7 +90,7 @@ export default function RightsOverview() {
             View all →
           </button>
         </div>
-        <AppTable>
+        <AppTable columns={["10%", "25%", "30%", "15%", "20%"]}>
           <AppTableHeader>
             <AppTableRow>
               <AppTableHead>ID</AppTableHead>
