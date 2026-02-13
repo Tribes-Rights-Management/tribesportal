@@ -825,6 +825,7 @@ export default function SongDetailPage() {
     : ownership.reduce((sum, r) => sum + r.ownership_percentage, 0);
 
   // ── Action slot: status badge + edit/save buttons ─────────
+  // On mobile when editing, buttons move to a sticky bottom bar
   const actionSlot = (
     <div className="flex items-center gap-3">
       {!editing && <StatusBadge active={song.is_active} />}
@@ -833,7 +834,7 @@ export default function SongDetailPage() {
           onClick={handleSave}
           disabled={isSaving}
           className={cn(
-            "text-sm font-medium px-4 py-2 rounded-lg bg-foreground text-background hover:opacity-90 shadow-sm transition-all",
+            "hidden md:inline-flex text-sm font-medium px-4 py-2 rounded-lg bg-foreground text-background hover:opacity-90 shadow-sm transition-all",
             isSaving && "opacity-50 cursor-not-allowed"
           )}
         >
@@ -842,7 +843,10 @@ export default function SongDetailPage() {
       )}
       <button
         onClick={editing ? handleCancel : () => setEditing(true)}
-        className="text-sm font-medium px-4 py-2 rounded-lg border border-[var(--app-surface-border)] text-foreground bg-white hover:bg-muted/50 shadow-sm transition-all"
+        className={cn(
+          "text-sm font-medium px-4 py-2 rounded-lg border border-[var(--app-surface-border)] text-foreground bg-white hover:bg-muted/50 shadow-sm transition-all",
+          editing && "hidden md:inline-flex"
+        )}
       >
         {editing ? "Cancel" : "Edit"}
       </button>
@@ -855,7 +859,28 @@ export default function SongDetailPage() {
       backLink={{ to: "/rights/catalog", label: "Catalog" }}
       action={actionSlot}
     >
-      <div className="max-w-4xl">
+      <div className={cn("max-w-4xl", editing && "pb-20 md:pb-0")}>
+        {/* ── Mobile sticky edit bar ── */}
+        {editing && (
+          <div className="fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-[var(--app-surface-border)] px-4 py-3 flex gap-3 md:hidden" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className={cn(
+                "flex-1 h-11 text-sm font-medium rounded-lg bg-foreground text-background hover:opacity-90 transition-all",
+                isSaving && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {isSaving ? "Saving…" : "Save Changes"}
+            </button>
+            <button
+              onClick={handleCancel}
+              className="flex-1 h-11 text-sm font-medium rounded-lg border border-[var(--app-surface-border)] text-foreground bg-background hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
         {/* ─── 1. OVERVIEW ──────────────────────────────── */}
         <AppCard className="mt-5">
           <AppCardHeader>
