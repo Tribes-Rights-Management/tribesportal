@@ -18,12 +18,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow, format } from "date-fns";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+  AppModal,
+  AppModalBody,
+} from "@/components/ui/app-modal";
 
 // Code-defined RLS coverage expectations for existing tables
 const RLS_COVERAGE = [
@@ -281,24 +278,15 @@ function ExceptionDetailModal({
   if (!exception) return null;
   
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent 
-        className="max-w-lg"
-        style={{ 
-          backgroundColor: 'var(--platform-surface)',
-          border: '1px solid hsl(var(--muted))'
-        }}
-      >
-        <DialogHeader>
-          <DialogTitle style={{ color: 'var(--platform-text)' }}>
-            {exception.name}
-          </DialogTitle>
-          <DialogDescription style={{ color: 'var(--platform-text-muted)' }}>
-            Exception details for {exception.resource}
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-4 mt-4">
+    <AppModal
+      open={open}
+      onOpenChange={onClose}
+      title={exception.name}
+      description={`Exception details for ${exception.resource}`}
+      maxWidth="lg"
+    >
+      <AppModalBody>
+        <div className="space-y-4">
           <div className="flex items-center gap-2">
             <SeverityChipWrapper severity={exception.severity} />
             <ScopeChip scope={exception.scope} />
@@ -342,8 +330,8 @@ function ExceptionDetailModal({
             </div>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </AppModalBody>
+    </AppModal>
   );
 }
 
