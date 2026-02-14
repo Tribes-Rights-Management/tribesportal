@@ -25,7 +25,6 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
   // Form state
   const [name, setName] = useState(client.name);
   const [email, setEmail] = useState(client.primary_email || "");
-  const [phone, setPhone] = useState(client.phone || "");
   const [line1, setLine1] = useState(client.address_line1 || "");
   const [line2, setLine2] = useState(client.address_line2 || "");
   const [city, setCity] = useState(client.city || "");
@@ -41,7 +40,6 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
         .update({
           name: name.trim(),
           primary_email: email.trim() || null,
-          phone: phone.trim() || null,
           address_line1: line1.trim() || null,
           address_line2: line2.trim() || null,
           city: city.trim() || null,
@@ -102,10 +100,6 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
               <label className="text-xs font-medium text-muted-foreground mb-1 block">Primary Email</label>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} />
             </div>
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">Phone</label>
-              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className={inputClass} />
-            </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs font-medium text-muted-foreground mb-1 block">Address Line 1</label>
@@ -162,7 +156,6 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
           <>
             <AppDetailRow label="Name" value={client.name} variant="editable" ctaLabel="Edit" onCta={() => setEditing(true)} />
             <AppDetailRow label="Email" value={client.primary_email || "—"} />
-            <AppDetailRow label="Phone" value={client.phone || "—"} />
             <AppDetailRow
               label="Address"
               value={

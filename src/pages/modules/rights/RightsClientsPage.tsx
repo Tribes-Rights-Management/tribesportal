@@ -43,7 +43,6 @@ export default function RightsClientsPage() {
   // Form state
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
-  const [formPhone, setFormPhone] = useState("");
   const [formNotes, setFormNotes] = useState("");
 
   const { data: clients = [], isLoading } = useQuery({
@@ -84,7 +83,6 @@ export default function RightsClientsPage() {
         .insert({
           name: formName.trim(),
           primary_email: formEmail.trim() || null,
-          phone: formPhone.trim() || null,
           notes: formNotes.trim() || null,
           status: "active" as any,
         })
@@ -108,7 +106,6 @@ export default function RightsClientsPage() {
   const resetForm = () => {
     setFormName("");
     setFormEmail("");
-    setFormPhone("");
     setFormNotes("");
   };
 
@@ -217,17 +214,6 @@ export default function RightsClientsPage() {
                 value={formEmail}
                 onChange={(e) => setFormEmail(e.target.value)}
                 placeholder="email@example.com"
-                className="h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px]"
-              />
-            </AppModalField>
-
-            <AppModalField label="Phone" htmlFor="client-phone">
-              <Input
-                id="client-phone"
-                type="tel"
-                value={formPhone}
-                onChange={(e) => setFormPhone(e.target.value)}
-                placeholder="+1 (555) 000-0000"
                 className="h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px]"
               />
             </AppModalField>

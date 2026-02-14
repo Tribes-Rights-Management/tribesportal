@@ -124,7 +124,6 @@ export default function ClientOverviewTab({ client }: ClientOverviewTabProps) {
         <AppCardBody className="p-0">
           <AppDetailRowGroup>
             <AppDetailRow label="Email" value={client.primary_email || "—"} />
-            <AppDetailRow label="Phone" value={client.phone || "—"} />
             <AppDetailRow label="Address" value={formatAddress(client)} />
             <AppDetailRow
               label="Created"
