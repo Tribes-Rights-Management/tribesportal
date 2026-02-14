@@ -482,7 +482,7 @@ export default function DisclosuresPage() {
         <AppTableBody>
           {loading ? (
             <AppTableEmpty colSpan={8}>
-              <span style={{ color: 'hsl(var(--platform-text-muted))' }}>
+              <span className="text-muted-foreground">
                 Loading exports
               </span>
             </AppTableEmpty>
@@ -494,58 +494,26 @@ export default function DisclosuresPage() {
           ) : (
             exports.map((exp) => (
               <AppTableRow key={exp.id} clickable onClick={() => openExportDetail(exp)}>
-                <AppTableCell>
-                  <code 
-                    className="text-[11px] font-mono"
-                    style={{ color: 'hsl(var(--platform-text))' }}
-                  >
+                <AppTableCell mono>
                     {exp.watermark}
-                  </code>
                 </AppTableCell>
                 <AppTableCell>
-                  <span 
-                    className="text-[13px]"
-                    style={{ color: 'hsl(var(--platform-text))' }}
-                  >
                     {EXPORT_TYPE_LABELS[exp.export_type]}
-                  </span>
                 </AppTableCell>
-                <AppTableCell>
-                  <span 
-                    className="text-[12px]"
-                    style={{ color: 'hsl(var(--platform-text-muted))' }}
-                  >
+                <AppTableCell muted>
                     {getScopeDisplay(exp)}
-                  </span>
                 </AppTableCell>
                 <AppTableCell>
-                  <span 
-                    className="text-[13px]"
-                    style={{ color: 'hsl(var(--platform-text))' }}
-                  >
                     {getGeneratorDisplay(exp.generated_by)}
-                  </span>
                 </AppTableCell>
                 <AppTableCell align="right">
-                  <span style={{ color: 'hsl(var(--platform-text))' }}>
                     {exp.record_count ?? '—'}
-                  </span>
                 </AppTableCell>
-                <AppTableCell>
-                  <span 
-                    className="text-[13px]"
-                    style={{ color: 'hsl(var(--platform-text-muted))' }}
-                  >
+                <AppTableCell muted>
                     {getStatusText(exp.status)}
-                  </span>
                 </AppTableCell>
-                <AppTableCell>
-                  <span 
-                    className="text-[12px]"
-                    style={{ color: 'hsl(var(--platform-text-muted))' }}
-                  >
+                <AppTableCell muted>
                     {formatDate(exp.generated_at)}
-                  </span>
                 </AppTableCell>
                 <AppTableCell align="center">
                   <ConsoleButton
@@ -557,7 +525,7 @@ export default function DisclosuresPage() {
                       openExportDetail(exp);
                     }}
                   >
-                    <ChevronRight className="h-4 w-4" style={{ color: 'hsl(var(--platform-text-muted))' }} />
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </ConsoleButton>
                 </AppTableCell>
               </AppTableRow>

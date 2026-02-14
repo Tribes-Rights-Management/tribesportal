@@ -222,7 +222,7 @@ export default function CorrelationChainPage() {
             <AppTableBody>
               {loadingRecent ? (
                 <AppTableEmpty colSpan={4}>
-                  <span style={{ color: 'var(--platform-text-muted)' }}>
+                  <span className="text-muted-foreground">
                     Loading records
                   </span>
                 </AppTableEmpty>
@@ -234,26 +234,14 @@ export default function CorrelationChainPage() {
               ) : (
                 recentCorrelations.map((record) => (
                   <AppTableRow key={record.correlation_id} clickable>
-                    <AppTableCell>
-                      <code 
-                        className="text-[12px] font-mono"
-                        style={{ color: 'var(--platform-text)' }}
-                      >
+                    <AppTableCell mono>
                         {record.correlation_id}
-                      </code>
                     </AppTableCell>
                     <AppTableCell>
-                      <span style={{ color: 'var(--platform-text)' }}>
                         {record.record_type.replace(/_/g, ' ')}
-                      </span>
                     </AppTableCell>
-                    <AppTableCell>
-                      <span 
-                        className="text-[13px]"
-                        style={{ color: 'var(--platform-text-muted)' }}
-                      >
+                    <AppTableCell muted>
                         {formatDate(record.created_at)}
-                      </span>
                     </AppTableCell>
                     <AppTableCell align="center">
                       <ConsoleButton

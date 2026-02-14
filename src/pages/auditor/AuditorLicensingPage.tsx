@@ -196,10 +196,7 @@ export default function AuditorLicensingPage() {
 
 function StatusBadge({ status }: { status: string }) {
   return (
-    <span 
-      className="text-[12px] font-medium capitalize"
-      style={{ color: 'var(--platform-text-secondary)' }}
-    >
+    <span className="text-xs font-medium capitalize text-muted-foreground">
       {status.replace(/_/g, ' ')}
     </span>
   );
