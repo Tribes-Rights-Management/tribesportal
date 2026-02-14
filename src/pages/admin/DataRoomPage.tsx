@@ -19,15 +19,7 @@ import {
 } from "lucide-react";
 import { AppPageLayout } from "@/components/app-ui";
 import { ConsoleButton, ConsoleChip } from "@/components/console";
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableRow, 
-  TableHead, 
-  TableCell,
-  TableEmptyRow 
-} from "@/components/ui/table";
+import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell, AppTableEmpty } from "@/components/app-ui/AppTable";
 import {
   AppModal,
   AppModalBody,
@@ -309,37 +301,33 @@ export default function DataRoomPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Export</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Scope</TableHead>
-                <TableHead>Period</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+            <AppTable columns={["22%", "18%", "12%", "16%", "12%", "12%", "8%"]}>
+            <AppTableHeader>
+              <AppTableRow header>
+                <AppTableHead>Export</AppTableHead>
+                <AppTableHead>Type</AppTableHead>
+                <AppTableHead>Scope</AppTableHead>
+                <AppTableHead>Period</AppTableHead>
+                <AppTableHead>Status</AppTableHead>
+                <AppTableHead>Created</AppTableHead>
+                <AppTableHead>Actions</AppTableHead>
+              </AppTableRow>
+            </AppTableHeader>
+            <AppTableBody>
               {(exports || []).length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7}>
-                    <div className="text-center py-8">
-                      <FileArchive className="h-6 w-6 text-muted-foreground mx-auto mb-2" strokeWidth={1.0} />
-                      <p className="text-[13px] text-muted-foreground">
-                        No exports created yet
-                      </p>
-                      <p className="text-[12px] text-muted-foreground mt-1">
-                        Create your first export package for audits or compliance
-                      </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                <AppTableEmpty colSpan={7}>
+                  <FileArchive className="h-6 w-6 text-muted-foreground mx-auto mb-2" strokeWidth={1.0} />
+                  <p className="text-[13px] text-muted-foreground">
+                    No exports created yet
+                  </p>
+                  <p className="text-[12px] text-muted-foreground mt-1">
+                    Create your first export package for audits or compliance
+                  </p>
+                </AppTableEmpty>
               ) : (
                 (exports || []).map((exp) => (
-                  <TableRow key={exp.id}>
-                    <TableCell>
+                  <AppTableRow key={exp.id}>
+                    <AppTableCell>
                       <div>
                         <p className="text-[13px] font-medium text-[--platform-text]">
                           {exp.title}
@@ -350,21 +338,21 @@ export default function DataRoomPage() {
                           </p>
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell>
+                    </AppTableCell>
+                    <AppTableCell>
                       <span className="text-[12px] text-[--platform-text]">
                         {EXPORT_TYPE_LABELS[exp.export_type]}
                       </span>
-                    </TableCell>
-                    <TableCell>
+                    </AppTableCell>
+                    <AppTableCell>
                       <ConsoleChip label={exp.scope_type} className="text-[10px]" />
-                    </TableCell>
-                    <TableCell>
+                    </AppTableCell>
+                    <AppTableCell>
                       <span className="text-[12px] text-muted-foreground">
                         {format(new Date(exp.period_start), "MMM d")} — {format(new Date(exp.period_end), "MMM d, yyyy")}
                       </span>
-                    </TableCell>
-                    <TableCell>
+                    </AppTableCell>
+                    <AppTableCell>
                       <div className="flex items-center gap-2">
                         {getStatusIcon(exp.status)}
                         <ConsoleChip 
@@ -373,13 +361,13 @@ export default function DataRoomPage() {
                           className="text-[10px]" 
                         />
                       </div>
-                    </TableCell>
-                    <TableCell>
+                    </AppTableCell>
+                    <AppTableCell>
                       <span className="text-[12px] text-muted-foreground">
                         {format(new Date(exp.created_at), "MMM d, yyyy")}
                       </span>
-                    </TableCell>
-                    <TableCell>
+                    </AppTableCell>
+                    <AppTableCell>
                       <div className="flex items-center gap-1">
                         <ConsoleButton
                           intent="ghost"
@@ -405,12 +393,12 @@ export default function DataRoomPage() {
                           <Users className="h-4 w-4" />
                         </ConsoleButton>
                       </div>
-                    </TableCell>
-                  </TableRow>
+                    </AppTableCell>
+                  </AppTableRow>
                 ))
               )}
-            </TableBody>
-          </Table>
+            </AppTableBody>
+          </AppTable>
           </div>
         )}
       </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell } from "@/components/app-ui/AppTable";
 import { ConsoleButton } from "@/components/console";
 import { Plus, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -202,50 +202,47 @@ export default function TenantsPage() {
 
             {/* Desktop: Table layout */}
             <div className="hidden md:block">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Slug</TableHead>
-                    <TableHead className="text-right">Members</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead className="w-16"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+              <AppTable columns={["30%", "25%", "15%", "20%", "10%"]}>
+                <AppTableHeader>
+                  <AppTableRow header>
+                    <AppTableHead>Name</AppTableHead>
+                    <AppTableHead>Slug</AppTableHead>
+                    <AppTableHead align="right">Members</AppTableHead>
+                    <AppTableHead>Created</AppTableHead>
+                    <AppTableHead></AppTableHead>
+                  </AppTableRow>
+                </AppTableHeader>
+                <AppTableBody>
                   {tenants.map((tenant) => (
-                    <TableRow 
+                    <AppTableRow 
                       key={tenant.id}
-                      className="row-hover"
+                      clickable
                       onClick={() => openEditDialog(tenant)}
                     >
-                      <TableCell className="font-medium">
+                      <AppTableCell className="font-medium">
                         {tenant.name}
-                      </TableCell>
-                      <TableCell 
-                        className="font-mono text-[12px]"
-                        style={{ color: 'var(--platform-text-secondary)' }}
-                      >
+                      </AppTableCell>
+                      <AppTableCell mono muted>
                         {tenant.slug}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      </AppTableCell>
+                      <AppTableCell align="right">
                         {tenant.member_count}
-                      </TableCell>
-                      <TableCell style={{ color: 'var(--platform-text-secondary)' }}>
+                      </AppTableCell>
+                      <AppTableCell muted>
                         {new Date(tenant.created_at).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <span
                           className="text-[13px]"
                           style={{ color: 'var(--platform-text-secondary)' }}
                         >
                           Edit
                         </span>
-                      </TableCell>
-                    </TableRow>
+                      </AppTableCell>
+                    </AppTableRow>
                   ))}
-                </TableBody>
-              </Table>
+                </AppTableBody>
+              </AppTable>
             </div>
           </>
         )}
