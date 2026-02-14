@@ -12,7 +12,7 @@ import {
   AppModalAction,
   AppModalCancel,
 } from "@/components/ui/app-modal";
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
+import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell } from "@/components/app-ui/AppTable";
 
 import type { Database } from "@/integrations/supabase/types";
 
@@ -222,29 +222,29 @@ export default function UserDirectoryPage() {
           <>
             {/* Desktop Table */}
             <div className="hidden md:block">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[40%]">Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Organizations</TableHead>
-                    <TableHead className="w-10"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+              <AppTable columns={["40%", "20%", "15%", "15%", "10%"]}>
+                <AppTableHeader>
+                  <AppTableRow header>
+                    <AppTableHead>Email</AppTableHead>
+                    <AppTableHead>Role</AppTableHead>
+                    <AppTableHead>Status</AppTableHead>
+                    <AppTableHead>Organizations</AppTableHead>
+                    <AppTableHead></AppTableHead>
+                  </AppTableRow>
+                </AppTableHeader>
+                <AppTableBody>
                   {users.map((user) => {
                     const activeOrgCount = user.memberships.filter(m => m.status === "active").length;
                     const statusStyle = getStatusStyle(user.status);
                     
                     return (
-                      <TableRow
+                      <AppTableRow
                         key={user.id}
                         clickable
                         onClick={() => handleRowClick(user)}
                         className="group"
                       >
-                        <TableCell>
+                        <AppTableCell>
                           <div className="flex items-center gap-2">
                             <span 
                               className="text-[15px] font-medium truncate"
@@ -261,8 +261,8 @@ export default function UserDirectoryPage() {
                               </span>
                             )}
                           </div>
-                        </TableCell>
-                        <TableCell>
+                        </AppTableCell>
+                        <AppTableCell>
                           <span 
                             className="inline-flex items-center px-3 py-1.5 rounded text-[12px] font-medium"
                             style={{ 
@@ -272,8 +272,8 @@ export default function UserDirectoryPage() {
                           >
                             {formatPlatformRole(user.platform_role)}
                           </span>
-                        </TableCell>
-                        <TableCell>
+                        </AppTableCell>
+                        <AppTableCell>
                           <span 
                             className="inline-flex items-center px-3 py-1.5 rounded text-[12px] font-medium"
                             style={{ 
@@ -283,24 +283,24 @@ export default function UserDirectoryPage() {
                           >
                             {formatStatus(user.status)}
                           </span>
-                        </TableCell>
-                        <TableCell>
+                        </AppTableCell>
+                        <AppTableCell>
                           <span className="text-[14px]" style={{ color: 'var(--platform-text-muted)' }}>
                             {activeOrgCount > 0 ? `${activeOrgCount} org${activeOrgCount > 1 ? 's' : ''}` : '—'}
                           </span>
-                        </TableCell>
-                        <TableCell>
+                        </AppTableCell>
+                        <AppTableCell>
                           <ChevronRight 
                             className="h-4 w-4 opacity-40 group-hover:opacity-70 transition-opacity" 
                              strokeWidth={1.5}
                             style={{ color: 'var(--platform-text-muted)' }}
                           />
-                        </TableCell>
-                      </TableRow>
+                        </AppTableCell>
+                      </AppTableRow>
                     );
                   })}
-                </TableBody>
-              </Table>
+                </AppTableBody>
+              </AppTable>
             </div>
 
             {/* Mobile Card List */}

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell } from "@/components/app-ui/AppTable";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ConsoleButton } from "@/components/console";
 import { ChevronRight, AlertCircle, RefreshCw } from "lucide-react";
@@ -562,19 +562,19 @@ export default function ApprovalsPage() {
             </div>
           ) : (
             /* Desktop: Table Layout */
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Requested</TableHead>
-                  <TableHead>Organization</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Contexts</TableHead>
-                  <TableHead>Default</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <AppTable columns={["20%", "12%", "15%", "12%", "13%", "10%", "18%"]}>
+              <AppTableHeader>
+                <AppTableRow header>
+                  <AppTableHead>Email</AppTableHead>
+                  <AppTableHead>Requested</AppTableHead>
+                  <AppTableHead>Organization</AppTableHead>
+                  <AppTableHead>Role</AppTableHead>
+                  <AppTableHead>Contexts</AppTableHead>
+                  <AppTableHead>Default</AppTableHead>
+                  <AppTableHead align="right">Actions</AppTableHead>
+                </AppTableRow>
+              </AppTableHeader>
+              <AppTableBody>
                 {pendingMemberships.map((membership) => {
                   const formState = formStates[membership.id] || {
                     tenant_id: "",
@@ -584,14 +584,14 @@ export default function ApprovalsPage() {
                   };
                   
                   return (
-                    <TableRow key={membership.id}>
-                      <TableCell className="font-medium">
+                    <AppTableRow key={membership.id}>
+                      <AppTableCell className="font-medium">
                         {membership.user_email}
-                      </TableCell>
-                      <TableCell style={{ color: 'var(--platform-text-secondary)' }}>
+                      </AppTableCell>
+                      <AppTableCell muted>
                         {new Date(membership.created_at).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <Select
                           value={formState.tenant_id}
                           onValueChange={(value) =>
@@ -614,8 +614,8 @@ export default function ApprovalsPage() {
                             ))}
                           </SelectContent>
                         </Select>
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <Select
                           value={formState.role}
                           onValueChange={(value) =>
@@ -638,8 +638,8 @@ export default function ApprovalsPage() {
                             ))}
                           </SelectContent>
                         </Select>
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <div className="flex flex-col gap-1.5">
                           {availableContexts.map((context) => (
                             <label
@@ -659,8 +659,8 @@ export default function ApprovalsPage() {
                             </label>
                           ))}
                         </div>
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <Select
                           value={formState.default_context || ""}
                           onValueChange={(value) =>
@@ -685,8 +685,8 @@ export default function ApprovalsPage() {
                             ))}
                           </SelectContent>
                         </Select>
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => approveMembership(membership)}
@@ -711,12 +711,12 @@ export default function ApprovalsPage() {
                             Deny
                           </button>
                         </div>
-                      </TableCell>
-                    </TableRow>
+                      </AppTableCell>
+                    </AppTableRow>
                   );
                 })}
-              </TableBody>
-            </Table>
+              </AppTableBody>
+            </AppTable>
         )}
       </ContentPanel>
     </AppPageLayout>
