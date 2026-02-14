@@ -12,7 +12,7 @@ import {
   AppModalAction,
   AppModalCancel,
 } from "@/components/ui/app-modal";
-import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell } from "@/components/app-ui/AppTable";
+import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell, AppTableBadge } from "@/components/app-ui/AppTable";
 
 import type { Database } from "@/integrations/supabase/types";
 
@@ -172,6 +172,17 @@ export default function UserDirectoryPage() {
     });
   };
 
+  const getStatusVariant = (status: MembershipStatus): "default" | "success" | "warning" | "error" => {
+    switch (status) {
+      case "active": return "success";
+      case "pending": return "warning";
+      case "suspended": return "warning";
+      case "revoked":
+      case "denied": return "error";
+      default: return "default";
+    }
+  };
+
   const getStatusStyle = (status: MembershipStatus) => {
     switch (status) {
       case "active":
@@ -244,56 +255,29 @@ export default function UserDirectoryPage() {
                         onClick={() => handleRowClick(user)}
                         className="group"
                       >
-                        <AppTableCell>
-                          <div className="flex items-center gap-2">
-                            <span 
-                              className="text-[15px] font-medium truncate"
-                              style={{ color: 'var(--platform-text)' }}
-                            >
-                              {user.email}
+                        <AppTableCell className="font-medium">
+                          {user.email}
+                          {isCurrentUser(user) && (
+                            <span className="ml-2 text-xs text-muted-foreground uppercase tracking-wider">
+                              (you)
                             </span>
-                            {isCurrentUser(user) && (
-                              <span 
-                                className="text-[12px] uppercase tracking-wider font-medium"
-                                style={{ color: 'var(--platform-text-muted)' }}
-                              >
-                                (YOU)
-                              </span>
-                            )}
-                          </div>
+                          )}
+                        </AppTableCell>
+                        <AppTableCell muted>
+                          {formatPlatformRole(user.platform_role)}
                         </AppTableCell>
                         <AppTableCell>
-                          <span 
-                            className="inline-flex items-center px-3 py-1.5 rounded text-[12px] font-medium"
-                            style={{ 
-                              backgroundColor: 'var(--platform-surface-2)',
-                              color: 'var(--platform-text)',
-                            }}
-                          >
-                            {formatPlatformRole(user.platform_role)}
-                          </span>
-                        </AppTableCell>
-                        <AppTableCell>
-                          <span 
-                            className="inline-flex items-center px-3 py-1.5 rounded text-[12px] font-medium"
-                            style={{ 
-                              backgroundColor: statusStyle.bg,
-                              color: statusStyle.text,
-                            }}
-                          >
+                          <AppTableBadge variant={getStatusVariant(user.status)}>
                             {formatStatus(user.status)}
-                          </span>
+                          </AppTableBadge>
                         </AppTableCell>
-                        <AppTableCell>
-                          <span className="text-[14px]" style={{ color: 'var(--platform-text-muted)' }}>
-                            {activeOrgCount > 0 ? `${activeOrgCount} org${activeOrgCount > 1 ? 's' : ''}` : '—'}
-                          </span>
+                        <AppTableCell muted>
+                          {activeOrgCount > 0 ? `${activeOrgCount} org${activeOrgCount > 1 ? 's' : ''}` : '—'}
                         </AppTableCell>
                         <AppTableCell>
                           <ChevronRight 
-                            className="h-4 w-4 opacity-40 group-hover:opacity-70 transition-opacity" 
-                             strokeWidth={1.5}
-                            style={{ color: 'var(--platform-text-muted)' }}
+                            className="h-4 w-4 text-muted-foreground opacity-40 group-hover:opacity-70 transition-opacity" 
+                            strokeWidth={1.5}
                           />
                         </AppTableCell>
                       </AppTableRow>
