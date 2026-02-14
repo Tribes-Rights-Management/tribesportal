@@ -31,7 +31,7 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
   const [state, setState] = useState(client.state_province || "");
   const [postal, setPostal] = useState(client.postal_code || "");
   const [country, setCountry] = useState(client.country || "");
-  const [notes, setNotes] = useState(client.notes || "");
+  
 
   const updateMutation = useMutation({
     mutationFn: async () => {
@@ -46,7 +46,6 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
           state_province: state.trim() || null,
           postal_code: postal.trim() || null,
           country: country.trim() || null,
-          notes: notes.trim() || null,
         })
         .eq("id", client.id);
       if (error) throw error;
@@ -128,15 +127,6 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
               <label className="text-xs font-medium text-muted-foreground mb-1 block">Country</label>
               <input type="text" value={country} onChange={(e) => setCountry(e.target.value)} className={inputClass} />
             </div>
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">Notes</label>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={3}
-                className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:border-foreground transition-colors resize-none"
-              />
-            </div>
             <div className="flex items-center justify-end gap-2 pt-2">
               <AppButton intent="secondary" size="sm" onClick={() => setEditing(false)}>
                 Cancel
@@ -164,7 +154,7 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
                   .join(", ") || "—"
               }
             />
-            <AppDetailRow label="Notes" value={client.notes || "—"} />
+            
           </>
         )}
       </AppSettingsCard>
