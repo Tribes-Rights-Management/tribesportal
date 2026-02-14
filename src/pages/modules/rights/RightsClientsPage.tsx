@@ -43,7 +43,7 @@ export default function RightsClientsPage() {
   // Form state
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
-  const [formNotes, setFormNotes] = useState("");
+  
 
   const { data: clients = [], isLoading } = useQuery({
     queryKey: ["clients-list"],
@@ -83,7 +83,6 @@ export default function RightsClientsPage() {
         .insert({
           name: formName.trim(),
           primary_email: formEmail.trim() || null,
-          notes: formNotes.trim() || null,
           status: "active" as any,
         })
         .select("id")
@@ -106,7 +105,6 @@ export default function RightsClientsPage() {
   const resetForm = () => {
     setFormName("");
     setFormEmail("");
-    setFormNotes("");
   };
 
   const filtered = searchQuery
@@ -218,16 +216,6 @@ export default function RightsClientsPage() {
               />
             </AppModalField>
 
-            <AppModalField label="Notes" htmlFor="client-notes">
-              <textarea
-                id="client-notes"
-                value={formNotes}
-                onChange={(e) => setFormNotes(e.target.value)}
-                placeholder="Optional notes"
-                rows={3}
-                className="w-full px-3 py-2.5 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px] resize-none focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-            </AppModalField>
           </AppModalFields>
         </AppModalBody>
 
