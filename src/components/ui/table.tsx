@@ -1,3 +1,16 @@
+/**
+ * @deprecated — DO NOT USE THIS COMPONENT IN PAGE FILES.
+ * 
+ * Use AppTable from "@/components/app-ui/AppTable" instead.
+ * This file exists only as a low-level primitive and should not
+ * be imported by any page or feature component.
+ * 
+ * AppTable provides: card container, column width balancing,
+ * consistent typography, muted/mono/align props, and AppTableBadge.
+ * 
+ * If you import from this file, your code will be rejected in review.
+ */
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
 

@@ -231,13 +231,8 @@ export default function TenantsPage() {
                       <AppTableCell muted>
                         {new Date(tenant.created_at).toLocaleDateString()}
                       </AppTableCell>
-                      <AppTableCell>
-                        <span
-                          className="text-[13px]"
-                          style={{ color: 'var(--platform-text-secondary)' }}
-                        >
+                      <AppTableCell muted>
                           Edit
-                        </span>
                       </AppTableCell>
                     </AppTableRow>
                   ))}

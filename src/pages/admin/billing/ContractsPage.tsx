@@ -149,18 +149,16 @@ export default function ContractsPage() {
                   <AppTableRow key={contract.id}>
                     <AppTableCell>
                       <div>
-                        <p className="text-[13px] font-medium text-[--platform-text]">
+                        <p className="font-medium">
                           {contract.title}
                         </p>
-                        <p className="text-[12px] text-muted-foreground">
+                        <p className="text-xs text-muted-foreground">
                           {contract.contract_number}
                         </p>
                       </div>
                     </AppTableCell>
                     <AppTableCell>
-                      <span className="text-[13px] text-[--platform-text]">
                         {contract.tenant?.name || "—"}
-                      </span>
                     </AppTableCell>
                     <AppTableCell>
                       <Badge variant={getStatusVariant(contract.status)} className="text-[11px]">
@@ -170,13 +168,11 @@ export default function ContractsPage() {
                     <AppTableCell muted>
                       v{contract.version}
                     </AppTableCell>
-                    <AppTableCell>
-                      <span className="text-[12px] text-[--platform-text]">
+                    <AppTableCell muted>
                         {contract.effective_date 
                           ? format(new Date(contract.effective_date), "MMM d, yyyy")
                           : "—"
                         }
-                      </span>
                     </AppTableCell>
                     <AppTableCell muted>
                       {format(new Date(contract.created_at), "MMM d, yyyy")}

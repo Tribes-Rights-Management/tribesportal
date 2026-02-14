@@ -644,8 +644,7 @@ export default function ApprovalsPage() {
                           {availableContexts.map((context) => (
                             <label
                               key={context.value}
-                              className="flex items-center gap-2 text-[13px] cursor-pointer"
-                              style={{ color: 'var(--platform-text-secondary)' }}
+                              className="flex items-center gap-2 text-sm cursor-pointer text-muted-foreground"
                             >
                               <Checkbox
                                 checked={formState.contexts.includes(context.value)}

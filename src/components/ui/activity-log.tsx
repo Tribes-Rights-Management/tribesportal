@@ -3,14 +3,14 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableHead, 
-  TableRow, 
-  TableCell,
-  TableEmptyRow 
-} from "@/components/ui/table";
+  AppTable, 
+  AppTableHeader, 
+  AppTableBody, 
+  AppTableHead, 
+  AppTableRow, 
+  AppTableCell,
+  AppTableEmpty 
+} from "@/components/app-ui/AppTable";
 import { EMPTY_STATES, BUTTON_LABELS } from "@/constants/institutional-copy";
 
 /**
@@ -119,52 +119,38 @@ export function ActivityLog({
       )}
 
       {/* Activity Table */}
-      <div 
-        style={{ 
-          border: '1px solid var(--platform-border)',
-          borderRadius: '6px',
-          overflow: 'hidden'
-        }}
-      >
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Timestamp (UTC)</TableHead>
-              <TableHead>Actor</TableHead>
-              <TableHead>Action</TableHead>
-              <TableHead>Object</TableHead>
-              <TableHead>Scope</TableHead>
-              <TableHead status>Result</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableEmptyRow 
-                colSpan={6} 
-                title="Retrieving records..."
-                description="Activity log is loading."
-              />
-            ) : entries.length === 0 ? (
-              <TableEmptyRow 
-                colSpan={6} 
-                title={EMPTY_STATES.NO_DATA.title}
-                description="Activity records will appear here once actions are performed."
-              />
-            ) : (
-              entries.map((entry) => (
-                <ActivityLogRow key={entry.id} entry={entry} />
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <AppTable columns={["18%", "18%", "12%", "22%", "15%", "15%"]}>
+        <AppTableHeader>
+          <AppTableRow header>
+            <AppTableHead>Timestamp (UTC)</AppTableHead>
+            <AppTableHead>Actor</AppTableHead>
+            <AppTableHead>Action</AppTableHead>
+            <AppTableHead>Object</AppTableHead>
+            <AppTableHead>Scope</AppTableHead>
+            <AppTableHead>Result</AppTableHead>
+          </AppTableRow>
+        </AppTableHeader>
+        <AppTableBody>
+          {loading ? (
+            <AppTableEmpty colSpan={6}>
+              Retrieving records…
+            </AppTableEmpty>
+          ) : entries.length === 0 ? (
+            <AppTableEmpty colSpan={6}>
+              <p className="text-sm text-muted-foreground">{EMPTY_STATES.NO_DATA.title}</p>
+              <p className="text-xs text-muted-foreground mt-1">Activity records will appear here once actions are performed.</p>
+            </AppTableEmpty>
+          ) : (
+            entries.map((entry) => (
+              <ActivityLogRow key={entry.id} entry={entry} />
+            ))
+          )}
+        </AppTableBody>
+      </AppTable>
 
       {/* Export Note */}
       {onExport && entries.length > 0 && (
-        <p 
-          className="mt-3 text-[12px]"
-          style={{ color: 'var(--platform-text-muted)' }}
-        >
+        <p className="mt-3 text-xs text-muted-foreground">
           Exports reflect the data as of the time generated. Export actions are logged.
         </p>
       )}
@@ -174,49 +160,40 @@ export function ActivityLog({
 
 function ActivityLogRow({ entry }: { entry: ActivityLogEntry }) {
   return (
-    <TableRow>
-      <TableCell muted className="font-mono text-[12px]">
+    <AppTableRow>
+      <AppTableCell mono muted>
         {formatTimestamp(entry.timestamp)}
-      </TableCell>
-      <TableCell>
+      </AppTableCell>
+      <AppTableCell>
         {entry.actor}
-      </TableCell>
-      <TableCell>
+      </AppTableCell>
+      <AppTableCell>
         {entry.action}
-      </TableCell>
-      <TableCell>
-        <span style={{ color: 'var(--platform-text)' }}>
-          {entry.object}
-        </span>
+      </AppTableCell>
+      <AppTableCell>
+        {entry.object}
         {entry.objectId && (
-          <span 
-            className="ml-2 font-mono text-[11px]"
-            style={{ color: 'var(--platform-text-muted)' }}
-          >
+          <span className="ml-2 font-mono text-xs text-muted-foreground">
             {entry.objectId.slice(0, 8)}
           </span>
         )}
-      </TableCell>
-      <TableCell muted>
+      </AppTableCell>
+      <AppTableCell muted>
         {entry.scope ?? '—'}
-      </TableCell>
-      <TableCell status>
+      </AppTableCell>
+      <AppTableCell>
         <ActivityResultBadge result={entry.result} />
-      </TableCell>
-    </TableRow>
+      </AppTableCell>
+    </AppTableRow>
   );
 }
 
 function ActivityResultBadge({ result }: { result: ActivityResult }) {
   return (
-    <span 
-      className="text-[12px] font-medium"
-      style={{ 
-        color: result === ACTIVITY_RESULTS.BLOCKED 
-          ? 'var(--platform-text-secondary)' 
-          : 'var(--platform-text-muted)'
-      }}
-    >
+    <span className={cn(
+      "text-xs font-medium",
+      result === ACTIVITY_RESULTS.BLOCKED ? "text-foreground" : "text-muted-foreground"
+    )}>
       {result}
     </span>
   );
@@ -234,37 +211,28 @@ function ActivityLogFilters({
   onExport 
 }: ActivityLogFiltersProps) {
   return (
-    <div 
-      className="flex items-center gap-4 mb-4 pb-4"
-      style={{ borderBottom: '1px solid var(--platform-border)' }}
-    >
+    <div className="flex items-center gap-4 mb-4 pb-4 border-b border-border">
       {/* Date Range */}
       <div className="flex items-center gap-2">
-        <label 
-          className="text-[12px] font-medium"
-          style={{ color: 'var(--platform-text-muted)' }}
-        >
+        <label className="text-xs font-medium text-muted-foreground">
           From
         </label>
         <Input
           type="date"
           value={filters.dateFrom ?? ''}
           onChange={(e) => onFilterChange({ ...filters, dateFrom: e.target.value })}
-          className="h-9 px-3 py-1.5 text-[13px] rounded-md bg-[var(--platform-surface)] border-[var(--platform-border)] text-[var(--platform-text)]"
+          className="h-9 px-3 py-1.5 text-sm"
         />
       </div>
       <div className="flex items-center gap-2">
-        <label 
-          className="text-[12px] font-medium"
-          style={{ color: 'var(--platform-text-muted)' }}
-        >
+        <label className="text-xs font-medium text-muted-foreground">
           To
         </label>
         <Input
           type="date"
           value={filters.dateTo ?? ''}
           onChange={(e) => onFilterChange({ ...filters, dateTo: e.target.value })}
-          className="h-9 px-3 py-1.5 text-[13px] rounded-md bg-[var(--platform-surface)] border-[var(--platform-border)] text-[var(--platform-text)]"
+          className="h-9 px-3 py-1.5 text-sm"
         />
       </div>
 
@@ -274,7 +242,7 @@ function ActivityLogFilters({
         placeholder="Filter by actor"
         value={filters.actor ?? ''}
         onChange={(e) => onFilterChange({ ...filters, actor: e.target.value })}
-        className="h-9 px-3 py-1.5 text-[13px] rounded-md flex-1 max-w-[200px] bg-[var(--platform-surface)] border-[var(--platform-border)] text-[var(--platform-text)]"
+        className="h-9 px-3 py-1.5 text-sm flex-1 max-w-[200px]"
       />
 
       {/* Action Type Filter */}
@@ -284,12 +252,7 @@ function ActivityLogFilters({
           ...filters, 
           action: e.target.value as ActivityVerb || undefined 
         })}
-        className="px-3 py-1.5 text-[13px] rounded-md"
-        style={{
-          backgroundColor: 'var(--platform-surface)',
-          border: '1px solid var(--platform-border)',
-          color: 'var(--platform-text)',
-        }}
+        className="px-3 py-1.5 text-sm rounded-md bg-background border border-border text-foreground"
       >
         <option value="">All actions</option>
         {Object.values(ACTIVITY_VERBS).map((verb) => (
@@ -351,10 +314,7 @@ export function ActivityLogCompact({
   return (
     <div className={cn("w-full", className)}>
       {displayEntries.length === 0 ? (
-        <p 
-          className="text-[13px] py-4"
-          style={{ color: 'var(--platform-text-muted)' }}
-        >
+        <p className="text-sm text-muted-foreground py-4">
           No recent activity
         </p>
       ) : (
@@ -362,27 +322,17 @@ export function ActivityLogCompact({
           {displayEntries.map((entry) => (
             <div 
               key={entry.id}
-              className="flex items-center justify-between py-3"
-              style={{ borderBottom: '1px solid var(--platform-border)' }}
+              className="flex items-center justify-between py-3 border-b border-border"
             >
               <div className="flex items-center gap-3">
-                <span 
-                  className="text-[13px]"
-                  style={{ color: 'var(--platform-text)' }}
-                >
+                <span className="text-sm text-foreground">
                   {entry.action}
                 </span>
-                <span 
-                  className="text-[13px]"
-                  style={{ color: 'var(--platform-text-secondary)' }}
-                >
+                <span className="text-sm text-muted-foreground">
                   {entry.object}
                 </span>
               </div>
-              <span 
-                className="text-[12px] font-mono"
-                style={{ color: 'var(--platform-text-muted)' }}
-              >
+              <span className="text-xs font-mono text-muted-foreground">
                 {formatTimestamp(entry.timestamp).slice(0, 10)}
               </span>
             </div>

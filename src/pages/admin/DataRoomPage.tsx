@@ -329,28 +329,24 @@ export default function DataRoomPage() {
                   <AppTableRow key={exp.id}>
                     <AppTableCell>
                       <div>
-                        <p className="text-[13px] font-medium text-[--platform-text]">
+                        <p className="font-medium">
                           {exp.title}
                         </p>
                         {exp.description && (
-                          <p className="text-[12px] text-muted-foreground line-clamp-1">
+                          <p className="text-xs text-muted-foreground line-clamp-1">
                             {exp.description}
                           </p>
                         )}
                       </div>
                     </AppTableCell>
                     <AppTableCell>
-                      <span className="text-[12px] text-[--platform-text]">
                         {EXPORT_TYPE_LABELS[exp.export_type]}
-                      </span>
                     </AppTableCell>
                     <AppTableCell>
                       <ConsoleChip label={exp.scope_type} className="text-[10px]" />
                     </AppTableCell>
-                    <AppTableCell>
-                      <span className="text-[12px] text-muted-foreground">
+                    <AppTableCell muted>
                         {format(new Date(exp.period_start), "MMM d")} — {format(new Date(exp.period_end), "MMM d, yyyy")}
-                      </span>
                     </AppTableCell>
                     <AppTableCell>
                       <div className="flex items-center gap-2">
@@ -362,10 +358,8 @@ export default function DataRoomPage() {
                         />
                       </div>
                     </AppTableCell>
-                    <AppTableCell>
-                      <span className="text-[12px] text-muted-foreground">
+                    <AppTableCell muted>
                         {format(new Date(exp.created_at), "MMM d, yyyy")}
-                      </span>
                     </AppTableCell>
                     <AppTableCell>
                       <div className="flex items-center gap-1">
