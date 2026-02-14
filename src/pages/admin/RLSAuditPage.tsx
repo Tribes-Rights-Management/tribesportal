@@ -1,13 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { ConsoleButton, ConsoleChip, ConsoleCard, ConsoleCardHeader, ConsoleCardBody } from "@/components/console";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell } from "@/components/app-ui/AppTable";
 import { ArrowLeft, Check, X, Shield, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -113,7 +106,7 @@ export default function RLSAuditPage() {
           </div>
         </div>
 
-        {/* Summary Stats - responsive grid */}
+        {/* Summary Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <ConsoleCard>
             <ConsoleCardBody>
@@ -156,53 +149,51 @@ export default function RLSAuditPage() {
           </ConsoleCard>
         </div>
 
-        {/* RLS Coverage Table - with overflow scroll for mobile */}
+        {/* RLS Coverage Table */}
         <ConsoleCard>
           <ConsoleCardHeader 
             title="Policy Coverage Inventory"
             description="Audit of RLS status, policy counts, and tenant isolation for all tables in public schema"
           />
           <ConsoleCardBody>
-            <div className="border rounded-lg overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/50">
-                    <TableHead className="text-xs font-medium uppercase">Table</TableHead>
-                    <TableHead className="text-xs font-medium uppercase text-center">RLS Enabled</TableHead>
-                    <TableHead className="text-xs font-medium uppercase text-center">Policy Count</TableHead>
-                    <TableHead className="text-xs font-medium uppercase text-center">Has tenant_id</TableHead>
-                    <TableHead className="text-xs font-medium uppercase text-center">Policies Use tenant_id</TableHead>
-                    <TableHead className="text-xs font-medium uppercase text-center">Status</TableHead>
-                    <TableHead className="text-xs font-medium uppercase">Notes</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {RLS_COVERAGE.map((row) => (
-                    <TableRow key={row.table}>
-                      <TableCell className="text-xs font-mono">{row.table}</TableCell>
-                      <TableCell className="text-center">
-                        <BooleanIndicator value={row.rlsEnabled} />
-                      </TableCell>
-                      <TableCell className="text-center text-xs">{row.policyCount}</TableCell>
-                      <TableCell className="text-center">
-                        <BooleanIndicator value={row.hasTenantId} />
-                      </TableCell>
-                      <TableCell className="text-center">
-                        {row.hasTenantId ? (
-                          <BooleanIndicator value={row.policiesReferenceTenantId} />
-                        ) : (
-                          <span className="text-xs text-muted-foreground">N/A</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <StatusBadge status={row.status} />
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground max-w-[200px]">{row.notes}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <AppTable columns={["20%", "12%", "12%", "12%", "14%", "10%", "20%"]}>
+              <AppTableHeader>
+                <AppTableRow header>
+                  <AppTableHead>Table</AppTableHead>
+                  <AppTableHead align="center">RLS Enabled</AppTableHead>
+                  <AppTableHead align="center">Policy Count</AppTableHead>
+                  <AppTableHead align="center">Has tenant_id</AppTableHead>
+                  <AppTableHead align="center">Policies Use tenant_id</AppTableHead>
+                  <AppTableHead align="center">Status</AppTableHead>
+                  <AppTableHead>Notes</AppTableHead>
+                </AppTableRow>
+              </AppTableHeader>
+              <AppTableBody>
+                {RLS_COVERAGE.map((row) => (
+                  <AppTableRow key={row.table}>
+                    <AppTableCell mono>{row.table}</AppTableCell>
+                    <AppTableCell align="center">
+                      <BooleanIndicator value={row.rlsEnabled} />
+                    </AppTableCell>
+                    <AppTableCell align="center">{row.policyCount}</AppTableCell>
+                    <AppTableCell align="center">
+                      <BooleanIndicator value={row.hasTenantId} />
+                    </AppTableCell>
+                    <AppTableCell align="center">
+                      {row.hasTenantId ? (
+                        <BooleanIndicator value={row.policiesReferenceTenantId} />
+                      ) : (
+                        <span className="text-xs text-muted-foreground">N/A</span>
+                      )}
+                    </AppTableCell>
+                    <AppTableCell align="center">
+                      <StatusBadge status={row.status} />
+                    </AppTableCell>
+                    <AppTableCell muted className="max-w-[200px]">{row.notes}</AppTableCell>
+                  </AppTableRow>
+                ))}
+              </AppTableBody>
+            </AppTable>
           </ConsoleCardBody>
         </ConsoleCard>
 

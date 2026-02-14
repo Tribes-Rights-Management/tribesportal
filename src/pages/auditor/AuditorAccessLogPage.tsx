@@ -3,15 +3,7 @@ import { AppPageLayout } from "@/components/app-ui";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableHead, 
-  TableRow, 
-  TableCell,
-  TableEmptyRow 
-} from "@/components/ui/table";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/app-ui/AppTable";
 import { EMPTY_STATES } from "@/constants/institutional-copy";
 
 /**
@@ -89,54 +81,44 @@ export default function AuditorAccessLogPage() {
         </p>
       </div>
 
-      <div 
-        style={{ 
-          border: '1px solid var(--platform-border)',
-          borderRadius: '6px',
-          overflow: 'hidden'
-        }}
-      >
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Timestamp (UTC)</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Access Type</TableHead>
-              <TableHead>Record Type</TableHead>
-              <TableHead>Record ID</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableEmptyRow 
-                colSpan={5} 
-                title="Retrieving records..."
-                description="Loading access log."
-              />
-            ) : entries.length === 0 ? (
-              <TableEmptyRow 
-                colSpan={5} 
-                title={EMPTY_STATES.NO_DATA.title}
-                description="Access events will appear here once records are viewed."
-              />
-            ) : (
-              entries.map((entry) => (
-                <TableRow key={entry.id}>
-                  <TableCell muted className="font-mono text-[12px]">
-                    {formatTimestamp(entry.accessed_at)}
-                  </TableCell>
-                  <TableCell>{entry.user_email}</TableCell>
-                  <TableCell>{formatAccessType(entry.access_type)}</TableCell>
-                  <TableCell muted>{entry.record_type}</TableCell>
-                  <TableCell muted className="font-mono text-[11px]">
-                    {entry.record_id.slice(0, 8)}...
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <AppTable columns={["25%", "20%", "15%", "20%", "20%"]}>
+        <AppTableHeader>
+          <AppTableRow header>
+            <AppTableHead>Timestamp (UTC)</AppTableHead>
+            <AppTableHead>User</AppTableHead>
+            <AppTableHead>Access Type</AppTableHead>
+            <AppTableHead>Record Type</AppTableHead>
+            <AppTableHead>Record ID</AppTableHead>
+          </AppTableRow>
+        </AppTableHeader>
+        <AppTableBody>
+          {loading ? (
+            <AppTableEmpty colSpan={5}>
+              <p className="text-sm text-muted-foreground">Retrieving records...</p>
+              <p className="text-xs text-muted-foreground mt-1">Loading access log.</p>
+            </AppTableEmpty>
+          ) : entries.length === 0 ? (
+            <AppTableEmpty colSpan={5}>
+              <p className="text-sm text-muted-foreground">{EMPTY_STATES.NO_DATA.title}</p>
+              <p className="text-xs text-muted-foreground mt-1">Access events will appear here once records are viewed.</p>
+            </AppTableEmpty>
+          ) : (
+            entries.map((entry) => (
+              <AppTableRow key={entry.id}>
+                <AppTableCell mono muted>
+                  {formatTimestamp(entry.accessed_at)}
+                </AppTableCell>
+                <AppTableCell>{entry.user_email}</AppTableCell>
+                <AppTableCell>{formatAccessType(entry.access_type)}</AppTableCell>
+                <AppTableCell muted>{entry.record_type}</AppTableCell>
+                <AppTableCell mono muted>
+                  {entry.record_id.slice(0, 8)}...
+                </AppTableCell>
+              </AppTableRow>
+            ))
+          )}
+        </AppTableBody>
+      </AppTable>
     </AppPageLayout>
   );
 }

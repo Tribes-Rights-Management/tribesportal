@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganizationMembers } from "@/hooks/useOrganizationMembers";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell } from "@/components/app-ui/AppTable";
 import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal, Shield, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -179,20 +179,20 @@ export default function OrganizationUsersPage() {
 
             {/* Desktop view */}
             <div className="hidden md:block">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Modules</TableHead>
-                    <TableHead>Joined</TableHead>
-                    <TableHead className="w-16"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+              <AppTable columns={["35%", "15%", "25%", "15%", "10%"]}>
+                <AppTableHeader>
+                  <AppTableRow header>
+                    <AppTableHead>User</AppTableHead>
+                    <AppTableHead>Role</AppTableHead>
+                    <AppTableHead>Modules</AppTableHead>
+                    <AppTableHead>Joined</AppTableHead>
+                    <AppTableHead></AppTableHead>
+                  </AppTableRow>
+                </AppTableHeader>
+                <AppTableBody>
                   {members.map((member) => (
-                    <TableRow key={member.id}>
-                      <TableCell>
+                    <AppTableRow key={member.id}>
+                      <AppTableCell>
                         <div>
                           <p className="font-medium">
                             {member.full_name || member.email}
@@ -203,13 +203,13 @@ export default function OrganizationUsersPage() {
                             </p>
                           )}
                         </div>
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <Badge variant={getRoleBadgeVariant(member.org_role)}>
                           {getRoleLabel(member.org_role)}
                         </Badge>
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <div className="flex gap-1">
                           {member.has_admin_access && (
                             <Badge variant="outline" className="gap-1">
@@ -224,11 +224,11 @@ export default function OrganizationUsersPage() {
                             </Badge>
                           )}
                         </div>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      </AppTableCell>
+                      <AppTableCell muted>
                         {formatDate(member.joined_at)}
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button className="p-2 hover:bg-muted rounded">
@@ -242,11 +242,11 @@ export default function OrganizationUsersPage() {
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
+                      </AppTableCell>
+                    </AppTableRow>
                   ))}
-                </TableBody>
-              </Table>
+                </AppTableBody>
+              </AppTable>
             </div>
           </>
         )}

@@ -8,15 +8,7 @@ import {
   CorrelationChainView, 
   ChainEvent 
 } from "@/components/ui/correlation-chain";
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableRow, 
-  TableHead, 
-  TableCell,
-  TableEmptyRow 
-} from "@/components/ui/table";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/app-ui/AppTable";
 import { AppSearchInput } from "@/components/app-ui";
 import { Button } from "@/components/ui/button";
 import { Search, Link2 } from "lucide-react";
@@ -219,56 +211,52 @@ export default function AuditorChainPage() {
             </h3>
           </div>
 
-          <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Correlation ID</TableHead>
-                <TableHead>Record Type</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="text-center">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <AppTable columns={["40%", "20%", "25%", "15%"]}>
+            <AppTableHeader>
+              <AppTableRow header>
+                <AppTableHead>Correlation ID</AppTableHead>
+                <AppTableHead>Record Type</AppTableHead>
+                <AppTableHead>Created</AppTableHead>
+                <AppTableHead align="center">Action</AppTableHead>
+              </AppTableRow>
+            </AppTableHeader>
+            <AppTableBody>
               {loadingRecent ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center py-8">
-                    <span style={{ color: 'var(--platform-text-muted)' }}>
-                      Loading records
-                    </span>
-                  </TableCell>
-                </TableRow>
+                <AppTableEmpty colSpan={4}>
+                  <span style={{ color: 'var(--platform-text-muted)' }}>
+                    Loading records
+                  </span>
+                </AppTableEmpty>
               ) : recentCorrelations.length === 0 ? (
-                <TableEmptyRow 
-                  colSpan={4} 
-                  title={EMPTY_STATES.NO_DATA.title}
-                  description="No correlated records available."
-                />
+                <AppTableEmpty colSpan={4}>
+                  <p className="text-sm text-muted-foreground">{EMPTY_STATES.NO_DATA.title}</p>
+                  <p className="text-xs text-muted-foreground mt-1">No correlated records available.</p>
+                </AppTableEmpty>
               ) : (
                 recentCorrelations.map((record) => (
-                  <TableRow key={record.correlation_id} clickable>
-                    <TableCell>
+                  <AppTableRow key={record.correlation_id} clickable>
+                    <AppTableCell>
                       <code 
                         className="text-[12px] font-mono"
                         style={{ color: 'var(--platform-text)' }}
                       >
                         {record.correlation_id}
                       </code>
-                    </TableCell>
-                    <TableCell>
+                    </AppTableCell>
+                    <AppTableCell>
                       <span style={{ color: 'var(--platform-text)' }}>
                         {record.record_type.replace(/_/g, ' ')}
                       </span>
-                    </TableCell>
-                    <TableCell>
+                    </AppTableCell>
+                    <AppTableCell>
                       <span 
                         className="text-[13px]"
                         style={{ color: 'var(--platform-text-muted)' }}
                       >
                         {formatDate(record.created_at)}
                       </span>
-                    </TableCell>
-                    <TableCell className="text-center">
+                    </AppTableCell>
+                    <AppTableCell align="center">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -278,13 +266,12 @@ export default function AuditorChainPage() {
                         <Link2 className="h-4 w-4 mr-1" />
                         View
                       </Button>
-                    </TableCell>
-                  </TableRow>
+                    </AppTableCell>
+                  </AppTableRow>
                 ))
               )}
-            </TableBody>
-          </Table>
-          </div>
+            </AppTableBody>
+          </AppTable>
         </>
       )}
     </AppPageLayout>
