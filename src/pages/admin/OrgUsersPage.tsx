@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell } from "@/components/app-ui/AppTable";
 import { Badge } from "@/components/ui/badge";
 import { Plus, MoreHorizontal, Mail, XCircle, Shield, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -63,7 +63,6 @@ export default function OrgUsersPage() {
     setLoading(true);
 
     try {
-      // Fetch members with their module access
       const { data: membershipsData, error: membershipsError } = await supabase
         .from("tenant_memberships")
         .select(`
@@ -82,7 +81,6 @@ export default function OrgUsersPage() {
 
       if (membershipsError) throw membershipsError;
 
-      // Fetch module access for these users
       const userIds = membershipsData?.map(m => m.user_id) || [];
       
       const { data: moduleAccessData } = await supabase
@@ -114,7 +112,6 @@ export default function OrgUsersPage() {
 
       setMembers(processedMembers);
 
-      // Fetch pending invitations
       const { data: invitationsData, error: invitationsError } = await supabase
         .from("invitations")
         .select("*")
@@ -165,7 +162,6 @@ export default function OrgUsersPage() {
   };
 
   const handleResendInvitation = async (email: string) => {
-    // Placeholder - email sending would be implemented here
     toast({
       title: "Resend not implemented",
       description: `Would resend invitation to ${email}`,
@@ -246,21 +242,20 @@ export default function OrgUsersPage() {
                 />
               </div>
             ) : (
-              <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Modules</TableHead>
-                    <TableHead>Joined</TableHead>
-                    <TableHead className="w-12"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+              <AppTable columns={["35%", "15%", "25%", "15%", "10%"]}>
+                <AppTableHeader>
+                  <AppTableRow header>
+                    <AppTableHead>User</AppTableHead>
+                    <AppTableHead>Role</AppTableHead>
+                    <AppTableHead>Modules</AppTableHead>
+                    <AppTableHead>Joined</AppTableHead>
+                    <AppTableHead></AppTableHead>
+                  </AppTableRow>
+                </AppTableHeader>
+                <AppTableBody>
                   {members.map((member) => (
-                    <TableRow key={member.id}>
-                      <TableCell>
+                    <AppTableRow key={member.id}>
+                      <AppTableCell>
                         <div>
                           <p className="font-medium">
                             {member.full_name || member.email}
@@ -271,13 +266,13 @@ export default function OrgUsersPage() {
                             </p>
                           )}
                         </div>
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <Badge variant={getRoleBadgeVariant(member.org_role)}>
                           {getRoleLabel(member.org_role)}
                         </Badge>
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <div className="flex gap-1.5">
                           {member.has_admin_access && (
                             <Badge variant="outline" className="gap-1 text-xs">
@@ -295,11 +290,11 @@ export default function OrgUsersPage() {
                             <span className="text-muted-foreground text-sm">—</span>
                           )}
                         </div>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
+                      </AppTableCell>
+                      <AppTableCell muted>
                         {formatDate(member.joined_at)}
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button className="p-1.5 hover:bg-muted rounded">
@@ -313,12 +308,11 @@ export default function OrgUsersPage() {
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
+                      </AppTableCell>
+                    </AppTableRow>
                   ))}
-                </TableBody>
-              </Table>
-              </div>
+                </AppTableBody>
+              </AppTable>
             )}
           </AppCard>
         </TabsContent>
@@ -337,29 +331,28 @@ export default function OrgUsersPage() {
                 />
               </div>
             ) : (
-              <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Modules</TableHead>
-                    <TableHead>Expires</TableHead>
-                    <TableHead className="w-12"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+              <AppTable columns={["30%", "15%", "25%", "20%", "10%"]}>
+                <AppTableHeader>
+                  <AppTableRow header>
+                    <AppTableHead>Email</AppTableHead>
+                    <AppTableHead>Role</AppTableHead>
+                    <AppTableHead>Modules</AppTableHead>
+                    <AppTableHead>Expires</AppTableHead>
+                    <AppTableHead></AppTableHead>
+                  </AppTableRow>
+                </AppTableHeader>
+                <AppTableBody>
                   {invitations.map((invitation) => (
-                    <TableRow key={invitation.id}>
-                      <TableCell className="font-medium">
+                    <AppTableRow key={invitation.id}>
+                      <AppTableCell className="font-medium">
                         {invitation.invited_email}
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <Badge variant={getRoleBadgeVariant(invitation.org_role)}>
                           {getRoleLabel(invitation.org_role)}
                         </Badge>
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <div className="flex gap-1.5">
                           {invitation.grant_admin_module && (
                             <Badge variant="outline" className="gap-1 text-xs">
@@ -374,8 +367,8 @@ export default function OrgUsersPage() {
                             </Badge>
                           )}
                         </div>
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <div className="flex items-center gap-2">
                           <span className="text-muted-foreground text-sm">
                             {formatDate(invitation.expires_at)}
@@ -386,8 +379,8 @@ export default function OrgUsersPage() {
                             </Badge>
                           )}
                         </div>
-                      </TableCell>
-                      <TableCell>
+                      </AppTableCell>
+                      <AppTableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button className="p-1.5 hover:bg-muted rounded">
@@ -410,12 +403,11 @@ export default function OrgUsersPage() {
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
+                      </AppTableCell>
+                    </AppTableRow>
                   ))}
-                </TableBody>
-              </Table>
-              </div>
+                </AppTableBody>
+              </AppTable>
             )}
           </AppCard>
         </TabsContent>

@@ -5,14 +5,7 @@ import { Download, Filter } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
 import { AppSearchInput, AppPageLayout } from "@/components/app-ui";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableEmpty } from "@/components/app-ui/AppTable";
 
 /**
  * SYSTEM CONSOLE — ALL INVOICES (Read-Only)
@@ -67,28 +60,26 @@ export default function AllInvoicesPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Invoice #</TableHead>
-                  <TableHead>Organization</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Due Date</TableHead>
-                  <TableHead>Created</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center">
-                    <InstitutionalEmptyState
-                      title="No invoices"
-                      description="Invoices will appear here when generated"
-                    />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+            <AppTable columns={["18%", "22%", "15%", "15%", "15%", "15%"]}>
+              <AppTableHeader>
+                <AppTableRow header>
+                  <AppTableHead>Invoice #</AppTableHead>
+                  <AppTableHead>Organization</AppTableHead>
+                  <AppTableHead>Amount</AppTableHead>
+                  <AppTableHead>Status</AppTableHead>
+                  <AppTableHead>Due Date</AppTableHead>
+                  <AppTableHead>Created</AppTableHead>
+                </AppTableRow>
+              </AppTableHeader>
+              <AppTableBody>
+                <AppTableEmpty colSpan={6}>
+                  <InstitutionalEmptyState
+                    title="No invoices"
+                    description="Invoices will appear here when generated"
+                  />
+                </AppTableEmpty>
+              </AppTableBody>
+            </AppTable>
           </CardContent>
         </Card>
 

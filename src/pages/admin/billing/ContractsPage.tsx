@@ -10,15 +10,7 @@ import { Link } from "react-router-dom";
 import { FileText, ExternalLink, Filter } from "lucide-react";
 import { format } from "date-fns";
 import { AppPageLayout } from "@/components/app-ui";
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableRow, 
-  TableHead, 
-  TableCell,
-  TableEmptyRow 
-} from "@/components/ui/table";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/app-ui/AppTable";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -129,38 +121,33 @@ export default function ContractsPage() {
             <InstitutionalLoadingState message="Loading contracts..." />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Contract</TableHead>
-                <TableHead>Organization</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Version</TableHead>
-                <TableHead>Effective Date</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <AppTable columns={["25%", "18%", "12%", "8%", "15%", "15%", "7%"]}>
+            <AppTableHeader>
+              <AppTableRow header>
+                <AppTableHead>Contract</AppTableHead>
+                <AppTableHead>Organization</AppTableHead>
+                <AppTableHead>Status</AppTableHead>
+                <AppTableHead>Version</AppTableHead>
+                <AppTableHead>Effective Date</AppTableHead>
+                <AppTableHead>Created</AppTableHead>
+                <AppTableHead></AppTableHead>
+              </AppTableRow>
+            </AppTableHeader>
+            <AppTableBody>
               {filteredContracts.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7}>
-                    <div className="text-center py-8">
-                      <FileText className="h-6 w-6 text-muted-foreground mx-auto mb-2" strokeWidth={1.0} />
-                      <p className="text-[13px] text-muted-foreground">
-                        {searchQuery || statusFilter !== "all" 
-                          ? "No contracts match your filters"
-                          : "No contracts in the system"
-                        }
-                      </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                <AppTableEmpty colSpan={7}>
+                  <FileText className="h-6 w-6 text-muted-foreground mx-auto mb-2" strokeWidth={1.0} />
+                  <p className="text-[13px] text-muted-foreground">
+                    {searchQuery || statusFilter !== "all" 
+                      ? "No contracts match your filters"
+                      : "No contracts in the system"
+                    }
+                  </p>
+                </AppTableEmpty>
               ) : (
                 filteredContracts.map((contract: any) => (
-                  <TableRow key={contract.id}>
-                    <TableCell>
+                  <AppTableRow key={contract.id}>
+                    <AppTableCell>
                       <div>
                         <p className="text-[13px] font-medium text-[--platform-text]">
                           {contract.title}
@@ -169,49 +156,44 @@ export default function ContractsPage() {
                           {contract.contract_number}
                         </p>
                       </div>
-                    </TableCell>
-                    <TableCell>
+                    </AppTableCell>
+                    <AppTableCell>
                       <span className="text-[13px] text-[--platform-text]">
                         {contract.tenant?.name || "—"}
                       </span>
-                    </TableCell>
-                    <TableCell>
+                    </AppTableCell>
+                    <AppTableCell>
                       <Badge variant={getStatusVariant(contract.status)} className="text-[11px]">
                         {contract.status}
                       </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-[12px] text-muted-foreground">
-                        v{contract.version}
-                      </span>
-                    </TableCell>
-                    <TableCell>
+                    </AppTableCell>
+                    <AppTableCell muted>
+                      v{contract.version}
+                    </AppTableCell>
+                    <AppTableCell>
                       <span className="text-[12px] text-[--platform-text]">
                         {contract.effective_date 
                           ? format(new Date(contract.effective_date), "MMM d, yyyy")
                           : "—"
                         }
                       </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-[12px] text-muted-foreground">
-                        {format(new Date(contract.created_at), "MMM d, yyyy")}
-                      </span>
-                    </TableCell>
-                    <TableCell>
+                    </AppTableCell>
+                    <AppTableCell muted>
+                      {format(new Date(contract.created_at), "MMM d, yyyy")}
+                    </AppTableCell>
+                    <AppTableCell>
                       <Link 
                         to={`/admin/billing/contracts/${contract.id}`}
                         className="text-muted-foreground hover:text-foreground"
                       >
                         <ExternalLink className="h-4 w-4" />
                       </Link>
-                    </TableCell>
-                  </TableRow>
+                    </AppTableCell>
+                  </AppTableRow>
                 ))
               )}
-            </TableBody>
-          </Table>
-          </div>
+            </AppTableBody>
+          </AppTable>
         )}
       </div>
     </AppPageLayout>

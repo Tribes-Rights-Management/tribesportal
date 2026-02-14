@@ -3,15 +3,7 @@ import { AppPageLayout } from "@/components/app-ui";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableHead, 
-  TableRow, 
-  TableCell,
-  TableEmptyRow 
-} from "@/components/ui/table";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/app-ui/AppTable";
 import { EMPTY_STATES } from "@/constants/institutional-copy";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -115,107 +107,87 @@ export default function AuditorLicensingPage() {
         </TabsList>
 
         <TabsContent value="requests">
-          <div 
-            style={{ 
-              border: '1px solid var(--platform-border)',
-              borderRadius: '6px',
-              overflow: 'hidden'
-            }}
-          >
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Work Title</TableHead>
-                  <TableHead status>Status</TableHead>
-                  <TableHead>Territory</TableHead>
-                  <TableHead>Usage Type</TableHead>
-                  <TableHead>Requester</TableHead>
-                  <TableHead>Submitted</TableHead>
-                  <TableHead>Last Updated</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                  <TableEmptyRow 
-                    colSpan={7} 
-                    title="Retrieving records..."
-                    description="Loading licensing requests."
-                  />
-                ) : requests.length === 0 ? (
-                  <TableEmptyRow 
-                    colSpan={7} 
-                    title={EMPTY_STATES.LICENSING_REQUESTS.title}
-                    description={EMPTY_STATES.LICENSING_REQUESTS.description}
-                  />
-                ) : (
-                  requests.map((req) => (
-                    <TableRow key={req.id}>
-                      <TableCell>{req.work_title ?? '—'}</TableCell>
-                      <TableCell status>
-                        <StatusBadge status={req.status} />
-                      </TableCell>
-                      <TableCell muted>{req.territory ?? '—'}</TableCell>
-                      <TableCell muted>{req.usage_type ?? '—'}</TableCell>
-                      <TableCell muted>{req.requester_email ?? '—'}</TableCell>
-                      <TableCell muted>{formatDate(req.created_at)}</TableCell>
-                      <TableCell muted>{formatDate(req.updated_at)}</TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          <AppTable columns={["22%", "10%", "12%", "12%", "18%", "13%", "13%"]}>
+            <AppTableHeader>
+              <AppTableRow header>
+                <AppTableHead>Work Title</AppTableHead>
+                <AppTableHead>Status</AppTableHead>
+                <AppTableHead>Territory</AppTableHead>
+                <AppTableHead>Usage Type</AppTableHead>
+                <AppTableHead>Requester</AppTableHead>
+                <AppTableHead>Submitted</AppTableHead>
+                <AppTableHead>Last Updated</AppTableHead>
+              </AppTableRow>
+            </AppTableHeader>
+            <AppTableBody>
+              {loading ? (
+                <AppTableEmpty colSpan={7}>
+                  <p className="text-sm text-muted-foreground">Retrieving records...</p>
+                  <p className="text-xs text-muted-foreground mt-1">Loading licensing requests.</p>
+                </AppTableEmpty>
+              ) : requests.length === 0 ? (
+                <AppTableEmpty colSpan={7}>
+                  <p className="text-sm text-muted-foreground">{EMPTY_STATES.LICENSING_REQUESTS.title}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{EMPTY_STATES.LICENSING_REQUESTS.description}</p>
+                </AppTableEmpty>
+              ) : (
+                requests.map((req) => (
+                  <AppTableRow key={req.id}>
+                    <AppTableCell>{req.work_title ?? '—'}</AppTableCell>
+                    <AppTableCell>
+                      <StatusBadge status={req.status} />
+                    </AppTableCell>
+                    <AppTableCell muted>{req.territory ?? '—'}</AppTableCell>
+                    <AppTableCell muted>{req.usage_type ?? '—'}</AppTableCell>
+                    <AppTableCell muted>{req.requester_email ?? '—'}</AppTableCell>
+                    <AppTableCell muted>{formatDate(req.created_at)}</AppTableCell>
+                    <AppTableCell muted>{formatDate(req.updated_at)}</AppTableCell>
+                  </AppTableRow>
+                ))
+              )}
+            </AppTableBody>
+          </AppTable>
         </TabsContent>
 
         <TabsContent value="agreements">
-          <div 
-            style={{ 
-              border: '1px solid var(--platform-border)',
-              borderRadius: '6px',
-              overflow: 'hidden'
-            }}
-          >
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Agreement Title</TableHead>
-                  <TableHead status>Status</TableHead>
-                  <TableHead>Effective Date</TableHead>
-                  <TableHead>End Date</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Last Updated</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                  <TableEmptyRow 
-                    colSpan={6} 
-                    title="Retrieving records..."
-                    description="Loading licensing agreements."
-                  />
-                ) : agreements.length === 0 ? (
-                  <TableEmptyRow 
-                    colSpan={6} 
-                    title={EMPTY_STATES.LICENSING_AGREEMENTS.title}
-                    description={EMPTY_STATES.LICENSING_AGREEMENTS.description}
-                  />
-                ) : (
-                  agreements.map((agr) => (
-                    <TableRow key={agr.id}>
-                      <TableCell>{agr.agreement_title}</TableCell>
-                      <TableCell status>
-                        <StatusBadge status={agr.status} />
-                      </TableCell>
-                      <TableCell muted>{agr.effective_date ?? '—'}</TableCell>
-                      <TableCell muted>{agr.end_date ?? '—'}</TableCell>
-                      <TableCell muted>{formatDate(agr.created_at)}</TableCell>
-                      <TableCell muted>{formatDate(agr.updated_at)}</TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          <AppTable columns={["25%", "12%", "16%", "16%", "16%", "15%"]}>
+            <AppTableHeader>
+              <AppTableRow header>
+                <AppTableHead>Agreement Title</AppTableHead>
+                <AppTableHead>Status</AppTableHead>
+                <AppTableHead>Effective Date</AppTableHead>
+                <AppTableHead>End Date</AppTableHead>
+                <AppTableHead>Created</AppTableHead>
+                <AppTableHead>Last Updated</AppTableHead>
+              </AppTableRow>
+            </AppTableHeader>
+            <AppTableBody>
+              {loading ? (
+                <AppTableEmpty colSpan={6}>
+                  <p className="text-sm text-muted-foreground">Retrieving records...</p>
+                  <p className="text-xs text-muted-foreground mt-1">Loading licensing agreements.</p>
+                </AppTableEmpty>
+              ) : agreements.length === 0 ? (
+                <AppTableEmpty colSpan={6}>
+                  <p className="text-sm text-muted-foreground">{EMPTY_STATES.LICENSING_AGREEMENTS.title}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{EMPTY_STATES.LICENSING_AGREEMENTS.description}</p>
+                </AppTableEmpty>
+              ) : (
+                agreements.map((agr) => (
+                  <AppTableRow key={agr.id}>
+                    <AppTableCell>{agr.agreement_title}</AppTableCell>
+                    <AppTableCell>
+                      <StatusBadge status={agr.status} />
+                    </AppTableCell>
+                    <AppTableCell muted>{agr.effective_date ?? '—'}</AppTableCell>
+                    <AppTableCell muted>{agr.end_date ?? '—'}</AppTableCell>
+                    <AppTableCell muted>{formatDate(agr.created_at)}</AppTableCell>
+                    <AppTableCell muted>{formatDate(agr.updated_at)}</AppTableCell>
+                  </AppTableRow>
+                ))
+              )}
+            </AppTableBody>
+          </AppTable>
         </TabsContent>
       </Tabs>
     </AppPageLayout>
