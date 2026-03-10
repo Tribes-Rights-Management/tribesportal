@@ -88,7 +88,7 @@ export default function AuthErrorPage() {
             e.currentTarget.style.opacity = '1';
           }}
         >
-          contact@tribesassets.com
+          admin@tribesassets.com
         </a>
       </p>
 

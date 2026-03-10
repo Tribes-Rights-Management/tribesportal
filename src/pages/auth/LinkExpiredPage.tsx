@@ -119,7 +119,7 @@ export default function LinkExpiredPage() {
             e.currentTarget.style.color = colors.muted;
           }}
         >
-          contact@tribesassets.com
+          admin@tribesassets.com
         </a>
       </p>
     </AuthLayout>

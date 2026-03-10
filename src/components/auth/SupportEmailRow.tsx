@@ -9,7 +9,7 @@ export function SupportEmailRow({ showLabel = true }: SupportEmailRowProps) {
   const [showEmail, setShowEmail] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const supportEmail = "contact@tribesassets.com";
+  const supportEmail = "admin@tribesassets.com";
 
   const handleCopyEmail = async () => {
     try {
