@@ -105,7 +105,7 @@ export default function LinkExpiredPage() {
       {/* Support */}
       <p style={{ marginTop: '8px' }}>
         <a 
-          href="mailto:contact@tribesassets.com"
+          href="mailto:admin@tribesassets.com"
           style={{
             fontSize: '12px',
             color: colors.muted,
