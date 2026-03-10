@@ -73,7 +73,7 @@ export default function AuthErrorPage() {
       {/* Support email */}
       <p style={{ marginTop: '8px' }}>
         <a 
-          href="mailto:contact@tribesassets.com"
+          href="mailto:admin@tribesassets.com"
           style={{
             fontSize: '14px',
             fontWeight: 500,
