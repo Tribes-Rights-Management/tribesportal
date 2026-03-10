@@ -31,7 +31,7 @@ export function SignInHelpDialog({
   const [isResending, setIsResending] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const supportEmail = "contact@tribesassets.com";
+  const supportEmail = "admin@tribesassets.com";
 
   const handleResendLink = async () => {
     if (!email.trim()) {

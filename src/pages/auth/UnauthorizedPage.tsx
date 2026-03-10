@@ -180,7 +180,7 @@ export default function UnauthorizedPage() {
 
       <p style={{ marginTop: '8px' }}>
         <a 
-          href="mailto:contact@tribesassets.com"
+          href="mailto:admin@tribesassets.com"
           style={{
             fontSize: '12px',
             color: colors.muted,
@@ -194,7 +194,7 @@ export default function UnauthorizedPage() {
             e.currentTarget.style.color = colors.muted;
           }}
         >
-          contact@tribesassets.com
+          admin@tribesassets.com
         </a>
       </p>
     </AuthLayout>

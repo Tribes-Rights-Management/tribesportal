@@ -585,7 +585,7 @@ export const SYSTEM_COPY = {
   
   // Contact
   CONTACT_ADMIN: "Contact administration for access inquiries.",
-  SUPPORT_EMAIL: "contact@tribesassets.com",
+  SUPPORT_EMAIL: "admin@tribesassets.com",
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
