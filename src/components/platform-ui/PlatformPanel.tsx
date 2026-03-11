@@ -180,7 +180,7 @@ export function PlatformPanelFooter({
   cancelLabel = "Cancel",
   submitting = false,
   submitDisabled = false,
-}: AppPanelFooterProps) {
+}: PlatformPanelFooterProps) {
   return (
     <div className="flex items-center justify-between w-full">
       <div>{left}</div>
