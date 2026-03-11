@@ -54,7 +54,7 @@ interface PlatformEmptyStateProps {
   className?: string;
 }
 
-export function AppEmptyState({
+export function PlatformEmptyState({
   icon = "inbox",
   customIcon,
   message,
