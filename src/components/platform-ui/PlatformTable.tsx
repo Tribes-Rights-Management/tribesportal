@@ -65,7 +65,7 @@ interface PlatformTableProps {
   className?: string;
 }
 
-export function AppTable({ children, columns, className }: AppTableProps) {
+export function PlatformTable({ children, columns, className }: PlatformTableProps) {
   // Resolve column widths from preset or direct array
   const columnWidths = columns
     ? typeof columns === "string"
