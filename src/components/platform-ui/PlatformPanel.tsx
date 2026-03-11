@@ -185,10 +185,10 @@ export function PlatformPanelFooter({
     <div className="flex items-center justify-between w-full">
       <div>{left}</div>
       <div className="flex items-center gap-2">
-        <AppButton intent="secondary" size="sm" onClick={onCancel}>
+        <PlatformButton intent="secondary" size="sm" onClick={onCancel}>
           {cancelLabel}
-        </AppButton>
-        <AppButton
+        </PlatformButton>
+        <PlatformButton
           intent="primary"
           size="sm"
           onClick={onSubmit}
