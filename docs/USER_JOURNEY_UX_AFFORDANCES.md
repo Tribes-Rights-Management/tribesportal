@@ -37,7 +37,7 @@ This document proves the system is coherent, humane, and institutional—not hea
 
 | Role | Landing Surface |
 |------|-----------------|
-| Platform Executive | System Console (`/admin`) |
+| Platform Executive | System Console (`/console`) |
 | Org Admin only | Their org workspace |
 | Multi-org user | Last active workspace |
 | No active membership | Access Pending (`/auth/unauthorized`) |
