@@ -37,7 +37,7 @@ const iconMap = {
 
 type IconType = keyof typeof iconMap;
 
-interface AppEmptyStateProps {
+interface PlatformEmptyStateProps {
   /** Icon to display */
   icon?: IconType;
   /** Custom icon component */
