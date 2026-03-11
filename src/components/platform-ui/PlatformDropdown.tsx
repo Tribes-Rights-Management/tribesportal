@@ -39,7 +39,7 @@ export interface PlatformDropdownProps {
   /** The trigger element that opens the dropdown */
   trigger: React.ReactNode;
   /** Array of menu items */
-  items: AppDropdownItem[];
+  items: PlatformDropdownItem[];
   /** Alignment of dropdown relative to trigger */
   align?: "start" | "end";
   /** Minimum width of dropdown menu */
