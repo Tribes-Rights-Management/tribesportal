@@ -23,7 +23,7 @@ This document defines **which components to use where** across the Tribes Portal
 | `/help/*` | Help Workstation | `@/components/app-ui` |
 | `/licensing/*` | Licensing Workstation | `@/components/app-ui` |
 | `/rights/*` | Rights Workstation | `@/components/app-ui` |
-| `/app/*` | Client Portal | `@/components/app-ui` |
+| `/app/*` | Legacy Client Views | `@/components/app-ui` |
 | `/auditor/*` | Auditor | `@/components/ui/*` + PlatformLayout |
 
 > **Note**: `/portal` and `/help-workstation` are legacy compatibility redirects, not primary identities.
