@@ -4,7 +4,7 @@ import {
   AppPageLayout,
   AppSection,
   AppEmptyState,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 
 /**
  * TRIBES ADMIN ROYALTIES PAGE

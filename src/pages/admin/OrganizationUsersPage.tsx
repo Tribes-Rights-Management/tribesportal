@@ -6,7 +6,7 @@ import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppT
 import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal, Shield, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { AppPageLayout } from "@/components/app-ui";
+import { AppPageLayout } from "@/components/platform-ui";
 import { ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
 import {
   DropdownMenu,
