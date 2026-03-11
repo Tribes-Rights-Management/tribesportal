@@ -306,7 +306,7 @@ CREATE POLICY "Tenant members can view"
 ```
 src/
 ├── components/
-│   ├── app-ui/          ← DESIGN SYSTEM (single source of truth)
+│   ├── platform-ui/      ← DESIGN SYSTEM (single source of truth)
 │   ├── admin/           ← Console-specific components
 │   ├── console/         ← Console-specific components
 │   ├── app/             ← Shared platform shell (header, nav, session guards)
