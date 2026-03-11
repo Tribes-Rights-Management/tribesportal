@@ -311,7 +311,7 @@ src/
 │   ├── app-ui/          ← DESIGN SYSTEM (single source of truth)
 │   ├── admin/           ← Console-specific components
 │   ├── console/         ← Console-specific components
-│   ├── app/             ← Client portal components
+│   ├── app/             ← Legacy client view components (/app/*)
 │   ├── auth/            ← Authentication components
 │   ├── help/            ← Help workstation components
 │   ├── ui/              ← Radix/shadcn primitives (DO NOT import in pages)
