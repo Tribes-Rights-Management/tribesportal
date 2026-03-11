@@ -29,8 +29,8 @@ export default tseslint.config(
   // 
   // Pages must use the design system components:
   // - /admin/* routes → @/components/console (ConsoleButton, ConsoleChip, etc.)
-  // - /help-workstation/* → @/components/app-ui (AppButton, AppChip, etc.)
-  // - Other pages → @/components/app-ui
+  // - /help/* → @/components/platform-ui (AppButton, AppChip, etc.)
+  // - Other pages → @/components/platform-ui
   //
   // Direct imports from @/components/ui/button or @/components/ui/badge in 
   // page files are prohibited to prevent visual drift.
