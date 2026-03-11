@@ -54,7 +54,7 @@ export function PlatformSectionHeader({
     <div className={cn("space-y-4", className)}>
       {/* Back navigation */}
       {backTo && (
-        <AppButton
+        <PlatformButton
           intent="ghost"
           size="sm"
           onClick={() => navigate(backTo)}
