@@ -25,7 +25,7 @@ export type ChipStatus = "pending" | "running" | "pass" | "warning" | "fail";
 export type ChipSeverity = "high" | "medium" | "low";
 export type ChipVariant = "default" | "outline" | "subtle";
 
-interface AppChipProps {
+interface PlatformChipProps {
   /** Status variant for security/audit checks */
   status?: ChipStatus;
   /** Severity variant for exceptions */
