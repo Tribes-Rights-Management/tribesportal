@@ -55,12 +55,12 @@ interface PlatformCardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   action?: React.ReactNode;
 }
 
-export function AppCardHeader({
+export function PlatformCardHeader({
   className,
   action,
   children,
   ...props
-}: AppCardHeaderProps) {
+}: PlatformCardHeaderProps) {
   return (
     <div
       className={cn(
