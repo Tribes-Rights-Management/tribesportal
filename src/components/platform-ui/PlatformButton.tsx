@@ -34,7 +34,7 @@ import { cn } from "@/lib/utils";
 
 type ButtonIntent = "primary" | "secondary" | "tertiary" | "ghost" | "danger" | "destructive";
 
-export interface AppButtonProps
+export interface PlatformButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Button intent/style variant */
   intent?: ButtonIntent;
