@@ -323,163 +323,51 @@ export const routeRegistry: Record<string, RouteDefinition> = {
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // LEGACY /admin ROUTES — redirect to /console equivalents
-  // These are kept for backward compatibility
+  // TRIBES ADMIN ROUTES — /admin (CANONICAL)
+  // Client-facing administration workspace
+  // Access: portal.view, portal.download, portal.submit
   // ═══════════════════════════════════════════════════════════════════════════
   "/admin": { 
-    scope: "system", 
+    scope: "organization", 
     parentPath: null, 
-    label: "Governance Overview",
-    requiredRoles: ["admin", "auditor"],
-    breadcrumbs: ["System Console"]
+    label: "Tribes Admin",
+    requiredPermission: "portal.view",
+    breadcrumbs: ["Tribes Admin"]
   },
-  "/admin/approvals": { 
-    scope: "system", 
+  "/admin/catalog": { 
+    scope: "organization", 
     parentPath: "/admin", 
-    label: "Approvals",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Approvals"]
+    label: "Catalog",
+    requiredPermission: "portal.view",
+    breadcrumbs: ["Tribes Admin", "Catalog"]
   },
-  "/admin/tenants": { 
-    scope: "system", 
+  "/admin/documents": { 
+    scope: "organization", 
     parentPath: "/admin", 
-    label: "Workspaces",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Workspaces"]
+    label: "Documents",
+    requiredPermission: "portal.view",
+    breadcrumbs: ["Tribes Admin", "Documents"]
   },
-  "/admin/users": { 
-    scope: "system", 
+  "/admin/payments": { 
+    scope: "organization", 
     parentPath: "/admin", 
-    label: "Active Users",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Active Users"]
-  },
-  "/admin/users/:userId": { 
-    scope: "system", 
-    parentPath: "/admin/users", 
-    label: "Member Details",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Active Users", "Member Details"]
-  },
-  "/admin/users/:userId/permissions": { 
-    scope: "system", 
-    parentPath: "/admin/users/:userId", 
-    label: "Permissions",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Active Users", "Member Details", "Permissions"]
-  },
-  "/admin/users/:userId/authority": { 
-    scope: "system", 
-    parentPath: "/admin/users/:userId", 
-    label: "Authority Record",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Active Users", "Member Details", "Authority Record"]
+    label: "Payments",
+    requiredPermission: "portal.view",
+    breadcrumbs: ["Tribes Admin", "Payments"]
   },
   "/admin/settings": { 
-    scope: "system", 
+    scope: "organization", 
     parentPath: "/admin", 
     label: "Settings",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Settings"]
+    requiredPermission: "portal.view",
+    breadcrumbs: ["Tribes Admin", "Settings"]
   },
-  "/admin/rls-audit": { 
-    scope: "system", 
+  "/admin/queue": { 
+    scope: "organization", 
     parentPath: "/admin", 
-    label: "RLS Audit",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "RLS Audit"]
-  },
-  "/admin/security": { 
-    scope: "system", 
-    parentPath: "/admin", 
-    label: "Security",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Security"]
-  },
-  "/admin/security/rls": { 
-    scope: "system", 
-    parentPath: "/admin/security", 
-    label: "RLS Policies",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Security", "RLS Policies"]
-  },
-  "/admin/security/auth": { 
-    scope: "system", 
-    parentPath: "/admin/security", 
-    label: "Auth Review",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Security", "Auth Review"]
-  },
-  "/admin/security/sessions": { 
-    scope: "system", 
-    parentPath: "/admin/security", 
-    label: "Sessions",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Security", "Sessions"]
-  },
-  "/admin/disclosures": { 
-    scope: "system", 
-    parentPath: "/admin", 
-    label: "Disclosures",
-    requiredRoles: ["admin", "auditor"],
-    breadcrumbs: ["System Console", "Disclosures"]
-  },
-  "/admin/chain": { 
-    scope: "system", 
-    parentPath: "/admin", 
-    label: "Correlation Chain",
-    requiredRoles: ["admin", "auditor"],
-    breadcrumbs: ["System Console", "Correlation Chain"]
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // LEGACY /admin — FINANCIAL GOVERNANCE (Scope: system)
-  // ─────────────────────────────────────────────────────────────────────────
-  "/admin/billing": { 
-    scope: "system", 
-    parentPath: "/admin", 
-    label: "Financial Governance",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Financial Governance"],
-    isGovernancePage: true
-  },
-  "/admin/billing/revenue": { 
-    scope: "system", 
-    parentPath: "/admin/billing", 
-    label: "Revenue Overview",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Financial Governance", "Revenue Overview"]
-  },
-  "/admin/billing/plans": { 
-    scope: "system", 
-    parentPath: "/admin/billing", 
-    label: "Plans & Pricing",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Financial Governance", "Plans & Pricing"],
-    isGovernancePage: true
-  },
-  "/admin/billing/invoices": { 
-    scope: "system", 
-    parentPath: "/admin/billing", 
-    label: "Invoice Ledger",
-    requiredRoles: ["admin", "auditor"],
-    breadcrumbs: ["System Console", "Financial Governance", "Invoice Ledger"]
-  },
-  "/admin/billing/providers": { 
-    scope: "system", 
-    parentPath: "/admin/billing", 
-    label: "Payment Providers",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Financial Governance", "Payment Providers"],
-    isGovernancePage: true
-  },
-  "/admin/billing/refunds": { 
-    scope: "system", 
-    parentPath: "/admin/billing", 
-    label: "Refunds",
-    requiredRoles: ["admin"],
-    breadcrumbs: ["System Console", "Financial Governance", "Refunds"],
-    isGovernancePage: true
+    label: "Queue",
+    requiredPermission: "portal.view",
+    breadcrumbs: ["Tribes Admin", "Queue"]
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
