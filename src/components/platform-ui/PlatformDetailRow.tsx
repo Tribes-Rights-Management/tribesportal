@@ -233,7 +233,7 @@ interface PlatformDetailRowGroupProps {
   className?: string;
 }
 
-export function AppDetailRowGroup({
+export function PlatformDetailRowGroup({
   children,
   divided = true,
   className,
