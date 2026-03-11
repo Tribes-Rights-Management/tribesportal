@@ -119,7 +119,7 @@ export function PlatformTableHeader({ children, className }: PlatformTableHeader
 // TABLE BODY
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableBodyProps {
+interface PlatformTableBodyProps {
   children: React.ReactNode;
   className?: string;
 }
