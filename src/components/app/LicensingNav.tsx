@@ -9,12 +9,11 @@ import {
 } from "lucide-react";
 
 /**
- * LICENSING NAVIGATION (Legacy /app/licensing routes)
+ * LICENSING NAVIGATION
  * 
- * Navigation Rules:
- * - Functional, not expressive
- * - Flat hierarchy, clear groupings
- * - No novelty patterns
+ * Serves the legacy /app/licensing route family.
+ * These routes are retained for backward compatibility only.
+ * Canonical licensing routes are under /licensing.
  */
 
 const navItems = [

@@ -167,10 +167,10 @@ ORGANIZATION WORKSPACES (Isolated)
 │   └── Members
 │       └── Licensing access only
 │
-└── Tribes Client Portal (Org)
+└── Tribes Admin (Org)
     ├── Org Admin
-    │   ├── Manage users in Client Portal
-    │   ├── Assign Client roles
+    │   ├── Manage users in Tribes Admin
+    │   ├── Assign client roles
     │   └── View org authority history
     │
     └── Members

@@ -11,12 +11,11 @@ import {
 } from "lucide-react";
 
 /**
- * PUBLISHING NAVIGATION (Legacy /app/publishing routes)
+ * PUBLISHING NAVIGATION
  * 
- * Navigation Rules:
- * - Functional, not expressive
- * - Flat hierarchy, clear groupings
- * - No novelty patterns
+ * Serves the legacy /app/publishing route family.
+ * These routes are retained for backward compatibility only.
+ * Canonical client-facing workspace is /admin (Tribes Admin).
  */
 
 const navItems = [
