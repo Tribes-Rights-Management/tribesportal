@@ -14,7 +14,7 @@ export interface CheckboxOption {
   description?: string;
 }
 
-interface AppCheckboxGroupProps {
+interface PlatformCheckboxGroupProps {
   /** Group label */
   label?: string;
   /** Available options */
