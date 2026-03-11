@@ -9,7 +9,7 @@ Scaffold a new page that is fully compliant with the Tribes design system from t
 
 ## Context to provide:
 - Page name and file path
-- Which module it belongs to (Rights, Licensing, Admin, Help, Client Portal, Account)
+- Which module it belongs to (Rights, Licensing, Tribes Admin, Help, Account)
 - What the page should display (table, form, detail view, dashboard)
 
 ## Prompt

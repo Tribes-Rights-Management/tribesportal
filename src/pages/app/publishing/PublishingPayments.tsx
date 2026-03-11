@@ -4,7 +4,7 @@ import {
 } from "@/components/app-ui";
 
 /**
- * Payments — Client Portal
+ * Payments — Legacy client-facing view (/app/publishing)
  */
 export default function PublishingPayments() {
   return (

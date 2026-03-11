@@ -4,7 +4,7 @@ import {
 } from "@/components/app-ui";
 
 /**
- * Splits — Client Portal
+ * Splits — Legacy client-facing view (/app/publishing)
  */
 export default function PublishingSplits() {
   return (

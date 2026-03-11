@@ -328,7 +328,7 @@ export function useRoleAccess(): RoleAccessResult {
           return false; // Only platform admins
 
         // ═══════════════════════════════════════════════════════════════════════
-        // CLIENT PORTAL PERMISSIONS — DEFAULT DENY
+        // LEGACY CLIENT VIEW PERMISSIONS — DEFAULT DENY (portal.* namespace retained for compatibility)
         // ═══════════════════════════════════════════════════════════════════════
         case "portal.view":
           // Platform Admin: YES

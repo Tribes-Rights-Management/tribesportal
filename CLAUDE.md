@@ -321,7 +321,7 @@ src/
 │   ├── console/         ← System Console pages (/console/*)
 │   │   ├── billing/     ← Billing governance pages
 │   │   └── reporting/   ← Executive reporting pages
-│   ├── app/             ← Client portal pages (/app/*)
+│   ├── app/             ← Legacy client view pages (/app/*)
 │   │   ├── licensing/   ← Client licensing views
 │   │   └── publishing/  ← Client publishing views
 │   ├── auditor/         ← External auditor pages (/auditor/*)
