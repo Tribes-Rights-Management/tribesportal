@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 
 type StatCardSize = "sm" | "md" | "lg";
 
-interface AppStatCardProps {
+interface PlatformStatCardProps {
   /** Label above the value */
   label: string;
   /** Main value to display */
