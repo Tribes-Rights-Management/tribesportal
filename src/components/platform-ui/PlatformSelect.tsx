@@ -95,4 +95,4 @@ export const PlatformSelect = forwardRef<HTMLButtonElement, PlatformSelectProps>
   }
 );
 
-AppSelect.displayName = "AppSelect";
+PlatformSelect.displayName = "PlatformSelect";

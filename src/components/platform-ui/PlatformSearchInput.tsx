@@ -71,7 +71,7 @@ export function PlatformSearchInput({
   onFocus,
   onBlur,
   "aria-label": ariaLabel,
-}: AppSearchInputProps) {
+}: PlatformSearchInputProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = React.useState(false);
 

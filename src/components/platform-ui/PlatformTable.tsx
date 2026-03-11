@@ -373,7 +373,7 @@ interface PlatformTableTagProps {
   className?: string;
 }
 
-export function AppTableTag({ children, className }: AppTableTagProps) {
+export function PlatformTableTag({ children, className }: PlatformTableTagProps) {
   return (
     <span
       className={cn(

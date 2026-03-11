@@ -123,7 +123,7 @@ export function PlatformStatCardGrid({
   children,
   columns = 4,
   className,
-}: AppStatCardGridProps) {
+}: PlatformStatCardGridProps) {
   const colClasses = {
     2: "md:grid-cols-2",
     3: "md:grid-cols-3",

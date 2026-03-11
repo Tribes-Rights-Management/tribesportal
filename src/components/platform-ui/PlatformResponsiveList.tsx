@@ -106,7 +106,7 @@ export function PlatformItemCard({
   status,
   onClick,
   className,
-}: AppItemCardProps) {
+}: PlatformItemCardProps) {
   return (
     <div
       onClick={onClick}

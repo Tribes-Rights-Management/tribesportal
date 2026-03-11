@@ -83,7 +83,7 @@ interface PlatformSettingsFooterProps {
   className?: string;
 }
 
-export function AppSettingsFooter({ children, className }: AppSettingsFooterProps) {
+export function PlatformSettingsFooter({ children, className }: PlatformSettingsFooterProps) {
   return (
     <p className={cn("mt-4 md:mt-6 text-[12px] md:text-[13px] text-muted-foreground", className)}>
       {children}
