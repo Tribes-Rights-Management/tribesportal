@@ -12,7 +12,7 @@ import {
   AppModalAction,
   AppModalCancel,
 } from "@/components/ui/app-modal";
-import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell, AppTableBadge } from "@/components/app-ui/AppTable";
+import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell, AppTableBadge } from "@/components/platform-ui/AppTable";
 
 import type { Database } from "@/integrations/supabase/types";
 

@@ -8,8 +8,8 @@ import {
   CorrelationChainView, 
   ChainEvent 
 } from "@/components/ui/correlation-chain";
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/app-ui/AppTable";
-import { AppSearchInput } from "@/components/app-ui";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/platform-ui/AppTable";
+import { AppSearchInput } from "@/components/platform-ui";
 import { Button } from "@/components/ui/button";
 import { Search, Link2 } from "lucide-react";
 import { EMPTY_STATES } from "@/constants/institutional-copy";

@@ -3,7 +3,7 @@ import { AppPageLayout } from "@/components/platform-ui";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/app-ui/AppTable";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/platform-ui/AppTable";
 import { EMPTY_STATES } from "@/constants/institutional-copy";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 

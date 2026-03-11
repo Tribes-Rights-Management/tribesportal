@@ -4,7 +4,7 @@ import {
   AppDetailRow,
   AppSettingsCard,
   AppSettingsFooter,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 
 /**
  * ACCOUNT SETTINGS PAGE — INSTITUTIONAL GOVERNANCE SURFACE

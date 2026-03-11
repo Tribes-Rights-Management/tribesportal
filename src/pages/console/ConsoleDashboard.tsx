@@ -4,7 +4,7 @@ import { MOBILE_COPY } from "@/constants/institutional-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminListRow, AdminMetricRow, AdminSection } from "@/components/admin/AdminListRow";
-import { AppPageLayout } from "@/components/app-ui";
+import { AppPageLayout } from "@/components/platform-ui";
 
 /**
  * SYSTEM CONSOLE LANDING — EXECUTIVE-GRADE GOVERNANCE (CANONICAL)

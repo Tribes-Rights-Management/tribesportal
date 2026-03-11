@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell, AppTableEmpty } from "@/components/app-ui/AppTable";
+import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell, AppTableEmpty } from "@/components/platform-ui/AppTable";
 import { ConsoleButton } from "@/components/console";
 import { 
   Select,
