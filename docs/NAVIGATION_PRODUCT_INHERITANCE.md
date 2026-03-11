@@ -112,7 +112,7 @@ Every new feature must declare exactly one scope:
 | Scope | Description | Example Features |
 |-------|-------------|------------------|
 | `system` | Company-level governance | Audit logs, Security settings, Disclosures |
-| `organization` | Org-scoped operations | Licensing requests, Portal documents |
+| `organization` | Org-scoped operations | Licensing requests, Tribes Admin documents |
 | `user` | Self-service only | Profile preferences, Notification settings |
 
 ### Authority Model Inheritance

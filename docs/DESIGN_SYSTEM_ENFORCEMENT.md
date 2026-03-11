@@ -329,7 +329,7 @@ import { ConsoleButton, ConsoleCard } from "@/components/console";
 When creating or updating a page:
 
 ### Pre-Development
-- [ ] Identify which context the page belongs to (Console, Admin, Workstation, Portal)
+- [ ] Identify which context the page belongs to (Console, Tribes Admin, Workstation, Legacy Client Views)
 - [ ] Import only from the appropriate component kit
 - [ ] Review this document for correct patterns
 

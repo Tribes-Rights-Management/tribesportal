@@ -146,7 +146,7 @@ If a route is accessed without valid parent context:
 
 1. Nearest registered parent in same scope
 2. Scope root path
-3. Role-appropriate default (admin → `/admin`, user → `/app`)
+3. Role-appropriate default (admin → `/console`, user → `/admin`)
 
 ---
 

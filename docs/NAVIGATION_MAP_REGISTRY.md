@@ -21,7 +21,7 @@ These rules ensure deterministic, scope-aware, and consistent navigation across 
 | `/help/*` | Help Workstation | organization |
 | `/licensing/*` | Licensing Workstation | organization |
 | `/rights/*` | Rights Workstation | organization |
-| `/app/*` | Client Portal | organization |
+| `/app/*` | Legacy Client Views | organization |
 | `/auditor/*` | Auditor | system |
 | `/account/*` | Account Settings | user |
 | `/auth/*` | Authentication | auth |

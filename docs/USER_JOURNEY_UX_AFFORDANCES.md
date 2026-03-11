@@ -373,7 +373,7 @@ On first entry to any workspace:
 ```
 
 **Must display**:
-- Explicit scope declaration ("You are entering: Client Portal")
+- Explicit scope declaration ("You are entering: Tribes Admin")
 - Explicit role confirmation ("Your role: Organization Admin")
 - Read-only posture until first deliberate action
 
