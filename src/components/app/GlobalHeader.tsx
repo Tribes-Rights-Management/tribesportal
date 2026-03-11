@@ -270,7 +270,8 @@ function MobileControls() {
                   setActiveTenant(membership.tenant_id);
                   if (currentMode !== "auditor") {
                     const ctx = membership.allowed_contexts[0];
-                    if (ctx) navigate(`/app/${ctx}`);
+                    // Navigate to canonical route, not legacy /app/*
+                    if (ctx) navigate(ctx === "licensing" ? "/licensing" : "/admin");
                   }
                 }}
                 className={cn(
