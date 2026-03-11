@@ -1,4 +1,4 @@
-import { AppPageLayout } from "@/components/app-ui";
+import { AppPageLayout } from "@/components/platform-ui";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";

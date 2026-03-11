@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Check } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
-import { AppSearchInput } from "@/components/app-ui";
+import { AppSearchInput } from "@/components/platform-ui";
 
 /**
  * SYSTEM CONSOLE — PLANS & PRICING

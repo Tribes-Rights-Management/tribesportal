@@ -22,7 +22,7 @@ import {
 import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
 import { useAllContracts } from "@/hooks/useBillingLineage";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
-import { AppSearchInput } from "@/components/app-ui";
+import { AppSearchInput } from "@/components/platform-ui";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // HELPERS

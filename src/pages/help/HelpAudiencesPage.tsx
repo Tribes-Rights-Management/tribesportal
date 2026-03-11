@@ -9,7 +9,7 @@ import {
   AppPanelFooter,
   AppListCard,
   AppListRow,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
