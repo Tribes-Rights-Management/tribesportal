@@ -145,7 +145,7 @@ interface PlatformTableRowProps {
   className?: string;
 }
 
-export function AppTableRow({
+export function PlatformTableRow({
   children,
   clickable = false,
   onClick,
