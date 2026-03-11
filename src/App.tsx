@@ -119,7 +119,7 @@ import AccountSecurityPage from "@/pages/account/AccountSecurityPage";
 import AccountPreferencesPage from "@/pages/account/AccountPreferencesPage";
 
 // Access state pages
-import AccessRestrictedPage from "@/pages/app/AccessRestrictedPage";
+import AccessRestrictedPage from "@/pages/access-states/AccessRestrictedPage";
 
 // Error pages
 import NotFoundPage from "@/pages/NotFoundPage";
