@@ -46,7 +46,7 @@ import { Switch } from "@/components/ui/switch";
 
 export type PlatformDetailRowVariant = "readonly" | "editable" | "select" | "copyable" | "toggle";
 
-interface AppDetailRowProps {
+interface PlatformDetailRowProps {
   /** Row label */
   label: string;
   /** Row value (for readonly/editable/select/copyable) */
