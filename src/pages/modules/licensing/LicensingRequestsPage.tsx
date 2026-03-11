@@ -1,6 +1,6 @@
 import {
-  AppPageLayout,
-  AppEmptyState,
+  PlatformPageLayout,
+  PlatformEmptyState,
 } from "@/components/platform-ui";
 
 /**
@@ -10,13 +10,13 @@ import {
  */
 export default function LicensingRequestsPage() {
   return (
-    <AppPageLayout title="License Requests">
-      <AppEmptyState
+    <PlatformPageLayout title="License Requests">
+      <PlatformEmptyState
         icon="inbox"
         message="No requests available"
         description="License requests will appear once submitted."
         size="lg"
       />
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

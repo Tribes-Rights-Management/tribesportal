@@ -1,6 +1,6 @@
 import {
-  AppPageLayout,
-  AppEmptyState,
+  PlatformPageLayout,
+  PlatformEmptyState,
 } from "@/components/platform-ui";
 
 /**
@@ -10,12 +10,12 @@ import {
  */
 export default function RightsSettingsPage() {
   return (
-    <AppPageLayout title="Settings">
-      <AppEmptyState
+    <PlatformPageLayout title="Settings">
+      <PlatformEmptyState
         message="No settings available"
         description="Settings functionality coming soon."
         size="lg"
       />
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
