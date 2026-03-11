@@ -208,7 +208,7 @@ export function PlatformTableHead({
   align = "left",
   width,
   className,
-}: AppTableHeadProps) {
+}: PlatformTableHeadProps) {
   const alignClasses = {
     left: "text-left",
     center: "text-center",
