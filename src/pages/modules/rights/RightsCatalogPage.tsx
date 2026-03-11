@@ -20,7 +20,7 @@ import {
   AppResponsiveList,
   AppItemCard,
   AppPagination,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   AlertDialog,

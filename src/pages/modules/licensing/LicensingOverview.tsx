@@ -16,7 +16,7 @@ import {
   AppTableBadge,
   AppEmptyState,
   AppSectionHeader,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { InstitutionalLoadingState, SystemErrorState } from "@/components/ui/institutional-states";
 
 /**
