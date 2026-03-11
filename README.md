@@ -47,7 +47,7 @@ This is **not** the public marketing website. The public-facing brand site, lega
 
 - **Rights Workstation** — Master song catalog, writers, publishers, deals, client accounts, submission queue
 - **Licensing Module** — License requests, agreements, payments, fee schedules
-- **Tribes Admin** — Client-facing portal: catalog view, documents, royalty statements, settings
+- **Tribes Admin** — Client-facing workspace: catalog view, documents, royalty statements, settings
 - **System Console** — Company-level governance: approvals, workspaces, users, security, disclosures, billing, reporting, correlation chain
 - **Help Workstation** — Audiences, categories, articles, analytics for the knowledge base
 - **Auditor View** — Read-only access to activity logs, access logs, licensing data, correlation chains
