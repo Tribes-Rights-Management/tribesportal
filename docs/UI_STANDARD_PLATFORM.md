@@ -144,7 +144,7 @@ All other page-level components must use the Platform UI Kit.
 
 When updating existing pages:
 
-1. Replace `import { Button } from "@/components/ui/button"` → `import { AppButton } from "@/components/app-ui"`
+1. Replace `import { Button } from "@/components/ui/button"` → `import { AppButton } from "@/components/platform-ui"`
 2. Replace `<Button variant="...">` → `<AppButton intent="...">` (map variants appropriately)
 3. Remove any `bg-*`, `text-*`, `rounded-*` className overrides on buttons
 4. Replace `<Badge>` status indicators → `<AppChip status="...">`
