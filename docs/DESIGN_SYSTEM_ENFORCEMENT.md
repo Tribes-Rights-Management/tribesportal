@@ -161,7 +161,7 @@ import {
 **Visual Rules**:
 - Light or dark theme (follows user preference)
 - More operational density than System Console
-- Uses app-ui component kit exclusively
+- Uses platform-ui component kit exclusively
 
 ---
 
