@@ -40,7 +40,7 @@ interface PlatformListCardProps {
   className?: string;
 }
 
-export function AppListCard({
+export function PlatformListCard({
   title,
   action,
   children,
