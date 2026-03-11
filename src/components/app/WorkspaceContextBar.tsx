@@ -34,8 +34,8 @@ export function WorkspaceContextBar() {
   const { activeTenant } = useAuth();
   const location = useLocation();
   
-  // Don't render without active workspace or in system console
-  if (!activeTenant || location.pathname.startsWith("/admin") || location.pathname.startsWith("/auditor")) {
+  // Don't render without active workspace, in System Console, or in Auditor surface
+  if (!activeTenant || location.pathname.startsWith("/console") || location.pathname.startsWith("/auditor")) {
     return null;
   }
   
