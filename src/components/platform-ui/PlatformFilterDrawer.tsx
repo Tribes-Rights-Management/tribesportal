@@ -7,7 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { AppButton } from "./AppButton";
+import { PlatformButton } from "./PlatformButton";
 import { ICON_SIZE, ICON_STROKE } from "@/styles/tokens";
 
 /**
