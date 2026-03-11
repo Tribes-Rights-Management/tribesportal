@@ -316,7 +316,7 @@ interface PlatformTableEmptyProps {
   className?: string;
 }
 
-export function AppTableEmpty({ colSpan, children, className }: AppTableEmptyProps) {
+export function PlatformTableEmpty({ colSpan, children, className }: PlatformTableEmptyProps) {
   return (
     <tr>
       <td colSpan={colSpan} className={cn("text-center py-20", className)}>
