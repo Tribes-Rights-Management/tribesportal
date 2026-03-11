@@ -98,7 +98,7 @@ import { AppSection, AppSectionHeader } from "@/components/platform-ui";
 ```tsx
 // ❌ NEVER mix component kits in the same page
 import { ConsoleButton } from "@/components/console";
-import { AppCard } from "@/components/app-ui";
+import { AppCard } from "@/components/platform-ui";
 ```
 
 ### Available app-ui Components
