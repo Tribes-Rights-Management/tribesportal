@@ -44,7 +44,7 @@ export function PlatformSettingsCard({
   description,
   children,
   className,
-}: AppSettingsCardProps) {
+}: PlatformSettingsCardProps) {
   return (
     <div
       className={cn(
