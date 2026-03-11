@@ -54,7 +54,7 @@ This document proves the system is coherent, humane, and institutional—not hea
 |---------|---------|
 | Header | "SYSTEM CONSOLE" |
 | Layout | Neutral, restrained |
-| Product links | None (no Licensing, no Client Portal) |
+| Product links | None (no Licensing, no Tribes Admin) |
 
 **Primary actions**:
 
