@@ -12,7 +12,7 @@ import {
   AppCardBody,
   AppDetailRow,
   AppDetailRowGroup,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { generateLabelCopy as generateLabelCopySchema, getPublicationYear } from "@/types/song-schema";

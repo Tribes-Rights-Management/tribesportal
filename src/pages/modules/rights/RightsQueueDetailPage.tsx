@@ -13,7 +13,7 @@ import {
   AppDetailRow,
   AppDetailRowGroup,
   AppSelect,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { QueueStatusBadge } from "@/components/queue/QueueStatusBadge";

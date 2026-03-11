@@ -11,7 +11,7 @@ import {
   AppTableEmpty,
   AppTableBadge,
   AppEmptyState,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 
 interface ClientTeamTabProps {
   clientId: string;

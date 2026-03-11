@@ -4,7 +4,7 @@ import { ArrowLeft, Check, ChevronRight, Plus, Trash2, HelpCircle, Upload, Send 
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
-import { AppSelect } from "@/components/app-ui/AppSelect";
+import { AppSelect } from "@/components/platform-ui/AppSelect";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ALGOLIA CONFIG
