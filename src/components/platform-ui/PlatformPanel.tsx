@@ -172,7 +172,7 @@ interface PlatformPanelFooterProps {
   submitDisabled?: boolean;
 }
 
-export function AppPanelFooter({
+export function PlatformPanelFooter({
   left,
   onCancel,
   onSubmit,
