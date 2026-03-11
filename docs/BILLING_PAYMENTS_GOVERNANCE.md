@@ -203,6 +203,6 @@ Any future feature involving:
 
 - `src/hooks/useBillingAuthority.ts` — Permission resolution
 - `src/services/PaymentService.ts` — Processor abstraction
-- `src/pages/admin/billing/` — System Console billing governance
+- `src/pages/console/billing/` — System Console billing governance
 - `src/pages/portal/billing/` — Org-level billing operations
 - `src/pages/licensing/billing/` — Licensing payment operations

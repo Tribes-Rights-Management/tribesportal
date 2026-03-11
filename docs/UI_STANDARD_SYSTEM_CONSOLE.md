@@ -221,10 +221,4 @@ When updating a `/console` page to use the console kit:
 
 1. **Code Review**: Any PR touching `/console` routes must use console components
 2. **Visual QA**: Primary buttons must never appear as white pills
-3. **Lint Rules** (future): Disallow `Button` imports in `src/pages/admin/**` (console page files)
-
----
-
-## Note on File Locations
-
-System Console page files currently reside in `src/pages/admin/` for historical reasons. The canonical route is `/console`. A future prompt may relocate these files to `src/pages/console/` for full alignment.
+3. **Lint Rules** (future): Disallow `Button` imports in `src/pages/console/**`
