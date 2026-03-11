@@ -96,7 +96,6 @@ export const routeRegistry: Record<string, RouteDefinition> = {
   // SYSTEM CONSOLE ROUTES — /console (CANONICAL)
   // Company-level governance only
   // Access: platform_admin, external_auditor (read-only)
-  // NOTE: /admin routes are legacy and redirect to /console
   // ═══════════════════════════════════════════════════════════════════════════
   "/console": { 
     scope: "system", 
