@@ -368,7 +368,7 @@ export function PlatformTableBadge({
 // TAG (for small inline labels)
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableTagProps {
+interface PlatformTableTagProps {
   children: React.ReactNode;
   className?: string;
 }
