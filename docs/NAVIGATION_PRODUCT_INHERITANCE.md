@@ -18,9 +18,9 @@ These rules are authoritative and must not be bypassed by UI shortcuts, routing 
 
 | Surface | Scope | May Display | Must Not Display |
 |---------|-------|-------------|------------------|
-| System Console | Company-level | Audit, Security, Disclosures, Governance | Licensing, Client Portal, Org data |
+| System Console | Company-level | Audit, Security, Disclosures, Governance | Licensing, Tribes Admin data, Org data |
 | Licensing Workspace | Organization | Licensing nav, org-scoped data | System Console links, other orgs |
-| Client Portal Workspace | Organization | Portal nav, org-scoped data | System Console links, other orgs |
+| Tribes Admin Workspace | Organization | Tribes Admin nav, org-scoped data | System Console links, other orgs |
 
 ### Rendering Rules
 
