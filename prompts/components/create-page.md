@@ -4,7 +4,7 @@
 Scaffold a new page that is fully compliant with the Tribes design system from the start.
 
 ## Preconditions — Do NOT use this prompt if:
-- The page already exists (use `migrations/adopt-app-ui.md` instead)
+- The page already exists (use `migrations/adopt-platform-ui.md` instead)
 - The page belongs to the System Console context (use Console components instead of platform-ui)
 
 ## Context to provide:

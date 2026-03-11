@@ -4,7 +4,7 @@
 Replace direct `@/components/ui/*` imports with `@/components/platform-ui` equivalents. This is a lighter migration than full adopt-platform-ui — only changes imports and component names, not layout patterns.
 
 ## Preconditions — Do NOT use this prompt if:
-- The page needs a full layout overhaul (use `adopt-app-ui.md` instead)
+- The page needs a full layout overhaul (use `adopt-platform-ui.md` instead)
 - The page is in the System Console context
 
 ## Context to provide:
