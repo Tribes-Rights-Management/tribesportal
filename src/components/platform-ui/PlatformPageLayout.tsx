@@ -35,7 +35,7 @@ interface BackLinkProps {
 
 type MaxWidth = "sm" | "md" | "lg" | "xl" | "2xl" | "full";
 
-interface AppPageLayoutProps {
+interface PlatformPageLayoutProps {
   /** Page title (required) */
   title: React.ReactNode;
   /** Optional subtitle below title */
