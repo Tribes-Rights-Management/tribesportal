@@ -29,12 +29,13 @@ The application is organized into **modules**, each mounted at a canonical top-l
 
 ### Legacy and Compatibility Routes
 
-| Path | Behavior |
-|------|----------|
-| `/portal/*` | Redirects to `/admin/*` — legacy compatibility only |
-| `/tribes-admin/*` | Redirects to `/admin/*` |
-| `/tribes-licensing/*` | Redirects to `/licensing/*` |
-| `/workstations` | Redirects to `/workspaces` |
+| Path | Surface | Behavior |
+|------|---------|----------|
+| `/app/*` | Legacy Client Views | Retained compatibility routes for publishing/licensing client views |
+| `/portal/*` | — | Redirects to `/admin/*` |
+| `/tribes-admin/*` | — | Redirects to `/admin/*` |
+| `/tribes-licensing/*` | — | Redirects to `/licensing/*` |
+| `/workstations` | — | Redirects to `/workspaces` |
 
 ---
 
