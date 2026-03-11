@@ -46,7 +46,7 @@ This document defines **which components to use where** across the Tribes Portal
 │            │                        │                                      │
 │            ▼                        ▼                                      │
 │  ┌─────────────────────┐  ┌─────────────────────┐                          │
-│  │ @/components/admin  │  │ @/components/app-ui │                          │
+│  │ @/components/admin  │  │ @/components/       │                          │
 │  │ @/components/console│  │                     │                          │
 │  └─────────────────────┘  └─────────────────────┘                          │
 │                                                                              │
