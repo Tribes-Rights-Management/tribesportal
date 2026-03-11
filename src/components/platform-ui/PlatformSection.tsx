@@ -91,7 +91,7 @@ export function PlatformSection({
  * 
  * Provides responsive grid layout for content.
  */
-interface AppSectionGridProps {
+interface PlatformSectionGridProps {
   children: React.ReactNode;
   /** Number of columns on desktop */
   columns?: 1 | 2 | 3;
