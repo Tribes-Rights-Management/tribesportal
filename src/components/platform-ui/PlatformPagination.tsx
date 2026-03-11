@@ -27,7 +27,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppPaginationProps {
+interface PlatformPaginationProps {
   /** Current page (1-indexed) */
   currentPage: number;
   /** Total number of pages */
@@ -38,12 +38,12 @@ interface AppPaginationProps {
   className?: string;
 }
 
-export function AppPagination({
+export function PlatformPagination({
   currentPage,
   totalPages,
   onPageChange,
   className,
-}: AppPaginationProps) {
+}: PlatformPaginationProps) {
   if (totalPages <= 1) return null;
 
   const canGoPrevious = currentPage > 1;

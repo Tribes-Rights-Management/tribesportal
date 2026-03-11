@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppSectionProps {
+interface PlatformSectionProps {
   /** Section title */
   title?: string;
   /** Section description */
@@ -44,7 +44,7 @@ interface AppSectionProps {
   className?: string;
 }
 
-export function AppSection({
+export function PlatformSection({
   title,
   description,
   action,
@@ -52,7 +52,7 @@ export function AppSection({
   spacing = "md",
   divided = false,
   className,
-}: AppSectionProps) {
+}: PlatformSectionProps) {
   const spacingClasses = {
     none: "",
     sm: "mb-6",
@@ -91,7 +91,7 @@ export function AppSection({
  * 
  * Provides responsive grid layout for content.
  */
-interface AppSectionGridProps {
+interface PlatformSectionGridProps {
   children: React.ReactNode;
   /** Number of columns on desktop */
   columns?: 1 | 2 | 3;
@@ -100,12 +100,12 @@ interface AppSectionGridProps {
   className?: string;
 }
 
-export function AppSectionGrid({
+export function PlatformSectionGrid({
   children,
   columns = 2,
   gap = "md",
   className,
-}: AppSectionGridProps) {
+}: PlatformSectionGridProps) {
   const colClasses = {
     1: "grid-cols-1",
     2: "grid-cols-1 md:grid-cols-2",

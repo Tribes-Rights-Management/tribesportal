@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 
 type StatCardSize = "sm" | "md" | "lg";
 
-interface AppStatCardProps {
+interface PlatformStatCardProps {
   /** Label above the value */
   label: string;
   /** Main value to display */
@@ -65,7 +65,7 @@ const sizeConfig: Record<StatCardSize, { padding: string; valueSize: string; lab
   },
 };
 
-export function AppStatCard({
+export function PlatformStatCard({
   label,
   value,
   subtitle,
@@ -73,7 +73,7 @@ export function AppStatCard({
   loading = false,
   onClick,
   className,
-}: AppStatCardProps) {
+}: PlatformStatCardProps) {
   const isClickable = !!onClick;
   const config = sizeConfig[size];
 
@@ -112,18 +112,18 @@ export function AppStatCard({
  * Provides responsive grid layout for stat cards.
  * Default: 1 column mobile, 2 tablet, 4 desktop
  */
-interface AppStatCardGridProps {
+interface PlatformStatCardGridProps {
   children: React.ReactNode;
   /** Number of columns on desktop */
   columns?: 2 | 3 | 4;
   className?: string;
 }
 
-export function AppStatCardGrid({
+export function PlatformStatCardGrid({
   children,
   columns = 4,
   className,
-}: AppStatCardGridProps) {
+}: PlatformStatCardGridProps) {
   const colClasses = {
     2: "md:grid-cols-2",
     3: "md:grid-cols-3",

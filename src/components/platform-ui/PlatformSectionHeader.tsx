@@ -2,7 +2,7 @@ import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { AppButton } from "./AppButton";
+import { PlatformButton } from "./PlatformButton";
 
 /**
  * APP SECTION HEADER — GLOBAL UI KIT (SINGLE SOURCE OF TRUTH)
@@ -22,7 +22,7 @@ import { AppButton } from "./AppButton";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppSectionHeaderProps {
+interface PlatformSectionHeaderProps {
   /** Main title */
   title: string;
   /** Optional subtitle/description */
@@ -39,7 +39,7 @@ interface AppSectionHeaderProps {
   className?: string;
 }
 
-export function AppSectionHeader({
+export function PlatformSectionHeader({
   title,
   subtitle,
   backTo,
@@ -47,14 +47,14 @@ export function AppSectionHeader({
   actions,
   meta,
   className,
-}: AppSectionHeaderProps) {
+}: PlatformSectionHeaderProps) {
   const navigate = useNavigate();
 
   return (
     <div className={cn("space-y-4", className)}>
       {/* Back navigation */}
       {backTo && (
-        <AppButton
+        <PlatformButton
           intent="ghost"
           size="sm"
           onClick={() => navigate(backTo)}
@@ -62,7 +62,7 @@ export function AppSectionHeader({
           className="text-muted-foreground hover:text-foreground -ml-2"
         >
           {backLabel || "Back"}
-        </AppButton>
+        </PlatformButton>
       )}
 
       {/* Header row */}

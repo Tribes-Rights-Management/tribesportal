@@ -37,7 +37,7 @@ const iconMap = {
 
 type IconType = keyof typeof iconMap;
 
-interface AppEmptyStateProps {
+interface PlatformEmptyStateProps {
   /** Icon to display */
   icon?: IconType;
   /** Custom icon component */
@@ -54,7 +54,7 @@ interface AppEmptyStateProps {
   className?: string;
 }
 
-export function AppEmptyState({
+export function PlatformEmptyState({
   icon = "inbox",
   customIcon,
   message,
@@ -62,7 +62,7 @@ export function AppEmptyState({
   action,
   size = "md",
   className,
-}: AppEmptyStateProps) {
+}: PlatformEmptyStateProps) {
   const Icon = iconMap[icon];
 
   // Reduced empty state icon sizes for Stripe-grade restraint

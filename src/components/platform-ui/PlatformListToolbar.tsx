@@ -2,7 +2,7 @@ import * as React from "react";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface AppListToolbarProps {
+interface PlatformListToolbarProps {
   /** Search placeholder text */
   placeholder?: string;
   /** Current search value */
@@ -17,14 +17,14 @@ interface AppListToolbarProps {
   className?: string;
 }
 
-export function AppListToolbar({
+export function PlatformListToolbar({
   placeholder = "Search...",
   searchValue,
   onSearchChange,
   count,
   action,
   className,
-}: AppListToolbarProps) {
+}: PlatformListToolbarProps) {
   return (
     <div className={cn("flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-5", className)}>
       <div className="relative flex-1">

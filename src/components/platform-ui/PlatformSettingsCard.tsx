@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppSettingsCardProps {
+interface PlatformSettingsCardProps {
   /** Section title */
   title: string;
   /** Section description */
@@ -39,12 +39,12 @@ interface AppSettingsCardProps {
   className?: string;
 }
 
-export function AppSettingsCard({
+export function PlatformSettingsCard({
   title,
   description,
   children,
   className,
-}: AppSettingsCardProps) {
+}: PlatformSettingsCardProps) {
   return (
     <div
       className={cn(
@@ -78,12 +78,12 @@ export function AppSettingsCard({
 /**
  * APP SETTINGS FOOTER — Policy/governance notice at bottom of settings pages
  */
-interface AppSettingsFooterProps {
+interface PlatformSettingsFooterProps {
   children: React.ReactNode;
   className?: string;
 }
 
-export function AppSettingsFooter({ children, className }: AppSettingsFooterProps) {
+export function PlatformSettingsFooter({ children, className }: PlatformSettingsFooterProps) {
   return (
     <p className={cn("mt-4 md:mt-6 text-[12px] md:text-[13px] text-muted-foreground", className)}>
       {children}

@@ -28,18 +28,18 @@ import {
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-export interface AppDropdownItem {
+export interface PlatformDropdownItem {
   label: string;
   onClick: () => void;
   /** Whether this item should be hidden */
   hidden?: boolean;
 }
 
-export interface AppDropdownProps {
+export interface PlatformDropdownProps {
   /** The trigger element that opens the dropdown */
   trigger: React.ReactNode;
   /** Array of menu items */
-  items: AppDropdownItem[];
+  items: PlatformDropdownItem[];
   /** Alignment of dropdown relative to trigger */
   align?: "start" | "end";
   /** Minimum width of dropdown menu */
@@ -48,13 +48,13 @@ export interface AppDropdownProps {
   className?: string;
 }
 
-export function AppDropdown({
+export function PlatformDropdown({
   trigger,
   items,
   align = "end",
   minWidth = 200,
   className,
-}: AppDropdownProps) {
+}: PlatformDropdownProps) {
   // Filter out hidden items
   const visibleItems = items.filter((item) => !item.hidden);
 

@@ -41,18 +41,18 @@ import {
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppSelectOption {
+interface PlatformSelectOption {
   value: string;
   label: string;
 }
 
-interface AppSelectProps {
+interface PlatformSelectProps {
   /** Current value */
   value: string;
   /** Change handler */
   onChange: (value: string) => void;
   /** Options list */
-  options: AppSelectOption[];
+  options: PlatformSelectOption[];
   /** Placeholder when no value selected */
   placeholder?: string;
   /** Disabled state */
@@ -63,7 +63,7 @@ interface AppSelectProps {
   className?: string;
 }
 
-export const AppSelect = forwardRef<HTMLButtonElement, AppSelectProps>(
+export const PlatformSelect = forwardRef<HTMLButtonElement, PlatformSelectProps>(
   ({ value, onChange, options, placeholder = "Select...", disabled = false, fullWidth = false, className }, ref) => {
     return (
       <Select value={value} onValueChange={onChange} disabled={disabled}>
@@ -95,4 +95,4 @@ export const AppSelect = forwardRef<HTMLButtonElement, AppSelectProps>(
   }
 );
 
-AppSelect.displayName = "AppSelect";
+PlatformSelect.displayName = "PlatformSelect";

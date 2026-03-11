@@ -44,15 +44,15 @@ import { Switch } from "@/components/ui/switch";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-export type AppDetailRowVariant = "readonly" | "editable" | "select" | "copyable" | "toggle";
+export type PlatformDetailRowVariant = "readonly" | "editable" | "select" | "copyable" | "toggle";
 
-interface AppDetailRowProps {
+interface PlatformDetailRowProps {
   /** Row label */
   label: string;
   /** Row value (for readonly/editable/select/copyable) */
   value?: string | React.ReactNode | null | undefined;
   /** Visual variant */
-  variant?: AppDetailRowVariant;
+  variant?: PlatformDetailRowVariant;
   /** Icon component to display (optional) */
   icon?: React.ElementType;
   /** Helper text displayed below label (for toggle) or below value (for others) */
@@ -75,7 +75,7 @@ interface AppDetailRowProps {
   className?: string;
 }
 
-export function AppDetailRow({
+export function PlatformDetailRow({
   label,
   value,
   variant = "readonly",
@@ -89,7 +89,7 @@ export function AppDetailRow({
   locked = false,
   lockReason = "Enforced by workspace policy",
   className,
-}: AppDetailRowProps) {
+}: PlatformDetailRowProps) {
   const displayValue = value ?? "—";
   const hasValue = value !== null && value !== undefined && value !== "";
   const isStringValue = typeof value === "string";
@@ -226,18 +226,18 @@ export function AppDetailRow({
  * 
  * Adds dividers between rows automatically.
  */
-interface AppDetailRowGroupProps {
+interface PlatformDetailRowGroupProps {
   children: React.ReactNode;
   /** Whether to show dividers between rows */
   divided?: boolean;
   className?: string;
 }
 
-export function AppDetailRowGroup({
+export function PlatformDetailRowGroup({
   children,
   divided = true,
   className,
-}: AppDetailRowGroupProps) {
+}: PlatformDetailRowGroupProps) {
   return (
     <div 
       className={cn(

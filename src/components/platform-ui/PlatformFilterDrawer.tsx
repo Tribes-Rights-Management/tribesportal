@@ -7,7 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { AppButton } from "./AppButton";
+import { PlatformButton } from "./PlatformButton";
 import { ICON_SIZE, ICON_STROKE } from "@/styles/tokens";
 
 /**
@@ -33,7 +33,7 @@ import { ICON_SIZE, ICON_STROKE } from "@/styles/tokens";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppFilterDrawerProps {
+interface PlatformFilterDrawerProps {
   /** Whether the drawer is open */
   open: boolean;
   /** Callback when open state changes */
@@ -46,13 +46,13 @@ interface AppFilterDrawerProps {
   onClearFilters?: () => void;
 }
 
-export function AppFilterDrawer({
+export function PlatformFilterDrawer({
   open,
   onOpenChange,
   children,
   hasActiveFilters = false,
   onClearFilters,
-}: AppFilterDrawerProps) {
+}: PlatformFilterDrawerProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-[300px] sm:w-[340px] flex flex-col">
@@ -81,12 +81,12 @@ export function AppFilterDrawer({
 /**
  * APP FILTER SECTION — Labeled group within filter drawer
  */
-interface AppFilterSectionProps {
+interface PlatformFilterSectionProps {
   title: string;
   children: React.ReactNode;
 }
 
-export function AppFilterSection({ title, children }: AppFilterSectionProps) {
+export function PlatformFilterSection({ title, children }: PlatformFilterSectionProps) {
   return (
     <div className="space-y-3">
       <h3 className="text-[12px] font-medium text-[#9CA3AF]">
@@ -100,13 +100,13 @@ export function AppFilterSection({ title, children }: AppFilterSectionProps) {
 /**
  * APP FILTER OPTION — Radio-style option within a filter section
  */
-interface AppFilterOptionProps {
+interface PlatformFilterOptionProps {
   label: string;
   selected: boolean;
   onClick: () => void;
 }
 
-export function AppFilterOption({ label, selected, onClick }: AppFilterOptionProps) {
+export function PlatformFilterOption({ label, selected, onClick }: PlatformFilterOptionProps) {
   return (
     <button
       onClick={onClick}
@@ -125,17 +125,17 @@ export function AppFilterOption({ label, selected, onClick }: AppFilterOptionPro
 /**
  * APP FILTER TRIGGER — Icon button that opens the filter drawer
  */
-interface AppFilterTriggerProps {
+interface PlatformFilterTriggerProps {
   onClick: () => void;
   hasActiveFilters?: boolean;
   className?: string;
 }
 
-export function AppFilterTrigger({
+export function PlatformFilterTrigger({
   onClick,
   hasActiveFilters = false,
   className,
-}: AppFilterTriggerProps) {
+}: PlatformFilterTriggerProps) {
   return (
     <button
       onClick={onClick}

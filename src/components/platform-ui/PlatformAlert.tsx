@@ -58,7 +58,7 @@ const variantConfig = {
   },
 };
 
-interface AppAlertProps {
+interface PlatformAlertProps {
   /** Alert variant */
   variant: AlertVariant;
   /** Main message */
@@ -73,14 +73,14 @@ interface AppAlertProps {
   className?: string;
 }
 
-export function AppAlert({
+export function PlatformAlert({
   variant,
   message,
   description,
   onRetry,
   onDismiss,
   className,
-}: AppAlertProps) {
+}: PlatformAlertProps) {
   const config = variantConfig[variant];
   const Icon = config.icon;
 

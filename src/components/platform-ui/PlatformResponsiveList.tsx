@@ -22,7 +22,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppResponsiveListProps<T> {
+interface PlatformResponsiveListProps<T> {
   /** Items to display */
   items: T[];
   /** Render function for mobile card view */
@@ -37,14 +37,14 @@ interface AppResponsiveListProps<T> {
   className?: string;
 }
 
-export function AppResponsiveList<T>({
+export function PlatformResponsiveList<T>({
   items,
   renderCard,
   renderTable,
   keyExtractor,
   emptyMessage = "No items available",
   className,
-}: AppResponsiveListProps<T>) {
+}: PlatformResponsiveListProps<T>) {
   const isMobile = useIsMobile();
 
   if (items.length === 0) {
@@ -84,7 +84,7 @@ export function AppResponsiveList<T>({
  * - Optional status chip
  * - Click handler
  */
-interface AppItemCardProps {
+interface PlatformItemCardProps {
   /** Primary title */
   title: string;
   /** Secondary subtitle */
@@ -99,14 +99,14 @@ interface AppItemCardProps {
   className?: string;
 }
 
-export function AppItemCard({
+export function PlatformItemCard({
   title,
   subtitle,
   meta,
   status,
   onClick,
   className,
-}: AppItemCardProps) {
+}: PlatformItemCardProps) {
   return (
     <div
       onClick={onClick}

@@ -20,20 +20,20 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppCardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface PlatformCardProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Card size variant */
   size?: "sm" | "md" | "lg";
   /** Whether to use transparent background */
   transparent?: boolean;
 }
 
-export function AppCard({
+export function PlatformCard({
   className,
   size = "md",
   transparent = false,
   children,
   ...props
-}: AppCardProps) {
+}: PlatformCardProps) {
   return (
     <div
       className={cn(
@@ -50,17 +50,17 @@ export function AppCard({
   );
 }
 
-interface AppCardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+interface PlatformCardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Optional action slot for buttons */
   action?: React.ReactNode;
 }
 
-export function AppCardHeader({
+export function PlatformCardHeader({
   className,
   action,
   children,
   ...props
-}: AppCardHeaderProps) {
+}: PlatformCardHeaderProps) {
   return (
     <div
       className={cn(
@@ -76,7 +76,7 @@ export function AppCardHeader({
   );
 }
 
-export function AppCardTitle({
+export function PlatformCardTitle({
   className,
   ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) {
@@ -91,7 +91,7 @@ export function AppCardTitle({
   );
 }
 
-export function AppCardDescription({
+export function PlatformCardDescription({
   className,
   ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) {
@@ -103,14 +103,14 @@ export function AppCardDescription({
   );
 }
 
-export function AppCardBody({
+export function PlatformCardBody({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("px-5 py-4", className)} {...props} />;
 }
 
-export function AppCardFooter({
+export function PlatformCardFooter({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {

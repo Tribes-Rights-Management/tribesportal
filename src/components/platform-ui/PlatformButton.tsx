@@ -34,7 +34,7 @@ import { cn } from "@/lib/utils";
 
 type ButtonIntent = "primary" | "secondary" | "tertiary" | "ghost" | "danger" | "destructive";
 
-export interface AppButtonProps
+export interface PlatformButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Button intent/style variant */
   intent?: ButtonIntent;
@@ -56,7 +56,7 @@ export interface AppButtonProps
   fullWidth?: boolean;
 }
 
-export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
+export const PlatformButton = React.forwardRef<HTMLButtonElement, PlatformButtonProps>(
   (
     {
       className,
@@ -190,4 +190,4 @@ export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
   }
 );
 
-AppButton.displayName = "AppButton";
+PlatformButton.displayName = "PlatformButton";

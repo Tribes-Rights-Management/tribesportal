@@ -25,7 +25,7 @@ export type ChipStatus = "pending" | "running" | "pass" | "warning" | "fail";
 export type ChipSeverity = "high" | "medium" | "low";
 export type ChipVariant = "default" | "outline" | "subtle";
 
-interface AppChipProps {
+interface PlatformChipProps {
   /** Status variant for security/audit checks */
   status?: ChipStatus;
   /** Severity variant for exceptions */
@@ -79,14 +79,14 @@ const severityConfig: Record<ChipSeverity, { label: string; cssVar: string }> = 
   low: { label: "Low", cssVar: "running" },
 };
 
-export function AppChip({
+export function PlatformChip({
   status,
   severity,
   variant = "default",
   label,
   showIcon = true,
   className,
-}: AppChipProps) {
+}: PlatformChipProps) {
   // Status chip
   if (status) {
     const config = statusConfig[status];

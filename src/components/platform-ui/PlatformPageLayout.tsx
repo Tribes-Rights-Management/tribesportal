@@ -35,7 +35,7 @@ interface BackLinkProps {
 
 type MaxWidth = "sm" | "md" | "lg" | "xl" | "2xl" | "full";
 
-interface AppPageLayoutProps {
+interface PlatformPageLayoutProps {
   /** Page title (required) */
   title: React.ReactNode;
   /** Optional subtitle below title */
@@ -63,7 +63,7 @@ const maxWidthClasses: Record<MaxWidth, string> = {
   full: "max-w-full",
 };
 
-export function AppPageLayout({
+export function PlatformPageLayout({
   title,
   subtitle,
   subtitleClassName,
@@ -72,7 +72,7 @@ export function AppPageLayout({
   maxWidth = "xl",
   bodyClassName,
   children,
-}: AppPageLayoutProps) {
+}: PlatformPageLayoutProps) {
   return (
     <div className="w-full">
       {/* ZONE 1: Page Header — fixed position, never affected by body container */}

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
-import { AppButton } from "./AppButton";
+import { PlatformButton } from "./PlatformButton";
 
 /**
  * APP PANEL — GLOBAL UI KIT (SINGLE SOURCE OF TRUTH)
@@ -31,7 +31,7 @@ import { AppButton } from "./AppButton";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppPanelProps {
+interface PlatformPanelProps {
   /** Whether panel is open */
   open: boolean;
   /** Close handler */
@@ -48,7 +48,7 @@ interface AppPanelProps {
   footer?: React.ReactNode;
 }
 
-export function AppPanel({
+export function PlatformPanel({
   open,
   onClose,
   title,
@@ -56,7 +56,7 @@ export function AppPanel({
   width = "md",
   children,
   footer,
-}: AppPanelProps) {
+}: PlatformPanelProps) {
   // Close on Escape key
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -155,7 +155,7 @@ export function AppPanel({
  * APP PANEL FOOTER — Common footer layouts
  */
 
-interface AppPanelFooterProps {
+interface PlatformPanelFooterProps {
   /** Left-side content (delete button, etc.) */
   left?: React.ReactNode;
   /** Cancel handler */
@@ -172,7 +172,7 @@ interface AppPanelFooterProps {
   submitDisabled?: boolean;
 }
 
-export function AppPanelFooter({
+export function PlatformPanelFooter({
   left,
   onCancel,
   onSubmit,
@@ -180,22 +180,22 @@ export function AppPanelFooter({
   cancelLabel = "Cancel",
   submitting = false,
   submitDisabled = false,
-}: AppPanelFooterProps) {
+}: PlatformPanelFooterProps) {
   return (
     <div className="flex items-center justify-between w-full">
       <div>{left}</div>
       <div className="flex items-center gap-2">
-        <AppButton intent="secondary" size="sm" onClick={onCancel}>
+        <PlatformButton intent="secondary" size="sm" onClick={onCancel}>
           {cancelLabel}
-        </AppButton>
-        <AppButton
+        </PlatformButton>
+        <PlatformButton
           intent="primary"
           size="sm"
           onClick={onSubmit}
           disabled={submitting || submitDisabled}
         >
           {submitting ? "Saving..." : submitLabel}
-        </AppButton>
+        </PlatformButton>
       </div>
     </div>
   );

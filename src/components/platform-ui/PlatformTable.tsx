@@ -54,7 +54,7 @@ export type ColumnPreset = keyof typeof TABLE_COLUMN_PRESETS;
 // TABLE CONTAINER
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableProps {
+interface PlatformTableProps {
   children: React.ReactNode;
   /** 
    * Column widths - can be:
@@ -65,7 +65,7 @@ interface AppTableProps {
   className?: string;
 }
 
-export function AppTable({ children, columns, className }: AppTableProps) {
+export function PlatformTable({ children, columns, className }: PlatformTableProps) {
   // Resolve column widths from preset or direct array
   const columnWidths = columns
     ? typeof columns === "string"
@@ -102,12 +102,12 @@ export function AppTable({ children, columns, className }: AppTableProps) {
 // TABLE HEADER
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableHeaderProps {
+interface PlatformTableHeaderProps {
   children: React.ReactNode;
   className?: string;
 }
 
-export function AppTableHeader({ children, className }: AppTableHeaderProps) {
+export function PlatformTableHeader({ children, className }: PlatformTableHeaderProps) {
   return (
     <thead className={cn("bg-muted/30", className)}>
       {children}
@@ -119,12 +119,12 @@ export function AppTableHeader({ children, className }: AppTableHeaderProps) {
 // TABLE BODY
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableBodyProps {
+interface PlatformTableBodyProps {
   children: React.ReactNode;
   className?: string;
 }
 
-export function AppTableBody({ children, className }: AppTableBodyProps) {
+export function PlatformTableBody({ children, className }: PlatformTableBodyProps) {
   return <tbody className={className}>{children}</tbody>;
 }
 
@@ -132,7 +132,7 @@ export function AppTableBody({ children, className }: AppTableBodyProps) {
 // TABLE ROW
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableRowProps {
+interface PlatformTableRowProps {
   children: React.ReactNode;
   /** Makes row clickable with hover state */
   clickable?: boolean;
@@ -145,14 +145,14 @@ interface AppTableRowProps {
   className?: string;
 }
 
-export function AppTableRow({
+export function PlatformTableRow({
   children,
   clickable = false,
   onClick,
   onDoubleClick,
   header = false,
   className,
-}: AppTableRowProps) {
+}: PlatformTableRowProps) {
   return (
     <tr
       onClick={clickable ? onClick : undefined}
@@ -185,7 +185,7 @@ export function AppTableRow({
 
 type SortDirection = "asc" | "desc" | null;
 
-interface AppTableHeadProps {
+interface PlatformTableHeadProps {
   children?: React.ReactNode;
   /** Enable sorting */
   sortable?: boolean;
@@ -200,7 +200,7 @@ interface AppTableHeadProps {
   className?: string;
 }
 
-export function AppTableHead({
+export function PlatformTableHead({
   children,
   sortable = false,
   sortDirection = null,
@@ -208,7 +208,7 @@ export function AppTableHead({
   align = "left",
   width,
   className,
-}: AppTableHeadProps) {
+}: PlatformTableHeadProps) {
   const alignClasses = {
     left: "text-left",
     center: "text-center",
@@ -265,7 +265,7 @@ export function AppTableHead({
 // TABLE CELL
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableCellProps {
+interface PlatformTableCellProps {
   children: React.ReactNode;
   /** Text alignment */
   align?: "left" | "center" | "right";
@@ -276,13 +276,13 @@ interface AppTableCellProps {
   className?: string;
 }
 
-export function AppTableCell({
+export function PlatformTableCell({
   children,
   align = "left",
   muted = false,
   mono = false,
   className,
-}: AppTableCellProps) {
+}: PlatformTableCellProps) {
   const alignClasses = {
     left: "text-left",
     center: "text-center",
@@ -308,7 +308,7 @@ export function AppTableCell({
 // TABLE EMPTY STATE
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableEmptyProps {
+interface PlatformTableEmptyProps {
   /** Number of columns to span */
   colSpan: number;
   /** Empty state content */
@@ -316,7 +316,7 @@ interface AppTableEmptyProps {
   className?: string;
 }
 
-export function AppTableEmpty({ colSpan, children, className }: AppTableEmptyProps) {
+export function PlatformTableEmpty({ colSpan, children, className }: PlatformTableEmptyProps) {
   return (
     <tr>
       <td colSpan={colSpan} className={cn("text-center py-20", className)}>
@@ -332,7 +332,7 @@ export function AppTableEmpty({ colSpan, children, className }: AppTableEmptyPro
 
 type BadgeVariant = "default" | "success" | "warning" | "error" | "info";
 
-interface AppTableBadgeProps {
+interface PlatformTableBadgeProps {
   children: React.ReactNode;
   variant?: BadgeVariant;
   className?: string;
@@ -346,11 +346,11 @@ const badgeVariants: Record<BadgeVariant, string> = {
   info: "bg-info/20 text-info",
 };
 
-export function AppTableBadge({
+export function PlatformTableBadge({
   children,
   variant = "default",
   className,
-}: AppTableBadgeProps) {
+}: PlatformTableBadgeProps) {
   return (
     <span
       className={cn(
@@ -368,12 +368,12 @@ export function AppTableBadge({
 // TAG (for small inline labels)
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableTagProps {
+interface PlatformTableTagProps {
   children: React.ReactNode;
   className?: string;
 }
 
-export function AppTableTag({ children, className }: AppTableTagProps) {
+export function PlatformTableTag({ children, className }: PlatformTableTagProps) {
   return (
     <span
       className={cn(

@@ -29,7 +29,7 @@ import { ChevronRight } from "lucide-react";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppListCardProps {
+interface PlatformListCardProps {
   /** Optional header title */
   title?: string;
   /** Optional header action (button, link, etc.) */
@@ -40,12 +40,12 @@ interface AppListCardProps {
   className?: string;
 }
 
-export function AppListCard({
+export function PlatformListCard({
   title,
   action,
   children,
   className,
-}: AppListCardProps) {
+}: PlatformListCardProps) {
   return (
     <div
       className={cn(
@@ -96,7 +96,7 @@ export function AppListCard({
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppListRowProps {
+interface PlatformListRowProps {
   /** Main title text */
   title: string;
   /** Optional subtitle below title */
@@ -113,7 +113,7 @@ interface AppListRowProps {
   className?: string;
 }
 
-export function AppListRow({
+export function PlatformListRow({
   title,
   subtitle,
   left,
@@ -121,7 +121,7 @@ export function AppListRow({
   showChevron = false,
   onClick,
   className,
-}: AppListRowProps) {
+}: PlatformListRowProps) {
   const isClickable = !!onClick;
   const showRightChevron = showChevron || isClickable;
 
@@ -170,17 +170,17 @@ export function AppListRow({
 /**
  * APP LIST ACTION — Link-style action for list headers
  */
-interface AppListActionProps {
+interface PlatformListActionProps {
   children: React.ReactNode;
   onClick?: () => void;
   className?: string;
 }
 
-export function AppListAction({
+export function PlatformListAction({
   children,
   onClick,
   className,
-}: AppListActionProps) {
+}: PlatformListActionProps) {
   return (
     <button
       onClick={onClick}

@@ -34,7 +34,7 @@ import { Search, X } from "lucide-react";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppSearchInputProps {
+interface PlatformSearchInputProps {
   /** Current value */
   value: string;
   /** Change handler */
@@ -59,7 +59,7 @@ interface AppSearchInputProps {
   "aria-label"?: string;
 }
 
-export function AppSearchInput({
+export function PlatformSearchInput({
   value,
   onChange,
   onSubmit,
@@ -71,7 +71,7 @@ export function AppSearchInput({
   onFocus,
   onBlur,
   "aria-label": ariaLabel,
-}: AppSearchInputProps) {
+}: PlatformSearchInputProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = React.useState(false);
 

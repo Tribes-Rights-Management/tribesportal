@@ -14,7 +14,7 @@ export interface CheckboxOption {
   description?: string;
 }
 
-interface AppCheckboxGroupProps {
+interface PlatformCheckboxGroupProps {
   /** Group label */
   label?: string;
   /** Available options */
@@ -36,7 +36,7 @@ interface AppCheckboxGroupProps {
   className?: string;
 }
 
-export function AppCheckboxGroup({
+export function PlatformCheckboxGroup({
   label,
   options,
   selected,
@@ -47,7 +47,7 @@ export function AppCheckboxGroup({
   required = false,
   disabled = false,
   className,
-}: AppCheckboxGroupProps) {
+}: PlatformCheckboxGroupProps) {
   const handleToggle = (optionId: string) => {
     if (disabled) return;
     
