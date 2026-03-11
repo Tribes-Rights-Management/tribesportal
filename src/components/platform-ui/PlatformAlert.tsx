@@ -73,7 +73,7 @@ interface PlatformAlertProps {
   className?: string;
 }
 
-export function AppAlert({
+export function PlatformAlert({
   variant,
   message,
   description,
