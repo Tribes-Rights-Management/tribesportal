@@ -217,7 +217,7 @@ function MobileControls() {
   const currentMode = useCurrentMode();
 
   const getModeLabel = () => {
-    if (currentMode === "admin") return NAV_LABELS.SYSTEM_CONSOLE;
+    if (currentMode === "admin") return NAV_LABELS.TRIBES_ADMIN;
     if (currentMode === "licensing") return NAV_LABELS.LICENSING;
     return NAV_LABELS.TRIBES_ADMIN;
   };
