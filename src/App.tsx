@@ -346,7 +346,7 @@ const App = () => (
             NO product navigation, NO workspace selector
         ═══════════════════════════════════════════════════════════════════════ */}
         <Route path="/console" element={<ConsoleProtectedRoute><SystemConsoleLayout /></ConsoleProtectedRoute>}>
-          <Route index element={<AdminDashboard />} />
+          <Route index element={<ConsoleDashboard />} />
           <Route path="approvals" element={<ApprovalsPage />} />
           <Route path="tenants" element={<TenantsPage />} />
           <Route path="tenants/:tenantId/users" element={<OrganizationUsersPage />} />
