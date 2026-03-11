@@ -191,17 +191,15 @@ function WorkspaceSelector() {
 }
 
 // Account menu wrapper - uses shared ProfileDropdown with dark theme for GlobalHeader
+// GlobalHeader is used in workspace context only, never in System Console
 function AccountMenu() {
   const { isPlatformAdmin } = useAuth();
-  const currentMode = useCurrentMode();
-  const showReturnToConsole = isPlatformAdmin && currentMode !== "admin";
-  const showSystemConsole = isPlatformAdmin && currentMode === "admin";
   
   return (
     <ProfileDropdown
       avatarVariant="dark"
-      showReturnToConsole={showReturnToConsole}
-      showSystemConsole={showSystemConsole}
+      showReturnToConsole={isPlatformAdmin}
+      showSystemConsole={false}
     />
   );
 }
