@@ -118,72 +118,72 @@ export default function RightsClientsPage() {
   const count = filtered.length;
 
   return (
-    <AppPageLayout title="Clients">
-      <AppListToolbar
+    <PlatformPageLayout title="Clients">
+      <PlatformListToolbar
         placeholder="Search clients..."
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
         count={`${count} ${count === 1 ? "client" : "clients"}`}
         action={
-          <AppButton intent="primary" size="sm" onClick={() => setShowCreateDialog(true)}>
+          <PlatformButton intent="primary" size="sm" onClick={() => setShowCreateDialog(true)}>
             <Plus className="h-4 w-4" />
             Add Client
-          </AppButton>
+          </PlatformButton>
         }
       />
 
       {isLoading ? (
-        <AppEmptyState message="Loading clients..." size="lg" />
+        <PlatformEmptyState message="Loading clients..." size="lg" />
       ) : filtered.length === 0 ? (
-        <AppTable columns={["40%", "25%", "20%", "15%"]}>
-          <AppTableHeader>
-            <AppTableRow header>
-              <AppTableHead>Name</AppTableHead>
-              <AppTableHead>Email</AppTableHead>
-              <AppTableHead>Status</AppTableHead>
-              <AppTableHead align="right">Songs</AppTableHead>
-            </AppTableRow>
-          </AppTableHeader>
-          <AppTableBody>
-            <AppTableEmpty colSpan={4}>
-              <AppEmptyState
+        <PlatformTable columns={["40%", "25%", "20%", "15%"]}>
+          <PlatformTableHeader>
+            <PlatformTableRow header>
+              <PlatformTableHead>Name</PlatformTableHead>
+              <PlatformTableHead>Email</PlatformTableHead>
+              <PlatformTableHead>Status</PlatformTableHead>
+              <PlatformTableHead align="right">Songs</PlatformTableHead>
+            </PlatformTableRow>
+          </PlatformTableHeader>
+          <PlatformTableBody>
+            <PlatformTableEmpty colSpan={4}>
+              <PlatformEmptyState
                 message={searchQuery ? "No clients match your search" : "No clients yet"}
                 description={searchQuery ? "Try a different search term." : "Add your first client to get started."}
               />
-            </AppTableEmpty>
-          </AppTableBody>
-        </AppTable>
+            </PlatformTableEmpty>
+          </PlatformTableBody>
+        </PlatformTable>
       ) : (
-        <AppTable columns={["40%", "25%", "20%", "15%"]}>
-          <AppTableHeader>
-            <AppTableRow header>
-              <AppTableHead>Name</AppTableHead>
-              <AppTableHead>Email</AppTableHead>
-              <AppTableHead>Status</AppTableHead>
-              <AppTableHead align="right">Songs</AppTableHead>
-            </AppTableRow>
-          </AppTableHeader>
-          <AppTableBody>
+        <PlatformTable columns={["40%", "25%", "20%", "15%"]}>
+          <PlatformTableHeader>
+            <PlatformTableRow header>
+              <PlatformTableHead>Name</PlatformTableHead>
+              <PlatformTableHead>Email</PlatformTableHead>
+              <PlatformTableHead>Status</PlatformTableHead>
+              <PlatformTableHead align="right">Songs</PlatformTableHead>
+            </PlatformTableRow>
+          </PlatformTableHeader>
+          <PlatformTableBody>
             {filtered.map((client) => (
-              <AppTableRow
+              <PlatformTableRow
                 key={client.id}
                 clickable
                 onClick={() => navigate(`/rights/clients/${client.id}`)}
               >
-                <AppTableCell>{client.name}</AppTableCell>
-                <AppTableCell muted>{client.primary_email || "—"}</AppTableCell>
-                <AppTableCell>
-                  <AppTableBadge variant={statusVariant[client.status] || "default"}>
+                <PlatformTableCell>{client.name}</PlatformTableCell>
+                <PlatformTableCell muted>{client.primary_email || "—"}</PlatformTableCell>
+                <PlatformTableCell>
+                  <PlatformTableBadge variant={statusVariant[client.status] || "default"}>
                     {client.status}
-                  </AppTableBadge>
-                </AppTableCell>
-                <AppTableCell align="right" muted>
+                  </PlatformTableBadge>
+                </PlatformTableCell>
+                <PlatformTableCell align="right" muted>
                   {songCounts?.[client.id] ?? "—"}
-                </AppTableCell>
-              </AppTableRow>
+                </PlatformTableCell>
+              </PlatformTableRow>
             ))}
-          </AppTableBody>
-        </AppTable>
+          </PlatformTableBody>
+        </PlatformTable>
       )}
 
       <AppModal
@@ -236,6 +236,6 @@ export default function RightsClientsPage() {
           </AppModalCancel>
         </AppModalFooter>
       </AppModal>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
