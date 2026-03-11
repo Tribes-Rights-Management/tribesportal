@@ -56,7 +56,7 @@ export interface PlatformButtonProps
   fullWidth?: boolean;
 }
 
-export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(
+export const PlatformButton = React.forwardRef<HTMLButtonElement, PlatformButtonProps>(
   (
     {
       className,
