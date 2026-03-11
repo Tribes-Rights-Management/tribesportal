@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, TrendingUp } from "lucide-react";
 import { format } from "date-fns";
 
-// Import from unified app-ui kit
+// Import from unified platform-ui kit
 import {
   AppButton,
   AppPageLayout,
@@ -22,7 +22,7 @@ import {
 /**
  * HELP WORKSTATION OVERVIEW — UNIFIED DESIGN SYSTEM
  * 
- * Uses canonical app-ui components for consistency across the application.
+ * Uses canonical platform-ui components for consistency across the application.
  * No hardcoded colors - all styling via CSS variables.
  */
 

@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
  * - Help → /help (mobile only)
  * - Sign Out
  * 
- * Uses AppDropdown from the app-ui design system for consistency.
+ * Uses AppDropdown from the platform-ui design system for consistency.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 

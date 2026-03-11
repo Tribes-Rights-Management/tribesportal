@@ -13,7 +13,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 
 /**
- * HELP AUDIENCES PAGE — Uses app-ui components consistently
+ * HELP AUDIENCES PAGE — Uses platform-ui components consistently
  */
 
 interface HelpAudience {

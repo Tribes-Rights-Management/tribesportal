@@ -14,7 +14,7 @@
  *   import { AppDetailRow, AppSettingsCard, AppSettingsFooter } from "@/components/platform-ui";
  *
  * These exports are preserved for backward compatibility only.
- * All new code MUST use app-ui components.
+ * All new code MUST use platform-ui components.
  */
 
 import * as React from "react";
