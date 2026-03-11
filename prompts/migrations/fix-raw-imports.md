@@ -1,7 +1,7 @@
 # Prompt: Fix Raw ui/ Imports
 
 ## Goal
-Replace direct `@/components/ui/*` imports with `@/components/app-ui` equivalents. This is a lighter migration than full adopt-app-ui — only changes imports and component names, not layout patterns.
+Replace direct `@/components/ui/*` imports with `@/components/platform-ui` equivalents. This is a lighter migration than full adopt-platform-ui — only changes imports and component names, not layout patterns.
 
 ## Preconditions — Do NOT use this prompt if:
 - The page needs a full layout overhaul (use `adopt-app-ui.md` instead)
@@ -15,9 +15,9 @@ Replace direct `@/components/ui/*` imports with `@/components/app-ui` equivalent
 ```
 In this file: [FILE_PATH]
 
-Find all imports from @/components/ui/* and replace them with app-ui equivalents:
+Find all imports from @/components/ui/* and replace them with platform-ui equivalents:
 
-- Button → AppButton (from @/components/app-ui)
+- Button → AppButton (from @/components/platform-ui)
 - Card, CardHeader, CardContent, CardFooter → AppCard, AppCardHeader, AppCardBody, AppCardFooter
 - Input → AppInput
 - Badge → AppChip
@@ -26,7 +26,7 @@ Find all imports from @/components/ui/* and replace them with app-ui equivalents
 
 Update all JSX references to use the new component names.
 Do NOT change any props, event handlers, classNames, or business logic.
-If a ui/ component has no app-ui equivalent, leave it and add a TODO comment.
+If a ui/ component has no platform-ui equivalent, leave it and add a TODO comment.
 ```
 
 ## Verification

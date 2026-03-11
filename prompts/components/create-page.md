@@ -5,7 +5,7 @@ Scaffold a new page that is fully compliant with the Tribes design system from t
 
 ## Preconditions — Do NOT use this prompt if:
 - The page already exists (use `migrations/adopt-app-ui.md` instead)
-- The page belongs to the System Console context (use Console components instead of app-ui)
+- The page belongs to the System Console context (use Console components instead of platform-ui)
 
 ## Context to provide:
 - Page name and file path
@@ -23,7 +23,7 @@ This page belongs to the [MODULE] module and should:
 - [DESCRIBE WHAT THE PAGE DOES]
 
 Requirements:
-1. Import ONLY from @/components/app-ui — never from @/components/ui/*
+1. Import ONLY from @/components/platform-ui — never from @/components/ui/*
 2. Use AppPageHeader for the page title
 3. Use AppPageContainer as the outer wrapper
 4. Use AppTable for any tabular data

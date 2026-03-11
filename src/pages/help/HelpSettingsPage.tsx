@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 /**
  * HELP SETTINGS PAGE — DESIGN SYSTEM COMPLIANT
  * 
- * Uses canonical app-ui components for consistency.
+ * Uses canonical platform-ui components for consistency.
  */
 
 interface SettingToggleProps {

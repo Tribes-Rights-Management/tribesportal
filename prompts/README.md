@@ -18,8 +18,8 @@ prompts/
 │   ├── create-page.md          # Scaffold a new page with correct imports
 │   └── create-edge-function.md # Supabase Edge Function template
 ├── migrations/
-│   ├── adopt-app-ui.md         # Convert a non-compliant page to app-ui
-│   └── fix-raw-imports.md      # Replace raw ui/ imports with app-ui
+│   ├── adopt-app-ui.md         # Convert a non-compliant page to platform-ui
+│   └── fix-raw-imports.md      # Replace raw ui/ imports with platform-ui
 └── review/
     └── design-system-audit.md  # Audit a page for violations
 ```

@@ -22,7 +22,7 @@ import {
 /**
  * HELP WORKSTATION OVERVIEW — UNIFIED DESIGN SYSTEM
  * 
- * Uses canonical app-ui components for consistency across the application.
+ * Uses canonical platform-ui components for consistency across the application.
  * No hardcoded colors - all styling via CSS variables.
  */
 
