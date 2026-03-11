@@ -295,8 +295,8 @@ CREATE POLICY "Tenant members can view"
 6. Regenerate types: update `src/integrations/supabase/types.ts`
 
 ### Modifying an Existing Component
-1. If it's in `app-ui/` — fix it there, all consumers benefit
-2. If it's NOT in `app-ui/` but should be — create the app-ui version first, then migrate the page
+1. If it's in `platform-ui/` — fix it there, all consumers benefit
+2. If it's NOT in `platform-ui/` but should be — create the platform-ui version first, then migrate the page
 3. Never add page-specific styling that should be in the design system
 
 ---
