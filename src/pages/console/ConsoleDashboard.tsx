@@ -220,6 +220,6 @@ export default function AdminDashboard() {
           </footer>
         </div>
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

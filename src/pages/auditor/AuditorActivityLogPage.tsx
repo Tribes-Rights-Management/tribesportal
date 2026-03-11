@@ -105,7 +105,7 @@ export default function AuditorActivityLogPage() {
         loading={loading}
         // No export for auditors — read-only
       />
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
 
