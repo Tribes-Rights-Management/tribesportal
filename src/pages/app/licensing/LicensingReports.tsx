@@ -4,7 +4,7 @@ import {
 } from "@/components/app-ui";
 
 /**
- * Reports — Client Portal
+ * Reports — Legacy client-facing view (/app/licensing)
  */
 export default function LicensingReports() {
   return (

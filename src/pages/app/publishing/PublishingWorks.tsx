@@ -4,7 +4,7 @@ import {
 } from "@/components/app-ui";
 
 /**
- * Works — Client Portal
+ * Works — Legacy client-facing view (/app/publishing)
  */
 export default function PublishingWorks() {
   return (

@@ -87,7 +87,7 @@ export const EMPTY_STATES = {
     description: "Executed agreements will be archived here for reference.",
   },
   
-  // Client Portal Tables
+  // Legacy Client View Tables (portal_* namespace retained for compatibility)
   PORTAL_AGREEMENTS: {
     title: "No agreements available.",
     description: "Your executed agreements will appear here once issued.",

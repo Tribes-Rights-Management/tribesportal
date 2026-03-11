@@ -172,12 +172,12 @@
 
 ---
 
-## Portal (Client-Facing) (2 tables)
+## Portal (Client-Facing, Legacy Naming) (2 tables)
 
 | Table | Cols | Classification | Notes |
 |-------|------|---------------|-------|
-| `portal_documents` | 6 | **CANONICAL** | Documents shared with clients via portal. `document_type`, `document_url`. |
-| `portal_statements` | 5 | **CANONICAL** | Royalty statements for client portal. `statement_period`, `statement_url`. |
+| `portal_documents` | 6 | **CANONICAL** | Documents shared with clients via Tribes Admin. Table name retains historical `portal_` prefix. |
+| `portal_statements` | 5 | **CANONICAL** | Royalty statements for client workspace. Table name retains historical `portal_` prefix. |
 
 ---
 

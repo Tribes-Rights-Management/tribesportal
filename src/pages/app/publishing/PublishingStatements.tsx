@@ -4,7 +4,7 @@ import {
 } from "@/components/app-ui";
 
 /**
- * Statements — Client Portal
+ * Statements — Legacy client-facing view (/app/publishing)
  */
 export default function PublishingStatements() {
   return (

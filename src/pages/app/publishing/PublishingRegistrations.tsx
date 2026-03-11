@@ -4,7 +4,7 @@ import {
 } from "@/components/app-ui";
 
 /**
- * Registrations — Client Portal
+ * Registrations — Legacy client-facing view (/app/publishing)
  */
 export default function PublishingRegistrations() {
   return (

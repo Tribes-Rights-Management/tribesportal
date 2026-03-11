@@ -38,7 +38,7 @@ This is **not** the public marketing website. The public-facing brand site, lega
 | `/auditor` | Auditor View | Read-only external audit access |
 | `/account` | Account Settings | User profile, security, preferences |
 | `/workspaces` | Workspaces Hub | Authenticated landing — module selection |
-| `/app/*` | Legacy Client Portal | Backward-compatible client views (publishing/licensing contexts) |
+| `/app/*` | Legacy Client Views | Retained compatibility routes (publishing/licensing contexts) |
 | `/portal/*` | Legacy redirect | Redirects to `/admin` — not a primary identity |
 
 ---
