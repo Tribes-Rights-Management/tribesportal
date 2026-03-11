@@ -318,6 +318,7 @@ src/
 │   └── ...
 ├── pages/
 │   ├── admin/           ← Tribes Admin pages (/admin/*)
+│   ├── console/         ← System Console pages (/console/*)
 │   │   ├── billing/     ← Billing governance pages
 │   │   └── reporting/   ← Executive reporting pages
 │   ├── app/             ← Client portal pages (/app/*)
@@ -325,7 +326,7 @@ src/
 │   │   └── publishing/  ← Client publishing views
 │   ├── auditor/         ← External auditor pages (/auditor/*)
 │   ├── auth/            ← Auth flow pages
-│   ├── help-workstation/ ← Help management pages (/help/*)
+│   ├── help/            ← Help Workstation pages (/help/*)
 │   ├── modules/
 │   │   ├── licensing/   ← Internal licensing module (/licensing/*)
 │   │   └── rights/      ← Internal rights module (/rights/*)

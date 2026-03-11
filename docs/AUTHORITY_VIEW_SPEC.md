@@ -285,7 +285,7 @@ When building or reviewing authority views, verify:
 
 - `src/components/admin/MemberDetailsSheet.tsx`
 - `src/components/admin/AuthorityRecordSheet.tsx`
-- `src/pages/admin/PermissionsPage.tsx`
+- `src/pages/console/PermissionsPage.tsx`
 - `src/components/admin/CapabilitiesMatrix.tsx`
 - `src/components/admin/AuditMetadata.tsx`
 

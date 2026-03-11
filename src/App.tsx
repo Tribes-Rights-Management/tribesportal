@@ -99,34 +99,34 @@ import {
   HelpCategoriesPage as HelpWorkstationCategoriesPage,
   HelpAnalyticsPage,
   HelpSettingsPage,
-} from "@/pages/help-workstation";
+} from "@/pages/help";
 
 
 // System Console pages - COMPANY-LEVEL (executive only)
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import ApprovalsPage from "@/pages/admin/ApprovalsPage";
-import TenantsPage from "@/pages/admin/TenantsPage";
-import UserDirectoryPage from "@/pages/admin/UserDirectoryPage";
-import PermissionsPage from "@/pages/admin/PermissionsPage";
-import AccountSettingsPage from "@/pages/admin/AccountSettingsPage";
-import RLSAuditPage from "@/pages/admin/RLSAuditPage";
-import AuthAccessReviewPage from "@/pages/admin/AuthAccessReviewPage";
-import DisclosuresPage from "@/pages/admin/DisclosuresPage";
-import CorrelationChainPage from "@/pages/admin/CorrelationChainPage";
-import DataRoomPage from "@/pages/admin/DataRoomPage";
+import ConsoleDashboard from "@/pages/console/ConsoleDashboard";
+import ApprovalsPage from "@/pages/console/ApprovalsPage";
+import TenantsPage from "@/pages/console/TenantsPage";
+import UserDirectoryPage from "@/pages/console/UserDirectoryPage";
+import PermissionsPage from "@/pages/console/PermissionsPage";
+import AccountSettingsPage from "@/pages/console/AccountSettingsPage";
+import RLSAuditPage from "@/pages/console/RLSAuditPage";
+import AuthAccessReviewPage from "@/pages/console/AuthAccessReviewPage";
+import DisclosuresPage from "@/pages/console/DisclosuresPage";
+import CorrelationChainPage from "@/pages/console/CorrelationChainPage";
+import DataRoomPage from "@/pages/console/DataRoomPage";
 
 // System Console - Executive Reporting (Platform Executives only)
-import ExecutiveReportingPage from "@/pages/admin/reporting/ExecutiveReportingPage";
-import BoardSummariesPage from "@/pages/admin/reporting/BoardSummariesPage";
-import ComplianceMappingPage from "@/pages/admin/reporting/ComplianceMappingPage";
+import ExecutiveReportingPage from "@/pages/console/reporting/ExecutiveReportingPage";
+import BoardSummariesPage from "@/pages/console/reporting/BoardSummariesPage";
+import ComplianceMappingPage from "@/pages/console/reporting/ComplianceMappingPage";
 
 // System Console Billing pages - FINANCIAL GOVERNANCE (executive only)
-import BillingGovernancePage from "@/pages/admin/billing/BillingGovernancePage";
-import RevenueOverviewPage from "@/pages/admin/billing/RevenueOverviewPage";
-import PlansConfigurationPage from "@/pages/admin/billing/PlansConfigurationPage";
-import AllInvoicesPage from "@/pages/admin/billing/AllInvoicesPage";
-import PaymentProvidersPage from "@/pages/admin/billing/PaymentProvidersPage";
-import RefundsPage from "@/pages/admin/billing/RefundsPage";
+import BillingGovernancePage from "@/pages/console/billing/BillingGovernancePage";
+import RevenueOverviewPage from "@/pages/console/billing/RevenueOverviewPage";
+import PlansConfigurationPage from "@/pages/console/billing/PlansConfigurationPage";
+import AllInvoicesPage from "@/pages/console/billing/AllInvoicesPage";
+import PaymentProvidersPage from "@/pages/console/billing/PaymentProvidersPage";
+import RefundsPage from "@/pages/console/billing/RefundsPage";
 
 // Auditor pages - READ-ONLY external access
 import AuditorLanding from "@/pages/auditor/AuditorLanding";
@@ -346,7 +346,7 @@ const App = () => (
             NO product navigation, NO workspace selector
         ═══════════════════════════════════════════════════════════════════════ */}
         <Route path="/console" element={<ConsoleProtectedRoute><SystemConsoleLayout /></ConsoleProtectedRoute>}>
-          <Route index element={<AdminDashboard />} />
+          <Route index element={<ConsoleDashboard />} />
           <Route path="approvals" element={<ApprovalsPage />} />
           <Route path="tenants" element={<TenantsPage />} />
           <Route path="tenants/:tenantId/users" element={<OrganizationUsersPage />} />
