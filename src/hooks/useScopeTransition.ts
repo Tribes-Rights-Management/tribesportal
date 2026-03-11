@@ -133,12 +133,14 @@ export function useScopeTransition(): ScopeTransitionState & ScopeTransitionActi
       case "system":
         return isExternalAuditor && !isPlatformAdmin ? "/auditor" : "/console";
       case "organization":
-        // Determine based on current path prefix
+        // Determine based on current path prefix — prefer canonical routes
         if (location.pathname.startsWith("/licensing")) return "/licensing";
         if (location.pathname.startsWith("/admin")) return "/admin";
-        if (location.pathname.startsWith("/app/licensing")) return "/app/licensing";
-        if (location.pathname.startsWith("/app/publishing")) return "/app/publishing";
-        return "/app";
+        // Legacy /portal and /app/* paths resolve to canonical roots
+        if (location.pathname.startsWith("/portal")) return "/admin";
+        if (location.pathname.startsWith("/app/licensing")) return "/licensing";
+        if (location.pathname.startsWith("/app/publishing")) return "/admin";
+        return "/admin";
       case "user":
         return "/account";
       case "auth":
