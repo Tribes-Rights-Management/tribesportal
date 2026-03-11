@@ -44,7 +44,7 @@ import { Switch } from "@/components/ui/switch";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-export type AppDetailRowVariant = "readonly" | "editable" | "select" | "copyable" | "toggle";
+export type PlatformDetailRowVariant = "readonly" | "editable" | "select" | "copyable" | "toggle";
 
 interface AppDetailRowProps {
   /** Row label */
