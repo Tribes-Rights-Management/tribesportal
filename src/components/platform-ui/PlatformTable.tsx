@@ -346,7 +346,7 @@ const badgeVariants: Record<BadgeVariant, string> = {
   info: "bg-info/20 text-info",
 };
 
-export function AppTableBadge({
+export function PlatformTableBadge({
   children,
   variant = "default",
   className,
