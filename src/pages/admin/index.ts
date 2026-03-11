@@ -1,8 +1,8 @@
 /**
  * TRIBES ADMIN PAGES — MODULE EXPORTS
  * 
- * Song catalog management workstation pages.
- * Renders at /admin
+ * Client-facing Tribes Admin workspace pages.
+ * Canonical route: /admin
  */
 
 export { default as TribesAdminDashboard } from "./TribesAdminDashboard";
