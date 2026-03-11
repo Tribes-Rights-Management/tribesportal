@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { AppPageLayout } from "@/components/app-ui";
+import { AppPageLayout } from "@/components/platform-ui";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
