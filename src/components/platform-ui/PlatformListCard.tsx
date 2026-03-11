@@ -96,7 +96,7 @@ export function PlatformListCard({
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppListRowProps {
+interface PlatformListRowProps {
   /** Main title text */
   title: string;
   /** Optional subtitle below title */
