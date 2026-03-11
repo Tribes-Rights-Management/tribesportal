@@ -89,7 +89,7 @@ export function PlatformDetailRow({
   locked = false,
   lockReason = "Enforced by workspace policy",
   className,
-}: AppDetailRowProps) {
+}: PlatformDetailRowProps) {
   const displayValue = value ?? "—";
   const hasValue = value !== null && value !== undefined && value !== "";
   const isStringValue = typeof value === "string";
