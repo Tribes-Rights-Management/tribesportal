@@ -7,7 +7,7 @@ import { AuthorityRecordSheet } from "./AuthorityRecordSheet";
 import {
   AppDetailRow,
   AppSettingsCard,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];

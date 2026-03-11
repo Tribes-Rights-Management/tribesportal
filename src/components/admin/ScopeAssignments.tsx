@@ -1,5 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { AppButton } from "@/components/app-ui";
+import { AppButton } from "@/components/platform-ui";
 import type { Database } from "@/integrations/supabase/types";
 
 type PortalRole = Database["public"]["Enums"]["portal_role"];

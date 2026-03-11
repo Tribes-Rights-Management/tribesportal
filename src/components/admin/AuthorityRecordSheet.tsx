@@ -6,7 +6,7 @@ import {
   AppDetailRow,
   AppSettingsCard,
   AppButton,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import type { Database } from "@/integrations/supabase/types";
 
 type PlatformRole = Database["public"]["Enums"]["platform_role"];
