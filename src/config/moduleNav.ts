@@ -57,7 +57,8 @@ const consoleNav: NavItem[] = [
 ];
 
 /**
- * Admin Module Navigation - Client-Facing Portal
+ * Tribes Admin Module Navigation — Client-Facing Workspace
+ * Canonical route: /admin
  * Clients view their associated documents, catalog, messages, and payments
  */
 const adminNav: NavItem[] = [
@@ -132,13 +133,13 @@ export function getModuleLabel(moduleKey: ModuleKey): string {
     case "console":
       return "System Console";
     case "admin":
-      return "Admin";
+      return "Tribes Admin";
     case "licensing":
       return "Licensing";
     case "rights":
       return "Rights";
     case "help":
-      return "Help";
+      return "Help Workstation";
     default:
       return "";
   }

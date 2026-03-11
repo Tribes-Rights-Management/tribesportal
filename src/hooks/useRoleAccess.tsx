@@ -114,8 +114,14 @@ export const MODULES = {
     navLabel: "Licensing",
     requiredPermission: "licensing.view" as Permission,
   },
+  /**
+   * Tribes Admin workspace — client-facing administration.
+   * Canonical route: /admin
+   * NOTE: Key is "portal" for backward compatibility with permission namespace.
+   * The routePrefix reflects the canonical /admin route.
+   */
   portal: {
-    routePrefix: "/portal",
+    routePrefix: "/admin",
     permissionNamespace: "portal",
     navLabel: "Tribes Admin",
     requiredPermission: "portal.view" as Permission,
@@ -123,9 +129,10 @@ export const MODULES = {
   
   // ─────────────────────────────────────────────────────────────────────────
   // COMPANY-LEVEL MODULE (NOT workspace-scoped)
+  // Canonical route: /console
   // ─────────────────────────────────────────────────────────────────────────
   admin: {
-    routePrefix: "/admin",
+    routePrefix: "/console",
     permissionNamespace: "platform",
     navLabel: "System Console",
     requiredPermission: "platform:admin" as Permission,
@@ -143,9 +150,10 @@ export const MODULES = {
   
   // ─────────────────────────────────────────────────────────────────────────
   // HELP WORKSTATION (company-scoped internal tool)
+  // Canonical route: /help
   // ─────────────────────────────────────────────────────────────────────────
   help: {
-    routePrefix: "/help-workstation",
+    routePrefix: "/help",
     permissionNamespace: "platform",
     navLabel: "Help Workstation",
     requiredPermission: "platform:manage_help" as Permission,

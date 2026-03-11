@@ -25,7 +25,8 @@ type ContextLabel = "Licensing" | "Tribes Admin" | "Publishing";
 
 function getContextLabel(pathname: string): ContextLabel {
   if (pathname.startsWith("/licensing")) return "Licensing";
-  if (pathname.startsWith("/portal")) return "Tribes Admin";
+  if (pathname.startsWith("/admin")) return "Tribes Admin";
+  if (pathname.startsWith("/portal")) return "Tribes Admin"; // Legacy compatibility
   return "Publishing";
 }
 

@@ -21,7 +21,7 @@ export default function NotFoundPage() {
     } else if (activeContext) {
       navigate(`/app/${activeContext}`);
     } else if (activeTenant) {
-      navigate("/portal");
+      navigate("/admin");
     } else {
       navigate("/auth/sign-in");
     }

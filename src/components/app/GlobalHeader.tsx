@@ -64,14 +64,21 @@ import { NotificationCenter } from "./NotificationCenter";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-type PortalMode = "publishing" | "licensing" | "portal" | "admin" | "auditor";
+/**
+ * Portal modes:
+ * - "admin" = Tribes Admin workspace (/admin)
+ * - "licensing" = Licensing workspace (/licensing)
+ * - "publishing" = Publishing workspace
+ * - "auditor" = Auditor access (/auditor)
+ */
+type PortalMode = "publishing" | "licensing" | "admin" | "auditor";
 
 function useCurrentMode(): PortalMode {
   const location = useLocation();
-  if (location.pathname.startsWith("/admin")) return "admin";
+  if (location.pathname.startsWith("/admin")) return "admin";    // Tribes Admin
   if (location.pathname.startsWith("/auditor")) return "auditor";
   if (location.pathname.startsWith("/licensing")) return "licensing";
-  if (location.pathname.startsWith("/portal")) return "portal";
+  if (location.pathname.startsWith("/portal")) return "admin";   // Legacy → Tribes Admin
   if (location.pathname.includes("/licensing")) return "licensing";
   return "publishing";
 }
@@ -79,8 +86,8 @@ function useCurrentMode(): PortalMode {
 // Get context label for header subtitle
 function getContextLabel(mode: PortalMode): string {
   switch (mode) {
+    case "admin": return "Tribes Admin";
     case "licensing": return "Licensing";
-    case "portal": return "Tribes Admin";
     case "publishing": return "Publishing";
     default: return "";
   }
@@ -128,7 +135,7 @@ function WorkspaceSelector() {
   const handleWorkspaceChange = (tenantId: string) => {
     setActiveTenant(tenantId);
     const newTenant = tenantMemberships.find(m => m.tenant_id === tenantId);
-    if (newTenant && currentMode !== "admin") {
+    if (newTenant && currentMode !== "auditor") {
       if (activeContext && newTenant.allowed_contexts.includes(activeContext)) {
         navigate(`/app/${activeContext}`);
       } else if (newTenant.allowed_contexts.length > 0) {
@@ -184,17 +191,15 @@ function WorkspaceSelector() {
 }
 
 // Account menu wrapper - uses shared ProfileDropdown with dark theme for GlobalHeader
+// GlobalHeader is used in workspace context only, never in System Console
 function AccountMenu() {
   const { isPlatformAdmin } = useAuth();
-  const currentMode = useCurrentMode();
-  const showReturnToConsole = isPlatformAdmin && currentMode !== "admin";
-  const showSystemConsole = isPlatformAdmin && currentMode === "admin";
   
   return (
     <ProfileDropdown
       avatarVariant="dark"
-      showReturnToConsole={showReturnToConsole}
-      showSystemConsole={showSystemConsole}
+      showReturnToConsole={isPlatformAdmin}
+      showSystemConsole={false}
     />
   );
 }
@@ -212,7 +217,7 @@ function MobileControls() {
   const currentMode = useCurrentMode();
 
   const getModeLabel = () => {
-    if (currentMode === "admin") return NAV_LABELS.SYSTEM_CONSOLE;
+    if (currentMode === "admin") return NAV_LABELS.TRIBES_ADMIN;
     if (currentMode === "licensing") return NAV_LABELS.LICENSING;
     return NAV_LABELS.TRIBES_ADMIN;
   };
@@ -260,7 +265,7 @@ function MobileControls() {
                 key={membership.tenant_id}
                 onClick={() => {
                   setActiveTenant(membership.tenant_id);
-                  if (currentMode !== "admin") {
+                  if (currentMode !== "auditor") {
                     const ctx = membership.allowed_contexts[0];
                     if (ctx) navigate(`/app/${ctx}`);
                   }
@@ -278,7 +283,7 @@ function MobileControls() {
         )}
         
         {/* Products only available with active workspace */}
-        {hasActiveWorkspace && currentMode !== "admin" && availableContexts.length > 1 && (
+        {hasActiveWorkspace && currentMode !== "auditor" && availableContexts.length > 1 && (
           <>
             <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
             <div className="px-3 py-1">
@@ -332,8 +337,6 @@ export function GlobalHeader() {
   const handleLogoClick = () => {
     if (currentMode === "admin") {
       navigate("/admin");
-    } else if (currentMode === "portal") {
-      navigate("/portal");
     } else if (currentMode === "licensing") {
       navigate("/licensing");
     } else {
@@ -485,16 +488,16 @@ export function GlobalHeader() {
       {/* Right: Module nav + Account */}
       <div className="flex items-center gap-1">
         {/* Product navigation - ONLY visible with active workspace */}
-        {currentMode !== "admin" && (
+        {currentMode !== "auditor" && (
           <nav className="flex items-center gap-1 mr-3">
-            {/* Tribes Admin (was Client Portal) - organization-scoped */}
+            {/* Tribes Admin — canonical route: /admin */}
             {showPortal && (
               <button
-                onClick={() => navigate("/portal")}
+                onClick={() => navigate("/admin")}
                 className={cn(
                   "h-8 px-3 rounded-lg text-[13px] font-medium transition-colors duration-150",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]",
-                  (currentMode === "portal" || currentMode === "publishing")
+                  (currentMode === "admin" || currentMode === "publishing")
                     ? "text-foreground bg-muted"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
