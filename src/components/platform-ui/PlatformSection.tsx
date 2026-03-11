@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppSectionProps {
+interface PlatformSectionProps {
   /** Section title */
   title?: string;
   /** Section description */
