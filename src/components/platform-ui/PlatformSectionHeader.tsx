@@ -2,7 +2,7 @@ import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { AppButton } from "./AppButton";
+import { PlatformButton } from "./PlatformButton";
 
 /**
  * APP SECTION HEADER — GLOBAL UI KIT (SINGLE SOURCE OF TRUTH)
