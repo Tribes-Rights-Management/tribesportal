@@ -22,7 +22,7 @@ import { PlatformButton } from "./PlatformButton";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppSectionHeaderProps {
+interface PlatformSectionHeaderProps {
   /** Main title */
   title: string;
   /** Optional subtitle/description */
