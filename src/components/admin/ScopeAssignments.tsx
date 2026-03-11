@@ -1,5 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { AppButton } from "@/components/platform-ui";
+import { PlatformButton } from "@/components/platform-ui";
 import type { Database } from "@/integrations/supabase/types";
 
 type PortalRole = Database["public"]["Enums"]["portal_role"];
@@ -115,30 +115,30 @@ export function ScopeAssignments({
                   {editMode && (
                     <div className="flex gap-2">
                       {membership.status === "active" && (
-                        <AppButton
+                        <PlatformButton
                           onClick={() => onStatusChange(membership, "suspended")}
                           intent="secondary"
                           size="xs"
                         >
                           Suspend
-                        </AppButton>
+                        </PlatformButton>
                       )}
                       {membership.status !== "active" && (
-                        <AppButton
+                        <PlatformButton
                           onClick={() => onStatusChange(membership, "active")}
                           intent="secondary"
                           size="xs"
                         >
                           Restore
-                        </AppButton>
+                        </PlatformButton>
                       )}
-                      <AppButton
+                      <PlatformButton
                         onClick={() => onStatusChange(membership, "revoked")}
                         intent="danger"
                         size="xs"
                       >
                         Revoke
-                      </AppButton>
+                      </PlatformButton>
                     </div>
                   )}
                 </div>

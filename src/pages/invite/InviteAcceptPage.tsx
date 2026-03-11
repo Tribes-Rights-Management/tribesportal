@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { AppButton, AppChip } from "@/components/platform-ui";
+import { PlatformButton, PlatformChip } from "@/components/platform-ui";
 import { toast } from "@/hooks/use-toast";
 import { CheckCircle, XCircle, Loader2, Shield, FileText } from "lucide-react";
 
@@ -102,7 +102,7 @@ export default function InviteAcceptPage() {
         <div className="max-w-md w-full text-center">
           <h1 className="text-[24px] font-semibold mb-4">Sign in required</h1>
           <p className="text-muted-foreground mb-6">Please sign in to accept this invitation.</p>
-          <AppButton onClick={() => navigate(`/auth/sign-in?returnTo=/invite/accept?token=${token}`)}>Sign in</AppButton>
+          <PlatformButton onClick={() => navigate(`/auth/sign-in?returnTo=/invite/accept?token=${token}`)}>Sign in</PlatformButton>
         </div>
       </div>
     );
@@ -123,7 +123,7 @@ export default function InviteAcceptPage() {
           <XCircle className="h-5 w-5 text-destructive mx-auto mb-4" strokeWidth={1.25} />
           <h1 className="text-[24px] font-semibold mb-2">Invalid invitation</h1>
           <p className="text-muted-foreground mb-6">{error}</p>
-          <AppButton variant="secondary" onClick={() => navigate("/workspaces")}>Go to workspaces</AppButton>
+          <PlatformButton variant="secondary" onClick={() => navigate("/workspaces")}>Go to workspaces</PlatformButton>
         </div>
       </div>
     );
@@ -137,7 +137,7 @@ export default function InviteAcceptPage() {
           <h1 className="text-[24px] font-semibold mb-2">Wrong account</h1>
           <p className="text-muted-foreground mb-2">This invitation was sent to <strong>{invitation.invited_email}</strong></p>
           <p className="text-muted-foreground mb-6">You're signed in as <strong>{user?.email}</strong></p>
-          <AppButton variant="secondary" onClick={() => navigate("/auth/sign-in")}>Sign in with different account</AppButton>
+          <PlatformButton variant="secondary" onClick={() => navigate("/auth/sign-in")}>Sign in with different account</PlatformButton>
         </div>
       </div>
     );
@@ -154,20 +154,20 @@ export default function InviteAcceptPage() {
           <div className="space-y-3 mb-6">
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-muted-foreground">Role</span>
-              <AppChip status="pending" label={getRoleLabel(invitation?.org_role || "")} />
+              <PlatformChip status="pending" label={getRoleLabel(invitation?.org_role || "")} />
             </div>
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-muted-foreground">Access</span>
               <div className="flex gap-1">
-                {invitation?.grant_admin_module && <AppChip status="pass" label="Admin" />}
-                {invitation?.grant_licensing_module && <AppChip status="pass" label="Licensing" />}
+                {invitation?.grant_admin_module && <PlatformChip status="pass" label="Admin" />}
+                {invitation?.grant_licensing_module && <PlatformChip status="pass" label="Licensing" />}
               </div>
             </div>
           </div>
 
-          <AppButton className="w-full" onClick={handleAccept} disabled={accepting} loading={accepting} loadingText="Accepting…">
+          <PlatformButton className="w-full" onClick={handleAccept} disabled={accepting} loading={accepting} loadingText="Accepting…">
             Accept invitation
-          </AppButton>
+          </PlatformButton>
         </div>
       </div>
     </div>
