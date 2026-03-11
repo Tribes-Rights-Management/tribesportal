@@ -155,11 +155,11 @@ export function useDeepLinkValidation(
       
       if (scope === "system") {
         // Trying to access system scope without permission
-        redirectPath = "/app/restricted";
+        redirectPath = "/restricted";
       } else if (scope === "organization") {
         // Trying to access org scope without membership
         redirectPath = accessState === "pending-approval" 
-          ? "/app/pending" 
+          ? "/pending" 
           : "/auth/unauthorized";
       } else {
         redirectPath = getNearestValidParent(pathname);
