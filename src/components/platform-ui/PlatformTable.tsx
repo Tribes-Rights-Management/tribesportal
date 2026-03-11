@@ -54,7 +54,7 @@ export type ColumnPreset = keyof typeof TABLE_COLUMN_PRESETS;
 // TABLE CONTAINER
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableProps {
+interface PlatformTableProps {
   children: React.ReactNode;
   /** 
    * Column widths - can be:
