@@ -109,7 +109,7 @@ Radix UI primitives
       → Page components
 ```
 
-**Rule:** Pages import from `app-ui`, never from `ui/` directly. Console and Auditor surfaces have their own component kits (`console/`, `admin/`) and may use `ui/` primitives directly.
+**Rule:** Pages import from `platform-ui`, never from `ui/` directly. Console and Auditor surfaces have their own component kits (`console/`, `admin/`) and may use `ui/` primitives directly.
 
 Typography uses the DM Sans font family with an institutional scale (10px–14px). Colors use HSL-based CSS custom properties with semantic tokens.
 
