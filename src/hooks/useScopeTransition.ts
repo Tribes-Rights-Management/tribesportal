@@ -209,7 +209,7 @@ export function useScopeTransition(): ScopeTransitionState & ScopeTransitionActi
     navigate("/console", { replace: false });
   }, [navigate, setEntryIntent]);
   
-  const enterOrganization = useCallback((path: string = "/app") => {
+  const enterOrganization = useCallback((path: string = "/admin") => {
     // Set explicit intent
     setEntryIntent("organization", path);
     

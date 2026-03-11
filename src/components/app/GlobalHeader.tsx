@@ -344,7 +344,8 @@ export function GlobalHeader() {
     } else if (currentMode === "licensing") {
       navigate("/licensing");
     } else {
-      navigate(`/app/${activeContext}`);
+      // Canonical destination based on active context
+      navigate(activeContext === "licensing" ? "/licensing" : "/admin");
     }
   };
 
