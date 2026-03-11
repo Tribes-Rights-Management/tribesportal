@@ -100,7 +100,7 @@ interface PlatformSectionGridProps {
   className?: string;
 }
 
-export function AppSectionGrid({
+export function PlatformSectionGrid({
   children,
   columns = 2,
   gap = "md",
