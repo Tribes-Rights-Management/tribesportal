@@ -113,7 +113,7 @@ interface PlatformListRowProps {
   className?: string;
 }
 
-export function AppListRow({
+export function PlatformListRow({
   title,
   subtitle,
   left,
