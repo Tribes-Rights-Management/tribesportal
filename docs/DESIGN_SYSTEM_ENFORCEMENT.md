@@ -163,7 +163,7 @@ import {
 
 ---
 
-### 4. Client Portal (`/app/*`)
+### 4. Legacy Client Views (`/app/*`)
 
 **Purpose**: External client-facing views
 
