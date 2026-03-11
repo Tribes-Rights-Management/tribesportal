@@ -107,7 +107,7 @@ interface PlatformTableHeaderProps {
   className?: string;
 }
 
-export function AppTableHeader({ children, className }: AppTableHeaderProps) {
+export function PlatformTableHeader({ children, className }: PlatformTableHeaderProps) {
   return (
     <thead className={cn("bg-muted/30", className)}>
       {children}
