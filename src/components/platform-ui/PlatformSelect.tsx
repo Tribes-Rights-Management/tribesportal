@@ -63,7 +63,7 @@ interface PlatformSelectProps {
   className?: string;
 }
 
-export const AppSelect = forwardRef<HTMLButtonElement, AppSelectProps>(
+export const PlatformSelect = forwardRef<HTMLButtonElement, PlatformSelectProps>(
   ({ value, onChange, options, placeholder = "Select...", disabled = false, fullWidth = false, className }, ref) => {
     return (
       <Select value={value} onValueChange={onChange} disabled={disabled}>
