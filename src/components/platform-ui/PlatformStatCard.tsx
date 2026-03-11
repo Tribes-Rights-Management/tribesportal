@@ -119,7 +119,7 @@ interface PlatformStatCardGridProps {
   className?: string;
 }
 
-export function AppStatCardGrid({
+export function PlatformStatCardGrid({
   children,
   columns = 4,
   className,
