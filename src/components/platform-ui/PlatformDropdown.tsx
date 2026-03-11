@@ -35,7 +35,7 @@ export interface PlatformDropdownItem {
   hidden?: boolean;
 }
 
-export interface AppDropdownProps {
+export interface PlatformDropdownProps {
   /** The trigger element that opens the dropdown */
   trigger: React.ReactNode;
   /** Array of menu items */
