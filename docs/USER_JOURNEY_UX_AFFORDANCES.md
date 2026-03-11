@@ -54,7 +54,7 @@ This document proves the system is coherent, humane, and institutional—not hea
 |---------|---------|
 | Header | "SYSTEM CONSOLE" |
 | Layout | Neutral, restrained |
-| Product links | None (no Licensing, no Client Portal) |
+| Product links | None (no Licensing, no Tribes Admin) |
 
 **Primary actions**:
 
@@ -365,15 +365,15 @@ On first entry to any workspace:
 
 ```tsx
 <WorkspaceInitialization
-  workspaceName="Client Portal"
+  workspaceName="Tribes Admin"
   workspaceRole="Organization Admin"
-  scopeDescription="Manage agreements, view statements, and submit payments."
+  scopeDescription="Manage catalog, view documents, and review payments."
   onContinue={() => navigateToWorkspace()}
 />
 ```
 
 **Must display**:
-- Explicit scope declaration ("You are entering: Client Portal")
+- Explicit scope declaration ("You are entering: Tribes Admin")
 - Explicit role confirmation ("Your role: Organization Admin")
 - Read-only posture until first deliberate action
 

@@ -26,7 +26,7 @@ The application is organized into **modules**, each mounted at a canonical top-l
 | `/auditor` | Auditor View | Read-only | External audit access to logs and correlation chains |
 | `/account` | Account Settings | User-scoped | Profile, security, preferences |
 | `/workspaces` | Workspaces Hub | User-scoped | Authenticated landing, module selection |
-| `/app/*` | Legacy Client Portal | Context-scoped | Backward-compatible publishing/licensing client views |
+| `/app/*` | Legacy Client Views | Context-scoped | Backward-compatible publishing/licensing client views |
 
 ### Legacy and Redirect Paths
 
@@ -79,7 +79,7 @@ Each surface uses a dedicated layout component:
 | Licensing | `ModuleLayout` | Licensing sidebar (`licensingNav`) |
 | Help Workstation | `HelpWorkstationLayout` | Help sidebar (`helpNav`) |
 | Account | `AccountLayout` | Account sidebar |
-| Legacy Client Portal | `AppLayout` | Context-specific navigation |
+| Legacy Client Views | `AppLayout` | Context-specific navigation |
 
 Navigation configuration lives in `src/config/moduleNav.ts` as a unified registry. Each module declares its sidebar items as data; the shared `SideNav` component renders them identically.
 

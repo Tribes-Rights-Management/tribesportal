@@ -67,7 +67,7 @@ On **every** route entry:
 | Scope | Description | Root Path |
 |-------|-------------|-----------|
 | `system` | Platform-level governance | `/console`, `/auditor` |
-| `organization` | Org-scoped workspaces | `/admin`, `/licensing`, `/app/*` |
+| `organization` | Org-scoped workspaces | `/admin`, `/licensing` |
 | `user` | User account settings | `/account` |
 | `auth` | Authentication flows | `/auth/*` |
 | `public` | Public/boundary pages | `/`, `/restricted` |
@@ -146,7 +146,7 @@ If a route is accessed without valid parent context:
 
 1. Nearest registered parent in same scope
 2. Scope root path
-3. Role-appropriate default (admin → `/admin`, user → `/app`)
+3. Role-appropriate default (admin → `/console`, user → `/admin`)
 
 ---
 

@@ -23,7 +23,7 @@ This document defines **which components to use where** across the Tribes Portal
 | `/help/*` | Help Workstation | `@/components/app-ui` |
 | `/licensing/*` | Licensing Workstation | `@/components/app-ui` |
 | `/rights/*` | Rights Workstation | `@/components/app-ui` |
-| `/app/*` | Client Portal | `@/components/app-ui` |
+| `/app/*` | Legacy Client Views | `@/components/app-ui` |
 | `/auditor/*` | Auditor | `@/components/ui/*` + PlatformLayout |
 
 > **Note**: `/portal` and `/help-workstation` are legacy compatibility redirects, not primary identities.
@@ -38,7 +38,7 @@ This document defines **which components to use where** across the Tribes Portal
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────┐ │
-│  │   SYSTEM CONSOLE    │  │    WORKSTATIONS     │  │    CLIENT PORTAL    │ │
+│  │   SYSTEM CONSOLE    │  │    WORKSTATIONS     │  │  LEGACY CLIENT VIEWS│ │
 │  │   /console/*        │  │   /help/*           │  │    /app/*           │ │
 │  │                     │  │   /licensing/*      │  │                     │ │
 │  │                     │  │   /admin/*          │  │                     │ │
@@ -163,9 +163,9 @@ import {
 
 ---
 
-### 4. Client Portal (`/app/*`)
+### 4. Legacy Client Views (`/app/*`)
 
-**Purpose**: External client-facing views
+**Purpose**: Legacy client-facing views retained for backward compatibility
 
 **Required Imports**:
 ```tsx
@@ -192,7 +192,7 @@ import {
 | System Console | `AdminMetricRow` | `AdminListRow` | `AdminListRow` |
 | Help Workstation | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
 | Workspaces | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
-| Client Portal | `AppStatCard` | `AppListRow` | `AppTable` |
+| Legacy Client Views | `AppStatCard` | `AppListRow` | `AppTable` |
 
 ---
 
@@ -329,7 +329,7 @@ import { ConsoleButton, ConsoleCard } from "@/components/console";
 When creating or updating a page:
 
 ### Pre-Development
-- [ ] Identify which context the page belongs to (Console, Admin, Workstation, Portal)
+- [ ] Identify which context the page belongs to (Console, Tribes Admin, Workstation, Legacy Client Views)
 - [ ] Import only from the appropriate component kit
 - [ ] Review this document for correct patterns
 

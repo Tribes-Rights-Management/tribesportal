@@ -18,9 +18,9 @@ These rules are authoritative and must not be bypassed by UI shortcuts, routing 
 
 | Surface | Scope | May Display | Must Not Display |
 |---------|-------|-------------|------------------|
-| System Console | Company-level | Audit, Security, Disclosures, Governance | Licensing, Client Portal, Org data |
+| System Console | Company-level | Audit, Security, Disclosures, Governance | Licensing, Tribes Admin data, Org data |
 | Licensing Workspace | Organization | Licensing nav, org-scoped data | System Console links, other orgs |
-| Client Portal Workspace | Organization | Portal nav, org-scoped data | System Console links, other orgs |
+| Tribes Admin Workspace | Organization | Tribes Admin nav, org-scoped data | System Console links, other orgs |
 
 ### Rendering Rules
 
@@ -46,19 +46,19 @@ These rules are authoritative and must not be bypassed by UI shortcuts, routing 
 ```
 COMPANY LEVEL (System Console)
 │
-├── /admin/* routes
+├── /console/* routes
 ├── Governance surfaces only
 ├── No product navigation
 └── Platform Executive access required
 
 ORGANIZATION LEVEL (Workspaces)
 │
-├── /app/licensing/* routes
+├── /licensing/* routes
 │   └── Licensing Workspace
 │       └── Org-scoped data only
 │
-├── /app/publishing/* routes
-│   └── Client Portal Workspace
+├── /admin/* routes
+│   └── Tribes Admin Workspace
 │       └── Org-scoped data only
 │
 └── Active membership required
@@ -112,7 +112,7 @@ Every new feature must declare exactly one scope:
 | Scope | Description | Example Features |
 |-------|-------------|------------------|
 | `system` | Company-level governance | Audit logs, Security settings, Disclosures |
-| `organization` | Org-scoped operations | Licensing requests, Portal documents |
+| `organization` | Org-scoped operations | Licensing requests, Tribes Admin documents |
 | `user` | Self-service only | Profile preferences, Notification settings |
 
 ### Authority Model Inheritance
