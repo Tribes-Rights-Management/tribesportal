@@ -315,6 +315,7 @@ src/
 │   ├── ui/              ← Radix/shadcn primitives (DO NOT import in pages)
 │   └── ...
 ├── pages/
+│   ├── access-states/   ← Access restriction/suspension pages
 │   ├── admin/           ← Tribes Admin pages (/admin/*)
 │   ├── console/         ← System Console pages (/console/*)
 │   │   ├── billing/     ← Billing governance pages
