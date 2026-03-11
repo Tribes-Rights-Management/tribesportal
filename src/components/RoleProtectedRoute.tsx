@@ -65,7 +65,7 @@ export default function RoleProtectedRoute({ children, allowedRoles }: RoleProte
       return <Navigate to="/admin" replace />;
     }
     // Non-privileged users go to app
-    return <Navigate to="/app/restricted" replace />;
+    return <Navigate to="/restricted" replace />;
   }
 
   return <>{children}</>;

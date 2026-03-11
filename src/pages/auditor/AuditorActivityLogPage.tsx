@@ -72,7 +72,7 @@ export default function AuditorActivityLogPage() {
   }, [hasAccess]);
 
   if (!hasAccess) {
-    return <Navigate to="/app/restricted" replace />;
+    return <Navigate to="/restricted" replace />;
   }
 
   return (

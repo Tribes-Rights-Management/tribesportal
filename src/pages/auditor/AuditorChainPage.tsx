@@ -133,7 +133,7 @@ export default function AuditorChainPage() {
   }
 
   if (!hasAccess) {
-    return <Navigate to="/app/restricted" replace />;
+    return <Navigate to="/restricted" replace />;
   }
 
   return (
