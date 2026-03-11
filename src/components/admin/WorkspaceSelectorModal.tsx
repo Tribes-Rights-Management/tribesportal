@@ -145,8 +145,8 @@ export function WorkspaceSelectorModal({ open, onOpenChange }: WorkspaceSelector
     // Close modal
     onOpenChange(false);
     
-    // Navigate to workspace - intentional, explicit transition
-    navigate(`/app/${initialContext}`);
+    // Navigate to canonical workspace root based on context
+    navigate(initialContext === "licensing" ? "/licensing" : "/admin");
   };
 
   // No workspaces available
