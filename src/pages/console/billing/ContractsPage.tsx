@@ -9,8 +9,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FileText, ExternalLink, Filter } from "lucide-react";
 import { format } from "date-fns";
-import { AppPageLayout } from "@/components/platform-ui";
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/platform-ui/AppTable";
+import { PlatformPageLayout, PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableRow, PlatformTableHead, PlatformTableCell, PlatformTableEmpty, PlatformSearchInput } from "@/components/platform-ui";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -22,7 +21,6 @@ import {
 import { InstitutionalLoadingState } from "@/components/ui/institutional-states";
 import { useAllContracts } from "@/hooks/useBillingLineage";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
-import { AppSearchInput } from "@/components/platform-ui";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // HELPERS
