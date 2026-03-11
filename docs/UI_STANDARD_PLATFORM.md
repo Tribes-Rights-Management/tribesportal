@@ -10,9 +10,9 @@ The Platform UI Kit provides institutional-grade UI components that prevent styl
 
 ### 1. Import Discipline
 
-**REQUIRED** — Import from the App UI Kit:
+**REQUIRED** — Import from the Platform UI Kit:
 ```tsx
-import { AppButton, AppChip, AppCard, AppSectionHeader } from "@/components/app-ui";
+import { AppButton, AppChip, AppCard, AppSectionHeader } from "@/components/platform-ui";
 ```
 
 **PROHIBITED** — Do not import raw primitives in page components:
