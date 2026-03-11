@@ -58,7 +58,7 @@ const variantConfig = {
   },
 };
 
-interface AppAlertProps {
+interface PlatformAlertProps {
   /** Alert variant */
   variant: AlertVariant;
   /** Main message */
