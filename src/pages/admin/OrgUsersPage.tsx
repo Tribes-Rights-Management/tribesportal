@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell } from "@/components/app-ui/AppTable";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell } from "@/components/platform-ui/AppTable";
 import { Badge } from "@/components/ui/badge";
 import { Plus, MoreHorizontal, Mail, XCircle, Shield, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -13,10 +13,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AppPageLayout } from "@/components/app-ui/AppPageLayout";
-import { AppCard } from "@/components/app-ui/AppCard";
-import { AppEmptyState } from "@/components/app-ui/AppEmptyState";
-import { AppButton } from "@/components/app-ui/AppButton";
+import { AppPageLayout } from "@/components/platform-ui/AppPageLayout";
+import { AppCard } from "@/components/platform-ui/AppCard";
+import { AppEmptyState } from "@/components/platform-ui/AppEmptyState";
+import { AppButton } from "@/components/platform-ui/AppButton";
 
 interface Member {
   id: string;

@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell } from "@/components/app-ui/AppTable";
+import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell } from "@/components/platform-ui/AppTable";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ConsoleButton } from "@/components/console";
 import { ChevronRight, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { AppPageLayout } from "@/components/app-ui";
+import { AppPageLayout } from "@/components/platform-ui";
 import { ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
 import type { Database } from "@/integrations/supabase/types";
 

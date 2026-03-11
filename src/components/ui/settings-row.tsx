@@ -1,17 +1,17 @@
 /**
  * @deprecated — LEGACY SETTINGS ROW COMPONENTS
  *
- * These components are DEPRECATED. Use app-ui components instead:
- * - SettingsRow → AppDetailRow from @/components/app-ui
- * - SettingsSectionCard → AppSettingsCard from @/components/app-ui
- * - SettingsFooterNotice → AppSettingsFooter from @/components/app-ui
+ * These components are DEPRECATED. Use platform-ui components instead:
+ * - SettingsRow → AppDetailRow from @/components/platform-ui
+ * - SettingsSectionCard → AppSettingsCard from @/components/platform-ui
+ * - SettingsFooterNotice → AppSettingsFooter from @/components/platform-ui
  *
  * MIGRATION:
  *   // Before (deprecated):
  *   import { SettingsRow, SettingsSectionCard } from "@/components/ui/settings-row";
  *
  *   // After (correct):
- *   import { AppDetailRow, AppSettingsCard, AppSettingsFooter } from "@/components/app-ui";
+ *   import { AppDetailRow, AppSettingsCard, AppSettingsFooter } from "@/components/platform-ui";
  *
  * These exports are preserved for backward compatibility only.
  * All new code MUST use app-ui components.
@@ -25,7 +25,7 @@ import { CopyButton } from "@/components/ui/copy-button";
 import { Switch } from "@/components/ui/switch";
 
 /**
- * @deprecated Use AppDetailRow from @/components/app-ui instead.
+ * @deprecated Use AppDetailRow from @/components/platform-ui instead.
  * 
  * Variants:
  * - readonly: label + single-line value + optional helper text
@@ -264,7 +264,7 @@ export function SettingsRow({
 }
 
 /**
- * @deprecated Use AppSettingsCard from @/components/app-ui instead.
+ * @deprecated Use AppSettingsCard from @/components/platform-ui instead.
  * Settings Section Card — Container for SettingsRow items
  */
 interface SettingsSectionCardProps {
@@ -358,7 +358,7 @@ export function SettingsPageHeader({ title, description }: SettingsPageHeaderPro
 }
 
 /**
- * @deprecated Use AppSettingsFooter from @/components/app-ui instead.
+ * @deprecated Use AppSettingsFooter from @/components/platform-ui instead.
  * Settings Footer Notice — Policy/governance notice at bottom of settings pages
  */
 interface SettingsFooterNoticeProps {

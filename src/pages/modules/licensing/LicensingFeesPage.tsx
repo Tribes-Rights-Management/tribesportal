@@ -7,7 +7,7 @@ import {
   AppCardTitle,
   AppCardBody,
   AppEmptyState,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 
 /**
  * LICENSING FEES — VIEW AND PAY LICENSE FEES

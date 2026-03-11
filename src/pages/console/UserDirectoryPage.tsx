@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { ChevronRight, Copy, AlertCircle, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { AppPageLayout } from "@/components/app-ui";
+import { AppPageLayout } from "@/components/platform-ui";
 import { ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
 import {
   AppModal,
@@ -12,7 +12,7 @@ import {
   AppModalAction,
   AppModalCancel,
 } from "@/components/ui/app-modal";
-import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell, AppTableBadge } from "@/components/app-ui/AppTable";
+import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell, AppTableBadge } from "@/components/platform-ui/AppTable";
 
 import type { Database } from "@/integrations/supabase/types";
 

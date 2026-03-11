@@ -6,7 +6,7 @@ import {
   AppCardTitle,
   AppCardBody,
   AppEmptyState,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 
 /**
  * LICENSING RECEIPTS — DOWNLOAD PAYMENT RECEIPTS

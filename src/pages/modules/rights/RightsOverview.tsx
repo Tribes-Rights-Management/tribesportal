@@ -12,7 +12,7 @@ import {
   AppTableHead,
   AppTableCell,
   AppTableEmpty,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { useQueueStats } from "@/hooks/use-song-queue";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";

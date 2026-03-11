@@ -19,10 +19,10 @@ This document defines **which components to use where** across the Tribes Portal
 | Route | Surface | Component Kit |
 |-------|---------|---------------|
 | `/console/*` | System Console | `@/components/console` + `@/components/admin` |
-| `/admin/*` | Tribes Admin | `@/components/app-ui` |
-| `/help/*` | Help Workstation | `@/components/app-ui` |
-| `/licensing/*` | Licensing Workstation | `@/components/app-ui` |
-| `/rights/*` | Rights Workstation | `@/components/app-ui` |
+| `/admin/*` | Tribes Admin | `@/components/platform-ui` |
+| `/help/*` | Help Workstation | `@/components/platform-ui` |
+| `/licensing/*` | Licensing Workstation | `@/components/platform-ui` |
+| `/rights/*` | Rights Workstation | `@/components/platform-ui` |
 | `/auditor/*` | Auditor | `@/components/ui/*` + PlatformLayout |
 
 
@@ -46,8 +46,8 @@ This document defines **which components to use where** across the Tribes Portal
 │            │                        │                                      │
 │            ▼                        ▼                                      │
 │  ┌─────────────────────┐  ┌─────────────────────┐                          │
-│  │ @/components/admin  │  │ @/components/app-ui │                          │
-│  │ @/components/console│  │                     │                          │
+│  │ @/components/admin  │  │ @/components/       │                          │
+│  │ @/components/console│  │   platform-ui       │                          │
 │  └─────────────────────┘  └─────────────────────┘                          │
 │                                                                              │
 
@@ -104,16 +104,16 @@ import { ConsoleButton, ConsoleChip, ConsoleCard } from "@/components/console";
 **Required Imports**:
 ```tsx
 // Page structure
-import { AppPageHeader, AppSection, AppSectionHeader } from "@/components/app-ui";
+import { AppPageHeader, AppSection, AppSectionHeader } from "@/components/platform-ui";
 
 // Lists and cards
-import { AppListCard, AppListRow, AppStatCard } from "@/components/app-ui";
+import { AppListCard, AppListRow, AppStatCard } from "@/components/platform-ui";
 
 // Buttons
-import { AppButton } from "@/components/app-ui";
+import { AppButton } from "@/components/platform-ui";
 
 // Tables
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow } from "@/components/app-ui";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow } from "@/components/platform-ui";
 ```
 
 **Visual Rules**:
@@ -155,13 +155,13 @@ import {
   AppButton,
   AppTable,
   AppListCard,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 ```
 
 **Visual Rules**:
 - Light or dark theme (follows user preference)
 - More operational density than System Console
-- Uses app-ui component kit exclusively
+- Uses platform-ui component kit exclusively
 
 ---
 
@@ -220,7 +220,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 // CORRECT - Import from appropriate kit
-import { AppButton, AppCard } from "@/components/app-ui";
+import { AppButton, AppCard } from "@/components/platform-ui";
 // or
 import { ConsoleButton, ConsoleCard } from "@/components/console";
 ```
@@ -252,15 +252,15 @@ const MySection = ({ title, children }) => (
 // CORRECT - Use canonical component
 import { AdminSection } from "@/components/admin/AdminListRow";
 // or
-import { AppSection, AppSectionHeader } from "@/components/app-ui";
+import { AppSection, AppSectionHeader } from "@/components/platform-ui";
 ```
 
 ### ❌ Mixed Kit Usage
 
 ```tsx
-// WRONG - Mixing console and app-ui in same page
+// WRONG - Mixing console and platform-ui in same page
 import { ConsoleButton } from "@/components/console";
-import { AppCard } from "@/components/app-ui";
+import { AppCard } from "@/components/platform-ui";
 
 // CORRECT - Stick to one kit per context
 import { ConsoleButton, ConsoleCard } from "@/components/console";
@@ -339,7 +339,7 @@ When creating or updating a page:
 ## Related Documents
 
 - [UI_STANDARD_SYSTEM_CONSOLE.md](./UI_STANDARD_SYSTEM_CONSOLE.md) — Console-specific patterns
-- [UI_STANDARD_APP.md](./UI_STANDARD_APP.md) — App-wide patterns
+- [UI_STANDARD_PLATFORM.md](./UI_STANDARD_PLATFORM.md) — Platform-wide UI patterns
 - [GLOBAL_ADMIN_UI_STANDARD.md](./GLOBAL_ADMIN_UI_STANDARD.md) — Admin view rules
 
 ---

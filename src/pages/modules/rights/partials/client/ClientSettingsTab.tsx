@@ -6,7 +6,7 @@ import {
   AppSettingsCard,
   AppDetailRow,
   AppButton,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import {
   AppModal,
   AppModalBody,

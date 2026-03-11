@@ -1,7 +1,7 @@
 import {
   AppPageLayout,
   AppEmptyState,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 
 /**
  * LICENSING MODULE — REQUESTS

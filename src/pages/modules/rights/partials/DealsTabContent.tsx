@@ -14,7 +14,7 @@ import {
   AppTableHead,
   AppTableCell,
   AppTableEmpty,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 
 const ALGOLIA_APP_ID = "8WVEYVACJ3";
 const ALGOLIA_SEARCH_KEY = "7f00c268627682cfec8adac8f1686033";

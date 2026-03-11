@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Download, Filter } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
-import { AppSearchInput, AppPageLayout } from "@/components/app-ui";
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableEmpty } from "@/components/app-ui/AppTable";
+import { AppSearchInput, AppPageLayout } from "@/components/platform-ui";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableEmpty } from "@/components/platform-ui/AppTable";
 
 /**
  * SYSTEM CONSOLE — ALL INVOICES (Read-Only)

@@ -11,7 +11,7 @@ import {
   AppStatCardGrid,
   AppEmptyState,
   AppButton,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 
 /**
  * LICENSING PAYMENTS — OVERVIEW AND NAVIGATION

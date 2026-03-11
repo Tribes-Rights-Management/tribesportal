@@ -15,7 +15,7 @@ import {
   AppPanel,
   AppPanelFooter,
   AppAlert,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useDebounce } from "@/hooks/useDebounce";

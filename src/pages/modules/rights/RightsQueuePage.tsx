@@ -16,7 +16,7 @@ import {
   AppPagination,
   AppStatCard,
   AppStatCardGrid,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { QueueStatusBadge } from "@/components/queue/QueueStatusBadge";
 import { useStaffQueue, useQueueStats } from "@/hooks/use-song-queue";
 

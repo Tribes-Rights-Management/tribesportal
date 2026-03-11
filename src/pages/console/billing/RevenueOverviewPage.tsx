@@ -6,7 +6,7 @@ import {
   Users,
 } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
-import { AppPageLayout } from "@/components/app-ui";
+import { AppPageLayout } from "@/components/platform-ui";
 
 /**
  * SYSTEM CONSOLE — REVENUE OVERVIEW

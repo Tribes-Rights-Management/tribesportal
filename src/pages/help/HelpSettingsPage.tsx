@@ -10,7 +10,7 @@ import {
   AppCardBody,
   AppSection,
   AppAlert,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 

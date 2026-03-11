@@ -1,7 +1,7 @@
 /**
  * @deprecated — DO NOT USE THIS COMPONENT IN PAGE FILES.
  * 
- * Use AppTable from "@/components/app-ui/AppTable" instead.
+ * Use AppTable from "@/components/platform-ui/AppTable" instead.
  * This file exists only as a low-level primitive and should not
  * be imported by any page or feature component.
  * 

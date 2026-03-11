@@ -105,11 +105,11 @@ The application uses a layered component architecture:
 ```
 Radix UI primitives
   → shadcn/ui components (src/components/ui/)
-    → app-ui design system (src/components/app-ui/)
+    → platform-ui design system (src/components/platform-ui/)
       → Page components
 ```
 
-**Rule:** Pages import from `app-ui`, never from `ui/` directly. Console and Auditor surfaces have their own component kits (`console/`, `admin/`) and may use `ui/` primitives directly.
+**Rule:** Pages import from `platform-ui`, never from `ui/` directly. Console and Auditor surfaces have their own component kits (`console/`, `admin/`) and may use `ui/` primitives directly.
 
 Typography uses the DM Sans font family with an institutional scale (10px–14px). Colors use HSL-based CSS custom properties with semantic tokens.
 
@@ -119,7 +119,7 @@ Typography uses the DM Sans font family with an institutional scale (10px–14px
 
 1. **Module isolation** — Each module owns its routes, pages, and navigation data. No module reaches into another module's internals.
 
-2. **Design system enforcement** — All UI composition flows through the `app-ui` kit. One-off styling in pages is prohibited.
+2. **Design system enforcement** — All UI composition flows through the `platform-ui` kit. One-off styling in pages is prohibited.
 
 3. **Role-based access at every layer** — Routes are gated by protection components. Data is gated by RLS policies using helper functions. No client-side-only authorization.
 

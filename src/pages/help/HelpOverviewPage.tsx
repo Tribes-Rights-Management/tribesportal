@@ -17,7 +17,7 @@ import {
   AppAlert,
   AppSectionGrid,
   AppSection,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 
 /**
  * HELP WORKSTATION OVERVIEW — UNIFIED DESIGN SYSTEM

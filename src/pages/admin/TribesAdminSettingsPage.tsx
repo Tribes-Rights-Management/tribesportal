@@ -5,7 +5,7 @@ import {
   AppSection,
   AppListCard,
   AppListRow,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 
 /**
  * TRIBES ADMIN SETTINGS PAGE

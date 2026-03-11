@@ -61,7 +61,7 @@ React 18 + TypeScript + Vite
 ├── Algolia (search — writers, catalog, help articles)
 ├── TipTap (rich text editor)
 ├── Tailwind CSS (institutional design tokens)
-├── Radix UI → shadcn/ui → app-ui design system
+├── Radix UI → shadcn/ui → platform-ui design system
 └── Lovable (deployment platform)
 ```
 

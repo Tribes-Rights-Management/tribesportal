@@ -37,7 +37,7 @@ import {
   AppEmptyState,
   AppPanel,
   AppPanelFooter,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import {
   Select,
   SelectContent,

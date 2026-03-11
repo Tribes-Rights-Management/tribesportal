@@ -19,7 +19,7 @@ import {
   AppFilterOption,
   AppFilterTrigger,
   AppPagination,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { cn } from "@/lib/utils";
 
 /**

@@ -18,7 +18,7 @@ import {
   AppTableHead,
   AppTableCell,
   AppTableEmpty,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { QueueStatusBadge } from "@/components/queue/QueueStatusBadge";
 import { useClientQueue } from "@/hooks/use-song-queue";
 

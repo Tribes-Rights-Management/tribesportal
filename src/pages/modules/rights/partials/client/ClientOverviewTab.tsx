@@ -19,7 +19,7 @@ import {
   AppTableCell,
   AppTableEmpty,
   AppTableBadge,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 
 interface ClientOverviewTabProps {
   client: any;

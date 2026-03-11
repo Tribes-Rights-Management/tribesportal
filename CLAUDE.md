@@ -25,7 +25,7 @@ React 18 + TypeScript + Vite
 ├── Algolia (search — writers, catalog, help articles)
 ├── TipTap (rich text editing in Help Workstation)
 ├── Tailwind CSS (with custom institutional typography scale)
-├── Radix UI primitives → shadcn/ui → app-ui design system
+├── Radix UI primitives → shadcn/ui → platform-ui design system
 └── Lovable (deployment platform)
 ```
 
@@ -52,18 +52,18 @@ React 18 + TypeScript + Vite
 ## Design System — MANDATORY RULES
 
 ### The Golden Rule
-**ALL UI changes go through the `app-ui` design system. Never patch individual pages.**
+**ALL UI changes go through the `platform-ui` design system. Never patch individual pages.**
 
-Components must be created or fixed in `src/components/app-ui/` first, then consumed by pages. This prevents fragmentation and ensures consistency.
+Components must be created or fixed in `src/components/platform-ui/` first, then consumed by pages. This prevents fragmentation and ensures consistency.
 
 ### Component Kit by Context
 
 | Context | Component Source | When to Use |
 |---------|-----------------|-------------|
 | Console (`/console/*`) | `@/components/console` + `@/components/admin` + `@/components/ui/*` | ConsoleButton, ConsoleChip, ConsoleCard, AdminSection, InviteUserModal. Raw `ui/table`, `ui/select`, `ui/dialog` are acceptable here. |
-| Help Workstation (`/help/*`) | `@/components/app-ui` | All app-ui components |
-| Rights/Licensing modules | `@/components/app-ui` | All app-ui components |
-| Account settings | `@/components/app-ui` | All app-ui components |
+| Help Workstation (`/help/*`) | `@/components/platform-ui` | All platform-ui components |
+| Rights/Licensing modules | `@/components/platform-ui` | All platform-ui components |
+| Account settings | `@/components/platform-ui` | All platform-ui components |
 | Auditor (`/auditor/*`) | `@/components/ui/*` + PlatformLayout | Read-only governance views. Raw `ui/table` acceptable. |
 
 ### Prohibited Patterns (NEVER do these)
@@ -74,7 +74,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 // ✅ ALWAYS import from the design system
-import { AppButton, AppCard } from "@/components/app-ui";
+import { AppButton, AppCard } from "@/components/platform-ui";
 ```
 
 ```tsx
@@ -82,7 +82,7 @@ import { AppButton, AppCard } from "@/components/app-ui";
 <div className="bg-white border rounded-lg">
 <div className="bg-[#1A1A1A]">
 
-// ✅ ALWAYS use CSS variables or app-ui components
+// ✅ ALWAYS use CSS variables or platform-ui components
 <AppCard>
 <AppPanel>
 ```
@@ -92,16 +92,16 @@ import { AppButton, AppCard } from "@/components/app-ui";
 const MySection = ({ title, children }) => (...)
 
 // ✅ ALWAYS use the design system
-import { AppSection, AppSectionHeader } from "@/components/app-ui";
+import { AppSection, AppSectionHeader } from "@/components/platform-ui";
 ```
 
 ```tsx
 // ❌ NEVER mix component kits in the same page
 import { ConsoleButton } from "@/components/console";
-import { AppCard } from "@/components/app-ui";
+import { AppCard } from "@/components/platform-ui";
 ```
 
-### Available app-ui Components
+### Available platform-ui Components
 
 **Layout:** AppPageHeader, AppPageContainer, AppSection, AppSectionGrid, AppSectionHeader, AppDetailRow, AppDetailRowGroup, AppSettingsCard, AppSettingsFooter
 **Cards:** AppCard, AppCardHeader, AppCardTitle, AppCardDescription, AppCardBody, AppCardFooter, AppStatCard, AppStatCardGrid
@@ -295,8 +295,8 @@ CREATE POLICY "Tenant members can view"
 6. Regenerate types: update `src/integrations/supabase/types.ts`
 
 ### Modifying an Existing Component
-1. If it's in `app-ui/` — fix it there, all consumers benefit
-2. If it's NOT in `app-ui/` but should be — create the app-ui version first, then migrate the page
+1. If it's in `platform-ui/` — fix it there, all consumers benefit
+2. If it's NOT in `platform-ui/` but should be — create the platform-ui version first, then migrate the page
 3. Never add page-specific styling that should be in the design system
 
 ---
@@ -306,7 +306,7 @@ CREATE POLICY "Tenant members can view"
 ```
 src/
 ├── components/
-│   ├── app-ui/          ← DESIGN SYSTEM (single source of truth)
+│   ├── platform-ui/      ← DESIGN SYSTEM (single source of truth)
 │   ├── admin/           ← Console-specific components
 │   ├── console/         ← Console-specific components
 │   ├── app/             ← Shared platform shell (header, nav, session guards)

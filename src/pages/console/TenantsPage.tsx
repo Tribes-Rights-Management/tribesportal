@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell } from "@/components/app-ui/AppTable";
+import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell } from "@/components/platform-ui/AppTable";
 import { ConsoleButton } from "@/components/console";
 import { Plus, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { OrganizationFormModal } from "@/components/admin/OrganizationFormModal";
-import { AppPageLayout, AppButton } from "@/components/app-ui";
+import { AppPageLayout, AppButton } from "@/components/platform-ui";
 import { ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
 
 interface Tenant {

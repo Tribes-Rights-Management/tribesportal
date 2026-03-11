@@ -16,7 +16,7 @@ import {
   AppResponsiveList,
   AppItemCard,
   AppPagination,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { cn } from "@/lib/utils";
 
 /**

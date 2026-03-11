@@ -18,7 +18,7 @@ import {
   AppEmptyState,
   AppButton,
   AppSelect,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import {
   AppModal,
   AppModalBody,

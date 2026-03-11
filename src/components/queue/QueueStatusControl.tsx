@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AppButton } from "@/components/app-ui";
+import { AppButton } from "@/components/platform-ui";
 import { Textarea } from "@/components/ui/textarea";
 import { useUpdateQueueStatus } from "@/hooks/use-song-queue";
 import { supabase } from "@/integrations/supabase/client";

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { AppButton, AppChip } from "@/components/app-ui";
+import { AppButton, AppChip } from "@/components/platform-ui";
 import { toast } from "@/hooks/use-toast";
 import { CheckCircle, XCircle, Loader2, Shield, FileText } from "lucide-react";
 

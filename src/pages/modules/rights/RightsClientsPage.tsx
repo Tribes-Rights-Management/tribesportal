@@ -17,7 +17,7 @@ import {
   AppTableEmpty,
   AppTableBadge,
   AppEmptyState,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import {
   AppModal,
   AppModalBody,

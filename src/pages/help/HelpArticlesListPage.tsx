@@ -35,7 +35,7 @@ import {
   AppPageLayout,
   AppAlert,
   AppEmptyState,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 import { SortableArticleCard } from "@/components/help/SortableArticleCard";
 import { SearchInput } from "@/components/ui/search-input";
 import {

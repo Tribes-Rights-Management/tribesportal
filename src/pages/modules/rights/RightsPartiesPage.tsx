@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { AppPageLayout } from "@/components/app-ui";
+import { AppPageLayout } from "@/components/platform-ui";
 import WritersTabContent from "./partials/WritersTabContent";
 import PublishersTabContent from "./partials/PublishersTabContent";
 import DealsTabContent from "./partials/DealsTabContent";

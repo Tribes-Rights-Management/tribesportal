@@ -17,7 +17,7 @@ import { AppButton } from "./AppButton";
  * - Meta slot (timestamps, status)
  * 
  * ENFORCEMENT:
- * - Import from @/components/app-ui
+ * - Import from @/components/platform-ui
  * - Use for all page-level headers across the application
  * ═══════════════════════════════════════════════════════════════════════════
  */

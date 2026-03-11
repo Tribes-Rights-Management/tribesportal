@@ -7,7 +7,7 @@ import {
   AppDetailRow,
   AppSettingsCard,
   AppSettingsFooter,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 
 /**
  * ACCOUNT PROFILE PAGE

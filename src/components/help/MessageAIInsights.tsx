@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Sparkles, Brain, TrendingUp, MessageSquare, Copy, Check } from 'lucide-react';
 import { analyzeMessage } from '@/lib/ai-message-analysis';
-import { AppButton, AppCard, AppCardBody } from '@/components/app-ui';
+import { AppButton, AppCard, AppCardBody } from '@/components/platform-ui';
 
 interface MessageAIInsightsProps {
   message: string;

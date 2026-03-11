@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { User } from "lucide-react";
-import { AppDropdown, type AppDropdownItem } from "@/components/app-ui";
+import { AppDropdown, type AppDropdownItem } from "@/components/platform-ui";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 

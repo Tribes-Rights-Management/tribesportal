@@ -1,18 +1,18 @@
-# App UI Standard — Global No-Drift Foundation
+# Platform UI Standard — Global No-Drift Foundation
 
 > **AUTHORITATIVE** — This document defines the canonical UI component system for the entire application.
 
 ## Overview
 
-The App UI Kit provides institutional-grade UI components that prevent styling drift across all surfaces. Every page must use these components instead of raw primitives.
+The Platform UI Kit provides institutional-grade UI components that prevent styling drift across all surfaces. Every page must use these components instead of raw primitives.
 
 ## Non-Negotiable Rules
 
 ### 1. Import Discipline
 
-**REQUIRED** — Import from the App UI Kit:
+**REQUIRED** — Import from the Platform UI Kit:
 ```tsx
-import { AppButton, AppChip, AppCard, AppSectionHeader } from "@/components/app-ui";
+import { AppButton, AppChip, AppCard, AppSectionHeader } from "@/components/platform-ui";
 ```
 
 **PROHIBITED** — Do not import raw primitives in page components:
@@ -21,7 +21,7 @@ import { AppButton, AppChip, AppCard, AppSectionHeader } from "@/components/app-
 import { Button } from "@/components/ui/button";
 
 // ✅ CORRECT
-import { AppButton } from "@/components/app-ui";
+import { AppButton } from "@/components/platform-ui";
 ```
 
 ### 2. No One-Off Styling
@@ -138,13 +138,13 @@ The following may still use raw primitives:
 - `src/components/ui/pagination.tsx` — Uses `buttonVariants` for links
 - `src/components/ui/alert-dialog.tsx` — Uses `buttonVariants` for actions
 
-All other page-level components must use the App UI Kit.
+All other page-level components must use the Platform UI Kit.
 
 ## Migration Checklist
 
 When updating existing pages:
 
-1. Replace `import { Button } from "@/components/ui/button"` → `import { AppButton } from "@/components/app-ui"`
+1. Replace `import { Button } from "@/components/ui/button"` → `import { AppButton } from "@/components/platform-ui"`
 2. Replace `<Button variant="...">` → `<AppButton intent="...">` (map variants appropriately)
 3. Remove any `bg-*`, `text-*`, `rounded-*` className overrides on buttons
 4. Replace `<Badge>` status indicators → `<AppChip status="...">`

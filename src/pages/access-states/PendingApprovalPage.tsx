@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { SYSTEM_COPY } from "@/styles/tokens";
-import { AppButton } from "@/components/app-ui";
+import { AppButton } from "@/components/platform-ui";
 
 /**
  * PendingApprovalPage - System boundary for pending approval
