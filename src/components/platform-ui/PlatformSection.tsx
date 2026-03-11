@@ -44,7 +44,7 @@ interface PlatformSectionProps {
   className?: string;
 }
 
-export function AppSection({
+export function PlatformSection({
   title,
   description,
   action,
