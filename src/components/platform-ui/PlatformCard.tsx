@@ -91,7 +91,7 @@ export function PlatformCardTitle({
   );
 }
 
-export function AppCardDescription({
+export function PlatformCardDescription({
   className,
   ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) {
