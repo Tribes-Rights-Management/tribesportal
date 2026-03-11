@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppSettingsCardProps {
+interface PlatformSettingsCardProps {
   /** Section title */
   title: string;
   /** Section description */
