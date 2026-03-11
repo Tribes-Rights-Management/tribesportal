@@ -265,7 +265,7 @@ export function PlatformTableHead({
 // TABLE CELL
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableCellProps {
+interface PlatformTableCellProps {
   children: React.ReactNode;
   /** Text alignment */
   align?: "left" | "center" | "right";
