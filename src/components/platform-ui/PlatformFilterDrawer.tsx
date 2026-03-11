@@ -46,13 +46,13 @@ interface PlatformFilterDrawerProps {
   onClearFilters?: () => void;
 }
 
-export function AppFilterDrawer({
+export function PlatformFilterDrawer({
   open,
   onOpenChange,
   children,
   hasActiveFilters = false,
   onClearFilters,
-}: AppFilterDrawerProps) {
+}: PlatformFilterDrawerProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-[300px] sm:w-[340px] flex flex-col">
