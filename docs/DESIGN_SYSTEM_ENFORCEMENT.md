@@ -252,7 +252,7 @@ const MySection = ({ title, children }) => (
 // CORRECT - Use canonical component
 import { AdminSection } from "@/components/admin/AdminListRow";
 // or
-import { AppSection, AppSectionHeader } from "@/components/app-ui";
+import { AppSection, AppSectionHeader } from "@/components/platform-ui";
 ```
 
 ### ❌ Mixed Kit Usage
