@@ -27,7 +27,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppPaginationProps {
+interface PlatformPaginationProps {
   /** Current page (1-indexed) */
   currentPage: number;
   /** Total number of pages */
