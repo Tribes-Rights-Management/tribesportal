@@ -679,29 +679,23 @@ export const routeRegistry: Record<string, RouteDefinition> = {
   // ACCESS STATE ROUTES (Scope: public)
   // Boundary screens for access control
   // ═══════════════════════════════════════════════════════════════════════════
-  "/app/pending": {
+  "/pending": {
     scope: "public",
     parentPath: null,
     label: "Pending Approval",
     breadcrumbs: ["Pending Approval"]
   },
-  "/app/no-access": {
+  "/no-access": {
     scope: "public",
     parentPath: null,
     label: "No Access",
     breadcrumbs: ["No Access"]
   },
-  "/app/suspended": {
+  "/suspended": {
     scope: "public",
     parentPath: null,
     label: "Access Suspended",
     breadcrumbs: ["Access Suspended"]
-  },
-  "/app/restricted": {
-    scope: "public",
-    parentPath: null,
-    label: "Access Restricted",
-    breadcrumbs: ["Access Restricted"]
   },
   "/restricted": {
     scope: "public",
