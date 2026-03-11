@@ -132,7 +132,7 @@ export function PlatformTableBody({ children, className }: PlatformTableBodyProp
 // TABLE ROW
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableRowProps {
+interface PlatformTableRowProps {
   children: React.ReactNode;
   /** Makes row clickable with hover state */
   clickable?: boolean;
