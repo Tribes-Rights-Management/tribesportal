@@ -17,7 +17,7 @@ interface PlatformListToolbarProps {
   className?: string;
 }
 
-export function AppListToolbar({
+export function PlatformListToolbar({
   placeholder = "Search...",
   searchValue,
   onSearchChange,
