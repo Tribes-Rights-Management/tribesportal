@@ -138,7 +138,7 @@ The following may still use raw primitives:
 - `src/components/ui/pagination.tsx` — Uses `buttonVariants` for links
 - `src/components/ui/alert-dialog.tsx` — Uses `buttonVariants` for actions
 
-All other page-level components must use the App UI Kit.
+All other page-level components must use the Platform UI Kit.
 
 ## Migration Checklist
 
