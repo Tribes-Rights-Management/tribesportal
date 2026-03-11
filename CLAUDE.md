@@ -92,7 +92,7 @@ import { AppButton, AppCard } from "@/components/platform-ui";
 const MySection = ({ title, children }) => (...)
 
 // ✅ ALWAYS use the design system
-import { AppSection, AppSectionHeader } from "@/components/app-ui";
+import { AppSection, AppSectionHeader } from "@/components/platform-ui";
 ```
 
 ```tsx
