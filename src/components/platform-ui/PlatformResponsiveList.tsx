@@ -37,7 +37,7 @@ interface PlatformResponsiveListProps<T> {
   className?: string;
 }
 
-export function AppResponsiveList<T>({
+export function PlatformResponsiveList<T>({
   items,
   renderCard,
   renderTable,
