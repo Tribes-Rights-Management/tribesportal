@@ -9,8 +9,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FileText, ExternalLink, Filter } from "lucide-react";
 import { format } from "date-fns";
-import { AppPageLayout } from "@/components/app-ui";
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/app-ui/AppTable";
+import { AppPageLayout } from "@/components/platform-ui";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/platform-ui/AppTable";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
