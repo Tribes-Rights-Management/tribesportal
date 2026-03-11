@@ -200,7 +200,7 @@ interface PlatformTableHeadProps {
   className?: string;
 }
 
-export function AppTableHead({
+export function PlatformTableHead({
   children,
   sortable = false,
   sortDirection = null,
