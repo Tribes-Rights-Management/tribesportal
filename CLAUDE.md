@@ -74,7 +74,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 // ✅ ALWAYS import from the design system
-import { AppButton, AppCard } from "@/components/app-ui";
+import { AppButton, AppCard } from "@/components/platform-ui";
 ```
 
 ```tsx
