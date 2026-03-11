@@ -472,8 +472,9 @@ export const routeRegistry: Record<string, RouteDefinition> = {
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // TRIBES ADMIN MODULE (Scope: organization)
-  // Access: portal.view, portal.download, portal.submit
+  // LEGACY /portal ROUTES — compatibility redirects to /admin
+  // /portal is NOT a primary identity. Canonical route is /admin.
+  // Retained for backward compatibility with existing bookmarks/links.
   // ═══════════════════════════════════════════════════════════════════════════
   "/portal": { 
     scope: "organization", 
