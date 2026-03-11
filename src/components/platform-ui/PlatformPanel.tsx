@@ -155,7 +155,7 @@ export function PlatformPanel({
  * APP PANEL FOOTER — Common footer layouts
  */
 
-interface AppPanelFooterProps {
+interface PlatformPanelFooterProps {
   /** Left-side content (delete button, etc.) */
   left?: React.ReactNode;
   /** Cancel handler */
