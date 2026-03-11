@@ -33,7 +33,7 @@ import { ICON_SIZE, ICON_STROKE } from "@/styles/tokens";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppFilterDrawerProps {
+interface PlatformFilterDrawerProps {
   /** Whether the drawer is open */
   open: boolean;
   /** Callback when open state changes */
