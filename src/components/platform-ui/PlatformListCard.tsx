@@ -180,7 +180,7 @@ export function PlatformListAction({
   children,
   onClick,
   className,
-}: AppListActionProps) {
+}: PlatformListActionProps) {
   return (
     <button
       onClick={onClick}

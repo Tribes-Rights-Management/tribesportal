@@ -47,7 +47,7 @@ export function PlatformCheckboxGroup({
   required = false,
   disabled = false,
   className,
-}: AppCheckboxGroupProps) {
+}: PlatformCheckboxGroupProps) {
   const handleToggle = (optionId: string) => {
     if (disabled) return;
     

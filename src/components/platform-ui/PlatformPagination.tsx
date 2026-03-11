@@ -43,7 +43,7 @@ export function PlatformPagination({
   totalPages,
   onPageChange,
   className,
-}: AppPaginationProps) {
+}: PlatformPaginationProps) {
   if (totalPages <= 1) return null;
 
   const canGoPrevious = currentPage > 1;

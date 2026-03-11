@@ -195,7 +195,7 @@ export function PlatformPanelFooter({
           disabled={submitting || submitDisabled}
         >
           {submitting ? "Saving..." : submitLabel}
-        </AppButton>
+        </PlatformButton>
       </div>
     </div>
   );

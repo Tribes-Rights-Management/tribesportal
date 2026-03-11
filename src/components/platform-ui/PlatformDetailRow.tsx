@@ -237,7 +237,7 @@ export function PlatformDetailRowGroup({
   children,
   divided = true,
   className,
-}: AppDetailRowGroupProps) {
+}: PlatformDetailRowGroupProps) {
   return (
     <div 
       className={cn(

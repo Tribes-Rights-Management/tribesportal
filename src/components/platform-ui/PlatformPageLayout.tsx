@@ -72,7 +72,7 @@ export function PlatformPageLayout({
   maxWidth = "xl",
   bodyClassName,
   children,
-}: AppPageLayoutProps) {
+}: PlatformPageLayoutProps) {
   return (
     <div className="w-full">
       {/* ZONE 1: Page Header — fixed position, never affected by body container */}

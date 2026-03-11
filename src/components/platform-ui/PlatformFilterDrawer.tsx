@@ -131,11 +131,11 @@ interface PlatformFilterTriggerProps {
   className?: string;
 }
 
-export function AppFilterTrigger({
+export function PlatformFilterTrigger({
   onClick,
   hasActiveFilters = false,
   className,
-}: AppFilterTriggerProps) {
+}: PlatformFilterTriggerProps) {
   return (
     <button
       onClick={onClick}

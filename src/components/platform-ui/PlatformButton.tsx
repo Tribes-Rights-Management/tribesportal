@@ -190,4 +190,4 @@ export const PlatformButton = React.forwardRef<HTMLButtonElement, PlatformButton
   }
 );
 
-AppButton.displayName = "AppButton";
+PlatformButton.displayName = "PlatformButton";

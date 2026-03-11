@@ -24,7 +24,7 @@ export function PlatformListToolbar({
   count,
   action,
   className,
-}: AppListToolbarProps) {
+}: PlatformListToolbarProps) {
   return (
     <div className={cn("flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-5", className)}>
       <div className="relative flex-1">

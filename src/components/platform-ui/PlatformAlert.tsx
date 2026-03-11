@@ -80,7 +80,7 @@ export function PlatformAlert({
   onRetry,
   onDismiss,
   className,
-}: AppAlertProps) {
+}: PlatformAlertProps) {
   const config = variantConfig[variant];
   const Icon = config.icon;
 

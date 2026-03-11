@@ -86,7 +86,7 @@ export function PlatformChip({
   label,
   showIcon = true,
   className,
-}: AppChipProps) {
+}: PlatformChipProps) {
   // Status chip
   if (status) {
     const config = statusConfig[status];

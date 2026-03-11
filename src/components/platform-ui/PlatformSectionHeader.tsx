@@ -62,7 +62,7 @@ export function PlatformSectionHeader({
           className="text-muted-foreground hover:text-foreground -ml-2"
         >
           {backLabel || "Back"}
-        </AppButton>
+        </PlatformButton>
       )}
 
       {/* Header row */}

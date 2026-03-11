@@ -62,7 +62,7 @@ export function PlatformEmptyState({
   action,
   size = "md",
   className,
-}: AppEmptyStateProps) {
+}: PlatformEmptyStateProps) {
   const Icon = iconMap[icon];
 
   // Reduced empty state icon sizes for Stripe-grade restraint

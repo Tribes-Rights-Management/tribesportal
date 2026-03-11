@@ -110,7 +110,7 @@ export function PlatformCardBody({
   return <div className={cn("px-5 py-4", className)} {...props} />;
 }
 
-export function AppCardFooter({
+export function PlatformCardFooter({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {

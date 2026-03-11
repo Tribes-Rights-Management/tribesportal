@@ -54,7 +54,7 @@ export function PlatformDropdown({
   align = "end",
   minWidth = 200,
   className,
-}: AppDropdownProps) {
+}: PlatformDropdownProps) {
   // Filter out hidden items
   const visibleItems = items.filter((item) => !item.hidden);
 
