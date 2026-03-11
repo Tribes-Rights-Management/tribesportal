@@ -313,7 +313,7 @@ function MobileControls() {
               <DropdownMenuItem
                 onClick={() => {
                   setActiveContext("licensing");
-                  navigate("/app/licensing");
+                  navigate("/licensing");
                 }}
                 className={cn(
                   "text-[13px] focus:bg-white/5",
