@@ -384,8 +384,8 @@ For new users:
 ```tsx
 <FirstSessionGuardrails
   entryPoints={[
-    { id: "docs", label: "Documents", description: "View agreements", icon: "documents", href: "/portal/documents" },
-    { id: "settings", label: "Configuration", description: "Account settings", icon: "settings", href: "/portal/settings" },
+    { id: "docs", label: "Documents", description: "View agreements", icon: "documents", href: "/admin/documents" },
+    { id: "settings", label: "Configuration", description: "Account settings", icon: "settings", href: "/admin/settings" },
   ]}
   onNavigate={(href) => navigate(href)}
 />

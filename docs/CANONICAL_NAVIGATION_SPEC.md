@@ -66,11 +66,13 @@ On **every** route entry:
 
 | Scope | Description | Root Path |
 |-------|-------------|-----------|
-| `system` | Platform-level governance | `/admin`, `/auditor` |
-| `organization` | Org-scoped workspaces | `/licensing`, `/portal`, `/app/*` |
+| `system` | Platform-level governance | `/console`, `/auditor` |
+| `organization` | Org-scoped workspaces | `/admin`, `/licensing`, `/app/*` |
 | `user` | User account settings | `/account` |
 | `auth` | Authentication flows | `/auth/*` |
 | `public` | Public/boundary pages | `/`, `/restricted` |
+
+> **Legacy paths**: `/portal` redirects to `/admin`. `/help-workstation` redirects to `/help`. These are compatibility layers only.
 
 ### No Implicit Scope Switching
 
