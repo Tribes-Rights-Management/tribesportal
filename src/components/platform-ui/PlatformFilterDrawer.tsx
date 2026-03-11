@@ -106,7 +106,7 @@ interface PlatformFilterOptionProps {
   onClick: () => void;
 }
 
-export function AppFilterOption({ label, selected, onClick }: AppFilterOptionProps) {
+export function PlatformFilterOption({ label, selected, onClick }: PlatformFilterOptionProps) {
   return (
     <button
       onClick={onClick}
