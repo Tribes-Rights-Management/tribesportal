@@ -1,10 +1,10 @@
 /**
  * @deprecated — LEGACY SETTINGS ROW COMPONENTS
  *
- * These components are DEPRECATED. Use app-ui components instead:
- * - SettingsRow → AppDetailRow from @/components/app-ui
- * - SettingsSectionCard → AppSettingsCard from @/components/app-ui
- * - SettingsFooterNotice → AppSettingsFooter from @/components/app-ui
+ * These components are DEPRECATED. Use platform-ui components instead:
+ * - SettingsRow → AppDetailRow from @/components/platform-ui
+ * - SettingsSectionCard → AppSettingsCard from @/components/platform-ui
+ * - SettingsFooterNotice → AppSettingsFooter from @/components/platform-ui
  *
  * MIGRATION:
  *   // Before (deprecated):
