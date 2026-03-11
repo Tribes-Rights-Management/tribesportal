@@ -57,7 +57,8 @@ const consoleNav: NavItem[] = [
 ];
 
 /**
- * Admin Module Navigation - Client-Facing Portal
+ * Tribes Admin Module Navigation — Client-Facing Workspace
+ * Canonical route: /admin
  * Clients view their associated documents, catalog, messages, and payments
  */
 const adminNav: NavItem[] = [
