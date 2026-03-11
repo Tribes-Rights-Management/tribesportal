@@ -100,7 +100,7 @@ export function PlatformFilterSection({ title, children }: PlatformFilterSection
 /**
  * APP FILTER OPTION — Radio-style option within a filter section
  */
-interface AppFilterOptionProps {
+interface PlatformFilterOptionProps {
   label: string;
   selected: boolean;
   onClick: () => void;
