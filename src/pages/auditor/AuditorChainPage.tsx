@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { AppPageLayout } from "@/components/platform-ui";
+import { AppPageLayout, AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty, AppSearchInput } from "@/components/platform-ui";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,8 +8,6 @@ import {
   CorrelationChainView, 
   ChainEvent 
 } from "@/components/ui/correlation-chain";
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/platform-ui/AppTable";
-import { AppSearchInput } from "@/components/platform-ui";
 import { Button } from "@/components/ui/button";
 import { Search, Link2 } from "lucide-react";
 import { EMPTY_STATES } from "@/constants/institutional-copy";

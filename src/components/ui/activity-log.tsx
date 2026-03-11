@@ -10,7 +10,7 @@ import {
   AppTableRow, 
   AppTableCell,
   AppTableEmpty 
-} from "@/components/platform-ui/AppTable";
+} from "@/components/platform-ui";
 import { EMPTY_STATES, BUTTON_LABELS } from "@/constants/institutional-copy";
 
 /**

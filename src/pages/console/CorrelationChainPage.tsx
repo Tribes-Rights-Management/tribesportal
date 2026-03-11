@@ -6,8 +6,7 @@ import {
   CorrelationChainView, 
   ChainEvent 
 } from "@/components/ui/correlation-chain";
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/platform-ui/AppTable";
-import { AppPageLayout, AppSearchInput } from "@/components/platform-ui";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty, AppPageLayout, AppSearchInput } from "@/components/platform-ui";
 import { ConsoleButton } from "@/components/console";
 import { Search, Link2 } from "lucide-react";
 import { EMPTY_STATES } from "@/constants/institutional-copy";
