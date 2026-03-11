@@ -44,7 +44,7 @@ export function PlatformResponsiveList<T>({
   keyExtractor,
   emptyMessage = "No items available",
   className,
-}: AppResponsiveListProps<T>) {
+}: PlatformResponsiveListProps<T>) {
   const isMobile = useIsMobile();
 
   if (items.length === 0) {
