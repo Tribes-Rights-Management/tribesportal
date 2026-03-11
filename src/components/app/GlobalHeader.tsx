@@ -136,13 +136,16 @@ function WorkspaceSelector() {
     setActiveTenant(tenantId);
     const newTenant = tenantMemberships.find(m => m.tenant_id === tenantId);
     if (newTenant && currentMode !== "auditor") {
+      // Navigate to canonical workspace root based on context
       if (activeContext && newTenant.allowed_contexts.includes(activeContext)) {
-        navigate(`/app/${activeContext}`);
+        const target = activeContext === "licensing" ? "/licensing" : "/admin";
+        navigate(target);
       } else if (newTenant.allowed_contexts.length > 0) {
         const newContext = newTenant.allowed_contexts.includes("publishing") 
           ? "publishing" 
           : newTenant.allowed_contexts[0];
-        navigate(`/app/${newContext}`);
+        const target = newContext === "licensing" ? "/licensing" : "/admin";
+        navigate(target);
       }
     }
   };
