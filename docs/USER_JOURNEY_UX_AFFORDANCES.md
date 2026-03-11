@@ -365,9 +365,9 @@ On first entry to any workspace:
 
 ```tsx
 <WorkspaceInitialization
-  workspaceName="Client Portal"
+  workspaceName="Tribes Admin"
   workspaceRole="Organization Admin"
-  scopeDescription="Manage agreements, view statements, and submit payments."
+  scopeDescription="Manage catalog, view documents, and review payments."
   onContinue={() => navigateToWorkspace()}
 />
 ```
