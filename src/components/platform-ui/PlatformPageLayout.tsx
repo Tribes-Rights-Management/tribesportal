@@ -63,7 +63,7 @@ const maxWidthClasses: Record<MaxWidth, string> = {
   full: "max-w-full",
 };
 
-export function AppPageLayout({
+export function PlatformPageLayout({
   title,
   subtitle,
   subtitleClassName,
