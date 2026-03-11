@@ -72,7 +72,7 @@ On **every** route entry:
 | `auth` | Authentication flows | `/auth/*` |
 | `public` | Public/boundary pages | `/`, `/restricted` |
 
-> **Legacy paths**: `/portal` redirects to `/admin`. `/help-workstation` redirects to `/help`. These are compatibility layers only.
+
 
 ### No Implicit Scope Switching
 
