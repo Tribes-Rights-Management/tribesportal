@@ -31,7 +31,7 @@ import { PlatformButton } from "./PlatformButton";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppPanelProps {
+interface PlatformPanelProps {
   /** Whether panel is open */
   open: boolean;
   /** Close handler */
