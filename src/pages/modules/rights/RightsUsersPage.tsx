@@ -5,19 +5,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import {
-  PlatformPageLayout,
-  PlatformListToolbar,
-  PlatformTable,
-  PlatformTableHeader,
-  PlatformTableBody,
-  PlatformTableRow,
-  PlatformTableHead,
-  PlatformTableCell,
-  PlatformTableEmpty,
-  PlatformTableBadge,
-  PlatformEmptyState,
-  PlatformButton,
-  PlatformSelect,
+  AppPageLayout,
+  AppListToolbar,
+  AppTable,
+  AppTableHeader,
+  AppTableBody,
+  AppTableRow,
+  AppTableHead,
+  AppTableCell,
+  AppTableEmpty,
+  AppTableBadge,
+  AppEmptyState,
+  AppButton,
+  AppSelect,
 } from "@/components/platform-ui";
 import {
   AppModal,

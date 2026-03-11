@@ -5,14 +5,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import {
-  PlatformPageLayout,
-  PlatformButton,
-  PlatformCard,
-  PlatformCardBody,
-  PlatformSection,
-  PlatformDetailRow,
-  PlatformDetailRowGroup,
-  PlatformSelect,
+  AppPageLayout,
+  AppButton,
+  AppCard,
+  AppCardBody,
+  AppSection,
+  AppDetailRow,
+  AppDetailRowGroup,
+  AppSelect,
 } from "@/components/platform-ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
