@@ -358,7 +358,7 @@ export function SettingsPageHeader({ title, description }: SettingsPageHeaderPro
 }
 
 /**
- * @deprecated Use AppSettingsFooter from @/components/app-ui instead.
+ * @deprecated Use AppSettingsFooter from @/components/platform-ui instead.
  * Settings Footer Notice — Policy/governance notice at bottom of settings pages
  */
 interface SettingsFooterNoticeProps {

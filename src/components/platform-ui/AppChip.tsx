@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
  * - Fixed minimum width for alignment
  * 
  * ENFORCEMENT:
- * - Import from @/components/app-ui
+ * - Import from @/components/platform-ui
  * - For status indicators, audit rows, etc.
  * ═══════════════════════════════════════════════════════════════════════════
  */
