@@ -1,12 +1,12 @@
 /**
  * @deprecated — DO NOT USE THIS COMPONENT IN PAGE FILES.
  * 
- * Use AppTable from "@/components/platform-ui/AppTable" instead.
+ * Use PlatformTable from "@/components/platform-ui" instead.
  * This file exists only as a low-level primitive and should not
  * be imported by any page or feature component.
  * 
- * AppTable provides: card container, column width balancing,
- * consistent typography, muted/mono/align props, and AppTableBadge.
+ * PlatformTable provides: card container, column width balancing,
+ * consistent typography, muted/mono/align props, and PlatformTableBadge.
  * 
  * If you import from this file, your code will be rejected in review.
  */

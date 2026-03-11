@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganizationMembers } from "@/hooks/useOrganizationMembers";
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell } from "@/components/platform-ui/AppTable";
+import { PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableRow, PlatformTableHead, PlatformTableCell, PlatformPageLayout } from "@/components/platform-ui";
 import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal, Shield, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { AppPageLayout } from "@/components/platform-ui";
 import { ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
 import {
   DropdownMenu,
