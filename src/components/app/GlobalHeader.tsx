@@ -135,7 +135,7 @@ function WorkspaceSelector() {
   const handleWorkspaceChange = (tenantId: string) => {
     setActiveTenant(tenantId);
     const newTenant = tenantMemberships.find(m => m.tenant_id === tenantId);
-    if (newTenant && currentMode !== "admin") {
+    if (newTenant && currentMode !== "auditor") {
       if (activeContext && newTenant.allowed_contexts.includes(activeContext)) {
         navigate(`/app/${activeContext}`);
       } else if (newTenant.allowed_contexts.length > 0) {
