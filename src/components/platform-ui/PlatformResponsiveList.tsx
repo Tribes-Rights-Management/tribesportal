@@ -99,7 +99,7 @@ interface PlatformItemCardProps {
   className?: string;
 }
 
-export function AppItemCard({
+export function PlatformItemCard({
   title,
   subtitle,
   meta,
