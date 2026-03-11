@@ -81,7 +81,7 @@ export function PlatformFilterDrawer({
 /**
  * APP FILTER SECTION — Labeled group within filter drawer
  */
-interface AppFilterSectionProps {
+interface PlatformFilterSectionProps {
   title: string;
   children: React.ReactNode;
 }
