@@ -161,6 +161,5 @@ For clarity, the Portal's top-level routes have fixed canonical meanings:
 |-------|----------|-------|
 | `/admin` | Tribes Admin workspace | Client-facing — catalog, documents, payments |
 | `/console` | System Console | Company governance — not a workspace |
-| `/portal/*` | Legacy redirect | Redirects to `/admin/*` — not a primary identity |
 
-The `/portal` path exists only for backward compatibility. It is not the canonical name for any surface. All documentation, navigation labels, and developer references should use `/admin` for the client-facing workspace and `/console` for platform governance.
+All documentation, navigation labels, and developer references should use `/admin` for the client-facing workspace and `/console` for platform governance.

@@ -69,7 +69,7 @@ export function ModuleProtectedRoute({
 
   // Suspended access
   if (accessState === "suspended-access") {
-    return <Navigate to="/app/suspended" replace />;
+    return <Navigate to="/suspended" replace />;
   }
 
   // Platform admins have full access to all modules

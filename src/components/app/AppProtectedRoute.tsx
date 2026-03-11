@@ -82,7 +82,7 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
     case "pending-approval":
       return <Navigate to="/auth/unauthorized" replace />;
     case "suspended-access":
-      return <Navigate to="/app/suspended" replace />;
+      return <Navigate to="/suspended" replace />;
   }
 
   // No active tenant selected (shouldn't happen if active, but safety check)
@@ -92,17 +92,6 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
 
   // Check context access for specific routes
   if (requiredContext && !canAccessContext(requiredContext)) {
-    // User tried to access a context they don't have permission for
-    // Show notification and redirect to their allowed context
-    if (activeContext) {
-      const requestedLabel = requiredContext === "licensing" ? "Licensing" : "Publishing";
-      toast.error(`${requestedLabel} access not available`, {
-        description: "You've been redirected to your available portal.",
-        duration: 3000,
-        position: "bottom-center",
-      });
-      return <Navigate to={`/app/${activeContext}`} replace />;
-    }
     return <Navigate to="/auth/unauthorized" replace />;
   }
 

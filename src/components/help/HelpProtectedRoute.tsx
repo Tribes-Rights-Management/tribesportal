@@ -52,7 +52,7 @@ export function HelpProtectedRoute({ children }: HelpProtectedRouteProps) {
 
   // Check Help capability
   if (!canManageHelp) {
-    return <Navigate to="/app/restricted" replace />;
+    return <Navigate to="/restricted" replace />;
   }
 
   return <>{children}</>;

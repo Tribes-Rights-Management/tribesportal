@@ -2,7 +2,7 @@
 
 > This file is the single source of truth for AI-assisted development.
 > Read this FIRST before making any changes to this codebase.
-> Last updated: 2026-02-07
+> Last updated: 2026-03-11
 
 ---
 
@@ -47,13 +47,6 @@ React 18 + TypeScript + Vite
 | Auditor | `/auditor/*` | (standalone) | External audit read-only access | AuditorProtectedRoute |
 | Account | `/account/*` | AccountLayout | User profile, security, preferences | Auth |
 
-### Legacy Compatibility Routes
-
-| Route | Layout | Purpose | Protected By |
-|-------|--------|---------|-------------|
-| `/app/*` | AppLayout | Retained legacy client views (publishing/licensing) | AppProtectedRoute + context |
-| `/portal/*` | — | Redirects to `/admin/*` | — |
-
 ---
 
 ## Design System — MANDATORY RULES
@@ -70,7 +63,6 @@ Components must be created or fixed in `src/components/app-ui/` first, then cons
 | Console (`/console/*`) | `@/components/console` + `@/components/admin` + `@/components/ui/*` | ConsoleButton, ConsoleChip, ConsoleCard, AdminSection, InviteUserModal. Raw `ui/table`, `ui/select`, `ui/dialog` are acceptable here. |
 | Help Workstation (`/help/*`) | `@/components/app-ui` | All app-ui components |
 | Rights/Licensing modules | `@/components/app-ui` | All app-ui components |
-| Legacy client views (`/app/*`) | `@/components/app-ui` | Retained compatibility routes |
 | Account settings | `@/components/app-ui` | All app-ui components |
 | Auditor (`/auditor/*`) | `@/components/ui/*` + PlatformLayout | Read-only governance views. Raw `ui/table` acceptable. |
 
@@ -317,7 +309,7 @@ src/
 │   ├── app-ui/          ← DESIGN SYSTEM (single source of truth)
 │   ├── admin/           ← Console-specific components
 │   ├── console/         ← Console-specific components
-│   ├── app/             ← Legacy client view components (/app/*)
+│   ├── app/             ← Shared app shell, header, navigation components
 │   ├── auth/            ← Authentication components
 │   ├── help/            ← Help workstation components
 │   ├── ui/              ← Radix/shadcn primitives (DO NOT import in pages)
@@ -327,9 +319,6 @@ src/
 │   ├── console/         ← System Console pages (/console/*)
 │   │   ├── billing/     ← Billing governance pages
 │   │   └── reporting/   ← Executive reporting pages
-│   ├── app/             ← Legacy client view pages (/app/*)
-│   │   ├── licensing/   ← Client licensing views
-│   │   └── publishing/  ← Client publishing views
 │   ├── auditor/         ← External auditor pages (/auditor/*)
 │   ├── auth/            ← Auth flow pages
 │   ├── help/            ← Help Workstation pages (/help/*)

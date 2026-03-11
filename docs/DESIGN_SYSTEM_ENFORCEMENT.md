@@ -25,7 +25,7 @@ This document defines **which components to use where** across the Tribes Portal
 | `/rights/*` | Rights Workstation | `@/components/app-ui` |
 | `/auditor/*` | Auditor | `@/components/ui/*` + PlatformLayout |
 
-> **Legacy compatibility**: `/app/*` (retained legacy client views) uses `@/components/app-ui`. `/portal` and `/help-workstation` are redirect-only paths.
+
 
 ---
 
@@ -50,7 +50,7 @@ This document defines **which components to use where** across the Tribes Portal
 │  │ @/components/console│  │                     │                          │
 │  └─────────────────────┘  └─────────────────────┘                          │
 │                                                                              │
-│  Note: /app/* (legacy client views) also uses @/components/app-ui.           │
+
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -165,27 +165,6 @@ import {
 
 ---
 
-### 4. Legacy Client Views (`/app/*`)
-
-**Purpose**: Legacy client-facing views retained for backward compatibility
-
-**Required Imports**:
-```tsx
-import { 
-  AppPageHeader, 
-  AppCard, 
-  AppButton,
-  AppTable,
-} from "@/components/app-ui";
-```
-
-**Visual Rules**:
-- Clean, professional
-- Less dense than internal views
-- Clear call-to-actions
-- No governance/admin patterns
-
----
 
 ## Row Component Decision Matrix
 
@@ -194,7 +173,7 @@ import {
 | System Console | `AdminMetricRow` | `AdminListRow` | `AdminListRow` |
 | Help Workstation | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
 | Workspaces | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
-| Legacy Client Views | `AppStatCard` | `AppListRow` | `AppTable` |
+| Workspaces | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
 
 ---
 

@@ -27,16 +27,6 @@ The application is organized into **modules**, each mounted at a canonical top-l
 | `/account` | Account Settings | User-scoped | Profile, security, preferences |
 | `/workspaces` | Workspaces Hub | User-scoped | Authenticated landing, module selection |
 
-### Legacy and Compatibility Routes
-
-| Path | Surface | Behavior |
-|------|---------|----------|
-| `/app/*` | Legacy Client Views | Retained compatibility routes for publishing/licensing client views |
-| `/portal/*` | — | Redirects to `/admin/*` |
-| `/tribes-admin/*` | — | Redirects to `/admin/*` |
-| `/tribes-licensing/*` | — | Redirects to `/licensing/*` |
-| `/workstations` | — | Redirects to `/workspaces` |
-
 ---
 
 ## Authentication and Access Model
@@ -52,7 +42,6 @@ All routes except `/sign-in`, `/auth/*`, and `/invite/accept` require an authent
 | Authentication | Supabase Auth session | All protected routes |
 | Module access | `ModuleProtectedRoute` | `/licensing` requires `licensing` module grant |
 | Role-based | `ConsoleProtectedRoute`, `TribesAdminProtectedRoute`, `AuditorProtectedRoute` | Route-level role gates |
-| Context-based | `AppProtectedRoute` with `requiredContext` | Legacy `/app/*` context routing |
 | Membership | Tenant/organization membership checks | Organization-scoped data |
 
 ### Role Model
@@ -79,7 +68,6 @@ Each surface uses a dedicated layout component:
 | Licensing | `ModuleLayout` | Licensing sidebar (`licensingNav`) |
 | Help Workstation | `HelpWorkstationLayout` | Help sidebar (`helpNav`) |
 | Account | `AccountLayout` | Account sidebar |
-| Legacy Client Views | `AppLayout` | Context-specific navigation |
 
 Navigation configuration lives in `src/config/moduleNav.ts` as a unified registry. Each module declares its sidebar items as data; the shared `SideNav` component renders them identically.
 

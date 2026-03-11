@@ -70,7 +70,7 @@ export default function AuditorLicensingPage() {
   }, [hasAccess]);
 
   if (!hasAccess) {
-    return <Navigate to="/app/restricted" replace />;
+    return <Navigate to="/restricted" replace />;
   }
 
   return (

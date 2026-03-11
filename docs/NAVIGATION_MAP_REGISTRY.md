@@ -25,7 +25,7 @@ These rules ensure deterministic, scope-aware, and consistent navigation across 
 | `/account/*` | Account Settings | user |
 | `/auth/*` | Authentication | auth |
 
-> **Legacy compatibility**: `/app/*` (legacy client views) is retained for backward compatibility. `/portal` and `/help-workstation` are redirect-only paths.
+
 
 ---
 

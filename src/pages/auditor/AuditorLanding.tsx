@@ -30,7 +30,7 @@ export default function AuditorLanding() {
 
   // Redirect non-auditors to appropriate location
   if (!isExternalAuditor && !isPlatformAdmin) {
-    return <Navigate to="/app/restricted" replace />;
+    return <Navigate to="/restricted" replace />;
   }
 
   return (

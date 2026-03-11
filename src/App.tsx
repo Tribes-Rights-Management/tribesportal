@@ -7,11 +7,9 @@ import { ConsoleProtectedRoute } from "@/components/console/ConsoleProtectedRout
 import { AuditorProtectedRoute } from "@/components/auditor/AuditorProtectedRoute";
 import { SessionGuard } from "@/components/session";
 import { AppProtectedRoute } from "@/components/app/AppProtectedRoute";
-import { AppLayout } from "@/layouts/AppLayout";
 import { SystemConsoleLayout } from "@/layouts/SystemConsoleLayout";
 import { ModuleLayout } from "@/layouts/ModuleLayout";
 import { ModuleProtectedRoute } from "@/components/modules/ModuleProtectedRoute";
-import { AppIndexRedirect } from "@/components/app/AppIndexRedirect";
 import AppUiBoot from "@/components/AppUiBoot";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
 import { HelpAssistantLauncher } from "@/components/app/HelpAssistantLauncher";
@@ -22,27 +20,6 @@ import AuthErrorPage from "@/pages/auth/AuthErrorPage";
 import AuthCallbackPage from "@/pages/auth/AuthCallbackPage";
 import LinkExpiredPage from "@/pages/auth/LinkExpiredPage";
 import UnauthorizedPage from "@/pages/auth/UnauthorizedPage";
-
-// App pages - Licensing (legacy /app/licensing routes)
-import LicensingDashboard from "@/pages/app/licensing/LicensingDashboard";
-import LicensingCatalog from "@/pages/app/licensing/LicensingCatalog";
-import LicensingRequests from "@/pages/app/licensing/LicensingRequests";
-import LicensingLicenses from "@/pages/app/licensing/LicensingLicenses";
-import LicensingReports from "@/pages/app/licensing/LicensingReports";
-import LicensingDocuments from "@/pages/app/licensing/LicensingDocuments";
-import LicensingSettings from "@/pages/app/licensing/LicensingSettings";
-
-// App pages - Publishing (legacy /app/publishing routes)
-import PublishingDashboard from "@/pages/app/publishing/PublishingDashboard";
-import PublishingCatalog from "@/pages/app/publishing/PublishingCatalog";
-import PublishingWorks from "@/pages/app/publishing/PublishingWorks";
-import PublishingSplits from "@/pages/app/publishing/PublishingSplits";
-import PublishingRegistrations from "@/pages/app/publishing/PublishingRegistrations";
-import PublishingStatements from "@/pages/app/publishing/PublishingStatements";
-import PublishingPayments from "@/pages/app/publishing/PublishingPayments";
-import PublishingDocuments from "@/pages/app/publishing/PublishingDocuments";
-import AccessRequestsPage from "@/pages/app/publishing/AccessRequestsPage";
-import PublishingSettings from "@/pages/app/publishing/PublishingSettings";
 
 // First-class module pages - Licensing (/licensing) - ORGANIZATION-SCOPED
 import LicensingOverview from "@/pages/modules/licensing/LicensingOverview";
@@ -68,7 +45,7 @@ import {
 } from "@/pages/modules/rights";
 import RightsClientDetailPage from "@/pages/modules/rights/RightsClientDetailPage";
 
-// App pages - Access states
+// Access state pages
 import PendingApprovalPage from "@/pages/app/PendingApprovalPage";
 import NoAccessPage from "@/pages/app/NoAccessPage";
 import AccessSuspendedPage from "@/pages/app/AccessSuspendedPage";
@@ -76,7 +53,7 @@ import AccessSuspendedPage from "@/pages/app/AccessSuspendedPage";
 // Tribes Admin Protected Route — gates access to Tribes Admin Workstation
 import { TribesAdminProtectedRoute } from "@/components/tribes-admin/TribesAdminProtectedRoute";
 
-// Tribes Admin Workstation — CLIENT-FACING PORTAL
+// Tribes Admin Workstation — CLIENT-FACING WORKSPACE
 import { TribesAdminLayout } from "@/layouts/TribesAdminLayout";
 import {
   TribesAdminDashboard,
@@ -164,8 +141,8 @@ const queryClient = new QueryClient();
 
 /**
  * PATH PRESERVING REDIRECT COMPONENT
- * Redirects from legacy paths while preserving sub-paths
- * e.g., /help-workstation/articles → /help/articles
+ * Redirects from variant paths while preserving sub-paths
+ * e.g., /tribes-admin/catalog → /admin/catalog
  */
 function PathPreservingRedirect({ from, to }: { from: string; to: string }) {
   const location = useLocation();
@@ -232,16 +209,15 @@ const App = () => (
           </AppProtectedRoute>
         } />
         
-        {/* Legacy redirects → /workspaces */}
+        {/* Variant redirects → /workspaces */}
         <Route path="/workstations" element={<Navigate to="/workspaces" replace />} />
         <Route path="/home" element={<Navigate to="/workspaces" replace />} />
         <Route path="/dashboard" element={<Navigate to="/workspaces" replace />} />
 
-        {/* App access state pages (outside protected layout) */}
-        <Route path="/app/pending" element={<PendingApprovalPage />} />
-        <Route path="/app/no-access" element={<NoAccessPage />} />
-        <Route path="/app/suspended" element={<AccessSuspendedPage />} />
-        <Route path="/app/restricted" element={<AccessRestrictedPage />} />
+        {/* Access state pages (outside protected layout) */}
+        <Route path="/pending" element={<PendingApprovalPage />} />
+        <Route path="/no-access" element={<NoAccessPage />} />
+        <Route path="/suspended" element={<AccessSuspendedPage />} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
             FIRST-CLASS MODULE: LICENSING (/licensing)
@@ -260,7 +236,7 @@ const App = () => (
           <Route path="payments/receipts" element={<LicensingReceiptsPage />} />
         </Route>
         
-        {/* Legacy licensing redirects */}
+        {/* Variant redirects */}
         <Route path="/tribes-licensing/*" element={<PathPreservingRedirect from="/tribes-licensing" to="/licensing" />} />
 
         {/* ═══════════════════════════════════════════════════════════════════════
@@ -293,7 +269,7 @@ const App = () => (
         </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
-            FIRST-CLASS MODULE: ADMIN (/admin) — CLIENT-FACING PORTAL
+            FIRST-CLASS MODULE: ADMIN (/admin) — CLIENT-FACING WORKSPACE
             Permission: All authenticated users (for now)
             Clients view their catalog, documents, payments
         ═══════════════════════════════════════════════════════════════════════ */}
@@ -305,39 +281,8 @@ const App = () => (
           <Route path="settings" element={<TribesAdminSettingsPage />} />
         </Route>
         
-        {/* Legacy Tribes Admin redirects */}
+        {/* Variant redirects */}
         <Route path="/tribes-admin/*" element={<PathPreservingRedirect from="/tribes-admin" to="/admin" />} />
-        <Route path="/portal/*" element={<PathPreservingRedirect from="/portal" to="/admin" />} />
-
-        {/* ═══════════════════════════════════════════════════════════════════════
-            LEGACY APP ROUTES (/app)
-            These remain for backward compatibility with existing context system
-        ═══════════════════════════════════════════════════════════════════════ */}
-        <Route path="/app" element={<AppProtectedRoute><AppLayout /></AppProtectedRoute>}>
-          {/* Index route - redirects to active context */}
-          <Route index element={<AppIndexRedirect />} />
-
-          {/* Licensing context routes */}
-          <Route path="licensing" element={<AppProtectedRoute requiredContext="licensing"><LicensingDashboard /></AppProtectedRoute>} />
-          <Route path="licensing/catalog" element={<AppProtectedRoute requiredContext="licensing"><LicensingCatalog /></AppProtectedRoute>} />
-          <Route path="licensing/requests" element={<AppProtectedRoute requiredContext="licensing"><LicensingRequests /></AppProtectedRoute>} />
-          <Route path="licensing/licenses" element={<AppProtectedRoute requiredContext="licensing"><LicensingLicenses /></AppProtectedRoute>} />
-          <Route path="licensing/reports" element={<AppProtectedRoute requiredContext="licensing"><LicensingReports /></AppProtectedRoute>} />
-          <Route path="licensing/documents" element={<AppProtectedRoute requiredContext="licensing"><LicensingDocuments /></AppProtectedRoute>} />
-          <Route path="licensing/settings" element={<AppProtectedRoute requiredContext="licensing"><LicensingSettings /></AppProtectedRoute>} />
-
-          {/* Publishing context routes */}
-          <Route path="publishing" element={<AppProtectedRoute requiredContext="publishing"><PublishingDashboard /></AppProtectedRoute>} />
-          <Route path="publishing/catalog" element={<AppProtectedRoute requiredContext="publishing"><PublishingCatalog /></AppProtectedRoute>} />
-          <Route path="publishing/works" element={<AppProtectedRoute requiredContext="publishing"><PublishingWorks /></AppProtectedRoute>} />
-          <Route path="publishing/splits" element={<AppProtectedRoute requiredContext="publishing"><PublishingSplits /></AppProtectedRoute>} />
-          <Route path="publishing/registrations" element={<AppProtectedRoute requiredContext="publishing"><PublishingRegistrations /></AppProtectedRoute>} />
-          <Route path="publishing/statements" element={<AppProtectedRoute requiredContext="publishing"><PublishingStatements /></AppProtectedRoute>} />
-          <Route path="publishing/payments" element={<AppProtectedRoute requiredContext="publishing"><PublishingPayments /></AppProtectedRoute>} />
-          <Route path="publishing/documents" element={<AppProtectedRoute requiredContext="publishing"><PublishingDocuments /></AppProtectedRoute>} />
-          <Route path="publishing/access-requests" element={<AppProtectedRoute requiredContext="publishing"><AccessRequestsPage /></AppProtectedRoute>} />
-          <Route path="publishing/settings" element={<AppProtectedRoute requiredContext="publishing"><PublishingSettings /></AppProtectedRoute>} />
-        </Route>
 
         {/* ═══════════════════════════════════════════════════════════════════════
             SYSTEM CONSOLE (/console) — COMPANY-LEVEL GOVERNANCE
@@ -374,7 +319,7 @@ const App = () => (
           <Route path="billing/refunds" element={<RefundsPage />} />
         </Route>
         
-        {/* Legacy System Console redirects → /console */}
+        {/* Variant redirects → /console */}
         <Route path="/system-console/*" element={<PathPreservingRedirect from="/system-console" to="/console" />} />
         <Route path="/system_console/*" element={<PathPreservingRedirect from="/system_console" to="/console" />} />
         <Route path="/systemconsole/*" element={<PathPreservingRedirect from="/systemconsole" to="/console" />} />
@@ -405,11 +350,7 @@ const App = () => (
           <Route path="analytics" element={<HelpAnalyticsPage />} />
           <Route path="settings" element={<HelpSettingsPage />} />
         </Route>
-        
-        {/* Legacy Help Workstation redirects → /help */}
-        <Route path="/help-workstation/*" element={<PathPreservingRedirect from="/help-workstation" to="/help" />} />
-        <Route path="/help_workstation/*" element={<PathPreservingRedirect from="/help_workstation" to="/help" />} />
-        <Route path="/helpcenter/*" element={<PathPreservingRedirect from="/helpcenter" to="/help" />} />
+
         {/* ═══════════════════════════════════════════════════════════════════════
             ACCOUNT SETTINGS HUB (/account)
             Available to all authenticated users

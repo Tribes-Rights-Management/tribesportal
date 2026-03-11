@@ -471,180 +471,8 @@ export const routeRegistry: Record<string, RouteDefinition> = {
     breadcrumbs: ["Licensing", "Payments", "Receipts"]
   },
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // LEGACY /portal ROUTES — compatibility redirects to /admin
-  // /portal is NOT a primary identity. Canonical route is /admin.
-  // Retained for backward compatibility with existing bookmarks/links.
-  // ═══════════════════════════════════════════════════════════════════════════
-  "/portal": { 
-    scope: "organization", 
-    parentPath: null, 
-    label: "Tribes Admin Overview",
-    requiredPermission: "portal.view",
-    breadcrumbs: ["Tribes Admin"]
-  },
-  "/portal/agreements": { 
-    scope: "organization", 
-    parentPath: "/portal", 
-    label: "Agreements",
-    requiredPermission: "portal.view",
-    breadcrumbs: ["Tribes Admin", "Agreements"]
-  },
-  "/portal/statements": { 
-    scope: "organization", 
-    parentPath: "/portal", 
-    label: "Statements",
-    requiredPermission: "portal.view",
-    breadcrumbs: ["Tribes Admin", "Statements"]
-  },
-  "/portal/documents": { 
-    scope: "organization", 
-    parentPath: "/portal", 
-    label: "Documents",
-    requiredPermission: "portal.view",
-    breadcrumbs: ["Tribes Admin", "Documents"]
-  },
-  "/portal/payments": { 
-    scope: "organization", 
-    parentPath: "/portal", 
-    label: "Payments",
-    requiredPermission: "portal.view",
-    breadcrumbs: ["Tribes Admin", "Payments"]
-  },
-  "/portal/payments/invoices": { 
-    scope: "organization", 
-    parentPath: "/portal/payments", 
-    label: "Invoices",
-    requiredPermission: "portal.view",
-    breadcrumbs: ["Tribes Admin", "Payments", "Invoices"]
-  },
-  "/portal/payments/methods": { 
-    scope: "organization", 
-    parentPath: "/portal/payments", 
-    label: "Payment Methods",
-    requiredPermission: "portal.view",
-    breadcrumbs: ["Tribes Admin", "Payments", "Payment Methods"]
-  },
-  "/portal/payments/history": { 
-    scope: "organization", 
-    parentPath: "/portal/payments", 
-    label: "Payment History",
-    requiredPermission: "portal.view",
-    breadcrumbs: ["Tribes Admin", "Payments", "Payment History"]
-  },
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // LEGACY APP ROUTES (Scope: organization)
-  // Maintained for backward compatibility
-  // ═══════════════════════════════════════════════════════════════════════════
-  "/app": {
-    scope: "organization",
-    parentPath: null,
-    label: "App",
-    breadcrumbs: ["App"]
-  },
-  "/app/licensing": { 
-    scope: "organization", 
-    parentPath: null, 
-    label: "Licensing",
-    breadcrumbs: ["Licensing"]
-  },
-  "/app/licensing/catalog": { 
-    scope: "organization", 
-    parentPath: "/app/licensing", 
-    label: "Catalog",
-    breadcrumbs: ["Licensing", "Catalog"]
-  },
-  "/app/licensing/requests": { 
-    scope: "organization", 
-    parentPath: "/app/licensing", 
-    label: "Requests",
-    breadcrumbs: ["Licensing", "Requests"]
-  },
-  "/app/licensing/licenses": { 
-    scope: "organization", 
-    parentPath: "/app/licensing", 
-    label: "Licenses",
-    breadcrumbs: ["Licensing", "Licenses"]
-  },
-  "/app/licensing/reports": { 
-    scope: "organization", 
-    parentPath: "/app/licensing", 
-    label: "Reports",
-    breadcrumbs: ["Licensing", "Reports"]
-  },
-  "/app/licensing/documents": { 
-    scope: "organization", 
-    parentPath: "/app/licensing", 
-    label: "Documents",
-    breadcrumbs: ["Licensing", "Documents"]
-  },
-  "/app/licensing/settings": { 
-    scope: "organization", 
-    parentPath: "/app/licensing", 
-    label: "Settings",
-    breadcrumbs: ["Licensing", "Settings"]
-  },
-  "/app/publishing": { 
-    scope: "organization", 
-    parentPath: null, 
-    label: "Publishing",
-    breadcrumbs: ["Publishing"]
-  },
-  "/app/publishing/catalog": { 
-    scope: "organization", 
-    parentPath: "/app/publishing", 
-    label: "Catalog",
-    breadcrumbs: ["Publishing", "Catalog"]
-  },
-  "/app/publishing/works": { 
-    scope: "organization", 
-    parentPath: "/app/publishing", 
-    label: "Works",
-    breadcrumbs: ["Publishing", "Works"]
-  },
-  "/app/publishing/splits": { 
-    scope: "organization", 
-    parentPath: "/app/publishing", 
-    label: "Splits",
-    breadcrumbs: ["Publishing", "Splits"]
-  },
-  "/app/publishing/registrations": { 
-    scope: "organization", 
-    parentPath: "/app/publishing", 
-    label: "Registrations",
-    breadcrumbs: ["Publishing", "Registrations"]
-  },
-  "/app/publishing/statements": { 
-    scope: "organization", 
-    parentPath: "/app/publishing", 
-    label: "Statements",
-    breadcrumbs: ["Publishing", "Statements"]
-  },
-  "/app/publishing/payments": { 
-    scope: "organization", 
-    parentPath: "/app/publishing", 
-    label: "Payments",
-    breadcrumbs: ["Publishing", "Payments"]
-  },
-  "/app/publishing/documents": { 
-    scope: "organization", 
-    parentPath: "/app/publishing", 
-    label: "Documents",
-    breadcrumbs: ["Publishing", "Documents"]
-  },
-  "/app/publishing/access-requests": { 
-    scope: "organization", 
-    parentPath: "/app/publishing", 
-    label: "Access Requests",
-    breadcrumbs: ["Publishing", "Access Requests"]
-  },
-  "/app/publishing/settings": { 
-    scope: "organization", 
-    parentPath: "/app/publishing", 
-    label: "Settings",
-    breadcrumbs: ["Publishing", "Settings"]
-  },
+
 
   // ═══════════════════════════════════════════════════════════════════════════
   // ACCOUNT ROUTES (Scope: user)
@@ -679,29 +507,23 @@ export const routeRegistry: Record<string, RouteDefinition> = {
   // ACCESS STATE ROUTES (Scope: public)
   // Boundary screens for access control
   // ═══════════════════════════════════════════════════════════════════════════
-  "/app/pending": {
+  "/pending": {
     scope: "public",
     parentPath: null,
     label: "Pending Approval",
     breadcrumbs: ["Pending Approval"]
   },
-  "/app/no-access": {
+  "/no-access": {
     scope: "public",
     parentPath: null,
     label: "No Access",
     breadcrumbs: ["No Access"]
   },
-  "/app/suspended": {
+  "/suspended": {
     scope: "public",
     parentPath: null,
     label: "Access Suspended",
     breadcrumbs: ["Access Suspended"]
-  },
-  "/app/restricted": {
-    scope: "public",
-    parentPath: null,
-    label: "Access Restricted",
-    breadcrumbs: ["Access Restricted"]
   },
   "/restricted": {
     scope: "public",
@@ -803,11 +625,7 @@ export function getNearestValidParent(pathname: string): string {
   if (pathname.startsWith("/admin")) return "/admin";
   if (pathname.startsWith("/auditor")) return "/auditor";
   if (pathname.startsWith("/licensing")) return "/licensing";
-  // Legacy paths → canonical fallbacks
-  if (pathname.startsWith("/portal")) return "/admin";
-  if (pathname.startsWith("/app/licensing")) return "/licensing";
-  if (pathname.startsWith("/app/publishing")) return "/admin";
-  if (pathname.startsWith("/app")) return "/admin";
+  if (pathname.startsWith("/rights")) return "/rights";
   if (pathname.startsWith("/account")) return "/account";
   if (pathname.startsWith("/workspaces")) return "/workspaces";
   
