@@ -19,10 +19,10 @@ This document defines **which components to use where** across the Tribes Portal
 | Route | Surface | Component Kit |
 |-------|---------|---------------|
 | `/console/*` | System Console | `@/components/console` + `@/components/admin` |
-| `/admin/*` | Tribes Admin | `@/components/app-ui` |
-| `/help/*` | Help Workstation | `@/components/app-ui` |
-| `/licensing/*` | Licensing Workstation | `@/components/app-ui` |
-| `/rights/*` | Rights Workstation | `@/components/app-ui` |
+| `/admin/*` | Tribes Admin | `@/components/platform-ui` |
+| `/help/*` | Help Workstation | `@/components/platform-ui` |
+| `/licensing/*` | Licensing Workstation | `@/components/platform-ui` |
+| `/rights/*` | Rights Workstation | `@/components/platform-ui` |
 | `/auditor/*` | Auditor | `@/components/ui/*` + PlatformLayout |
 
 
