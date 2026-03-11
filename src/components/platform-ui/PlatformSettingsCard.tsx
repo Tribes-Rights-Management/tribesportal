@@ -78,7 +78,7 @@ export function PlatformSettingsCard({
 /**
  * APP SETTINGS FOOTER — Policy/governance notice at bottom of settings pages
  */
-interface AppSettingsFooterProps {
+interface PlatformSettingsFooterProps {
   children: React.ReactNode;
   className?: string;
 }
