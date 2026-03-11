@@ -192,7 +192,7 @@ import {
 | System Console | `AdminMetricRow` | `AdminListRow` | `AdminListRow` |
 | Help Workstation | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
 | Workspaces | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
-| Client Portal | `AppStatCard` | `AppListRow` | `AppTable` |
+| Legacy Client Views | `AppStatCard` | `AppListRow` | `AppTable` |
 
 ---
 
