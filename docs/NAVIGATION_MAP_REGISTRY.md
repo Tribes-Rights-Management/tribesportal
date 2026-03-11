@@ -21,12 +21,11 @@ These rules ensure deterministic, scope-aware, and consistent navigation across 
 | `/help/*` | Help Workstation | organization |
 | `/licensing/*` | Licensing Workstation | organization |
 | `/rights/*` | Rights Workstation | organization |
-| `/app/*` | Legacy Client Views | organization |
 | `/auditor/*` | Auditor | system |
 | `/account/*` | Account Settings | user |
 | `/auth/*` | Authentication | auth |
 
-> **Legacy paths**: `/portal` and `/help-workstation` are compatibility redirects only, not primary identities.
+> **Legacy compatibility**: `/app/*` (legacy client views) is retained for backward compatibility. `/portal` and `/help-workstation` are redirect-only paths.
 
 ---
 
