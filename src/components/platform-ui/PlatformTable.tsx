@@ -350,7 +350,7 @@ export function PlatformTableBadge({
   children,
   variant = "default",
   className,
-}: AppTableBadgeProps) {
+}: PlatformTableBadgeProps) {
   return (
     <span
       className={cn(
