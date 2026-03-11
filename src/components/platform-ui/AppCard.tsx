@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
  * - Consistent padding across all cards
  * 
  * ENFORCEMENT:
- * - Import from @/components/app-ui
+ * - Import from @/components/platform-ui
  * - Do NOT use Card from @/components/ui/card directly
  * ═══════════════════════════════════════════════════════════════════════════
  */
