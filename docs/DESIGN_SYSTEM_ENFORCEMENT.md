@@ -25,7 +25,7 @@ This document defines **which components to use where** across the Tribes Portal
 | `/rights/*` | Rights Workstation | `@/components/app-ui` |
 | `/auditor/*` | Auditor | `@/components/ui/*` + PlatformLayout |
 
-> **Legacy compatibility**: `/app/*` (retained legacy client views) uses `@/components/app-ui`. `/portal` and `/help-workstation` are redirect-only paths.
+
 
 ---
 
