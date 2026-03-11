@@ -75,7 +75,7 @@ interface PlatformDetailRowProps {
   className?: string;
 }
 
-export function AppDetailRow({
+export function PlatformDetailRow({
   label,
   value,
   variant = "readonly",
