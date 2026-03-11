@@ -152,7 +152,7 @@ export function PlatformTableRow({
   onDoubleClick,
   header = false,
   className,
-}: AppTableRowProps) {
+}: PlatformTableRowProps) {
   return (
     <tr
       onClick={clickable ? onClick : undefined}
