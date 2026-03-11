@@ -283,7 +283,7 @@ function MobileControls() {
         )}
         
         {/* Products only available with active workspace */}
-        {hasActiveWorkspace && currentMode !== "admin" && availableContexts.length > 1 && (
+        {hasActiveWorkspace && currentMode !== "auditor" && availableContexts.length > 1 && (
           <>
             <DropdownMenuSeparator style={{ backgroundColor: 'var(--tribes-border)' }} />
             <div className="px-3 py-1">
