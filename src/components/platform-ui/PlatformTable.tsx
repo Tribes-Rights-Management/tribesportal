@@ -124,7 +124,7 @@ interface PlatformTableBodyProps {
   className?: string;
 }
 
-export function AppTableBody({ children, className }: AppTableBodyProps) {
+export function PlatformTableBody({ children, className }: PlatformTableBodyProps) {
   return <tbody className={className}>{children}</tbody>;
 }
 
