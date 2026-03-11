@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
-import { AppButton } from "./AppButton";
+import { PlatformButton } from "./PlatformButton";
 
 /**
  * APP PANEL — GLOBAL UI KIT (SINGLE SOURCE OF TRUTH)
