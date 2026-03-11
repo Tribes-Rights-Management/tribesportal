@@ -46,7 +46,13 @@ React 18 + TypeScript + Vite
 | Help Workstation | `/help/*` | HelpWorkstationLayout | Knowledge base management | HelpProtectedRoute |
 | Auditor | `/auditor/*` | (standalone) | External audit read-only access | AuditorProtectedRoute |
 | Account | `/account/*` | AccountLayout | User profile, security, preferences | Auth |
-| Legacy Client Views | `/app/*` | AppLayout | Legacy client views (publishing/licensing) | AppProtectedRoute + context |
+
+### Legacy Compatibility Routes
+
+| Route | Layout | Purpose | Protected By |
+|-------|--------|---------|-------------|
+| `/app/*` | AppLayout | Retained legacy client views (publishing/licensing) | AppProtectedRoute + context |
+| `/portal/*` | — | Redirects to `/admin/*` | — |
 
 ---
 
