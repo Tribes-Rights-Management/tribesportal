@@ -932,7 +932,7 @@ export const NAV_LABELS = {
   SYSTEM_CONSOLE: "System Console",  // Company governance, audit, compliance
   
   // ORGANIZATION-LEVEL (workspace-scoped products)
-  TRIBES_ADMIN: "Tribes Admin",      // Organization administration (was "Client Portal")
+  TRIBES_ADMIN: "Tribes Admin",      // Organization administration
   LICENSING: "Licensing",            // Licensee workspace
   
   // Deprecated labels
