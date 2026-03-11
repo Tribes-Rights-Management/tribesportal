@@ -26,7 +26,7 @@ The application is organized into **modules**, each mounted at a canonical top-l
 | `/auditor` | Auditor View | Read-only | External audit access to logs and correlation chains |
 | `/account` | Account Settings | User-scoped | Profile, security, preferences |
 | `/workspaces` | Workspaces Hub | User-scoped | Authenticated landing, module selection |
-| `/app/*` | Legacy Client Portal | Context-scoped | Backward-compatible publishing/licensing client views |
+| `/app/*` | Legacy Client Views | Context-scoped | Backward-compatible publishing/licensing client views |
 
 ### Legacy and Redirect Paths
 
