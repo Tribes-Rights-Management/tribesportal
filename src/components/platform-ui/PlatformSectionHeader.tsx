@@ -47,7 +47,7 @@ export function PlatformSectionHeader({
   actions,
   meta,
   className,
-}: AppSectionHeaderProps) {
+}: PlatformSectionHeaderProps) {
   const navigate = useNavigate();
 
   return (
