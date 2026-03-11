@@ -27,13 +27,13 @@ interface PlatformCardProps extends React.HTMLAttributes<HTMLDivElement> {
   transparent?: boolean;
 }
 
-export function AppCard({
+export function PlatformCard({
   className,
   size = "md",
   transparent = false,
   children,
   ...props
-}: AppCardProps) {
+}: PlatformCardProps) {
   return (
     <div
       className={cn(
