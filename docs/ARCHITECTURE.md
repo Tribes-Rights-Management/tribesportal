@@ -79,7 +79,7 @@ Each surface uses a dedicated layout component:
 | Licensing | `ModuleLayout` | Licensing sidebar (`licensingNav`) |
 | Help Workstation | `HelpWorkstationLayout` | Help sidebar (`helpNav`) |
 | Account | `AccountLayout` | Account sidebar |
-| Legacy Client Portal | `AppLayout` | Context-specific navigation |
+| Legacy Client Views | `AppLayout` | Context-specific navigation |
 
 Navigation configuration lives in `src/config/moduleNav.ts` as a unified registry. Each module declares its sidebar items as data; the shared `SideNav` component renders them identically.
 
