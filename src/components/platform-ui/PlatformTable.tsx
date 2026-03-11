@@ -282,7 +282,7 @@ export function PlatformTableCell({
   muted = false,
   mono = false,
   className,
-}: AppTableCellProps) {
+}: PlatformTableCellProps) {
   const alignClasses = {
     left: "text-left",
     center: "text-center",
