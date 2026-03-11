@@ -103,7 +103,7 @@ export function PlatformCardDescription({
   );
 }
 
-export function AppCardBody({
+export function PlatformCardBody({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
