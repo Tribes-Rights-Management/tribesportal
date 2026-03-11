@@ -86,7 +86,7 @@ interface PlatformFilterSectionProps {
   children: React.ReactNode;
 }
 
-export function AppFilterSection({ title, children }: AppFilterSectionProps) {
+export function PlatformFilterSection({ title, children }: PlatformFilterSectionProps) {
   return (
     <div className="space-y-3">
       <h3 className="text-[12px] font-medium text-[#9CA3AF]">
