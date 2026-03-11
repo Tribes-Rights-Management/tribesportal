@@ -39,7 +39,7 @@ interface PlatformSectionHeaderProps {
   className?: string;
 }
 
-export function AppSectionHeader({
+export function PlatformSectionHeader({
   title,
   subtitle,
   backTo,
