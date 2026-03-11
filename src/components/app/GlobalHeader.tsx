@@ -337,8 +337,6 @@ export function GlobalHeader() {
   const handleLogoClick = () => {
     if (currentMode === "admin") {
       navigate("/admin");
-    } else if (currentMode === "portal") {
-      navigate("/portal");
     } else if (currentMode === "licensing") {
       navigate("/licensing");
     } else {
