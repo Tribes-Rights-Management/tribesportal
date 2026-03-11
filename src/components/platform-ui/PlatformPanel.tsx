@@ -48,7 +48,7 @@ interface PlatformPanelProps {
   footer?: React.ReactNode;
 }
 
-export function AppPanel({
+export function PlatformPanel({
   open,
   onClose,
   title,
@@ -56,7 +56,7 @@ export function AppPanel({
   width = "md",
   children,
   footer,
-}: AppPanelProps) {
+}: PlatformPanelProps) {
   // Close on Escape key
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
