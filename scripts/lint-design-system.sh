@@ -53,7 +53,7 @@ find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.
 
     # Check 4: Raw ui/badge imports
     if grep -q 'from.*@/components/ui/badge' "$file"; then
-        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/badge → use AppChip from @/components/app-ui\n"
+        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/badge → use AppChip from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
