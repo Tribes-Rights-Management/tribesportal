@@ -176,7 +176,7 @@ interface PlatformListActionProps {
   className?: string;
 }
 
-export function AppListAction({
+export function PlatformListAction({
   children,
   onClick,
   className,
