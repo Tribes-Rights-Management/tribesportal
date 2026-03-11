@@ -50,7 +50,7 @@ export function PlatformCard({
   );
 }
 
-interface AppCardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+interface PlatformCardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Optional action slot for buttons */
   action?: React.ReactNode;
 }
