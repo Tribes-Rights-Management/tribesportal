@@ -189,7 +189,7 @@ export function useDeepLinkValidation(
           invalidReason: "Required role not present",
           redirectPath: isPlatformAdmin ? "/admin" : 
                         isExternalAuditor ? "/auditor" : 
-                        "/app/restricted",
+                        "/restricted",
           scope,
           isRegistered,
         };
