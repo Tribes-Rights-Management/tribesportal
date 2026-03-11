@@ -47,7 +47,7 @@ find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.
 
     # Check 3: Raw ui/input imports
     if grep -q 'from.*@/components/ui/input' "$file"; then
-        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/input → use AppInput from @/components/app-ui\n"
+        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/input → use AppInput from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
