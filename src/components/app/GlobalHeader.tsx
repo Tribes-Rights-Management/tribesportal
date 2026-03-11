@@ -78,7 +78,7 @@ function useCurrentMode(): PortalMode {
   if (location.pathname.startsWith("/admin")) return "admin";    // Tribes Admin
   if (location.pathname.startsWith("/auditor")) return "auditor";
   if (location.pathname.startsWith("/licensing")) return "licensing";
-  if (location.pathname.startsWith("/portal")) return "admin";   // Legacy → Tribes Admin
+  if (location.pathname.includes("/licensing")) return "licensing";
   if (location.pathname.includes("/licensing")) return "licensing";
   return "publishing";
 }

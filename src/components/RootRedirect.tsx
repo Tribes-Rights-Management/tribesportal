@@ -47,7 +47,7 @@ export default function RootRedirect() {
     case "pending-approval":
       return <Navigate to="/auth/unauthorized" replace />;
     case "suspended-access":
-      return <Navigate to="/app/suspended" replace />;
+      return <Navigate to="/suspended" replace />;
     case "active":
       // All users land on Modules Home
       return <Navigate to="/workspaces" replace />;

@@ -82,7 +82,7 @@ export function AppProtectedRoute({ children, requiredContext }: AppProtectedRou
     case "pending-approval":
       return <Navigate to="/auth/unauthorized" replace />;
     case "suspended-access":
-      return <Navigate to="/app/suspended" replace />;
+      return <Navigate to="/suspended" replace />;
   }
 
   // No active tenant selected (shouldn't happen if active, but safety check)

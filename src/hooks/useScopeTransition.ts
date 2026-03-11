@@ -136,10 +136,7 @@ export function useScopeTransition(): ScopeTransitionState & ScopeTransitionActi
         // Determine based on current path prefix — prefer canonical routes
         if (location.pathname.startsWith("/licensing")) return "/licensing";
         if (location.pathname.startsWith("/admin")) return "/admin";
-        // Legacy /portal and /app/* paths resolve to canonical roots
-        if (location.pathname.startsWith("/portal")) return "/admin";
-        if (location.pathname.startsWith("/app/licensing")) return "/licensing";
-        if (location.pathname.startsWith("/app/publishing")) return "/admin";
+        return "/admin";
         return "/admin";
       case "user":
         return "/account";

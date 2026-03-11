@@ -202,7 +202,7 @@ export function useDeepLinkValidation(
         return {
           isValid: false,
           invalidReason: `Required permission '${route.requiredPermission}' not granted`,
-          redirectPath: "/app/restricted",
+          redirectPath: "/restricted",
           scope,
           isRegistered,
         };

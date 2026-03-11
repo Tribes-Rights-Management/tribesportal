@@ -8,7 +8,7 @@ type PortalStatement = Database["public"]["Tables"]["portal_statements"]["Row"];
 type PortalAgreement = Database["public"]["Tables"]["portal_agreements"]["Row"];
 
 /**
- * LEGACY CLIENT VIEW DATA HOOKS (portal_* tables, retained for /app/* compatibility)
+ * CLIENT VIEW DATA HOOKS (portal_* tables)
  * 
  * All queries are tenant-isolated using activeTenant.tenant_id.
  * Never query without tenant_id scope.
