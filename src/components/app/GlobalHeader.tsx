@@ -64,14 +64,21 @@ import { NotificationCenter } from "./NotificationCenter";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-type PortalMode = "publishing" | "licensing" | "portal" | "admin" | "auditor";
+/**
+ * Portal modes:
+ * - "admin" = Tribes Admin workspace (/admin)
+ * - "licensing" = Licensing workspace (/licensing)
+ * - "publishing" = Publishing workspace
+ * - "auditor" = Auditor access (/auditor)
+ */
+type PortalMode = "publishing" | "licensing" | "admin" | "auditor";
 
 function useCurrentMode(): PortalMode {
   const location = useLocation();
-  if (location.pathname.startsWith("/admin")) return "admin";
+  if (location.pathname.startsWith("/admin")) return "admin";    // Tribes Admin
   if (location.pathname.startsWith("/auditor")) return "auditor";
   if (location.pathname.startsWith("/licensing")) return "licensing";
-  if (location.pathname.startsWith("/portal")) return "portal";
+  if (location.pathname.startsWith("/portal")) return "admin";   // Legacy → Tribes Admin
   if (location.pathname.includes("/licensing")) return "licensing";
   return "publishing";
 }
@@ -79,8 +86,8 @@ function useCurrentMode(): PortalMode {
 // Get context label for header subtitle
 function getContextLabel(mode: PortalMode): string {
   switch (mode) {
+    case "admin": return "Tribes Admin";
     case "licensing": return "Licensing";
-    case "portal": return "Tribes Admin";
     case "publishing": return "Publishing";
     default: return "";
   }
