@@ -39,7 +39,7 @@ interface PlatformSettingsCardProps {
   className?: string;
 }
 
-export function AppSettingsCard({
+export function PlatformSettingsCard({
   title,
   description,
   children,
