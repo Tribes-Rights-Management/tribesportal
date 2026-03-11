@@ -279,7 +279,7 @@ Onboarding must signal **authority, clarity, and restraint** — not guidance or
 
 #### Workspace Entry
 
-- Explicit scope declaration (e.g., "You are entering: Client Portal")
+- Explicit scope declaration (e.g., "You are entering: Tribes Admin")
 - Explicit role confirmation (e.g., "Your role: Organization Admin")
 - Read-only posture until the first deliberate action
 

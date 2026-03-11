@@ -204,5 +204,5 @@ Any future feature involving:
 - `src/hooks/useBillingAuthority.ts` — Permission resolution
 - `src/services/PaymentService.ts` — Processor abstraction
 - `src/pages/console/billing/` — System Console billing governance
-- `src/pages/portal/billing/` — Org-level billing operations
-- `src/pages/licensing/billing/` — Licensing payment operations
+- `src/pages/admin/` — Tribes Admin org-level billing operations (canonical route: /admin)
+- `src/pages/modules/licensing/` — Licensing payment operations
