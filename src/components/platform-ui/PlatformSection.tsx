@@ -52,7 +52,7 @@ export function PlatformSection({
   spacing = "md",
   divided = false,
   className,
-}: AppSectionProps) {
+}: PlatformSectionProps) {
   const spacingClasses = {
     none: "",
     sm: "mb-6",
