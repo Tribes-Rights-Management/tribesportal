@@ -28,7 +28,7 @@ import {
  * - Workspaces are listed only if user has active membership
  * 
  * POST-SELECTION BEHAVIOR:
- * - Navigate to /app/{context}
+ * - Navigate to canonical workspace root (/admin or /licensing)
  * - Activate workspace switcher in GlobalHeader
  * - Change data scope globally
  * - System Console becomes accessible only via user menu
