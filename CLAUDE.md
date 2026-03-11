@@ -64,7 +64,7 @@ Components must be created or fixed in `src/components/app-ui/` first, then cons
 | Console (`/console/*`) | `@/components/console` + `@/components/admin` + `@/components/ui/*` | ConsoleButton, ConsoleChip, ConsoleCard, AdminSection, InviteUserModal. Raw `ui/table`, `ui/select`, `ui/dialog` are acceptable here. |
 | Help Workstation (`/help/*`) | `@/components/app-ui` | All app-ui components |
 | Rights/Licensing modules | `@/components/app-ui` | All app-ui components |
-| Client Portal (`/app/*`) | `@/components/app-ui` | All app-ui components |
+| Legacy Client Views (`/app/*`) | `@/components/app-ui` | All app-ui components |
 | Account settings | `@/components/app-ui` | All app-ui components |
 | Auditor (`/auditor/*`) | `@/components/ui/*` + PlatformLayout | Read-only governance views. Raw `ui/table` acceptable. |
 
