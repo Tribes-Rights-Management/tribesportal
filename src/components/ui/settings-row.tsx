@@ -264,7 +264,7 @@ export function SettingsRow({
 }
 
 /**
- * @deprecated Use AppSettingsCard from @/components/app-ui instead.
+ * @deprecated Use AppSettingsCard from @/components/platform-ui instead.
  * Settings Section Card — Container for SettingsRow items
  */
 interface SettingsSectionCardProps {
