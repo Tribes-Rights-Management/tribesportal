@@ -131,11 +131,11 @@ export function useScopeTransition(): ScopeTransitionState & ScopeTransitionActi
   const scopeRootPath = useMemo((): string => {
     switch (currentScope) {
       case "system":
-        return isExternalAuditor && !isPlatformAdmin ? "/auditor" : "/admin";
+        return isExternalAuditor && !isPlatformAdmin ? "/auditor" : "/console";
       case "organization":
         // Determine based on current path prefix
         if (location.pathname.startsWith("/licensing")) return "/licensing";
-        if (location.pathname.startsWith("/portal")) return "/portal";
+        if (location.pathname.startsWith("/admin")) return "/admin";
         if (location.pathname.startsWith("/app/licensing")) return "/app/licensing";
         if (location.pathname.startsWith("/app/publishing")) return "/app/publishing";
         return "/app";

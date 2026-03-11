@@ -1,14 +1,32 @@
-# Navigation Map Registry & Deep-Link Safety — Canonical Rules v1.0
+# Navigation Map Registry & Deep-Link Safety — Canonical Rules v1.1
 
 > **Status**: LOCKED (Platform-Wide Enforcement)  
 > **Scope**: All navigation, routing, deep-link access  
-> **Last Updated**: 2026-01-17
+> **Last Updated**: 2026-03-11
 
 ---
 
 ## Purpose
 
 These rules ensure deterministic, scope-aware, and consistent navigation across the Tribes platform. Navigation is **structural, not contextual**. Browser history must never determine back behavior.
+
+---
+
+## Canonical Route Model
+
+| Route | Surface | Scope |
+|-------|---------|-------|
+| `/console/*` | System Console | system |
+| `/admin/*` | Tribes Admin workspace | organization |
+| `/help/*` | Help Workstation | organization |
+| `/licensing/*` | Licensing Workstation | organization |
+| `/rights/*` | Rights Workstation | organization |
+| `/app/*` | Client Portal | organization |
+| `/auditor/*` | Auditor | system |
+| `/account/*` | Account Settings | user |
+| `/auth/*` | Authentication | auth |
+
+> **Legacy paths**: `/portal` and `/help-workstation` are compatibility redirects only, not primary identities.
 
 ---
 
@@ -37,13 +55,13 @@ interface RouteDefinition {
 
 | Route | Parent | Scope |
 |-------|--------|-------|
-| `/admin` | null (root) | system |
-| `/admin/users` | `/admin` | system |
-| `/admin/users/:userId` | `/admin/users` | system |
-| `/admin/users/:userId/permissions` | `/admin/users/:userId` | system |
+| `/console` | null (root) | system |
+| `/console/users` | `/console` | system |
+| `/console/users/:userId` | `/console/users` | system |
+| `/admin` | null (root) | organization |
+| `/admin/catalog` | `/admin` | organization |
 | `/licensing` | null (root) | organization |
 | `/licensing/requests` | `/licensing` | organization |
-| `/portal/agreements` | `/portal` | organization |
 
 ---
 
@@ -202,3 +220,4 @@ After this enforcement:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-01-17 | Initial Navigation Map Registry and Deep-Link Safety spec |
+| 1.1 | 2026-03-11 | Updated to canonical route model: `/console` for System Console, `/admin` for Tribes Admin |

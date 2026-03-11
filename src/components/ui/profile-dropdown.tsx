@@ -99,7 +99,7 @@ export function ProfileDropdown({
         {showReturnToConsole && (
           <>
             <DropdownMenuItem
-              onClick={() => navigate("/admin")}
+              onClick={() => navigate("/console")}
               className="px-3 py-2 text-[13px] gap-2"
             >
               <ArrowLeft className="h-4 w-4 opacity-50" strokeWidth={1.5} />
@@ -112,7 +112,7 @@ export function ProfileDropdown({
         {/* System Console (when already in console) */}
         {showSystemConsole && (
           <DropdownMenuItem
-            onClick={() => navigate("/admin")}
+            onClick={() => navigate("/console")}
             className="px-3 py-2 text-[13px] gap-2"
           >
             <Shield className="h-4 w-4 opacity-50" strokeWidth={1.5} />

@@ -2,7 +2,7 @@
 
 > **Status**: CANONICAL  
 > **Scope**: All pages across the application  
-> **Last Updated**: 2026-01-24
+> **Last Updated**: 2026-03-11
 
 ---
 
@@ -11,6 +11,22 @@
 This document defines **which components to use where** across the Tribes Portal. It prevents visual drift by mandating specific component kits for each context.
 
 **Core Principle**: No page should have independently created UI patterns. All UI flows through the design system.
+
+---
+
+## Canonical Route Model
+
+| Route | Surface | Component Kit |
+|-------|---------|---------------|
+| `/console/*` | System Console | `@/components/console` + `@/components/admin` |
+| `/admin/*` | Tribes Admin | `@/components/app-ui` |
+| `/help/*` | Help Workstation | `@/components/app-ui` |
+| `/licensing/*` | Licensing Workstation | `@/components/app-ui` |
+| `/rights/*` | Rights Workstation | `@/components/app-ui` |
+| `/app/*` | Client Portal | `@/components/app-ui` |
+| `/auditor/*` | Auditor | `@/components/ui/*` + PlatformLayout |
+
+> **Note**: `/portal` and `/help-workstation` are legacy compatibility redirects, not primary identities.
 
 ---
 
@@ -23,9 +39,9 @@ This document defines **which components to use where** across the Tribes Portal
 │                                                                              │
 │  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────┐ │
 │  │   SYSTEM CONSOLE    │  │    WORKSTATIONS     │  │    CLIENT PORTAL    │ │
-│  │   /admin/*          │  │   /help-workstation │  │    /portal/*        │ │
-│  │                     │  │   /licensing/*      │  │    /publishing/*    │ │
-│  │                     │  │   /publishing-admin │  │                     │ │
+│  │   /console/*        │  │   /help/*           │  │    /app/*           │ │
+│  │                     │  │   /licensing/*      │  │                     │ │
+│  │                     │  │   /admin/*          │  │                     │ │
 │  └─────────┬───────────┘  └─────────┬───────────┘  └─────────┬───────────┘ │
 │            │                        │                        │              │
 │            ▼                        ▼                        ▼              │
@@ -41,7 +57,7 @@ This document defines **which components to use where** across the Tribes Portal
 
 ## Context-Specific Component Requirements
 
-### 1. System Console (`/admin/*`)
+### 1. System Console (`/console/*`)
 
 **Purpose**: Executive governance, audit, security oversight
 
@@ -61,16 +77,16 @@ import { ConsoleButton, ConsoleChip, ConsoleCard } from "@/components/console";
 - Sections use `AdminSection` with small caps labels
 - No colorful accents except status indicators
 
-**Landing Page Pattern** (AdminDashboard.tsx):
+**Landing Page Pattern** (Console Dashboard):
 ```tsx
 <AdminSection label="Governance Overview">
-  <AdminMetricRow to="/admin/tenants" label="Active workspaces" value="2" />
-  <AdminMetricRow to="/admin/users" label="Active users" value="5" />
+  <AdminMetricRow to="/console/tenants" label="Active workspaces" value="2" />
+  <AdminMetricRow to="/console/users" label="Active users" value="5" />
 </AdminSection>
 
 <AdminSection label="Workstations">
   <AdminListRow 
-    to="/help-workstation" 
+    to="/help" 
     title="Help Workstation"
     description="Manage public Help articles, categories, and messages"
   />
@@ -79,7 +95,7 @@ import { ConsoleButton, ConsoleChip, ConsoleCard } from "@/components/console";
 
 ---
 
-### 2. Help Workstation (`/help-workstation/*`)
+### 2. Help Workstation (`/help/*`)
 
 **Purpose**: Internal knowledge management, article authoring
 
@@ -124,7 +140,7 @@ import { AppTable, AppTableHeader, AppTableBody, AppTableRow } from "@/component
 
 ---
 
-### 3. Workspace Views (`/licensing/*`, `/publishing/*`)
+### 3. Tribes Admin & Workspace Views (`/admin/*`, `/licensing/*`, `/rights/*`)
 
 **Purpose**: Operational work for internal team
 
@@ -147,7 +163,7 @@ import {
 
 ---
 
-### 4. Client Portal (`/portal/*`)
+### 4. Client Portal (`/app/*`)
 
 **Purpose**: External client-facing views
 
@@ -313,7 +329,7 @@ import { ConsoleButton, ConsoleCard } from "@/components/console";
 When creating or updating a page:
 
 ### Pre-Development
-- [ ] Identify which context the page belongs to (Console, Workstation, Portal)
+- [ ] Identify which context the page belongs to (Console, Admin, Workstation, Portal)
 - [ ] Import only from the appropriate component kit
 - [ ] Review this document for correct patterns
 
@@ -352,3 +368,4 @@ When creating or updating a page:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-01-24 | Initial specification with component kit architecture |
+| 1.1 | 2026-03-11 | Updated route model: `/console` for System Console, `/admin` for Tribes Admin, `/help` canonical |
