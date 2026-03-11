@@ -28,7 +28,7 @@ import {
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-export interface AppDropdownItem {
+export interface PlatformDropdownItem {
   label: string;
   onClick: () => void;
   /** Whether this item should be hidden */
