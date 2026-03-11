@@ -1,5 +1,5 @@
 /**
- * APP UI KIT — GLOBAL COMPONENT LIBRARY (SINGLE SOURCE OF TRUTH)
+ * PLATFORM UI KIT — GLOBAL COMPONENT LIBRARY (SINGLE SOURCE OF TRUTH)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
  * ENFORCEMENT RULES (LOCKED)
@@ -14,7 +14,7 @@
  *     AppStatCard,
  *     AppListCard,
  *     AppListRow,
- *   } from "@/components/app-ui";
+ *   } from "@/components/platform-ui";
  * 
  * PROHIBITED:
  * - Importing Button from @/components/ui/button in page components
@@ -26,7 +26,7 @@
  * - UI primitives (calendar, pagination, alert-dialog) may use base components
  * - Internal component composition within this kit
  * 
- * See: docs/UI_STANDARD_APP.md for complete guidelines
+ * See: docs/UI_STANDARD_PLATFORM.md for complete guidelines
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
