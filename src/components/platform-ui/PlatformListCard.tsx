@@ -45,7 +45,7 @@ export function PlatformListCard({
   action,
   children,
   className,
-}: AppListCardProps) {
+}: PlatformListCardProps) {
   return (
     <div
       className={cn(
