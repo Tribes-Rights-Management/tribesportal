@@ -265,7 +265,7 @@ function MobileControls() {
                 key={membership.tenant_id}
                 onClick={() => {
                   setActiveTenant(membership.tenant_id);
-                  if (currentMode !== "admin") {
+                  if (currentMode !== "auditor") {
                     const ctx = membership.allowed_contexts[0];
                     if (ctx) navigate(`/app/${ctx}`);
                   }
