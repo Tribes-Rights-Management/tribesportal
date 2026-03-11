@@ -339,7 +339,7 @@ When creating or updating a page:
 ## Related Documents
 
 - [UI_STANDARD_SYSTEM_CONSOLE.md](./UI_STANDARD_SYSTEM_CONSOLE.md) — Console-specific patterns
-- [UI_STANDARD_APP.md](./UI_STANDARD_APP.md) — App-wide patterns
+- [UI_STANDARD_PLATFORM.md](./UI_STANDARD_PLATFORM.md) — Platform-wide UI patterns
 - [GLOBAL_ADMIN_UI_STANDARD.md](./GLOBAL_ADMIN_UI_STANDARD.md) — Admin view rules
 
 ---
