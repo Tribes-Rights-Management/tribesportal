@@ -125,7 +125,7 @@ export function PlatformFilterOption({ label, selected, onClick }: PlatformFilte
 /**
  * APP FILTER TRIGGER — Icon button that opens the filter drawer
  */
-interface AppFilterTriggerProps {
+interface PlatformFilterTriggerProps {
   onClick: () => void;
   hasActiveFilters?: boolean;
   className?: string;
