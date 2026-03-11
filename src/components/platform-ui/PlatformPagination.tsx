@@ -38,7 +38,7 @@ interface PlatformPaginationProps {
   className?: string;
 }
 
-export function AppPagination({
+export function PlatformPagination({
   currentPage,
   totalPages,
   onPageChange,
