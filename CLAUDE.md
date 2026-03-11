@@ -82,7 +82,7 @@ import { AppButton, AppCard } from "@/components/platform-ui";
 <div className="bg-white border rounded-lg">
 <div className="bg-[#1A1A1A]">
 
-// ✅ ALWAYS use CSS variables or app-ui components
+// ✅ ALWAYS use CSS variables or platform-ui components
 <AppCard>
 <AppPanel>
 ```
