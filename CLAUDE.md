@@ -309,7 +309,7 @@ src/
 │   ├── app-ui/          ← DESIGN SYSTEM (single source of truth)
 │   ├── admin/           ← Console-specific components
 │   ├── console/         ← Console-specific components
-│   ├── app/             ← Shared app shell, header, navigation components
+│   ├── app/             ← Shared platform shell (header, nav, session guards)
 │   ├── auth/            ← Authentication components
 │   ├── help/            ← Help workstation components
 │   ├── ui/              ← Radix/shadcn primitives (DO NOT import in pages)
