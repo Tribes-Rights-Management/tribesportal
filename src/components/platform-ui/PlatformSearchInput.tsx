@@ -34,7 +34,7 @@ import { Search, X } from "lucide-react";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppSearchInputProps {
+interface PlatformSearchInputProps {
   /** Current value */
   value: string;
   /** Change handler */
