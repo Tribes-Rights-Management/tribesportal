@@ -8,12 +8,12 @@
  * ALL pages across the application MUST import from this kit:
  * 
  *   import { 
- *     AppButton, 
- *     AppCard, 
- *     AppPageLayout,
- *     AppStatCard,
- *     AppListCard,
- *     AppListRow,
+ *     PlatformButton, 
+ *     PlatformCard, 
+ *     PlatformPageLayout,
+ *     PlatformStatCard,
+ *     PlatformListCard,
+ *     PlatformListRow,
  *   } from "@/components/platform-ui";
  * 
  * PROHIBITED:
@@ -33,97 +33,97 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // BUTTONS
 // ─────────────────────────────────────────────────────────────────────────────
-export { AppButton, type AppButtonProps } from "./AppButton";
+export { PlatformButton, type PlatformButtonProps } from "./PlatformButton";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CHIPS / BADGES
 // ─────────────────────────────────────────────────────────────────────────────
-export { AppChip, type ChipStatus, type ChipSeverity, type ChipVariant } from "./AppChip";
+export { PlatformChip, type ChipStatus, type ChipSeverity, type ChipVariant } from "./PlatformChip";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CARDS
 // ─────────────────────────────────────────────────────────────────────────────
 export {
-  AppCard,
-  AppCardHeader,
-  AppCardTitle,
-  AppCardDescription,
-  AppCardBody,
-  AppCardFooter,
-} from "./AppCard";
+  PlatformCard,
+  PlatformCardHeader,
+  PlatformCardTitle,
+  PlatformCardDescription,
+  PlatformCardBody,
+  PlatformCardFooter,
+} from "./PlatformCard";
 
-export { AppStatCard, AppStatCardGrid } from "./AppStatCard";
+export { PlatformStatCard, PlatformStatCardGrid } from "./PlatformStatCard";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // LISTS
 // ─────────────────────────────────────────────────────────────────────────────
-export { AppListCard, AppListRow, AppListAction } from "./AppListCard";
-export { AppResponsiveList, AppItemCard } from "./AppResponsiveList";
+export { PlatformListCard, PlatformListRow, PlatformListAction } from "./PlatformListCard";
+export { PlatformResponsiveList, PlatformItemCard } from "./PlatformResponsiveList";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PAGE STRUCTURE
 // ─────────────────────────────────────────────────────────────────────────────
-export { AppPageLayout } from "./AppPageLayout";
-export { AppListToolbar } from "./AppListToolbar";
-export { AppSectionHeader } from "./AppSectionHeader";
-export { AppSection, AppSectionGrid } from "./AppSection";
+export { PlatformPageLayout } from "./PlatformPageLayout";
+export { PlatformListToolbar } from "./PlatformListToolbar";
+export { PlatformSectionHeader } from "./PlatformSectionHeader";
+export { PlatformSection, PlatformSectionGrid } from "./PlatformSection";
 export { 
-  AppDetailRow, 
-  AppDetailRowGroup,
-  type AppDetailRowVariant,
-} from "./AppDetailRow";
-export { AppSettingsCard, AppSettingsFooter } from "./AppSettingsCard";
+  PlatformDetailRow, 
+  PlatformDetailRowGroup,
+  type PlatformDetailRowVariant,
+} from "./PlatformDetailRow";
+export { PlatformSettingsCard, PlatformSettingsFooter } from "./PlatformSettingsCard";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // INPUTS
 // ─────────────────────────────────────────────────────────────────────────────
-export { AppSearchInput } from "./AppSearchInput";
-export { AppSelect } from "./AppSelect";
-export { AppCheckboxGroup, type CheckboxOption } from "./AppCheckboxGroup";
+export { PlatformSearchInput } from "./PlatformSearchInput";
+export { PlatformSelect } from "./PlatformSelect";
+export { PlatformCheckboxGroup, type CheckboxOption } from "./PlatformCheckboxGroup";
 
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DROPDOWNS
 // ─────────────────────────────────────────────────────────────────────────────
-export { AppDropdown, type AppDropdownItem, type AppDropdownProps } from "./AppDropdown";
+export { PlatformDropdown, type PlatformDropdownItem, type PlatformDropdownProps } from "./PlatformDropdown";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PANELS / MODALS
 // ─────────────────────────────────────────────────────────────────────────────
-export { AppPanel, AppPanelFooter } from "./AppPanel";
+export { PlatformPanel, PlatformPanelFooter } from "./PlatformPanel";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TABLES
 // ─────────────────────────────────────────────────────────────────────────────
 export {
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppTableBadge,
-  AppTableTag,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformTableBadge,
+  PlatformTableTag,
   TABLE_COLUMN_PRESETS,
   type ColumnPreset,
-} from "./AppTable";
+} from "./PlatformTable";
 
-export { AppPagination } from "./AppPagination";
+export { PlatformPagination } from "./PlatformPagination";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FEEDBACK
 // ─────────────────────────────────────────────────────────────────────────────
-export { AppAlert } from "./AppAlert";
-export { AppEmptyState } from "./AppEmptyState";
+export { PlatformAlert } from "./PlatformAlert";
+export { PlatformEmptyState } from "./PlatformEmptyState";
 
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FILTERS
 // ─────────────────────────────────────────────────────────────────────────────
 export {
-  AppFilterDrawer,
-  AppFilterSection,
-  AppFilterOption,
-  AppFilterTrigger,
-} from "./AppFilterDrawer";
+  PlatformFilterDrawer,
+  PlatformFilterSection,
+  PlatformFilterOption,
+  PlatformFilterTrigger,
+} from "./PlatformFilterDrawer";
