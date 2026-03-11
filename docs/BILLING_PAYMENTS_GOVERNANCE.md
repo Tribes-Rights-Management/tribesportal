@@ -108,7 +108,7 @@ System Console
 ```
 
 **Rules**:
-- No links to Client Portal or Licensing payments
+- No links to Tribes Admin or Licensing payments from governance views
 - No org switching inside Billing
 - Billing governance never appears inside org navigation
 
