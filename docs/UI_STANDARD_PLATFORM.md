@@ -1,10 +1,10 @@
-# App UI Standard — Global No-Drift Foundation
+# Platform UI Standard — Global No-Drift Foundation
 
 > **AUTHORITATIVE** — This document defines the canonical UI component system for the entire application.
 
 ## Overview
 
-The App UI Kit provides institutional-grade UI components that prevent styling drift across all surfaces. Every page must use these components instead of raw primitives.
+The Platform UI Kit provides institutional-grade UI components that prevent styling drift across all surfaces. Every page must use these components instead of raw primitives.
 
 ## Non-Negotiable Rules
 
