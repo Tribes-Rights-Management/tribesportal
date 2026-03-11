@@ -112,7 +112,7 @@ export function PlatformStatCard({
  * Provides responsive grid layout for stat cards.
  * Default: 1 column mobile, 2 tablet, 4 desktop
  */
-interface AppStatCardGridProps {
+interface PlatformStatCardGridProps {
   children: React.ReactNode;
   /** Number of columns on desktop */
   columns?: 2 | 3 | 4;
