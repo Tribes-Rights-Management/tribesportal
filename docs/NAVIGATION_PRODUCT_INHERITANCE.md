@@ -46,19 +46,19 @@ These rules are authoritative and must not be bypassed by UI shortcuts, routing 
 ```
 COMPANY LEVEL (System Console)
 │
-├── /admin/* routes
+├── /console/* routes
 ├── Governance surfaces only
 ├── No product navigation
 └── Platform Executive access required
 
 ORGANIZATION LEVEL (Workspaces)
 │
-├── /app/licensing/* routes
+├── /licensing/* routes
 │   └── Licensing Workspace
 │       └── Org-scoped data only
 │
-├── /app/publishing/* routes
-│   └── Client Portal Workspace
+├── /admin/* routes
+│   └── Tribes Admin Workspace
 │       └── Org-scoped data only
 │
 └── Active membership required
