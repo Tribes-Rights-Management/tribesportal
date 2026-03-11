@@ -29,7 +29,7 @@ import { ChevronRight } from "lucide-react";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppListCardProps {
+interface PlatformListCardProps {
   /** Optional header title */
   title?: string;
   /** Optional header action (button, link, etc.) */
