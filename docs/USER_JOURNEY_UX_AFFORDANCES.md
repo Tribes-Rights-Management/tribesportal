@@ -330,7 +330,7 @@ This document proves the system is coherent, humane, and institutional—not hea
 ### Landing Logic
 
 ```
-IF platform_role = 'platform_admin' → /admin
+IF platform_role = 'platform_admin' → /console
 ELSE IF active_memberships.length = 1 → that workspace
 ELSE IF last_active_scope exists → restore it
 ELSE → workspace selector
