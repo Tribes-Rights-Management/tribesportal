@@ -105,7 +105,7 @@ The application uses a layered component architecture:
 ```
 Radix UI primitives
   → shadcn/ui components (src/components/ui/)
-    → app-ui design system (src/components/app-ui/)
+    → platform-ui design system (src/components/platform-ui/)
       → Page components
 ```
 
