@@ -36,7 +36,7 @@ interface PlatformCheckboxGroupProps {
   className?: string;
 }
 
-export function AppCheckboxGroup({
+export function PlatformCheckboxGroup({
   label,
   options,
   selected,
