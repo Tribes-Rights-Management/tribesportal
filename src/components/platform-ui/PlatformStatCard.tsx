@@ -65,7 +65,7 @@ const sizeConfig: Record<StatCardSize, { padding: string; valueSize: string; lab
   },
 };
 
-export function AppStatCard({
+export function PlatformStatCard({
   label,
   value,
   subtitle,
