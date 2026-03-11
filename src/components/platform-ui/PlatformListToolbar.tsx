@@ -2,7 +2,7 @@ import * as React from "react";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface AppListToolbarProps {
+interface PlatformListToolbarProps {
   /** Search placeholder text */
   placeholder?: string;
   /** Current search value */
