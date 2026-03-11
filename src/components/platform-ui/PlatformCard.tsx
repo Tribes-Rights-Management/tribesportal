@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppCardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface PlatformCardProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Card size variant */
   size?: "sm" | "md" | "lg";
   /** Whether to use transparent background */
