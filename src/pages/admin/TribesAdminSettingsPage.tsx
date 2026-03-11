@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
 
 import {
-  AppPageLayout,
-  AppSection,
-  AppListCard,
-  AppListRow,
+  PlatformPageLayout,
+  PlatformSection,
+  PlatformListCard,
+  PlatformListRow,
 } from "@/components/platform-ui";
 
 /**
@@ -17,32 +17,32 @@ export default function TribesAdminSettingsPage() {
   const navigate = useNavigate();
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Settings"
       backLink={{ to: "/admin", label: "Dashboard" }}
     >
-      <AppSection spacing="md">
-        <AppListCard title="Account">
-          <AppListRow
+      <PlatformSection spacing="md">
+        <PlatformListCard title="Account">
+          <PlatformListRow
             title="Profile"
             subtitle="Manage your personal information"
             onClick={() => navigate("/account/profile")}
             showChevron
           />
-          <AppListRow
+          <PlatformListRow
             title="Security"
             subtitle="Password and authentication settings"
             onClick={() => navigate("/account/security")}
             showChevron
           />
-          <AppListRow
+          <PlatformListRow
             title="Preferences"
             subtitle="Theme, notifications, and display options"
             onClick={() => navigate("/account/preferences")}
             showChevron
           />
-        </AppListCard>
-      </AppSection>
-    </AppPageLayout>
+        </PlatformListCard>
+      </PlatformSection>
+    </PlatformPageLayout>
   );
 }

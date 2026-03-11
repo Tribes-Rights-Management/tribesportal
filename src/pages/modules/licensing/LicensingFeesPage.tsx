@@ -1,12 +1,12 @@
 import { DollarSign } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import {
-  AppPageLayout,
-  AppCard,
-  AppCardHeader,
-  AppCardTitle,
-  AppCardBody,
-  AppEmptyState,
+  PlatformPageLayout,
+  PlatformCard,
+  PlatformCardHeader,
+  PlatformCardTitle,
+  PlatformCardBody,
+  PlatformEmptyState,
 } from "@/components/platform-ui";
 
 /**
@@ -20,53 +20,53 @@ export default function LicensingFeesPage() {
 
   if (!canViewOrgInvoices) {
     return (
-      <AppPageLayout title="License Fees" backLink={{ to: "/licensing/payments", label: "Payments" }}>
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="License Fees" backLink={{ to: "/licensing/payments", label: "Payments" }}>
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             <div className="text-center py-12">
               <p className="text-muted-foreground">Access restricted</p>
             </div>
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
   return (
-    <AppPageLayout title="License Fees" backLink={{ to: "/licensing/payments", label: "Payments" }}>
+    <PlatformPageLayout title="License Fees" backLink={{ to: "/licensing/payments", label: "Payments" }}>
       {/* Outstanding Fees */}
-      <AppCard className="mb-6">
-        <AppCardHeader>
+      <PlatformCard className="mb-6">
+        <PlatformCardHeader>
           <div className="flex items-center justify-between">
-            <AppCardTitle>Outstanding Fees</AppCardTitle>
+            <PlatformCardTitle>Outstanding Fees</PlatformCardTitle>
             <span className="text-[12px] text-muted-foreground flex items-center gap-1">
               <DollarSign className="h-3 w-3" />
               $0.00 total
             </span>
           </div>
-        </AppCardHeader>
-        <AppCardBody>
-          <AppEmptyState
+        </PlatformCardHeader>
+        <PlatformCardBody>
+          <PlatformEmptyState
             icon="file"
             message="No outstanding fees"
             description="All license fees are paid"
           />
-        </AppCardBody>
-      </AppCard>
+        </PlatformCardBody>
+      </PlatformCard>
 
       {/* Fee History */}
-      <AppCard>
-        <AppCardHeader>
-          <AppCardTitle>Fee History</AppCardTitle>
-        </AppCardHeader>
-        <AppCardBody>
-          <AppEmptyState
+      <PlatformCard>
+        <PlatformCardHeader>
+          <PlatformCardTitle>Fee History</PlatformCardTitle>
+        </PlatformCardHeader>
+        <PlatformCardBody>
+          <PlatformEmptyState
             icon="file"
             message="No fee history"
             description="Paid fees will appear here"
           />
-        </AppCardBody>
-      </AppCard>
-    </AppPageLayout>
+        </PlatformCardBody>
+      </PlatformCard>
+    </PlatformPageLayout>
   );
 }

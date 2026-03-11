@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AppButton } from "@/components/platform-ui";
+import { PlatformButton } from "@/components/platform-ui";
 import { Textarea } from "@/components/ui/textarea";
 import { useUpdateQueueStatus } from "@/hooks/use-song-queue";
 import { supabase } from "@/integrations/supabase/client";
@@ -92,17 +92,17 @@ export function QueueStatusControl({ queueId, currentStatus, songData, onStatusC
             className="min-h-[60px]"
           />
           <div className="flex gap-2">
-            <AppButton
+            <PlatformButton
               size="sm"
               onClick={() => handleStatusChange("needs_revision", { revisionRequest })}
               disabled={!revisionRequest.trim() || updateStatus.isPending}
               loading={updateStatus.isPending}
             >
               Send Revision Request
-            </AppButton>
-            <AppButton size="sm" variant="ghost" onClick={() => setShowRevisionInput(false)}>
+            </PlatformButton>
+            <PlatformButton size="sm" variant="ghost" onClick={() => setShowRevisionInput(false)}>
               Cancel
-            </AppButton>
+            </PlatformButton>
           </div>
         </div>
       )}
@@ -117,7 +117,7 @@ export function QueueStatusControl({ queueId, currentStatus, songData, onStatusC
             className="min-h-[60px]"
           />
           <div className="flex gap-2">
-            <AppButton
+            <PlatformButton
               size="sm"
               variant="danger"
               onClick={() => handleStatusChange("rejected", { rejectionReason })}
@@ -125,10 +125,10 @@ export function QueueStatusControl({ queueId, currentStatus, songData, onStatusC
               loading={updateStatus.isPending}
             >
               Confirm Rejection
-            </AppButton>
-            <AppButton size="sm" variant="ghost" onClick={() => setShowRejectInput(false)}>
+            </PlatformButton>
+            <PlatformButton size="sm" variant="ghost" onClick={() => setShowRejectInput(false)}>
               Cancel
-            </AppButton>
+            </PlatformButton>
           </div>
         </div>
       )}
@@ -137,38 +137,38 @@ export function QueueStatusControl({ queueId, currentStatus, songData, onStatusC
       {!showRejectInput && !showRevisionInput && (
         <div className="flex flex-wrap gap-2">
           {(currentStatus === "submitted" || currentStatus === "pending") && (
-            <AppButton
+            <PlatformButton
               size="sm"
               onClick={() => handleStatusChange("in_review")}
               loading={updateStatus.isPending}
             >
               Start Review
-            </AppButton>
+            </PlatformButton>
           )}
 
           {(currentStatus === "in_review" || currentStatus === "needs_revision") && (
             <>
-              <AppButton
+              <PlatformButton
                 size="sm"
                 onClick={handleApprove}
                 loading={isApproving}
               >
                 Complete Registration
-              </AppButton>
-              <AppButton
+              </PlatformButton>
+              <PlatformButton
                 size="sm"
                 variant="secondary"
                 onClick={() => setShowRevisionInput(true)}
               >
                 Request Update
-              </AppButton>
-              <AppButton
+              </PlatformButton>
+              <PlatformButton
                 size="sm"
                 variant="danger"
                 onClick={() => setShowRejectInput(true)}
               >
                 Reject
-              </AppButton>
+              </PlatformButton>
             </>
           )}
         </div>

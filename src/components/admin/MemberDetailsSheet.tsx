@@ -5,8 +5,8 @@ import { AppSheet, AppSheetBody } from "@/components/ui/app-sheet";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AuthorityRecordSheet } from "./AuthorityRecordSheet";
 import {
-  AppDetailRow,
-  AppSettingsCard,
+  PlatformDetailRow,
+  PlatformSettingsCard,
 } from "@/components/platform-ui";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -71,10 +71,8 @@ export function MemberDetailsSheet({
   const [authorityRecordOpen, setAuthorityRecordOpen] = useState(false);
   const [governanceOpen, setGovernanceOpen] = useState(false);
 
-  // Scroll to top when sheet opens
   useEffect(() => {
     if (open) {
-      // Small delay to ensure sheet is rendered
       setTimeout(() => {
         const sheetBody = document.querySelector('[data-sheet-body]');
         if (sheetBody) sheetBody.scrollTop = 0;
@@ -142,15 +140,11 @@ export function MemberDetailsSheet({
         width="lg"
       >
         <AppSheetBody className="space-y-6 overflow-x-hidden" data-sheet-body>
-          {/* ═══════════════════════════════════════════════════════════════════
-              SECTION 1: IDENTITY
-              ═══════════════════════════════════════════════════════════════════ */}
-          <AppSettingsCard
+          <PlatformSettingsCard
             title="Identity"
             description="Account identification and status"
           >
-            {/* Email with copy */}
-            <AppDetailRow
+            <PlatformDetailRow
               label="Email"
               value={
                 <>
@@ -164,47 +158,37 @@ export function MemberDetailsSheet({
               }
               variant="copyable"
             />
-
-            {/* Account Created */}
-            <AppDetailRow
+            <PlatformDetailRow
               label="Account Created"
               value={formatDate(user.created_at)}
               variant="readonly"
             />
-
-            {/* Account Status */}
-            <AppDetailRow
+            <PlatformDetailRow
               label="Account Status"
               value={formatStatus(user.status)}
               variant="readonly"
             />
-          </AppSettingsCard>
+          </PlatformSettingsCard>
 
-          {/* ═══════════════════════════════════════════════════════════════════
-              SECTION 2: PLATFORM AUTHORITY
-              ═══════════════════════════════════════════════════════════════════ */}
-          <AppSettingsCard
+          <PlatformSettingsCard
             title="Platform Authority"
             description={isCurrentUser 
               ? "You cannot modify your own access" 
               : "Role determines system-wide authority level"}
           >
-            <AppDetailRow
+            <PlatformDetailRow
               label="Platform Role"
               value={formatPlatformRole(user.platform_role)}
               variant="readonly"
             />
-            <AppDetailRow
+            <PlatformDetailRow
               label="Authority & Permissions"
               value="View record"
               variant="select"
               onSelect={() => setAuthorityRecordOpen(true)}
             />
-          </AppSettingsCard>
+          </PlatformSettingsCard>
 
-          {/* ═══════════════════════════════════════════════════════════════════
-              SECTION 3: ORGANIZATION MEMBERSHIPS
-              ═══════════════════════════════════════════════════════════════════ */}
           <section>
             <h2 
               className="text-[10px] font-medium uppercase tracking-[0.08em] mb-3"
@@ -228,32 +212,29 @@ export function MemberDetailsSheet({
             ) : (
               <div className="space-y-3">
                 {user.memberships.map((membership) => (
-                  <AppSettingsCard
+                  <PlatformSettingsCard
                     key={membership.id}
                     title={membership.tenant_name}
                     description={formatRole(membership.role)}
                   >
-                    <AppDetailRow
+                    <PlatformDetailRow
                       label="Context Access"
                       value={membership.allowed_contexts.length === 0 
                         ? "None" 
                         : membership.allowed_contexts.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(", ")}
                       variant="readonly"
                     />
-                    <AppDetailRow
+                    <PlatformDetailRow
                       label="Status"
                       value={formatStatus(membership.status)}
                       variant="readonly"
                     />
-                  </AppSettingsCard>
+                  </PlatformSettingsCard>
                 ))}
               </div>
             )}
           </section>
 
-          {/* ═══════════════════════════════════════════════════════════════════
-              SECTION 4: GOVERNANCE (Collapsed by default)
-              ═══════════════════════════════════════════════════════════════════ */}
           <Collapsible open={governanceOpen} onOpenChange={setGovernanceOpen}>
             <CollapsibleTrigger asChild>
               <button
@@ -271,20 +252,19 @@ export function MemberDetailsSheet({
               </button>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <AppSettingsCard
+              <PlatformSettingsCard
                 title="Audit Metadata"
                 description="Authority changes are logged and timestamped"
               >
-                <AppDetailRow
+                <PlatformDetailRow
                   label="Record Created"
                   value={formatDate(user.created_at)}
                   variant="readonly"
                 />
-              </AppSettingsCard>
+              </PlatformSettingsCard>
             </CollapsibleContent>
           </Collapsible>
 
-          {/* Self-view notice */}
           {isCurrentUser && (
             <div 
               className="p-4 rounded-lg text-[12px]"
@@ -300,7 +280,6 @@ export function MemberDetailsSheet({
         </AppSheetBody>
       </AppSheet>
 
-      {/* Authority Record Child Sheet */}
       <AuthorityRecordSheet
         open={authorityRecordOpen}
         onOpenChange={setAuthorityRecordOpen}

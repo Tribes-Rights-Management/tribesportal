@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { AppPageLayout, AppEmptyState, AppTableBadge } from "@/components/platform-ui";
+import { PlatformPageLayout, PlatformEmptyState, PlatformTableBadge } from "@/components/platform-ui";
 import ClientOverviewTab from "./partials/client/ClientOverviewTab";
 import ClientDocumentsTab from "./partials/client/ClientDocumentsTab";
 import ClientTeamTab from "./partials/client/ClientTeamTab";
@@ -40,30 +40,30 @@ export default function RightsClientDetailPage() {
 
   if (isLoading) {
     return (
-      <AppPageLayout title="Loading..." backLink={{ to: "/rights/clients", label: "Back to Clients" }}>
-        <AppEmptyState message="Loading client details..." size="lg" />
-      </AppPageLayout>
+      <PlatformPageLayout title="Loading..." backLink={{ to: "/rights/clients", label: "Back to Clients" }}>
+        <PlatformEmptyState message="Loading client details..." size="lg" />
+      </PlatformPageLayout>
     );
   }
 
   if (!client) {
     return (
-      <AppPageLayout title="Client Not Found" backLink={{ to: "/rights/clients", label: "Back to Clients" }}>
-        <AppEmptyState message="Client not found" description="This client may have been removed." size="lg" />
-      </AppPageLayout>
+      <PlatformPageLayout title="Client Not Found" backLink={{ to: "/rights/clients", label: "Back to Clients" }}>
+        <PlatformEmptyState message="Client not found" description="This client may have been removed." size="lg" />
+      </PlatformPageLayout>
     );
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title={client.name}
       backLink={{ to: "/rights/clients", label: "Back to Clients" }}
     >
       {/* Status + email bar */}
       <div className="flex items-center gap-3 mb-6">
-        <AppTableBadge variant={statusVariant[client.status] || "default"}>
+        <PlatformTableBadge variant={statusVariant[client.status] || "default"}>
           {client.status}
-        </AppTableBadge>
+        </PlatformTableBadge>
         {client.primary_email && (
           <span className="text-sm text-muted-foreground">{client.primary_email}</span>
         )}
@@ -93,6 +93,6 @@ export default function RightsClientDetailPage() {
       {activeTab === "documents" && <ClientDocumentsTab clientId={client.id} />}
       {activeTab === "team" && <ClientTeamTab clientId={client.id} />}
       {activeTab === "settings" && <ClientSettingsTab client={client} />}
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
