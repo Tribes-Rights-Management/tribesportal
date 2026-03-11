@@ -1,17 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import {
-  AppPageLayout,
-  AppStatCard,
-  AppStatCardGrid,
-  AppSection,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
+  PlatformPageLayout,
+  PlatformStatCard,
+  PlatformStatCardGrid,
+  PlatformSection,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
 } from "@/components/platform-ui";
 import { useQueueStats } from "@/hooks/use-song-queue";
 import { useQuery } from "@tanstack/react-query";
@@ -74,51 +74,51 @@ export default function RightsOverview() {
   });
 
   return (
-    <AppPageLayout title="Overview">
-      <AppStatCardGrid columns={3} className="mb-6">
-        <AppStatCard label="Active Clients" value={clientCount ?? "—"} onClick={() => navigate("/rights/clients")} />
+    <PlatformPageLayout title="Overview">
+      <PlatformStatCardGrid columns={3} className="mb-6">
+        <PlatformStatCard label="Active Clients" value={clientCount ?? "—"} onClick={() => navigate("/rights/clients")} />
         
-        <AppStatCard label="Songs in Queue" value={queueStats?.total ?? "—"} loading={statsLoading} onClick={() => navigate("/rights/queue")} />
-        <AppStatCard label="Catalog" value={songCount ?? "—"} onClick={() => navigate("/rights/catalog")} />
-      </AppStatCardGrid>
+        <PlatformStatCard label="Songs in Queue" value={queueStats?.total ?? "—"} loading={statsLoading} onClick={() => navigate("/rights/queue")} />
+        <PlatformStatCard label="Catalog" value={songCount ?? "—"} onClick={() => navigate("/rights/catalog")} />
+      </PlatformStatCardGrid>
 
       {/* Recently added songs */}
-      <AppSection spacing="md">
+      <PlatformSection spacing="md">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-medium text-foreground">Recently added</h2>
           <button onClick={() => navigate("/rights/catalog")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
             View all →
           </button>
         </div>
-        <AppTable columns={["10%", "25%", "30%", "15%", "20%"]}>
-          <AppTableHeader>
-            <AppTableRow>
-              <AppTableHead>ID</AppTableHead>
-              <AppTableHead>Title</AppTableHead>
-              <AppTableHead>Songwriters</AppTableHead>
-              <AppTableHead align="right">Control</AppTableHead>
-              <AppTableHead>Last updated</AppTableHead>
-            </AppTableRow>
-          </AppTableHeader>
-          <AppTableBody>
+        <PlatformTable columns={["10%", "25%", "30%", "15%", "20%"]}>
+          <PlatformTableHeader>
+            <PlatformTableRow>
+              <PlatformTableHead>ID</PlatformTableHead>
+              <PlatformTableHead>Title</PlatformTableHead>
+              <PlatformTableHead>Songwriters</PlatformTableHead>
+              <PlatformTableHead align="right">Control</PlatformTableHead>
+              <PlatformTableHead>Last updated</PlatformTableHead>
+            </PlatformTableRow>
+          </PlatformTableHeader>
+          <PlatformTableBody>
             {recentSongs.length === 0 ? (
-              <AppTableEmpty colSpan={5}>
+              <PlatformTableEmpty colSpan={5}>
                 <span className="text-muted-foreground text-sm">No songs in catalog</span>
-              </AppTableEmpty>
+              </PlatformTableEmpty>
             ) : (
               recentSongs.map((song: any) => (
-                <AppTableRow key={song.id} clickable onClick={() => navigate(`/rights/catalog/${song.song_number}`)}>
-                  <AppTableCell muted>{song.song_number}</AppTableCell>
-                  <AppTableCell className="font-medium">{song.title}</AppTableCell>
-                  <AppTableCell muted>{song.songwriters.join(" / ") || "—"}</AppTableCell>
-                  <AppTableCell align="right" muted>{song.control > 0 ? `${song.control}%` : "—"}</AppTableCell>
-                  <AppTableCell muted>{format(new Date(song.updated_at), "MMM d, yyyy")}</AppTableCell>
-                </AppTableRow>
+                <PlatformTableRow key={song.id} clickable onClick={() => navigate(`/rights/catalog/${song.song_number}`)}>
+                  <PlatformTableCell muted>{song.song_number}</PlatformTableCell>
+                  <PlatformTableCell className="font-medium">{song.title}</PlatformTableCell>
+                  <PlatformTableCell muted>{song.songwriters.join(" / ") || "—"}</PlatformTableCell>
+                  <PlatformTableCell align="right" muted>{song.control > 0 ? `${song.control}%` : "—"}</PlatformTableCell>
+                  <PlatformTableCell muted>{format(new Date(song.updated_at), "MMM d, yyyy")}</PlatformTableCell>
+                </PlatformTableRow>
               ))
             )}
-          </AppTableBody>
-        </AppTable>
-      </AppSection>
-    </AppPageLayout>
+          </PlatformTableBody>
+        </PlatformTable>
+      </PlatformSection>
+    </PlatformPageLayout>
   );
 }

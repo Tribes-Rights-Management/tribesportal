@@ -2,22 +2,22 @@ import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { Music } from "lucide-react";
 import {
-  AppPageLayout,
-  AppStatCard,
-  AppStatCardGrid,
-  AppSection,
-  AppSectionGrid,
-  AppListCard,
-  AppListRow,
-  AppListAction,
-  AppEmptyState,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
+  PlatformPageLayout,
+  PlatformStatCard,
+  PlatformStatCardGrid,
+  PlatformSection,
+  PlatformSectionGrid,
+  PlatformListCard,
+  PlatformListRow,
+  PlatformListAction,
+  PlatformEmptyState,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
 } from "@/components/platform-ui";
 import { QueueStatusBadge } from "@/components/queue/QueueStatusBadge";
 import { useClientQueue } from "@/hooks/use-song-queue";
@@ -39,55 +39,55 @@ export default function TribesAdminDashboard() {
   };
 
   return (
-    <AppPageLayout title="Dashboard">
-      <AppSection spacing="md">
-        <AppStatCardGrid columns={4}>
-          <AppStatCard label="My Submissions" value={queueItems.length} loading={isLoading} />
-          <AppStatCard label="Pending" value={activeQueue.length} loading={isLoading} />
-          <AppStatCard label="Approved" value={queueItems.filter(i => i.status === "approved").length} loading={isLoading} />
-          <AppStatCard label="Needs Update" value={queueItems.filter(i => i.status === "needs_revision").length} loading={isLoading} />
-        </AppStatCardGrid>
-      </AppSection>
+    <PlatformPageLayout title="Dashboard">
+      <PlatformSection spacing="md">
+        <PlatformStatCardGrid columns={4}>
+          <PlatformStatCard label="My Submissions" value={queueItems.length} loading={isLoading} />
+          <PlatformStatCard label="Pending" value={activeQueue.length} loading={isLoading} />
+          <PlatformStatCard label="Approved" value={queueItems.filter(i => i.status === "approved").length} loading={isLoading} />
+          <PlatformStatCard label="Needs Update" value={queueItems.filter(i => i.status === "needs_revision").length} loading={isLoading} />
+        </PlatformStatCardGrid>
+      </PlatformSection>
 
-      <AppSection spacing="md">
+      <PlatformSection spacing="md">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-medium text-foreground">Songs in Queue</h2>
         </div>
-        <AppTable>
-          <AppTableHeader>
-            <AppTableRow>
-              <AppTableHead>Title</AppTableHead>
-              <AppTableHead>Songwriters</AppTableHead>
-              <AppTableHead align="center">Status</AppTableHead>
-              <AppTableHead>Submitted</AppTableHead>
-            </AppTableRow>
-          </AppTableHeader>
-          <AppTableBody>
+        <PlatformTable>
+          <PlatformTableHeader>
+            <PlatformTableRow>
+              <PlatformTableHead>Title</PlatformTableHead>
+              <PlatformTableHead>Songwriters</PlatformTableHead>
+              <PlatformTableHead align="center">Status</PlatformTableHead>
+              <PlatformTableHead>Submitted</PlatformTableHead>
+            </PlatformTableRow>
+          </PlatformTableHeader>
+          <PlatformTableBody>
             {topQueue.length === 0 ? (
-              <AppTableEmpty colSpan={4}>
+              <PlatformTableEmpty colSpan={4}>
                 <span className="text-muted-foreground text-sm">No songs in queue</span>
-              </AppTableEmpty>
+              </PlatformTableEmpty>
             ) : (
               topQueue.map(item => (
-                <AppTableRow key={item.id} clickable onClick={() => navigate(`/admin/queue/${item.submission_number || item.id}`)}>
-                  <AppTableCell className="font-medium">{getSongTitle(item)}</AppTableCell>
-                  <AppTableCell muted>{getWriters(item)}</AppTableCell>
-                  <AppTableCell align="center"><QueueStatusBadge status={item.status} clientFacing /></AppTableCell>
-                  <AppTableCell muted>{format(new Date(item.submitted_at), "MMM d, yyyy")}</AppTableCell>
-                </AppTableRow>
+                <PlatformTableRow key={item.id} clickable onClick={() => navigate(`/admin/queue/${item.submission_number || item.id}`)}>
+                  <PlatformTableCell className="font-medium">{getSongTitle(item)}</PlatformTableCell>
+                  <PlatformTableCell muted>{getWriters(item)}</PlatformTableCell>
+                  <PlatformTableCell align="center"><QueueStatusBadge status={item.status} clientFacing /></PlatformTableCell>
+                  <PlatformTableCell muted>{format(new Date(item.submitted_at), "MMM d, yyyy")}</PlatformTableCell>
+                </PlatformTableRow>
               ))
             )}
-          </AppTableBody>
-        </AppTable>
-      </AppSection>
+          </PlatformTableBody>
+        </PlatformTable>
+      </PlatformSection>
 
-      <AppSectionGrid columns={2}>
-        <AppListCard title="Quick Actions" className="h-full">
-          <AppListRow title="Submit New Song" subtitle="Add a song to the catalog" onClick={() => navigate("/rights/songs/submit")} />
-          <AppListRow title="View Catalog" subtitle="Browse your registered songs" onClick={() => navigate("/admin/catalog")} />
-          <AppListRow title="Manage Documents" subtitle="Contracts and agreements" onClick={() => navigate("/admin/documents")} />
-        </AppListCard>
-      </AppSectionGrid>
-    </AppPageLayout>
+      <PlatformSectionGrid columns={2}>
+        <PlatformListCard title="Quick Actions" className="h-full">
+          <PlatformListRow title="Submit New Song" subtitle="Add a song to the catalog" onClick={() => navigate("/rights/songs/submit")} />
+          <PlatformListRow title="View Catalog" subtitle="Browse your registered songs" onClick={() => navigate("/admin/catalog")} />
+          <PlatformListRow title="Manage Documents" subtitle="Contracts and agreements" onClick={() => navigate("/admin/documents")} />
+        </PlatformListCard>
+      </PlatformSectionGrid>
+    </PlatformPageLayout>
   );
 }
