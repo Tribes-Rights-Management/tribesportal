@@ -38,7 +38,7 @@ This document defines **which components to use where** across the Tribes Portal
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────┐ │
-│  │   SYSTEM CONSOLE    │  │    WORKSTATIONS     │  │    CLIENT PORTAL    │ │
+│  │   SYSTEM CONSOLE    │  │    WORKSTATIONS     │  │  LEGACY CLIENT VIEWS│ │
 │  │   /console/*        │  │   /help/*           │  │    /app/*           │ │
 │  │                     │  │   /licensing/*      │  │                     │ │
 │  │                     │  │   /admin/*          │  │                     │ │
