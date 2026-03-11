@@ -52,9 +52,9 @@ React 18 + TypeScript + Vite
 ## Design System — MANDATORY RULES
 
 ### The Golden Rule
-**ALL UI changes go through the `app-ui` design system. Never patch individual pages.**
+**ALL UI changes go through the `platform-ui` design system. Never patch individual pages.**
 
-Components must be created or fixed in `src/components/app-ui/` first, then consumed by pages. This prevents fragmentation and ensures consistency.
+Components must be created or fixed in `src/components/platform-ui/` first, then consumed by pages. This prevents fragmentation and ensures consistency.
 
 ### Component Kit by Context
 
