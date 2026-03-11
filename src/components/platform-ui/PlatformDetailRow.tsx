@@ -52,7 +52,7 @@ interface PlatformDetailRowProps {
   /** Row value (for readonly/editable/select/copyable) */
   value?: string | React.ReactNode | null | undefined;
   /** Visual variant */
-  variant?: AppDetailRowVariant;
+  variant?: PlatformDetailRowVariant;
   /** Icon component to display (optional) */
   icon?: React.ElementType;
   /** Helper text displayed below label (for toggle) or below value (for others) */
