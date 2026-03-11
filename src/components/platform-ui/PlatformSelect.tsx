@@ -52,7 +52,7 @@ interface PlatformSelectProps {
   /** Change handler */
   onChange: (value: string) => void;
   /** Options list */
-  options: AppSelectOption[];
+  options: PlatformSelectOption[];
   /** Placeholder when no value selected */
   placeholder?: string;
   /** Disabled state */
