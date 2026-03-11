@@ -50,7 +50,7 @@ This document defines **which components to use where** across the Tribes Portal
 │  │ @/components/console│  │                     │                          │
 │  └─────────────────────┘  └─────────────────────┘                          │
 │                                                                              │
-│  Note: /app/* (legacy client views) also uses @/components/app-ui.           │
+
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
