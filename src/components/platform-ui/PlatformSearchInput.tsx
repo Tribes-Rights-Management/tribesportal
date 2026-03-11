@@ -59,7 +59,7 @@ interface PlatformSearchInputProps {
   "aria-label"?: string;
 }
 
-export function AppSearchInput({
+export function PlatformSearchInput({
   value,
   onChange,
   onSubmit,
