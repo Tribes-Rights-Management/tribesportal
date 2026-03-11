@@ -276,7 +276,7 @@ interface PlatformTableCellProps {
   className?: string;
 }
 
-export function AppTableCell({
+export function PlatformTableCell({
   children,
   align = "left",
   muted = false,
