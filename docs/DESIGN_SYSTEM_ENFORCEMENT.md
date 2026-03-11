@@ -220,7 +220,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 // CORRECT - Import from appropriate kit
-import { AppButton, AppCard } from "@/components/app-ui";
+import { AppButton, AppCard } from "@/components/platform-ui";
 // or
 import { ConsoleButton, ConsoleCard } from "@/components/console";
 ```
