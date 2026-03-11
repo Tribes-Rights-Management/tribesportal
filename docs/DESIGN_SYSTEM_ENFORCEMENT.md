@@ -104,16 +104,16 @@ import { ConsoleButton, ConsoleChip, ConsoleCard } from "@/components/console";
 **Required Imports**:
 ```tsx
 // Page structure
-import { AppPageHeader, AppSection, AppSectionHeader } from "@/components/app-ui";
+import { AppPageHeader, AppSection, AppSectionHeader } from "@/components/platform-ui";
 
 // Lists and cards
-import { AppListCard, AppListRow, AppStatCard } from "@/components/app-ui";
+import { AppListCard, AppListRow, AppStatCard } from "@/components/platform-ui";
 
 // Buttons
-import { AppButton } from "@/components/app-ui";
+import { AppButton } from "@/components/platform-ui";
 
 // Tables
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow } from "@/components/app-ui";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow } from "@/components/platform-ui";
 ```
 
 **Visual Rules**:
