@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { SYSTEM_COPY } from "@/styles/tokens";
-import { AppButton } from "@/components/platform-ui";
+import { PlatformButton } from "@/components/platform-ui";
 
 /**
  * NoAccessPage - System boundary for accounts with no access record
@@ -40,22 +40,22 @@ export default function NoAccessPage() {
 
       {/* Actions */}
       <div className="mt-10 space-y-3">
-        <AppButton
+        <PlatformButton
           variant="primary"
           size="lg"
           className="w-full h-[48px]"
           onClick={() => window.open("https://tribesassets.com/request-access", "_blank")}
         >
           Request access
-        </AppButton>
+        </PlatformButton>
 
-        <AppButton
+        <PlatformButton
           variant="tertiary"
           onClick={signOut}
           className="w-full text-[13px]"
         >
           Sign out
-        </AppButton>
+        </PlatformButton>
       </div>
 
       {/* Contact */}

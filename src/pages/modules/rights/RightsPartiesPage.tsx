@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { AppPageLayout } from "@/components/platform-ui";
+import { PlatformPageLayout } from "@/components/platform-ui";
 import WritersTabContent from "./partials/WritersTabContent";
 import PublishersTabContent from "./partials/PublishersTabContent";
 import DealsTabContent from "./partials/DealsTabContent";
@@ -15,7 +15,7 @@ export default function RightsPartiesPage() {
   const activeTab = searchParams.get("tab") || "writers";
 
   return (
-    <AppPageLayout title="Parties">
+    <PlatformPageLayout title="Parties">
       {/* Tab bar */}
       <div className="flex items-center gap-1 border-b border-[var(--border-subtle)] mt-2 mb-5">
         {tabs.map((tab) => (
@@ -39,6 +39,6 @@ export default function RightsPartiesPage() {
       {activeTab === "writers" && <WritersTabContent />}
       {activeTab === "publishers" && <PublishersTabContent />}
       {activeTab === "deals" && <DealsTabContent />}
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

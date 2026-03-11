@@ -2,15 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppTableBadge,
-  AppEmptyState,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformTableBadge,
+  PlatformEmptyState,
 } from "@/components/platform-ui";
 
 interface ClientTeamTabProps {
@@ -56,41 +56,41 @@ export default function ClientTeamTab({ clientId }: ClientTeamTabProps) {
   }
 
   if (isLoading) {
-    return <AppEmptyState message="Loading team members..." size="lg" />;
+    return <PlatformEmptyState message="Loading team members..." size="lg" />;
   }
 
   return (
-    <AppTable columns={["25%", "25%", "15%", "20%", "15%"]}>
-      <AppTableHeader>
-        <AppTableRow header>
-          <AppTableHead>Name</AppTableHead>
-          <AppTableHead>Email</AppTableHead>
-          <AppTableHead>Role</AppTableHead>
-          <AppTableHead>Permissions</AppTableHead>
-          <AppTableHead align="right">Added</AppTableHead>
-        </AppTableRow>
-      </AppTableHeader>
-      <AppTableBody>
+    <PlatformTable columns={["25%", "25%", "15%", "20%", "15%"]}>
+      <PlatformTableHeader>
+        <PlatformTableRow header>
+          <PlatformTableHead>Name</PlatformTableHead>
+          <PlatformTableHead>Email</PlatformTableHead>
+          <PlatformTableHead>Role</PlatformTableHead>
+          <PlatformTableHead>Permissions</PlatformTableHead>
+          <PlatformTableHead align="right">Added</PlatformTableHead>
+        </PlatformTableRow>
+      </PlatformTableHeader>
+      <PlatformTableBody>
         {members.length === 0 ? (
-          <AppTableEmpty colSpan={5}>
+          <PlatformTableEmpty colSpan={5}>
             <span className="text-sm text-muted-foreground">No team members</span>
-          </AppTableEmpty>
+          </PlatformTableEmpty>
         ) : (
           members.map((member: any) => (
-            <AppTableRow key={member.id}>
-              <AppTableCell>{member.display_name || "—"}</AppTableCell>
-              <AppTableCell muted>{member.email}</AppTableCell>
-              <AppTableCell>
-                <AppTableBadge>{member.role}</AppTableBadge>
-              </AppTableCell>
-              <AppTableCell muted>{getPermissionsSummary(member)}</AppTableCell>
-              <AppTableCell align="right" muted>
+            <PlatformTableRow key={member.id}>
+              <PlatformTableCell>{member.display_name || "—"}</PlatformTableCell>
+              <PlatformTableCell muted>{member.email}</PlatformTableCell>
+              <PlatformTableCell>
+                <PlatformTableBadge>{member.role}</PlatformTableBadge>
+              </PlatformTableCell>
+              <PlatformTableCell muted>{getPermissionsSummary(member)}</PlatformTableCell>
+              <PlatformTableCell align="right" muted>
                 {format(new Date(member.created_at), "MMM d, yyyy")}
-              </AppTableCell>
-            </AppTableRow>
+              </PlatformTableCell>
+            </PlatformTableRow>
           ))
         )}
-      </AppTableBody>
-    </AppTable>
+      </PlatformTableBody>
+    </PlatformTable>
   );
 }

@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { SYSTEM_COPY } from "@/styles/tokens";
-import { AppButton } from "@/components/platform-ui";
+import { PlatformButton } from "@/components/platform-ui";
 
 /**
  * AccessSuspendedPage - System boundary for suspended access
@@ -40,13 +40,13 @@ export default function AccessSuspendedPage() {
 
       {/* Action - using Button component */}
       <div className="mt-10">
-        <AppButton
+        <PlatformButton
           onClick={signOut}
           variant="secondary"
           className="w-full h-[48px]"
         >
           Sign out
-        </AppButton>
+        </PlatformButton>
       </div>
 
       {/* Contact */}

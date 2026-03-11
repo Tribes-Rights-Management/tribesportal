@@ -1,4 +1,4 @@
-import { AppPageLayout } from "@/components/platform-ui";
+import { PlatformPageLayout } from "@/components/platform-ui";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { AUDIT_COPY } from "@/constants/institutional-copy";
@@ -34,7 +34,7 @@ export default function AuditorLanding() {
   }
 
   return (
-    <AppPageLayout title="Auditor Access">
+    <PlatformPageLayout title="Auditor Access">
       {/* Purpose Statement */}
       <p className="text-sm text-muted-foreground mb-6">
         Read-only access for external review and compliance verification
@@ -137,7 +137,7 @@ export default function AuditorLanding() {
           </div>
         </div>
       </section>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
 
