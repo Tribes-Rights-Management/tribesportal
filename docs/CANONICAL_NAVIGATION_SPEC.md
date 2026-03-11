@@ -32,11 +32,16 @@ Every route MUST declare:
 
 ```
 System Console (scope: system)
-  └─ Governance Overview (/admin)
-      └─ Active Users (/admin/users)
-          └─ Member Details (/admin/users/:userId)
-              └─ Authority Record (/admin/users/:userId/authority)
-              └─ Permissions (/admin/users/:userId/permissions)
+  └─ Governance Overview (/console)
+      └─ Active Users (/console/users)
+          └─ Member Details (/console/users/:userId)
+              └─ Authority Record (/console/users/:userId/authority)
+              └─ Permissions (/console/users/:userId/permissions)
+
+Tribes Admin (scope: organization)
+  └─ Admin Dashboard (/admin)
+      └─ Catalog (/admin/catalog)
+      └─ Documents (/admin/documents)
 ```
 
 ### Back Navigation Rules
