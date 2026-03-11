@@ -2,20 +2,20 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
 import {
-  AppPageLayout,
-  AppSection,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppResponsiveList,
-  AppItemCard,
-  AppPagination,
-  AppStatCard,
-  AppStatCardGrid,
+  PlatformPageLayout,
+  PlatformSection,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformResponsiveList,
+  PlatformItemCard,
+  PlatformPagination,
+  PlatformStatCard,
+  PlatformStatCardGrid,
 } from "@/components/platform-ui";
 import { QueueStatusBadge } from "@/components/queue/QueueStatusBadge";
 import { useStaffQueue, useQueueStats } from "@/hooks/use-song-queue";

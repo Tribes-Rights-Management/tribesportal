@@ -5,18 +5,18 @@ import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import {
-  AppPageLayout,
-  AppListToolbar,
-  AppButton,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppTableBadge,
-  AppEmptyState,
+  PlatformPageLayout,
+  PlatformListToolbar,
+  PlatformButton,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformTableBadge,
+  PlatformEmptyState,
 } from "@/components/platform-ui";
 import {
   AppModal,
