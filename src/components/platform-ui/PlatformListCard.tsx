@@ -170,7 +170,7 @@ export function PlatformListRow({
 /**
  * APP LIST ACTION — Link-style action for list headers
  */
-interface AppListActionProps {
+interface PlatformListActionProps {
   children: React.ReactNode;
   onClick?: () => void;
   className?: string;
