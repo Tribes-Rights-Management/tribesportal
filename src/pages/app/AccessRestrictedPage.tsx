@@ -25,7 +25,8 @@ export default function AccessRestrictedPage() {
     if (isPlatformAdmin) {
       navigate("/admin");
     } else if (activeContext) {
-      navigate(`/app/${activeContext}`);
+      // Navigate to canonical workspace root based on context
+      navigate(activeContext === "licensing" ? "/licensing" : "/admin");
     } else if (activeTenant) {
       navigate("/admin");
     } else {
