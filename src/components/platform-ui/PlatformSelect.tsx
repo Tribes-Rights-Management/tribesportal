@@ -41,12 +41,12 @@ import {
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppSelectOption {
+interface PlatformSelectOption {
   value: string;
   label: string;
 }
 
-interface AppSelectProps {
+interface PlatformSelectProps {
   /** Current value */
   value: string;
   /** Change handler */
