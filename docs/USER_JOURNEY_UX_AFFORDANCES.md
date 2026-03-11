@@ -37,7 +37,7 @@ This document proves the system is coherent, humane, and institutional—not hea
 
 | Role | Landing Surface |
 |------|-----------------|
-| Platform Executive | System Console (`/admin`) |
+| Platform Executive | System Console (`/console`) |
 | Org Admin only | Their org workspace |
 | Multi-org user | Last active workspace |
 | No active membership | Access Pending (`/auth/unauthorized`) |
@@ -330,7 +330,7 @@ This document proves the system is coherent, humane, and institutional—not hea
 ### Landing Logic
 
 ```
-IF platform_role = 'platform_admin' → /admin
+IF platform_role = 'platform_admin' → /console
 ELSE IF active_memberships.length = 1 → that workspace
 ELSE IF last_active_scope exists → restore it
 ELSE → workspace selector
@@ -384,8 +384,8 @@ For new users:
 ```tsx
 <FirstSessionGuardrails
   entryPoints={[
-    { id: "docs", label: "Documents", description: "View agreements", icon: "documents", href: "/portal/documents" },
-    { id: "settings", label: "Configuration", description: "Account settings", icon: "settings", href: "/portal/settings" },
+    { id: "docs", label: "Documents", description: "View agreements", icon: "documents", href: "/admin/documents" },
+    { id: "settings", label: "Configuration", description: "Account settings", icon: "settings", href: "/admin/settings" },
   ]}
   onNavigate={(href) => navigate(href)}
 />

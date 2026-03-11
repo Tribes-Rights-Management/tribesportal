@@ -32,11 +32,16 @@ Every route MUST declare:
 
 ```
 System Console (scope: system)
-  └─ Governance Overview (/admin)
-      └─ Active Users (/admin/users)
-          └─ Member Details (/admin/users/:userId)
-              └─ Authority Record (/admin/users/:userId/authority)
-              └─ Permissions (/admin/users/:userId/permissions)
+  └─ Governance Overview (/console)
+      └─ Active Users (/console/users)
+          └─ Member Details (/console/users/:userId)
+              └─ Authority Record (/console/users/:userId/authority)
+              └─ Permissions (/console/users/:userId/permissions)
+
+Tribes Admin (scope: organization)
+  └─ Admin Dashboard (/admin)
+      └─ Catalog (/admin/catalog)
+      └─ Documents (/admin/documents)
 ```
 
 ### Back Navigation Rules
@@ -61,11 +66,13 @@ On **every** route entry:
 
 | Scope | Description | Root Path |
 |-------|-------------|-----------|
-| `system` | Platform-level governance | `/admin`, `/auditor` |
-| `organization` | Org-scoped workspaces | `/licensing`, `/portal`, `/app/*` |
+| `system` | Platform-level governance | `/console`, `/auditor` |
+| `organization` | Org-scoped workspaces | `/admin`, `/licensing`, `/app/*` |
 | `user` | User account settings | `/account` |
 | `auth` | Authentication flows | `/auth/*` |
 | `public` | Public/boundary pages | `/`, `/restricted` |
+
+> **Legacy paths**: `/portal` redirects to `/admin`. `/help-workstation` redirects to `/help`. These are compatibility layers only.
 
 ### No Implicit Scope Switching
 

@@ -1,8 +1,8 @@
 # System Console UI Standard
 
-> **Canonical Reference** — Last updated: 2026-01-19
+> **Canonical Reference** — Last updated: 2026-03-11
 
-This document defines the mandatory UI patterns and components for all System Console (`/admin`) routes.
+This document defines the mandatory UI patterns and components for all System Console (`/console`) routes.
 
 ---
 
@@ -14,6 +14,8 @@ The System Console is the **company-level governance interface** for platform ad
 - **Trust** — Dark, restrained, precise
 - **Consistency** — No styling drift across pages
 
+> **Canonical Route**: `/console` is the System Console. `/admin` is the client-facing Tribes Admin workspace. These are distinct surfaces.
+
 ---
 
 ## Architectural Rules (Immutable)
@@ -24,7 +26,7 @@ The System Console is the **company-level governance interface** for platform ad
    - All console components inherit from these variables
 
 2. **Component Kit Enforcement**
-   - All `/admin` routes MUST import from `@/components/console`
+   - All `/console` routes MUST import from `@/components/console`
    - PROHIBITED: Direct imports from `@/components/ui` for `Button`, `Badge`, `Card`
    - Allowed: Utility components (`Dialog`, `Table`, `Input`) that don't have console equivalents
 
@@ -135,7 +137,7 @@ import { ConsoleSectionHeader } from "@/components/console";
   title="Security Verification"
   subtitle="Live security posture checks and RLS coverage audit"
   showBack
-  backFallback="/admin"
+  backFallback="/console"
   actions={
     <ConsoleButton intent="primary" icon={<ShieldCheck />}>
       Run checks
@@ -203,7 +205,7 @@ All variables are scoped to `.console-scope`:
 
 ## Migration Checklist
 
-When updating a `/admin` page to use the console kit:
+When updating a `/console` page to use the console kit:
 
 - [ ] Replace `Button` imports with `ConsoleButton`
 - [ ] Replace `Badge` with `ConsoleChip` for status indicators
@@ -217,6 +219,12 @@ When updating a `/admin` page to use the console kit:
 
 ## Enforcement
 
-1. **Code Review**: Any PR touching `/admin` routes must use console components
+1. **Code Review**: Any PR touching `/console` routes must use console components
 2. **Visual QA**: Primary buttons must never appear as white pills
-3. **Lint Rules** (future): Disallow `Button` imports in `src/pages/admin/**`
+3. **Lint Rules** (future): Disallow `Button` imports in `src/pages/admin/**` (console page files)
+
+---
+
+## Note on File Locations
+
+System Console page files currently reside in `src/pages/admin/` for historical reasons. The canonical route is `/console`. A future prompt may relocate these files to `src/pages/console/` for full alignment.
