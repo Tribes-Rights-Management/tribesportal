@@ -46,9 +46,9 @@ import {
 import RightsClientDetailPage from "@/pages/modules/rights/RightsClientDetailPage";
 
 // Access state pages
-import PendingApprovalPage from "@/pages/app/PendingApprovalPage";
-import NoAccessPage from "@/pages/app/NoAccessPage";
-import AccessSuspendedPage from "@/pages/app/AccessSuspendedPage";
+import PendingApprovalPage from "@/pages/access-states/PendingApprovalPage";
+import NoAccessPage from "@/pages/access-states/NoAccessPage";
+import AccessSuspendedPage from "@/pages/access-states/AccessSuspendedPage";
 
 // Tribes Admin Protected Route — gates access to Tribes Admin Workstation
 import { TribesAdminProtectedRoute } from "@/components/tribes-admin/TribesAdminProtectedRoute";
@@ -119,7 +119,7 @@ import AccountSecurityPage from "@/pages/account/AccountSecurityPage";
 import AccountPreferencesPage from "@/pages/account/AccountPreferencesPage";
 
 // Access state pages
-import AccessRestrictedPage from "@/pages/app/AccessRestrictedPage";
+import AccessRestrictedPage from "@/pages/access-states/AccessRestrictedPage";
 
 // Error pages
 import NotFoundPage from "@/pages/NotFoundPage";
