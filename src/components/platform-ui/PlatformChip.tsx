@@ -79,7 +79,7 @@ const severityConfig: Record<ChipSeverity, { label: string; cssVar: string }> = 
   low: { label: "Low", cssVar: "running" },
 };
 
-export function AppChip({
+export function PlatformChip({
   status,
   severity,
   variant = "default",
