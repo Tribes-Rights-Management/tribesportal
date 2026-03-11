@@ -165,27 +165,6 @@ import {
 
 ---
 
-### 4. Legacy Client Views (`/app/*`)
-
-**Purpose**: Legacy client-facing views retained for backward compatibility
-
-**Required Imports**:
-```tsx
-import { 
-  AppPageHeader, 
-  AppCard, 
-  AppButton,
-  AppTable,
-} from "@/components/app-ui";
-```
-
-**Visual Rules**:
-- Clean, professional
-- Less dense than internal views
-- Clear call-to-actions
-- No governance/admin patterns
-
----
 
 ## Row Component Decision Matrix
 
