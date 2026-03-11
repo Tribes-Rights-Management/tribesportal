@@ -61,9 +61,9 @@ Components must be created or fixed in `src/components/platform-ui/` first, then
 | Context | Component Source | When to Use |
 |---------|-----------------|-------------|
 | Console (`/console/*`) | `@/components/console` + `@/components/admin` + `@/components/ui/*` | ConsoleButton, ConsoleChip, ConsoleCard, AdminSection, InviteUserModal. Raw `ui/table`, `ui/select`, `ui/dialog` are acceptable here. |
-| Help Workstation (`/help/*`) | `@/components/app-ui` | All app-ui components |
-| Rights/Licensing modules | `@/components/app-ui` | All app-ui components |
-| Account settings | `@/components/app-ui` | All app-ui components |
+| Help Workstation (`/help/*`) | `@/components/platform-ui` | All platform-ui components |
+| Rights/Licensing modules | `@/components/platform-ui` | All platform-ui components |
+| Account settings | `@/components/platform-ui` | All platform-ui components |
 | Auditor (`/auditor/*`) | `@/components/ui/*` + PlatformLayout | Read-only governance views. Raw `ui/table` acceptable. |
 
 ### Prohibited Patterns (NEVER do these)
