@@ -71,7 +71,7 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <AppPageLayout title="System Console">
+    <PlatformPageLayout title="System Console">
       {/* Subtitle */}
       <p 
         className="text-[13px] md:text-[14px] -mt-2 mb-6"
@@ -220,6 +220,6 @@ export default function AdminDashboard() {
           </footer>
         </div>
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

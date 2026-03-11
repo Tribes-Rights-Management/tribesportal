@@ -76,7 +76,7 @@ export default function AuditorActivityLogPage() {
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Activity Log"
       backLink={{ to: "/auditor", label: "Auditor Portal" }}
     >
@@ -105,7 +105,7 @@ export default function AuditorActivityLogPage() {
         loading={loading}
         // No export for auditors — read-only
       />
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
 
