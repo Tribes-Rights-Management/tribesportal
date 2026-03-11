@@ -332,7 +332,7 @@ export function PlatformTableEmpty({ colSpan, children, className }: PlatformTab
 
 type BadgeVariant = "default" | "success" | "warning" | "error" | "info";
 
-interface AppTableBadgeProps {
+interface PlatformTableBadgeProps {
   children: React.ReactNode;
   variant?: BadgeVariant;
   className?: string;
