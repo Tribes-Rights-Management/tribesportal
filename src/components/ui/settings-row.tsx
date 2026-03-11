@@ -11,7 +11,7 @@
  *   import { SettingsRow, SettingsSectionCard } from "@/components/ui/settings-row";
  *
  *   // After (correct):
- *   import { AppDetailRow, AppSettingsCard, AppSettingsFooter } from "@/components/app-ui";
+ *   import { AppDetailRow, AppSettingsCard, AppSettingsFooter } from "@/components/platform-ui";
  *
  * These exports are preserved for backward compatibility only.
  * All new code MUST use app-ui components.
