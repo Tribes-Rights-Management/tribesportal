@@ -22,7 +22,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-interface AppResponsiveListProps<T> {
+interface PlatformResponsiveListProps<T> {
   /** Items to display */
   items: T[];
   /** Render function for mobile card view */
