@@ -298,7 +298,7 @@ function MobileControls() {
               <DropdownMenuItem
                 onClick={() => {
                   setActiveContext("publishing");
-                  navigate("/app/publishing");
+                  navigate("/admin");
                 }}
                 className={cn(
                   "text-[13px] focus:bg-white/5",
