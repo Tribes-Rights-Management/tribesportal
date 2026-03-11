@@ -48,7 +48,7 @@ export interface PlatformDropdownProps {
   className?: string;
 }
 
-export function AppDropdown({
+export function PlatformDropdown({
   trigger,
   items,
   align = "end",
