@@ -5,7 +5,7 @@
  * SINGLE IMPORT POINT FOR ALL CONSOLE COMPONENTS
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * All /admin routes MUST import from this index instead of generic
+ * All /console routes MUST import from this index instead of generic
  * @/components/ui primitives to enforce institutional styling.
  * 
  * USAGE:
@@ -17,7 +17,7 @@
  * } from "@/components/console";
  * 
  * GUARDRAILS:
- * - Do not import Button, Badge, Card from @/components/ui in /admin routes
+ * - Do not import Button, Badge, Card from @/components/ui in /console routes
  * - All console styling flows through .console-scope CSS variables
  * ═══════════════════════════════════════════════════════════════════════════
  */

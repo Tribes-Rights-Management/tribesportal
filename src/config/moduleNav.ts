@@ -133,13 +133,13 @@ export function getModuleLabel(moduleKey: ModuleKey): string {
     case "console":
       return "System Console";
     case "admin":
-      return "Admin";
+      return "Tribes Admin";
     case "licensing":
       return "Licensing";
     case "rights":
       return "Rights";
     case "help":
-      return "Help";
+      return "Help Workstation";
     default:
       return "";
   }

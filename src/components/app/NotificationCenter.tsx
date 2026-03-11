@@ -505,10 +505,10 @@ export function NotificationCenter() {
           navigate(`/licensing/requests/${notification.record_id}`);
           break;
         case "payment":
-          navigate(`/portal/payments/${notification.record_id}`);
+          navigate(`/admin/payments/${notification.record_id}`);
           break;
         case "user":
-          navigate(`/admin/users/${notification.record_id}`);
+          navigate(`/console/users/${notification.record_id}`);
           break;
         default:
           // Stay on current page

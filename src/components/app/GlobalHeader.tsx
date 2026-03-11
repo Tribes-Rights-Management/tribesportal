@@ -488,16 +488,16 @@ export function GlobalHeader() {
       {/* Right: Module nav + Account */}
       <div className="flex items-center gap-1">
         {/* Product navigation - ONLY visible with active workspace */}
-        {currentMode !== "admin" && (
+        {currentMode !== "auditor" && (
           <nav className="flex items-center gap-1 mr-3">
-            {/* Tribes Admin (was Client Portal) - organization-scoped */}
+            {/* Tribes Admin — canonical route: /admin */}
             {showPortal && (
               <button
-                onClick={() => navigate("/portal")}
+                onClick={() => navigate("/admin")}
                 className={cn(
                   "h-8 px-3 rounded-lg text-[13px] font-medium transition-colors duration-150",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3]",
-                  (currentMode === "portal" || currentMode === "publishing")
+                  (currentMode === "admin" || currentMode === "publishing")
                     ? "text-foreground bg-muted"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
