@@ -4,7 +4,7 @@ import {
 } from "@/components/app-ui";
 
 /**
- * Catalog — Client Portal
+ * Catalog — Legacy client-facing view (/app/publishing)
  */
 export default function PublishingCatalog() {
   return (
