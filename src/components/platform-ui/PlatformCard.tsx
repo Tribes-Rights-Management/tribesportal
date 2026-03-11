@@ -76,7 +76,7 @@ export function PlatformCardHeader({
   );
 }
 
-export function AppCardTitle({
+export function PlatformCardTitle({
   className,
   ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) {
