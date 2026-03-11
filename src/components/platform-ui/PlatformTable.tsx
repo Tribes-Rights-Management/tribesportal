@@ -185,7 +185,7 @@ export function PlatformTableRow({
 
 type SortDirection = "asc" | "desc" | null;
 
-interface AppTableHeadProps {
+interface PlatformTableHeadProps {
   children?: React.ReactNode;
   /** Enable sorting */
   sortable?: boolean;
