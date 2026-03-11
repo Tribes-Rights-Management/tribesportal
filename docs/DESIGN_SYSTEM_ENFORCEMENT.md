@@ -165,7 +165,7 @@ import {
 
 ### 4. Legacy Client Views (`/app/*`)
 
-**Purpose**: External client-facing views
+**Purpose**: Legacy client-facing views retained for backward compatibility
 
 **Required Imports**:
 ```tsx
