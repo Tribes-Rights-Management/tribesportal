@@ -84,7 +84,7 @@ export function PlatformResponsiveList<T>({
  * - Optional status chip
  * - Click handler
  */
-interface AppItemCardProps {
+interface PlatformItemCardProps {
   /** Primary title */
   title: string;
   /** Secondary subtitle */
