@@ -67,7 +67,7 @@ On **every** route entry:
 | Scope | Description | Root Path |
 |-------|-------------|-----------|
 | `system` | Platform-level governance | `/console`, `/auditor` |
-| `organization` | Org-scoped workspaces | `/admin`, `/licensing`, `/app/*` |
+| `organization` | Org-scoped workspaces | `/admin`, `/licensing` |
 | `user` | User account settings | `/account` |
 | `auth` | Authentication flows | `/auth/*` |
 | `public` | Public/boundary pages | `/`, `/restricted` |
