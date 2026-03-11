@@ -155,7 +155,7 @@ import {
   AppButton,
   AppTable,
   AppListCard,
-} from "@/components/app-ui";
+} from "@/components/platform-ui";
 ```
 
 **Visual Rules**:
