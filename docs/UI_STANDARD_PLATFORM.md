@@ -21,7 +21,7 @@ import { AppButton, AppChip, AppCard, AppSectionHeader } from "@/components/plat
 import { Button } from "@/components/ui/button";
 
 // ✅ CORRECT
-import { AppButton } from "@/components/app-ui";
+import { AppButton } from "@/components/platform-ui";
 ```
 
 ### 2. No One-Off Styling
