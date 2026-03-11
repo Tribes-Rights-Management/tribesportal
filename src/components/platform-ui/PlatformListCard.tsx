@@ -121,7 +121,7 @@ export function PlatformListRow({
   showChevron = false,
   onClick,
   className,
-}: AppListRowProps) {
+}: PlatformListRowProps) {
   const isClickable = !!onClick;
   const showRightChevron = showChevron || isClickable;
 
