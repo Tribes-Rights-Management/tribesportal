@@ -3,13 +3,13 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
-  PlatformTable, 
-  PlatformTableHeader, 
-  PlatformTableBody, 
-  PlatformTableHead, 
-  PlatformTableRow, 
-  PlatformTableCell,
-  PlatformTableEmpty 
+  AppTable, 
+  AppTableHeader, 
+  AppTableBody, 
+  AppTableHead, 
+  AppTableRow, 
+  AppTableCell,
+  AppTableEmpty 
 } from "@/components/platform-ui";
 import { EMPTY_STATES, BUTTON_LABELS } from "@/constants/institutional-copy";
 

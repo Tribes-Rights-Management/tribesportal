@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PlatformPageLayout, PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableRow, PlatformTableHead, PlatformTableCell, PlatformTableEmpty } from "@/components/platform-ui";
+import { AppPageLayout, AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty } from "@/components/platform-ui";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";

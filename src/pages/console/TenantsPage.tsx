@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableHead, PlatformTableRow, PlatformTableCell, PlatformPageLayout, PlatformButton } from "@/components/platform-ui";
+import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell, AppPageLayout, AppButton } from "@/components/platform-ui";
 import { ConsoleButton } from "@/components/console";
 import { Plus, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";

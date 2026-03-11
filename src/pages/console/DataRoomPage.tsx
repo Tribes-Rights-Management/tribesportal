@@ -17,7 +17,7 @@ import {
   Users,
   Eye
 } from "lucide-react";
-import { PlatformPageLayout, PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableHead, PlatformTableRow, PlatformTableCell, PlatformTableEmpty } from "@/components/platform-ui";
+import { AppPageLayout, AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell, AppTableEmpty } from "@/components/platform-ui";
 import { ConsoleButton, ConsoleChip } from "@/components/console";
 import {
   AppModal,

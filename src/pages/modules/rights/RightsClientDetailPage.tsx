@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { PlatformPageLayout, PlatformEmptyState, PlatformTableBadge } from "@/components/platform-ui";
+import { AppPageLayout, AppEmptyState, AppTableBadge } from "@/components/platform-ui";
 import ClientOverviewTab from "./partials/client/ClientOverviewTab";
 import ClientDocumentsTab from "./partials/client/ClientDocumentsTab";
 import ClientTeamTab from "./partials/client/ClientTeamTab";

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableRow, PlatformTableHead, PlatformTableCell, PlatformPageLayout, PlatformCard, PlatformEmptyState, PlatformButton } from "@/components/platform-ui";
+import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppPageLayout, AppCard, AppEmptyState, AppButton } from "@/components/platform-ui";
 import { Badge } from "@/components/ui/badge";
 import { Plus, MoreHorizontal, Mail, XCircle, Shield, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
