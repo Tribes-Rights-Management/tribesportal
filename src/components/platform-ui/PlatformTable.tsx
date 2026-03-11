@@ -308,7 +308,7 @@ export function PlatformTableCell({
 // TABLE EMPTY STATE
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface AppTableEmptyProps {
+interface PlatformTableEmptyProps {
   /** Number of columns to span */
   colSpan: number;
   /** Empty state content */
