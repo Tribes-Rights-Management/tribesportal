@@ -73,7 +73,7 @@ export function PlatformStatCard({
   loading = false,
   onClick,
   className,
-}: AppStatCardProps) {
+}: PlatformStatCardProps) {
   const isClickable = !!onClick;
   const config = sizeConfig[size];
 
