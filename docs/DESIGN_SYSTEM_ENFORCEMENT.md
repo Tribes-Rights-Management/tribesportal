@@ -258,9 +258,9 @@ import { AppSection, AppSectionHeader } from "@/components/platform-ui";
 ### ❌ Mixed Kit Usage
 
 ```tsx
-// WRONG - Mixing console and app-ui in same page
+// WRONG - Mixing console and platform-ui in same page
 import { ConsoleButton } from "@/components/console";
-import { AppCard } from "@/components/app-ui";
+import { AppCard } from "@/components/platform-ui";
 
 // CORRECT - Stick to one kit per context
 import { ConsoleButton, ConsoleCard } from "@/components/console";
