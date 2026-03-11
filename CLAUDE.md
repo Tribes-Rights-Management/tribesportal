@@ -101,7 +101,7 @@ import { ConsoleButton } from "@/components/console";
 import { AppCard } from "@/components/platform-ui";
 ```
 
-### Available app-ui Components
+### Available platform-ui Components
 
 **Layout:** AppPageHeader, AppPageContainer, AppSection, AppSectionGrid, AppSectionHeader, AppDetailRow, AppDetailRowGroup, AppSettingsCard, AppSettingsFooter
 **Cards:** AppCard, AppCardHeader, AppCardTitle, AppCardDescription, AppCardBody, AppCardFooter, AppStatCard, AppStatCardGrid
