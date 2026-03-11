@@ -226,7 +226,7 @@ export function PlatformDetailRow({
  * 
  * Adds dividers between rows automatically.
  */
-interface AppDetailRowGroupProps {
+interface PlatformDetailRowGroupProps {
   children: React.ReactNode;
   /** Whether to show dividers between rows */
   divided?: boolean;
