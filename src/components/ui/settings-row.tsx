@@ -25,7 +25,7 @@ import { CopyButton } from "@/components/ui/copy-button";
 import { Switch } from "@/components/ui/switch";
 
 /**
- * @deprecated Use AppDetailRow from @/components/app-ui instead.
+ * @deprecated Use AppDetailRow from @/components/platform-ui instead.
  * 
  * Variants:
  * - readonly: label + single-line value + optional helper text
