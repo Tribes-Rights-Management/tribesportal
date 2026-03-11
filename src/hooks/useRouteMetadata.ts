@@ -803,10 +803,11 @@ export function getNearestValidParent(pathname: string): string {
   if (pathname.startsWith("/admin")) return "/admin";
   if (pathname.startsWith("/auditor")) return "/auditor";
   if (pathname.startsWith("/licensing")) return "/licensing";
-  if (pathname.startsWith("/portal")) return "/portal";
-  if (pathname.startsWith("/app/licensing")) return "/app/licensing";
-  if (pathname.startsWith("/app/publishing")) return "/app/publishing";
-  if (pathname.startsWith("/app")) return "/app";
+  // Legacy paths → canonical fallbacks
+  if (pathname.startsWith("/portal")) return "/admin";
+  if (pathname.startsWith("/app/licensing")) return "/licensing";
+  if (pathname.startsWith("/app/publishing")) return "/admin";
+  if (pathname.startsWith("/app")) return "/admin";
   if (pathname.startsWith("/account")) return "/account";
   if (pathname.startsWith("/workspaces")) return "/workspaces";
   

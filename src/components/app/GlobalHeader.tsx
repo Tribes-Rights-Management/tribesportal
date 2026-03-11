@@ -136,13 +136,16 @@ function WorkspaceSelector() {
     setActiveTenant(tenantId);
     const newTenant = tenantMemberships.find(m => m.tenant_id === tenantId);
     if (newTenant && currentMode !== "auditor") {
+      // Navigate to canonical workspace root based on context
       if (activeContext && newTenant.allowed_contexts.includes(activeContext)) {
-        navigate(`/app/${activeContext}`);
+        const target = activeContext === "licensing" ? "/licensing" : "/admin";
+        navigate(target);
       } else if (newTenant.allowed_contexts.length > 0) {
         const newContext = newTenant.allowed_contexts.includes("publishing") 
           ? "publishing" 
           : newTenant.allowed_contexts[0];
-        navigate(`/app/${newContext}`);
+        const target = newContext === "licensing" ? "/licensing" : "/admin";
+        navigate(target);
       }
     }
   };
@@ -267,7 +270,8 @@ function MobileControls() {
                   setActiveTenant(membership.tenant_id);
                   if (currentMode !== "auditor") {
                     const ctx = membership.allowed_contexts[0];
-                    if (ctx) navigate(`/app/${ctx}`);
+                    // Navigate to canonical route, not legacy /app/*
+                    if (ctx) navigate(ctx === "licensing" ? "/licensing" : "/admin");
                   }
                 }}
                 className={cn(
@@ -294,7 +298,7 @@ function MobileControls() {
               <DropdownMenuItem
                 onClick={() => {
                   setActiveContext("publishing");
-                  navigate("/app/publishing");
+                  navigate("/admin");
                 }}
                 className={cn(
                   "text-[13px] focus:bg-white/5",
@@ -309,7 +313,7 @@ function MobileControls() {
               <DropdownMenuItem
                 onClick={() => {
                   setActiveContext("licensing");
-                  navigate("/app/licensing");
+                  navigate("/licensing");
                 }}
                 className={cn(
                   "text-[13px] focus:bg-white/5",
@@ -340,7 +344,8 @@ export function GlobalHeader() {
     } else if (currentMode === "licensing") {
       navigate("/licensing");
     } else {
-      navigate(`/app/${activeContext}`);
+      // Canonical destination based on active context
+      navigate(activeContext === "licensing" ? "/licensing" : "/admin");
     }
   };
 

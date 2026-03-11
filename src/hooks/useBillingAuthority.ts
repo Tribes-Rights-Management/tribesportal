@@ -212,31 +212,31 @@ export function useBillingAuthority(): BillingAuthorityResult {
  * - /admin/billing/providers — Payment Providers
  * 
  * Organization Billing (operations):
- * - /portal/payments — Portal Payments Overview
- * - /portal/payments/invoices — Org Invoices
- * - /portal/payments/methods — Payment Methods
- * - /portal/payments/history — Payment History
+ * - /admin/payments — Tribes Admin Payments Overview
+ * - /admin/payments/invoices — Org Invoices
+ * - /admin/payments/methods — Payment Methods
+ * - /admin/payments/history — Payment History
  * 
  * - /licensing/payments — Licensing Payments Overview
  * - /licensing/payments/fees — License Fees
  * - /licensing/payments/receipts — Receipts
  */
 export const BILLING_ROUTES = {
-  // System Console (Governance)
+  // System Console (Governance) — canonical: /console
   system: {
-    root: "/admin/billing",
-    plans: "/admin/billing/plans",
-    revenue: "/admin/billing/revenue",
-    invoices: "/admin/billing/invoices",
-    providers: "/admin/billing/providers",
+    root: "/console/billing",
+    plans: "/console/billing/plans",
+    revenue: "/console/billing/revenue",
+    invoices: "/console/billing/invoices",
+    providers: "/console/billing/providers",
   },
   
-  // Portal (Organization Operations)
+  // Tribes Admin (Organization Operations) — canonical: /admin
   portal: {
-    root: "/portal/payments",
-    invoices: "/portal/payments/invoices",
-    methods: "/portal/payments/methods",
-    history: "/portal/payments/history",
+    root: "/admin/payments",
+    invoices: "/admin/payments/invoices",
+    methods: "/admin/payments/methods",
+    history: "/admin/payments/history",
   },
   
   // Licensing (Organization Operations)
