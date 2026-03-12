@@ -20,7 +20,7 @@
 import { useState } from "react";
 import { FileText, Download, Clock, Shield, DollarSign, Scale, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
-import { AppPageLayout } from "@/components/platform-ui";
+import { PlatformPageLayout } from "@/components/platform-ui";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
@@ -227,7 +227,7 @@ export default function BoardSummariesPage() {
   };
 
   return (
-    <AppPageLayout title="Board Summaries" maxWidth="xl">
+    <PlatformPageLayout title="Board Summaries" maxWidth="xl">
 
       {/* Period Selector */}
       {!isExternalAuditor && (
@@ -315,6 +315,6 @@ export default function BoardSummariesPage() {
       >
         Generated summaries are immutable and versioned. Every generation is logged for audit purposes.
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

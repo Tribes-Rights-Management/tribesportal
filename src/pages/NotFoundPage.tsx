@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { AppButton } from "@/components/platform-ui";
+import { PlatformButton } from "@/components/platform-ui";
 
 /**
  * 404 PAGE — INSTITUTIONAL NOT FOUND (AUTHENTICATED USERS)
  * 
  * Replaces generic 404 with institutional language.
  * Directs users back to their appropriate workspace.
- * Uses unified AppButton for consistency.
+ * Uses unified PlatformButton for consistency.
  */
 export default function NotFoundPage() {
   const navigate = useNavigate();
@@ -39,14 +39,14 @@ export default function NotFoundPage() {
           This page does not exist or you do not have access to it.
         </p>
 
-        <AppButton
+        <PlatformButton
           onClick={handleReturnToWorkspace}
           intent="primary"
           size="lg"
           fullWidth
         >
           Return to workspace
-        </AppButton>
+        </PlatformButton>
 
         <p className="text-[12px] mt-6 text-muted-foreground">
           If you believe this is an error, contact the Tribes team.

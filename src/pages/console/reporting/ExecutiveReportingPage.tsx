@@ -17,7 +17,7 @@
 import { useState } from "react";
 import { ChevronRight, Shield, DollarSign, FileText, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
-import { AppPageLayout } from "@/components/platform-ui";
+import { PlatformPageLayout } from "@/components/platform-ui";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
@@ -159,7 +159,7 @@ export default function ExecutiveReportingPage() {
   const [timeRange, setTimeRange] = useState("30d");
 
   return (
-    <AppPageLayout title="Executive Reporting">
+    <PlatformPageLayout title="Executive Reporting">
 
       {/* Time Range Filter */}
       <div className="flex items-center justify-end mb-6">
@@ -204,6 +204,6 @@ export default function ExecutiveReportingPage() {
       >
         Data reflects the selected period. All metrics link to read-only detail views.
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

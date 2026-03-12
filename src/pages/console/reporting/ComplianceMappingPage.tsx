@@ -17,7 +17,7 @@
 
 import { useState } from "react";
 import { Shield, Check, Minus, ExternalLink, FileText, Database, Clock, AlertTriangle } from "lucide-react";
-import { AppPageLayout } from "@/components/platform-ui";
+import { PlatformPageLayout } from "@/components/platform-ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -323,7 +323,7 @@ export default function ComplianceMappingPage() {
     : COMPLIANCE_CONTROLS.filter(c => c.domain === selectedDomain);
 
   return (
-    <AppPageLayout title="Compliance Mapping" maxWidth="xl">
+    <PlatformPageLayout title="Compliance Mapping" maxWidth="xl">
 
       {/* Disclaimer */}
       <div 
@@ -553,6 +553,6 @@ export default function ComplianceMappingPage() {
       >
         This mapping is for audit reference only and does not constitute certification.
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

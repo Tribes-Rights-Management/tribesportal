@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { AppPageLayout } from "@/components/platform-ui";
+import { PlatformPageLayout } from "@/components/platform-ui";
 import { 
   ConsoleButton,
   ConsoleChip,
@@ -516,7 +516,7 @@ export default function SecurityVerificationPage() {
   const selectedException = exceptions.find(e => e.id === selectedExceptionId) || null;
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Security Verification"
       backLink={{ to: "/console", label: "System Console" }}
       action={
@@ -689,6 +689,6 @@ export default function SecurityVerificationPage() {
         open={!!selectedExceptionId}
         onClose={() => setSelectedExceptionId(null)}
       />
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

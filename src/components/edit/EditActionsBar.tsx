@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { AppButton } from "@/components/platform-ui";
+import { PlatformButton } from "@/components/platform-ui";
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -8,7 +8,7 @@ import { AppButton } from "@/components/platform-ui";
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * Standard Cancel/Save layout for the Edit Flow.
- * Uses unified AppButton components for consistency.
+ * Uses unified PlatformButton components for consistency.
  * 
  * LAYOUT:
  * - Cancel (left) — secondary action
@@ -54,7 +54,7 @@ export function EditActionsBar({
       }}
     >
       {/* Cancel button - secondary styling */}
-      <AppButton
+      <PlatformButton
         type="button"
         onClick={onCancel}
         disabled={saving}
@@ -64,10 +64,10 @@ export function EditActionsBar({
         className="flex-1"
       >
         {cancelLabel}
-      </AppButton>
+      </PlatformButton>
 
       {/* Save button - primary styling */}
-      <AppButton
+      <PlatformButton
         type="button"
         onClick={onSave}
         disabled={!canSave}
@@ -79,7 +79,7 @@ export function EditActionsBar({
         className="flex-1"
       >
         {saveLabel}
-      </AppButton>
+      </PlatformButton>
     </div>
   );
 }

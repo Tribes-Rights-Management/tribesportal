@@ -1,4 +1,4 @@
-import { AppPageLayout } from "@/components/platform-ui";
+import { PlatformPageLayout } from "@/components/platform-ui";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ export default function PaymentProvidersPage() {
   }
 
   return (
-    <AppPageLayout title="Payment Providers" backLink={{ to: "/console/billing", label: "Billing" }}>
+    <PlatformPageLayout title="Payment Providers" backLink={{ to: "/console/billing", label: "Billing" }}>
 
       {/* Current Status */}
       <Card className={activeProvider === "none" ? "border-amber-500/20" : "border-green-500/20"}>
@@ -159,6 +159,6 @@ export default function PaymentProvidersPage() {
           </p>
         </CardContent>
       </Card>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

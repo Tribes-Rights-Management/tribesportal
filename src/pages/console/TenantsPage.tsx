@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell, AppPageLayout, AppButton } from "@/components/platform-ui";
+import { PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableHead, PlatformTableRow, PlatformTableCell, PlatformPageLayout, PlatformButton } from "@/components/platform-ui";
 import { ConsoleButton } from "@/components/console";
 import { Plus, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -124,7 +124,7 @@ export default function TenantsPage() {
   const subtitleText = loading ? "Loading..." : `${tenants.length} organization${tenants.length !== 1 ? 's' : ''}`;
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Organizations"
       backLink={{ to: "/console", label: "System Console" }}
       action={
@@ -201,42 +201,42 @@ export default function TenantsPage() {
 
             {/* Desktop: Table layout */}
             <div className="hidden md:block">
-              <AppTable columns={["30%", "25%", "15%", "20%", "10%"]}>
-                <AppTableHeader>
-                  <AppTableRow header>
-                    <AppTableHead>Name</AppTableHead>
-                    <AppTableHead>Slug</AppTableHead>
-                    <AppTableHead align="right">Members</AppTableHead>
-                    <AppTableHead>Created</AppTableHead>
-                    <AppTableHead></AppTableHead>
-                  </AppTableRow>
-                </AppTableHeader>
-                <AppTableBody>
+              <PlatformTable columns={["30%", "25%", "15%", "20%", "10%"]}>
+                <PlatformTableHeader>
+                  <PlatformTableRow header>
+                    <PlatformTableHead>Name</PlatformTableHead>
+                    <PlatformTableHead>Slug</PlatformTableHead>
+                    <PlatformTableHead align="right">Members</PlatformTableHead>
+                    <PlatformTableHead>Created</PlatformTableHead>
+                    <PlatformTableHead></PlatformTableHead>
+                  </PlatformTableRow>
+                </PlatformTableHeader>
+                <PlatformTableBody>
                   {tenants.map((tenant) => (
-                    <AppTableRow 
+                    <PlatformTableRow 
                       key={tenant.id}
                       clickable
                       onClick={() => openEditDialog(tenant)}
                     >
-                      <AppTableCell className="font-medium">
+                      <PlatformTableCell className="font-medium">
                         {tenant.name}
-                      </AppTableCell>
-                      <AppTableCell mono muted>
+                      </PlatformTableCell>
+                      <PlatformTableCell mono muted>
                         {tenant.slug}
-                      </AppTableCell>
-                      <AppTableCell align="right">
+                      </PlatformTableCell>
+                      <PlatformTableCell align="right">
                         {tenant.member_count}
-                      </AppTableCell>
-                      <AppTableCell muted>
+                      </PlatformTableCell>
+                      <PlatformTableCell muted>
                         {new Date(tenant.created_at).toLocaleDateString()}
-                      </AppTableCell>
-                      <AppTableCell muted>
+                      </PlatformTableCell>
+                      <PlatformTableCell muted>
                           Edit
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   ))}
-                </AppTableBody>
-              </AppTable>
+                </PlatformTableBody>
+              </PlatformTable>
             </div>
           </>
         )}
@@ -250,6 +250,6 @@ export default function TenantsPage() {
         initialData={editingTenant ? { name: editingTenant.name, slug: editingTenant.slug } : null}
         mode={editingTenant ? "edit" : "create"}
       />
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

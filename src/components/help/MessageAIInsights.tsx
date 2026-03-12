@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Sparkles, Brain, TrendingUp, MessageSquare, Copy, Check } from 'lucide-react';
 import { analyzeMessage } from '@/lib/ai-message-analysis';
-import { AppButton, AppCard, AppCardBody } from '@/components/platform-ui';
+import { PlatformButton, PlatformCard, PlatformCardBody } from '@/components/platform-ui';
 
 interface MessageAIInsightsProps {
   message: string;
@@ -70,14 +70,14 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
 
   if (loading) {
     return (
-      <AppCard>
-        <AppCardBody>
+      <PlatformCard>
+        <PlatformCardBody>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Sparkles className="h-4 w-4 animate-pulse" />
             <span>Analyzing message with AI...</span>
           </div>
-        </AppCardBody>
-      </AppCard>
+        </PlatformCardBody>
+      </PlatformCard>
     );
   }
 
@@ -98,8 +98,8 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-3">
-        <AppCard>
-          <AppCardBody className="p-3">
+        <PlatformCard>
+          <PlatformCardBody className="p-3">
             <div className="flex items-center gap-2 mb-1">
               <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" />
               <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -109,11 +109,11 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
             <p className={`text-sm font-medium ${getPriorityColor(analysis.priority)}`}>
               {analysis.priority.charAt(0).toUpperCase() + analysis.priority.slice(1)}
             </p>
-          </AppCardBody>
-        </AppCard>
+          </PlatformCardBody>
+        </PlatformCard>
 
-        <AppCard>
-          <AppCardBody className="p-3">
+        <PlatformCard>
+          <PlatformCardBody className="p-3">
             <div className="flex items-center gap-2 mb-1">
               <Brain className="h-3.5 w-3.5 text-muted-foreground" />
               <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -123,13 +123,13 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
             <p className={`text-sm font-medium ${getSentimentColor(analysis.sentiment)}`}>
               {analysis.sentiment.charAt(0).toUpperCase() + analysis.sentiment.slice(1)}
             </p>
-          </AppCardBody>
-        </AppCard>
+          </PlatformCardBody>
+        </PlatformCard>
       </div>
 
       {/* Category & Topics */}
-      <AppCard>
-        <AppCardBody className="p-3 space-y-3">
+      <PlatformCard>
+        <PlatformCardBody className="p-3 space-y-3">
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
               Suggested Category
@@ -158,18 +158,18 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
               </div>
             </div>
           )}
-        </AppCardBody>
-      </AppCard>
+        </PlatformCardBody>
+      </PlatformCard>
 
       {/* AI Reasoning */}
-      <AppCard>
-        <AppCardBody className="p-3">
+      <PlatformCard>
+        <PlatformCardBody className="p-3">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
             AI Reasoning
           </p>
           <p className="text-sm">{analysis.reasoning}</p>
-        </AppCardBody>
-      </AppCard>
+        </PlatformCardBody>
+      </PlatformCard>
 
       {/* Draft Response */}
       <div>
@@ -180,21 +180,21 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
               AI-Generated Response Draft
             </span>
           </div>
-          <AppButton
+          <PlatformButton
             intent="ghost"
             size="sm"
             onClick={copyDraftResponse}
             icon={copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
           >
             {copied ? 'Copied!' : 'Copy'}
-          </AppButton>
+          </PlatformButton>
         </div>
         
-        <AppCard>
-          <AppCardBody className="p-3">
+        <PlatformCard>
+          <PlatformCardBody className="p-3">
             <p className="text-sm whitespace-pre-wrap">{analysis.draftResponse}</p>
-          </AppCardBody>
-        </AppCard>
+          </PlatformCardBody>
+        </PlatformCard>
         
         <p className="text-xs text-muted-foreground mt-2">
           ⚠️ Review and edit before sending. AI-generated content should be verified.

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { User } from "lucide-react";
-import { AppDropdown, type AppDropdownItem } from "@/components/platform-ui";
+import { PlatformDropdown, type PlatformDropdownItem } from "@/components/platform-ui";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
  * - Help → /help (mobile only)
  * - Sign Out
  * 
- * Uses AppDropdown from the platform-ui design system for consistency.
+ * Uses PlatformDropdown from the platform-ui design system for consistency.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -30,7 +30,7 @@ export function UserMenuDropdown() {
     navigate("/sign-in");
   };
 
-  const menuItems: AppDropdownItem[] = [
+  const menuItems: PlatformDropdownItem[] = [
     {
       label: "Workspaces",
       onClick: () => navigate("/workspaces"),
@@ -70,7 +70,7 @@ export function UserMenuDropdown() {
   );
 
   return (
-    <AppDropdown
+    <PlatformDropdown
       trigger={trigger}
       items={menuItems}
       align="end"

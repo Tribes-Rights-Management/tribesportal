@@ -9,7 +9,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FileText, ExternalLink, Filter } from "lucide-react";
 import { format } from "date-fns";
-import { AppPageLayout, AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty, AppSearchInput } from "@/components/platform-ui";
+import { PlatformPageLayout as AppPageLayout, PlatformTable as AppTable, PlatformTableHeader as AppTableHeader, PlatformTableBody as AppTableBody, PlatformTableRow as AppTableRow, PlatformTableHead as AppTableHead, PlatformTableCell as AppTableCell, PlatformTableEmpty as AppTableEmpty, PlatformSearchInput as AppSearchInput } from "@/components/platform-ui";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
