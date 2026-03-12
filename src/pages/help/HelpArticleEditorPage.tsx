@@ -470,22 +470,22 @@ export default function HelpArticleEditorPage() {
           {/* Internal articles: Save Draft + Publish */}
           {!isNew && status === "internal" && (
             <>
-              <AppButton 
+              <PlatformButton 
                 intent="secondary" 
                 size="sm" 
                 onClick={handleSaveDraft}
                 disabled={saving || !title.trim()}
               >
                 {saving ? "Saving..." : "Save Draft"}
-              </AppButton>
-              <AppButton 
+              </PlatformButton>
+              <PlatformButton 
                 intent="primary" 
                 size="sm" 
                 onClick={handlePublish}
                 disabled={publishing || !title.trim() || !bodyMd.trim()}
               >
                 {publishing ? "Publishing..." : "Publish"}
-              </AppButton>
+              </PlatformButton>
             </>
           )}
         </div>
