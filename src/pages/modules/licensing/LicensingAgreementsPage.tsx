@@ -191,16 +191,16 @@ export default function LicensingAgreementsPage() {
 
   if (error) {
     return (
-      <AppPageLayout title="Agreements">
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="Agreements">
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             <SystemErrorState 
               title="Unable to load agreements"
               description="Please try again or contact support if the issue persists."
             />
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
