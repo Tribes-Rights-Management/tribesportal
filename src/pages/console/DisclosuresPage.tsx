@@ -552,13 +552,13 @@ export default function DisclosuresPage() {
       </div>
 
       {/* Export Detail Modal */}
-      <AppModal 
+      <PlatformModal 
         open={detailOpen} 
         onOpenChange={setDetailOpen}
         title="Disclosure Export Details"
         maxWidth="lg"
       >
-        <AppModalBody>
+        <PlatformModalBody>
           {selectedExport && (
             <div className="space-y-6">
               {/* Watermark */}
