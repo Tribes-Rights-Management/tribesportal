@@ -2,19 +2,19 @@ import { useState, useEffect, useCallback } from "react";
 import { Plus } from "lucide-react";
 
 import {
-  AppButton,
-  AppListToolbar,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppPagination,
-  AppPanel,
-  AppPanelFooter,
-  AppAlert,
+  PlatformButton,
+  PlatformListToolbar,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformPagination,
+  PlatformPanel,
+  PlatformPanelFooter,
+  PlatformAlert,
 } from "@/components/platform-ui";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AppTable, AppTableHeader, AppTableBody, AppTableHead, AppTableRow, AppTableCell, AppPageLayout } from "@/components/platform-ui";
+import { PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableHead, PlatformTableRow, PlatformTableCell, PlatformPageLayout } from "@/components/platform-ui";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ConsoleButton } from "@/components/console";
 import { ChevronRight, AlertCircle, RefreshCw } from "lucide-react";

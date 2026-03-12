@@ -2,17 +2,17 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { RefreshCw } from "lucide-react";
 import {
-  AppPageLayout,
-  AppStatCard,
-  AppStatCardGrid,
-  AppCard,
-  AppCardHeader,
-  AppCardTitle,
-  AppCardBody,
-  AppListRow,
-  AppEmptyState,
-  AppAlert,
-  AppSection,
+  PlatformPageLayout,
+  PlatformStatCard,
+  PlatformStatCardGrid,
+  PlatformCard,
+  PlatformCardHeader,
+  PlatformCardTitle,
+  PlatformCardBody,
+  PlatformListRow,
+  PlatformEmptyState,
+  PlatformAlert,
+  PlatformSection,
 } from "@/components/platform-ui";
 import {
   Select,

@@ -1,6 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { ConsoleButton, ConsoleChip, ConsoleCard, ConsoleCardHeader, ConsoleCardBody } from "@/components/console";
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell } from "@/components/platform-ui";
+import { PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableRow, PlatformTableHead, PlatformTableCell } from "@/components/platform-ui";
 import { ArrowLeft, Check, X, Shield, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 

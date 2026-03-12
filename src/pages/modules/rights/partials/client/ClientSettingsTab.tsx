@@ -3,9 +3,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import {
-  AppSettingsCard,
-  AppDetailRow,
-  AppButton,
+  PlatformSettingsCard,
+  PlatformDetailRow,
+  PlatformButton,
 } from "@/components/platform-ui";
 import {
   AppModal,
@@ -88,7 +88,7 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
   return (
     <div className="space-y-6 max-w-2xl">
       {/* Client Details */}
-      <AppSettingsCard title="Client Details">
+      <PlatformSettingsCard title="Client Details">
         {editing ? (
           <div className="p-4 space-y-4">
             <div>
@@ -128,10 +128,10 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
               <input type="text" value={country} onChange={(e) => setCountry(e.target.value)} className={inputClass} />
             </div>
             <div className="flex items-center justify-end gap-2 pt-2">
-              <AppButton intent="secondary" size="sm" onClick={() => setEditing(false)}>
+              <PlatformButton intent="secondary" size="sm" onClick={() => setEditing(false)}>
                 Cancel
-              </AppButton>
-              <AppButton
+              </PlatformButton>
+              <PlatformButton
                 intent="primary"
                 size="sm"
                 onClick={() => updateMutation.mutate()}
@@ -139,14 +139,14 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
                 disabled={!name.trim()}
               >
                 Save Changes
-              </AppButton>
+              </PlatformButton>
             </div>
           </div>
         ) : (
           <>
-            <AppDetailRow label="Name" value={client.name} variant="editable" ctaLabel="Edit" onCta={() => setEditing(true)} />
-            <AppDetailRow label="Email" value={client.primary_email || "—"} />
-            <AppDetailRow
+            <PlatformDetailRow label="Name" value={client.name} variant="editable" ctaLabel="Edit" onCta={() => setEditing(true)} />
+            <PlatformDetailRow label="Email" value={client.primary_email || "—"} />
+            <PlatformDetailRow
               label="Address"
               value={
                 [client.address_line1, client.city, client.state_province, client.country]
@@ -157,29 +157,29 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
             
           </>
         )}
-      </AppSettingsCard>
+      </PlatformSettingsCard>
 
       {/* Account Status */}
-      <AppSettingsCard title="Account Status">
-        <AppDetailRow label="Current Status" value={client.status} />
+      <PlatformSettingsCard title="Account Status">
+        <PlatformDetailRow label="Current Status" value={client.status} />
         <div className="px-4 py-3 flex items-center gap-2">
           {client.status === "active" && (
-            <AppButton intent="secondary" size="sm" onClick={() => setConfirmAction("suspended")}>
+            <PlatformButton intent="secondary" size="sm" onClick={() => setConfirmAction("suspended")}>
               Suspend Client
-            </AppButton>
+            </PlatformButton>
           )}
           {client.status === "suspended" && (
-            <AppButton intent="primary" size="sm" onClick={() => setConfirmAction("active")}>
+            <PlatformButton intent="primary" size="sm" onClick={() => setConfirmAction("active")}>
               Reactivate Client
-            </AppButton>
+            </PlatformButton>
           )}
           {client.status !== "archived" && (
-            <AppButton intent="danger" size="sm" onClick={() => setConfirmAction("archived")}>
+            <PlatformButton intent="danger" size="sm" onClick={() => setConfirmAction("archived")}>
               Archive Client
-            </AppButton>
+            </PlatformButton>
           )}
         </div>
-      </AppSettingsCard>
+      </PlatformSettingsCard>
 
       {/* Confirm Dialog */}
       <AppModal
@@ -196,18 +196,22 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
         maxWidth="sm"
       >
         <AppModalFooter>
-          <AppButton intent="secondary" onClick={() => setConfirmAction(null)}>
+          <PlatformButton intent="secondary" onClick={() => setConfirmAction(null)}>
             Cancel
-          </AppButton>
-          <AppButton
+          </PlatformButton>
+          <PlatformButton
             intent={confirmAction === "archived" || confirmAction === "suspended" ? "danger" : "primary"}
             onClick={() => confirmAction && statusMutation.mutate(confirmAction)}
             loading={statusMutation.isPending}
           >
             Confirm
-          </AppButton>
+          </PlatformButton>
         </AppModalFooter>
       </AppModal>
     </div>
   );
+}
+
+interface ClientSettingsTabProps {
+  client: any;
 }

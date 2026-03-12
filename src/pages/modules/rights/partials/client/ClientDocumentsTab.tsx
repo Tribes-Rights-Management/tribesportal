@@ -5,15 +5,15 @@ import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import {
-  AppButton,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppEmptyState,
+  PlatformButton,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformEmptyState,
 } from "@/components/platform-ui";
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
@@ -140,53 +140,53 @@ export default function ClientDocumentsTab({ clientId }: ClientDocumentsTabProps
 
       {/* Documents table */}
       {isLoading ? (
-        <AppEmptyState message="Loading documents..." size="lg" />
+        <PlatformEmptyState message="Loading documents..." size="lg" />
       ) : (
-        <AppTable columns={["35%", "20%", "20%", "15%", "10%"]}>
-          <AppTableHeader>
-            <AppTableRow header>
-              <AppTableHead>Name</AppTableHead>
-              <AppTableHead>Type</AppTableHead>
-              <AppTableHead>Uploaded</AppTableHead>
-              <AppTableHead>Size</AppTableHead>
-              <AppTableHead align="right">Actions</AppTableHead>
-            </AppTableRow>
-          </AppTableHeader>
-          <AppTableBody>
+        <PlatformTable columns={["35%", "20%", "20%", "15%", "10%"]}>
+          <PlatformTableHeader>
+            <PlatformTableRow header>
+              <PlatformTableHead>Name</PlatformTableHead>
+              <PlatformTableHead>Type</PlatformTableHead>
+              <PlatformTableHead>Uploaded</PlatformTableHead>
+              <PlatformTableHead>Size</PlatformTableHead>
+              <PlatformTableHead align="right">Actions</PlatformTableHead>
+            </PlatformTableRow>
+          </PlatformTableHeader>
+          <PlatformTableBody>
             {documents.length === 0 ? (
-              <AppTableEmpty colSpan={5}>
+              <PlatformTableEmpty colSpan={5}>
                 <span className="text-sm text-muted-foreground">No documents uploaded</span>
-              </AppTableEmpty>
+              </PlatformTableEmpty>
             ) : (
               documents.map((doc: any) => (
-                <AppTableRow key={doc.id}>
-                  <AppTableCell>{doc.file_name}</AppTableCell>
-                  <AppTableCell muted>{doc.document_type?.replace("_", " ") || "other"}</AppTableCell>
-                  <AppTableCell muted>
+                <PlatformTableRow key={doc.id}>
+                  <PlatformTableCell>{doc.file_name}</PlatformTableCell>
+                  <PlatformTableCell muted>{doc.document_type?.replace("_", " ") || "other"}</PlatformTableCell>
+                  <PlatformTableCell muted>
                     {format(new Date(doc.created_at), "MMM d, yyyy")}
-                  </AppTableCell>
-                  <AppTableCell muted>
+                  </PlatformTableCell>
+                  <PlatformTableCell muted>
                     {doc.file_size ? formatFileSize(doc.file_size) : "—"}
-                  </AppTableCell>
-                  <AppTableCell align="right">
+                  </PlatformTableCell>
+                  <PlatformTableCell align="right">
                     <div className="flex items-center justify-end gap-1">
-                      <AppButton intent="ghost" size="xs" onClick={() => handleDownload(doc)}>
+                      <PlatformButton intent="ghost" size="xs" onClick={() => handleDownload(doc)}>
                         <Download className="h-3.5 w-3.5" />
-                      </AppButton>
-                      <AppButton
+                      </PlatformButton>
+                      <PlatformButton
                         intent="ghost"
                         size="xs"
                         onClick={() => deleteMutation.mutate(doc)}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
-                      </AppButton>
+                      </PlatformButton>
                     </div>
-                  </AppTableCell>
-                </AppTableRow>
+                  </PlatformTableCell>
+                </PlatformTableRow>
               ))
             )}
-          </AppTableBody>
-        </AppTable>
+          </PlatformTableBody>
+        </PlatformTable>
       )}
     </div>
   );

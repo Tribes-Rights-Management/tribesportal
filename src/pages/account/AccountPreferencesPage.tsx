@@ -9,9 +9,9 @@ import {
 } from "@/hooks/useUserPreferences";
 import { EditSelectSheet } from "@/components/edit";
 import {
-  AppDetailRow,
-  AppSettingsCard,
-  AppSettingsFooter,
+  PlatformDetailRow,
+  PlatformSettingsCard,
+  PlatformSettingsFooter,
 } from "@/components/platform-ui";
 
 /**

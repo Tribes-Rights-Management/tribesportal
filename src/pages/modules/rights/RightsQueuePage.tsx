@@ -2,20 +2,20 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
 import {
-  AppPageLayout,
-  AppSection,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppResponsiveList,
-  AppItemCard,
-  AppPagination,
-  AppStatCard,
-  AppStatCardGrid,
+  PlatformPageLayout,
+  PlatformSection,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformResponsiveList,
+  PlatformItemCard,
+  PlatformPagination,
+  PlatformStatCard,
+  PlatformStatCardGrid,
 } from "@/components/platform-ui";
 import { QueueStatusBadge } from "@/components/queue/QueueStatusBadge";
 import { useStaffQueue, useQueueStats } from "@/hooks/use-song-queue";
@@ -63,17 +63,17 @@ export default function RightsQueuePage() {
   ];
 
   return (
-    <AppPageLayout title="Queue">
-      <AppSection spacing="md">
-        <AppStatCardGrid columns={4}>
-          <AppStatCard label="Submitted" value={stats?.submitted || 0} loading={!stats} onClick={() => handleStatusChange("submitted")} />
-          <AppStatCard label="In Review" value={stats?.in_review || 0} loading={!stats} onClick={() => handleStatusChange("in_review")} />
-          <AppStatCard label="Needs Revision" value={stats?.needs_revision || 0} loading={!stats} onClick={() => handleStatusChange("needs_revision")} />
-          <AppStatCard label="Total in Queue" value={stats?.total || 0} loading={!stats} />
-        </AppStatCardGrid>
-      </AppSection>
+    <PlatformPageLayout title="Queue">
+      <PlatformSection spacing="md">
+        <PlatformStatCardGrid columns={4}>
+          <PlatformStatCard label="Submitted" value={stats?.submitted || 0} loading={!stats} onClick={() => handleStatusChange("submitted")} />
+          <PlatformStatCard label="In Review" value={stats?.in_review || 0} loading={!stats} onClick={() => handleStatusChange("in_review")} />
+          <PlatformStatCard label="Needs Revision" value={stats?.needs_revision || 0} loading={!stats} onClick={() => handleStatusChange("needs_revision")} />
+          <PlatformStatCard label="Total in Queue" value={stats?.total || 0} loading={!stats} />
+        </PlatformStatCardGrid>
+      </PlatformSection>
 
-      <AppSection spacing="md">
+      <PlatformSection spacing="md">
         <div className="flex items-center justify-end mb-3">
           <span className="text-[12px] text-muted-foreground">
             {totalItems} {totalItems === 1 ? "item" : "items"}
@@ -83,12 +83,12 @@ export default function RightsQueuePage() {
         {isLoading ? (
           <div className="py-12 text-center text-muted-foreground text-sm">Loading queue...</div>
         ) : (
-          <AppResponsiveList
+          <PlatformResponsiveList
             items={paginatedItems}
             keyExtractor={(item) => item.id}
             emptyMessage="No submissions found"
             renderCard={(item) => (
-              <AppItemCard
+              <PlatformItemCard
                 title={getSongTitle(item)}
                 subtitle={item.client_name || "Unknown client"}
                 meta={<span>{format(new Date(item.submitted_at), "MMM d, yyyy")}</span>}
@@ -97,45 +97,45 @@ export default function RightsQueuePage() {
               />
             )}
             renderTable={() => (
-              <AppTable>
-                <AppTableHeader>
-                  <AppTableRow>
-                    <AppTableHead>#</AppTableHead>
-                     <AppTableHead>Title</AppTableHead>
-                     <AppTableHead>Client</AppTableHead>
-                     <AppTableHead>Deal</AppTableHead>
-                     <AppTableHead>Songwriters</AppTableHead>
-                     <AppTableHead align="center">Status</AppTableHead>
-                     <AppTableHead>Submitted</AppTableHead>
-                  </AppTableRow>
-                </AppTableHeader>
-                <AppTableBody>
+              <PlatformTable>
+                <PlatformTableHeader>
+                  <PlatformTableRow>
+                    <PlatformTableHead>#</PlatformTableHead>
+                     <PlatformTableHead>Title</PlatformTableHead>
+                     <PlatformTableHead>Client</PlatformTableHead>
+                     <PlatformTableHead>Deal</PlatformTableHead>
+                     <PlatformTableHead>Songwriters</PlatformTableHead>
+                     <PlatformTableHead align="center">Status</PlatformTableHead>
+                     <PlatformTableHead>Submitted</PlatformTableHead>
+                  </PlatformTableRow>
+                </PlatformTableHeader>
+                <PlatformTableBody>
                   {paginatedItems.length === 0 ? (
-                     <AppTableEmpty colSpan={7}>
+                     <PlatformTableEmpty colSpan={7}>
                        <span className="text-muted-foreground text-sm">No submissions found</span>
-                    </AppTableEmpty>
+                    </PlatformTableEmpty>
                   ) : (
                     paginatedItems.map(item => (
-                      <AppTableRow key={item.id} clickable onClick={() => navigate(`/rights/queue/${item.submission_number}`)}>
-                        <AppTableCell muted>{item.submission_number}</AppTableCell>
-                         <AppTableCell className="font-medium">{getSongTitle(item)}</AppTableCell>
-                         <AppTableCell muted>{item.client_name}</AppTableCell>
-                         <AppTableCell muted>—</AppTableCell>
-                         <AppTableCell muted className="max-w-[200px] truncate">{getWriterNames(item)}</AppTableCell>
-                         <AppTableCell align="center"><QueueStatusBadge status={item.status} /></AppTableCell>
-                         <AppTableCell muted>{format(new Date(item.submitted_at), "MMM d, yyyy")}</AppTableCell>
-                      </AppTableRow>
+                      <PlatformTableRow key={item.id} clickable onClick={() => navigate(`/rights/queue/${item.submission_number}`)}>
+                        <PlatformTableCell muted>{item.submission_number}</PlatformTableCell>
+                         <PlatformTableCell className="font-medium">{getSongTitle(item)}</PlatformTableCell>
+                         <PlatformTableCell muted>{item.client_name}</PlatformTableCell>
+                         <PlatformTableCell muted>—</PlatformTableCell>
+                         <PlatformTableCell muted className="max-w-[200px] truncate">{getWriterNames(item)}</PlatformTableCell>
+                         <PlatformTableCell align="center"><QueueStatusBadge status={item.status} /></PlatformTableCell>
+                         <PlatformTableCell muted>{format(new Date(item.submitted_at), "MMM d, yyyy")}</PlatformTableCell>
+                      </PlatformTableRow>
                     ))
                   )}
-                </AppTableBody>
-              </AppTable>
+                </PlatformTableBody>
+              </PlatformTable>
             )}
           />
         )}
 
-        <AppPagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-      </AppSection>
+        <PlatformPagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+      </PlatformSection>
 
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

@@ -4,14 +4,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useDebounce } from "@/hooks/useDebounce";
 import {
-  AppPageLayout,
-  AppSection,
-  AppCard,
-  AppCardHeader,
-  AppCardTitle,
-  AppCardBody,
-  AppDetailRow,
-  AppDetailRowGroup,
+  PlatformPageLayout,
+  PlatformSection,
+  PlatformCard,
+  PlatformCardHeader,
+  PlatformCardTitle,
+  PlatformCardBody,
+  PlatformDetailRow,
+  PlatformDetailRowGroup,
 } from "@/components/platform-ui";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";

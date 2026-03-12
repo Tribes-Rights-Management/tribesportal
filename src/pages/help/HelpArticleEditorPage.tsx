@@ -4,7 +4,7 @@ import { ArrowLeft, AlertCircle, MoreHorizontal } from "lucide-react";
 import { useHelpManagement, HelpArticle } from "@/hooks/useHelpManagement";
 import { useCategoriesByAudience, CategoryForAudience } from "@/hooks/useCategoriesByAudience";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
-import { AppButton, AppChip, AppSelect, AppCheckboxGroup } from "@/components/platform-ui";
+import { PlatformButton, PlatformChip, PlatformSelect, PlatformCheckboxGroup } from "@/components/platform-ui";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import {
