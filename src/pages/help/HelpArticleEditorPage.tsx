@@ -391,7 +391,7 @@ export default function HelpArticleEditorPage() {
       {/* Header */}
       <div className="px-[20px] sm:px-6 py-3 border-b border-border flex items-center justify-between gap-2">
         {/* Back button - icon only on mobile, full on desktop */}
-        <AppButton 
+        <PlatformButton 
           intent="ghost" 
           size="sm" 
           onClick={() => navigate("/help/articles")}
@@ -399,8 +399,8 @@ export default function HelpArticleEditorPage() {
           className="hidden sm:inline-flex"
         >
           Back to Articles
-        </AppButton>
-        <AppButton 
+        </PlatformButton>
+        <PlatformButton 
           intent="ghost" 
           size="sm" 
           onClick={() => navigate("/help/articles")}
@@ -408,7 +408,7 @@ export default function HelpArticleEditorPage() {
           aria-label="Back to Articles"
         >
           <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
-        </AppButton>
+        </PlatformButton>
 
         {/* Desktop: Full action row */}
         <div className="hidden sm:flex items-center gap-2">
