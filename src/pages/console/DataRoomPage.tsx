@@ -401,6 +401,6 @@ export default function DataRoomPage() {
         open={showCreateDialog} 
         onOpenChange={setShowCreateDialog} 
       />
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
