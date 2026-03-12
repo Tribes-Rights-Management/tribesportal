@@ -65,7 +65,7 @@ find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.
 
     # Check 6: bg-white or bg-card on DIV elements used as panel pattern (skip inputs and selects)
     if grep -qE '<div.*className=.*bg-(white|card).*border.*rounded|<div.*className=.*bg-(white|card).*rounded.*border|<section.*className=.*bg-(white|card).*border.*rounded' "$file"; then
-        file_issues+="  ${YELLOW}PATTERN${NC} Raw bg-white/bg-card panel on div → use AppPanel or AppCard\n"
+        file_issues+="  ${YELLOW}PATTERN${NC} Raw bg-white/bg-card panel on div → use PlatformPanel or PlatformCard\n"
         file_violations=$((file_violations + 1))
     fi
 
