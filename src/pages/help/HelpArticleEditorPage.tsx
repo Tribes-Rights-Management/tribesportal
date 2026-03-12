@@ -372,14 +372,14 @@ export default function HelpArticleEditorPage() {
           <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
           <div>
             <p className="text-[12px] text-foreground">Unable to load article</p>
-            <AppButton 
+            <PlatformButton 
               intent="tertiary" 
               size="xs"
               onClick={() => navigate("/help/articles")} 
               className="text-[11px] text-destructive hover:text-destructive/80 mt-1"
             >
               Back to articles
-            </AppButton>
+            </PlatformButton>
           </div>
         </div>
       </div>
