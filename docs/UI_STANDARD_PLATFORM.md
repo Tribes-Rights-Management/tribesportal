@@ -12,7 +12,7 @@ The Platform UI Kit provides institutional-grade UI components that prevent styl
 
 **REQUIRED** — Import from the Platform UI Kit:
 ```tsx
-import { AppButton, AppChip, AppCard, AppSectionHeader } from "@/components/platform-ui";
+import { PlatformButton, PlatformChip, PlatformCard, PlatformSectionHeader } from "@/components/platform-ui";
 ```
 
 **PROHIBITED** — Do not import raw primitives in page components:
@@ -21,7 +21,7 @@ import { AppButton, AppChip, AppCard, AppSectionHeader } from "@/components/plat
 import { Button } from "@/components/ui/button";
 
 // ✅ CORRECT
-import { AppButton } from "@/components/platform-ui";
+import { PlatformButton } from "@/components/platform-ui";
 ```
 
 ### 2. No One-Off Styling
