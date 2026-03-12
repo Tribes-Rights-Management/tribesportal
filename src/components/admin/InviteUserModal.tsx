@@ -14,13 +14,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
-  AppModalAction,
-  AppModalCancel,
-  AppModalField,
-  AppModalFields,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
+  PlatformModalAction,
+  PlatformModalCancel,
+  PlatformModalField,
+  PlatformModalFields,
 } from "@/components/ui/app-modal";
 
 interface InviteUserModalProps {
