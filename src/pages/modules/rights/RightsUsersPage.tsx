@@ -250,57 +250,57 @@ export default function RightsUsersPage() {
   const count = allUsers.length;
 
   return (
-    <AppPageLayout title="Users">
-      <AppListToolbar
+    <PlatformPageLayout title="Users">
+      <PlatformListToolbar
         placeholder="Search by name, email, or client..."
         searchValue={search}
         onSearchChange={setSearch}
         count={`${count} ${count === 1 ? "user" : "users"}`}
         action={
-          <AppButton intent="primary" size="sm" onClick={() => setInviteOpen(true)}>
+          <PlatformButton intent="primary" size="sm" onClick={() => setInviteOpen(true)}>
             <Plus className="h-4 w-4" />
             Invite User
-          </AppButton>
+          </PlatformButton>
         }
       />
 
       {isLoading ? (
-        <AppEmptyState message="Loading users..." size="lg" />
+        <PlatformEmptyState message="Loading users..." size="lg" />
       ) : allUsers.length === 0 ? (
-        <AppTable columns={["35%", "25%", "15%", "15%", "10%"]}>
-          <AppTableHeader>
-            <AppTableRow header>
-              <AppTableHead>Name</AppTableHead>
-              <AppTableHead>Clients</AppTableHead>
-              <AppTableHead>Role</AppTableHead>
-              <AppTableHead>Status</AppTableHead>
-              <AppTableHead>Added</AppTableHead>
-            </AppTableRow>
-          </AppTableHeader>
-          <AppTableBody>
-            <AppTableEmpty colSpan={5}>
-              <AppEmptyState
+        <PlatformTable columns={["35%", "25%", "15%", "15%", "10%"]}>
+          <PlatformTableHeader>
+            <PlatformTableRow header>
+              <PlatformTableHead>Name</PlatformTableHead>
+              <PlatformTableHead>Clients</PlatformTableHead>
+              <PlatformTableHead>Role</PlatformTableHead>
+              <PlatformTableHead>Status</PlatformTableHead>
+              <PlatformTableHead>Added</PlatformTableHead>
+            </PlatformTableRow>
+          </PlatformTableHeader>
+          <PlatformTableBody>
+            <PlatformTableEmpty colSpan={5}>
+              <PlatformEmptyState
                 message={search ? "No users match your search" : "No users yet"}
                 description={search ? "Try a different search term." : "Invite users to grant them portal access to client accounts."}
               />
-            </AppTableEmpty>
-          </AppTableBody>
-        </AppTable>
+            </PlatformTableEmpty>
+          </PlatformTableBody>
+        </PlatformTable>
       ) : (
-        <AppTable columns={["35%", "25%", "15%", "15%", "10%"]}>
-          <AppTableHeader>
-            <AppTableRow header>
-              <AppTableHead>Name</AppTableHead>
-              <AppTableHead>Clients</AppTableHead>
-              <AppTableHead>Role</AppTableHead>
-              <AppTableHead>Status</AppTableHead>
-              <AppTableHead>Added</AppTableHead>
-            </AppTableRow>
-          </AppTableHeader>
-          <AppTableBody>
+        <PlatformTable columns={["35%", "25%", "15%", "15%", "10%"]}>
+          <PlatformTableHeader>
+            <PlatformTableRow header>
+              <PlatformTableHead>Name</PlatformTableHead>
+              <PlatformTableHead>Clients</PlatformTableHead>
+              <PlatformTableHead>Role</PlatformTableHead>
+              <PlatformTableHead>Status</PlatformTableHead>
+              <PlatformTableHead>Added</PlatformTableHead>
+            </PlatformTableRow>
+          </PlatformTableHeader>
+          <PlatformTableBody>
             {allUsers.map((u) => (
-              <AppTableRow key={u.user_id}>
-                <AppTableCell>
+              <PlatformTableRow key={u.user_id}>
+                <PlatformTableCell>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[12px] font-medium text-muted-foreground shrink-0">
                       {getInitials(u.name, u.email)}
@@ -314,29 +314,29 @@ export default function RightsUsersPage() {
                       </p>
                     </div>
                   </div>
-                </AppTableCell>
-                <AppTableCell>
+                </PlatformTableCell>
+                <PlatformTableCell>
                   <span className="text-sm text-foreground">
                     {u.clients.join(", ")}
                   </span>
-                </AppTableCell>
-                <AppTableCell>
-                  <AppTableBadge variant={getRoleBadgeVariant(u.role)}>
+                </PlatformTableCell>
+                <PlatformTableCell>
+                  <PlatformTableBadge variant={getRoleBadgeVariant(u.role)}>
                     {u.role.charAt(0).toUpperCase() + u.role.slice(1)}
-                  </AppTableBadge>
-                </AppTableCell>
-                <AppTableCell>
-                  <AppTableBadge variant={getStatusBadgeVariant(u.status)}>
+                  </PlatformTableBadge>
+                </PlatformTableCell>
+                <PlatformTableCell>
+                  <PlatformTableBadge variant={getStatusBadgeVariant(u.status)}>
                     {u.status.charAt(0).toUpperCase() + u.status.slice(1)}
-                  </AppTableBadge>
-                </AppTableCell>
-                <AppTableCell muted>
+                  </PlatformTableBadge>
+                </PlatformTableCell>
+                <PlatformTableCell muted>
                   {formatDate(u.created_at)}
-                </AppTableCell>
-              </AppTableRow>
+                </PlatformTableCell>
+              </PlatformTableRow>
             ))}
-          </AppTableBody>
-        </AppTable>
+          </PlatformTableBody>
+        </PlatformTable>
       )}
 
       {/* Invite User Modal */}
@@ -361,7 +361,7 @@ export default function RightsUsersPage() {
             </AppModalField>
 
             <AppModalField label="Client" htmlFor="invite-client">
-              <AppSelect
+              <PlatformSelect
                 value={inviteClientId}
                 onChange={setInviteClientId}
                 placeholder="Select a client"
@@ -370,7 +370,7 @@ export default function RightsUsersPage() {
             </AppModalField>
 
             <AppModalField label="Role" htmlFor="invite-role">
-              <AppSelect
+              <PlatformSelect
                 value={inviteRole}
                 onChange={setInviteRole}
                 options={[
@@ -421,6 +421,6 @@ export default function RightsUsersPage() {
           </AppModalCancel>
         </AppModalFooter>
       </AppModal>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

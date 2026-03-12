@@ -871,7 +871,7 @@ export default function SongSubmitPage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Language</label>
-                <AppSelect
+                <PlatformSelect
                   value={data.language}
                   onChange={(val) => setData(prev => ({ ...prev, language: val }))}
                   options={LANGUAGES.map(l => ({ value: l, label: l }))}
@@ -882,7 +882,7 @@ export default function SongSubmitPage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Song Type <span className="text-destructive">*</span></label>
-                <AppSelect
+                <PlatformSelect
                   value={data.songType}
                   onChange={(val) => setData(prev => ({ ...prev, songType: val as SongData["songType"] }))}
                   options={SONG_TYPES}
@@ -1013,7 +1013,7 @@ export default function SongSubmitPage() {
                               </div>
                               <div>
                                 <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Credit <span className="text-destructive">*</span></label>
-                                <AppSelect
+                                <PlatformSelect
                                   value={w.credit}
                                   onChange={(val) => updateWriter(w.id, { credit: val as Writer["credit"] })}
                                   options={[
@@ -1027,7 +1027,7 @@ export default function SongSubmitPage() {
                               </div>
                               <div>
                                 <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Administrator</label>
-                                <AppSelect
+                                <PlatformSelect
                                   value={w.tribes_administered ? "tribes" : "other"}
                                   onChange={(val) => updateWriter(w.id, { tribes_administered: val === "tribes" })}
                                   options={[
@@ -1113,7 +1113,7 @@ export default function SongSubmitPage() {
                       {data.lyricsSections.map((section, i) => (
                         <div key={section.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
                           <div className="flex items-center justify-between">
-                            <AppSelect
+                            <PlatformSelect
                               value={section.type}
                               onChange={(val) => updateLyricSection(section.id, { type: val as LyricSection["type"] })}
                               options={LYRIC_SECTION_TYPES}

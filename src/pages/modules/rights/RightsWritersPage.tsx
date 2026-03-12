@@ -377,17 +377,17 @@ export default function RightsWritersPage() {
   };
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Writers"
       action={
-        <AppButton
+        <PlatformButton
           intent="secondary"
           size="sm"
           onClick={handleCreate}
         >
           <Plus className="h-4 w-4" />
           Add Writer
-        </AppButton>
+        </PlatformButton>
       }
     >
 
@@ -411,16 +411,16 @@ export default function RightsWritersPage() {
       {/* Table */}
       <div className="overflow-x-auto -mx-4 sm:mx-0">
         <div className="px-4 sm:px-0">
-          <AppTable columns={["45%", "20%", "25%", "10%"]}>
-            <AppTableHeader>
-              <AppTableRow header>
-                <AppTableHead className="pl-5">Name</AppTableHead>
-                <AppTableHead>PRO</AppTableHead>
-                <AppTableHead className="hidden sm:table-cell">IPI Number</AppTableHead>
-                <AppTableHead className="text-right pr-10">Songs</AppTableHead>
-              </AppTableRow>
-            </AppTableHeader>
-            <AppTableBody>
+          <PlatformTable columns={["45%", "20%", "25%", "10%"]}>
+            <PlatformTableHeader>
+              <PlatformTableRow header>
+                <PlatformTableHead className="pl-5">Name</PlatformTableHead>
+                <PlatformTableHead>PRO</PlatformTableHead>
+                <PlatformTableHead className="hidden sm:table-cell">IPI Number</PlatformTableHead>
+                <PlatformTableHead className="text-right pr-10">Songs</PlatformTableHead>
+              </PlatformTableRow>
+            </PlatformTableHeader>
+            <PlatformTableBody>
               {loading ? (
                 <tr>
                   <td colSpan={4} className="text-center py-8 text-muted-foreground text-sm">
@@ -428,37 +428,37 @@ export default function RightsWritersPage() {
                   </td>
                 </tr>
               ) : writers.length === 0 ? (
-                <AppTableEmpty colSpan={4}>
+                <PlatformTableEmpty colSpan={4}>
                   <p className="text-[13px] text-muted-foreground">
                     {searchQuery ? "No writers match your search" : "No writers in the system"}
                   </p>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : (
                 writers.map((writer) => {
                   const songCount = writerSongCountMap.get(writer.name.trim().toLowerCase()) || 0;
                   return (
-                    <AppTableRow
+                    <PlatformTableRow
                       key={writer.id}
                       clickable
                       onClick={() => handleEdit(writer)}
                     >
-                      <AppTableCell className="pl-5">{writer.name}</AppTableCell>
-                      <AppTableCell muted>{writer.pro || "—"}</AppTableCell>
-                      <AppTableCell muted className="hidden sm:table-cell">{writer.ipi_number || writer.cae_number || "—"}</AppTableCell>
-                      <AppTableCell muted className="text-right pr-10 tabular-nums">{songCount}</AppTableCell>
-                    </AppTableRow>
+                      <PlatformTableCell className="pl-5">{writer.name}</PlatformTableCell>
+                      <PlatformTableCell muted>{writer.pro || "—"}</PlatformTableCell>
+                      <PlatformTableCell muted className="hidden sm:table-cell">{writer.ipi_number || writer.cae_number || "—"}</PlatformTableCell>
+                      <PlatformTableCell muted className="text-right pr-10 tabular-nums">{songCount}</PlatformTableCell>
+                    </PlatformTableRow>
                   );
                 })
               )}
-            </AppTableBody>
-          </AppTable>
+            </PlatformTableBody>
+          </PlatformTable>
         </div>
       </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="mt-4">
-          <AppPagination
+          <PlatformPagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}
@@ -467,13 +467,13 @@ export default function RightsWritersPage() {
       )}
 
       {/* Edit/Add Panel */}
-      <AppPanel
+      <PlatformPanel
         open={panelOpen}
         onClose={() => setPanelOpen(false)}
         title={editing ? "Edit writer" : "New writer"}
         description={editing ? "Update writer details" : "Add a new writer to the registry"}
         footer={
-          <AppPanelFooter
+          <PlatformPanelFooter
             left={
               editing && (
                 <button
@@ -494,7 +494,7 @@ export default function RightsWritersPage() {
       >
         <div className="space-y-4">
           {formError && (
-            <AppAlert variant="error" message={formError} />
+            <PlatformAlert variant="error" message={formError} />
           )}
 
           <div className="grid grid-cols-2 gap-3">
@@ -565,7 +565,7 @@ export default function RightsWritersPage() {
             />
           </div>
         </div>
-      </AppPanel>
-    </AppPageLayout>
+      </PlatformPanel>
+    </PlatformPageLayout>
   );
 }

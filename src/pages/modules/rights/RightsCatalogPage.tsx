@@ -366,38 +366,38 @@ export default function RightsCatalogPage() {
   const someSelected = paginatedSongs.some(s => selectedSongs.has(s.id)) && !allSelected;
 
   return (
-    <AppPageLayout title="Catalog">
+    <PlatformPageLayout title="Catalog">
 
-      <AppListToolbar
+      <PlatformListToolbar
         placeholder="Search by title, writer, or lyric..."
         searchValue={searchQuery}
         onSearchChange={(v) => { setSearchQuery(v); setCurrentPage(1); }}
         count={`${totalItems} ${totalItems === 1 ? "song" : "songs"}`}
         action={
-          <AppButton
+          <PlatformButton
             intent="primary"
             size="sm"
             onClick={() => navigate("/rights/songs/submit")}
           >
             <Plus className="h-4 w-4" />
             Add Song
-          </AppButton>
+          </PlatformButton>
         }
       />
 
-      <AppSection spacing="none">
+      <PlatformSection spacing="none">
         {/* Sort control */}
         <div className="flex items-center justify-end mb-3">
           <SortDropdown value={sortBy} onChange={setSortBy} />
         </div>
 
-        <AppResponsiveList
+        <PlatformResponsiveList
           items={paginatedSongs}
           keyExtractor={(song) => song.id}
           emptyMessage={searchQuery ? "No songs match your search" : "No songs in catalog"}
           className="[&_.md\\:hidden]:space-y-2"
           renderCard={(song) => (
-            <AppItemCard
+            <PlatformItemCard
               title={song.title}
               subtitle={song.songwriters.join(" / ")}
               meta={format(new Date(song.updatedAt), "MMM d, yyyy")}
@@ -405,10 +405,10 @@ export default function RightsCatalogPage() {
             />
           )}
           renderTable={() => (
-            <AppTable columns={["40px", "10%", "25%", "28%", "12%", "20%"]}>
-              <AppTableHeader>
-                <AppTableRow>
-                  <AppTableHead>
+            <PlatformTable columns={["40px", "10%", "25%", "28%", "12%", "20%"]}>
+              <PlatformTableHeader>
+                <PlatformTableRow>
+                  <PlatformTableHead>
                     <Checkbox
                       checked={allSelected ? true : someSelected ? "indeterminate" : false}
                       onCheckedChange={(checked) => {
@@ -420,24 +420,24 @@ export default function RightsCatalogPage() {
                       }}
                       aria-label="Select all songs"
                     />
-                  </AppTableHead>
-                  <AppTableHead>ID</AppTableHead>
-                  <AppTableHead>Title</AppTableHead>
-                  <AppTableHead>Songwriters</AppTableHead>
-                  <AppTableHead align="right">Control</AppTableHead>
-                  <AppTableHead>Last updated</AppTableHead>
-                </AppTableRow>
-              </AppTableHeader>
-              <AppTableBody>
+                  </PlatformTableHead>
+                  <PlatformTableHead>ID</PlatformTableHead>
+                  <PlatformTableHead>Title</PlatformTableHead>
+                  <PlatformTableHead>Songwriters</PlatformTableHead>
+                  <PlatformTableHead align="right">Control</PlatformTableHead>
+                  <PlatformTableHead>Last updated</PlatformTableHead>
+                </PlatformTableRow>
+              </PlatformTableHeader>
+              <PlatformTableBody>
                 {paginatedSongs.length === 0 ? (
-                  <AppTableEmpty colSpan={6}>
+                  <PlatformTableEmpty colSpan={6}>
                     <span className="text-muted-foreground text-sm">
                       {searchQuery ? "No songs match your search" : "No songs in catalog"}
                     </span>
-                  </AppTableEmpty>
+                  </PlatformTableEmpty>
                 ) : (
                   paginatedSongs.map((song, index) => (
-                    <AppTableRow
+                    <PlatformTableRow
                       key={song.id}
                       clickable
                       onClick={(e) => {
@@ -449,7 +449,7 @@ export default function RightsCatalogPage() {
                       }}
                       className={cn(selectedSongs.has(song.id) && "bg-muted/50")}
                     >
-                      <AppTableCell>
+                      <PlatformTableCell>
                         <div onClick={(e) => e.stopPropagation()}>
                           <Checkbox
                             checked={selectedSongs.has(song.id)}
@@ -466,23 +466,23 @@ export default function RightsCatalogPage() {
                             aria-label={`Select ${song.title}`}
                           />
                         </div>
-                      </AppTableCell>
-                      <AppTableCell muted>{song.song_number}</AppTableCell>
-                      <AppTableCell className="font-medium">{song.title}</AppTableCell>
-                      <AppTableCell muted>{song.songwriters.join(" / ") || "—"}</AppTableCell>
-                      <AppTableCell align="right" muted>{song.control > 0 ? `${song.control}%` : "—"}</AppTableCell>
-                      <AppTableCell muted>
+                      </PlatformTableCell>
+                      <PlatformTableCell muted>{song.song_number}</PlatformTableCell>
+                      <PlatformTableCell className="font-medium">{song.title}</PlatformTableCell>
+                      <PlatformTableCell muted>{song.songwriters.join(" / ") || "—"}</PlatformTableCell>
+                      <PlatformTableCell align="right" muted>{song.control > 0 ? `${song.control}%` : "—"}</PlatformTableCell>
+                      <PlatformTableCell muted>
                         {format(new Date(song.updatedAt), "MMM d, yyyy")}
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   ))
                 )}
-              </AppTableBody>
-            </AppTable>
+              </PlatformTableBody>
+            </PlatformTable>
           )}
         />
 
-        <AppPagination
+        <PlatformPagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
@@ -504,7 +504,7 @@ export default function RightsCatalogPage() {
             </div>
           </div>
         )}
-      </AppSection>
+      </PlatformSection>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
@@ -529,6 +529,6 @@ export default function RightsCatalogPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
