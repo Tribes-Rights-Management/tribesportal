@@ -1608,23 +1608,23 @@ export default function SongDetailPage() {
             ? generateLabelCopySchema(year, tribesPublishers)
             : null;
           return (
-            <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-              <AppCardHeader className="bg-muted/30">
+            <PlatformCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+              <PlatformCardHeader className="bg-muted/30">
                 <div className="flex items-center justify-between w-full">
-                  <AppCardTitle className="text-sm font-semibold text-foreground">Controlled Label Copy</AppCardTitle>
+                  <PlatformCardTitle className="text-sm font-semibold text-foreground">Controlled Label Copy</PlatformCardTitle>
                   {labelCopy && !editing && (
                     <CopyIconButton text={labelCopy} successMessage="Label copy copied to clipboard" label="Copy label copy" />
                   )}
                 </div>
-              </AppCardHeader>
-              <AppCardBody>
+              </PlatformCardHeader>
+              <PlatformCardBody>
                 {labelCopy ? (
                   <p className="text-sm text-foreground leading-relaxed">{labelCopy}</p>
                 ) : (
                   <p className="text-sm text-muted-foreground">No Tribes-administered publishers on this song.</p>
                 )}
-              </AppCardBody>
-            </AppCard>
+              </PlatformCardBody>
+            </PlatformCard>
           );
         })()}
 
