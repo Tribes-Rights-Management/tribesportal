@@ -390,8 +390,8 @@ export default function DataRoomPage() {
                   </PlatformTableRow>
                 ))
               )}
-            </AppTableBody>
-          </AppTable>
+            </PlatformTableBody>
+          </PlatformTable>
           </div>
         )}
       </div>
