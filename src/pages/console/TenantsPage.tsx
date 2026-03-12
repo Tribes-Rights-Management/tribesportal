@@ -201,42 +201,42 @@ export default function TenantsPage() {
 
             {/* Desktop: Table layout */}
             <div className="hidden md:block">
-              <AppTable columns={["30%", "25%", "15%", "20%", "10%"]}>
-                <AppTableHeader>
-                  <AppTableRow header>
-                    <AppTableHead>Name</AppTableHead>
-                    <AppTableHead>Slug</AppTableHead>
-                    <AppTableHead align="right">Members</AppTableHead>
-                    <AppTableHead>Created</AppTableHead>
-                    <AppTableHead></AppTableHead>
-                  </AppTableRow>
-                </AppTableHeader>
-                <AppTableBody>
+              <PlatformTable columns={["30%", "25%", "15%", "20%", "10%"]}>
+                <PlatformTableHeader>
+                  <PlatformTableRow header>
+                    <PlatformTableHead>Name</PlatformTableHead>
+                    <PlatformTableHead>Slug</PlatformTableHead>
+                    <PlatformTableHead align="right">Members</PlatformTableHead>
+                    <PlatformTableHead>Created</PlatformTableHead>
+                    <PlatformTableHead></PlatformTableHead>
+                  </PlatformTableRow>
+                </PlatformTableHeader>
+                <PlatformTableBody>
                   {tenants.map((tenant) => (
-                    <AppTableRow 
+                    <PlatformTableRow 
                       key={tenant.id}
                       clickable
                       onClick={() => openEditDialog(tenant)}
                     >
-                      <AppTableCell className="font-medium">
+                      <PlatformTableCell className="font-medium">
                         {tenant.name}
-                      </AppTableCell>
-                      <AppTableCell mono muted>
+                      </PlatformTableCell>
+                      <PlatformTableCell mono muted>
                         {tenant.slug}
-                      </AppTableCell>
-                      <AppTableCell align="right">
+                      </PlatformTableCell>
+                      <PlatformTableCell align="right">
                         {tenant.member_count}
-                      </AppTableCell>
-                      <AppTableCell muted>
+                      </PlatformTableCell>
+                      <PlatformTableCell muted>
                         {new Date(tenant.created_at).toLocaleDateString()}
-                      </AppTableCell>
-                      <AppTableCell muted>
+                      </PlatformTableCell>
+                      <PlatformTableCell muted>
                           Edit
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   ))}
-                </AppTableBody>
-              </AppTable>
+                </PlatformTableBody>
+              </PlatformTable>
             </div>
           </>
         )}
