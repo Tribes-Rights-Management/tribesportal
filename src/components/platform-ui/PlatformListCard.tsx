@@ -12,16 +12,16 @@ import { ChevronRight } from "lucide-react";
  * Card container for lists with:
  * - Optional header with title and action
  * - Consistent border and background
- * - Works with AppListRow for items
+ * - Works with PlatformListRow for items
  * 
  * USAGE:
- *   <AppListCard
+ *   <PlatformListCard
  *     title="Recent Articles"
  *     action={<button>View all</button>}
  *   >
- *     <AppListRow title="Article 1" subtitle="Jan 1" />
- *     <AppListRow title="Article 2" subtitle="Jan 2" />
- *   </AppListCard>
+ *     <PlatformListRow title="Article 1" subtitle="Jan 1" />
+ *     <PlatformListRow title="Article 2" subtitle="Jan 2" />
+ *   </PlatformListCard>
  * 
  * ENFORCEMENT:
  * - All list displays must use this component
