@@ -94,16 +94,16 @@ export default function LicensingOverview() {
 
   if (hasError) {
     return (
-      <AppPageLayout title="Overview">
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="Overview">
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             <SystemErrorState 
               title="Unable to load licensing data"
               description="Please try again or contact support if the issue persists."
             />
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
