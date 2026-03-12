@@ -193,7 +193,7 @@ export function OrganizationFormModal({
             label="Slug"
             htmlFor="org-slug"
             helpText="URL-friendly identifier. Auto-generated from name."
-            error={slugError}
+            error={errors.slug}
           >
             <Input
               id="org-slug"
