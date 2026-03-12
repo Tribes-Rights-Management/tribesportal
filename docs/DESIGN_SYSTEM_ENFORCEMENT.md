@@ -104,16 +104,16 @@ import { ConsoleButton, ConsoleChip, ConsoleCard } from "@/components/console";
 **Required Imports**:
 ```tsx
 // Page structure
-import { AppPageHeader, AppSection, AppSectionHeader } from "@/components/platform-ui";
+import { PlatformPageLayout, PlatformSection, PlatformSectionHeader } from "@/components/platform-ui";
 
 // Lists and cards
-import { AppListCard, AppListRow, AppStatCard } from "@/components/platform-ui";
+import { PlatformListCard, PlatformListRow, PlatformStatCard } from "@/components/platform-ui";
 
 // Buttons
-import { AppButton } from "@/components/platform-ui";
+import { PlatformButton } from "@/components/platform-ui";
 
 // Tables
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow } from "@/components/platform-ui";
+import { PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableRow } from "@/components/platform-ui";
 ```
 
 **Visual Rules**:
@@ -133,10 +133,10 @@ import { AppTable, AppTableHeader, AppTableBody, AppTableRow } from "@/component
     <h1 className="text-[20px] font-medium text-white mb-1">Articles</h1>
     <p className="text-[13px] text-[#AAAAAA]">24 articles</p>
   </div>
-  <AppButton variant="outline" size="sm">
+  <PlatformButton variant="outline" size="sm">
     <Plus className="h-3.5 w-3.5" />
     New Article
-  </AppButton>
+  </PlatformButton>
 </div>
 ```
 
@@ -149,12 +149,12 @@ import { AppTable, AppTableHeader, AppTableBody, AppTableRow } from "@/component
 **Required Imports**:
 ```tsx
 import { 
-  AppPageHeader, 
-  AppCard, 
-  AppStatCard, 
-  AppButton,
-  AppTable,
-  AppListCard,
+  PlatformPageLayout, 
+  PlatformCard, 
+  PlatformStatCard, 
+  PlatformButton,
+  PlatformTable,
+  PlatformListCard,
 } from "@/components/platform-ui";
 ```
 
