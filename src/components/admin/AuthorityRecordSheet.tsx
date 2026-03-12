@@ -142,7 +142,7 @@ export function AuthorityRecordSheet({
     >
       <AppSheetBody className="space-y-6 overflow-x-hidden" data-authority-sheet-body>
         {/* Back to Member Details */}
-        <AppButton
+        <PlatformButton
           onClick={() => onOpenChange(false)}
           intent="ghost"
           size="sm"
@@ -150,7 +150,7 @@ export function AuthorityRecordSheet({
           className="-mt-2"
         >
           Back to Member Details
-        </AppButton>
+        </PlatformButton>
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 1: USER IDENTITY SUMMARY
