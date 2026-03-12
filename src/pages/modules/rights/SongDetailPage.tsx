@@ -896,7 +896,7 @@ export default function SongDetailPage() {
   );
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title={
         <div>
           <div>{displayTitle}</div>
