@@ -41,10 +41,10 @@ import { PlatformButton } from "@/components/platform-ui";
 
 ### 3. Status Chips Are Non-Interactive
 
-- `AppChip` renders as `<span>`, never `<button>`
+- `PlatformChip` renders as `<span>`, never `<button>`
 - No hover states, no pointer cursor
 - Used for status display only
-- For actionable elements, use `AppButton`
+- For actionable elements, use `PlatformButton`
 
 ## Component Reference
 
