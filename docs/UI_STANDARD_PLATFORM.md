@@ -66,7 +66,7 @@ import { PlatformButton } from "@/components/platform-ui";
 - Radius: 8px (xs/sm), 12px (md/lg)
 - Primary: Dark elevated surface (#252528), NOT white
 
-### AppChip
+### PlatformChip
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
