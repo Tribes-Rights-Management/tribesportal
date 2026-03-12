@@ -593,7 +593,7 @@ export default function HelpArticleEditorPage() {
           )}>
             {/* Audiences - Inline checkboxes */}
             <div className="flex-1 min-w-0">
-              <AppCheckboxGroup
+              <PlatformCheckboxGroup
                 label="Audiences"
                 required
                 options={activeAudiences.map(a => ({ id: a.id, label: a.name }))}
