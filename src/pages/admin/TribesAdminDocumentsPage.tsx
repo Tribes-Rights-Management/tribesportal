@@ -75,17 +75,17 @@ const mockDocuments: Document[] = Array.from({ length: 89 }, (_, i) => ({
 const getStatusBadge = (status: DocumentStatus) => {
   switch (status) {
     case "active":
-      return <AppTableBadge variant="success">Active</AppTableBadge>;
+      return <PlatformTableBadge variant="success">Active</PlatformTableBadge>;
     case "pending":
-      return <AppTableBadge variant="warning">Pending</AppTableBadge>;
+      return <PlatformTableBadge variant="warning">Pending</PlatformTableBadge>;
     case "draft":
-      return <AppTableBadge variant="default">Draft</AppTableBadge>;
+      return <PlatformTableBadge variant="default">Draft</PlatformTableBadge>;
     case "expired":
-      return <AppTableBadge variant="warning">Expired</AppTableBadge>;
+      return <PlatformTableBadge variant="warning">Expired</PlatformTableBadge>;
     case "terminated":
-      return <AppTableBadge variant="error">Terminated</AppTableBadge>;
+      return <PlatformTableBadge variant="error">Terminated</PlatformTableBadge>;
     default:
-      return <AppTableBadge variant="default">{status}</AppTableBadge>;
+      return <PlatformTableBadge variant="default">{status}</PlatformTableBadge>;
   }
 };
 
