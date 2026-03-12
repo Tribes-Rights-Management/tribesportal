@@ -1013,7 +1013,7 @@ export default function SongSubmitPage() {
                               </div>
                               <div>
                                 <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Credit <span className="text-destructive">*</span></label>
-                                <AppSelect
+                                <PlatformSelect
                                   value={w.credit}
                                   onChange={(val) => updateWriter(w.id, { credit: val as Writer["credit"] })}
                                   options={[
