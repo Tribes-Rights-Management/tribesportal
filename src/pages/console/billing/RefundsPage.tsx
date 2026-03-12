@@ -271,7 +271,7 @@ export default function RefundsPage() {
 
             <div className="space-y-2">
               <Label htmlFor="reasonCode">Reason Code</Label>
-              <AppSelect
+              <PlatformSelect
                 value={refundReason}
                 onChange={setRefundReason}
                 fullWidth
