@@ -8,9 +8,9 @@ import {
   PlatformButton,
 } from "@/components/platform-ui";
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
 } from "@/components/ui/app-modal";
 
 interface ClientSettingsTabProps {
@@ -182,7 +182,7 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
       </PlatformSettingsCard>
 
       {/* Confirm Dialog */}
-      <AppModal
+      <PlatformModal
         open={!!confirmAction}
         onOpenChange={() => setConfirmAction(null)}
         title={confirmAction === "archived" ? "Archive Client" : confirmAction === "suspended" ? "Suspend Client" : "Reactivate Client"}
@@ -195,7 +195,7 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
         }
         maxWidth="sm"
       >
-        <AppModalFooter>
+        <PlatformModalFooter>
           <PlatformButton intent="secondary" onClick={() => setConfirmAction(null)}>
             Cancel
           </PlatformButton>
@@ -206,8 +206,8 @@ export default function ClientSettingsTab({ client }: ClientSettingsTabProps) {
           >
             Confirm
           </PlatformButton>
-        </AppModalFooter>
-      </AppModal>
+        </PlatformModalFooter>
+      </PlatformModal>
     </div>
   );
 }

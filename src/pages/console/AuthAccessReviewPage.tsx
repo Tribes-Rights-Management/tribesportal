@@ -18,8 +18,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow, format } from "date-fns";
 import {
-  AppModal,
-  AppModalBody,
+  PlatformModal,
+  PlatformModalBody,
 } from "@/components/ui/app-modal";
 
 // Code-defined RLS coverage expectations for existing tables
@@ -278,14 +278,14 @@ function ExceptionDetailModal({
   if (!exception) return null;
   
   return (
-    <AppModal
+    <PlatformModal
       open={open}
       onOpenChange={onClose}
       title={exception.name}
       description={`Exception details for ${exception.resource}`}
       maxWidth="lg"
     >
-      <AppModalBody>
+      <PlatformModalBody>
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <SeverityChipWrapper severity={exception.severity} />
@@ -330,8 +330,8 @@ function ExceptionDetailModal({
             </div>
           </div>
         </div>
-      </AppModalBody>
-    </AppModal>
+      </PlatformModalBody>
+    </PlatformModal>
   );
 }
 

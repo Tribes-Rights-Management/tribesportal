@@ -2,17 +2,17 @@ import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
-  AppModalAction,
-  AppModalCancel,
-  AppModalField,
-  AppModalFields,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
+  PlatformModalAction,
+  PlatformModalCancel,
+  PlatformModalField,
+  PlatformModalFields,
 } from "@/components/ui/app-modal";
 
 /**
- * ORGANIZATION FORM MODAL — USES UNIFIED APP MODAL SYSTEM
+ * ORGANIZATION FORM MODAL — USES UNIFIED PLATFORM MODAL SYSTEM
  * 
  * Features:
  * - Real-time slug validation
@@ -160,18 +160,18 @@ export function OrganizationFormModal({
   };
 
   return (
-    <AppModal
+    <PlatformModal
       open={open}
       onOpenChange={onOpenChange}
-      title={mode === "edit" ? "Edit organization" : "Add organization"}
-      description={mode === "edit" ? "Update organization details." : "Create a new organization."}
+      title={mode === "edit" ? "Edit organization" : "Create organization"}
+      description={mode === "edit" ? "Update organization details" : "Add a new organization to the platform"}
       preventClose={saving}
       maxWidth="sm"
     >
-      <AppModalBody>
-        <AppModalFields>
+      <PlatformModalBody>
+        <PlatformModalFields>
           {/* Name Field */}
-          <AppModalField
+          <PlatformModalField
             label="Name"
             htmlFor="org-name"
             error={errors.name}
@@ -180,55 +180,49 @@ export function OrganizationFormModal({
               id="org-name"
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="Acme Publishing"
-              autoComplete="organization"
-              autoCapitalize="words"
+              placeholder="Organization name"
               className={cn(
-                "h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px] placeholder:text-muted-foreground/50",
+                "h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px]",
                 errors.name ? "border-destructive" : "border-border"
               )}
             />
-          </AppModalField>
+          </PlatformModalField>
 
           {/* Slug Field */}
-          <AppModalField
+          <PlatformModalField
             label="Slug"
             htmlFor="org-slug"
+            helpText="URL-friendly identifier. Auto-generated from name."
             error={errors.slug}
-            helpText={!errors.slug ? "URL-friendly identifier. Must be unique." : undefined}
           >
             <Input
               id="org-slug"
               value={slug}
               onChange={(e) => handleSlugChange(e.target.value)}
-              placeholder="acme-publishing"
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              spellCheck={false}
+              placeholder="organization-slug"
               className={cn(
-                "h-12 md:h-11 text-[16px] md:text-[14px] font-mono bg-muted/50 border rounded-[10px] placeholder:text-muted-foreground/50",
+                "h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px] font-mono",
                 errors.slug ? "border-destructive" : "border-border"
               )}
             />
-          </AppModalField>
-        </AppModalFields>
-      </AppModalBody>
+          </PlatformModalField>
+        </PlatformModalFields>
+      </PlatformModalBody>
 
-      <AppModalFooter>
-        <AppModalAction
+      <PlatformModalFooter>
+        <PlatformModalAction
           onClick={handleSubmit}
           disabled={!isValid}
           loading={saving}
           loadingText={mode === "edit" ? "Updating…" : "Creating…"}
         >
           {mode === "edit" ? "Update" : "Create"}
-        </AppModalAction>
+        </PlatformModalAction>
         
-        <AppModalCancel onClick={() => onOpenChange(false)} disabled={saving}>
+        <PlatformModalCancel onClick={() => onOpenChange(false)} disabled={saving}>
           Cancel
-        </AppModalCancel>
-      </AppModalFooter>
-    </AppModal>
+        </PlatformModalCancel>
+      </PlatformModalFooter>
+    </PlatformModal>
   );
 }

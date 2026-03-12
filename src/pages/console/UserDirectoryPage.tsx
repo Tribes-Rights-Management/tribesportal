@@ -6,11 +6,11 @@ import { toast } from "@/hooks/use-toast";
 import { PlatformPageLayout, PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableHead, PlatformTableRow, PlatformTableCell, PlatformTableBadge } from "@/components/platform-ui";
 import { ContentPanel, EmptyState, LoadingState } from "@/components/ui/page-shell";
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
-  AppModalAction,
-  AppModalCancel,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
+  PlatformModalAction,
+  PlatformModalCancel,
 } from "@/components/ui/app-modal";
 
 import type { Database } from "@/integrations/supabase/types";
@@ -361,14 +361,14 @@ export default function UserDirectoryPage() {
       </ContentPanel>
 
       {/* Member Details Modal */}
-      <AppModal
+      <PlatformModal
         open={modalOpen}
         onOpenChange={setModalOpen}
         title={selectedUser?.email || "User Details"}
         maxWidth="lg"
       >
         {selectedUser && (
-          <AppModalBody>
+          <PlatformModalBody>
             <div className="space-y-6">
               {/* Email + Copy */}
               <div className="flex items-center gap-2">
@@ -545,40 +545,40 @@ export default function UserDirectoryPage() {
                 </section>
               )}
             </div>
-          </AppModalBody>
+          </PlatformModalBody>
         )}
-      </AppModal>
+      </PlatformModal>
 
       {/* Delete Confirmation Modal */}
-      <AppModal
+      <PlatformModal
         open={confirmDelete}
         onOpenChange={setConfirmDelete}
         title="Delete user"
         maxWidth="sm"
         preventClose={deleting}
       >
-        <AppModalBody>
+        <PlatformModalBody>
           <p className="text-[14px] leading-relaxed" style={{ color: 'var(--platform-text-secondary)' }}>
             This will permanently delete <strong style={{ color: 'var(--platform-text)' }}>{selectedUser?.email}</strong> and remove all their memberships and data. This action cannot be undone.
           </p>
-        </AppModalBody>
-        <AppModalFooter>
-          <AppModalAction
+        </PlatformModalBody>
+        <PlatformModalFooter>
+          <PlatformModalAction
             variant="destructive"
             onClick={handleDeleteUser}
             loading={deleting}
             loadingText="Deleting…"
           >
             Delete user
-          </AppModalAction>
-          <AppModalCancel
+          </PlatformModalAction>
+          <PlatformModalCancel
             onClick={() => setConfirmDelete(false)}
             disabled={deleting}
           >
             Cancel
-          </AppModalCancel>
-        </AppModalFooter>
-      </AppModal>
+          </PlatformModalCancel>
+        </PlatformModalFooter>
+      </PlatformModal>
     </PlatformPageLayout>
   );
 }

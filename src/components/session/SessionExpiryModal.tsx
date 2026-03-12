@@ -1,9 +1,9 @@
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
-  AppModalAction,
-  AppModalCancel,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
+  PlatformModalAction,
+  PlatformModalCancel,
 } from '@/components/ui/app-modal';
 
 /**
@@ -15,7 +15,7 @@ import {
  * 
  * - No gamification, no urgency language, no emojis
  * - Calm, professional, security-focused
- * - Uses AppModal for consistent styling
+ * - Uses PlatformModal for consistent styling
  * - Mobile: bottom sheet with sticky footer
  * - Desktop: centered dialog
  */
@@ -43,7 +43,7 @@ export function SessionExpiryModal({
   const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
   return (
-    <AppModal
+    <PlatformModal
       open={open}
       onOpenChange={() => {
         // Clicking X or outside should extend session (same as "Stay signed in")
@@ -52,7 +52,7 @@ export function SessionExpiryModal({
       title="Session expiring"
       maxWidth="sm"
     >
-      <AppModalBody>
+      <PlatformModalBody>
         <div className="space-y-4">
           <p
             className="text-[15px] leading-relaxed"
@@ -80,16 +80,16 @@ export function SessionExpiryModal({
             </p>
           </div>
         </div>
-      </AppModalBody>
+      </PlatformModalBody>
 
-      <AppModalFooter>
-        <AppModalCancel onClick={onSignOutNow}>
+      <PlatformModalFooter>
+        <PlatformModalCancel onClick={onSignOutNow}>
           Sign out now
-        </AppModalCancel>
-        <AppModalAction onClick={onExtendSession}>
+        </PlatformModalCancel>
+        <PlatformModalAction onClick={onExtendSession}>
           Stay signed in
-        </AppModalAction>
-      </AppModalFooter>
-    </AppModal>
+        </PlatformModalAction>
+      </PlatformModalFooter>
+    </PlatformModal>
   );
 }

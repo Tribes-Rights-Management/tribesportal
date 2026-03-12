@@ -25,7 +25,7 @@ import {
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- * APP MODAL — UNIFIED INSTITUTIONAL MODAL SYSTEM (LOCKED)
+ * PLATFORM MODAL — UNIFIED INSTITUTIONAL MODAL SYSTEM (LOCKED)
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * This is the CANONICAL modal component for the entire application.
@@ -54,13 +54,13 @@ import {
  * - Custom modal variants are prohibited
  * 
  * Usage:
- * <AppModal open={open} onOpenChange={setOpen} title="Modal Title">
- *   <AppModalBody>Content here</AppModalBody>
- *   <AppModalFooter>
- *     <AppModalCancel>Cancel</AppModalCancel>
- *     <AppModalAction>Confirm</AppModalAction>
- *   </AppModalFooter>
- * </AppModal>
+ * <PlatformModal open={open} onOpenChange={setOpen} title="Modal Title">
+ *   <PlatformModalBody>Content here</PlatformModalBody>
+ *   <PlatformModalFooter>
+ *     <PlatformModalCancel>Cancel</PlatformModalCancel>
+ *     <PlatformModalAction>Confirm</PlatformModalAction>
+ *   </PlatformModalFooter>
+ * </PlatformModal>
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -68,7 +68,7 @@ import {
 // TYPES
 // ============================================================================
 
-interface AppModalProps {
+interface PlatformModalProps {
   /** Controls modal visibility */
   open: boolean;
   /** Callback when modal should close */
@@ -87,22 +87,22 @@ interface AppModalProps {
   className?: string;
 }
 
-interface AppModalBodyProps extends React.HTMLAttributes<HTMLDivElement> {
+interface PlatformModalBodyProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-interface AppModalFooterProps extends React.HTMLAttributes<HTMLDivElement> {
+interface PlatformModalFooterProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-interface AppModalActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface PlatformModalActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   loading?: boolean;
   loadingText?: string;
   variant?: "primary" | "destructive";
 }
 
-interface AppModalCancelProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface PlatformModalCancelProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
@@ -121,7 +121,7 @@ const MAX_WIDTH_MAP = {
 // MAIN COMPONENT
 // ============================================================================
 
-export function AppModal({
+export function PlatformModal({
   open,
   onOpenChange,
   title,
@@ -130,7 +130,7 @@ export function AppModal({
   maxWidth = "md",
   preventClose = false,
   className,
-}: AppModalProps) {
+}: PlatformModalProps) {
   const isMobile = useIsMobile();
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -197,9 +197,9 @@ export function AppModal({
 // ============================================================================
 
 /**
- * APP MODAL BODY — Scrollable content area
+ * PLATFORM MODAL BODY — Scrollable content area
  */
-export function AppModalBody({ children, className, ...props }: AppModalBodyProps) {
+export function PlatformModalBody({ children, className, ...props }: PlatformModalBodyProps) {
   const isMobile = useIsMobile();
   
   if (isMobile) {
@@ -210,9 +210,9 @@ export function AppModalBody({ children, className, ...props }: AppModalBodyProp
 }
 
 /**
- * APP MODAL FOOTER — Sticky action bar
+ * PLATFORM MODAL FOOTER — Sticky action bar
  */
-export function AppModalFooter({ children, className, ...props }: AppModalFooterProps) {
+export function PlatformModalFooter({ children, className, ...props }: PlatformModalFooterProps) {
   const isMobile = useIsMobile();
   
   if (isMobile) {
@@ -223,13 +223,13 @@ export function AppModalFooter({ children, className, ...props }: AppModalFooter
 }
 
 /**
- * APP MODAL ACTION — Primary action button
+ * PLATFORM MODAL ACTION — Primary action button
  * 
  * - Full width on mobile
  * - Loading state with spinner
  * - Disabled until valid
  */
-export function AppModalAction({
+export function PlatformModalAction({
   children,
   loading = false,
   loadingText,
@@ -237,7 +237,7 @@ export function AppModalAction({
   disabled,
   className,
   ...props
-}: AppModalActionProps) {
+}: PlatformModalActionProps) {
   const isDisabled = disabled || loading;
   
   const baseStyles = cn(
@@ -278,17 +278,17 @@ export function AppModalAction({
 }
 
 /**
- * APP MODAL CANCEL — Secondary action button
+ * PLATFORM MODAL CANCEL — Secondary action button
  * 
  * - Text button style (not equal visual weight to primary)
  * - Full width on mobile, auto on desktop
  */
-export function AppModalCancel({
+export function PlatformModalCancel({
   children,
   className,
   disabled,
   ...props
-}: AppModalCancelProps) {
+}: PlatformModalCancelProps) {
   return (
     <button
       className={cn(
@@ -311,7 +311,7 @@ export function AppModalCancel({
 // FORM UTILITIES
 // ============================================================================
 
-interface AppModalFieldProps {
+interface PlatformModalFieldProps {
   label: string;
   htmlFor?: string;
   error?: string | null;
@@ -321,21 +321,21 @@ interface AppModalFieldProps {
 }
 
 /**
- * APP MODAL FIELD — Consistent form field wrapper
+ * PLATFORM MODAL FIELD — Consistent form field wrapper
  * 
  * - Visible label (never placeholder-as-label)
  * - 8-12px label → input spacing
  * - Inline error below field
  * - Help text wraps naturally
  */
-export function AppModalField({
+export function PlatformModalField({
   label,
   htmlFor,
   error,
   helpText,
   children,
   className,
-}: AppModalFieldProps) {
+}: PlatformModalFieldProps) {
   return (
     <div className={cn("space-y-2", className)}>
       <label 
@@ -365,11 +365,11 @@ export function AppModalField({
 }
 
 /**
- * APP MODAL FIELDS — Container for multiple fields
+ * PLATFORM MODAL FIELDS — Container for multiple fields
  * 
  * - 16-20px spacing between fields
  */
-export function AppModalFields({ 
+export function PlatformModalFields({ 
   children, 
   className 
 }: { 
@@ -384,20 +384,20 @@ export function AppModalFields({
 }
 
 // ============================================================================
-// ALIASES — AppDialog naming for clarity
+// ALIASES — PlatformDialog naming for clarity
 // ============================================================================
 
 /**
- * AppDialog is an alias for AppModal.
- * Use AppDialog for forms, confirmations, and short structured interactions.
- * Use AppSheet (from @/components/ui/app-sheet) for long settings/detail panels.
+ * PlatformDialog is an alias for PlatformModal.
+ * Use PlatformDialog for forms, confirmations, and short structured interactions.
+ * Use PlatformPanel (from @/components/platform-ui) for long settings/detail panels.
  */
 export {
-  AppModal as AppDialog,
-  AppModalBody as AppDialogBody,
-  AppModalFooter as AppDialogFooter,
-  AppModalAction as AppDialogAction,
-  AppModalCancel as AppDialogCancel,
-  AppModalField as AppDialogField,
-  AppModalFields as AppDialogFields,
+  PlatformModal as PlatformDialog,
+  PlatformModalBody as PlatformDialogBody,
+  PlatformModalFooter as PlatformDialogFooter,
+  PlatformModalAction as PlatformDialogAction,
+  PlatformModalCancel as PlatformDialogCancel,
+  PlatformModalField as PlatformDialogField,
+  PlatformModalFields as PlatformDialogFields,
 };

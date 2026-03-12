@@ -1,9 +1,9 @@
 import { useState } from "react";
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
-  AppModalAction,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
+  PlatformModalAction,
 } from "@/components/ui/app-modal";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Check } from "lucide-react";
@@ -84,70 +84,30 @@ export function SignInHelpDialog({
   };
 
   return (
-    <AppModal
+    <PlatformModal
       open={open}
       onOpenChange={handleOpenChange}
       title="Access assistance"
       maxWidth="sm"
     >
-      <AppModalBody>
-        {/* Intro */}
-        <p 
-          className="text-[14px] leading-relaxed"
-          style={{ color: 'var(--platform-text-secondary)' }}
-        >
+      <PlatformModalBody>
+        <p className="text-[14px] leading-relaxed" style={{ color: 'var(--platform-text-secondary)' }}>
           Tribes uses secure email verification links.
         </p>
-
-        {/* Troubleshooting list */}
         <div className="mt-4">
-          <p 
-            className="text-[14px] leading-relaxed mb-2"
-            style={{ color: 'var(--platform-text-secondary)' }}
-          >
+          <p className="text-[14px] leading-relaxed mb-2" style={{ color: 'var(--platform-text-secondary)' }}>
             If verification fails:
           </p>
           <ul className="pl-4 space-y-1">
-            <li 
-              className="text-[14px] leading-relaxed list-disc"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              Confirm the email address is correct.
-            </li>
-            <li 
-              className="text-[14px] leading-relaxed list-disc"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              Check spam or junk folders.
-            </li>
-            <li 
-              className="text-[14px] leading-relaxed list-disc"
-              style={{ color: 'var(--platform-text-secondary)' }}
-            >
-              Links expire and are single-use.
-            </li>
+            <li className="text-[14px] leading-relaxed list-disc" style={{ color: 'var(--platform-text-secondary)' }}>Confirm the email address is correct.</li>
+            <li className="text-[14px] leading-relaxed list-disc" style={{ color: 'var(--platform-text-secondary)' }}>Check spam or junk folders.</li>
+            <li className="text-[14px] leading-relaxed list-disc" style={{ color: 'var(--platform-text-secondary)' }}>Links expire and are single-use.</li>
           </ul>
         </div>
-
-        {/* Support row */}
         <div className="mt-5 flex items-center gap-2">
-          <span 
-            className="text-[12px]"
-            style={{ color: 'var(--platform-text-muted)' }}
-          >
-            Support
-          </span>
-          <span 
-            className="text-[13px]"
-            style={{ color: 'var(--platform-text-secondary)' }}
-          >
-            {supportEmail}
-          </span>
-          <button
-            onClick={handleCopyEmail}
-            className="flex items-center justify-center transition-opacity hover:opacity-70 focus:outline-none ml-1"
-            aria-label="Copy email address"
-          >
+          <span className="text-[12px]" style={{ color: 'var(--platform-text-muted)' }}>Support</span>
+          <span className="text-[13px]" style={{ color: 'var(--platform-text-secondary)' }}>{supportEmail}</span>
+          <button onClick={handleCopyEmail} className="flex items-center justify-center transition-opacity hover:opacity-70 focus:outline-none ml-1" aria-label="Copy email address">
             {copied ? (
               <Check className="h-3.5 w-3.5" strokeWidth={1.5} style={{ color: 'hsl(var(--success, 120 20% 49%))' }} />
             ) : (
@@ -155,26 +115,21 @@ export function SignInHelpDialog({
             )}
           </button>
         </div>
-
-        {/* Footer note */}
-        <p 
-          className="mt-3 text-[12px] leading-relaxed"
-          style={{ color: 'var(--platform-text-muted)' }}
-        >
+        <p className="mt-3 text-[12px] leading-relaxed" style={{ color: 'var(--platform-text-muted)' }}>
           Access is restricted to approved accounts.
         </p>
-      </AppModalBody>
+      </PlatformModalBody>
 
-      <AppModalFooter>
-        <AppModalAction
+      <PlatformModalFooter>
+        <PlatformModalAction
           onClick={handleResendLink}
           loading={isResending}
           loadingText="Sending"
           disabled={!email.trim()}
         >
           Resend verification link
-        </AppModalAction>
-      </AppModalFooter>
-    </AppModal>
+        </PlatformModalAction>
+      </PlatformModalFooter>
+    </PlatformModal>
   );
 }

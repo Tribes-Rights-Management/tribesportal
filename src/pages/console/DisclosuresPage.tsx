@@ -15,8 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  AppModal,
-  AppModalBody,
+  PlatformModal,
+  PlatformModalBody,
 } from "@/components/ui/app-modal";
 import { toast } from "sonner";
 import { Download, FileText, Loader2, Eye, ChevronRight } from "lucide-react";
@@ -552,13 +552,13 @@ export default function DisclosuresPage() {
       </div>
 
       {/* Export Detail Modal */}
-      <AppModal 
+      <PlatformModal 
         open={detailOpen} 
         onOpenChange={setDetailOpen}
         title="Disclosure Export Details"
         maxWidth="lg"
       >
-        <AppModalBody>
+        <PlatformModalBody>
           {selectedExport && (
             <div className="space-y-6">
               {/* Watermark */}
@@ -785,8 +785,8 @@ export default function DisclosuresPage() {
               )}
             </div>
           )}
-        </AppModalBody>
-      </AppModal>
+        </PlatformModalBody>
+      </PlatformModal>
     </PlatformPageLayout>
   );
 }

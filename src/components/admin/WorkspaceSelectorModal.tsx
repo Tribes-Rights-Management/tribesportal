@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
-  AppModal,
-  AppModalBody,
+  PlatformModal,
+  PlatformModalBody,
 } from "@/components/ui/app-modal";
 
 /**
  * WORKSPACE SELECTOR MODAL — SYSTEM CONSOLE → WORKSPACE ENTRY
  * 
- * Uses the unified AppModal system for consistent backdrop and mobile behavior.
+ * Uses the unified PlatformModal system for consistent backdrop and mobile behavior.
  * 
  * ═══════════════════════════════════════════════════════════════════════════
  * CANONICAL ARCHITECTURE ENFORCEMENT
@@ -152,14 +152,14 @@ export function WorkspaceSelectorModal({ open, onOpenChange }: WorkspaceSelector
   // No workspaces available
   if (tenantMemberships.length === 0) {
     return (
-      <AppModal
+      <PlatformModal
         open={open}
         onOpenChange={onOpenChange}
         title="No Workspaces Available"
         description="You do not have access to any operating workspaces."
         maxWidth="sm"
       >
-        <AppModalBody>
+        <PlatformModalBody>
           <div className="py-4 text-center">
             <p 
               className="text-[13px]"
@@ -168,13 +168,13 @@ export function WorkspaceSelectorModal({ open, onOpenChange }: WorkspaceSelector
               Contact an administrator to request workspace access.
             </p>
           </div>
-        </AppModalBody>
-      </AppModal>
+        </PlatformModalBody>
+      </PlatformModal>
     );
   }
 
   return (
-    <AppModal
+    <PlatformModal
       open={open}
       onOpenChange={onOpenChange}
       title="Select a Workspace"
@@ -207,6 +207,6 @@ export function WorkspaceSelectorModal({ open, onOpenChange }: WorkspaceSelector
           Selecting a workspace changes your data scope globally.
         </p>
       </div>
-    </AppModal>
+    </PlatformModal>
   );
 }

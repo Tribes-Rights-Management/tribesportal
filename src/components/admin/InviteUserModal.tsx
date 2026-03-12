@@ -14,13 +14,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
-  AppModalAction,
-  AppModalCancel,
-  AppModalField,
-  AppModalFields,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
+  PlatformModalAction,
+  PlatformModalCancel,
+  PlatformModalField,
+  PlatformModalFields,
 } from "@/components/ui/app-modal";
 
 interface InviteUserModalProps {
@@ -152,7 +152,7 @@ export function InviteUserModal({
   const isValid = email.trim() && !emailError && (grantAdmin || grantLicensing);
 
   return (
-    <AppModal
+    <PlatformModal
       open={open}
       onOpenChange={onOpenChange}
       title="Invite user"
@@ -160,10 +160,10 @@ export function InviteUserModal({
       preventClose={saving}
       maxWidth="sm"
     >
-      <AppModalBody>
-        <AppModalFields>
+      <PlatformModalBody>
+        <PlatformModalFields>
           {/* Email Field */}
-          <AppModalField label="Email address" htmlFor="invite-email" error={emailError}>
+          <PlatformModalField label="Email address" htmlFor="invite-email" error={emailError}>
             <Input
               id="invite-email"
               type="email"
@@ -176,10 +176,10 @@ export function InviteUserModal({
                 emailError ? "border-destructive" : "border-border"
               )}
             />
-          </AppModalField>
+          </PlatformModalField>
 
           {/* Organization Role */}
-          <AppModalField label="Role in organization" htmlFor="org-role">
+          <PlatformModalField label="Role in organization" htmlFor="org-role">
             <Select value={orgRole} onValueChange={setOrgRole}>
               <SelectTrigger 
                 id="org-role"
@@ -195,7 +195,7 @@ export function InviteUserModal({
                 ))}
               </SelectContent>
             </Select>
-          </AppModalField>
+          </PlatformModalField>
 
           {/* Module Access Section */}
           <div className="pt-4 border-t border-border">
@@ -272,22 +272,22 @@ export function InviteUserModal({
               </p>
             )}
           </div>
-        </AppModalFields>
-      </AppModalBody>
+        </PlatformModalFields>
+      </PlatformModalBody>
 
-      <AppModalFooter>
-        <AppModalAction
+      <PlatformModalFooter>
+        <PlatformModalAction
           onClick={handleSubmit}
           disabled={!isValid}
           loading={saving}
           loadingText="Sending…"
         >
           Send invitation
-        </AppModalAction>
-        <AppModalCancel onClick={() => onOpenChange(false)} disabled={saving}>
+        </PlatformModalAction>
+        <PlatformModalCancel onClick={() => onOpenChange(false)} disabled={saving}>
           Cancel
-        </AppModalCancel>
-      </AppModalFooter>
-    </AppModal>
+        </PlatformModalCancel>
+      </PlatformModalFooter>
+    </PlatformModal>
   );
 }
