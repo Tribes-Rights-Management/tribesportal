@@ -938,7 +938,7 @@ export default function SongDetailPage() {
             <PlatformCardTitle className="text-sm font-semibold text-foreground">Overview</PlatformCardTitle>
           </PlatformCardHeader>
           {editing ? (
-            <AppCardBody>
+            <PlatformCardBody>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                 <div>
                   <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Title</label>
