@@ -19,13 +19,13 @@ import {
   PlatformEmptyState,
 } from "@/components/platform-ui";
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
-  AppModalAction,
-  AppModalCancel,
-  AppModalField,
-  AppModalFields,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
+  PlatformModalAction,
+  PlatformModalCancel,
+  PlatformModalField,
+  PlatformModalFields,
 } from "@/components/ui/app-modal";
 import { Input } from "@/components/ui/input";
 
