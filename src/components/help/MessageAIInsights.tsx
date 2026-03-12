@@ -128,8 +128,8 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
       </div>
 
       {/* Category & Topics */}
-      <AppCard>
-        <AppCardBody className="p-3 space-y-3">
+      <PlatformCard>
+        <PlatformCardBody className="p-3 space-y-3">
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
               Suggested Category
@@ -158,8 +158,8 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
               </div>
             </div>
           )}
-        </AppCardBody>
-      </AppCard>
+        </PlatformCardBody>
+      </PlatformCard>
 
       {/* AI Reasoning */}
       <AppCard>
