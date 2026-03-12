@@ -2,17 +2,17 @@ import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
-  AppModalAction,
-  AppModalCancel,
-  AppModalField,
-  AppModalFields,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
+  PlatformModalAction,
+  PlatformModalCancel,
+  PlatformModalField,
+  PlatformModalFields,
 } from "@/components/ui/app-modal";
 
 /**
- * ORGANIZATION FORM MODAL — USES UNIFIED APP MODAL SYSTEM
+ * ORGANIZATION FORM MODAL — USES UNIFIED PLATFORM MODAL SYSTEM
  * 
  * Features:
  * - Real-time slug validation
