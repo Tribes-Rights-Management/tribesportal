@@ -45,7 +45,7 @@ export function PermissionConfirmDialog({
   if (!change) return null;
 
   return (
-    <AppModal
+    <PlatformModal
       open={open}
       onOpenChange={onClose}
       title="Confirm Authority Change"
@@ -53,7 +53,7 @@ export function PermissionConfirmDialog({
       preventClose={processing}
       maxWidth="sm"
     >
-      <AppModalBody>
+      <PlatformModalBody>
         {/* Change Summary */}
         <div className="space-y-4">
           <div>
@@ -107,21 +107,21 @@ export function PermissionConfirmDialog({
             </p>
           </div>
         </div>
-      </AppModalBody>
+      </PlatformModalBody>
 
-      <AppModalFooter>
-        <AppModalAction
+      <PlatformModalFooter>
+        <PlatformModalAction
           onClick={onConfirm}
           loading={processing}
           loadingText="Processing…"
         >
           Confirm Change
-        </AppModalAction>
+        </PlatformModalAction>
         
-        <AppModalCancel onClick={onClose} disabled={processing}>
+        <PlatformModalCancel onClick={onClose} disabled={processing}>
           Cancel
-        </AppModalCancel>
-      </AppModalFooter>
-    </AppModal>
+        </PlatformModalCancel>
+      </PlatformModalFooter>
+    </PlatformModal>
   );
 }
