@@ -88,13 +88,13 @@ import { PlatformButton } from "@/components/platform-ui";
 | `transparent` | `boolean` | `false` | Transparent background |
 
 Sub-components:
-- `AppCardHeader` — Header with optional action slot
-- `AppCardTitle` — Title text (h3)
-- `AppCardDescription` — Description text
-- `AppCardBody` — Main content area
-- `AppCardFooter` — Footer with actions
+- `PlatformCardHeader` — Header with optional action slot
+- `PlatformCardTitle` — Title text (h3)
+- `PlatformCardDescription` — Description text
+- `PlatformCardBody` — Main content area
+- `PlatformCardFooter` — Footer with actions
 
-### AppSectionHeader
+### PlatformSectionHeader
 
 | Prop | Type | Description |
 |------|------|-------------|
