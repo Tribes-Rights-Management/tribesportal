@@ -1,9 +1,9 @@
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
-  AppModalAction,
-  AppModalCancel,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
+  PlatformModalAction,
+  PlatformModalCancel,
 } from '@/components/ui/app-modal';
 
 /**
@@ -15,7 +15,7 @@ import {
  * 
  * - No gamification, no urgency language, no emojis
  * - Calm, professional, security-focused
- * - Uses AppModal for consistent styling
+ * - Uses PlatformModal for consistent styling
  * - Mobile: bottom sheet with sticky footer
  * - Desktop: centered dialog
  */
