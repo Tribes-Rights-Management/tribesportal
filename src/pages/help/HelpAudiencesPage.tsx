@@ -231,14 +231,14 @@ export default function HelpAudiencesPage() {
   };
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Audiences"
       backLink={{ to: "/help", label: "Overview" }}
       action={
-        <AppButton intent="primary" size="sm" onClick={handleCreate}>
+        <PlatformButton intent="primary" size="sm" onClick={handleCreate}>
           <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
           New Audience
-        </AppButton>
+        </PlatformButton>
       }
     >
       {/* Error */}
