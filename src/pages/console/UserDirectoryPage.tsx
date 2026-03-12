@@ -215,7 +215,7 @@ export default function UserDirectoryPage() {
   const isCurrentUser = (user: UserWithProfile) => user.user_id === currentProfile?.user_id;
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Member Directory"
       backLink={{ to: "/console", label: "System Console" }}
     >
