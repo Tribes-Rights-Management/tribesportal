@@ -35,8 +35,8 @@ import { PlatformButton } from "@/components/platform-ui";
 
 **ALLOWED** — Use only intent/variant props:
 ```tsx
-<AppButton intent="primary" size="md">Submit</AppButton>
-<AppButton intent="danger" loading loadingText="Deleting...">Delete</AppButton>
+<PlatformButton intent="primary" size="md">Submit</PlatformButton>
+<PlatformButton intent="danger" loading loadingText="Deleting...">Delete</PlatformButton>
 ```
 
 ### 3. Status Chips Are Non-Interactive
