@@ -314,7 +314,7 @@ export default function DataRoomPage() {
             </PlatformTableHeader>
             <PlatformTableBody>
               {(exports || []).length === 0 ? (
-                <AppTableEmpty colSpan={7}>
+                <PlatformTableEmpty colSpan={7}>
                   <FileArchive className="h-6 w-6 text-muted-foreground mx-auto mb-2" strokeWidth={1.0} />
                   <p className="text-[13px] text-muted-foreground">
                     No exports created yet
@@ -322,7 +322,7 @@ export default function DataRoomPage() {
                   <p className="text-[12px] text-muted-foreground mt-1">
                     Create your first export package for audits or compliance
                   </p>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : (
                 (exports || []).map((exp) => (
                   <AppTableRow key={exp.id}>
