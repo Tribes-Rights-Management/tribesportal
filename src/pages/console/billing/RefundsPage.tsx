@@ -13,7 +13,7 @@ import {
   User,
   FileText
 } from "lucide-react";
-import { AppSearchInput, AppSelect } from "@/components/platform-ui";
+import { PlatformSearchInput, PlatformSelect } from "@/components/platform-ui";
 import { Input } from "@/components/ui/input";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
