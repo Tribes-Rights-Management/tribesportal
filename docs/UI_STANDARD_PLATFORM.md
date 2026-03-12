@@ -80,7 +80,7 @@ import { PlatformButton } from "@/components/platform-ui";
 - Radius: pill (9999px) for status, 4px for severity
 - Min-width: 96px for alignment
 
-### AppCard
+### PlatformCard
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
