@@ -155,21 +155,21 @@ export function AuthorityRecordSheet({
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 1: USER IDENTITY SUMMARY
             ═══════════════════════════════════════════════════════════════════ */}
-        <AppSettingsCard
+        <PlatformSettingsCard
           title="User Identity"
           description="Primary identification"
         >
-          <AppDetailRow
+          <PlatformDetailRow
             label="Display Name"
             value={user.full_name || "—"}
             variant="readonly"
           />
-          <AppDetailRow
+          <PlatformDetailRow
             label="Email"
             value={user.email}
             variant="copyable"
           />
-        </AppSettingsCard>
+        </PlatformSettingsCard>
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 2: PLATFORM-LEVEL CAPABILITIES
