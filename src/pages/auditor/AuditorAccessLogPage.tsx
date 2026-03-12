@@ -56,7 +56,7 @@ export default function AuditorAccessLogPage() {
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Access Log"
       backLink={{ to: "/auditor", label: "Auditor Portal" }}
     >
@@ -80,45 +80,45 @@ export default function AuditorAccessLogPage() {
         </p>
       </div>
 
-      <AppTable columns={["25%", "20%", "15%", "20%", "20%"]}>
-        <AppTableHeader>
-          <AppTableRow header>
-            <AppTableHead>Timestamp (UTC)</AppTableHead>
-            <AppTableHead>User</AppTableHead>
-            <AppTableHead>Access Type</AppTableHead>
-            <AppTableHead>Record Type</AppTableHead>
-            <AppTableHead>Record ID</AppTableHead>
-          </AppTableRow>
-        </AppTableHeader>
-        <AppTableBody>
+      <PlatformTable columns={["25%", "20%", "15%", "20%", "20%"]}>
+        <PlatformTableHeader>
+          <PlatformTableRow header>
+            <PlatformTableHead>Timestamp (UTC)</PlatformTableHead>
+            <PlatformTableHead>User</PlatformTableHead>
+            <PlatformTableHead>Access Type</PlatformTableHead>
+            <PlatformTableHead>Record Type</PlatformTableHead>
+            <PlatformTableHead>Record ID</PlatformTableHead>
+          </PlatformTableRow>
+        </PlatformTableHeader>
+        <PlatformTableBody>
           {loading ? (
-            <AppTableEmpty colSpan={5}>
+            <PlatformTableEmpty colSpan={5}>
               <p className="text-sm text-muted-foreground">Retrieving records...</p>
               <p className="text-xs text-muted-foreground mt-1">Loading access log.</p>
-            </AppTableEmpty>
+            </PlatformTableEmpty>
           ) : entries.length === 0 ? (
-            <AppTableEmpty colSpan={5}>
+            <PlatformTableEmpty colSpan={5}>
               <p className="text-sm text-muted-foreground">{EMPTY_STATES.NO_DATA.title}</p>
               <p className="text-xs text-muted-foreground mt-1">Access events will appear here once records are viewed.</p>
-            </AppTableEmpty>
+            </PlatformTableEmpty>
           ) : (
             entries.map((entry) => (
-              <AppTableRow key={entry.id}>
-                <AppTableCell mono muted>
+              <PlatformTableRow key={entry.id}>
+                <PlatformTableCell mono muted>
                   {formatTimestamp(entry.accessed_at)}
-                </AppTableCell>
-                <AppTableCell>{entry.user_email}</AppTableCell>
-                <AppTableCell>{formatAccessType(entry.access_type)}</AppTableCell>
-                <AppTableCell muted>{entry.record_type}</AppTableCell>
-                <AppTableCell mono muted>
+                </PlatformTableCell>
+                <PlatformTableCell>{entry.user_email}</PlatformTableCell>
+                <PlatformTableCell>{formatAccessType(entry.access_type)}</PlatformTableCell>
+                <PlatformTableCell muted>{entry.record_type}</PlatformTableCell>
+                <PlatformTableCell mono muted>
                   {entry.record_id.slice(0, 8)}...
-                </AppTableCell>
-              </AppTableRow>
+                </PlatformTableCell>
+              </PlatformTableRow>
             ))
           )}
-        </AppTableBody>
-      </AppTable>
-    </AppPageLayout>
+        </PlatformTableBody>
+      </PlatformTable>
+    </PlatformPageLayout>
   );
 }
 

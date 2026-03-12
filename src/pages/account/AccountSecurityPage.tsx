@@ -51,34 +51,34 @@ export default function AccountSecurityPage() {
   return (
     <>
       {/* Authentication Method */}
-      <AppSettingsCard
+      <PlatformSettingsCard
         title="Authentication"
         description="How you sign in to the platform"
         className="mb-4 md:mb-6"
       >
-        <AppDetailRow
+        <PlatformDetailRow
           icon={KeyRound}
           label="Magic Link"
           value="Active"
           variant="readonly"
           helperText="Authentication via secure email verification"
         />
-        <AppDetailRow
+        <PlatformDetailRow
           icon={ShieldCheck}
           label="Two-Factor Authentication"
           value="Not configured"
           variant="readonly"
           helperText="Additional security layer for account access"
         />
-      </AppSettingsCard>
+      </PlatformSettingsCard>
 
       {/* Session Settings */}
-      <AppSettingsCard
+      <PlatformSettingsCard
         title="Session"
         description="Session behavior and timeout settings"
         className="mb-4 md:mb-6"
       >
-        <AppDetailRow
+        <PlatformDetailRow
           icon={Timer}
           label="Auto-logout after inactivity"
           value={getInactivityTimeoutLabel(preferences.inactivity_timeout_minutes)}
@@ -88,28 +88,28 @@ export default function AccountSecurityPage() {
           lockReason="Enforced by workspace policy"
           helperText={!isTimeoutLocked ? "For security, sessions expire after inactivity" : undefined}
         />
-        <AppDetailRow
+        <PlatformDetailRow
           icon={Monitor}
           label="Current session"
           value="Active"
           variant="readonly"
           helperText="This device is currently active"
         />
-        <AppDetailRow
+        <PlatformDetailRow
           icon={Clock}
           label="Session status"
           value="Your session will remain active until you sign out"
           variant="readonly"
         />
-      </AppSettingsCard>
+      </PlatformSettingsCard>
 
       {/* Session Actions */}
-      <AppSettingsCard
+      <PlatformSettingsCard
         title="Session Actions"
         description="Manage your active sessions"
       >
         <div className="px-4 py-4">
-          <AppButton
+          <PlatformButton
             onClick={handleSignOutAll}
             disabled={signingOut}
             loading={signingOut}
@@ -118,17 +118,17 @@ export default function AccountSecurityPage() {
             size="md"
           >
             Sign out all sessions
-          </AppButton>
+          </PlatformButton>
           <p className="text-[12px] mt-3 line-clamp-2 text-muted-foreground">
             This will sign you out from all devices and require re-authentication.
           </p>
         </div>
-      </AppSettingsCard>
+      </PlatformSettingsCard>
 
-      <AppSettingsFooter>
+      <PlatformSettingsFooter>
         Security settings may be governed by workspace policies.
         Contact your administrator for policy changes.
-      </AppSettingsFooter>
+      </PlatformSettingsFooter>
 
       {/* Inactivity Timeout Selection Sheet */}
       <EditSelectSheet

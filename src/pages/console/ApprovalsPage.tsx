@@ -256,7 +256,7 @@ export default function ApprovalsPage() {
   ];
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Access Control"
       backLink={{ to: "/console", label: "System Console" }}
     >
@@ -561,19 +561,19 @@ export default function ApprovalsPage() {
             </div>
           ) : (
             /* Desktop: Table Layout */
-            <AppTable columns={["20%", "12%", "15%", "12%", "13%", "10%", "18%"]}>
-              <AppTableHeader>
-                <AppTableRow header>
-                  <AppTableHead>Email</AppTableHead>
-                  <AppTableHead>Requested</AppTableHead>
-                  <AppTableHead>Organization</AppTableHead>
-                  <AppTableHead>Role</AppTableHead>
-                  <AppTableHead>Contexts</AppTableHead>
-                  <AppTableHead>Default</AppTableHead>
-                  <AppTableHead align="right">Actions</AppTableHead>
-                </AppTableRow>
-              </AppTableHeader>
-              <AppTableBody>
+            <PlatformTable columns={["20%", "12%", "15%", "12%", "13%", "10%", "18%"]}>
+              <PlatformTableHeader>
+                <PlatformTableRow header>
+                  <PlatformTableHead>Email</PlatformTableHead>
+                  <PlatformTableHead>Requested</PlatformTableHead>
+                  <PlatformTableHead>Organization</PlatformTableHead>
+                  <PlatformTableHead>Role</PlatformTableHead>
+                  <PlatformTableHead>Contexts</PlatformTableHead>
+                  <PlatformTableHead>Default</PlatformTableHead>
+                  <PlatformTableHead align="right">Actions</PlatformTableHead>
+                </PlatformTableRow>
+              </PlatformTableHeader>
+              <PlatformTableBody>
                 {pendingMemberships.map((membership) => {
                   const formState = formStates[membership.id] || {
                     tenant_id: "",
@@ -583,14 +583,14 @@ export default function ApprovalsPage() {
                   };
                   
                   return (
-                    <AppTableRow key={membership.id}>
-                      <AppTableCell className="font-medium">
+                    <PlatformTableRow key={membership.id}>
+                      <PlatformTableCell className="font-medium">
                         {membership.user_email}
-                      </AppTableCell>
-                      <AppTableCell muted>
+                      </PlatformTableCell>
+                      <PlatformTableCell muted>
                         {new Date(membership.created_at).toLocaleDateString()}
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <Select
                           value={formState.tenant_id}
                           onValueChange={(value) =>
@@ -613,8 +613,8 @@ export default function ApprovalsPage() {
                             ))}
                           </SelectContent>
                         </Select>
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <Select
                           value={formState.role}
                           onValueChange={(value) =>
@@ -637,8 +637,8 @@ export default function ApprovalsPage() {
                             ))}
                           </SelectContent>
                         </Select>
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <div className="flex flex-col gap-1.5">
                           {availableContexts.map((context) => (
                             <label
@@ -657,8 +657,8 @@ export default function ApprovalsPage() {
                             </label>
                           ))}
                         </div>
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <Select
                           value={formState.default_context || ""}
                           onValueChange={(value) =>
@@ -683,8 +683,8 @@ export default function ApprovalsPage() {
                             ))}
                           </SelectContent>
                         </Select>
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => approveMembership(membership)}
@@ -709,14 +709,14 @@ export default function ApprovalsPage() {
                             Deny
                           </button>
                         </div>
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   );
                 })}
-              </AppTableBody>
-            </AppTable>
+              </PlatformTableBody>
+            </PlatformTable>
         )}
       </ContentPanel>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

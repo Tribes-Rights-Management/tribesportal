@@ -29,7 +29,7 @@ export default function RevenueOverviewPage() {
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Revenue Overview"
       backLink={{ to: "/console/billing", label: "Billing" }}
     >
@@ -142,6 +142,6 @@ export default function RevenueOverviewPage() {
           </CardContent>
         </Card>
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

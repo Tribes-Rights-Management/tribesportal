@@ -119,34 +119,34 @@ export function ActivityLog({
       )}
 
       {/* Activity Table */}
-      <AppTable columns={["18%", "18%", "12%", "22%", "15%", "15%"]}>
-        <AppTableHeader>
-          <AppTableRow header>
-            <AppTableHead>Timestamp (UTC)</AppTableHead>
-            <AppTableHead>Actor</AppTableHead>
-            <AppTableHead>Action</AppTableHead>
-            <AppTableHead>Object</AppTableHead>
-            <AppTableHead>Scope</AppTableHead>
-            <AppTableHead>Result</AppTableHead>
-          </AppTableRow>
-        </AppTableHeader>
-        <AppTableBody>
+      <PlatformTable columns={["18%", "18%", "12%", "22%", "15%", "15%"]}>
+        <PlatformTableHeader>
+          <PlatformTableRow header>
+            <PlatformTableHead>Timestamp (UTC)</PlatformTableHead>
+            <PlatformTableHead>Actor</PlatformTableHead>
+            <PlatformTableHead>Action</PlatformTableHead>
+            <PlatformTableHead>Object</PlatformTableHead>
+            <PlatformTableHead>Scope</PlatformTableHead>
+            <PlatformTableHead>Result</PlatformTableHead>
+          </PlatformTableRow>
+        </PlatformTableHeader>
+        <PlatformTableBody>
           {loading ? (
-            <AppTableEmpty colSpan={6}>
+            <PlatformTableEmpty colSpan={6}>
               Retrieving records…
-            </AppTableEmpty>
+            </PlatformTableEmpty>
           ) : entries.length === 0 ? (
-            <AppTableEmpty colSpan={6}>
+            <PlatformTableEmpty colSpan={6}>
               <p className="text-sm text-muted-foreground">{EMPTY_STATES.NO_DATA.title}</p>
               <p className="text-xs text-muted-foreground mt-1">Activity records will appear here once actions are performed.</p>
-            </AppTableEmpty>
+            </PlatformTableEmpty>
           ) : (
             entries.map((entry) => (
               <ActivityLogRow key={entry.id} entry={entry} />
             ))
           )}
-        </AppTableBody>
-      </AppTable>
+        </PlatformTableBody>
+      </PlatformTable>
 
       {/* Export Note */}
       {onExport && entries.length > 0 && (
@@ -160,31 +160,31 @@ export function ActivityLog({
 
 function ActivityLogRow({ entry }: { entry: ActivityLogEntry }) {
   return (
-    <AppTableRow>
-      <AppTableCell mono muted>
+    <PlatformTableRow>
+      <PlatformTableCell mono muted>
         {formatTimestamp(entry.timestamp)}
-      </AppTableCell>
-      <AppTableCell>
+      </PlatformTableCell>
+      <PlatformTableCell>
         {entry.actor}
-      </AppTableCell>
-      <AppTableCell>
+      </PlatformTableCell>
+      <PlatformTableCell>
         {entry.action}
-      </AppTableCell>
-      <AppTableCell>
+      </PlatformTableCell>
+      <PlatformTableCell>
         {entry.object}
         {entry.objectId && (
           <span className="ml-2 font-mono text-xs text-muted-foreground">
             {entry.objectId.slice(0, 8)}
           </span>
         )}
-      </AppTableCell>
-      <AppTableCell muted>
+      </PlatformTableCell>
+      <PlatformTableCell muted>
         {entry.scope ?? '—'}
-      </AppTableCell>
-      <AppTableCell>
+      </PlatformTableCell>
+      <PlatformTableCell>
         <ActivityResultBadge result={entry.result} />
-      </AppTableCell>
-    </AppTableRow>
+      </PlatformTableCell>
+    </PlatformTableRow>
   );
 }
 

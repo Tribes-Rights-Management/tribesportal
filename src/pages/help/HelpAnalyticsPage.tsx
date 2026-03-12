@@ -141,7 +141,7 @@ export default function HelpAnalyticsPage() {
   const totalViews = topArticles.reduce((sum, a) => sum + a.view_count, 0);
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Analytics"
       backLink={{ to: "/help", label: "Overview" }}
       action={
@@ -160,7 +160,7 @@ export default function HelpAnalyticsPage() {
       {/* Error */}
       {error && (
         <div className="mb-6">
-          <AppAlert
+          <PlatformAlert
             variant="error"
             message={error}
             onRetry={fetchAnalytics}
@@ -173,47 +173,47 @@ export default function HelpAnalyticsPage() {
           <p className="text-[13px] text-muted-foreground">Loading analytics...</p>
         </div>
       ) : !hasData ? (
-        <AppCard>
-          <AppCardBody className="py-16">
-            <AppEmptyState
+        <PlatformCard>
+          <PlatformCardBody className="py-16">
+            <PlatformEmptyState
               icon="search"
               message="No analytics data yet"
               description="Analytics data will appear here once users start searching and viewing Help articles."
             />
-          </AppCardBody>
-        </AppCard>
+          </PlatformCardBody>
+        </PlatformCard>
       ) : (
         <>
           {/* Summary Stats */}
-          <AppSection spacing="md">
-            <AppStatCardGrid columns={3}>
-              <AppStatCard
+          <PlatformSection spacing="md">
+            <PlatformStatCardGrid columns={3}>
+              <PlatformStatCard
                 label="Total Searches"
                 value={totalSearches}
                 subtitle={`Last ${dateRange} days`}
               />
-              <AppStatCard
+              <PlatformStatCard
                 label="Article Views"
                 value={totalViews}
                 subtitle="All time"
               />
-              <AppStatCard
+              <PlatformStatCard
                 label="Support Tickets"
                 value={messageVolume.total}
                 subtitle={`${messageVolume.resolved} resolved`}
               />
-            </AppStatCardGrid>
-          </AppSection>
+            </PlatformStatCardGrid>
+          </PlatformSection>
 
           {/* Top Searches & Articles */}
-          <AppSection spacing="md">
+          <PlatformSection spacing="md">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Top Searches */}
-              <AppCard>
-                <AppCardHeader>
-                  <AppCardTitle>Top Search Queries</AppCardTitle>
-                </AppCardHeader>
-                <AppCardBody className="p-0">
+              <PlatformCard>
+                <PlatformCardHeader>
+                  <PlatformCardTitle>Top Search Queries</PlatformCardTitle>
+                </PlatformCardHeader>
+                <PlatformCardBody className="p-0">
                   {topSearches.length === 0 ? (
                     <div className="py-6 px-4">
                       <p className="text-[12px] text-muted-foreground text-center">No search data available</p>
@@ -221,7 +221,7 @@ export default function HelpAnalyticsPage() {
                   ) : (
                     <div className="divide-y divide-border/40">
                       {topSearches.map((item, index) => (
-                        <AppListRow
+                        <PlatformListRow
                           key={item.query}
                           title={`${index + 1}. "${item.query}"`}
                           value={<span className="font-medium tabular-nums">{item.count}</span>}
@@ -229,15 +229,15 @@ export default function HelpAnalyticsPage() {
                       ))}
                     </div>
                   )}
-                </AppCardBody>
-              </AppCard>
+                </PlatformCardBody>
+              </PlatformCard>
               
               {/* Top Articles */}
-              <AppCard>
-                <AppCardHeader>
-                  <AppCardTitle>Most Viewed Articles</AppCardTitle>
-                </AppCardHeader>
-                <AppCardBody className="p-0">
+              <PlatformCard>
+                <PlatformCardHeader>
+                  <PlatformCardTitle>Most Viewed Articles</PlatformCardTitle>
+                </PlatformCardHeader>
+                <PlatformCardBody className="p-0">
                   {topArticles.filter(a => a.view_count > 0).length === 0 ? (
                     <div className="py-6 px-4">
                       <p className="text-[12px] text-muted-foreground text-center">No view data available</p>
@@ -245,7 +245,7 @@ export default function HelpAnalyticsPage() {
                   ) : (
                     <div className="divide-y divide-border/40">
                       {topArticles.filter(a => a.view_count > 0).map((article, index) => (
-                        <AppListRow
+                        <PlatformListRow
                           key={article.id}
                           title={`${index + 1}. ${article.title}`}
                           value={
@@ -260,20 +260,20 @@ export default function HelpAnalyticsPage() {
                       ))}
                     </div>
                   )}
-                </AppCardBody>
-              </AppCard>
+                </PlatformCardBody>
+              </PlatformCard>
             </div>
-          </AppSection>
+          </PlatformSection>
 
           {/* Note */}
-          <AppSection spacing="none">
-            <AppAlert
+          <PlatformSection spacing="none">
+            <PlatformAlert
               variant="info"
               message="Search queries and article views are tracked when users interact with the public Help Center."
             />
-          </AppSection>
+          </PlatformSection>
         </>
       )}
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

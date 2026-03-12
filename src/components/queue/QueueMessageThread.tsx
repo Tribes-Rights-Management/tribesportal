@@ -89,7 +89,7 @@ export function QueueMessageThread({ queueId, viewerRole }: QueueMessageThreadPr
               </label>
             )}
           </div>
-          <AppButton
+          <PlatformButton
             size="sm"
             onClick={handleSend}
             disabled={!newMessage.trim() || sendMessage.isPending}
@@ -97,7 +97,7 @@ export function QueueMessageThread({ queueId, viewerRole }: QueueMessageThreadPr
             icon={<Send className="h-3.5 w-3.5" />}
           >
             Send
-          </AppButton>
+          </PlatformButton>
         </div>
       </div>
     </div>

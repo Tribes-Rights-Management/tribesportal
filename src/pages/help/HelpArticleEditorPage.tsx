@@ -372,14 +372,14 @@ export default function HelpArticleEditorPage() {
           <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" strokeWidth={1.5} />
           <div>
             <p className="text-[12px] text-foreground">Unable to load article</p>
-            <AppButton 
+            <PlatformButton 
               intent="tertiary" 
               size="xs"
               onClick={() => navigate("/help/articles")} 
               className="text-[11px] text-destructive hover:text-destructive/80 mt-1"
             >
               Back to articles
-            </AppButton>
+            </PlatformButton>
           </div>
         </div>
       </div>
@@ -391,7 +391,7 @@ export default function HelpArticleEditorPage() {
       {/* Header */}
       <div className="px-[20px] sm:px-6 py-3 border-b border-border flex items-center justify-between gap-2">
         {/* Back button - icon only on mobile, full on desktop */}
-        <AppButton 
+        <PlatformButton 
           intent="ghost" 
           size="sm" 
           onClick={() => navigate("/help/articles")}
@@ -399,8 +399,8 @@ export default function HelpArticleEditorPage() {
           className="hidden sm:inline-flex"
         >
           Back to Articles
-        </AppButton>
-        <AppButton 
+        </PlatformButton>
+        <PlatformButton 
           intent="ghost" 
           size="sm" 
           onClick={() => navigate("/help/articles")}
@@ -408,84 +408,84 @@ export default function HelpArticleEditorPage() {
           aria-label="Back to Articles"
         >
           <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
-        </AppButton>
+        </PlatformButton>
 
         {/* Desktop: Full action row */}
         <div className="hidden sm:flex items-center gap-2">
           {/* Archive/Restore actions */}
           {!isNew && status === "archived" ? (
-            <AppButton intent="ghost" size="sm" onClick={handleRestore}>
+             <PlatformButton intent="ghost" size="sm" onClick={handleRestore}>
               Restore
-            </AppButton>
+            </PlatformButton>
           ) : !isNew && status !== "archived" && (
-            <AppButton intent="ghost" size="sm" onClick={handleArchive}>
+            <PlatformButton intent="ghost" size="sm" onClick={handleArchive}>
               Archive
-            </AppButton>
+            </PlatformButton>
           )}
 
           {/* Draft articles: Save Draft + Publish */}
           {(isNew || status === "draft") && (
             <>
-              <AppButton 
+              <PlatformButton 
                 intent="secondary" 
                 size="sm" 
                 onClick={handleSaveDraft}
                 disabled={saving || !title.trim()}
               >
                 {saving ? "Saving..." : "Save Draft"}
-              </AppButton>
-              <AppButton 
+              </PlatformButton>
+              <PlatformButton 
                 intent="primary" 
                 size="sm" 
                 onClick={handlePublish}
                 disabled={publishing || !title.trim() || !bodyMd.trim()}
               >
                 {publishing ? "Publishing..." : "Publish"}
-              </AppButton>
+              </PlatformButton>
             </>
           )}
 
           {/* Published articles: Save + Unpublish */}
           {!isNew && status === "published" && (
             <>
-              <AppButton 
+              <PlatformButton 
                 intent="ghost" 
                 size="sm" 
                 onClick={handleUnpublish}
                 disabled={saving}
               >
                 Unpublish
-              </AppButton>
-              <AppButton 
+              </PlatformButton>
+              <PlatformButton 
                 intent="primary" 
                 size="sm" 
                 onClick={handleSavePublished}
                 disabled={saving || !title.trim() || !bodyMd.trim()}
               >
                 {saving ? "Saving..." : "Save"}
-              </AppButton>
+              </PlatformButton>
             </>
           )}
 
           {/* Internal articles: Save Draft + Publish */}
           {!isNew && status === "internal" && (
             <>
-              <AppButton 
+              <PlatformButton 
                 intent="secondary" 
                 size="sm" 
                 onClick={handleSaveDraft}
                 disabled={saving || !title.trim()}
               >
                 {saving ? "Saving..." : "Save Draft"}
-              </AppButton>
-              <AppButton 
+              </PlatformButton>
+              <PlatformButton 
                 intent="primary" 
                 size="sm" 
                 onClick={handlePublish}
                 disabled={publishing || !title.trim() || !bodyMd.trim()}
               >
                 {publishing ? "Publishing..." : "Publish"}
-              </AppButton>
+              </PlatformButton>
             </>
           )}
         </div>
@@ -494,37 +494,37 @@ export default function HelpArticleEditorPage() {
         <div className="flex sm:hidden items-center gap-2">
           {/* Primary action button based on status */}
           {(isNew || status === "draft" || status === "internal") && (
-            <AppButton 
+            <PlatformButton 
               intent="primary" 
               size="sm" 
               onClick={handlePublish}
               disabled={publishing || !title.trim() || !bodyMd.trim()}
             >
               {publishing ? "..." : "Publish"}
-            </AppButton>
+            </PlatformButton>
           )}
           {!isNew && status === "published" && (
-            <AppButton 
+            <PlatformButton 
               intent="primary" 
               size="sm" 
               onClick={handleSavePublished}
               disabled={saving || !title.trim() || !bodyMd.trim()}
             >
               {saving ? "..." : "Save"}
-            </AppButton>
+            </PlatformButton>
           )}
           {!isNew && status === "archived" && (
-            <AppButton intent="secondary" size="sm" onClick={handleRestore}>
+            <PlatformButton intent="secondary" size="sm" onClick={handleRestore}>
               Restore
-            </AppButton>
+            </PlatformButton>
           )}
 
           {/* Overflow menu for secondary actions */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <AppButton intent="ghost" size="sm" className="p-2" aria-label="More actions">
+              <PlatformButton intent="ghost" size="sm" className="p-2" aria-label="More actions">
                 <MoreHorizontal className="h-4 w-4" />
-              </AppButton>
+              </PlatformButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-[160px]">
               {(isNew || status === "draft" || status === "internal") && (
@@ -571,7 +571,7 @@ export default function HelpArticleEditorPage() {
               className="flex-1 h-9 px-3 bg-card border border-border rounded-lg text-[15px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             />
             {!isNew && (
-              <AppChip 
+              <PlatformChip 
                 status={status === "published" ? "pass" : status === "archived" ? "fail" : "pending"}
                 label={status.toUpperCase()}
                 className="self-start sm:self-auto"
@@ -593,7 +593,7 @@ export default function HelpArticleEditorPage() {
           )}>
             {/* Audiences - Inline checkboxes */}
             <div className="flex-1 min-w-0">
-              <AppCheckboxGroup
+              <PlatformCheckboxGroup
                 label="Audiences"
                 required
                 options={activeAudiences.map(a => ({ id: a.id, label: a.name }))}
@@ -618,7 +618,7 @@ export default function HelpArticleEditorPage() {
                   </Link>
                 </div>
               ) : (
-                <AppSelect
+                <PlatformSelect
                   value={selectedCategoryId}
                   onChange={setSelectedCategoryId}
                   disabled={selectedAudienceIds.length === 0}
