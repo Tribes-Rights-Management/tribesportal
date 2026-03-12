@@ -871,7 +871,7 @@ export default function SongSubmitPage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Language</label>
-                <AppSelect
+                <PlatformSelect
                   value={data.language}
                   onChange={(val) => setData(prev => ({ ...prev, language: val }))}
                   options={LANGUAGES.map(l => ({ value: l, label: l }))}
