@@ -183,7 +183,7 @@ export function OrganizationFormModal({
               placeholder="Organization name"
               className={cn(
                 "h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px]",
-                nameError ? "border-destructive" : "border-border"
+                errors.name ? "border-destructive" : "border-border"
               )}
             />
           </PlatformModalField>
