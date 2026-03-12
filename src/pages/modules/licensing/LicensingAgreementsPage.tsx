@@ -179,13 +179,13 @@ export default function LicensingAgreementsPage() {
 
   if (isLoading) {
     return (
-      <AppPageLayout title="Agreements">
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="Agreements">
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             <InstitutionalLoadingState message="Loading agreements" />
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
