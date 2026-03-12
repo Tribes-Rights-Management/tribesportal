@@ -6,20 +6,20 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 import {
-  AppPageLayout,
-  AppSection,
-  AppButton,
-  AppListToolbar,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppResponsiveList,
-  AppItemCard,
-  AppPagination,
+  PlatformPageLayout,
+  PlatformSection,
+  PlatformButton,
+  PlatformListToolbar,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformResponsiveList,
+  PlatformItemCard,
+  PlatformPagination,
 } from "@/components/platform-ui";
 import { Checkbox } from "@/components/ui/checkbox";
 import {

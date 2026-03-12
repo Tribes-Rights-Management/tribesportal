@@ -4,10 +4,10 @@ import { Monitor, Clock, KeyRound, ShieldCheck, Timer } from "lucide-react";
 import { useUserPreferences, INACTIVITY_TIMEOUT_OPTIONS } from "@/hooks/useUserPreferences";
 import { EditSelectSheet } from "@/components/edit";
 import {
-  AppButton,
-  AppDetailRow,
-  AppSettingsCard,
-  AppSettingsFooter,
+  PlatformButton,
+  PlatformDetailRow,
+  PlatformSettingsCard,
+  PlatformSettingsFooter,
 } from "@/components/platform-ui";
 
 /**

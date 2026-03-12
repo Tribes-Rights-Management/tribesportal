@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { AppPageLayout, AppCard, AppCardBody } from "@/components/platform-ui";
+import { PlatformPageLayout, PlatformCard, PlatformCardBody } from "@/components/platform-ui";
 import { toast } from "sonner";
 import { Plus, X, Search } from "lucide-react";
 

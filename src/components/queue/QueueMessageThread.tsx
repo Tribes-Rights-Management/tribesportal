@@ -2,7 +2,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { Send, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { AppButton } from "@/components/platform-ui";
+import { PlatformButton } from "@/components/platform-ui";
 import { Textarea } from "@/components/ui/textarea";
 import { useQueueMessages, useSendQueueMessage, type QueueMessage } from "@/hooks/use-queue-messages";
 

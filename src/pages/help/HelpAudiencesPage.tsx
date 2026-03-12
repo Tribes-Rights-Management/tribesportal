@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { Plus, GripVertical } from "lucide-react";
 import {
-  AppButton,
-  AppPageLayout,
-  AppAlert,
-  AppEmptyState,
-  AppPanel,
-  AppPanelFooter,
-  AppListCard,
-  AppListRow,
+  PlatformButton,
+  PlatformPageLayout,
+  PlatformAlert,
+  PlatformEmptyState,
+  PlatformPanel,
+  PlatformPanelFooter,
+  PlatformListCard,
+  PlatformListRow,
 } from "@/components/platform-ui";
 import { supabase } from "@/integrations/supabase/client";
 
