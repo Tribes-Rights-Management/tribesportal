@@ -87,7 +87,7 @@ export function PlatformListCard({
  * - Click handler for navigation
  * 
  * USAGE:
- *   <AppListRow
+ *   <PlatformListRow
  *     title="Active workspaces"
  *     value="2"
  *     onClick={() => navigate("/workspaces")}
