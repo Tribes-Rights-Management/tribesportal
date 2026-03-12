@@ -128,8 +128,8 @@ function AgreementDetailView({ agreementId }: { agreementId: string }) {
             Edit functionality will be available once the module is fully connected.
           </p>
         )}
-      </AppCardBody>
-    </AppCard>
+      </PlatformCardBody>
+    </PlatformCard>
   );
 }
 
