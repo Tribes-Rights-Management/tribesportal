@@ -283,16 +283,16 @@ export function AuthorityRecordSheet({
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 4: AUDIT METADATA
             ═══════════════════════════════════════════════════════════════════ */}
-        <AppSettingsCard
+        <PlatformSettingsCard
           title="Audit Metadata"
           description="Record creation and modification history"
         >
-          <AppDetailRow
+          <PlatformDetailRow
             label="Record Created"
             value={formatDate(user.created_at)}
             variant="readonly"
           />
-        </AppSettingsCard>
+        </PlatformSettingsCard>
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 5: GOVERNANCE NOTICE

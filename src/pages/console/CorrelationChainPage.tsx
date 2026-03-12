@@ -146,18 +146,18 @@ export default function CorrelationChainPage() {
 
   if (!hasAccess) {
     return (
-      <AppPageLayout title="Correlation Chain" backLink={{ to: "/console", label: "System Console" }}>
+      <PlatformPageLayout title="Correlation Chain" backLink={{ to: "/console", label: "System Console" }}>
         <div className="py-12 text-center">
           <p className="text-[14px]" style={{ color: 'var(--platform-text-muted)' }}>
             Access restricted. Platform administrator or auditor role required.
           </p>
         </div>
-      </AppPageLayout>
+      </PlatformPageLayout>
     );
   }
 
   return (
-    <AppPageLayout title="Correlation Chain" backLink={{ to: "/console", label: "System Console" }}>
+    <PlatformPageLayout title="Correlation Chain" backLink={{ to: "/console", label: "System Console" }}>
 
       {/* Search */}
       <div 
@@ -169,7 +169,7 @@ export default function CorrelationChainPage() {
       >
         <div className="flex gap-3 items-center">
           <div className="flex-1">
-            <AppSearchInput
+            <PlatformSearchInput
               value={searchInput}
               onChange={(value) => setSearchInput(value)}
               placeholder="Enter correlation ID (e.g., CORR-20260116-143012-A1B2C3D4)"
@@ -209,40 +209,40 @@ export default function CorrelationChainPage() {
             </h3>
           </div>
 
-          <AppTable columns={["40%", "20%", "25%", "15%"]}>
-            <AppTableHeader>
-              <AppTableRow header>
-                <AppTableHead>Correlation ID</AppTableHead>
-                <AppTableHead>Record Type</AppTableHead>
-                <AppTableHead>Created</AppTableHead>
-                <AppTableHead align="center">Action</AppTableHead>
-              </AppTableRow>
-            </AppTableHeader>
-            <AppTableBody>
+          <PlatformTable columns={["40%", "20%", "25%", "15%"]}>
+            <PlatformTableHeader>
+              <PlatformTableRow header>
+                <PlatformTableHead>Correlation ID</PlatformTableHead>
+                <PlatformTableHead>Record Type</PlatformTableHead>
+                <PlatformTableHead>Created</PlatformTableHead>
+                <PlatformTableHead align="center">Action</PlatformTableHead>
+              </PlatformTableRow>
+            </PlatformTableHeader>
+            <PlatformTableBody>
               {loadingRecent ? (
-                <AppTableEmpty colSpan={4}>
+                <PlatformTableEmpty colSpan={4}>
                   <span className="text-muted-foreground">
                     Loading records
                   </span>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : recentCorrelations.length === 0 ? (
-                <AppTableEmpty colSpan={4}>
+                <PlatformTableEmpty colSpan={4}>
                   <p className="text-sm text-muted-foreground">{EMPTY_STATES.NO_DATA.title}</p>
                   <p className="text-xs text-muted-foreground mt-1">Correlation IDs are generated when records are created.</p>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : (
                 recentCorrelations.map((record) => (
-                  <AppTableRow key={record.correlation_id} clickable>
-                    <AppTableCell mono>
+                  <PlatformTableRow key={record.correlation_id} clickable>
+                    <PlatformTableCell mono>
                         {record.correlation_id}
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                         {record.record_type.replace(/_/g, ' ')}
-                    </AppTableCell>
-                    <AppTableCell muted>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                         {formatDate(record.created_at)}
-                    </AppTableCell>
-                    <AppTableCell align="center">
+                    </PlatformTableCell>
+                    <PlatformTableCell align="center">
                       <ConsoleButton
                         intent="ghost"
                         size="sm"
@@ -252,12 +252,12 @@ export default function CorrelationChainPage() {
                         <Link2 className="h-4 w-4 mr-1" />
                         View Chain
                       </ConsoleButton>
-                    </AppTableCell>
-                  </AppTableRow>
+                    </PlatformTableCell>
+                  </PlatformTableRow>
                 ))
               )}
-            </AppTableBody>
-          </AppTable>
+            </PlatformTableBody>
+          </PlatformTable>
         </>
       )}
 
@@ -277,6 +277,6 @@ export default function CorrelationChainPage() {
           This view is read-only and cannot be modified.
         </p>
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

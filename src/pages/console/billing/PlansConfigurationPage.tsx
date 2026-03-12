@@ -30,10 +30,10 @@ export default function PlansConfigurationPage() {
   }
 
   return (
-    <AppPageLayout title="Plans & Pricing" backLink={{ to: "/console/billing", label: "Billing" }}>
+    <PlatformPageLayout title="Plans & Pricing" backLink={{ to: "/console/billing", label: "Billing" }}>
 
       <div className="flex items-center justify-between">
-        <AppSearchInput
+        <PlatformSearchInput
           value={searchQuery}
           onChange={setSearchQuery}
           placeholder="Search plans..."

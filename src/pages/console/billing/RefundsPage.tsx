@@ -371,6 +371,6 @@ export default function RefundsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

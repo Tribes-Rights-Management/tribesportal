@@ -787,6 +787,6 @@ export default function DisclosuresPage() {
           )}
         </AppModalBody>
       </AppModal>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
