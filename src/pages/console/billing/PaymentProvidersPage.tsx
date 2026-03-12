@@ -35,7 +35,7 @@ export default function PaymentProvidersPage() {
   }
 
   return (
-    <AppPageLayout title="Payment Providers" backLink={{ to: "/console/billing", label: "Billing" }}>
+    <PlatformPageLayout title="Payment Providers" backLink={{ to: "/console/billing", label: "Billing" }}>
 
       {/* Current Status */}
       <Card className={activeProvider === "none" ? "border-amber-500/20" : "border-green-500/20"}>
