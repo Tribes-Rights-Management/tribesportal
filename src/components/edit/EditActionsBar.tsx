@@ -8,7 +8,7 @@ import { PlatformButton } from "@/components/platform-ui";
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * Standard Cancel/Save layout for the Edit Flow.
- * Uses unified AppButton components for consistency.
+ * Uses unified PlatformButton components for consistency.
  * 
  * LAYOUT:
  * - Cancel (left) — secondary action
