@@ -257,7 +257,7 @@ export default function RefundsPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="refundType">Refund Type</Label>
-                <AppSelect
+                <PlatformSelect
                   value={refundType}
                   onChange={setRefundType}
                   fullWidth
