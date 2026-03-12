@@ -13,7 +13,7 @@ import { PlatformButton } from "./PlatformButton";
  * 
  * - Title + optional subtitle
  * - Back navigation (optional)
- * - Actions slot (AppButton)
+ * - Actions slot (PlatformButton)
  * - Meta slot (timestamps, status)
  * 
  * ENFORCEMENT:
