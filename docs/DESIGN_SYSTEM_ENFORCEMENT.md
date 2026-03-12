@@ -220,7 +220,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 // CORRECT - Import from appropriate kit
-import { AppButton, AppCard } from "@/components/platform-ui";
+import { PlatformButton, PlatformCard } from "@/components/platform-ui";
 // or
 import { ConsoleButton, ConsoleCard } from "@/components/console";
 ```
@@ -252,7 +252,7 @@ const MySection = ({ title, children }) => (
 // CORRECT - Use canonical component
 import { AdminSection } from "@/components/admin/AdminListRow";
 // or
-import { AppSection, AppSectionHeader } from "@/components/platform-ui";
+import { PlatformSection, PlatformSectionHeader } from "@/components/platform-ui";
 ```
 
 ### ❌ Mixed Kit Usage
@@ -260,7 +260,7 @@ import { AppSection, AppSectionHeader } from "@/components/platform-ui";
 ```tsx
 // WRONG - Mixing console and platform-ui in same page
 import { ConsoleButton } from "@/components/console";
-import { AppCard } from "@/components/platform-ui";
+import { PlatformCard } from "@/components/platform-ui";
 
 // CORRECT - Stick to one kit per context
 import { ConsoleButton, ConsoleCard } from "@/components/console";
