@@ -397,7 +397,7 @@ export default function HelpAudiencesPage() {
             />
           </div>
         </div>
-      </AppPanel>
-    </AppPageLayout>
+      </PlatformPanel>
+    </PlatformPageLayout>
   );
 }

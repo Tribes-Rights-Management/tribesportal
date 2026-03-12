@@ -205,62 +205,62 @@ export default function LicensingAgreementsPage() {
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Agreements"
       action={tenantMemberships.length > 1 ? <TenantSelector /> : undefined}
     >
-      <AppCard>
-        <AppCardBody className="p-6 md:p-8">
+      <PlatformCard>
+        <PlatformCardBody className="p-6 md:p-8">
           {agreements && agreements.length > 0 ? (
-            <AppTable>
-              <AppTableHeader>
-                <AppTableRow header>
-                  <AppTableHead>Agreement Title</AppTableHead>
-                  <AppTableHead>Status</AppTableHead>
-                  <AppTableHead>Effective Date</AppTableHead>
-                  <AppTableHead>End Date</AppTableHead>
-                </AppTableRow>
-              </AppTableHeader>
-              <AppTableBody>
+            <PlatformTable>
+              <PlatformTableHeader>
+                <PlatformTableRow header>
+                  <PlatformTableHead>Agreement Title</PlatformTableHead>
+                  <PlatformTableHead>Status</PlatformTableHead>
+                  <PlatformTableHead>Effective Date</PlatformTableHead>
+                  <PlatformTableHead>End Date</PlatformTableHead>
+                </PlatformTableRow>
+              </PlatformTableHeader>
+              <PlatformTableBody>
                 {agreements.map((agreement) => (
-                  <AppTableRow 
+                  <PlatformTableRow 
                     key={agreement.id}
                     clickable
                     onClick={() => setSearchParams({ id: agreement.id })}
                   >
-                    <AppTableCell>
+                    <PlatformTableCell>
                       {agreement.agreement_title}
-                    </AppTableCell>
-                    <AppTableCell>
-                      <AppTableBadge variant={getStatusVariant(agreement.status)}>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
+                      <PlatformTableBadge variant={getStatusVariant(agreement.status)}>
                         {agreement.status}
-                      </AppTableBadge>
-                    </AppTableCell>
-                    <AppTableCell muted>
+                      </PlatformTableBadge>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                       {agreement.effective_date 
                         ? format(new Date(agreement.effective_date), "MMM d, yyyy")
                         : "—"
                       }
-                    </AppTableCell>
-                    <AppTableCell muted>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                       {agreement.end_date 
                         ? format(new Date(agreement.end_date), "MMM d, yyyy")
                         : "—"
                       }
-                    </AppTableCell>
-                  </AppTableRow>
+                    </PlatformTableCell>
+                  </PlatformTableRow>
                 ))}
-              </AppTableBody>
-            </AppTable>
+              </PlatformTableBody>
+            </PlatformTable>
           ) : (
-            <AppEmptyState
+            <PlatformEmptyState
               icon="file"
               message="No agreements available"
               description="Licensing agreements will appear once executed."
             />
           )}
-        </AppCardBody>
-      </AppCard>
-    </AppPageLayout>
+        </PlatformCardBody>
+      </PlatformCard>
+    </PlatformPageLayout>
   );
 }
