@@ -241,72 +241,72 @@ export default function WritersTabContent() {
 
   return (
     <>
-      <AppListToolbar
+      <PlatformListToolbar
         placeholder="Search writers..."
         searchValue={searchQuery}
         onSearchChange={(v) => { setSearchQuery(v); setCurrentPage(1); }}
         count={`${totalCount.toLocaleString()} writers`}
         action={
-          <AppButton intent="secondary" size="sm" onClick={handleCreate}>
+          <PlatformButton intent="secondary" size="sm" onClick={handleCreate}>
             <Plus className="h-4 w-4" />
             Add Writer
-          </AppButton>
+          </PlatformButton>
         }
       />
 
       {/* Table */}
       <div className="overflow-x-auto -mx-4 sm:mx-0">
         <div className="px-4 sm:px-0">
-          <AppTable columns={["45%", "20%", "25%", "10%"]}>
-            <AppTableHeader>
-              <AppTableRow header>
-                <AppTableHead className="pl-5">Name</AppTableHead>
-                <AppTableHead>PRO</AppTableHead>
-                <AppTableHead className="hidden sm:table-cell">IPI Number</AppTableHead>
-                <AppTableHead className="text-right pr-10">Songs</AppTableHead>
-              </AppTableRow>
-            </AppTableHeader>
-            <AppTableBody>
+          <PlatformTable columns={["45%", "20%", "25%", "10%"]}>
+            <PlatformTableHeader>
+              <PlatformTableRow header>
+                <PlatformTableHead className="pl-5">Name</PlatformTableHead>
+                <PlatformTableHead>PRO</PlatformTableHead>
+                <PlatformTableHead className="hidden sm:table-cell">IPI Number</PlatformTableHead>
+                <PlatformTableHead className="text-right pr-10">Songs</PlatformTableHead>
+              </PlatformTableRow>
+            </PlatformTableHeader>
+            <PlatformTableBody>
               {loading ? (
                 <tr><td colSpan={4} className="text-center py-8 text-muted-foreground text-sm">Loading...</td></tr>
               ) : writers.length === 0 ? (
-                <AppTableEmpty colSpan={4}>
+                <PlatformTableEmpty colSpan={4}>
                   <p className="text-[13px] text-muted-foreground">
                     {searchQuery ? "No writers match your search" : "No writers in the system"}
                   </p>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : (
                 writers.map((writer) => {
                   const songCount = writerSongCountMap.get(writer.name.trim().toLowerCase()) || 0;
                   return (
-                    <AppTableRow key={writer.id} clickable onClick={() => handleEdit(writer)}>
-                      <AppTableCell className="pl-5">{writer.name}</AppTableCell>
-                      <AppTableCell muted>{writer.pro || "—"}</AppTableCell>
-                      <AppTableCell muted className="hidden sm:table-cell">{writer.ipi_number || writer.cae_number || "—"}</AppTableCell>
-                      <AppTableCell muted className="text-right pr-10 tabular-nums">{songCount}</AppTableCell>
-                    </AppTableRow>
+                    <PlatformTableRow key={writer.id} clickable onClick={() => handleEdit(writer)}>
+                      <PlatformTableCell className="pl-5">{writer.name}</PlatformTableCell>
+                      <PlatformTableCell muted>{writer.pro || "—"}</PlatformTableCell>
+                      <PlatformTableCell muted className="hidden sm:table-cell">{writer.ipi_number || writer.cae_number || "—"}</PlatformTableCell>
+                      <PlatformTableCell muted className="text-right pr-10 tabular-nums">{songCount}</PlatformTableCell>
+                    </PlatformTableRow>
                   );
                 })
               )}
-            </AppTableBody>
-          </AppTable>
+            </PlatformTableBody>
+          </PlatformTable>
         </div>
       </div>
 
       {totalPages > 1 && (
         <div className="mt-4">
-          <AppPagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+          <PlatformPagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
       )}
 
       {/* Edit/Add Panel */}
-      <AppPanel
+      <PlatformPanel
         open={panelOpen}
         onClose={() => setPanelOpen(false)}
         title={editing ? "Edit writer" : "New writer"}
         description={editing ? "Update writer details" : "Add a new writer to the registry"}
         footer={
-          <AppPanelFooter
+          <PlatformPanelFooter
             left={editing && (
               <button onClick={handleDelete} disabled={saving}
                 className="text-xs text-destructive hover:text-destructive/80 disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors">
@@ -321,7 +321,7 @@ export default function WritersTabContent() {
         }
       >
         <div className="space-y-4">
-          {formError && <AppAlert variant="error" message={formError} />}
+          {formError && <PlatformAlert variant="error" message={formError} />}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">First Name *</label>
@@ -360,7 +360,7 @@ export default function WritersTabContent() {
               className="w-full h-9 px-3 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring" />
           </div>
         </div>
-      </AppPanel>
+      </PlatformPanel>
     </>
   );
 }

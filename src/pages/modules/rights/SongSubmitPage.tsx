@@ -1113,7 +1113,7 @@ export default function SongSubmitPage() {
                       {data.lyricsSections.map((section, i) => (
                         <div key={section.id} className="p-4 bg-[var(--muted-wash)] rounded-xl space-y-3">
                           <div className="flex items-center justify-between">
-                            <AppSelect
+                            <PlatformSelect
                               value={section.type}
                               onChange={(val) => updateLyricSection(section.id, { type: val as LyricSection["type"] })}
                               options={LYRIC_SECTION_TYPES}
