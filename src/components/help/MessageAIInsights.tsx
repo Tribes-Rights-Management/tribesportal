@@ -70,14 +70,14 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
 
   if (loading) {
     return (
-      <AppCard>
-        <AppCardBody>
+      <PlatformCard>
+        <PlatformCardBody>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Sparkles className="h-4 w-4 animate-pulse" />
             <span>Analyzing message with AI...</span>
           </div>
-        </AppCardBody>
-      </AppCard>
+        </PlatformCardBody>
+      </PlatformCard>
     );
   }
 
