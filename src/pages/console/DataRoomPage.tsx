@@ -244,11 +244,11 @@ export default function DataRoomPage() {
 
   if (!isPlatformAdmin) {
     return (
-      <AppPageLayout title="Access Denied">
+      <PlatformPageLayout title="Access Denied">
         <p className="text-muted-foreground">
           You do not have permission to access the data room.
         </p>
-      </AppPageLayout>
+      </PlatformPageLayout>
     );
   }
 
