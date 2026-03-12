@@ -256,14 +256,14 @@ This action requires [Platform Executive / Org Admin] privileges.
 
 ```tsx
 // Canonical approval dialog structure
-<AppModal
+<PlatformModal
   open={open}
   onOpenChange={onOpenChange}
   title="Approve Authority Change"
   description="You are approving a change to user authority. This action alters access and responsibility."
   preventsClose={processing}
 >
-  <AppModalBody>
+  <PlatformModalBody>
     <div className="space-y-4">
       <div>
         <Label className="text-[11px] uppercase text-muted-foreground tracking-wide">
@@ -296,22 +296,22 @@ This action requires [Platform Executive / Org Admin] privileges.
         />
       </div>
     </div>
-  </AppModalBody>
+  </PlatformModalBody>
   
-  <AppModalFooter>
-    <AppModalAction
+  <PlatformModalFooter>
+    <PlatformModalAction
       onClick={handleApprove}
       loading={processing}
       loadingText="Processing…"
       variant="outline"
     >
       Approve change
-    </AppModalAction>
-    <AppModalCancel onClick={onOpenChange.bind(null, false)}>
+    </PlatformModalAction>
+    <PlatformModalCancel onClick={onOpenChange.bind(null, false)}>
       Cancel
-    </AppModalCancel>
-  </AppModalFooter>
-</AppModal>
+    </PlatformModalCancel>
+  </PlatformModalFooter>
+</PlatformModal>
 ```
 
 ---
