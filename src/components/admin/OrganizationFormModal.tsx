@@ -174,7 +174,7 @@ export function OrganizationFormModal({
           <PlatformModalField
             label="Name"
             htmlFor="org-name"
-            error={nameError}
+            error={errors.name}
           >
             <Input
               id="org-name"
