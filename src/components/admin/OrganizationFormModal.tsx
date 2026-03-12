@@ -202,7 +202,7 @@ export function OrganizationFormModal({
               placeholder="organization-slug"
               className={cn(
                 "h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px] font-mono",
-                slugError ? "border-destructive" : "border-border"
+                errors.slug ? "border-destructive" : "border-border"
               )}
             />
           </PlatformModalField>

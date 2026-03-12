@@ -1,9 +1,9 @@
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
-  AppModalAction,
-  AppModalCancel,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
+  PlatformModalAction,
+  PlatformModalCancel,
 } from "@/components/ui/app-modal";
 
 interface PendingChange {

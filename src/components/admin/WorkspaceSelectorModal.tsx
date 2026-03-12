@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
-  AppModal,
-  AppModalBody,
+  PlatformModal,
+  PlatformModalBody,
 } from "@/components/ui/app-modal";
 
 /**
  * WORKSPACE SELECTOR MODAL — SYSTEM CONSOLE → WORKSPACE ENTRY
  * 
- * Uses the unified AppModal system for consistent backdrop and mobile behavior.
+ * Uses the unified PlatformModal system for consistent backdrop and mobile behavior.
  * 
  * ═══════════════════════════════════════════════════════════════════════════
  * CANONICAL ARCHITECTURE ENFORCEMENT

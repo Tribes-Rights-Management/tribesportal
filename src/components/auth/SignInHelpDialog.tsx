@@ -1,9 +1,9 @@
 import { useState } from "react";
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
-  AppModalAction,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
+  PlatformModalAction,
 } from "@/components/ui/app-modal";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Check } from "lucide-react";
