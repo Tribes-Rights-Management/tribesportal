@@ -165,7 +165,7 @@ export default function RefundsPage() {
         </CardHeader>
         <CardContent>
           <div className="flex gap-3">
-            <AppSearchInput
+            <PlatformSearchInput
               value={searchQuery}
               onChange={setSearchQuery}
               placeholder="Enter transaction ID or invoice number..."
