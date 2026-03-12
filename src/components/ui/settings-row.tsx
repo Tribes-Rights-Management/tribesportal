@@ -2,16 +2,16 @@
  * @deprecated — LEGACY SETTINGS ROW COMPONENTS
  *
  * These components are DEPRECATED. Use platform-ui components instead:
- * - SettingsRow → AppDetailRow from @/components/platform-ui
- * - SettingsSectionCard → AppSettingsCard from @/components/platform-ui
- * - SettingsFooterNotice → AppSettingsFooter from @/components/platform-ui
+ * - SettingsRow → PlatformDetailRow from @/components/platform-ui
+ * - SettingsSectionCard → PlatformSettingsCard from @/components/platform-ui
+ * - SettingsFooterNotice → PlatformSettingsFooter from @/components/platform-ui
  *
  * MIGRATION:
  *   // Before (deprecated):
  *   import { SettingsRow, SettingsSectionCard } from "@/components/ui/settings-row";
  *
  *   // After (correct):
- *   import { AppDetailRow, AppSettingsCard, AppSettingsFooter } from "@/components/platform-ui";
+ *   import { PlatformDetailRow, PlatformSettingsCard, PlatformSettingsFooter } from "@/components/platform-ui";
  *
  * These exports are preserved for backward compatibility only.
  * All new code MUST use platform-ui components.
