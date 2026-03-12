@@ -312,13 +312,13 @@ export default function HelpAudiencesPage() {
                   >
                     {audience.is_active ? "Active" : "Inactive"}
                   </button>
-                  <AppButton
+                  <PlatformButton
                     intent="ghost"
                     size="sm"
                     onClick={(e) => { e.stopPropagation(); handleEdit(audience); }}
                   >
                     Edit
-                  </AppButton>
+                  </PlatformButton>
                 </div>
               </div>
             </div>
