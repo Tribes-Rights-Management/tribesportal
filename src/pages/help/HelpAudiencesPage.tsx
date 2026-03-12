@@ -327,13 +327,13 @@ export default function HelpAudiencesPage() {
       </div>
 
       {/* Right-side Panel */}
-      <AppPanel
+      <PlatformPanel
         open={panelOpen}
         onClose={() => setPanelOpen(false)}
         title={editing ? "Edit audience" : "New audience"}
         description={editing ? "Update audience details" : "Create a new audience segment"}
         footer={
-          <AppPanelFooter
+          <PlatformPanelFooter
             left={
               editing && (
                 <button
