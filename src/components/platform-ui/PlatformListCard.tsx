@@ -34,7 +34,7 @@ interface PlatformListCardProps {
   title?: string;
   /** Optional header action (button, link, etc.) */
   action?: React.ReactNode;
-  /** List content (AppListRow components) */
+  /** List content (PlatformListRow components) */
   children: React.ReactNode;
   /** Additional className */
   className?: string;

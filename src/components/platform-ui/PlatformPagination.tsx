@@ -15,7 +15,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  * - Next button (right)
  * 
  * USAGE:
- *   <AppPagination
+ *   <PlatformPagination
  *     currentPage={page}
  *     totalPages={10}
  *     onPageChange={setPage}

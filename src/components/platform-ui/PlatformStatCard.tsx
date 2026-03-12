@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
  * - Optional click handler for navigation
  * 
  * USAGE:
- *   <AppStatCard
+ *   <PlatformStatCard
  *     label="Articles"
  *     value={42}
  *     subtitle="38 published, 4 draft"

@@ -26,7 +26,7 @@ import {
  * - Border: border-border
  * 
  * USAGE:
- *   <AppSelect
+ *   <PlatformSelect
  *     value={status}
  *     onChange={setStatus}
  *     options={[
