@@ -111,7 +111,7 @@ These rules apply universally:
 |---------|----------------|
 | Single explicit CTA | "Propose Authority Change" button |
 | Disabled control microcopy | "Role changes require admin approval" |
-| Confirmation dialog | `AppModal` with diff preview |
+| Confirmation dialog | `PlatformModal` with diff preview |
 | Audit reason field | Required for all changes |
 
 ---

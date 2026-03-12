@@ -18,7 +18,7 @@ interface SignInHelpDialogProps {
 /**
  * SignInHelpDialog — Institutional access assistance modal
  * 
- * DESIGN: Uses unified AppModal system
+ * DESIGN: Uses unified PlatformModal system
  * Dark theme, minimal, functional, no friendly language
  */
 export function SignInHelpDialog({
