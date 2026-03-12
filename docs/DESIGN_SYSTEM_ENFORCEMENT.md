@@ -171,9 +171,9 @@ import {
 | Context | Stats/Metrics | Navigation | Content Lists |
 |---------|---------------|------------|---------------|
 | System Console | `AdminMetricRow` | `AdminListRow` | `AdminListRow` |
-| Help Workstation | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
-| Workspaces | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
-| Workspaces | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
+| Help Workstation | `PlatformStatCard` | `PlatformListRow` | `PlatformListRow` or `PlatformTable` |
+| Workspaces | `PlatformStatCard` | `PlatformListRow` | `PlatformListRow` or `PlatformTable` |
+| Workspaces | `PlatformStatCard` | `PlatformListRow` | `PlatformListRow` or `PlatformTable` |
 
 ---
 
