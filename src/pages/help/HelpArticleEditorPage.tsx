@@ -571,7 +571,7 @@ export default function HelpArticleEditorPage() {
               className="flex-1 h-9 px-3 bg-card border border-border rounded-lg text-[15px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             />
             {!isNew && (
-              <AppChip 
+              <PlatformChip 
                 status={status === "published" ? "pass" : status === "archived" ? "fail" : "pending"}
                 label={status.toUpperCase()}
                 className="self-start sm:self-auto"
