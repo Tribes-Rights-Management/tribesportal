@@ -1,9 +1,9 @@
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  AppPageLayout,
-  AppDetailRow,
-  AppSettingsCard,
-  AppSettingsFooter,
+  PlatformPageLayout,
+  PlatformDetailRow,
+  PlatformSettingsCard,
+  PlatformSettingsFooter,
 } from "@/components/platform-ui";
 
 /**
@@ -28,89 +28,89 @@ export default function AccountSettingsPage() {
     : 'User';
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Account Settings"
       backLink={{ to: "/admin", label: "Back" }}
       maxWidth="sm"
     >
       {/* Profile Information */}
-      <AppSettingsCard
+      <PlatformSettingsCard
         title="Profile Information"
         description="Identity and organizational association"
         className="mb-4 md:mb-6"
       >
-        <AppDetailRow
+        <PlatformDetailRow
           label="Full name"
           value={profile?.full_name}
           variant="readonly"
         />
-        <AppDetailRow
+        <PlatformDetailRow
           label="Email address"
           value={profile?.email}
           variant="copyable"
           locked
           lockReason="Managed by organization policy"
         />
-        <AppDetailRow
+        <PlatformDetailRow
           label="Role"
           value={roleDisplay}
           variant="readonly"
           locked
           lockReason="Managed by organization policy"
         />
-        <AppDetailRow
+        <PlatformDetailRow
           label="Organization"
           value={activeTenant?.tenant_name}
           variant="readonly"
           locked
           lockReason="Managed by organization policy"
         />
-      </AppSettingsCard>
+      </PlatformSettingsCard>
 
       {/* Security */}
-      <AppSettingsCard
+      <PlatformSettingsCard
         title="Security"
         description="Authentication and session management"
         className="mb-4 md:mb-6"
       >
-        <AppDetailRow
+        <PlatformDetailRow
           label="Authentication method"
           value="Magic Link (email verification)"
           variant="readonly"
         />
-        <AppDetailRow
+        <PlatformDetailRow
           label="Session status"
           value="Active session on this device"
           variant="readonly"
         />
-      </AppSettingsCard>
+      </PlatformSettingsCard>
 
       {/* Preferences */}
-      <AppSettingsCard
+      <PlatformSettingsCard
         title="Preferences"
         description="Operational settings"
       >
-        <AppDetailRow
+        <PlatformDetailRow
           label="Time zone"
           value="System default (auto-detected)"
           variant="readonly"
         />
-        <AppDetailRow
+        <PlatformDetailRow
           label="Date format"
           value="ISO 8601 (YYYY-MM-DD)"
           variant="readonly"
         />
-        <AppDetailRow
+        <PlatformDetailRow
           label="Notifications"
           value="Email notifications enabled"
           variant="readonly"
         />
-      </AppSettingsCard>
+      </PlatformSettingsCard>
 
-      <AppSettingsFooter>
+      <PlatformSettingsFooter>
         Account configuration is governed by organizational policies. 
         Contact your administrator for access-related changes.
-      </AppSettingsFooter>
-    </AppPageLayout>
+      </PlatformSettingsFooter>
+    </PlatformPageLayout>
   );
 }

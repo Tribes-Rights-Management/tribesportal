@@ -104,16 +104,16 @@ import { ConsoleButton, ConsoleChip, ConsoleCard } from "@/components/console";
 **Required Imports**:
 ```tsx
 // Page structure
-import { AppPageHeader, AppSection, AppSectionHeader } from "@/components/platform-ui";
+import { PlatformPageLayout, PlatformSection, PlatformSectionHeader } from "@/components/platform-ui";
 
 // Lists and cards
-import { AppListCard, AppListRow, AppStatCard } from "@/components/platform-ui";
+import { PlatformListCard, PlatformListRow, PlatformStatCard } from "@/components/platform-ui";
 
 // Buttons
-import { AppButton } from "@/components/platform-ui";
+import { PlatformButton } from "@/components/platform-ui";
 
 // Tables
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow } from "@/components/platform-ui";
+import { PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableRow } from "@/components/platform-ui";
 ```
 
 **Visual Rules**:
@@ -133,10 +133,10 @@ import { AppTable, AppTableHeader, AppTableBody, AppTableRow } from "@/component
     <h1 className="text-[20px] font-medium text-white mb-1">Articles</h1>
     <p className="text-[13px] text-[#AAAAAA]">24 articles</p>
   </div>
-  <AppButton variant="outline" size="sm">
+  <PlatformButton variant="outline" size="sm">
     <Plus className="h-3.5 w-3.5" />
     New Article
-  </AppButton>
+  </PlatformButton>
 </div>
 ```
 
@@ -149,12 +149,12 @@ import { AppTable, AppTableHeader, AppTableBody, AppTableRow } from "@/component
 **Required Imports**:
 ```tsx
 import { 
-  AppPageHeader, 
-  AppCard, 
-  AppStatCard, 
-  AppButton,
-  AppTable,
-  AppListCard,
+  PlatformPageLayout, 
+  PlatformCard, 
+  PlatformStatCard, 
+  PlatformButton,
+  PlatformTable,
+  PlatformListCard,
 } from "@/components/platform-ui";
 ```
 
@@ -171,9 +171,9 @@ import {
 | Context | Stats/Metrics | Navigation | Content Lists |
 |---------|---------------|------------|---------------|
 | System Console | `AdminMetricRow` | `AdminListRow` | `AdminListRow` |
-| Help Workstation | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
-| Workspaces | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
-| Workspaces | `AppStatCard` | `AppListRow` | `AppListRow` or `AppTable` |
+| Help Workstation | `PlatformStatCard` | `PlatformListRow` | `PlatformListRow` or `PlatformTable` |
+| Workspaces | `PlatformStatCard` | `PlatformListRow` | `PlatformListRow` or `PlatformTable` |
+| Workspaces | `PlatformStatCard` | `PlatformListRow` | `PlatformListRow` or `PlatformTable` |
 
 ---
 
@@ -220,7 +220,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 // CORRECT - Import from appropriate kit
-import { AppButton, AppCard } from "@/components/platform-ui";
+import { PlatformButton, PlatformCard } from "@/components/platform-ui";
 // or
 import { ConsoleButton, ConsoleCard } from "@/components/console";
 ```
@@ -252,7 +252,7 @@ const MySection = ({ title, children }) => (
 // CORRECT - Use canonical component
 import { AdminSection } from "@/components/admin/AdminListRow";
 // or
-import { AppSection, AppSectionHeader } from "@/components/platform-ui";
+import { PlatformSection, PlatformSectionHeader } from "@/components/platform-ui";
 ```
 
 ### ❌ Mixed Kit Usage
@@ -260,7 +260,7 @@ import { AppSection, AppSectionHeader } from "@/components/platform-ui";
 ```tsx
 // WRONG - Mixing console and platform-ui in same page
 import { ConsoleButton } from "@/components/console";
-import { AppCard } from "@/components/platform-ui";
+import { PlatformCard } from "@/components/platform-ui";
 
 // CORRECT - Stick to one kit per context
 import { ConsoleButton, ConsoleCard } from "@/components/console";
@@ -315,8 +315,8 @@ When creating or updating a page:
 - [ ] Review this document for correct patterns
 
 ### Development
-- [ ] Use `AdminSection` / `AppSection` for grouping
-- [ ] Use appropriate row component (AdminMetricRow, AdminListRow, AppListRow)
+- [ ] Use `AdminSection` / `PlatformSection` for grouping
+- [ ] Use appropriate row component (AdminMetricRow, AdminListRow, PlatformListRow)
 - [ ] Use CSS variables, not hardcoded colors
 - [ ] Follow header pattern for the context
 

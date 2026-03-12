@@ -18,7 +18,7 @@ import {
  * - Works correctly on all pages and viewports
  * 
  * Usage:
- *   <AppDropdown
+ *   <PlatformDropdown
  *     trigger={<button>Open</button>}
  *     items={[
  *       { label: "Settings", onClick: () => navigate("/settings") },

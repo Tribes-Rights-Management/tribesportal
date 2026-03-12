@@ -74,7 +74,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 // ✅ ALWAYS import from the design system
-import { AppButton, AppCard } from "@/components/platform-ui";
+import { PlatformButton, PlatformCard } from "@/components/platform-ui";
 ```
 
 ```tsx
@@ -83,8 +83,8 @@ import { AppButton, AppCard } from "@/components/platform-ui";
 <div className="bg-[#1A1A1A]">
 
 // ✅ ALWAYS use CSS variables or platform-ui components
-<AppCard>
-<AppPanel>
+<PlatformCard>
+<PlatformPanel>
 ```
 
 ```tsx
@@ -92,26 +92,26 @@ import { AppButton, AppCard } from "@/components/platform-ui";
 const MySection = ({ title, children }) => (...)
 
 // ✅ ALWAYS use the design system
-import { AppSection, AppSectionHeader } from "@/components/platform-ui";
+import { PlatformSection, PlatformSectionHeader } from "@/components/platform-ui";
 ```
 
 ```tsx
 // ❌ NEVER mix component kits in the same page
 import { ConsoleButton } from "@/components/console";
-import { AppCard } from "@/components/platform-ui";
+import { PlatformCard } from "@/components/platform-ui";
 ```
 
 ### Available platform-ui Components
 
-**Layout:** AppPageHeader, AppPageContainer, AppSection, AppSectionGrid, AppSectionHeader, AppDetailRow, AppDetailRowGroup, AppSettingsCard, AppSettingsFooter
-**Cards:** AppCard, AppCardHeader, AppCardTitle, AppCardDescription, AppCardBody, AppCardFooter, AppStatCard, AppStatCardGrid
-**Lists:** AppListCard, AppListRow, AppListAction, AppResponsiveList, AppItemCard
-**Tables:** AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppTableEmpty, AppTableBadge, AppTableTag, AppPagination
-**Inputs:** AppInput, AppTextarea, AppSearchInput, AppSelect, AppCheckboxGroup
-**Actions:** AppButton, AppDropdown, AppChip
-**Panels:** AppPanel, AppPanelFooter
-**Feedback:** AppAlert, AppEmptyState, AppDivider
-**Filters:** AppFilterDrawer, AppFilterSection, AppFilterOption, AppFilterTrigger
+**Layout:** PlatformPageLayout, PlatformSection, PlatformSectionGrid, PlatformSectionHeader, PlatformDetailRow, PlatformDetailRowGroup, PlatformSettingsCard, PlatformSettingsFooter
+**Cards:** PlatformCard, PlatformCardHeader, PlatformCardTitle, PlatformCardDescription, PlatformCardBody, PlatformCardFooter, PlatformStatCard, PlatformStatCardGrid
+**Lists:** PlatformListCard, PlatformListRow, PlatformListAction, PlatformResponsiveList, PlatformItemCard
+**Tables:** PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableRow, PlatformTableHead, PlatformTableCell, PlatformTableEmpty, PlatformTableBadge, PlatformTableTag, PlatformPagination
+**Inputs:** PlatformSearchInput, PlatformSelect, PlatformCheckboxGroup
+**Actions:** PlatformButton, PlatformDropdown, PlatformChip
+**Panels:** PlatformPanel, PlatformPanelFooter
+**Feedback:** PlatformAlert, PlatformEmptyState
+**Filters:** PlatformFilterDrawer, PlatformFilterSection, PlatformFilterOption, PlatformFilterTrigger
 
 ### Typography Scale (Institutional)
 

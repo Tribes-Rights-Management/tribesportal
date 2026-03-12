@@ -21,15 +21,15 @@ import { ICON_SIZE, ICON_STROKE } from "@/styles/tokens";
  * Shows filter indicator when filters are active.
  * 
  * USAGE:
- *   <AppFilterDrawer
+ *   <PlatformFilterDrawer
  *     open={filterOpen}
  *     onOpenChange={setFilterOpen}
  *     hasActiveFilters={hasFilters}
  *   >
- *     <AppFilterSection title="Status">
+ *     <PlatformFilterSection title="Status">
  *       ...filter controls
- *     </AppFilterSection>
- *   </AppFilterDrawer>
+ *     </PlatformFilterSection>
+ *   </PlatformFilterDrawer>
  * ═══════════════════════════════════════════════════════════════════════════
  */
 

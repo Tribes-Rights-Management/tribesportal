@@ -23,18 +23,18 @@ import { useHelpManagement, HelpArticle, HelpArticleStatus } from "@/hooks/useHe
 import { useArticleOrderByCategory } from "@/hooks/useArticleOrderByCategory";
 import { useDebounce } from "@/hooks/useDebounce";
 import {
-  AppButton,
-  AppChip,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppPageLayout,
-  AppAlert,
-  AppEmptyState,
+  PlatformButton,
+  PlatformChip,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformPageLayout,
+  PlatformAlert,
+  PlatformEmptyState,
 } from "@/components/platform-ui";
 import { SortableArticleCard } from "@/components/help/SortableArticleCard";
 import { SearchInput } from "@/components/ui/search-input";
@@ -218,13 +218,13 @@ export default function HelpArticlesListPage() {
   const getStatusChip = (status: HelpArticleStatus) => {
     switch (status) {
       case "published":
-        return <AppChip status="pass" label="Published" />;
+        return <PlatformChip status="pass" label="Published" />;
       case "draft":
-        return <AppChip status="pending" label="Draft" />;
+        return <PlatformChip status="pending" label="Draft" />;
       case "archived":
-        return <AppChip status="fail" label="Archived" />;
+        return <PlatformChip status="fail" label="Archived" />;
       default:
-        return <AppChip status="pending" label={status} />;
+        return <PlatformChip status="pending" label={status} />;
     }
   };
 
@@ -244,20 +244,20 @@ export default function HelpArticlesListPage() {
   const displayCount = isTableView ? filteredArticles.length : orderedArticles.length;
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Articles"
       backLink={{ to: "/help", label: "Overview" }}
       action={
-        <AppButton intent="primary" size="sm" onClick={() => navigate("/help/articles/new")}>
+        <PlatformButton intent="primary" size="sm" onClick={() => navigate("/help/articles/new")}>
           <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
           New Article
-        </AppButton>
+        </PlatformButton>
       }
     >
       {/* Error */}
       {articlesError && (
         <div className="mb-6">
-          <AppAlert
+          <PlatformAlert
             variant="error"
             message={articlesError}
             onRetry={() => fetchArticles()}
@@ -307,11 +307,11 @@ export default function HelpArticlesListPage() {
 
       {/* Content */}
       {isLoading ? (
-        <AppEmptyState message="Loading articles..." size="lg" />
+        <PlatformEmptyState message="Loading articles..." size="lg" />
       ) : !isTableView ? (
         /* Category View - Sortable Cards */
         orderedArticles.length === 0 ? (
-          <AppEmptyState
+          <PlatformEmptyState
             icon="file"
             message={`No articles in ${selectedCategory?.name || "this category"} yet.`}
             description="Create an article and assign it to this category."
@@ -344,57 +344,57 @@ export default function HelpArticlesListPage() {
           <ContentPanel>
             <div className="overflow-x-auto">
               <div className="min-w-[600px]">
-                <AppTable columns="name-meta-status-date" className="border-0 rounded-none shadow-none">
-                  <AppTableHeader>
-                  <AppTableRow header>
-                    <AppTableHead
+                <PlatformTable columns="name-meta-status-date" className="border-0 rounded-none shadow-none">
+                  <PlatformTableHeader>
+                  <PlatformTableRow header>
+                    <PlatformTableHead
                       sortable
                       sortDirection={sortField === "title" ? sortOrder : null}
                       onSort={() => handleSort("title")}
                     >
                       Title
-                    </AppTableHead>
-                    <AppTableHead className="hidden sm:table-cell">Audiences</AppTableHead>
-                    <AppTableHead>Status</AppTableHead>
-                    <AppTableHead
+                    </PlatformTableHead>
+                    <PlatformTableHead className="hidden sm:table-cell">Audiences</PlatformTableHead>
+                    <PlatformTableHead>Status</PlatformTableHead>
+                    <PlatformTableHead
                       align="right"
                       sortable
                       sortDirection={sortField === "updated_at" ? sortOrder : null}
                       onSort={() => handleSort("updated_at")}
                     >
                       Updated
-                    </AppTableHead>
-                  </AppTableRow>
-                </AppTableHeader>
-                <AppTableBody>
+                    </PlatformTableHead>
+                  </PlatformTableRow>
+                </PlatformTableHeader>
+                <PlatformTableBody>
                   {paginatedArticles.length === 0 ? (
-                    <AppTableEmpty colSpan={4}>
+                    <PlatformTableEmpty colSpan={4}>
                       <p className="text-[13px] text-muted-foreground">
                         {debouncedSearch || statusFilter !== "all" ? "No articles match your filters" : "No articles yet"}
                       </p>
-                    </AppTableEmpty>
+                    </PlatformTableEmpty>
                   ) : (
                     paginatedArticles.map(article => (
-                      <AppTableRow
+                      <PlatformTableRow
                         key={article.id}
                         clickable
                         onClick={() => navigate(`/help/articles/${article.id}`)}
                       >
-                        <AppTableCell>{article.title || "Untitled"}</AppTableCell>
-                        <AppTableCell muted className="hidden sm:table-cell">
+                        <PlatformTableCell>{article.title || "Untitled"}</PlatformTableCell>
+                        <PlatformTableCell muted className="hidden sm:table-cell">
                           {getArticleAudiences(article.id) || <span className="italic">No audiences</span>}
-                        </AppTableCell>
-                        <AppTableCell>
+                        </PlatformTableCell>
+                        <PlatformTableCell>
                           {getStatusChip(article.status)}
-                        </AppTableCell>
-                        <AppTableCell align="right" muted>
+                        </PlatformTableCell>
+                        <PlatformTableCell align="right" muted>
                           {format(new Date(article.updated_at), "MMM d, yyyy")}
-                        </AppTableCell>
-                      </AppTableRow>
+                        </PlatformTableCell>
+                      </PlatformTableRow>
                     ))
                   )}
-                </AppTableBody>
-                </AppTable>
+                </PlatformTableBody>
+                </PlatformTable>
               </div>
             </div>
           </ContentPanel>
@@ -406,7 +406,7 @@ export default function HelpArticlesListPage() {
                 Page {currentPage} of {totalPages}
               </p>
               <div className="flex items-center gap-2">
-                <AppButton
+                <PlatformButton
                   intent="secondary"
                   size="sm"
                   disabled={currentPage === 1}
@@ -414,8 +414,8 @@ export default function HelpArticlesListPage() {
                   className="flex-1 sm:flex-none"
                 >
                   Previous
-                </AppButton>
-                <AppButton
+                </PlatformButton>
+                <PlatformButton
                   intent="secondary"
                   size="sm"
                   disabled={currentPage === totalPages}
@@ -423,12 +423,12 @@ export default function HelpArticlesListPage() {
                   className="flex-1 sm:flex-none"
                 >
                   Next
-                </AppButton>
+                </PlatformButton>
               </div>
             </div>
           )}
         </>
       )}
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

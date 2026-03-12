@@ -23,14 +23,14 @@ import { Switch } from "@/components/ui/switch";
  * - toggle: label + description + iOS-style switch
  * 
  * USAGE:
- *   <AppDetailRow
+ *   <PlatformDetailRow
  *     icon={Mail}
  *     label="Email"
  *     value="user@example.com"
  *     variant="copyable"
  *   />
  * 
- *   <AppDetailRow
+ *   <PlatformDetailRow
  *     icon={Timer}
  *     label="Auto-logout"
  *     value="15 minutes"

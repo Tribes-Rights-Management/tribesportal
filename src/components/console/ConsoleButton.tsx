@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
  * DO NOT STYLE BUTTONS PER-PAGE. USE VARIANTS HERE.
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * This component matches AppButton exactly for visual consistency across
+ * This component matches PlatformButton exactly for visual consistency across
  * all workstations (Help, System Console, Licensing, etc.).
  * 
  * MERCURY/STRIPE-LIKE NEUTRAL BUTTON SYSTEM:

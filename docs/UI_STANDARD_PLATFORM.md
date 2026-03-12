@@ -12,7 +12,7 @@ The Platform UI Kit provides institutional-grade UI components that prevent styl
 
 **REQUIRED** — Import from the Platform UI Kit:
 ```tsx
-import { AppButton, AppChip, AppCard, AppSectionHeader } from "@/components/platform-ui";
+import { PlatformButton, PlatformChip, PlatformCard, PlatformSectionHeader } from "@/components/platform-ui";
 ```
 
 **PROHIBITED** — Do not import raw primitives in page components:
@@ -21,7 +21,7 @@ import { AppButton, AppChip, AppCard, AppSectionHeader } from "@/components/plat
 import { Button } from "@/components/ui/button";
 
 // ✅ CORRECT
-import { AppButton } from "@/components/platform-ui";
+import { PlatformButton } from "@/components/platform-ui";
 ```
 
 ### 2. No One-Off Styling
@@ -35,20 +35,20 @@ import { AppButton } from "@/components/platform-ui";
 
 **ALLOWED** — Use only intent/variant props:
 ```tsx
-<AppButton intent="primary" size="md">Submit</AppButton>
-<AppButton intent="danger" loading loadingText="Deleting...">Delete</AppButton>
+<PlatformButton intent="primary" size="md">Submit</PlatformButton>
+<PlatformButton intent="danger" loading loadingText="Deleting...">Delete</PlatformButton>
 ```
 
 ### 3. Status Chips Are Non-Interactive
 
-- `AppChip` renders as `<span>`, never `<button>`
+- `PlatformChip` renders as `<span>`, never `<button>`
 - No hover states, no pointer cursor
 - Used for status display only
-- For actionable elements, use `AppButton`
+- For actionable elements, use `PlatformButton`
 
 ## Component Reference
 
-### AppButton
+### PlatformButton
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -66,7 +66,7 @@ import { AppButton } from "@/components/platform-ui";
 - Radius: 8px (xs/sm), 12px (md/lg)
 - Primary: Dark elevated surface (#252528), NOT white
 
-### AppChip
+### PlatformChip
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -80,7 +80,7 @@ import { AppButton } from "@/components/platform-ui";
 - Radius: pill (9999px) for status, 4px for severity
 - Min-width: 96px for alignment
 
-### AppCard
+### PlatformCard
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -88,13 +88,13 @@ import { AppButton } from "@/components/platform-ui";
 | `transparent` | `boolean` | `false` | Transparent background |
 
 Sub-components:
-- `AppCardHeader` — Header with optional action slot
-- `AppCardTitle` — Title text (h3)
-- `AppCardDescription` — Description text
-- `AppCardBody` — Main content area
-- `AppCardFooter` — Footer with actions
+- `PlatformCardHeader` — Header with optional action slot
+- `PlatformCardTitle` — Title text (h3)
+- `PlatformCardDescription` — Description text
+- `PlatformCardBody` — Main content area
+- `PlatformCardFooter` — Footer with actions
 
-### AppSectionHeader
+### PlatformSectionHeader
 
 | Prop | Type | Description |
 |------|------|-------------|
@@ -144,11 +144,11 @@ All other page-level components must use the Platform UI Kit.
 
 When updating existing pages:
 
-1. Replace `import { Button } from "@/components/ui/button"` → `import { AppButton } from "@/components/platform-ui"`
-2. Replace `<Button variant="...">` → `<AppButton intent="...">` (map variants appropriately)
+1. Replace `import { Button } from "@/components/ui/button"` → `import { PlatformButton } from "@/components/platform-ui"`
+2. Replace `<Button variant="...">` → `<PlatformButton intent="...">` (map variants appropriately)
 3. Remove any `bg-*`, `text-*`, `rounded-*` className overrides on buttons
-4. Replace `<Badge>` status indicators → `<AppChip status="...">`
-5. Replace `<Card>` containers → `<AppCard>` with sub-components
+4. Replace `<Badge>` status indicators → `<PlatformChip status="...">`
+5. Replace `<Card>` containers → `<PlatformCard>` with sub-components
 
 ## Verification
 

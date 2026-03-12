@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
  * - Info notices
  * 
  * USAGE:
- *   <AppAlert
+ *   <PlatformAlert
  *     variant="error"
  *     message="Unable to load data"
  *     onRetry={handleRetry}

@@ -13,7 +13,7 @@ import { PlatformButton } from "./PlatformButton";
  * 
  * - Title + optional subtitle
  * - Back navigation (optional)
- * - Actions slot (AppButton)
+ * - Actions slot (PlatformButton)
  * - Meta slot (timestamps, status)
  * 
  * ENFORCEMENT:
@@ -31,7 +31,7 @@ interface PlatformSectionHeaderProps {
   backTo?: string;
   /** Back button label */
   backLabel?: string;
-  /** Actions slot (typically AppButton components) */
+  /** Actions slot (typically PlatformButton components) */
   actions?: React.ReactNode;
   /** Meta information slot (timestamps, status badges) */
   meta?: React.ReactNode;

@@ -35,37 +35,37 @@ find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.
 
     # Check 1: Raw ui/button imports
     if grep -q 'from.*@/components/ui/button' "$file"; then
-        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/button → use AppButton from @/components/platform-ui\n"
+        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/button → use PlatformButton from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
     # Check 2: Raw ui/card imports
     if grep -q 'from.*@/components/ui/card' "$file"; then
-        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/card → use AppCard from @/components/platform-ui\n"
+        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/card → use PlatformCard from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
     # Check 3: Raw ui/input imports
     if grep -q 'from.*@/components/ui/input' "$file"; then
-        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/input → use AppInput from @/components/platform-ui\n"
+        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/input → use PlatformSearchInput from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
     # Check 4: Raw ui/badge imports
     if grep -q 'from.*@/components/ui/badge' "$file"; then
-        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/badge → use AppChip from @/components/platform-ui\n"
+        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/badge → use PlatformChip from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
     # Check 5: Raw ui/table imports
     if grep -q 'from.*@/components/ui/table' "$file"; then
-        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/table → use AppTable from @/components/platform-ui\n"
+        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/table → use PlatformTable from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
     # Check 6: bg-white or bg-card on DIV elements used as panel pattern (skip inputs and selects)
     if grep -qE '<div.*className=.*bg-(white|card).*border.*rounded|<div.*className=.*bg-(white|card).*rounded.*border|<section.*className=.*bg-(white|card).*border.*rounded' "$file"; then
-        file_issues+="  ${YELLOW}PATTERN${NC} Raw bg-white/bg-card panel on div → use AppPanel or AppCard\n"
+        file_issues+="  ${YELLOW}PATTERN${NC} Raw bg-white/bg-card panel on div → use PlatformPanel or PlatformCard\n"
         file_violations=$((file_violations + 1))
     fi
 
@@ -78,7 +78,7 @@ find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.
 
     # Check 8: Raw <table element
     if grep -q '<table' "$file"; then
-        file_issues+="  ${YELLOW}ELEMENT${NC} Raw <table> → use AppTable from @/components/platform-ui\n"
+        file_issues+="  ${YELLOW}ELEMENT${NC} Raw <table> → use PlatformTable from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
