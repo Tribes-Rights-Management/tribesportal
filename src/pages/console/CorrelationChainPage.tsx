@@ -6,7 +6,7 @@ import {
   CorrelationChainView, 
   ChainEvent 
 } from "@/components/ui/correlation-chain";
-import { PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableRow, PlatformTableHead, PlatformTableCell, PlatformTableEmpty, PlatformPageLayout, PlatformSearchInput } from "@/components/platform-ui";
+import { PlatformTable as AppTable, PlatformTableHeader as AppTableHeader, PlatformTableBody as AppTableBody, PlatformTableRow as AppTableRow, PlatformTableHead as AppTableHead, PlatformTableCell as AppTableCell, PlatformTableEmpty as AppTableEmpty, PlatformPageLayout as AppPageLayout, PlatformSearchInput as AppSearchInput } from "@/components/platform-ui";
 import { ConsoleButton } from "@/components/console";
 import { Search, Link2 } from "lucide-react";
 import { EMPTY_STATES } from "@/constants/institutional-copy";
