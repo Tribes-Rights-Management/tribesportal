@@ -999,11 +999,11 @@ export default function SongDetailPage() {
         </PlatformCard>
 
         {/* ─── 2. SONGWRITERS (from song_writers table) ──── */}
-        <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-          <AppCardHeader className="bg-muted/30">
-            <AppCardTitle className="text-sm font-semibold text-foreground">Songwriters</AppCardTitle>
-          </AppCardHeader>
-          <AppCardBody className={editing ? undefined : "p-0"}>
+        <PlatformCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+          <PlatformCardHeader className="bg-muted/30">
+            <PlatformCardTitle className="text-sm font-semibold text-foreground">Songwriters</PlatformCardTitle>
+          </PlatformCardHeader>
+          <PlatformCardBody className={editing ? undefined : "p-0"}>
             {editing ? (
               <div>
                 {/* ── Desktop edit layout ── */}
