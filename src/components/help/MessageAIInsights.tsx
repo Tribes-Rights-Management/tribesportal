@@ -98,8 +98,8 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-3">
-        <AppCard>
-          <AppCardBody className="p-3">
+        <PlatformCard>
+          <PlatformCardBody className="p-3">
             <div className="flex items-center gap-2 mb-1">
               <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" />
               <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -109,11 +109,11 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
             <p className={`text-sm font-medium ${getPriorityColor(analysis.priority)}`}>
               {analysis.priority.charAt(0).toUpperCase() + analysis.priority.slice(1)}
             </p>
-          </AppCardBody>
-        </AppCard>
+          </PlatformCardBody>
+        </PlatformCard>
 
-        <AppCard>
-          <AppCardBody className="p-3">
+        <PlatformCard>
+          <PlatformCardBody className="p-3">
             <div className="flex items-center gap-2 mb-1">
               <Brain className="h-3.5 w-3.5 text-muted-foreground" />
               <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -123,8 +123,8 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
             <p className={`text-sm font-medium ${getSentimentColor(analysis.sentiment)}`}>
               {analysis.sentiment.charAt(0).toUpperCase() + analysis.sentiment.slice(1)}
             </p>
-          </AppCardBody>
-        </AppCard>
+          </PlatformCardBody>
+        </PlatformCard>
       </div>
 
       {/* Category & Topics */}
