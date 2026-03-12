@@ -135,7 +135,7 @@ export default function AuditorChainPage() {
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Correlation Chain"
       backLink={{ to: "/auditor", label: "Auditor Portal" }}
     >
@@ -169,7 +169,7 @@ export default function AuditorChainPage() {
       >
         <div className="flex gap-3 items-center">
           <div className="flex-1">
-            <AppSearchInput
+            <PlatformSearchInput
               value={searchInput}
               onChange={(value) => setSearchInput(value)}
               placeholder="Enter correlation ID"
@@ -209,40 +209,40 @@ export default function AuditorChainPage() {
             </h3>
           </div>
 
-          <AppTable columns={["40%", "20%", "25%", "15%"]}>
-            <AppTableHeader>
-              <AppTableRow header>
-                <AppTableHead>Correlation ID</AppTableHead>
-                <AppTableHead>Record Type</AppTableHead>
-                <AppTableHead>Created</AppTableHead>
-                <AppTableHead align="center">Action</AppTableHead>
-              </AppTableRow>
-            </AppTableHeader>
-            <AppTableBody>
+          <PlatformTable columns={["40%", "20%", "25%", "15%"]}>
+            <PlatformTableHeader>
+              <PlatformTableRow header>
+                <PlatformTableHead>Correlation ID</PlatformTableHead>
+                <PlatformTableHead>Record Type</PlatformTableHead>
+                <PlatformTableHead>Created</PlatformTableHead>
+                <PlatformTableHead align="center">Action</PlatformTableHead>
+              </PlatformTableRow>
+            </PlatformTableHeader>
+            <PlatformTableBody>
               {loadingRecent ? (
-                <AppTableEmpty colSpan={4}>
+                <PlatformTableEmpty colSpan={4}>
                   <span className="text-muted-foreground">
                     Loading records
                   </span>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : recentCorrelations.length === 0 ? (
-                <AppTableEmpty colSpan={4}>
+                <PlatformTableEmpty colSpan={4}>
                   <p className="text-sm text-muted-foreground">{EMPTY_STATES.NO_DATA.title}</p>
                   <p className="text-xs text-muted-foreground mt-1">No correlated records available.</p>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : (
                 recentCorrelations.map((record) => (
-                  <AppTableRow key={record.correlation_id} clickable>
-                    <AppTableCell mono>
+                  <PlatformTableRow key={record.correlation_id} clickable>
+                    <PlatformTableCell mono>
                         {record.correlation_id}
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                         {record.record_type.replace(/_/g, ' ')}
-                    </AppTableCell>
-                    <AppTableCell muted>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                         {formatDate(record.created_at)}
-                    </AppTableCell>
-                    <AppTableCell align="center">
+                    </PlatformTableCell>
+                    <PlatformTableCell align="center">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -252,14 +252,14 @@ export default function AuditorChainPage() {
                         <Link2 className="h-4 w-4 mr-1" />
                         View
                       </Button>
-                    </AppTableCell>
-                  </AppTableRow>
+                    </PlatformTableCell>
+                  </PlatformTableRow>
                 ))
               )}
-            </AppTableBody>
-          </AppTable>
+            </PlatformTableBody>
+          </PlatformTable>
         </>
       )}
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

@@ -73,7 +73,7 @@ export default function AuditorLicensingPage() {
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Licensing Records"
       backLink={{ to: "/auditor", label: "Auditor Portal" }}
     >
@@ -106,90 +106,90 @@ export default function AuditorLicensingPage() {
         </TabsList>
 
         <TabsContent value="requests">
-          <AppTable columns={["22%", "10%", "12%", "12%", "18%", "13%", "13%"]}>
-            <AppTableHeader>
-              <AppTableRow header>
-                <AppTableHead>Work Title</AppTableHead>
-                <AppTableHead>Status</AppTableHead>
-                <AppTableHead>Territory</AppTableHead>
-                <AppTableHead>Usage Type</AppTableHead>
-                <AppTableHead>Requester</AppTableHead>
-                <AppTableHead>Submitted</AppTableHead>
-                <AppTableHead>Last Updated</AppTableHead>
-              </AppTableRow>
-            </AppTableHeader>
-            <AppTableBody>
+          <PlatformTable columns={["22%", "10%", "12%", "12%", "18%", "13%", "13%"]}>
+            <PlatformTableHeader>
+              <PlatformTableRow header>
+                <PlatformTableHead>Work Title</PlatformTableHead>
+                <PlatformTableHead>Status</PlatformTableHead>
+                <PlatformTableHead>Territory</PlatformTableHead>
+                <PlatformTableHead>Usage Type</PlatformTableHead>
+                <PlatformTableHead>Requester</PlatformTableHead>
+                <PlatformTableHead>Submitted</PlatformTableHead>
+                <PlatformTableHead>Last Updated</PlatformTableHead>
+              </PlatformTableRow>
+            </PlatformTableHeader>
+            <PlatformTableBody>
               {loading ? (
-                <AppTableEmpty colSpan={7}>
+                <PlatformTableEmpty colSpan={7}>
                   <p className="text-sm text-muted-foreground">Retrieving records...</p>
                   <p className="text-xs text-muted-foreground mt-1">Loading licensing requests.</p>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : requests.length === 0 ? (
-                <AppTableEmpty colSpan={7}>
+                <PlatformTableEmpty colSpan={7}>
                   <p className="text-sm text-muted-foreground">{EMPTY_STATES.LICENSING_REQUESTS.title}</p>
                   <p className="text-xs text-muted-foreground mt-1">{EMPTY_STATES.LICENSING_REQUESTS.description}</p>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : (
                 requests.map((req) => (
-                  <AppTableRow key={req.id}>
-                    <AppTableCell>{req.work_title ?? '—'}</AppTableCell>
-                    <AppTableCell>
+                  <PlatformTableRow key={req.id}>
+                    <PlatformTableCell>{req.work_title ?? '—'}</PlatformTableCell>
+                    <PlatformTableCell>
                       <StatusBadge status={req.status} />
-                    </AppTableCell>
-                    <AppTableCell muted>{req.territory ?? '—'}</AppTableCell>
-                    <AppTableCell muted>{req.usage_type ?? '—'}</AppTableCell>
-                    <AppTableCell muted>{req.requester_email ?? '—'}</AppTableCell>
-                    <AppTableCell muted>{formatDate(req.created_at)}</AppTableCell>
-                    <AppTableCell muted>{formatDate(req.updated_at)}</AppTableCell>
-                  </AppTableRow>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>{req.territory ?? '—'}</PlatformTableCell>
+                    <PlatformTableCell muted>{req.usage_type ?? '—'}</PlatformTableCell>
+                    <PlatformTableCell muted>{req.requester_email ?? '—'}</PlatformTableCell>
+                    <PlatformTableCell muted>{formatDate(req.created_at)}</PlatformTableCell>
+                    <PlatformTableCell muted>{formatDate(req.updated_at)}</PlatformTableCell>
+                  </PlatformTableRow>
                 ))
               )}
-            </AppTableBody>
-          </AppTable>
+            </PlatformTableBody>
+          </PlatformTable>
         </TabsContent>
 
         <TabsContent value="agreements">
-          <AppTable columns={["25%", "12%", "16%", "16%", "16%", "15%"]}>
-            <AppTableHeader>
-              <AppTableRow header>
-                <AppTableHead>Agreement Title</AppTableHead>
-                <AppTableHead>Status</AppTableHead>
-                <AppTableHead>Effective Date</AppTableHead>
-                <AppTableHead>End Date</AppTableHead>
-                <AppTableHead>Created</AppTableHead>
-                <AppTableHead>Last Updated</AppTableHead>
-              </AppTableRow>
-            </AppTableHeader>
-            <AppTableBody>
+          <PlatformTable columns={["25%", "12%", "16%", "16%", "16%", "15%"]}>
+            <PlatformTableHeader>
+              <PlatformTableRow header>
+                <PlatformTableHead>Agreement Title</PlatformTableHead>
+                <PlatformTableHead>Status</PlatformTableHead>
+                <PlatformTableHead>Effective Date</PlatformTableHead>
+                <PlatformTableHead>End Date</PlatformTableHead>
+                <PlatformTableHead>Created</PlatformTableHead>
+                <PlatformTableHead>Last Updated</PlatformTableHead>
+              </PlatformTableRow>
+            </PlatformTableHeader>
+            <PlatformTableBody>
               {loading ? (
-                <AppTableEmpty colSpan={6}>
+                <PlatformTableEmpty colSpan={6}>
                   <p className="text-sm text-muted-foreground">Retrieving records...</p>
                   <p className="text-xs text-muted-foreground mt-1">Loading licensing agreements.</p>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : agreements.length === 0 ? (
-                <AppTableEmpty colSpan={6}>
+                <PlatformTableEmpty colSpan={6}>
                   <p className="text-sm text-muted-foreground">{EMPTY_STATES.LICENSING_AGREEMENTS.title}</p>
                   <p className="text-xs text-muted-foreground mt-1">{EMPTY_STATES.LICENSING_AGREEMENTS.description}</p>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : (
                 agreements.map((agr) => (
-                  <AppTableRow key={agr.id}>
-                    <AppTableCell>{agr.agreement_title}</AppTableCell>
-                    <AppTableCell>
+                  <PlatformTableRow key={agr.id}>
+                    <PlatformTableCell>{agr.agreement_title}</PlatformTableCell>
+                    <PlatformTableCell>
                       <StatusBadge status={agr.status} />
-                    </AppTableCell>
-                    <AppTableCell muted>{agr.effective_date ?? '—'}</AppTableCell>
-                    <AppTableCell muted>{agr.end_date ?? '—'}</AppTableCell>
-                    <AppTableCell muted>{formatDate(agr.created_at)}</AppTableCell>
-                    <AppTableCell muted>{formatDate(agr.updated_at)}</AppTableCell>
-                  </AppTableRow>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>{agr.effective_date ?? '—'}</PlatformTableCell>
+                    <PlatformTableCell muted>{agr.end_date ?? '—'}</PlatformTableCell>
+                    <PlatformTableCell muted>{formatDate(agr.created_at)}</PlatformTableCell>
+                    <PlatformTableCell muted>{formatDate(agr.updated_at)}</PlatformTableCell>
+                  </PlatformTableRow>
                 ))
               )}
-            </AppTableBody>
-          </AppTable>
+            </PlatformTableBody>
+          </PlatformTable>
         </TabsContent>
       </Tabs>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
 

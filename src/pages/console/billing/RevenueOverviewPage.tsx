@@ -142,6 +142,6 @@ export default function RevenueOverviewPage() {
           </CardContent>
         </Card>
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

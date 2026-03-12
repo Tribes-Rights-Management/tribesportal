@@ -97,16 +97,16 @@ export default function OrganizationUsersPage() {
 
   if (!organization) {
     return (
-      <AppPageLayout title="Loading...">
+      <PlatformPageLayout title="Loading...">
         <div className="py-16 text-center">
           <LoadingState message="Loading organization…" />
         </div>
-      </AppPageLayout>
+      </PlatformPageLayout>
     );
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title={organization.name}
       backLink={{ to: "/console/tenants", label: "Organizations" }}
     >
@@ -178,20 +178,20 @@ export default function OrganizationUsersPage() {
 
             {/* Desktop view */}
             <div className="hidden md:block">
-              <AppTable columns={["35%", "15%", "25%", "15%", "10%"]}>
-                <AppTableHeader>
-                  <AppTableRow header>
-                    <AppTableHead>User</AppTableHead>
-                    <AppTableHead>Role</AppTableHead>
-                    <AppTableHead>Modules</AppTableHead>
-                    <AppTableHead>Joined</AppTableHead>
-                    <AppTableHead></AppTableHead>
-                  </AppTableRow>
-                </AppTableHeader>
-                <AppTableBody>
+              <PlatformTable columns={["35%", "15%", "25%", "15%", "10%"]}>
+                <PlatformTableHeader>
+                  <PlatformTableRow header>
+                    <PlatformTableHead>User</PlatformTableHead>
+                    <PlatformTableHead>Role</PlatformTableHead>
+                    <PlatformTableHead>Modules</PlatformTableHead>
+                    <PlatformTableHead>Joined</PlatformTableHead>
+                    <PlatformTableHead></PlatformTableHead>
+                  </PlatformTableRow>
+                </PlatformTableHeader>
+                <PlatformTableBody>
                   {members.map((member) => (
-                    <AppTableRow key={member.id}>
-                      <AppTableCell>
+                    <PlatformTableRow key={member.id}>
+                      <PlatformTableCell>
                         <div>
                           <p className="font-medium">
                             {member.full_name || member.email}
@@ -202,13 +202,13 @@ export default function OrganizationUsersPage() {
                             </p>
                           )}
                         </div>
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <Badge variant={getRoleBadgeVariant(member.org_role)}>
                           {getRoleLabel(member.org_role)}
                         </Badge>
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <div className="flex gap-1">
                           {member.has_admin_access && (
                             <Badge variant="outline" className="gap-1">
@@ -223,11 +223,11 @@ export default function OrganizationUsersPage() {
                             </Badge>
                           )}
                         </div>
-                      </AppTableCell>
-                      <AppTableCell muted>
+                      </PlatformTableCell>
+                      <PlatformTableCell muted>
                         {formatDate(member.joined_at)}
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button className="p-2 hover:bg-muted rounded">
@@ -241,15 +241,15 @@ export default function OrganizationUsersPage() {
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   ))}
-                </AppTableBody>
-              </AppTable>
+                </PlatformTableBody>
+              </PlatformTable>
             </div>
           </>
         )}
       </ContentPanel>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

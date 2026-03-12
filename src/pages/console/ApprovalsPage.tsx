@@ -256,7 +256,7 @@ export default function ApprovalsPage() {
   ];
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Access Control"
       backLink={{ to: "/console", label: "System Console" }}
     >
