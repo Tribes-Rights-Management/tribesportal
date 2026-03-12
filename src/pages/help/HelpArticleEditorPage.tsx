@@ -426,44 +426,44 @@ export default function HelpArticleEditorPage() {
           {/* Draft articles: Save Draft + Publish */}
           {(isNew || status === "draft") && (
             <>
-              <AppButton 
+              <PlatformButton 
                 intent="secondary" 
                 size="sm" 
                 onClick={handleSaveDraft}
                 disabled={saving || !title.trim()}
               >
                 {saving ? "Saving..." : "Save Draft"}
-              </AppButton>
-              <AppButton 
+              </PlatformButton>
+              <PlatformButton 
                 intent="primary" 
                 size="sm" 
                 onClick={handlePublish}
                 disabled={publishing || !title.trim() || !bodyMd.trim()}
               >
                 {publishing ? "Publishing..." : "Publish"}
-              </AppButton>
+              </PlatformButton>
             </>
           )}
 
           {/* Published articles: Save + Unpublish */}
           {!isNew && status === "published" && (
             <>
-              <AppButton 
+              <PlatformButton 
                 intent="ghost" 
                 size="sm" 
                 onClick={handleUnpublish}
                 disabled={saving}
               >
                 Unpublish
-              </AppButton>
-              <AppButton 
+              </PlatformButton>
+              <PlatformButton 
                 intent="primary" 
                 size="sm" 
                 onClick={handleSavePublished}
                 disabled={saving || !title.trim() || !bodyMd.trim()}
               >
                 {saving ? "Saving..." : "Save"}
-              </AppButton>
+              </PlatformButton>
             </>
           )}
 
