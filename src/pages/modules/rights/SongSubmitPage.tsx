@@ -1027,7 +1027,7 @@ export default function SongSubmitPage() {
                               </div>
                               <div>
                                 <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Administrator</label>
-                                <AppSelect
+                                <PlatformSelect
                                   value={w.tribes_administered ? "tribes" : "other"}
                                   onChange={(val) => updateWriter(w.id, { tribes_administered: val === "tribes" })}
                                   options={[
