@@ -54,9 +54,9 @@ export default function LicensingOverview() {
   // No tenant selected
   if (!activeTenant) {
     return (
-      <AppPageLayout title="Overview">
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="Overview">
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             {tenantMemberships.length > 1 ? (
               <div>
                 <p className="text-[13px] text-muted-foreground mb-4">
@@ -65,15 +65,15 @@ export default function LicensingOverview() {
                 <TenantSelector />
               </div>
             ) : (
-              <AppEmptyState
+              <PlatformEmptyState
                 icon="folder"
                 message="No organization available"
                 description="You are not a member of any organization."
               />
             )}
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
@@ -82,76 +82,76 @@ export default function LicensingOverview() {
 
   if (isLoading) {
     return (
-      <AppPageLayout title="Overview">
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="Overview">
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             <InstitutionalLoadingState message="Loading licensing data" />
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
   if (hasError) {
     return (
-      <AppPageLayout title="Overview">
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="Overview">
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             <SystemErrorState 
               title="Unable to load licensing data"
               description="Please try again or contact support if the issue persists."
             />
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Overview"
       action={tenantMemberships.length > 1 ? <TenantSelector /> : undefined}
     >
-      <AppCard>
-        <AppCardBody className="p-6 md:p-8">
+      <PlatformCard>
+        <PlatformCardBody className="p-6 md:p-8">
           {/* Requests Section */}
           <section className="mb-10">
-            <AppSectionHeader title="Requests" />
+            <PlatformSectionHeader title="Requests" />
             
             {requests && requests.length > 0 ? (
-              <AppTable>
-                <AppTableHeader>
-                  <AppTableRow header>
-                    <AppTableHead>Work Title</AppTableHead>
-                    <AppTableHead>Status</AppTableHead>
-                    <AppTableHead>Created</AppTableHead>
-                  </AppTableRow>
-                </AppTableHeader>
-                <AppTableBody>
+              <PlatformTable>
+                <PlatformTableHeader>
+                  <PlatformTableRow header>
+                    <PlatformTableHead>Work Title</PlatformTableHead>
+                    <PlatformTableHead>Status</PlatformTableHead>
+                    <PlatformTableHead>Created</PlatformTableHead>
+                  </PlatformTableRow>
+                </PlatformTableHeader>
+                <PlatformTableBody>
                   {requests.map((request) => (
-                    <AppTableRow key={request.id} clickable>
-                      <AppTableCell>
+                    <PlatformTableRow key={request.id} clickable>
+                      <PlatformTableCell>
                         <Link 
                           to={`/licensing/requests?id=${request.id}`}
                           className="hover:underline"
                         >
                           {request.work_title || "Untitled Request"}
                         </Link>
-                      </AppTableCell>
-                      <AppTableCell>
-                        <AppTableBadge variant={getStatusVariant(request.status)}>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
+                        <PlatformTableBadge variant={getStatusVariant(request.status)}>
                           {request.status.replace("_", " ")}
-                        </AppTableBadge>
-                      </AppTableCell>
-                      <AppTableCell muted>
+                        </PlatformTableBadge>
+                      </PlatformTableCell>
+                      <PlatformTableCell muted>
                         {format(new Date(request.created_at), "MMM d, yyyy")}
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   ))}
-                </AppTableBody>
-              </AppTable>
+                </PlatformTableBody>
+              </PlatformTable>
             ) : (
-              <AppEmptyState
+              <PlatformEmptyState
                 icon="inbox"
                 message="No requests available"
                 description="Licensing requests will appear once submitted."
@@ -161,53 +161,53 @@ export default function LicensingOverview() {
 
           {/* Agreements Section */}
           <section>
-            <AppSectionHeader title="Agreements" />
+            <PlatformSectionHeader title="Agreements" />
             
             {agreements && agreements.length > 0 ? (
-              <AppTable>
-                <AppTableHeader>
-                  <AppTableRow header>
-                    <AppTableHead>Agreement Title</AppTableHead>
-                    <AppTableHead>Status</AppTableHead>
-                    <AppTableHead>Effective Date</AppTableHead>
-                  </AppTableRow>
-                </AppTableHeader>
-                <AppTableBody>
+              <PlatformTable>
+                <PlatformTableHeader>
+                  <PlatformTableRow header>
+                    <PlatformTableHead>Agreement Title</PlatformTableHead>
+                    <PlatformTableHead>Status</PlatformTableHead>
+                    <PlatformTableHead>Effective Date</PlatformTableHead>
+                  </PlatformTableRow>
+                </PlatformTableHeader>
+                <PlatformTableBody>
                   {agreements.map((agreement) => (
-                    <AppTableRow key={agreement.id} clickable>
-                      <AppTableCell>
+                    <PlatformTableRow key={agreement.id} clickable>
+                      <PlatformTableCell>
                         <Link 
                           to={`/licensing/agreements?id=${agreement.id}`}
                           className="hover:underline"
                         >
                           {agreement.agreement_title}
                         </Link>
-                      </AppTableCell>
-                      <AppTableCell>
-                        <AppTableBadge variant={getStatusVariant(agreement.status)}>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
+                        <PlatformTableBadge variant={getStatusVariant(agreement.status)}>
                           {agreement.status}
-                        </AppTableBadge>
-                      </AppTableCell>
-                      <AppTableCell muted>
+                        </PlatformTableBadge>
+                      </PlatformTableCell>
+                      <PlatformTableCell muted>
                         {agreement.effective_date 
                           ? format(new Date(agreement.effective_date), "MMM d, yyyy")
                           : "—"
                         }
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   ))}
-                </AppTableBody>
-              </AppTable>
+                </PlatformTableBody>
+              </PlatformTable>
             ) : (
-              <AppEmptyState
+              <PlatformEmptyState
                 icon="file"
                 message="No agreements available"
                 description="Licensing agreements will appear once executed."
               />
             )}
           </section>
-        </AppCardBody>
-      </AppCard>
-    </AppPageLayout>
+        </PlatformCardBody>
+      </PlatformCard>
+    </PlatformPageLayout>
   );
 }

@@ -24,39 +24,39 @@ export default function LicensingPaymentsPage() {
 
   if (!canViewOrgInvoices) {
     return (
-      <AppPageLayout title="Payments">
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="Payments">
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             <div className="text-center py-12">
               <p className="text-muted-foreground">Access restricted</p>
             </div>
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
   return (
-    <AppPageLayout title="Payments">
+    <PlatformPageLayout title="Payments">
       {/* Summary Stats */}
-      <AppStatCardGrid columns={2} className="mb-8">
-        <AppStatCard
+      <PlatformStatCardGrid columns={2} className="mb-8">
+        <PlatformStatCard
           label="Outstanding Fees"
           value="$0.00"
           subtitle="No fees pending"
         />
-        <AppStatCard
+        <PlatformStatCard
           label="Active Licenses"
           value="0"
           subtitle="Licensed works"
         />
-      </AppStatCardGrid>
+      </PlatformStatCardGrid>
 
       {/* Navigation Cards */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 mb-8">
         <Link to="/licensing/payments/fees">
-          <AppCard className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
-            <AppCardBody className="p-6">
+          <PlatformCard className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
+            <PlatformCardBody className="p-6">
               <div className="flex items-start gap-4">
                 <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
                   <DollarSign className="h-5 w-5 text-muted-foreground" />
@@ -70,14 +70,14 @@ export default function LicensingPaymentsPage() {
                   </p>
                 </div>
               </div>
-            </AppCardBody>
-          </AppCard>
+            </PlatformCardBody>
+          </PlatformCard>
         </Link>
 
         {canDownloadReceipts && (
           <Link to="/licensing/payments/receipts">
-            <AppCard className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
-              <AppCardBody className="p-6">
+            <PlatformCard className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
+              <PlatformCardBody className="p-6">
                 <div className="flex items-start gap-4">
                   <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
                     <Receipt className="h-5 w-5 text-muted-foreground" />
@@ -91,32 +91,32 @@ export default function LicensingPaymentsPage() {
                     </p>
                   </div>
                 </div>
-              </AppCardBody>
-            </AppCard>
+              </PlatformCardBody>
+            </PlatformCard>
           </Link>
         )}
       </div>
 
       {/* Recent Fees Section */}
-      <AppCard>
-        <AppCardHeader>
+      <PlatformCard>
+        <PlatformCardHeader>
           <div className="flex items-center justify-between">
-            <AppCardTitle>Recent License Fees</AppCardTitle>
+            <PlatformCardTitle>Recent License Fees</PlatformCardTitle>
             <Link to="/licensing/payments/fees">
-              <AppButton intent="ghost" size="sm">
+              <PlatformButton intent="ghost" size="sm">
                 View All
-              </AppButton>
+              </PlatformButton>
             </Link>
           </div>
-        </AppCardHeader>
-        <AppCardBody>
-          <AppEmptyState
+        </PlatformCardHeader>
+        <PlatformCardBody>
+          <PlatformEmptyState
             icon="file"
             message="No recent fees"
             description="License fees will appear here"
           />
-        </AppCardBody>
-      </AppCard>
-    </AppPageLayout>
+        </PlatformCardBody>
+      </PlatformCard>
+    </PlatformPageLayout>
   );
 }

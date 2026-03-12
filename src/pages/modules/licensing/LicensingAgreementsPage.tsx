@@ -63,15 +63,15 @@ function AgreementDetailView({ agreementId }: { agreementId: string }) {
   }
 
   return (
-    <AppCard>
-      <AppCardBody className="p-6">
+    <PlatformCard>
+      <PlatformCardBody className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-[16px] font-medium text-foreground">
             {agreement.agreement_title}
           </h2>
-          <AppTableBadge variant={getStatusVariant(agreement.status)}>
+          <PlatformTableBadge variant={getStatusVariant(agreement.status)}>
             {agreement.status}
-          </AppTableBadge>
+          </PlatformTableBadge>
         </div>
 
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-[13px]">
@@ -128,8 +128,8 @@ function AgreementDetailView({ agreementId }: { agreementId: string }) {
             Edit functionality will be available once the module is fully connected.
           </p>
         )}
-      </AppCardBody>
-    </AppCard>
+      </PlatformCardBody>
+    </PlatformCard>
   );
 }
 
@@ -142,9 +142,9 @@ export default function LicensingAgreementsPage() {
   // No tenant selected
   if (!activeTenant) {
     return (
-      <AppPageLayout title="Agreements">
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="Agreements">
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             {tenantMemberships.length > 1 ? (
               <div>
                 <p className="text-[13px] text-muted-foreground mb-4">
@@ -153,114 +153,114 @@ export default function LicensingAgreementsPage() {
                 <TenantSelector />
               </div>
             ) : (
-              <AppEmptyState
+              <PlatformEmptyState
                 icon="folder"
                 message="No organization available"
                 description="You are not a member of any organization."
               />
             )}
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
   // Detail view
   if (selectedId) {
     return (
-      <AppPageLayout
+      <PlatformPageLayout
         title="Agreement Detail"
         backLink={{ to: "/licensing/agreements", label: "Back to agreements" }}
       >
         <AgreementDetailView agreementId={selectedId} />
-      </AppPageLayout>
+      </PlatformPageLayout>
     );
   }
 
   if (isLoading) {
     return (
-      <AppPageLayout title="Agreements">
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="Agreements">
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             <InstitutionalLoadingState message="Loading agreements" />
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
   if (error) {
     return (
-      <AppPageLayout title="Agreements">
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="Agreements">
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             <SystemErrorState 
               title="Unable to load agreements"
               description="Please try again or contact support if the issue persists."
             />
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Agreements"
       action={tenantMemberships.length > 1 ? <TenantSelector /> : undefined}
     >
-      <AppCard>
-        <AppCardBody className="p-6 md:p-8">
+      <PlatformCard>
+        <PlatformCardBody className="p-6 md:p-8">
           {agreements && agreements.length > 0 ? (
-            <AppTable>
-              <AppTableHeader>
-                <AppTableRow header>
-                  <AppTableHead>Agreement Title</AppTableHead>
-                  <AppTableHead>Status</AppTableHead>
-                  <AppTableHead>Effective Date</AppTableHead>
-                  <AppTableHead>End Date</AppTableHead>
-                </AppTableRow>
-              </AppTableHeader>
-              <AppTableBody>
+            <PlatformTable>
+              <PlatformTableHeader>
+                <PlatformTableRow header>
+                  <PlatformTableHead>Agreement Title</PlatformTableHead>
+                  <PlatformTableHead>Status</PlatformTableHead>
+                  <PlatformTableHead>Effective Date</PlatformTableHead>
+                  <PlatformTableHead>End Date</PlatformTableHead>
+                </PlatformTableRow>
+              </PlatformTableHeader>
+              <PlatformTableBody>
                 {agreements.map((agreement) => (
-                  <AppTableRow 
+                  <PlatformTableRow 
                     key={agreement.id}
                     clickable
                     onClick={() => setSearchParams({ id: agreement.id })}
                   >
-                    <AppTableCell>
+                    <PlatformTableCell>
                       {agreement.agreement_title}
-                    </AppTableCell>
-                    <AppTableCell>
-                      <AppTableBadge variant={getStatusVariant(agreement.status)}>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
+                      <PlatformTableBadge variant={getStatusVariant(agreement.status)}>
                         {agreement.status}
-                      </AppTableBadge>
-                    </AppTableCell>
-                    <AppTableCell muted>
+                      </PlatformTableBadge>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                       {agreement.effective_date 
                         ? format(new Date(agreement.effective_date), "MMM d, yyyy")
                         : "—"
                       }
-                    </AppTableCell>
-                    <AppTableCell muted>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                       {agreement.end_date 
                         ? format(new Date(agreement.end_date), "MMM d, yyyy")
                         : "—"
                       }
-                    </AppTableCell>
-                  </AppTableRow>
+                    </PlatformTableCell>
+                  </PlatformTableRow>
                 ))}
-              </AppTableBody>
-            </AppTable>
+              </PlatformTableBody>
+            </PlatformTable>
           ) : (
-            <AppEmptyState
+            <PlatformEmptyState
               icon="file"
               message="No agreements available"
               description="Licensing agreements will appear once executed."
             />
           )}
-        </AppCardBody>
-      </AppCard>
-    </AppPageLayout>
+        </PlatformCardBody>
+      </PlatformCard>
+    </PlatformPageLayout>
   );
 }

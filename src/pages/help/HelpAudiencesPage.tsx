@@ -231,20 +231,20 @@ export default function HelpAudiencesPage() {
   };
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Audiences"
       backLink={{ to: "/help", label: "Overview" }}
       action={
-        <AppButton intent="primary" size="sm" onClick={handleCreate}>
+        <PlatformButton intent="primary" size="sm" onClick={handleCreate}>
           <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
           New Audience
-        </AppButton>
+        </PlatformButton>
       }
     >
       {/* Error */}
       {error && (
         <div className="mb-6">
-          <AppAlert
+           <PlatformAlert
             variant="error"
             message={error}
             onRetry={() => { setError(null); fetchAudiences(); }}
@@ -255,9 +255,9 @@ export default function HelpAudiencesPage() {
       {/* Audience List */}
       <div className="space-y-2">
         {loading ? (
-          <AppEmptyState message="Loading audiences..." size="lg" />
+          <PlatformEmptyState message="Loading audiences..." size="lg" />
         ) : audiences.length === 0 ? (
-          <AppEmptyState
+          <PlatformEmptyState
             icon="users"
             message="No audiences configured yet"
             size="lg"
@@ -312,13 +312,13 @@ export default function HelpAudiencesPage() {
                   >
                     {audience.is_active ? "Active" : "Inactive"}
                   </button>
-                  <AppButton
+                  <PlatformButton
                     intent="ghost"
                     size="sm"
                     onClick={(e) => { e.stopPropagation(); handleEdit(audience); }}
                   >
                     Edit
-                  </AppButton>
+                  </PlatformButton>
                 </div>
               </div>
             </div>
@@ -327,13 +327,13 @@ export default function HelpAudiencesPage() {
       </div>
 
       {/* Right-side Panel */}
-      <AppPanel
+      <PlatformPanel
         open={panelOpen}
         onClose={() => setPanelOpen(false)}
         title={editing ? "Edit audience" : "New audience"}
         description={editing ? "Update audience details" : "Create a new audience segment"}
         footer={
-          <AppPanelFooter
+          <PlatformPanelFooter
             left={
               editing && (
                 <button
@@ -355,7 +355,7 @@ export default function HelpAudiencesPage() {
         <div className="space-y-4">
           {/* Form Error */}
           {formError && (
-            <AppAlert variant="error" message={formError} />
+            <PlatformAlert variant="error" message={formError} />
           )}
 
           <div>
@@ -397,7 +397,7 @@ export default function HelpAudiencesPage() {
             />
           </div>
         </div>
-      </AppPanel>
-    </AppPageLayout>
+      </PlatformPanel>
+    </PlatformPageLayout>
   );
 }
