@@ -1590,8 +1590,8 @@ export default function SongDetailPage() {
                 </div>
               )
             )}
-          </AppCardBody>
-        </AppCard>
+          </PlatformCardBody>
+        </PlatformCard>
 
         {/* ─── 4. LABEL COPY ──────────────────────────── */}
         {(() => {
