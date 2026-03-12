@@ -133,7 +133,7 @@ export default function RefundsPage() {
   };
 
   return (
-    <AppPageLayout title="Refunds">
+    <PlatformPageLayout title="Refunds">
 
       {/* Warning Banner */}
       <div 
