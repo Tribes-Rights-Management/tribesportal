@@ -819,14 +819,14 @@ export default function SongDetailPage() {
   // ── Loading state ─────────────────────────────────────────
   if (isLoading) {
     return (
-      <AppPageLayout
+      <PlatformPageLayout
         title="Loading…"
         backLink={{ to: "/rights/catalog", label: "Catalog" }}
       >
-        <AppSection spacing="md">
+        <PlatformSection spacing="md">
           <p className="text-sm text-muted-foreground">Loading song details…</p>
-        </AppSection>
-      </AppPageLayout>
+        </PlatformSection>
+      </PlatformPageLayout>
     );
   }
 
