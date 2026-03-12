@@ -300,19 +300,19 @@ export default function DataRoomPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <AppTable columns={["22%", "18%", "12%", "16%", "12%", "12%", "8%"]}>
-            <AppTableHeader>
-              <AppTableRow header>
-                <AppTableHead>Export</AppTableHead>
-                <AppTableHead>Type</AppTableHead>
-                <AppTableHead>Scope</AppTableHead>
-                <AppTableHead>Period</AppTableHead>
-                <AppTableHead>Status</AppTableHead>
-                <AppTableHead>Created</AppTableHead>
-                <AppTableHead>Actions</AppTableHead>
-              </AppTableRow>
-            </AppTableHeader>
-            <AppTableBody>
+             <PlatformTable columns={["22%", "18%", "12%", "16%", "12%", "12%", "8%"]}>
+            <PlatformTableHeader>
+              <PlatformTableRow header>
+                <PlatformTableHead>Export</PlatformTableHead>
+                <PlatformTableHead>Type</PlatformTableHead>
+                <PlatformTableHead>Scope</PlatformTableHead>
+                <PlatformTableHead>Period</PlatformTableHead>
+                <PlatformTableHead>Status</PlatformTableHead>
+                <PlatformTableHead>Created</PlatformTableHead>
+                <PlatformTableHead>Actions</PlatformTableHead>
+              </PlatformTableRow>
+            </PlatformTableHeader>
+            <PlatformTableBody>
               {(exports || []).length === 0 ? (
                 <AppTableEmpty colSpan={7}>
                   <FileArchive className="h-6 w-6 text-muted-foreground mx-auto mb-2" strokeWidth={1.0} />
