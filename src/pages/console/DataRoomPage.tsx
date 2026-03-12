@@ -20,9 +20,9 @@ import {
 import { PlatformPageLayout, PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableHead, PlatformTableRow, PlatformTableCell, PlatformTableEmpty } from "@/components/platform-ui";
 import { ConsoleButton, ConsoleChip } from "@/components/console";
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
 } from "@/components/ui/app-modal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
