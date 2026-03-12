@@ -244,16 +244,16 @@ export default function DataRoomPage() {
 
   if (!isPlatformAdmin) {
     return (
-      <AppPageLayout title="Access Denied">
+      <PlatformPageLayout title="Access Denied">
         <p className="text-muted-foreground">
           You do not have permission to access the data room.
         </p>
-      </AppPageLayout>
+      </PlatformPageLayout>
     );
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Data Room"
       action={
         <ConsoleButton onClick={() => setShowCreateDialog(true)}>
@@ -300,21 +300,21 @@ export default function DataRoomPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <AppTable columns={["22%", "18%", "12%", "16%", "12%", "12%", "8%"]}>
-            <AppTableHeader>
-              <AppTableRow header>
-                <AppTableHead>Export</AppTableHead>
-                <AppTableHead>Type</AppTableHead>
-                <AppTableHead>Scope</AppTableHead>
-                <AppTableHead>Period</AppTableHead>
-                <AppTableHead>Status</AppTableHead>
-                <AppTableHead>Created</AppTableHead>
-                <AppTableHead>Actions</AppTableHead>
-              </AppTableRow>
-            </AppTableHeader>
-            <AppTableBody>
+             <PlatformTable columns={["22%", "18%", "12%", "16%", "12%", "12%", "8%"]}>
+            <PlatformTableHeader>
+              <PlatformTableRow header>
+                <PlatformTableHead>Export</PlatformTableHead>
+                <PlatformTableHead>Type</PlatformTableHead>
+                <PlatformTableHead>Scope</PlatformTableHead>
+                <PlatformTableHead>Period</PlatformTableHead>
+                <PlatformTableHead>Status</PlatformTableHead>
+                <PlatformTableHead>Created</PlatformTableHead>
+                <PlatformTableHead>Actions</PlatformTableHead>
+              </PlatformTableRow>
+            </PlatformTableHeader>
+            <PlatformTableBody>
               {(exports || []).length === 0 ? (
-                <AppTableEmpty colSpan={7}>
+                <PlatformTableEmpty colSpan={7}>
                   <FileArchive className="h-6 w-6 text-muted-foreground mx-auto mb-2" strokeWidth={1.0} />
                   <p className="text-[13px] text-muted-foreground">
                     No exports created yet
@@ -322,11 +322,11 @@ export default function DataRoomPage() {
                   <p className="text-[12px] text-muted-foreground mt-1">
                     Create your first export package for audits or compliance
                   </p>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : (
                 (exports || []).map((exp) => (
-                  <AppTableRow key={exp.id}>
-                    <AppTableCell>
+                  <PlatformTableRow key={exp.id}>
+                    <PlatformTableCell>
                       <div>
                         <p className="font-medium">
                           {exp.title}
@@ -337,17 +337,17 @@ export default function DataRoomPage() {
                           </p>
                         )}
                       </div>
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                         {EXPORT_TYPE_LABELS[exp.export_type]}
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                       <ConsoleChip label={exp.scope_type} className="text-[10px]" />
-                    </AppTableCell>
-                    <AppTableCell muted>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                         {format(new Date(exp.period_start), "MMM d")} — {format(new Date(exp.period_end), "MMM d, yyyy")}
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                       <div className="flex items-center gap-2">
                         {getStatusIcon(exp.status)}
                         <ConsoleChip 
@@ -356,11 +356,11 @@ export default function DataRoomPage() {
                           className="text-[10px]" 
                         />
                       </div>
-                    </AppTableCell>
-                    <AppTableCell muted>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                         {format(new Date(exp.created_at), "MMM d, yyyy")}
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                       <div className="flex items-center gap-1">
                         <ConsoleButton
                           intent="ghost"
@@ -386,12 +386,12 @@ export default function DataRoomPage() {
                           <Users className="h-4 w-4" />
                         </ConsoleButton>
                       </div>
-                    </AppTableCell>
-                  </AppTableRow>
+                    </PlatformTableCell>
+                  </PlatformTableRow>
                 ))
               )}
-            </AppTableBody>
-          </AppTable>
+            </PlatformTableBody>
+          </PlatformTable>
           </div>
         )}
       </div>
@@ -401,6 +401,6 @@ export default function DataRoomPage() {
         open={showCreateDialog} 
         onOpenChange={setShowCreateDialog} 
       />
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
