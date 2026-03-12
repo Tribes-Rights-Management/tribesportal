@@ -717,6 +717,6 @@ export default function ApprovalsPage() {
             </AppTable>
         )}
       </ContentPanel>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
