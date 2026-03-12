@@ -232,58 +232,58 @@ export default function UserDirectoryPage() {
           <>
             {/* Desktop Table */}
             <div className="hidden md:block">
-              <AppTable columns={["40%", "20%", "15%", "15%", "10%"]}>
-                <AppTableHeader>
-                  <AppTableRow header>
-                    <AppTableHead>Email</AppTableHead>
-                    <AppTableHead>Role</AppTableHead>
-                    <AppTableHead>Status</AppTableHead>
-                    <AppTableHead>Organizations</AppTableHead>
-                    <AppTableHead></AppTableHead>
-                  </AppTableRow>
-                </AppTableHeader>
-                <AppTableBody>
+              <PlatformTable columns={["40%", "20%", "15%", "15%", "10%"]}>
+                <PlatformTableHeader>
+                  <PlatformTableRow header>
+                    <PlatformTableHead>Email</PlatformTableHead>
+                    <PlatformTableHead>Role</PlatformTableHead>
+                    <PlatformTableHead>Status</PlatformTableHead>
+                    <PlatformTableHead>Organizations</PlatformTableHead>
+                    <PlatformTableHead></PlatformTableHead>
+                  </PlatformTableRow>
+                </PlatformTableHeader>
+                <PlatformTableBody>
                   {users.map((user) => {
                     const activeOrgCount = user.memberships.filter(m => m.status === "active").length;
                     const statusStyle = getStatusStyle(user.status);
                     
                     return (
-                      <AppTableRow
+                      <PlatformTableRow
                         key={user.id}
                         clickable
                         onClick={() => handleRowClick(user)}
                         className="group"
                       >
-                        <AppTableCell className="font-medium">
+                        <PlatformTableCell className="font-medium">
                           {user.email}
                           {isCurrentUser(user) && (
                             <span className="ml-2 text-xs text-muted-foreground uppercase tracking-wider">
                               (you)
                             </span>
                           )}
-                        </AppTableCell>
-                        <AppTableCell muted>
+                        </PlatformTableCell>
+                        <PlatformTableCell muted>
                           {formatPlatformRole(user.platform_role)}
-                        </AppTableCell>
-                        <AppTableCell>
-                          <AppTableBadge variant={getStatusVariant(user.status)}>
+                        </PlatformTableCell>
+                        <PlatformTableCell>
+                          <PlatformTableBadge variant={getStatusVariant(user.status)}>
                             {formatStatus(user.status)}
-                          </AppTableBadge>
-                        </AppTableCell>
-                        <AppTableCell muted>
+                          </PlatformTableBadge>
+                        </PlatformTableCell>
+                        <PlatformTableCell muted>
                           {activeOrgCount > 0 ? `${activeOrgCount} org${activeOrgCount > 1 ? 's' : ''}` : '—'}
-                        </AppTableCell>
-                        <AppTableCell>
+                        </PlatformTableCell>
+                        <PlatformTableCell>
                           <ChevronRight 
                             className="h-4 w-4 text-muted-foreground opacity-40 group-hover:opacity-70 transition-opacity" 
                             strokeWidth={1.5}
                           />
-                        </AppTableCell>
-                      </AppTableRow>
+                        </PlatformTableCell>
+                      </PlatformTableRow>
                     );
                   })}
-                </AppTableBody>
-              </AppTable>
+                </PlatformTableBody>
+              </PlatformTable>
             </div>
 
             {/* Mobile Card List */}
