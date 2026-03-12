@@ -315,6 +315,6 @@ export default function BoardSummariesPage() {
       >
         Generated summaries are immutable and versioned. Every generation is logged for audit purposes.
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

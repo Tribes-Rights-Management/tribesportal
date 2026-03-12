@@ -204,6 +204,6 @@ export default function ExecutiveReportingPage() {
       >
         Data reflects the selected period. All metrics link to read-only detail views.
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

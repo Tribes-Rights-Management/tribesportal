@@ -159,6 +159,6 @@ export default function PaymentProvidersPage() {
           </p>
         </CardContent>
       </Card>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

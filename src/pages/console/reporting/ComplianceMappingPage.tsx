@@ -553,6 +553,6 @@ export default function ComplianceMappingPage() {
       >
         This mapping is for audit reference only and does not constitute certification.
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

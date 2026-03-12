@@ -39,14 +39,14 @@ export default function NotFoundPage() {
           This page does not exist or you do not have access to it.
         </p>
 
-        <AppButton
+        <PlatformButton
           onClick={handleReturnToWorkspace}
           intent="primary"
           size="lg"
           fullWidth
         >
           Return to workspace
-        </AppButton>
+        </PlatformButton>
 
         <p className="text-[12px] mt-6 text-muted-foreground">
           If you believe this is an error, contact the Tribes team.

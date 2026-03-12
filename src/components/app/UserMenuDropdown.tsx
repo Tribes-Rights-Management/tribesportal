@@ -70,7 +70,7 @@ export function UserMenuDropdown() {
   );
 
   return (
-    <AppDropdown
+    <PlatformDropdown
       trigger={trigger}
       items={menuItems}
       align="end"

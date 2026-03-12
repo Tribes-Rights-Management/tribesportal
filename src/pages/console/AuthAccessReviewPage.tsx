@@ -689,6 +689,6 @@ export default function SecurityVerificationPage() {
         open={!!selectedExceptionId}
         onClose={() => setSelectedExceptionId(null)}
       />
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

@@ -255,6 +255,6 @@ export default function BillingGovernancePage() {
           </p>
         </CardContent>
       </Card>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
