@@ -1630,16 +1630,16 @@ export default function SongDetailPage() {
 
         {/* ─── 5. LYRICS ────────────────────────────────── */}
         {(metadata.lyrics || editing) && (
-          <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-            <AppCardHeader className="bg-muted/30">
+          <PlatformCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <PlatformCardHeader className="bg-muted/30">
               <div className="flex items-center justify-between w-full">
-                <AppCardTitle className="text-sm font-semibold text-foreground">Lyrics</AppCardTitle>
+                <PlatformCardTitle className="text-sm font-semibold text-foreground">Lyrics</PlatformCardTitle>
                 {metadata.lyrics && !editing && (
                   <CopyIconButton text={metadata.lyrics} successMessage="Lyrics copied to clipboard" label="Copy lyrics" />
                 )}
               </div>
-            </AppCardHeader>
-            <AppCardBody>
+            </PlatformCardHeader>
+            <PlatformCardBody>
               {editing ? (
                 <textarea
                   ref={(el) => {
@@ -1680,8 +1680,8 @@ export default function SongDetailPage() {
                   </div>
                 </>
               )}
-            </AppCardBody>
-          </AppCard>
+            </PlatformCardBody>
+          </PlatformCard>
         )}
       </div>
     </AppPageLayout>
