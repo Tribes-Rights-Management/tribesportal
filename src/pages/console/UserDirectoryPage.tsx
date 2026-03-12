@@ -579,6 +579,6 @@ export default function UserDirectoryPage() {
           </AppModalCancel>
         </AppModalFooter>
       </AppModal>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

@@ -156,44 +156,44 @@ export default function RLSAuditPage() {
             description="Audit of RLS status, policy counts, and tenant isolation for all tables in public schema"
           />
           <ConsoleCardBody>
-            <AppTable columns={["20%", "12%", "12%", "12%", "14%", "10%", "20%"]}>
-              <AppTableHeader>
-                <AppTableRow header>
-                  <AppTableHead>Table</AppTableHead>
-                  <AppTableHead align="center">RLS Enabled</AppTableHead>
-                  <AppTableHead align="center">Policy Count</AppTableHead>
-                  <AppTableHead align="center">Has tenant_id</AppTableHead>
-                  <AppTableHead align="center">Policies Use tenant_id</AppTableHead>
-                  <AppTableHead align="center">Status</AppTableHead>
-                  <AppTableHead>Notes</AppTableHead>
-                </AppTableRow>
-              </AppTableHeader>
-              <AppTableBody>
+            <PlatformTable columns={["20%", "12%", "12%", "12%", "14%", "10%", "20%"]}>
+              <PlatformTableHeader>
+                <PlatformTableRow header>
+                  <PlatformTableHead>Table</PlatformTableHead>
+                  <PlatformTableHead align="center">RLS Enabled</PlatformTableHead>
+                  <PlatformTableHead align="center">Policy Count</PlatformTableHead>
+                  <PlatformTableHead align="center">Has tenant_id</PlatformTableHead>
+                  <PlatformTableHead align="center">Policies Use tenant_id</PlatformTableHead>
+                  <PlatformTableHead align="center">Status</PlatformTableHead>
+                  <PlatformTableHead>Notes</PlatformTableHead>
+                </PlatformTableRow>
+              </PlatformTableHeader>
+              <PlatformTableBody>
                 {RLS_COVERAGE.map((row) => (
-                  <AppTableRow key={row.table}>
-                    <AppTableCell mono>{row.table}</AppTableCell>
-                    <AppTableCell align="center">
+                  <PlatformTableRow key={row.table}>
+                    <PlatformTableCell mono>{row.table}</PlatformTableCell>
+                    <PlatformTableCell align="center">
                       <BooleanIndicator value={row.rlsEnabled} />
-                    </AppTableCell>
-                    <AppTableCell align="center">{row.policyCount}</AppTableCell>
-                    <AppTableCell align="center">
+                    </PlatformTableCell>
+                    <PlatformTableCell align="center">{row.policyCount}</PlatformTableCell>
+                    <PlatformTableCell align="center">
                       <BooleanIndicator value={row.hasTenantId} />
-                    </AppTableCell>
-                    <AppTableCell align="center">
+                    </PlatformTableCell>
+                    <PlatformTableCell align="center">
                       {row.hasTenantId ? (
                         <BooleanIndicator value={row.policiesReferenceTenantId} />
                       ) : (
                         <span className="text-xs text-muted-foreground">N/A</span>
                       )}
-                    </AppTableCell>
-                    <AppTableCell align="center">
+                    </PlatformTableCell>
+                    <PlatformTableCell align="center">
                       <StatusBadge status={row.status} />
-                    </AppTableCell>
-                    <AppTableCell muted className="max-w-[200px]">{row.notes}</AppTableCell>
-                  </AppTableRow>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted className="max-w-[200px]">{row.notes}</PlatformTableCell>
+                  </PlatformTableRow>
                 ))}
-              </AppTableBody>
-            </AppTable>
+              </PlatformTableBody>
+            </PlatformTable>
           </ConsoleCardBody>
         </ConsoleCard>
 

@@ -618,7 +618,7 @@ export default function HelpArticleEditorPage() {
                   </Link>
                 </div>
               ) : (
-                <AppSelect
+                <PlatformSelect
                   value={selectedCategoryId}
                   onChange={setSelectedCategoryId}
                   disabled={selectedAudienceIds.length === 0}
