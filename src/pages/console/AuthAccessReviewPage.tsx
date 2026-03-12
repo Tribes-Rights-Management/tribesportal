@@ -516,7 +516,7 @@ export default function SecurityVerificationPage() {
   const selectedException = exceptions.find(e => e.id === selectedExceptionId) || null;
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Security Verification"
       backLink={{ to: "/console", label: "System Console" }}
       action={
