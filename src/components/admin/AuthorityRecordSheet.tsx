@@ -174,11 +174,11 @@ export function AuthorityRecordSheet({
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 2: PLATFORM-LEVEL CAPABILITIES
             ═══════════════════════════════════════════════════════════════════ */}
-        <AppSettingsCard
+        <PlatformSettingsCard
           title="Platform-Level Capabilities"
           description="System-wide authority derived from platform role"
         >
-          <AppDetailRow
+          <PlatformDetailRow
             label="Assigned Role"
             value={formatPlatformRole(user.platform_role)}
             variant="readonly"
@@ -207,7 +207,7 @@ export function AuthorityRecordSheet({
               })}
             </div>
           </div>
-        </AppSettingsCard>
+        </PlatformSettingsCard>
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 3: ORGANIZATION-LEVEL CAPABILITIES
