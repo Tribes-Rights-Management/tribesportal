@@ -17,7 +17,7 @@
 import { useState } from "react";
 import { ChevronRight, Shield, DollarSign, FileText, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
-import { AppPageLayout } from "@/components/platform-ui";
+import { PlatformPageLayout } from "@/components/platform-ui";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
