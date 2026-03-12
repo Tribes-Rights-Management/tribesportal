@@ -325,8 +325,8 @@ export default function DataRoomPage() {
                 </PlatformTableEmpty>
               ) : (
                 (exports || []).map((exp) => (
-                  <AppTableRow key={exp.id}>
-                    <AppTableCell>
+                  <PlatformTableRow key={exp.id}>
+                    <PlatformTableCell>
                       <div>
                         <p className="font-medium">
                           {exp.title}
@@ -337,17 +337,17 @@ export default function DataRoomPage() {
                           </p>
                         )}
                       </div>
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                         {EXPORT_TYPE_LABELS[exp.export_type]}
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                       <ConsoleChip label={exp.scope_type} className="text-[10px]" />
-                    </AppTableCell>
-                    <AppTableCell muted>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                         {format(new Date(exp.period_start), "MMM d")} — {format(new Date(exp.period_end), "MMM d, yyyy")}
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                       <div className="flex items-center gap-2">
                         {getStatusIcon(exp.status)}
                         <ConsoleChip 
@@ -356,11 +356,11 @@ export default function DataRoomPage() {
                           className="text-[10px]" 
                         />
                       </div>
-                    </AppTableCell>
-                    <AppTableCell muted>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                         {format(new Date(exp.created_at), "MMM d, yyyy")}
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                       <div className="flex items-center gap-1">
                         <ConsoleButton
                           intent="ghost"
@@ -386,8 +386,8 @@ export default function DataRoomPage() {
                           <Users className="h-4 w-4" />
                         </ConsoleButton>
                       </div>
-                    </AppTableCell>
-                  </AppTableRow>
+                    </PlatformTableCell>
+                  </PlatformTableRow>
                 ))
               )}
             </AppTableBody>
