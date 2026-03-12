@@ -35,31 +35,31 @@ find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.
 
     # Check 1: Raw ui/button imports
     if grep -q 'from.*@/components/ui/button' "$file"; then
-        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/button → use AppButton from @/components/platform-ui\n"
+        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/button → use PlatformButton from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
     # Check 2: Raw ui/card imports
     if grep -q 'from.*@/components/ui/card' "$file"; then
-        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/card → use AppCard from @/components/platform-ui\n"
+        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/card → use PlatformCard from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
     # Check 3: Raw ui/input imports
     if grep -q 'from.*@/components/ui/input' "$file"; then
-        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/input → use AppInput from @/components/platform-ui\n"
+        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/input → use PlatformSearchInput from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
     # Check 4: Raw ui/badge imports
     if grep -q 'from.*@/components/ui/badge' "$file"; then
-        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/badge → use AppChip from @/components/platform-ui\n"
+        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/badge → use PlatformChip from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
     # Check 5: Raw ui/table imports
     if grep -q 'from.*@/components/ui/table' "$file"; then
-        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/table → use AppTable from @/components/platform-ui\n"
+        file_issues+="  ${YELLOW}IMPORT${NC}  Raw ui/table → use PlatformTable from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 
