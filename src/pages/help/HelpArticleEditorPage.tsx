@@ -414,13 +414,13 @@ export default function HelpArticleEditorPage() {
         <div className="hidden sm:flex items-center gap-2">
           {/* Archive/Restore actions */}
           {!isNew && status === "archived" ? (
-            <AppButton intent="ghost" size="sm" onClick={handleRestore}>
+             <PlatformButton intent="ghost" size="sm" onClick={handleRestore}>
               Restore
-            </AppButton>
+            </PlatformButton>
           ) : !isNew && status !== "archived" && (
-            <AppButton intent="ghost" size="sm" onClick={handleArchive}>
+            <PlatformButton intent="ghost" size="sm" onClick={handleArchive}>
               Archive
-            </AppButton>
+            </PlatformButton>
           )}
 
           {/* Draft articles: Save Draft + Publish */}
