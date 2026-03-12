@@ -53,7 +53,7 @@ export default function BillingGovernancePage() {
   } = useBillingAuthority();
 
   return (
-    <AppPageLayout title="Billing Governance">
+    <PlatformPageLayout title="Billing Governance">
 
       {/* Governance Notice */}
       <Card className="border-[var(--warning-border)] bg-[var(--warning-bg)]">
