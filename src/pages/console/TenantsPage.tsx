@@ -124,7 +124,7 @@ export default function TenantsPage() {
   const subtitleText = loading ? "Loading..." : `${tenants.length} organization${tenants.length !== 1 ? 's' : ''}`;
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Organizations"
       backLink={{ to: "/console", label: "System Console" }}
       action={
