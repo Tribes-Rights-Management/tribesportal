@@ -180,21 +180,21 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
               AI-Generated Response Draft
             </span>
           </div>
-          <AppButton
+          <PlatformButton
             intent="ghost"
             size="sm"
             onClick={copyDraftResponse}
             icon={copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
           >
             {copied ? 'Copied!' : 'Copy'}
-          </AppButton>
+          </PlatformButton>
         </div>
         
-        <AppCard>
-          <AppCardBody className="p-3">
+        <PlatformCard>
+          <PlatformCardBody className="p-3">
             <p className="text-sm whitespace-pre-wrap">{analysis.draftResponse}</p>
-          </AppCardBody>
-        </AppCard>
+          </PlatformCardBody>
+        </PlatformCard>
         
         <p className="text-xs text-muted-foreground mt-2">
           ⚠️ Review and edit before sending. AI-generated content should be verified.
