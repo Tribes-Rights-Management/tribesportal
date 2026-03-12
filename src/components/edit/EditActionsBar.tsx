@@ -54,7 +54,7 @@ export function EditActionsBar({
       }}
     >
       {/* Cancel button - secondary styling */}
-      <AppButton
+      <PlatformButton
         type="button"
         onClick={onCancel}
         disabled={saving}
@@ -64,7 +64,7 @@ export function EditActionsBar({
         className="flex-1"
       >
         {cancelLabel}
-      </AppButton>
+      </PlatformButton>
 
       {/* Save button - primary styling */}
       <AppButton
