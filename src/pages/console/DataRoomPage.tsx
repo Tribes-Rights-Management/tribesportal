@@ -253,7 +253,7 @@ export default function DataRoomPage() {
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Data Room"
       action={
         <ConsoleButton onClick={() => setShowCreateDialog(true)}>
