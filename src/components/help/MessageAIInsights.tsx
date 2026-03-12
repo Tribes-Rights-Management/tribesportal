@@ -162,14 +162,14 @@ export function MessageAIInsights({ message, senderName, subject }: MessageAIIns
       </PlatformCard>
 
       {/* AI Reasoning */}
-      <AppCard>
-        <AppCardBody className="p-3">
+      <PlatformCard>
+        <PlatformCardBody className="p-3">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
             AI Reasoning
           </p>
           <p className="text-sm">{analysis.reasoning}</p>
-        </AppCardBody>
-      </AppCard>
+        </PlatformCardBody>
+      </PlatformCard>
 
       {/* Draft Response */}
       <div>
