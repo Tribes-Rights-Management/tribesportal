@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
  * Standardized search field for use throughout the application.
  * Uses consistent 36px height, 16px icon, and proper padding.
  * 
- * For the global header search (with keyboard hints), use AppSearchInput.
+ * For the global header search (with keyboard hints), use PlatformSearchInput.
  * For page-level search (simpler), use this SearchInput.
  */
 

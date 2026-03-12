@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
  * - Danger: Red border, transparent bg
  * 
  * ENFORCEMENT:
- * - All pages must import AppButton from @/components/platform-ui
+ * - All pages must import PlatformButton from @/components/platform-ui
  * - Do NOT import Button from @/components/ui/button directly
  * ═══════════════════════════════════════════════════════════════════════════
  */

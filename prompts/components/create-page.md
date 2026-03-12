@@ -40,8 +40,7 @@ The page should look like it belongs in a Bloomberg terminal or banking applicat
 After generation, check:
 - [ ] No imports from `@/components/ui/*`
 - [ ] No hardcoded colors (`bg-white`, `bg-[#...]`, `text-[#...]`)
-- [ ] Uses `AppPageHeader` for the title
-- [ ] Uses `AppPageContainer` as wrapper
+- [ ] Uses `PlatformPageLayout` as wrapper
 - [ ] Has loading state
 - [ ] Has empty state
 - [ ] Follows the correct layout for its module

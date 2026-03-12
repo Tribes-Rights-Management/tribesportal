@@ -15,10 +15,10 @@ import { Inbox, FileText, Users, FolderOpen, Search } from "lucide-react";
  * - No data available
  * 
  * USAGE:
- *   <AppEmptyState
+ *   <PlatformEmptyState
  *     icon="inbox"
  *     message="No articles yet"
- *     action={<AppButton>Create Article</AppButton>}
+ *     action={<PlatformButton>Create Article</PlatformButton>}
  *   />
  * 
  * ENFORCEMENT:

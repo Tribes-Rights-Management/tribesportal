@@ -195,7 +195,7 @@ interface PlatformTableHeadProps {
   onSort?: () => void;
   /** Text alignment */
   align?: "left" | "center" | "right";
-  /** Width (use columns prop on AppTable instead for consistency) */
+  /** Width (use columns prop on PlatformTable instead for consistency) */
   width?: string;
   className?: string;
 }

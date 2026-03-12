@@ -23,21 +23,20 @@ Rules:
 3. Replace these patterns:
 
    IMPORTS:
-   - import { Button } from "@/components/ui/button"  →  import { AppButton } from "@/components/platform-ui"
-   - import { Card } from "@/components/ui/card"  →  import { AppCard } from "@/components/platform-ui"
-   - import { Input } from "@/components/ui/input"  →  import { AppInput } from "@/components/platform-ui"
-   - import { Table } from "@/components/ui/table"  →  import { AppTable, ... } from "@/components/platform-ui"
-   - import { Badge } from "@/components/ui/badge"  →  import { AppChip } from "@/components/platform-ui"
-   - import { Select } from "@/components/ui/select"  →  import { AppSelect } from "@/components/platform-ui"
+   - import { Button } from "@/components/ui/button"  →  import { PlatformButton } from "@/components/platform-ui"
+   - import { Card } from "@/components/ui/card"  →  import { PlatformCard } from "@/components/platform-ui"
+   - import { Input } from "@/components/ui/input"  →  import { PlatformSearchInput } from "@/components/platform-ui"
+   - import { Table } from "@/components/ui/table"  →  import { PlatformTable, ... } from "@/components/platform-ui"
+   - import { Badge } from "@/components/ui/badge"  →  import { PlatformChip } from "@/components/platform-ui"
+   - import { Select } from "@/components/ui/select"  →  import { PlatformSelect } from "@/components/platform-ui"
 
    JSX PATTERNS:
-   - <Button>  →  <AppButton>
-   - <Card>/<CardHeader>/<CardContent>  →  <AppCard>/<AppCardHeader>/<AppCardBody>
-   - <div className="bg-white border rounded-lg p-...">  →  <AppPanel> or <AppCard>
-   - <div className="bg-card border rounded-lg p-...">  →  <AppPanel> or <AppCard>
-   - Raw <table>  →  <AppTable> with AppTableHeader, AppTableBody, AppTableRow, AppTableCell
-   - <Badge>  →  <AppChip>
-   - <Input>  →  <AppInput>
+   - <Button>  →  <PlatformButton>
+   - <Card>/<CardHeader>/<CardContent>  →  <PlatformCard>/<PlatformCardHeader>/<PlatformCardBody>
+   - <div className="bg-white border rounded-lg p-...">  →  <PlatformPanel> or <PlatformCard>
+   - <div className="bg-card border rounded-lg p-...">  →  <PlatformPanel> or <PlatformCard>
+   - Raw <table>  →  <PlatformTable> with PlatformTableHeader, PlatformTableBody, PlatformTableRow, PlatformTableCell
+   - <Badge>  →  <PlatformChip>
 
    COLORS:
    - Remove all hardcoded hex colors (bg-[#...], text-[#...])

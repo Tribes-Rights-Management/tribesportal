@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * This is the base button component. Most pages should use:
- * - AppButton from @/components/platform-ui (for workstation pages)
+ * - PlatformButton from @/components/platform-ui (for workstation pages)
  * - ConsoleButton from @/components/console (for admin console pages)
  * 
  * Both of those components wrap this primitive and add specialized features.
