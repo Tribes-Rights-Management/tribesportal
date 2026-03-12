@@ -63,15 +63,15 @@ const mockQueueSongs: QueueSong[] = Array.from({ length: 127 }, (_, i) => ({
 const getStatusBadge = (status: QueueSong["status"]) => {
   switch (status) {
     case "pending":
-      return <AppTableBadge variant="default">Pending</AppTableBadge>;
+      return <PlatformTableBadge variant="default">Pending</PlatformTableBadge>;
     case "review":
-      return <AppTableBadge variant="warning">In Review</AppTableBadge>;
+      return <PlatformTableBadge variant="warning">In Review</PlatformTableBadge>;
     case "approved":
-      return <AppTableBadge variant="success">Approved</AppTableBadge>;
+      return <PlatformTableBadge variant="success">Approved</PlatformTableBadge>;
     case "rejected":
-      return <AppTableBadge variant="error">Rejected</AppTableBadge>;
+      return <PlatformTableBadge variant="error">Rejected</PlatformTableBadge>;
     default:
-      return <AppTableBadge variant="default">{status}</AppTableBadge>;
+      return <PlatformTableBadge variant="default">{status}</PlatformTableBadge>;
   }
 };
 
