@@ -4,18 +4,18 @@ import { ArrowUpDown, Check } from "lucide-react";
 import { format } from "date-fns";
 
 import {
-  AppPageLayout,
-  AppSection,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppResponsiveList,
-  AppItemCard,
-  AppPagination,
+  PlatformPageLayout,
+  PlatformSection,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformResponsiveList,
+  PlatformItemCard,
+  PlatformPagination,
 } from "@/components/platform-ui";
 import { cn } from "@/lib/utils";
 

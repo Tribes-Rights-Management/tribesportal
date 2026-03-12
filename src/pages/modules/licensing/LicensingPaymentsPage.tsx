@@ -2,15 +2,15 @@ import { Link } from "react-router-dom";
 import { DollarSign, Receipt } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import {
-  AppPageLayout,
-  AppCard,
-  AppCardHeader,
-  AppCardTitle,
-  AppCardBody,
-  AppStatCard,
-  AppStatCardGrid,
-  AppEmptyState,
-  AppButton,
+  PlatformPageLayout,
+  PlatformCard,
+  PlatformCardHeader,
+  PlatformCardTitle,
+  PlatformCardBody,
+  PlatformStatCard,
+  PlatformStatCardGrid,
+  PlatformEmptyState,
+  PlatformButton,
 } from "@/components/platform-ui";
 
 /**

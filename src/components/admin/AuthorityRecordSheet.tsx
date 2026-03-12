@@ -3,9 +3,9 @@ import { ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { AppSheet, AppSheetBody } from "@/components/ui/app-sheet";
 import {
-  AppDetailRow,
-  AppSettingsCard,
-  AppButton,
+  PlatformDetailRow,
+  PlatformSettingsCard,
+  PlatformButton,
 } from "@/components/platform-ui";
 import type { Database } from "@/integrations/supabase/types";
 

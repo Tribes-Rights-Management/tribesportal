@@ -4,21 +4,21 @@ import { ArrowUpDown, Check } from "lucide-react";
 import { format } from "date-fns";
 
 import {
-  AppPageLayout,
-  AppSection,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppTableBadge,
-  AppFilterDrawer,
-  AppFilterSection,
-  AppFilterOption,
-  AppFilterTrigger,
-  AppPagination,
+  PlatformPageLayout,
+  PlatformSection,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformTableBadge,
+  PlatformFilterDrawer,
+  PlatformFilterSection,
+  PlatformFilterOption,
+  PlatformFilterTrigger,
+  PlatformPagination,
 } from "@/components/platform-ui";
 import { cn } from "@/lib/utils";
 

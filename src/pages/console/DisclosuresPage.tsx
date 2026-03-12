@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PlatformPageLayout as AppPageLayout, PlatformTable as AppTable, PlatformTableHeader as AppTableHeader, PlatformTableBody as AppTableBody, PlatformTableHead as AppTableHead, PlatformTableRow as AppTableRow, PlatformTableCell as AppTableCell, PlatformTableEmpty as AppTableEmpty } from "@/components/platform-ui";
+import { PlatformPageLayout, PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableHead, PlatformTableRow, PlatformTableCell, PlatformTableEmpty } from "@/components/platform-ui";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleAccess } from "@/hooks/useRoleAccess";

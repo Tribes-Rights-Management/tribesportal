@@ -4,18 +4,18 @@ import { TenantSelector } from "@/components/app/TenantSelector";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import {
-  AppPageLayout,
-  AppCard,
-  AppCardBody,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableBadge,
-  AppEmptyState,
-  AppSectionHeader,
+  PlatformPageLayout,
+  PlatformCard,
+  PlatformCardBody,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableBadge,
+  PlatformEmptyState,
+  PlatformSectionHeader,
 } from "@/components/platform-ui";
 import { InstitutionalLoadingState, SystemErrorState } from "@/components/ui/institutional-states";
 
