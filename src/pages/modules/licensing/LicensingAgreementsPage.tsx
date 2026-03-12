@@ -142,9 +142,9 @@ export default function LicensingAgreementsPage() {
   // No tenant selected
   if (!activeTenant) {
     return (
-      <AppPageLayout title="Agreements">
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="Agreements">
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             {tenantMemberships.length > 1 ? (
               <div>
                 <p className="text-[13px] text-muted-foreground mb-4">
@@ -153,15 +153,15 @@ export default function LicensingAgreementsPage() {
                 <TenantSelector />
               </div>
             ) : (
-              <AppEmptyState
+              <PlatformEmptyState
                 icon="folder"
                 message="No organization available"
                 description="You are not a member of any organization."
               />
             )}
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
