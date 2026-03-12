@@ -204,13 +204,13 @@ export default function RightsPublishersPage() {
   };
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Publishers"
       action={
-        <AppButton intent="secondary" size="sm" onClick={handleCreate}>
+        <PlatformButton intent="secondary" size="sm" onClick={handleCreate}>
           <Plus className="h-4 w-4" />
           Add Publisher
-        </AppButton>
+        </PlatformButton>
       }
     >
       {/* Search */}
@@ -233,16 +233,16 @@ export default function RightsPublishersPage() {
       {/* Table */}
       <div className="overflow-x-auto -mx-4 sm:mx-0">
         <div className="px-4 sm:px-0">
-          <AppTable columns={["45%", "20%", "25%", "10%"]}>
-            <AppTableHeader>
-              <AppTableRow header>
-                <AppTableHead className="pl-5">Name</AppTableHead>
-                <AppTableHead>PRO</AppTableHead>
-                <AppTableHead className="hidden sm:table-cell">IPI Number</AppTableHead>
-                <AppTableHead className="text-right pr-10">Songs</AppTableHead>
-              </AppTableRow>
-            </AppTableHeader>
-            <AppTableBody>
+          <PlatformTable columns={["45%", "20%", "25%", "10%"]}>
+            <PlatformTableHeader>
+              <PlatformTableRow header>
+                <PlatformTableHead className="pl-5">Name</PlatformTableHead>
+                <PlatformTableHead>PRO</PlatformTableHead>
+                <PlatformTableHead className="hidden sm:table-cell">IPI Number</PlatformTableHead>
+                <PlatformTableHead className="text-right pr-10">Songs</PlatformTableHead>
+              </PlatformTableRow>
+            </PlatformTableHeader>
+            <PlatformTableBody>
               {loading ? (
                 <tr>
                   <td
@@ -253,40 +253,40 @@ export default function RightsPublishersPage() {
                   </td>
                 </tr>
               ) : paged.length === 0 ? (
-                <AppTableEmpty colSpan={4}>
+                <PlatformTableEmpty colSpan={4}>
                   <p className="text-[13px] text-muted-foreground">
                     {searchQuery
                       ? "No publishers match your search"
                       : "No publishers in the system"}
                   </p>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : (
                 paged.map((publisher) => (
-                  <AppTableRow
+                  <PlatformTableRow
                     key={publisher.id}
                     clickable
                     onClick={() => handleEdit(publisher)}
                   >
-                    <AppTableCell className="pl-5">{publisher.name}</AppTableCell>
-                    <AppTableCell muted>{publisher.pro || "—"}</AppTableCell>
-                    <AppTableCell muted className="hidden sm:table-cell">
+                    <PlatformTableCell className="pl-5">{publisher.name}</PlatformTableCell>
+                    <PlatformTableCell muted>{publisher.pro || "—"}</PlatformTableCell>
+                    <PlatformTableCell muted className="hidden sm:table-cell">
                       {publisher.ipi_number || "—"}
-                    </AppTableCell>
-                    <AppTableCell muted className="text-right pr-10 tabular-nums">
+                    </PlatformTableCell>
+                    <PlatformTableCell muted className="text-right pr-10 tabular-nums">
                       {songCountMap.get(publisher.id) || 0}
-                    </AppTableCell>
-                  </AppTableRow>
+                    </PlatformTableCell>
+                  </PlatformTableRow>
                 ))
               )}
-            </AppTableBody>
-          </AppTable>
+            </PlatformTableBody>
+          </PlatformTable>
         </div>
       </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="mt-4">
-          <AppPagination
+          <PlatformPagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}
@@ -295,7 +295,7 @@ export default function RightsPublishersPage() {
       )}
 
       {/* Edit/Add Panel */}
-      <AppPanel
+      <PlatformPanel
         open={panelOpen}
         onClose={() => setPanelOpen(false)}
         title={editing ? "Edit publisher" : "New publisher"}
@@ -305,7 +305,7 @@ export default function RightsPublishersPage() {
             : "Add a new publisher to the registry"
         }
         footer={
-          <AppPanelFooter
+          <PlatformPanelFooter
             left={
               editing && (
                 <button
@@ -325,7 +325,7 @@ export default function RightsPublishersPage() {
         }
       >
         <div className="space-y-4">
-          {formError && <AppAlert variant="error" message={formError} />}
+          {formError && <PlatformAlert variant="error" message={formError} />}
 
           <div>
             <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">
@@ -392,7 +392,7 @@ export default function RightsPublishersPage() {
             />
           </div>
         </div>
-      </AppPanel>
-    </AppPageLayout>
+      </PlatformPanel>
+    </PlatformPageLayout>
   );
 }

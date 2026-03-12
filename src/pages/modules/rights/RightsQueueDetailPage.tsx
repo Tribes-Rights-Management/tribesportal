@@ -142,17 +142,17 @@ export default function RightsQueueDetailPage() {
 
   if (isLoading) {
     return (
-      <AppPageLayout title="Loading..." backLink={{ to: "/rights/queue", label: "Back to Queue" }}>
+      <PlatformPageLayout title="Loading..." backLink={{ to: "/rights/queue", label: "Back to Queue" }}>
         <div className="py-12 text-center text-muted-foreground text-sm">Loading...</div>
-      </AppPageLayout>
+      </PlatformPageLayout>
     );
   }
 
   if (!item) {
     return (
-      <AppPageLayout title="Not Found" backLink={{ to: "/rights/queue", label: "Back to Queue" }}>
+      <PlatformPageLayout title="Not Found" backLink={{ to: "/rights/queue", label: "Back to Queue" }}>
         <div className="py-12 text-center text-muted-foreground text-sm">Queue item not found.</div>
-      </AppPageLayout>
+      </PlatformPageLayout>
     );
   }
 
@@ -209,7 +209,7 @@ export default function RightsQueueDetailPage() {
   );
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title={title}
       backLink={{ to: "/rights/queue", label: "Back to Queue" }}
       action={<QueueStatusBadge status={item.status} />}
@@ -229,16 +229,16 @@ export default function RightsQueueDetailPage() {
         <TabsContent value="details">
           <div className="space-y-4">
             {/* Song Details Card */}
-            <AppCard>
-              <AppCardBody className={isEditing ? undefined : "p-0"}>
+            <PlatformCard>
+              <PlatformCardBody className={isEditing ? undefined : "p-0"}>
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-medium">Song Details</h3>
                   {!isEditing ? (
-                    <AppButton size="sm" variant="ghost" onClick={startEditing}>Edit</AppButton>
+                    <PlatformButton size="sm" variant="ghost" onClick={startEditing}>Edit</PlatformButton>
                   ) : (
                     <div className="flex gap-2">
-                      <AppButton size="sm" onClick={saveEdits} loading={isSaving}>Save</AppButton>
-                      <AppButton size="sm" variant="ghost" onClick={() => setIsEditing(false)}>Cancel</AppButton>
+                      <PlatformButton size="sm" onClick={saveEdits} loading={isSaving}>Save</PlatformButton>
+                      <PlatformButton size="sm" variant="ghost" onClick={() => setIsEditing(false)}>Cancel</PlatformButton>
                     </div>
                   )}
                 </div>
@@ -249,7 +249,7 @@ export default function RightsQueueDetailPage() {
                     {editField("language", "Language")}
                     <div>
                       <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Song Type</label>
-                      <AppSelect
+                      <PlatformSelect
                         value={editData?.song_type || ""}
                         onChange={(val) => setEditData({ ...editData, song_type: val })}
                         options={[
@@ -265,7 +265,7 @@ export default function RightsQueueDetailPage() {
                     </div>
                     <div>
                       <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Release Status</label>
-                      <AppSelect
+                      <PlatformSelect
                         value={editData?.release_status || ""}
                         onChange={(val) => setEditData({ ...editData, release_status: val })}
                         options={[
@@ -278,7 +278,7 @@ export default function RightsQueueDetailPage() {
                     {editField("publication_year", "Publication Year")}
                     <div>
                       <label className="block text-[12px] text-[#6B7280] mb-1.5 font-medium">Copyright Status</label>
-                      <AppSelect
+                      <PlatformSelect
                         value={editData?.copyright_status || ""}
                         onChange={(val) => setEditData({ ...editData, copyright_status: val })}
                         options={[
@@ -292,17 +292,17 @@ export default function RightsQueueDetailPage() {
                     </div>
                   </div>
                 ) : (
-                  <AppDetailRowGroup>
-                    <AppDetailRow label="Title" value={title} />
-                    <AppDetailRow label="Alternate Title" value={
+                  <PlatformDetailRowGroup>
+                    <PlatformDetailRow label="Title" value={title} />
+                    <PlatformDetailRow label="Alternate Title" value={
                       songData.alternate_titles?.length > 0 ? songData.alternate_titles.join(", ") : "—"
                     } />
-                    <AppDetailRow label="Language" value={songData.language || "—"} />
-                    <AppDetailRow label="Song Type" value={capitalize(songData.song_type)} />
-                    <AppDetailRow label="Release Status" value={capitalize(songData.release_status)} />
-                    <AppDetailRow label="Publication Year" value={songData.publication_year || "—"} />
-                    <AppDetailRow label="Copyright Status" value={capitalize(songData.copyright_status)} />
-                    <AppDetailRow label="Chord Chart" value={
+                    <PlatformDetailRow label="Language" value={songData.language || "—"} />
+                    <PlatformDetailRow label="Song Type" value={capitalize(songData.song_type)} />
+                    <PlatformDetailRow label="Release Status" value={capitalize(songData.release_status)} />
+                    <PlatformDetailRow label="Publication Year" value={songData.publication_year || "—"} />
+                    <PlatformDetailRow label="Copyright Status" value={capitalize(songData.copyright_status)} />
+                    <PlatformDetailRow label="Chord Chart" value={
                       songData.chord_chart_path ? (
                         <button
                           className="text-sm text-primary hover:underline cursor-pointer"
@@ -319,14 +319,14 @@ export default function RightsQueueDetailPage() {
                         </button>
                       ) : songData.has_chord_chart ? "Yes (not uploaded)" : "No"
                     } />
-                  </AppDetailRowGroup>
+                  </PlatformDetailRowGroup>
                 )}
-              </AppCardBody>
-            </AppCard>
+              </PlatformCardBody>
+            </PlatformCard>
 
             {/* Writers */}
-            <AppCard>
-              <AppCardBody>
+            <PlatformCard>
+              <PlatformCardBody>
                 <h3 className="text-sm font-medium mb-3">Songwriters</h3>
                 {writers.length === 0 ? (
                   <p className="text-sm text-muted-foreground">No writers listed.</p>
@@ -351,12 +351,12 @@ export default function RightsQueueDetailPage() {
                     ))}
                   </div>
                 )}
-              </AppCardBody>
-            </AppCard>
+              </PlatformCardBody>
+            </PlatformCard>
 
             {/* Publishing & Administration — Deal-based */}
-            <AppCard>
-              <AppCardBody>
+            <PlatformCard>
+              <PlatformCardBody>
                 <h3 className="text-sm font-medium mb-4">Publishing & Administration</h3>
                 {writers.map((writer: any, wIndex: number) => {
                   const writerId = writer.writer_id;
@@ -383,7 +383,7 @@ export default function RightsQueueDetailPage() {
                             ) : writerDeals.length === 0 ? (
                               <p className="text-xs text-muted-foreground italic">No active deals for this writer.</p>
                             ) : (
-                              <AppSelect
+                              <PlatformSelect
                                 value="none"
                                 onChange={(val) => handleSelectDeal(writerId, val)}
                                 options={[
@@ -453,8 +453,8 @@ export default function RightsQueueDetailPage() {
                     </div>
                   );
                 })}
-              </AppCardBody>
-            </AppCard>
+              </PlatformCardBody>
+            </PlatformCard>
 
             {/* Controlled Label Copy — auto-generated from selected deals */}
             {(() => {
@@ -481,13 +481,13 @@ export default function RightsQueueDetailPage() {
                 : null;
 
               return (
-                <AppCard>
-                  <AppCardBody>
+                <PlatformCard>
+                  <PlatformCardBody>
                     <h3 className="text-sm font-medium mb-3">Controlled Label Copy</h3>
                     {labelCopy ? (
                       <div className="flex items-start justify-between gap-4">
                         <p className="text-[13px] text-foreground leading-relaxed select-all">{labelCopy}</p>
-                        <AppButton
+                        <PlatformButton
                           size="sm"
                           variant="ghost"
                           onClick={() => {
@@ -496,22 +496,22 @@ export default function RightsQueueDetailPage() {
                           }}
                         >
                           Copy
-                        </AppButton>
+                        </PlatformButton>
                       </div>
                     ) : (
                       <p className="text-[12px] text-muted-foreground italic">
                         Add Tribes-administered publishers to auto-generate label copy.
                       </p>
                     )}
-                  </AppCardBody>
-                </AppCard>
+                  </PlatformCardBody>
+                </PlatformCard>
               );
             })()}
 
             {/* Lyrics */}
             {(songData.lyrics || songData.lyrics_sections?.length > 0) && (
-              <AppCard>
-                <AppCardBody>
+              <PlatformCard>
+                <PlatformCardBody>
                   <h3 className="text-sm font-medium mb-3">Lyrics</h3>
                   <pre className="text-[13px] text-muted-foreground whitespace-pre-wrap font-sans leading-relaxed max-h-[400px] overflow-y-auto">
                     {songData.lyrics_sections?.length > 0
@@ -519,13 +519,13 @@ export default function RightsQueueDetailPage() {
                       : songData.lyrics
                     }
                   </pre>
-                </AppCardBody>
-              </AppCard>
+                </PlatformCardBody>
+              </PlatformCard>
             )}
 
             {/* Admin Notes */}
-            <AppCard>
-              <AppCardBody>
+            <PlatformCard>
+              <PlatformCardBody>
                 <h3 className="text-sm font-medium mb-2">Admin Notes (internal only)</h3>
                 {notesEditing ? (
                   <div className="space-y-2">
@@ -536,8 +536,8 @@ export default function RightsQueueDetailPage() {
                       className="min-h-[60px]"
                     />
                     <div className="flex gap-2">
-                      <AppButton size="sm" onClick={handleSaveNotes} loading={updateStatus.isPending}>Save</AppButton>
-                      <AppButton size="sm" variant="ghost" onClick={() => setNotesEditing(false)}>Cancel</AppButton>
+                      <PlatformButton size="sm" onClick={handleSaveNotes} loading={updateStatus.isPending}>Save</PlatformButton>
+                      <PlatformButton size="sm" variant="ghost" onClick={() => setNotesEditing(false)}>Cancel</PlatformButton>
                     </div>
                   </div>
                 ) : (
@@ -545,32 +545,32 @@ export default function RightsQueueDetailPage() {
                     <p className="text-[13px] text-muted-foreground whitespace-pre-wrap">
                       {item.admin_notes || "No notes yet."}
                     </p>
-                    <AppButton size="sm" variant="ghost" className="mt-2" onClick={() => { setAdminNotes(item.admin_notes || ""); setNotesEditing(true); }}>
+                    <PlatformButton size="sm" variant="ghost" className="mt-2" onClick={() => { setAdminNotes(item.admin_notes || ""); setNotesEditing(true); }}>
                       Edit Notes
-                    </AppButton>
+                    </PlatformButton>
                   </div>
                 )}
-              </AppCardBody>
-            </AppCard>
+              </PlatformCardBody>
+            </PlatformCard>
 
             {/* Status Controls */}
-            <AppSection spacing="md">
+            <PlatformSection spacing="md">
               <QueueStatusControl queueId={item.id} currentStatus={item.status} songData={songData} onStatusChange={() => refetch()} hasDealSelected={Object.keys(writerDealMap).length > 0} />
-            </AppSection>
+            </PlatformSection>
           </div>
         </TabsContent>
 
         <TabsContent value="messages">
-          <AppCard>
-            <AppCardBody>
+          <PlatformCard>
+            <PlatformCardBody>
               <QueueMessageThread queueId={item.id} viewerRole="staff" />
-            </AppCardBody>
-          </AppCard>
+            </PlatformCardBody>
+          </PlatformCard>
         </TabsContent>
 
         <TabsContent value="history">
-          <AppCard>
-            <AppCardBody>
+          <PlatformCard>
+            <PlatformCardBody>
               <div className="space-y-3 text-[13px]">
                 <div className="flex justify-between py-1.5 border-b border-border/50">
                   <span className="text-muted-foreground">Submitted</span>
@@ -593,10 +593,10 @@ export default function RightsQueueDetailPage() {
                   <span>{format(new Date(item.updated_at), "MMM d, yyyy h:mm a")}</span>
                 </div>
               </div>
-            </AppCardBody>
-          </AppCard>
+            </PlatformCardBody>
+          </PlatformCard>
         </TabsContent>
       </Tabs>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

@@ -522,7 +522,7 @@ export default function RightsDealDetailPage() {
   });
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title={isNew ? "New Deal" : `Deal #${existingDeal?.deal_number || dealNumber}`}
       backLink={{ to: "/rights/parties?tab=deals", label: "Back to Deals" }}
       action={
@@ -569,8 +569,8 @@ export default function RightsDealDetailPage() {
       {activeTab === "contract" && (
         <div className="space-y-4">
           {/* Deal Info */}
-          <AppCard>
-            <AppCardBody>
+          <PlatformCard>
+            <PlatformCardBody>
               <h3 className="text-sm font-medium mb-4">Deal Info</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Writer search */}
@@ -625,12 +625,12 @@ export default function RightsDealDetailPage() {
                   </div>
                 </div>
               </div>
-            </AppCardBody>
-          </AppCard>
+            </PlatformCardBody>
+          </PlatformCard>
 
           {/* Publishers */}
-          <AppCard>
-            <AppCardBody>
+          <PlatformCard>
+            <PlatformCardBody>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium">Publishers</h3>
                 <button onClick={addPublisher}
@@ -719,8 +719,8 @@ export default function RightsDealDetailPage() {
                   </div>
                 </div>
               )}
-            </AppCardBody>
-          </AppCard>
+            </PlatformCardBody>
+          </PlatformCard>
 
           {/* Notes */}
           <div>
@@ -826,6 +826,6 @@ export default function RightsDealDetailPage() {
           )}
         </div>
       )}
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
