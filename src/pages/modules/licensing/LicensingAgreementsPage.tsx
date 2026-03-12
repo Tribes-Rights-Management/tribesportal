@@ -168,12 +168,12 @@ export default function LicensingAgreementsPage() {
   // Detail view
   if (selectedId) {
     return (
-      <AppPageLayout
+      <PlatformPageLayout
         title="Agreement Detail"
         backLink={{ to: "/licensing/agreements", label: "Back to agreements" }}
       >
         <AgreementDetailView agreementId={selectedId} />
-      </AppPageLayout>
+      </PlatformPageLayout>
     );
   }
 
