@@ -27,7 +27,7 @@ interface PermissionConfirmDialogProps {
 /**
  * PERMISSION CONFIRMATION DIALOG — INSTITUTIONAL GOVERNANCE STANDARD
  * 
- * Uses the unified AppModal system for consistent backdrop, spacing, and behavior.
+ * Uses the unified PlatformModal system for consistent backdrop, spacing, and behavior.
  * 
  * Design Rules:
  * - Explicit restatement of impact

@@ -172,7 +172,7 @@ type AuthorityAuditAction =
 
 ### Confirmation Dialog
 
-Must use `AppModal` with:
+Must use `PlatformModal` with:
 
 - `preventsClose={processing}` during submission
 - Clear impact statement
