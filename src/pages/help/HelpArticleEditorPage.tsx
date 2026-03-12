@@ -494,37 +494,37 @@ export default function HelpArticleEditorPage() {
         <div className="flex sm:hidden items-center gap-2">
           {/* Primary action button based on status */}
           {(isNew || status === "draft" || status === "internal") && (
-            <AppButton 
+            <PlatformButton 
               intent="primary" 
               size="sm" 
               onClick={handlePublish}
               disabled={publishing || !title.trim() || !bodyMd.trim()}
             >
               {publishing ? "..." : "Publish"}
-            </AppButton>
+            </PlatformButton>
           )}
           {!isNew && status === "published" && (
-            <AppButton 
+            <PlatformButton 
               intent="primary" 
               size="sm" 
               onClick={handleSavePublished}
               disabled={saving || !title.trim() || !bodyMd.trim()}
             >
               {saving ? "..." : "Save"}
-            </AppButton>
+            </PlatformButton>
           )}
           {!isNew && status === "archived" && (
-            <AppButton intent="secondary" size="sm" onClick={handleRestore}>
+            <PlatformButton intent="secondary" size="sm" onClick={handleRestore}>
               Restore
-            </AppButton>
+            </PlatformButton>
           )}
 
           {/* Overflow menu for secondary actions */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <AppButton intent="ghost" size="sm" className="p-2" aria-label="More actions">
+              <PlatformButton intent="ghost" size="sm" className="p-2" aria-label="More actions">
                 <MoreHorizontal className="h-4 w-4" />
-              </AppButton>
+              </PlatformButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-[160px]">
               {(isNew || status === "draft" || status === "internal") && (
