@@ -7,7 +7,7 @@ import { PlatformButton } from "@/components/platform-ui";
  * 
  * Replaces generic 404 with institutional language.
  * Directs users back to their appropriate workspace.
- * Uses unified AppButton for consistency.
+ * Uses unified PlatformButton for consistency.
  */
 export default function NotFoundPage() {
   const navigate = useNavigate();
