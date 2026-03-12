@@ -44,15 +44,15 @@ export default tseslint.config(
           paths: [
             {
               name: "@/components/ui/button",
-              message: "Use AppButton from @/components/platform-ui or ConsoleButton from @/components/console instead. See docs/DESIGN_SYSTEM_ENFORCEMENT.md"
+              message: "Use PlatformButton from @/components/platform-ui or ConsoleButton from @/components/console instead. See docs/DESIGN_SYSTEM_ENFORCEMENT.md"
             },
             {
               name: "@/components/ui/badge",
-              message: "Use AppChip from @/components/platform-ui or ConsoleChip from @/components/console instead. See docs/DESIGN_SYSTEM_ENFORCEMENT.md"
+              message: "Use PlatformChip from @/components/platform-ui or ConsoleChip from @/components/console instead. See docs/DESIGN_SYSTEM_ENFORCEMENT.md"
             },
             {
               name: "@/components/ui/card",
-              message: "Use AppCard from @/components/platform-ui or ConsoleCard from @/components/console instead. See docs/DESIGN_SYSTEM_ENFORCEMENT.md"
+              message: "Use PlatformCard from @/components/platform-ui or ConsoleCard from @/components/console instead. See docs/DESIGN_SYSTEM_ENFORCEMENT.md"
             }
           ]
         }

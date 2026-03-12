@@ -23,18 +23,18 @@ import { useHelpManagement, HelpArticle, HelpArticleStatus } from "@/hooks/useHe
 import { useArticleOrderByCategory } from "@/hooks/useArticleOrderByCategory";
 import { useDebounce } from "@/hooks/useDebounce";
 import {
-  AppButton,
-  AppChip,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppPageLayout,
-  AppAlert,
-  AppEmptyState,
+  PlatformButton,
+  PlatformChip,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformPageLayout,
+  PlatformAlert,
+  PlatformEmptyState,
 } from "@/components/platform-ui";
 import { SortableArticleCard } from "@/components/help/SortableArticleCard";
 import { SearchInput } from "@/components/ui/search-input";
