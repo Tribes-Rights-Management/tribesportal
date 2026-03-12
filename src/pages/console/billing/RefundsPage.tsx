@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PlatformPageLayout as AppPageLayout } from "@/components/platform-ui";
+import { PlatformPageLayout } from "@/components/platform-ui";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -13,7 +13,7 @@ import {
   User,
   FileText
 } from "lucide-react";
-import { PlatformSearchInput as AppSearchInput, PlatformSelect as AppSelect } from "@/components/platform-ui";
+import { PlatformSearchInput, PlatformSelect } from "@/components/platform-ui";
 import { Input } from "@/components/ui/input";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
@@ -133,7 +133,7 @@ export default function RefundsPage() {
   };
 
   return (
-    <AppPageLayout title="Refunds">
+    <PlatformPageLayout title="Refunds">
 
       {/* Warning Banner */}
       <div 
@@ -165,7 +165,7 @@ export default function RefundsPage() {
         </CardHeader>
         <CardContent>
           <div className="flex gap-3">
-            <AppSearchInput
+            <PlatformSearchInput
               value={searchQuery}
               onChange={setSearchQuery}
               placeholder="Enter transaction ID or invoice number..."
@@ -257,7 +257,7 @@ export default function RefundsPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="refundType">Refund Type</Label>
-                <AppSelect
+                <PlatformSelect
                   value={refundType}
                   onChange={setRefundType}
                   fullWidth
@@ -271,7 +271,7 @@ export default function RefundsPage() {
 
             <div className="space-y-2">
               <Label htmlFor="reasonCode">Reason Code</Label>
-              <AppSelect
+              <PlatformSelect
                 value={refundReason}
                 onChange={setRefundReason}
                 fullWidth
@@ -371,6 +371,6 @@ export default function RefundsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

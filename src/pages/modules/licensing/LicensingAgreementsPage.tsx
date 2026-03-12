@@ -6,18 +6,18 @@ import { useSearchParams } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import {
-  AppPageLayout,
-  AppCard,
-  AppCardBody,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableBadge,
-  AppEmptyState,
-  AppButton,
+  PlatformPageLayout,
+  PlatformCard,
+  PlatformCardBody,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableBadge,
+  PlatformEmptyState,
+  PlatformButton,
 } from "@/components/platform-ui";
 import { InstitutionalLoadingState, SystemErrorState } from "@/components/ui/institutional-states";
 

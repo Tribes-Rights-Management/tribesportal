@@ -4,18 +4,18 @@ import { ArrowUpDown, Check } from "lucide-react";
 import { format } from "date-fns";
 
 import {
-  AppPageLayout,
-  AppSection,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppResponsiveList,
-  AppItemCard,
-  AppPagination,
+  PlatformPageLayout,
+  PlatformSection,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformResponsiveList,
+  PlatformItemCard,
+  PlatformPagination,
 } from "@/components/platform-ui";
 import { cn } from "@/lib/utils";
 
@@ -209,9 +209,9 @@ export default function TribesAdminCatalogPage() {
   };
 
   return (
-    <AppPageLayout title="My Catalog">
+    <PlatformPageLayout title="My Catalog">
 
-      <AppSection spacing="none">
+      <PlatformSection spacing="none">
         {/* Search Input */}
         <div className="relative mb-2">
           <input
@@ -256,13 +256,13 @@ export default function TribesAdminCatalogPage() {
           </div>
         </div>
 
-        <AppResponsiveList
+        <PlatformResponsiveList
           items={paginatedSongs}
           keyExtractor={(song) => song.id}
           emptyMessage={searchQuery ? "No songs match your search" : "No songs in your catalog"}
           className="[&_.md\\:hidden]:space-y-2"
           renderCard={(song) => (
-            <AppItemCard
+            <PlatformItemCard
               title={song.title}
               subtitle={song.songwriters.join(" / ")}
               meta={format(new Date(song.addedAt), "MMM d, yyyy")}
@@ -271,49 +271,49 @@ export default function TribesAdminCatalogPage() {
             />
           )}
           renderTable={() => (
-            <AppTable columns={["35%", "30%", "15%", "20%"]}>
-              <AppTableHeader>
-                <AppTableRow>
-                  <AppTableHead>Title</AppTableHead>
-                  <AppTableHead>Songwriters</AppTableHead>
-                  <AppTableHead align="center">Status</AppTableHead>
-                  <AppTableHead>Added</AppTableHead>
-                </AppTableRow>
-              </AppTableHeader>
-              <AppTableBody>
+            <PlatformTable columns={["35%", "30%", "15%", "20%"]}>
+              <PlatformTableHeader>
+                <PlatformTableRow>
+                  <PlatformTableHead>Title</PlatformTableHead>
+                  <PlatformTableHead>Songwriters</PlatformTableHead>
+                  <PlatformTableHead align="center">Status</PlatformTableHead>
+                  <PlatformTableHead>Added</PlatformTableHead>
+                </PlatformTableRow>
+              </PlatformTableHeader>
+              <PlatformTableBody>
                 {paginatedSongs.length === 0 ? (
-                  <AppTableEmpty colSpan={4}>
+                  <PlatformTableEmpty colSpan={4}>
                     <span className="text-muted-foreground text-sm">
                       {searchQuery ? "No songs match your search" : "No songs in your catalog"}
                     </span>
-                  </AppTableEmpty>
+                  </PlatformTableEmpty>
                 ) : (
                   paginatedSongs.map((song) => (
-                    <AppTableRow
+                    <PlatformTableRow
                       key={song.id}
                       clickable
                       onClick={() => handleSongClick(song.id)}
                     >
-                      <AppTableCell className="font-medium">{song.title}</AppTableCell>
-                      <AppTableCell muted>{song.songwriters.join(" / ")}</AppTableCell>
-                      <AppTableCell align="center">{getStatusText(song.status)}</AppTableCell>
-                      <AppTableCell muted>
+                      <PlatformTableCell className="font-medium">{song.title}</PlatformTableCell>
+                      <PlatformTableCell muted>{song.songwriters.join(" / ")}</PlatformTableCell>
+                      <PlatformTableCell align="center">{getStatusText(song.status)}</PlatformTableCell>
+                      <PlatformTableCell muted>
                         {format(new Date(song.addedAt), "MMM d, yyyy")}
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   ))
                 )}
-              </AppTableBody>
-            </AppTable>
+              </PlatformTableBody>
+            </PlatformTable>
           )}
         />
 
-        <AppPagination
+        <PlatformPagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
         />
-      </AppSection>
-    </AppPageLayout>
+      </PlatformSection>
+    </PlatformPageLayout>
   );
 }

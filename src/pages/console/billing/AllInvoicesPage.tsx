@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Download, Filter } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
-import { PlatformSearchInput as AppSearchInput, PlatformPageLayout as AppPageLayout, PlatformTable as AppTable, PlatformTableHeader as AppTableHeader, PlatformTableBody as AppTableBody, PlatformTableRow as AppTableRow, PlatformTableHead as AppTableHead, PlatformTableEmpty as AppTableEmpty } from "@/components/platform-ui";
+import { PlatformSearchInput, PlatformPageLayout, PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableRow, PlatformTableHead, PlatformTableEmpty } from "@/components/platform-ui";
 
 /**
  * SYSTEM CONSOLE — ALL INVOICES (Read-Only)
@@ -28,13 +28,13 @@ export default function AllInvoicesPage() {
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="All Invoices"
       backLink={{ to: "/console/billing", label: "Billing" }}
     >
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <AppSearchInput
+          <PlatformSearchInput
             value={searchQuery}
             onChange={setSearchQuery}
             placeholder="Search invoices..."
@@ -59,26 +59,26 @@ export default function AllInvoicesPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <AppTable columns={["18%", "22%", "15%", "15%", "15%", "15%"]}>
-              <AppTableHeader>
-                <AppTableRow header>
-                  <AppTableHead>Invoice #</AppTableHead>
-                  <AppTableHead>Organization</AppTableHead>
-                  <AppTableHead>Amount</AppTableHead>
-                  <AppTableHead>Status</AppTableHead>
-                  <AppTableHead>Due Date</AppTableHead>
-                  <AppTableHead>Created</AppTableHead>
-                </AppTableRow>
-              </AppTableHeader>
-              <AppTableBody>
-                <AppTableEmpty colSpan={6}>
+            <PlatformTable columns={["18%", "22%", "15%", "15%", "15%", "15%"]}>
+              <PlatformTableHeader>
+                <PlatformTableRow header>
+                  <PlatformTableHead>Invoice #</PlatformTableHead>
+                  <PlatformTableHead>Organization</PlatformTableHead>
+                  <PlatformTableHead>Amount</PlatformTableHead>
+                  <PlatformTableHead>Status</PlatformTableHead>
+                  <PlatformTableHead>Due Date</PlatformTableHead>
+                  <PlatformTableHead>Created</PlatformTableHead>
+                </PlatformTableRow>
+              </PlatformTableHeader>
+              <PlatformTableBody>
+                <PlatformTableEmpty colSpan={6}>
                   <InstitutionalEmptyState
                     title="No invoices"
                     description="Invoices will appear here when generated"
                   />
-                </AppTableEmpty>
-              </AppTableBody>
-            </AppTable>
+                </PlatformTableEmpty>
+              </PlatformTableBody>
+            </PlatformTable>
           </CardContent>
         </Card>
 
@@ -92,6 +92,6 @@ export default function AllInvoicesPage() {
           </CardContent>
         </Card>
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

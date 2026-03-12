@@ -4,23 +4,23 @@ import { ArrowUpDown, Check } from "lucide-react";
 import { format } from "date-fns";
 
 import {
-  AppPageLayout,
-  AppSection,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppTableBadge,
-  AppResponsiveList,
-  AppItemCard,
-  AppFilterDrawer,
-  AppFilterSection,
-  AppFilterOption,
-  AppFilterTrigger,
-  AppPagination,
+  PlatformPageLayout,
+  PlatformSection,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformTableBadge,
+  PlatformResponsiveList,
+  PlatformItemCard,
+  PlatformFilterDrawer,
+  PlatformFilterSection,
+  PlatformFilterOption,
+  PlatformFilterTrigger,
+  PlatformPagination,
 } from "@/components/platform-ui";
 import { cn } from "@/lib/utils";
 
@@ -63,15 +63,15 @@ const mockQueueSongs: QueueSong[] = Array.from({ length: 127 }, (_, i) => ({
 const getStatusBadge = (status: QueueSong["status"]) => {
   switch (status) {
     case "pending":
-      return <AppTableBadge variant="default">Pending</AppTableBadge>;
+      return <PlatformTableBadge variant="default">Pending</PlatformTableBadge>;
     case "review":
-      return <AppTableBadge variant="warning">In Review</AppTableBadge>;
+      return <PlatformTableBadge variant="warning">In Review</PlatformTableBadge>;
     case "approved":
-      return <AppTableBadge variant="success">Approved</AppTableBadge>;
+      return <PlatformTableBadge variant="success">Approved</PlatformTableBadge>;
     case "rejected":
-      return <AppTableBadge variant="error">Rejected</AppTableBadge>;
+      return <PlatformTableBadge variant="error">Rejected</PlatformTableBadge>;
     default:
-      return <AppTableBadge variant="default">{status}</AppTableBadge>;
+      return <PlatformTableBadge variant="default">{status}</PlatformTableBadge>;
   }
 };
 
@@ -214,17 +214,17 @@ export default function TribesAdminQueuePage() {
   }));
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Queue"
       action={
-        <AppFilterTrigger
+        <PlatformFilterTrigger
           onClick={() => setFilterOpen(true)}
           hasActiveFilters={hasActiveFilters}
         />
       }
     >
 
-      <AppSection spacing="none">
+      <PlatformSection spacing="none">
         {/* Sort + Count Row */}
         <div className="flex items-center justify-end mb-3">
           <div className="flex items-center gap-2">
@@ -235,12 +235,12 @@ export default function TribesAdminQueuePage() {
           </div>
         </div>
 
-        <AppResponsiveList
+        <PlatformResponsiveList
           items={paginatedSongs}
           keyExtractor={(song) => song.id}
           emptyMessage={`No ${statusFilter === "all" ? "" : statusFilter + " "}submissions`}
           renderCard={(song) => (
-            <AppItemCard
+            <PlatformItemCard
               title={song.title}
               subtitle={song.artist}
               meta={
@@ -254,69 +254,69 @@ export default function TribesAdminQueuePage() {
             />
           )}
           renderTable={() => (
-            <AppTable columns={["20%", "20%", "25%", "15%", "20%"]}>
-              <AppTableHeader>
-                <AppTableRow>
-                  <AppTableHead>Title</AppTableHead>
-                  <AppTableHead>Artist</AppTableHead>
-                  <AppTableHead>Submitter</AppTableHead>
-                  <AppTableHead align="center">Status</AppTableHead>
-                  <AppTableHead>Submitted</AppTableHead>
-                </AppTableRow>
-              </AppTableHeader>
-              <AppTableBody>
+            <PlatformTable columns={["20%", "20%", "25%", "15%", "20%"]}>
+              <PlatformTableHeader>
+                <PlatformTableRow>
+                  <PlatformTableHead>Title</PlatformTableHead>
+                  <PlatformTableHead>Artist</PlatformTableHead>
+                  <PlatformTableHead>Submitter</PlatformTableHead>
+                  <PlatformTableHead align="center">Status</PlatformTableHead>
+                  <PlatformTableHead>Submitted</PlatformTableHead>
+                </PlatformTableRow>
+              </PlatformTableHeader>
+              <PlatformTableBody>
                 {paginatedSongs.length === 0 ? (
-                  <AppTableEmpty colSpan={5}>
+                  <PlatformTableEmpty colSpan={5}>
                     <span className="text-muted-foreground text-sm">
                       No {statusFilter === "all" ? "" : statusFilter + " "}submissions
                     </span>
-                  </AppTableEmpty>
+                  </PlatformTableEmpty>
                 ) : (
                   paginatedSongs.map(song => (
-                    <AppTableRow
+                    <PlatformTableRow
                       key={song.id}
                       clickable
                       onClick={() => handleSongClick(song.id)}
                     >
-                      <AppTableCell className="font-medium">{song.title}</AppTableCell>
-                      <AppTableCell muted>{song.artist}</AppTableCell>
-                      <AppTableCell muted>{song.submitter}</AppTableCell>
-                      <AppTableCell align="center">{getStatusBadge(song.status)}</AppTableCell>
-                      <AppTableCell muted>
+                      <PlatformTableCell className="font-medium">{song.title}</PlatformTableCell>
+                      <PlatformTableCell muted>{song.artist}</PlatformTableCell>
+                      <PlatformTableCell muted>{song.submitter}</PlatformTableCell>
+                      <PlatformTableCell align="center">{getStatusBadge(song.status)}</PlatformTableCell>
+                      <PlatformTableCell muted>
                         {format(new Date(song.submittedAt), "MMM d, yyyy")}
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   ))
                 )}
-              </AppTableBody>
-            </AppTable>
+              </PlatformTableBody>
+            </PlatformTable>
           )}
         />
 
-        <AppPagination
+        <PlatformPagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
         />
-      </AppSection>
+      </PlatformSection>
 
-      <AppFilterDrawer
+      <PlatformFilterDrawer
         open={filterOpen}
         onOpenChange={setFilterOpen}
         hasActiveFilters={hasActiveFilters}
         onClearFilters={handleClearFilters}
       >
-        <AppFilterSection title="Status">
+        <PlatformFilterSection title="Status">
           {statusOptionsWithCounts.map((opt) => (
-            <AppFilterOption
+            <PlatformFilterOption
               key={opt.value}
               label={opt.label}
               selected={statusFilter === opt.value}
               onClick={() => handleStatusChange(opt.value)}
             />
           ))}
-        </AppFilterSection>
-      </AppFilterDrawer>
-    </AppPageLayout>
+        </PlatformFilterSection>
+      </PlatformFilterDrawer>
+    </PlatformPageLayout>
   );
 }

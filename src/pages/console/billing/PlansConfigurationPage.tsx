@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { PlatformPageLayout as AppPageLayout } from "@/components/platform-ui";
+import { PlatformPageLayout } from "@/components/platform-ui";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Plus, Check } from "lucide-react";
 import { useBillingAuthority } from "@/hooks/useBillingAuthority";
 import { InstitutionalEmptyState } from "@/components/ui/institutional-states";
-import { PlatformSearchInput as AppSearchInput } from "@/components/platform-ui";
+import { PlatformSearchInput } from "@/components/platform-ui";
 
 /**
  * SYSTEM CONSOLE — PLANS & PRICING
@@ -30,10 +30,10 @@ export default function PlansConfigurationPage() {
   }
 
   return (
-    <AppPageLayout title="Plans & Pricing" backLink={{ to: "/console/billing", label: "Billing" }}>
+    <PlatformPageLayout title="Plans & Pricing" backLink={{ to: "/console/billing", label: "Billing" }}>
 
       <div className="flex items-center justify-between">
-        <AppSearchInput
+        <PlatformSearchInput
           value={searchQuery}
           onChange={setSearchQuery}
           placeholder="Search plans..."
@@ -118,6 +118,6 @@ export default function PlansConfigurationPage() {
           </p>
         </CardContent>
       </Card>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

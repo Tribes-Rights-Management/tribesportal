@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { AppTable, AppTableHeader, AppTableBody, AppTableRow, AppTableHead, AppTableCell, AppPageLayout, AppCard, AppEmptyState, AppButton } from "@/components/platform-ui";
+import { PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableRow, PlatformTableHead, PlatformTableCell, PlatformPageLayout, PlatformCard, PlatformEmptyState, PlatformButton } from "@/components/platform-ui";
 import { Badge } from "@/components/ui/badge";
 import { Plus, MoreHorizontal, Mail, XCircle, Shield, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -195,7 +195,7 @@ export default function OrgUsersPage() {
   if (!organizationId) {
     return (
       <div className="p-6">
-        <AppEmptyState
+        <PlatformEmptyState
           message="No organization selected"
           description="Select an organization to manage users."
         />
@@ -204,13 +204,13 @@ export default function OrgUsersPage() {
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Users"
       action={
-        <AppButton onClick={() => setInviteModalOpen(true)}>
+        <PlatformButton onClick={() => setInviteModalOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Invite user
-        </AppButton>
+        </PlatformButton>
       }
     >
 
@@ -225,33 +225,33 @@ export default function OrgUsersPage() {
         </TabsList>
 
         <TabsContent value="members" className="mt-4">
-          <AppCard className="p-0">
+          <PlatformCard className="p-0">
             {loading ? (
               <div className="p-6 sm:p-8 text-center text-muted-foreground">
                 Loading members...
               </div>
             ) : members.length === 0 ? (
               <div className="p-6 sm:p-8">
-                <AppEmptyState
+                <PlatformEmptyState
                   message="No members yet"
                   description="Invite users to grant them access to this organization."
                 />
               </div>
             ) : (
-              <AppTable columns={["35%", "15%", "25%", "15%", "10%"]}>
-                <AppTableHeader>
-                  <AppTableRow header>
-                    <AppTableHead>User</AppTableHead>
-                    <AppTableHead>Role</AppTableHead>
-                    <AppTableHead>Modules</AppTableHead>
-                    <AppTableHead>Joined</AppTableHead>
-                    <AppTableHead></AppTableHead>
-                  </AppTableRow>
-                </AppTableHeader>
-                <AppTableBody>
+              <PlatformTable columns={["35%", "15%", "25%", "15%", "10%"]}>
+                <PlatformTableHeader>
+                  <PlatformTableRow header>
+                    <PlatformTableHead>User</PlatformTableHead>
+                    <PlatformTableHead>Role</PlatformTableHead>
+                    <PlatformTableHead>Modules</PlatformTableHead>
+                    <PlatformTableHead>Joined</PlatformTableHead>
+                    <PlatformTableHead></PlatformTableHead>
+                  </PlatformTableRow>
+                </PlatformTableHeader>
+                <PlatformTableBody>
                   {members.map((member) => (
-                    <AppTableRow key={member.id}>
-                      <AppTableCell>
+                    <PlatformTableRow key={member.id}>
+                      <PlatformTableCell>
                         <div>
                           <p className="font-medium">
                             {member.full_name || member.email}
@@ -262,13 +262,13 @@ export default function OrgUsersPage() {
                             </p>
                           )}
                         </div>
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <Badge variant={getRoleBadgeVariant(member.org_role)}>
                           {getRoleLabel(member.org_role)}
                         </Badge>
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <div className="flex gap-1.5">
                           {member.has_admin_access && (
                             <Badge variant="outline" className="gap-1 text-xs">
@@ -286,11 +286,11 @@ export default function OrgUsersPage() {
                             <span className="text-muted-foreground text-sm">—</span>
                           )}
                         </div>
-                      </AppTableCell>
-                      <AppTableCell muted>
+                      </PlatformTableCell>
+                      <PlatformTableCell muted>
                         {formatDate(member.joined_at)}
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button className="p-1.5 hover:bg-muted rounded">
@@ -304,51 +304,51 @@ export default function OrgUsersPage() {
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   ))}
-                </AppTableBody>
-              </AppTable>
+                </PlatformTableBody>
+              </PlatformTable>
             )}
-          </AppCard>
+          </PlatformCard>
         </TabsContent>
 
         <TabsContent value="invitations" className="mt-4">
-          <AppCard className="p-0">
+          <PlatformCard className="p-0">
             {loading ? (
               <div className="p-6 sm:p-8 text-center text-muted-foreground">
                 Loading invitations...
               </div>
             ) : invitations.length === 0 ? (
               <div className="p-6 sm:p-8">
-                <AppEmptyState
+                <PlatformEmptyState
                   message="No pending invitations"
                   description="All invitations have been accepted or expired."
                 />
               </div>
             ) : (
-              <AppTable columns={["30%", "15%", "25%", "20%", "10%"]}>
-                <AppTableHeader>
-                  <AppTableRow header>
-                    <AppTableHead>Email</AppTableHead>
-                    <AppTableHead>Role</AppTableHead>
-                    <AppTableHead>Modules</AppTableHead>
-                    <AppTableHead>Expires</AppTableHead>
-                    <AppTableHead></AppTableHead>
-                  </AppTableRow>
-                </AppTableHeader>
-                <AppTableBody>
+              <PlatformTable columns={["30%", "15%", "25%", "20%", "10%"]}>
+                <PlatformTableHeader>
+                  <PlatformTableRow header>
+                    <PlatformTableHead>Email</PlatformTableHead>
+                    <PlatformTableHead>Role</PlatformTableHead>
+                    <PlatformTableHead>Modules</PlatformTableHead>
+                    <PlatformTableHead>Expires</PlatformTableHead>
+                    <PlatformTableHead></PlatformTableHead>
+                  </PlatformTableRow>
+                </PlatformTableHeader>
+                <PlatformTableBody>
                   {invitations.map((invitation) => (
-                    <AppTableRow key={invitation.id}>
-                      <AppTableCell className="font-medium">
+                    <PlatformTableRow key={invitation.id}>
+                      <PlatformTableCell className="font-medium">
                         {invitation.invited_email}
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <Badge variant={getRoleBadgeVariant(invitation.org_role)}>
                           {getRoleLabel(invitation.org_role)}
                         </Badge>
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <div className="flex gap-1.5">
                           {invitation.grant_admin_module && (
                             <Badge variant="outline" className="gap-1 text-xs">
@@ -363,8 +363,8 @@ export default function OrgUsersPage() {
                             </Badge>
                           )}
                         </div>
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <div className="flex items-center gap-2">
                           <span className="text-muted-foreground text-sm">
                             {formatDate(invitation.expires_at)}
@@ -375,8 +375,8 @@ export default function OrgUsersPage() {
                             </Badge>
                           )}
                         </div>
-                      </AppTableCell>
-                      <AppTableCell>
+                      </PlatformTableCell>
+                      <PlatformTableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button className="p-1.5 hover:bg-muted rounded">
@@ -399,13 +399,13 @@ export default function OrgUsersPage() {
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   ))}
-                </AppTableBody>
-              </AppTable>
+                </PlatformTableBody>
+              </PlatformTable>
             )}
-          </AppCard>
+          </PlatformCard>
         </TabsContent>
       </Tabs>
 
@@ -420,6 +420,6 @@ export default function OrgUsersPage() {
           setActiveTab("invitations");
         }}
       />
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

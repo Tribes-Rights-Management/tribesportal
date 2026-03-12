@@ -9,7 +9,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FileText, ExternalLink, Filter } from "lucide-react";
 import { format } from "date-fns";
-import { PlatformPageLayout as AppPageLayout, PlatformTable as AppTable, PlatformTableHeader as AppTableHeader, PlatformTableBody as AppTableBody, PlatformTableRow as AppTableRow, PlatformTableHead as AppTableHead, PlatformTableCell as AppTableCell, PlatformTableEmpty as AppTableEmpty, PlatformSearchInput as AppSearchInput } from "@/components/platform-ui";
+import { PlatformPageLayout, PlatformTable, PlatformTableHeader, PlatformTableBody, PlatformTableRow, PlatformTableHead, PlatformTableCell, PlatformTableEmpty, PlatformSearchInput } from "@/components/platform-ui";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -64,16 +64,16 @@ export default function ContractsPage() {
 
   if (!canViewAllInvoices) {
     return (
-      <AppPageLayout title="Access Denied">
+      <PlatformPageLayout title="Access Denied">
         <p className="text-muted-foreground">
           You do not have permission to view platform contracts.
         </p>
-      </AppPageLayout>
+      </PlatformPageLayout>
     );
   }
 
   return (
-    <AppPageLayout title="Contracts Registry" backLink={{ to: "/console/billing", label: "Billing" }}>
+    <PlatformPageLayout title="Contracts Registry" backLink={{ to: "/console/billing", label: "Billing" }}>
 
       {/* Filters */}
       <div 
@@ -83,7 +83,7 @@ export default function ContractsPage() {
           border: "1px solid var(--platform-border)",
         }}
       >
-        <AppSearchInput
+        <PlatformSearchInput
           value={searchQuery}
           onChange={setSearchQuery}
           placeholder="Search contracts..."
@@ -119,21 +119,21 @@ export default function ContractsPage() {
             <InstitutionalLoadingState message="Loading contracts..." />
           </div>
         ) : (
-          <AppTable columns={["25%", "18%", "12%", "8%", "15%", "15%", "7%"]}>
-            <AppTableHeader>
-              <AppTableRow header>
-                <AppTableHead>Contract</AppTableHead>
-                <AppTableHead>Organization</AppTableHead>
-                <AppTableHead>Status</AppTableHead>
-                <AppTableHead>Version</AppTableHead>
-                <AppTableHead>Effective Date</AppTableHead>
-                <AppTableHead>Created</AppTableHead>
-                <AppTableHead></AppTableHead>
-              </AppTableRow>
-            </AppTableHeader>
-            <AppTableBody>
+          <PlatformTable columns={["25%", "18%", "12%", "8%", "15%", "15%", "7%"]}>
+            <PlatformTableHeader>
+              <PlatformTableRow header>
+                <PlatformTableHead>Contract</PlatformTableHead>
+                <PlatformTableHead>Organization</PlatformTableHead>
+                <PlatformTableHead>Status</PlatformTableHead>
+                <PlatformTableHead>Version</PlatformTableHead>
+                <PlatformTableHead>Effective Date</PlatformTableHead>
+                <PlatformTableHead>Created</PlatformTableHead>
+                <PlatformTableHead></PlatformTableHead>
+              </PlatformTableRow>
+            </PlatformTableHeader>
+            <PlatformTableBody>
               {filteredContracts.length === 0 ? (
-                <AppTableEmpty colSpan={7}>
+                <PlatformTableEmpty colSpan={7}>
                   <FileText className="h-6 w-6 text-muted-foreground mx-auto mb-2" strokeWidth={1.0} />
                   <p className="text-[13px] text-muted-foreground">
                     {searchQuery || statusFilter !== "all" 
@@ -141,11 +141,11 @@ export default function ContractsPage() {
                       : "No contracts in the system"
                     }
                   </p>
-                </AppTableEmpty>
+                </PlatformTableEmpty>
               ) : (
                 filteredContracts.map((contract: any) => (
-                  <AppTableRow key={contract.id}>
-                    <AppTableCell>
+                  <PlatformTableRow key={contract.id}>
+                    <PlatformTableCell>
                       <div>
                         <p className="font-medium">
                           {contract.title}
@@ -154,42 +154,42 @@ export default function ContractsPage() {
                           {contract.contract_number}
                         </p>
                       </div>
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                         {contract.tenant?.name || "—"}
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                       <Badge variant={getStatusVariant(contract.status)} className="text-[11px]">
                         {contract.status}
                       </Badge>
-                    </AppTableCell>
-                    <AppTableCell muted>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                       v{contract.version}
-                    </AppTableCell>
-                    <AppTableCell muted>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                         {contract.effective_date 
                           ? format(new Date(contract.effective_date), "MMM d, yyyy")
                           : "—"
                         }
-                    </AppTableCell>
-                    <AppTableCell muted>
+                    </PlatformTableCell>
+                    <PlatformTableCell muted>
                       {format(new Date(contract.created_at), "MMM d, yyyy")}
-                    </AppTableCell>
-                    <AppTableCell>
+                    </PlatformTableCell>
+                    <PlatformTableCell>
                       <Link 
                         to={`/admin/billing/contracts/${contract.id}`}
                         className="text-muted-foreground hover:text-foreground"
                       >
                         <ExternalLink className="h-4 w-4" />
                       </Link>
-                    </AppTableCell>
-                  </AppTableRow>
+                    </PlatformTableCell>
+                  </PlatformTableRow>
                 ))
               )}
-            </AppTableBody>
-          </AppTable>
+            </PlatformTableBody>
+          </PlatformTable>
         )}
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }

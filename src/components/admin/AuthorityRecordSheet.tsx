@@ -3,9 +3,9 @@ import { ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { AppSheet, AppSheetBody } from "@/components/ui/app-sheet";
 import {
-  AppDetailRow,
-  AppSettingsCard,
-  AppButton,
+  PlatformDetailRow,
+  PlatformSettingsCard,
+  PlatformButton,
 } from "@/components/platform-ui";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -142,7 +142,7 @@ export function AuthorityRecordSheet({
     >
       <AppSheetBody className="space-y-6 overflow-x-hidden" data-authority-sheet-body>
         {/* Back to Member Details */}
-        <AppButton
+        <PlatformButton
           onClick={() => onOpenChange(false)}
           intent="ghost"
           size="sm"
@@ -150,35 +150,35 @@ export function AuthorityRecordSheet({
           className="-mt-2"
         >
           Back to Member Details
-        </AppButton>
+        </PlatformButton>
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 1: USER IDENTITY SUMMARY
             ═══════════════════════════════════════════════════════════════════ */}
-        <AppSettingsCard
+        <PlatformSettingsCard
           title="User Identity"
           description="Primary identification"
         >
-          <AppDetailRow
+          <PlatformDetailRow
             label="Display Name"
             value={user.full_name || "—"}
             variant="readonly"
           />
-          <AppDetailRow
+          <PlatformDetailRow
             label="Email"
             value={user.email}
             variant="copyable"
           />
-        </AppSettingsCard>
+        </PlatformSettingsCard>
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 2: PLATFORM-LEVEL CAPABILITIES
             ═══════════════════════════════════════════════════════════════════ */}
-        <AppSettingsCard
+        <PlatformSettingsCard
           title="Platform-Level Capabilities"
           description="System-wide authority derived from platform role"
         >
-          <AppDetailRow
+          <PlatformDetailRow
             label="Assigned Role"
             value={formatPlatformRole(user.platform_role)}
             variant="readonly"
@@ -207,7 +207,7 @@ export function AuthorityRecordSheet({
               })}
             </div>
           </div>
-        </AppSettingsCard>
+        </PlatformSettingsCard>
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 3: ORGANIZATION-LEVEL CAPABILITIES
@@ -237,12 +237,12 @@ export function AuthorityRecordSheet({
               {activeMemberships.map((membership) => {
                 const tenantCaps = getTenantCapabilities(membership.role);
                 return (
-                  <AppSettingsCard
+                  <PlatformSettingsCard
                     key={membership.id}
                     title={membership.tenant_name}
                     description={formatRole(membership.role)}
                   >
-                    <AppDetailRow
+                    <PlatformDetailRow
                       label="Context Scope"
                       value={membership.allowed_contexts.length === 0 
                         ? "No contexts assigned" 
@@ -273,7 +273,7 @@ export function AuthorityRecordSheet({
                         })}
                       </div>
                     </div>
-                  </AppSettingsCard>
+                  </PlatformSettingsCard>
                 );
               })}
             </div>
@@ -283,16 +283,16 @@ export function AuthorityRecordSheet({
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 4: AUDIT METADATA
             ═══════════════════════════════════════════════════════════════════ */}
-        <AppSettingsCard
+        <PlatformSettingsCard
           title="Audit Metadata"
           description="Record creation and modification history"
         >
-          <AppDetailRow
+          <PlatformDetailRow
             label="Record Created"
             value={formatDate(user.created_at)}
             variant="readonly"
           />
-        </AppSettingsCard>
+        </PlatformSettingsCard>
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 5: GOVERNANCE NOTICE
