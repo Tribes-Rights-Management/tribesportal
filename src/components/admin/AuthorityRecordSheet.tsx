@@ -237,12 +237,12 @@ export function AuthorityRecordSheet({
               {activeMemberships.map((membership) => {
                 const tenantCaps = getTenantCapabilities(membership.role);
                 return (
-                  <AppSettingsCard
+                  <PlatformSettingsCard
                     key={membership.id}
                     title={membership.tenant_name}
                     description={formatRole(membership.role)}
                   >
-                    <AppDetailRow
+                    <PlatformDetailRow
                       label="Context Scope"
                       value={membership.allowed_contexts.length === 0 
                         ? "No contexts assigned" 
@@ -273,7 +273,7 @@ export function AuthorityRecordSheet({
                         })}
                       </div>
                     </div>
-                  </AppSettingsCard>
+                  </PlatformSettingsCard>
                 );
               })}
             </div>
