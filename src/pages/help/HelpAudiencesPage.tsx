@@ -355,7 +355,7 @@ export default function HelpAudiencesPage() {
         <div className="space-y-4">
           {/* Form Error */}
           {formError && (
-            <AppAlert variant="error" message={formError} />
+            <PlatformAlert variant="error" message={formError} />
           )}
 
           <div>
