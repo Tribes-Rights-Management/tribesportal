@@ -323,7 +323,7 @@ export default function ComplianceMappingPage() {
     : COMPLIANCE_CONTROLS.filter(c => c.domain === selectedDomain);
 
   return (
-    <AppPageLayout title="Compliance Mapping" maxWidth="xl">
+    <PlatformPageLayout title="Compliance Mapping" maxWidth="xl">
 
       {/* Disclaimer */}
       <div 
