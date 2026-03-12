@@ -1278,8 +1278,8 @@ export default function SongDetailPage() {
                 </div>
               )
             )}
-          </AppCardBody>
-        </AppCard>
+          </PlatformCardBody>
+        </PlatformCard>
 
         {/* ─── 3. OWNERSHIP ─────────────────────────────── */}
         <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
