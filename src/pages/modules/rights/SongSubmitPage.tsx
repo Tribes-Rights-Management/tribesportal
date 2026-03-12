@@ -882,7 +882,7 @@ export default function SongSubmitPage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--btn-text)]">Song Type <span className="text-destructive">*</span></label>
-                <AppSelect
+                <PlatformSelect
                   value={data.songType}
                   onChange={(val) => setData(prev => ({ ...prev, songType: val as SongData["songType"] }))}
                   options={SONG_TYPES}
