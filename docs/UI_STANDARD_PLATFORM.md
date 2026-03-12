@@ -48,7 +48,7 @@ import { PlatformButton } from "@/components/platform-ui";
 
 ## Component Reference
 
-### AppButton
+### PlatformButton
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
