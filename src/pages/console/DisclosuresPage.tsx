@@ -286,7 +286,7 @@ export default function DisclosuresPage() {
 
   if (!hasAccess) {
     return (
-      <AppPageLayout title="Regulatory Disclosures">
+      <PlatformPageLayout title="Regulatory Disclosures">
         <div className="py-12 text-center">
           <p 
             className="text-[14px]"
@@ -295,12 +295,12 @@ export default function DisclosuresPage() {
             Access restricted. Platform administrator or auditor role required.
           </p>
         </div>
-      </AppPageLayout>
+      </PlatformPageLayout>
     );
   }
 
   return (
-    <AppPageLayout title="Regulatory Disclosures">
+    <PlatformPageLayout title="Regulatory Disclosures">
       {/* Description */}
       <p 
         className="text-[14px] mb-6"
