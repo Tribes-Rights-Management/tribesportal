@@ -63,15 +63,15 @@ function AgreementDetailView({ agreementId }: { agreementId: string }) {
   }
 
   return (
-    <AppCard>
-      <AppCardBody className="p-6">
+    <PlatformCard>
+      <PlatformCardBody className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-[16px] font-medium text-foreground">
             {agreement.agreement_title}
           </h2>
-          <AppTableBadge variant={getStatusVariant(agreement.status)}>
+          <PlatformTableBadge variant={getStatusVariant(agreement.status)}>
             {agreement.status}
-          </AppTableBadge>
+          </PlatformTableBadge>
         </div>
 
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-[13px]">
