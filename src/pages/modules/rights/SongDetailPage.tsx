@@ -819,30 +819,30 @@ export default function SongDetailPage() {
   // ── Loading state ─────────────────────────────────────────
   if (isLoading) {
     return (
-      <AppPageLayout
+      <PlatformPageLayout
         title="Loading…"
         backLink={{ to: "/rights/catalog", label: "Catalog" }}
       >
-        <AppSection spacing="md">
+        <PlatformSection spacing="md">
           <p className="text-sm text-muted-foreground">Loading song details…</p>
-        </AppSection>
-      </AppPageLayout>
+        </PlatformSection>
+      </PlatformPageLayout>
     );
   }
 
   // ── Not found state ───────────────────────────────────────
   if (!song) {
     return (
-      <AppPageLayout
+      <PlatformPageLayout
         title="Not Found"
         backLink={{ to: "/rights/catalog", label: "Catalog" }}
       >
-        <AppSection spacing="md">
+        <PlatformSection spacing="md">
           <p className="text-sm text-muted-foreground">
             This song could not be found.
           </p>
-        </AppSection>
-      </AppPageLayout>
+        </PlatformSection>
+      </PlatformPageLayout>
     );
   }
 
@@ -896,7 +896,7 @@ export default function SongDetailPage() {
   );
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title={
         <div>
           <div>{displayTitle}</div>
@@ -933,12 +933,12 @@ export default function SongDetailPage() {
           </div>
         )}
         {/* ─── 1. OVERVIEW ──────────────────────────────── */}
-        <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-          <AppCardHeader className="bg-muted/30">
-            <AppCardTitle className="text-sm font-semibold text-foreground">Overview</AppCardTitle>
-          </AppCardHeader>
+        <PlatformCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+          <PlatformCardHeader className="bg-muted/30">
+            <PlatformCardTitle className="text-sm font-semibold text-foreground">Overview</PlatformCardTitle>
+          </PlatformCardHeader>
           {editing ? (
-            <AppCardBody>
+            <PlatformCardBody>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                 <div>
                   <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Title</label>
@@ -976,13 +976,13 @@ export default function SongDetailPage() {
                   </div>
                 )}
               </div>
-            </AppCardBody>
+            </PlatformCardBody>
           ) : (
-            <AppCardBody className="p-0">
-              <AppDetailRowGroup>
-                <AppDetailRow label="Title" value={song.title} />
-                <AppDetailRow label="Language" value={song.language || "—"} />
-                <AppDetailRow
+            <PlatformCardBody className="p-0">
+              <PlatformDetailRowGroup>
+                <PlatformDetailRow label="Title" value={song.title} />
+                <PlatformDetailRow label="Language" value={song.language || "—"} />
+                <PlatformDetailRow
                   label="Alternate Title"
                   value={
                     song.alternate_titles && song.alternate_titles.length > 0
@@ -991,19 +991,19 @@ export default function SongDetailPage() {
                   }
                 />
                 {song.duration_seconds != null && (
-                  <AppDetailRow label="Duration" value={formatDuration(song.duration_seconds)} />
+                  <PlatformDetailRow label="Duration" value={formatDuration(song.duration_seconds)} />
                 )}
-              </AppDetailRowGroup>
-            </AppCardBody>
+              </PlatformDetailRowGroup>
+            </PlatformCardBody>
           )}
-        </AppCard>
+        </PlatformCard>
 
         {/* ─── 2. SONGWRITERS (from song_writers table) ──── */}
-        <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-          <AppCardHeader className="bg-muted/30">
-            <AppCardTitle className="text-sm font-semibold text-foreground">Songwriters</AppCardTitle>
-          </AppCardHeader>
-          <AppCardBody className={editing ? undefined : "p-0"}>
+        <PlatformCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+          <PlatformCardHeader className="bg-muted/30">
+            <PlatformCardTitle className="text-sm font-semibold text-foreground">Songwriters</PlatformCardTitle>
+          </PlatformCardHeader>
+          <PlatformCardBody className={editing ? undefined : "p-0"}>
             {editing ? (
               <div>
                 {/* ── Desktop edit layout ── */}
@@ -1278,15 +1278,15 @@ export default function SongDetailPage() {
                 </div>
               )
             )}
-          </AppCardBody>
-        </AppCard>
+          </PlatformCardBody>
+        </PlatformCard>
 
         {/* ─── 3. OWNERSHIP ─────────────────────────────── */}
-        <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-          <AppCardHeader className="bg-muted/30">
-            <AppCardTitle className="text-sm font-semibold text-foreground">Ownership</AppCardTitle>
-          </AppCardHeader>
-          <AppCardBody className={editing ? undefined : "p-0"}>
+        <PlatformCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+          <PlatformCardHeader className="bg-muted/30">
+            <PlatformCardTitle className="text-sm font-semibold text-foreground">Ownership</PlatformCardTitle>
+          </PlatformCardHeader>
+          <PlatformCardBody className={editing ? undefined : "p-0"}>
             {editing ? (
               <div>
                 {/* ── Desktop edit layout ── */}
@@ -1590,8 +1590,8 @@ export default function SongDetailPage() {
                 </div>
               )
             )}
-          </AppCardBody>
-        </AppCard>
+          </PlatformCardBody>
+        </PlatformCard>
 
         {/* ─── 4. LABEL COPY ──────────────────────────── */}
         {(() => {
@@ -1608,38 +1608,38 @@ export default function SongDetailPage() {
             ? generateLabelCopySchema(year, tribesPublishers)
             : null;
           return (
-            <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-              <AppCardHeader className="bg-muted/30">
+            <PlatformCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+              <PlatformCardHeader className="bg-muted/30">
                 <div className="flex items-center justify-between w-full">
-                  <AppCardTitle className="text-sm font-semibold text-foreground">Controlled Label Copy</AppCardTitle>
+                  <PlatformCardTitle className="text-sm font-semibold text-foreground">Controlled Label Copy</PlatformCardTitle>
                   {labelCopy && !editing && (
                     <CopyIconButton text={labelCopy} successMessage="Label copy copied to clipboard" label="Copy label copy" />
                   )}
                 </div>
-              </AppCardHeader>
-              <AppCardBody>
+              </PlatformCardHeader>
+              <PlatformCardBody>
                 {labelCopy ? (
                   <p className="text-sm text-foreground leading-relaxed">{labelCopy}</p>
                 ) : (
                   <p className="text-sm text-muted-foreground">No Tribes-administered publishers on this song.</p>
                 )}
-              </AppCardBody>
-            </AppCard>
+              </PlatformCardBody>
+            </PlatformCard>
           );
         })()}
 
         {/* ─── 5. LYRICS ────────────────────────────────── */}
         {(metadata.lyrics || editing) && (
-          <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-            <AppCardHeader className="bg-muted/30">
+          <PlatformCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <PlatformCardHeader className="bg-muted/30">
               <div className="flex items-center justify-between w-full">
-                <AppCardTitle className="text-sm font-semibold text-foreground">Lyrics</AppCardTitle>
+                <PlatformCardTitle className="text-sm font-semibold text-foreground">Lyrics</PlatformCardTitle>
                 {metadata.lyrics && !editing && (
                   <CopyIconButton text={metadata.lyrics} successMessage="Lyrics copied to clipboard" label="Copy lyrics" />
                 )}
               </div>
-            </AppCardHeader>
-            <AppCardBody>
+            </PlatformCardHeader>
+            <PlatformCardBody>
               {editing ? (
                 <textarea
                   ref={(el) => {
@@ -1680,10 +1680,10 @@ export default function SongDetailPage() {
                   </div>
                 </>
               )}
-            </AppCardBody>
-          </AppCard>
+            </PlatformCardBody>
+          </PlatformCard>
         )}
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
