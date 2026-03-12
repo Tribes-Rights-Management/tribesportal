@@ -82,13 +82,13 @@ export default function LicensingOverview() {
 
   if (isLoading) {
     return (
-      <AppPageLayout title="Overview">
-        <AppCard>
-          <AppCardBody className="p-6 md:p-8">
+      <PlatformPageLayout title="Overview">
+        <PlatformCard>
+          <PlatformCardBody className="p-6 md:p-8">
             <InstitutionalLoadingState message="Loading licensing data" />
-          </AppCardBody>
-        </AppCard>
-      </AppPageLayout>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformPageLayout>
     );
   }
 
