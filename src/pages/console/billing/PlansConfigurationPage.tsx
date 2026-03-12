@@ -118,6 +118,6 @@ export default function PlansConfigurationPage() {
           </p>
         </CardContent>
       </Card>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
