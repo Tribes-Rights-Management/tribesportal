@@ -976,13 +976,13 @@ export default function SongDetailPage() {
                   </div>
                 )}
               </div>
-            </AppCardBody>
+            </PlatformCardBody>
           ) : (
-            <AppCardBody className="p-0">
-              <AppDetailRowGroup>
-                <AppDetailRow label="Title" value={song.title} />
-                <AppDetailRow label="Language" value={song.language || "—"} />
-                <AppDetailRow
+            <PlatformCardBody className="p-0">
+              <PlatformDetailRowGroup>
+                <PlatformDetailRow label="Title" value={song.title} />
+                <PlatformDetailRow label="Language" value={song.language || "—"} />
+                <PlatformDetailRow
                   label="Alternate Title"
                   value={
                     song.alternate_titles && song.alternate_titles.length > 0
@@ -991,12 +991,12 @@ export default function SongDetailPage() {
                   }
                 />
                 {song.duration_seconds != null && (
-                  <AppDetailRow label="Duration" value={formatDuration(song.duration_seconds)} />
+                  <PlatformDetailRow label="Duration" value={formatDuration(song.duration_seconds)} />
                 )}
-              </AppDetailRowGroup>
-            </AppCardBody>
+              </PlatformDetailRowGroup>
+            </PlatformCardBody>
           )}
-        </AppCard>
+        </PlatformCard>
 
         {/* ─── 2. SONGWRITERS (from song_writers table) ──── */}
         <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
