@@ -186,16 +186,16 @@ export default function RightsClientsPage() {
         </PlatformTable>
       )}
 
-      <AppModal
+      <PlatformModal
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
         title="Add Client"
         preventClose={createMutation.isPending}
         maxWidth="sm"
       >
-        <AppModalBody>
-          <AppModalFields>
-            <AppModalField label="Name" htmlFor="client-name">
+        <PlatformModalBody>
+          <PlatformModalFields>
+            <PlatformModalField label="Name" htmlFor="client-name">
               <Input
                 id="client-name"
                 value={formName}
@@ -203,9 +203,9 @@ export default function RightsClientsPage() {
                 placeholder="Client name"
                 className="h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px]"
               />
-            </AppModalField>
+            </PlatformModalField>
 
-            <AppModalField label="Primary email" htmlFor="client-email">
+            <PlatformModalField label="Primary email" htmlFor="client-email">
               <Input
                 id="client-email"
                 type="email"
@@ -214,28 +214,28 @@ export default function RightsClientsPage() {
                 placeholder="email@example.com"
                 className="h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px]"
               />
-            </AppModalField>
+            </PlatformModalField>
 
-          </AppModalFields>
-        </AppModalBody>
+          </PlatformModalFields>
+        </PlatformModalBody>
 
-        <AppModalFooter>
-          <AppModalAction
+        <PlatformModalFooter>
+          <PlatformModalAction
             onClick={() => createMutation.mutate()}
             disabled={!formName.trim()}
             loading={createMutation.isPending}
             loadingText="Creating…"
           >
             Add Client
-          </AppModalAction>
-          <AppModalCancel
+          </PlatformModalAction>
+          <PlatformModalCancel
             onClick={() => { setShowCreateDialog(false); resetForm(); }}
             disabled={createMutation.isPending}
           >
             Cancel
-          </AppModalCancel>
-        </AppModalFooter>
-      </AppModal>
+          </PlatformModalCancel>
+        </PlatformModalFooter>
+      </PlatformModal>
     </PlatformPageLayout>
   );
 }

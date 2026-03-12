@@ -8,9 +8,9 @@ import {
   PlatformButton,
 } from "@/components/platform-ui";
 import {
-  AppModal,
-  AppModalBody,
-  AppModalFooter,
+  PlatformModal,
+  PlatformModalBody,
+  PlatformModalFooter,
 } from "@/components/ui/app-modal";
 
 interface ClientSettingsTabProps {

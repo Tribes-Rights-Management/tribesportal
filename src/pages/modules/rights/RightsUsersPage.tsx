@@ -340,16 +340,16 @@ export default function RightsUsersPage() {
       )}
 
       {/* Invite User Modal */}
-      <AppModal
+      <PlatformModal
         open={inviteOpen}
         onOpenChange={(open) => { if (!open) { setInviteOpen(false); resetInviteForm(); } }}
         title="Invite User"
         preventClose={inviting}
         maxWidth="sm"
       >
-        <AppModalBody>
-          <AppModalFields>
-            <AppModalField label="Email" htmlFor="invite-email">
+        <PlatformModalBody>
+          <PlatformModalFields>
+            <PlatformModalField label="Email" htmlFor="invite-email">
               <Input
                 id="invite-email"
                 type="email"
@@ -358,18 +358,18 @@ export default function RightsUsersPage() {
                 placeholder="user@example.com"
                 className="h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px]"
               />
-            </AppModalField>
+            </PlatformModalField>
 
-            <AppModalField label="Client" htmlFor="invite-client">
+            <PlatformModalField label="Client" htmlFor="invite-client">
               <PlatformSelect
                 value={inviteClientId}
                 onChange={setInviteClientId}
                 placeholder="Select a client"
                 options={clientAccounts.map(c => ({ value: c.id, label: c.name }))}
               />
-            </AppModalField>
+            </PlatformModalField>
 
-            <AppModalField label="Role" htmlFor="invite-role">
+            <PlatformModalField label="Role" htmlFor="invite-role">
               <PlatformSelect
                 value={inviteRole}
                 onChange={setInviteRole}
@@ -379,9 +379,9 @@ export default function RightsUsersPage() {
                   { value: "viewer", label: "Viewer" },
                 ]}
               />
-            </AppModalField>
+            </PlatformModalField>
 
-            <AppModalField label="Permissions" htmlFor="invite-perms">
+            <PlatformModalField label="Permissions" htmlFor="invite-perms">
               <div className="space-y-3 pt-1">
                 <div className="flex items-center gap-2">
                   <Checkbox id="perm-songs" checked={canSubmitSongs} onCheckedChange={(v) => setCanSubmitSongs(!!v)} />
@@ -400,27 +400,27 @@ export default function RightsUsersPage() {
                   <Label htmlFor="perm-exports" className="text-sm">Can download exports</Label>
                 </div>
               </div>
-            </AppModalField>
-          </AppModalFields>
-        </AppModalBody>
+            </PlatformModalField>
+          </PlatformModalFields>
+        </PlatformModalBody>
 
-        <AppModalFooter>
-          <AppModalAction
+        <PlatformModalFooter>
+          <PlatformModalAction
             onClick={handleInvite}
             disabled={!inviteEmail.trim() || !inviteClientId}
             loading={inviting}
             loadingText="Sending…"
           >
             Send Invitation
-          </AppModalAction>
-          <AppModalCancel
+          </PlatformModalAction>
+          <PlatformModalCancel
             onClick={() => { setInviteOpen(false); resetInviteForm(); }}
             disabled={inviting}
           >
             Cancel
-          </AppModalCancel>
-        </AppModalFooter>
-      </AppModal>
+          </PlatformModalCancel>
+        </PlatformModalFooter>
+      </PlatformModal>
     </PlatformPageLayout>
   );
 }

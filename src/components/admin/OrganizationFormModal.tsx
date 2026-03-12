@@ -160,75 +160,69 @@ export function OrganizationFormModal({
   };
 
   return (
-    <AppModal
+    <PlatformModal
       open={open}
       onOpenChange={onOpenChange}
-      title={mode === "edit" ? "Edit organization" : "Add organization"}
-      description={mode === "edit" ? "Update organization details." : "Create a new organization."}
+      title={mode === "edit" ? "Edit organization" : "Create organization"}
+      description={mode === "edit" ? "Update organization details" : "Add a new organization to the platform"}
       preventClose={saving}
       maxWidth="sm"
     >
-      <AppModalBody>
-        <AppModalFields>
+      <PlatformModalBody>
+        <PlatformModalFields>
           {/* Name Field */}
-          <AppModalField
+          <PlatformModalField
             label="Name"
             htmlFor="org-name"
-            error={errors.name}
+            error={nameError}
           >
             <Input
               id="org-name"
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="Acme Publishing"
-              autoComplete="organization"
-              autoCapitalize="words"
+              placeholder="Organization name"
               className={cn(
-                "h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px] placeholder:text-muted-foreground/50",
-                errors.name ? "border-destructive" : "border-border"
+                "h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px]",
+                nameError ? "border-destructive" : "border-border"
               )}
             />
-          </AppModalField>
+          </PlatformModalField>
 
           {/* Slug Field */}
-          <AppModalField
+          <PlatformModalField
             label="Slug"
             htmlFor="org-slug"
-            error={errors.slug}
-            helpText={!errors.slug ? "URL-friendly identifier. Must be unique." : undefined}
+            helpText="URL-friendly identifier. Auto-generated from name."
+            error={slugError}
           >
             <Input
               id="org-slug"
               value={slug}
               onChange={(e) => handleSlugChange(e.target.value)}
-              placeholder="acme-publishing"
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              spellCheck={false}
+              placeholder="organization-slug"
               className={cn(
-                "h-12 md:h-11 text-[16px] md:text-[14px] font-mono bg-muted/50 border rounded-[10px] placeholder:text-muted-foreground/50",
-                errors.slug ? "border-destructive" : "border-border"
+                "h-12 md:h-11 text-[16px] md:text-[14px] bg-muted/50 border rounded-[10px] font-mono",
+                slugError ? "border-destructive" : "border-border"
               )}
             />
-          </AppModalField>
-        </AppModalFields>
-      </AppModalBody>
+          </PlatformModalField>
+        </PlatformModalFields>
+      </PlatformModalBody>
 
-      <AppModalFooter>
-        <AppModalAction
+      <PlatformModalFooter>
+        <PlatformModalAction
           onClick={handleSubmit}
           disabled={!isValid}
           loading={saving}
           loadingText={mode === "edit" ? "Updating…" : "Creating…"}
         >
           {mode === "edit" ? "Update" : "Create"}
-        </AppModalAction>
+        </PlatformModalAction>
         
-        <AppModalCancel onClick={() => onOpenChange(false)} disabled={saving}>
+        <PlatformModalCancel onClick={() => onOpenChange(false)} disabled={saving}>
           Cancel
-        </AppModalCancel>
-      </AppModalFooter>
-    </AppModal>
+        </PlatformModalCancel>
+      </PlatformModalFooter>
+    </PlatformModal>
   );
 }

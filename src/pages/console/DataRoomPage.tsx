@@ -125,14 +125,14 @@ function CreateExportDialog({ open, onOpenChange }: CreateExportDialogProps) {
   };
 
   return (
-    <AppModal
+    <PlatformModal
       open={open}
       onOpenChange={onOpenChange}
       title="Create Data Room Export"
       description="Generate a formal, immutable disclosure package for audits or compliance."
       maxWidth="lg"
     >
-      <AppModalBody>
+      <PlatformModalBody>
         <div className="space-y-4">
           {/* Export Type */}
           <div className="space-y-2">
@@ -219,17 +219,17 @@ function CreateExportDialog({ open, onOpenChange }: CreateExportDialogProps) {
             </p>
           </div>
         </div>
-      </AppModalBody>
+      </PlatformModalBody>
       
-      <AppModalFooter>
+      <PlatformModalFooter>
         <ConsoleButton intent="secondary" onClick={() => onOpenChange(false)}>
           Cancel
         </ConsoleButton>
         <ConsoleButton onClick={handleCreate} disabled={createExport.isPending}>
           {createExport.isPending ? "Creating..." : "Create Export"}
         </ConsoleButton>
-      </AppModalFooter>
-    </AppModal>
+      </PlatformModalFooter>
+    </PlatformModal>
   );
 }
 

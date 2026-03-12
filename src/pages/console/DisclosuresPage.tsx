@@ -785,8 +785,8 @@ export default function DisclosuresPage() {
               )}
             </div>
           )}
-        </AppModalBody>
-      </AppModal>
+        </PlatformModalBody>
+      </PlatformModal>
     </PlatformPageLayout>
   );
 }
