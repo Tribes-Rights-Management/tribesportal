@@ -315,8 +315,8 @@ When creating or updating a page:
 - [ ] Review this document for correct patterns
 
 ### Development
-- [ ] Use `AdminSection` / `AppSection` for grouping
-- [ ] Use appropriate row component (AdminMetricRow, AdminListRow, AppListRow)
+- [ ] Use `AdminSection` / `PlatformSection` for grouping
+- [ ] Use appropriate row component (AdminMetricRow, AdminListRow, PlatformListRow)
 - [ ] Use CSS variables, not hardcoded colors
 - [ ] Follow header pattern for the context
 
