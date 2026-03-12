@@ -30,7 +30,7 @@ export function UserMenuDropdown() {
     navigate("/sign-in");
   };
 
-  const menuItems: AppDropdownItem[] = [
+  const menuItems: PlatformDropdownItem[] = [
     {
       label: "Workspaces",
       onClick: () => navigate("/workspaces"),
