@@ -15,8 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  AppModal,
-  AppModalBody,
+  PlatformModal,
+  PlatformModalBody,
 } from "@/components/ui/app-modal";
 import { toast } from "sonner";
 import { Download, FileText, Loader2, Eye, ChevronRight } from "lucide-react";
