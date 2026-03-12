@@ -224,17 +224,17 @@ export default function TribesAdminDocumentsPage() {
   }
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Documents"
       action={
-        <AppFilterTrigger
+        <PlatformFilterTrigger
           onClick={() => setFilterOpen(true)}
           hasActiveFilters={hasActiveFilters}
         />
       }
     >
 
-      <AppSection spacing="none">
+      <PlatformSection spacing="none">
         {/* Sort + Count Row */}
         <div className="flex items-center justify-end mb-3">
           <div className="flex items-center gap-2">
@@ -245,71 +245,71 @@ export default function TribesAdminDocumentsPage() {
           </div>
         </div>
 
-        <AppTable columns={["25%", "12%", "18%", "15%", "15%", "15%"]}>
-          <AppTableHeader>
-            <AppTableRow>
-              <AppTableHead>Document</AppTableHead>
-              <AppTableHead>Type</AppTableHead>
-              <AppTableHead>Party</AppTableHead>
-              <AppTableHead align="center">Status</AppTableHead>
-              <AppTableHead>Created</AppTableHead>
-              <AppTableHead>Expires</AppTableHead>
-            </AppTableRow>
-          </AppTableHeader>
-          <AppTableBody>
+        <PlatformTable columns={["25%", "12%", "18%", "15%", "15%", "15%"]}>
+          <PlatformTableHeader>
+            <PlatformTableRow>
+              <PlatformTableHead>Document</PlatformTableHead>
+              <PlatformTableHead>Type</PlatformTableHead>
+              <PlatformTableHead>Party</PlatformTableHead>
+              <PlatformTableHead align="center">Status</PlatformTableHead>
+              <PlatformTableHead>Created</PlatformTableHead>
+              <PlatformTableHead>Expires</PlatformTableHead>
+            </PlatformTableRow>
+          </PlatformTableHeader>
+          <PlatformTableBody>
             {paginatedDocuments.length === 0 ? (
-              <AppTableEmpty colSpan={6}>
+              <PlatformTableEmpty colSpan={6}>
                 <span className="text-muted-foreground text-sm">
                   {typeFilter !== "all" ? "No matching documents" : "No documents"}
                 </span>
-              </AppTableEmpty>
+              </PlatformTableEmpty>
             ) : (
               paginatedDocuments.map(doc => (
-                <AppTableRow
+                <PlatformTableRow
                   key={doc.id}
                   clickable
                   onClick={() => navigate(`/admin/documents/${doc.id}`)}
                 >
-                  <AppTableCell className="font-medium">{doc.title}</AppTableCell>
-                  <AppTableCell muted>{getTypeLabel(doc.type)}</AppTableCell>
-                  <AppTableCell muted>{doc.party}</AppTableCell>
-                  <AppTableCell align="center">{getStatusBadge(doc.status)}</AppTableCell>
-                  <AppTableCell muted>
+                  <PlatformTableCell className="font-medium">{doc.title}</PlatformTableCell>
+                  <PlatformTableCell muted>{getTypeLabel(doc.type)}</PlatformTableCell>
+                  <PlatformTableCell muted>{doc.party}</PlatformTableCell>
+                  <PlatformTableCell align="center">{getStatusBadge(doc.status)}</PlatformTableCell>
+                  <PlatformTableCell muted>
                     {format(new Date(doc.createdAt), "MMM d, yyyy")}
-                  </AppTableCell>
-                  <AppTableCell muted>
+                  </PlatformTableCell>
+                  <PlatformTableCell muted>
                     {doc.expiresAt ? format(new Date(doc.expiresAt), "MMM d, yyyy") : "—"}
-                  </AppTableCell>
-                </AppTableRow>
+                  </PlatformTableCell>
+                </PlatformTableRow>
               ))
             )}
-          </AppTableBody>
-        </AppTable>
+          </PlatformTableBody>
+        </PlatformTable>
 
-        <AppPagination
+        <PlatformPagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
         />
-      </AppSection>
+      </PlatformSection>
 
-      <AppFilterDrawer
+      <PlatformFilterDrawer
         open={filterOpen}
         onOpenChange={setFilterOpen}
         hasActiveFilters={hasActiveFilters}
         onClearFilters={handleClearFilters}
       >
-        <AppFilterSection title="Type">
+        <PlatformFilterSection title="Type">
           {typeOptions.map((opt) => (
-            <AppFilterOption
+            <PlatformFilterOption
               key={opt.value}
               label={opt.label}
               selected={typeFilter === opt.value}
               onClick={() => handleTypeChange(opt.value)}
             />
           ))}
-        </AppFilterSection>
-      </AppFilterDrawer>
-    </AppPageLayout>
+        </PlatformFilterSection>
+      </PlatformFilterDrawer>
+    </PlatformPageLayout>
   );
 }
