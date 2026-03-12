@@ -250,6 +250,6 @@ export default function TenantsPage() {
         initialData={editingTenant ? { name: editingTenant.name, slug: editingTenant.slug } : null}
         mode={editingTenant ? "edit" : "create"}
       />
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
