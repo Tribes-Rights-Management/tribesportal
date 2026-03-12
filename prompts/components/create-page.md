@@ -24,15 +24,14 @@ This page belongs to the [MODULE] module and should:
 
 Requirements:
 1. Import ONLY from @/components/platform-ui — never from @/components/ui/*
-2. Use AppPageHeader for the page title
-3. Use AppPageContainer as the outer wrapper
-4. Use AppTable for any tabular data
-5. Use AppButton for all buttons
-6. Use AppCard or AppPanel for content sections
-7. Use AppEmptyState when there's no data
-8. Use CSS variables for all colors — no hardcoded hex values
-9. Follow the institutional typography scale (text-sm = 13px, text-base = 14px)
-10. Include loading and error states
+2. Use PlatformPageLayout for the page wrapper and title
+3. Use PlatformTable for any tabular data
+4. Use PlatformButton for all buttons
+5. Use PlatformCard or PlatformPanel for content sections
+6. Use PlatformEmptyState when there's no data
+7. Use CSS variables for all colors — no hardcoded hex values
+8. Follow the institutional typography scale (text-sm = 13px, text-base = 14px)
+9. Include loading and error states
 
 The page should look like it belongs in a Bloomberg terminal or banking application — minimal, flat, professional. No decorative elements, no rounded corners on panels, no playful UI.
 ```
