@@ -933,10 +933,10 @@ export default function SongDetailPage() {
           </div>
         )}
         {/* ─── 1. OVERVIEW ──────────────────────────────── */}
-        <AppCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-          <AppCardHeader className="bg-muted/30">
-            <AppCardTitle className="text-sm font-semibold text-foreground">Overview</AppCardTitle>
-          </AppCardHeader>
+        <PlatformCard className="mt-5 border border-border/80 bg-card rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+          <PlatformCardHeader className="bg-muted/30">
+            <PlatformCardTitle className="text-sm font-semibold text-foreground">Overview</PlatformCardTitle>
+          </PlatformCardHeader>
           {editing ? (
             <AppCardBody>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
