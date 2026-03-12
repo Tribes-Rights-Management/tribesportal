@@ -244,7 +244,7 @@ export default function HelpAudiencesPage() {
       {/* Error */}
       {error && (
         <div className="mb-6">
-          <AppAlert
+           <PlatformAlert
             variant="error"
             message={error}
             onRetry={() => { setError(null); fetchAudiences(); }}
@@ -255,9 +255,9 @@ export default function HelpAudiencesPage() {
       {/* Audience List */}
       <div className="space-y-2">
         {loading ? (
-          <AppEmptyState message="Loading audiences..." size="lg" />
+          <PlatformEmptyState message="Loading audiences..." size="lg" />
         ) : audiences.length === 0 ? (
-          <AppEmptyState
+          <PlatformEmptyState
             icon="users"
             message="No audiences configured yet"
             size="lg"
