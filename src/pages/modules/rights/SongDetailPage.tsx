@@ -833,16 +833,16 @@ export default function SongDetailPage() {
   // ── Not found state ───────────────────────────────────────
   if (!song) {
     return (
-      <AppPageLayout
+      <PlatformPageLayout
         title="Not Found"
         backLink={{ to: "/rights/catalog", label: "Catalog" }}
       >
-        <AppSection spacing="md">
+        <PlatformSection spacing="md">
           <p className="text-sm text-muted-foreground">
             This song could not be found.
           </p>
-        </AppSection>
-      </AppPageLayout>
+        </PlatformSection>
+      </PlatformPageLayout>
     );
   }
 
