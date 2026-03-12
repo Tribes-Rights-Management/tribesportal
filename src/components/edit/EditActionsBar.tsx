@@ -67,7 +67,7 @@ export function EditActionsBar({
       </PlatformButton>
 
       {/* Save button - primary styling */}
-      <AppButton
+      <PlatformButton
         type="button"
         onClick={onSave}
         disabled={!canSave}
@@ -79,7 +79,7 @@ export function EditActionsBar({
         className="flex-1"
       >
         {saveLabel}
-      </AppButton>
+      </PlatformButton>
     </div>
   );
 }
