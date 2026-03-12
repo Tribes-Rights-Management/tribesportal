@@ -78,7 +78,7 @@ find "$SRC_DIR" -name "*.tsx" -not -name "index.*" -not -name "AuthCallbackPage.
 
     # Check 8: Raw <table element
     if grep -q '<table' "$file"; then
-        file_issues+="  ${YELLOW}ELEMENT${NC} Raw <table> → use AppTable from @/components/platform-ui\n"
+        file_issues+="  ${YELLOW}ELEMENT${NC} Raw <table> → use PlatformTable from @/components/platform-ui\n"
         file_violations=$((file_violations + 1))
     fi
 

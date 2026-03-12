@@ -314,20 +314,20 @@ export default function HelpCategoriesPage() {
   const linkedCategoryCount = selectedAudienceId ? orderedCategories.length : categories.length;
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Categories"
       backLink={{ to: "/help", label: "Overview" }}
       action={
-        <AppButton intent="primary" size="sm" onClick={handleCreate}>
+        <PlatformButton intent="primary" size="sm" onClick={handleCreate}>
           <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
           New Category
-        </AppButton>
+        </PlatformButton>
       }
     >
       {/* Error */}
       {(error || categoriesError) && (
         <div className="mb-6">
-          <AppAlert
+          <PlatformAlert
             variant="error"
             message={error || categoriesError || ""}
             onRetry={() => { setError(null); fetchCategories(); }}
@@ -368,11 +368,11 @@ export default function HelpCategoriesPage() {
 
       {/* Content */}
       {isLoading ? (
-        <AppEmptyState message="Loading categories..." size="lg" />
+        <PlatformEmptyState message="Loading categories..." size="lg" />
       ) : selectedAudienceId ? (
         /* By Audience View - Sortable Cards */
         orderedCategories.length === 0 ? (
-          <AppEmptyState
+          <PlatformEmptyState
             icon="folder"
             message={`No categories linked to ${selectedAudience?.name || "this audience"}.`}
             description="Create a category and assign it to this audience."
@@ -404,36 +404,36 @@ export default function HelpCategoriesPage() {
         <ContentPanel>
           <div className="overflow-x-auto">
             <div className="min-w-[500px]">
-              <AppTable columns={["40%", "35%", "25%"]} className="border-0 rounded-none shadow-none">
-                <AppTableHeader>
-                <AppTableRow header>
-                  <AppTableHead>Name</AppTableHead>
-                  <AppTableHead className="hidden sm:table-cell">Audiences</AppTableHead>
-                  <AppTableHead align="right">Updated</AppTableHead>
-                </AppTableRow>
-              </AppTableHeader>
-              <AppTableBody>
+              <PlatformTable columns={["40%", "35%", "25%"]} className="border-0 rounded-none shadow-none">
+                <PlatformTableHeader>
+                <PlatformTableRow header>
+                  <PlatformTableHead>Name</PlatformTableHead>
+                  <PlatformTableHead className="hidden sm:table-cell">Audiences</PlatformTableHead>
+                  <PlatformTableHead align="right">Updated</PlatformTableHead>
+                </PlatformTableRow>
+              </PlatformTableHeader>
+              <PlatformTableBody>
                 {categoriesWithMeta.length === 0 ? (
-                  <AppTableEmpty colSpan={3}>
+                  <PlatformTableEmpty colSpan={3}>
                     <p className="text-[13px] text-muted-foreground">No categories configured yet</p>
-                  </AppTableEmpty>
+                  </PlatformTableEmpty>
                 ) : (
                   categoriesWithMeta.map(cat => (
-                    <AppTableRow
+                    <PlatformTableRow
                       key={cat.id}
                       clickable
                       onClick={() => handleEdit(cat)}
                       className="group"
                     >
-                      <AppTableCell>{cat.name}</AppTableCell>
-                      <AppTableCell muted className="hidden sm:table-cell">
+                      <PlatformTableCell>{cat.name}</PlatformTableCell>
+                      <PlatformTableCell muted className="hidden sm:table-cell">
                         {cat.audienceIds.length === 0 ? (
                           <span className="italic">No audiences</span>
                         ) : (
                           cat.audienceIds.map(id => getAudienceName(id)).join(", ")
                         )}
-                      </AppTableCell>
-                      <AppTableCell align="right" muted>
+                      </PlatformTableCell>
+                      <PlatformTableCell align="right" muted>
                         <div className="flex items-center justify-end gap-2">
                           <span>{format(new Date(cat.updated_at), "MMM d, yyyy")}</span>
                           {cat.article_count === 0 && (
@@ -446,25 +446,25 @@ export default function HelpCategoriesPage() {
                             </button>
                           )}
                         </div>
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   ))
                 )}
-              </AppTableBody>
-              </AppTable>
+              </PlatformTableBody>
+              </PlatformTable>
             </div>
           </div>
         </ContentPanel>
       )}
 
       {/* Right-side Panel */}
-      <AppPanel
+      <PlatformPanel
         open={panelOpen}
         onClose={() => setPanelOpen(false)}
         title={editing ? "Edit category" : "New category"}
         description={editing ? "Update category details" : "Create a new category"}
         footer={
-          <AppPanelFooter
+          <PlatformPanelFooter
             left={
               editing && (
                 <button
@@ -491,7 +491,7 @@ export default function HelpCategoriesPage() {
       >
         <div className="space-y-4">
           {formError && (
-            <AppAlert variant="error" message={formError} />
+            <PlatformAlert variant="error" message={formError} />
           )}
 
           <div>
@@ -510,7 +510,7 @@ export default function HelpCategoriesPage() {
             </p>
           </div>
 
-          <AppCheckboxGroup
+          <PlatformCheckboxGroup
             label="Audience Visibility"
             required
             options={activeAudiences.map(a => ({ id: a.id, label: a.name }))}
@@ -519,22 +519,22 @@ export default function HelpCategoriesPage() {
             direction="vertical"
           />
         </div>
-      </AppPanel>
+      </PlatformPanel>
 
       {/* Delete Confirmation */}
-      <AppPanel
+      <PlatformPanel
         open={deleteDialogOpen && !!deleting}
         onClose={() => { setDeleteDialogOpen(false); setDeleting(null); }}
         title="Delete category?"
         width="sm"
         footer={
           <div className="flex items-center justify-end gap-2 w-full">
-            <AppButton intent="secondary" size="sm" onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }}>
+            <PlatformButton intent="secondary" size="sm" onClick={() => { setDeleteDialogOpen(false); setDeleting(null); }}>
               Cancel
-            </AppButton>
-            <AppButton intent="danger" size="sm" onClick={handleDelete} disabled={deleting?.article_count !== undefined && deleting.article_count > 0}>
+            </PlatformButton>
+            <PlatformButton intent="danger" size="sm" onClick={handleDelete} disabled={deleting?.article_count !== undefined && deleting.article_count > 0}>
               Delete
-            </AppButton>
+            </PlatformButton>
           </div>
         }
       >
@@ -548,7 +548,7 @@ export default function HelpCategoriesPage() {
             <>This will permanently delete "{deleting?.name}". This action cannot be undone.</>
           )}
         </p>
-      </AppPanel>
-    </AppPageLayout>
+      </PlatformPanel>
+    </PlatformPageLayout>
   );
 }
