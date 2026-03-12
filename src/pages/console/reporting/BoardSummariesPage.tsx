@@ -227,7 +227,7 @@ export default function BoardSummariesPage() {
   };
 
   return (
-    <AppPageLayout title="Board Summaries" maxWidth="xl">
+    <PlatformPageLayout title="Board Summaries" maxWidth="xl">
 
       {/* Period Selector */}
       {!isExternalAuditor && (
