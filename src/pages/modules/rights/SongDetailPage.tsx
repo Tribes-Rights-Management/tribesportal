@@ -1684,6 +1684,6 @@ export default function SongDetailPage() {
           </PlatformCard>
         )}
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
