@@ -6,17 +6,17 @@ import { format } from "date-fns";
 
 // Import from unified platform-ui kit
 import {
-  AppButton,
-  AppPageLayout,
-  AppStatCard,
-  AppStatCardGrid,
-  AppListCard,
-  AppListRow,
-  AppListAction,
-  AppEmptyState,
-  AppAlert,
-  AppSectionGrid,
-  AppSection,
+  PlatformButton,
+  PlatformPageLayout,
+  PlatformStatCard,
+  PlatformStatCardGrid,
+  PlatformListCard,
+  PlatformListRow,
+  PlatformListAction,
+  PlatformEmptyState,
+  PlatformAlert,
+  PlatformSectionGrid,
+  PlatformSection,
 } from "@/components/platform-ui";
 
 /**
@@ -132,23 +132,23 @@ export default function HelpOverviewPage() {
 
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Overview"
       action={
-        <AppButton
+        <PlatformButton
           intent="primary"
           size="sm"
           onClick={() => navigate("/help/articles/new")}
         >
           <Plus className="h-4 w-4" />
           New Article
-        </AppButton>
+        </PlatformButton>
       }
     >
       {/* Error Alert */}
       {error && (
         <div className="mb-6">
-          <AppAlert
+          <PlatformAlert
             variant="error"
             message={error}
             onRetry={loadStats}
@@ -157,51 +157,51 @@ export default function HelpOverviewPage() {
       )}
 
       {/* Stats Cards */}
-      <AppSection spacing="md">
-        <AppStatCardGrid columns={3}>
-          <AppStatCard
+      <PlatformSection spacing="md">
+        <PlatformStatCardGrid columns={3}>
+          <PlatformStatCard
             label="Articles"
             value={articleStats.total}
             subtitle={`${articleStats.published} published, ${articleStats.draft} draft`}
             loading={loading}
             onClick={() => navigate("/help/articles")}
           />
-          <AppStatCard
+          <PlatformStatCard
             label="Categories"
             value={categoryCount}
             loading={loading}
             onClick={() => navigate("/help/categories")}
           />
-          <AppStatCard
+          <PlatformStatCard
             label="Audiences"
             value={audienceCount}
             loading={loading}
             onClick={() => navigate("/help/audiences")}
           />
-        </AppStatCardGrid>
-      </AppSection>
+        </PlatformStatCardGrid>
+      </PlatformSection>
 
       {/* Recent Articles & Drafts */}
-      <AppSectionGrid columns={2}>
+      <PlatformSectionGrid columns={2}>
         {/* Top Performing Articles */}
-        <AppListCard
+        <PlatformListCard
           title="Top Performing Articles"
           className="h-full"
           action={
-            <AppListAction onClick={() => navigate("/help/articles")}>
+            <PlatformListAction onClick={() => navigate("/help/articles")}>
               View all
-            </AppListAction>
+            </PlatformListAction>
           }
         >
           {topArticles.length === 0 ? (
-            <AppEmptyState
+            <PlatformEmptyState
               customIcon={<TrendingUp className="h-5 w-5" />}
               message="No published articles yet"
               size="sm"
             />
           ) : (
             topArticles.map(article => (
-              <AppListRow
+              <PlatformListRow
                 key={article.id}
                 title={article.title}
                 subtitle={`${formatViewCount(article.view_count || 0)} views`}
@@ -209,27 +209,27 @@ export default function HelpOverviewPage() {
               />
             ))
           )}
-        </AppListCard>
+        </PlatformListCard>
 
         {/* Drafts to Review */}
-        <AppListCard
+        <PlatformListCard
           title="Drafts to Review"
           className="h-full"
           action={
-            <AppListAction onClick={() => navigate("/help/articles?status=draft")}>
+            <PlatformListAction onClick={() => navigate("/help/articles?status=draft")}>
               View all
-            </AppListAction>
+            </PlatformListAction>
           }
         >
           {draftsToReview.length === 0 ? (
-            <AppEmptyState
+            <PlatformEmptyState
               icon="file"
               message="No drafts"
               size="sm"
             />
           ) : (
             draftsToReview.map(article => (
-              <AppListRow
+              <PlatformListRow
                 key={article.id}
                 title={article.title}
                 subtitle={format(new Date(article.updated_at), "MMM d, yyyy")}
@@ -237,8 +237,8 @@ export default function HelpOverviewPage() {
               />
             ))
           )}
-        </AppListCard>
-      </AppSectionGrid>
-    </AppPageLayout>
+        </PlatformListCard>
+      </PlatformSectionGrid>
+    </PlatformPageLayout>
   );
 }

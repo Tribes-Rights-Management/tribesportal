@@ -5,15 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import {
-  AppButton,
-  AppListToolbar,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
+  PlatformButton,
+  PlatformListToolbar,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
 } from "@/components/platform-ui";
 
 const ALGOLIA_APP_ID = "8WVEYVACJ3";
@@ -123,15 +123,15 @@ export default function DealsTabContent() {
 
   return (
     <>
-      <AppListToolbar
+      <PlatformListToolbar
         placeholder="Search by writer or publisher..."
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
         action={
-          <AppButton intent="secondary" size="sm" onClick={() => navigate("/rights/parties/deals/new")}>
+          <PlatformButton intent="secondary" size="sm" onClick={() => navigate("/rights/parties/deals/new")}>
             <Plus className="h-4 w-4" />
             New Deal
-          </AppButton>
+          </PlatformButton>
         }
       />
 
@@ -148,17 +148,17 @@ export default function DealsTabContent() {
       ) : (
         <div className="overflow-x-auto -mx-4 sm:mx-0">
           <div className="px-4 sm:px-0">
-            <AppTable columns={["8%", "30%", "32%", "15%", "15%"]}>
-              <AppTableHeader>
-                <AppTableRow header>
-                  <AppTableHead className="pl-5">#</AppTableHead>
-                  <AppTableHead>Writer</AppTableHead>
-                  <AppTableHead>Publishers</AppTableHead>
-                  <AppTableHead>Territory</AppTableHead>
-                  <AppTableHead className="text-right pr-5">Songs</AppTableHead>
-                </AppTableRow>
-              </AppTableHeader>
-              <AppTableBody>
+            <PlatformTable columns={["8%", "30%", "32%", "15%", "15%"]}>
+              <PlatformTableHeader>
+                <PlatformTableRow header>
+                  <PlatformTableHead className="pl-5">#</PlatformTableHead>
+                  <PlatformTableHead>Writer</PlatformTableHead>
+                  <PlatformTableHead>Publishers</PlatformTableHead>
+                  <PlatformTableHead>Territory</PlatformTableHead>
+                  <PlatformTableHead className="text-right pr-5">Songs</PlatformTableHead>
+                </PlatformTableRow>
+              </PlatformTableHeader>
+              <PlatformTableBody>
                 {displayDeals.map((deal: any) => {
                   const publishers = deal.deal_publishers || [];
                   const publisherDisplay = publishers.length > 2
@@ -166,13 +166,13 @@ export default function DealsTabContent() {
                     : publishers.map((p: any) => p.publisher_name).join(", ");
 
                   return (
-                    <AppTableRow
+                    <PlatformTableRow
                       key={deal.id}
                       clickable
                       onClick={() => navigate(`/rights/parties/deals/${deal.deal_number}`)}
                     >
-                      <AppTableCell muted className="pl-5">{deal.deal_number}</AppTableCell>
-                      <AppTableCell>
+                      <PlatformTableCell muted className="pl-5">{deal.deal_number}</PlatformTableCell>
+                      <PlatformTableCell>
                         <div className="flex items-center gap-2">
                           <span>{deal.writers?.name || "—"}</span>
                           {deal.writers?.pro && (
@@ -181,19 +181,19 @@ export default function DealsTabContent() {
                             </span>
                           )}
                         </div>
-                      </AppTableCell>
-                      <AppTableCell muted>
+                      </PlatformTableCell>
+                      <PlatformTableCell muted>
                         {publisherDisplay || <span className="italic">None</span>}
-                      </AppTableCell>
-                      <AppTableCell muted>{deal.territory}</AppTableCell>
-                      <AppTableCell muted className="text-right pr-5 tabular-nums">
+                      </PlatformTableCell>
+                      <PlatformTableCell muted>{deal.territory}</PlatformTableCell>
+                      <PlatformTableCell muted className="text-right pr-5 tabular-nums">
                         {songCounts?.[deal.id] || 0}
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   );
                 })}
-              </AppTableBody>
-            </AppTable>
+              </PlatformTableBody>
+            </PlatformTable>
           </div>
         </div>
       )}

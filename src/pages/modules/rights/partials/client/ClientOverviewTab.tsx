@@ -3,22 +3,22 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  AppCard,
-  AppCardHeader,
-  AppCardTitle,
-  AppCardBody,
-  AppDetailRow,
-  AppDetailRowGroup,
-  AppStatCard,
-  AppStatCardGrid,
-  AppTable,
-  AppTableHeader,
-  AppTableBody,
-  AppTableRow,
-  AppTableHead,
-  AppTableCell,
-  AppTableEmpty,
-  AppTableBadge,
+  PlatformCard,
+  PlatformCardHeader,
+  PlatformCardTitle,
+  PlatformCardBody,
+  PlatformDetailRow,
+  PlatformDetailRowGroup,
+  PlatformStatCard,
+  PlatformStatCardGrid,
+  PlatformTable,
+  PlatformTableHeader,
+  PlatformTableBody,
+  PlatformTableRow,
+  PlatformTableHead,
+  PlatformTableCell,
+  PlatformTableEmpty,
+  PlatformTableBadge,
 } from "@/components/platform-ui";
 
 interface ClientOverviewTabProps {
@@ -69,7 +69,6 @@ export default function ClientOverviewTab({ client }: ClientOverviewTabProps) {
   const { data: dealCount = 0, isLoading: dealLoading } = useQuery({
     queryKey: ["client-deals-count", client.id],
     queryFn: async () => {
-      // Count deals through writers linked to this client
       const { data, error } = await supabase
         .from("contract_associations")
         .select("id", { count: "exact", head: true })
@@ -117,72 +116,72 @@ export default function ClientOverviewTab({ client }: ClientOverviewTabProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Left: Details */}
-      <AppCard>
-        <AppCardHeader>
-          <AppCardTitle>Client Information</AppCardTitle>
-        </AppCardHeader>
-        <AppCardBody className="p-0">
-          <AppDetailRowGroup>
-            <AppDetailRow label="Email" value={client.primary_email || "—"} />
-            <AppDetailRow label="Address" value={formatAddress(client)} />
-            <AppDetailRow
+      <PlatformCard>
+        <PlatformCardHeader>
+          <PlatformCardTitle>Client Information</PlatformCardTitle>
+        </PlatformCardHeader>
+        <PlatformCardBody className="p-0">
+          <PlatformDetailRowGroup>
+            <PlatformDetailRow label="Email" value={client.primary_email || "—"} />
+            <PlatformDetailRow label="Address" value={formatAddress(client)} />
+            <PlatformDetailRow
               label="Created"
               value={format(new Date(client.created_at), "MMM d, yyyy")}
             />
-          </AppDetailRowGroup>
-        </AppCardBody>
-      </AppCard>
+          </PlatformDetailRowGroup>
+        </PlatformCardBody>
+      </PlatformCard>
 
       {/* Right: Activity */}
       <div className="space-y-6">
-        <AppStatCardGrid columns={2}>
-          <AppStatCard label="Songs" value={songCount} size="sm" loading={songLoading} />
-          <AppStatCard label="Pending" value={pendingCount} size="sm" loading={pendingLoading} />
-          <AppStatCard label="Contracts" value={dealCount} size="sm" loading={dealLoading} />
-          <AppStatCard label="IPI Numbers" value={ipiCount} size="sm" loading={ipiLoading} />
-        </AppStatCardGrid>
+        <PlatformStatCardGrid columns={2}>
+          <PlatformStatCard label="Songs" value={songCount} size="sm" loading={songLoading} />
+          <PlatformStatCard label="Pending" value={pendingCount} size="sm" loading={pendingLoading} />
+          <PlatformStatCard label="Contracts" value={dealCount} size="sm" loading={dealLoading} />
+          <PlatformStatCard label="IPI Numbers" value={ipiCount} size="sm" loading={ipiLoading} />
+        </PlatformStatCardGrid>
 
-        <AppCard>
-          <AppCardHeader>
-            <AppCardTitle>Recent Submissions</AppCardTitle>
-          </AppCardHeader>
-          <AppCardBody className="p-0">
-            <AppTable>
-              <AppTableHeader>
-                <AppTableRow header>
-                  <AppTableHead>Title</AppTableHead>
-                  <AppTableHead>Status</AppTableHead>
-                  <AppTableHead align="right">Submitted</AppTableHead>
-                </AppTableRow>
-              </AppTableHeader>
-              <AppTableBody>
+        <PlatformCard>
+          <PlatformCardHeader>
+            <PlatformCardTitle>Recent Submissions</PlatformCardTitle>
+          </PlatformCardHeader>
+          <PlatformCardBody className="p-0">
+            <PlatformTable>
+              <PlatformTableHeader>
+                <PlatformTableRow header>
+                  <PlatformTableHead>Title</PlatformTableHead>
+                  <PlatformTableHead>Status</PlatformTableHead>
+                  <PlatformTableHead align="right">Submitted</PlatformTableHead>
+                </PlatformTableRow>
+              </PlatformTableHeader>
+              <PlatformTableBody>
                 {recentSubmissions.length === 0 ? (
-                  <AppTableEmpty colSpan={3}>
+                  <PlatformTableEmpty colSpan={3}>
                     <span className="text-sm text-muted-foreground">No submissions yet</span>
-                  </AppTableEmpty>
+                  </PlatformTableEmpty>
                 ) : (
                   recentSubmissions.map((sub: any) => (
-                    <AppTableRow
+                    <PlatformTableRow
                       key={sub.id}
                       clickable
                       onClick={() => navigate(`/rights/queue/${sub.id}`)}
                     >
-                      <AppTableCell>{sub.title}</AppTableCell>
-                      <AppTableCell>
-                        <AppTableBadge variant={statusVariant[sub.status] || "default"}>
+                      <PlatformTableCell>{sub.title}</PlatformTableCell>
+                      <PlatformTableCell>
+                        <PlatformTableBadge variant={statusVariant[sub.status] || "default"}>
                           {sub.status?.replace("_", " ")}
-                        </AppTableBadge>
-                      </AppTableCell>
-                      <AppTableCell align="right" muted>
+                        </PlatformTableBadge>
+                      </PlatformTableCell>
+                      <PlatformTableCell align="right" muted>
                         {format(new Date(sub.created_at), "MMM d, yyyy")}
-                      </AppTableCell>
-                    </AppTableRow>
+                      </PlatformTableCell>
+                    </PlatformTableRow>
                   ))
                 )}
-              </AppTableBody>
-            </AppTable>
-          </AppCardBody>
-        </AppCard>
+              </PlatformTableBody>
+            </PlatformTable>
+          </PlatformCardBody>
+        </PlatformCard>
       </div>
     </div>
   );

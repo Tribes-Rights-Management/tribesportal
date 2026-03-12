@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { ExternalLink } from "lucide-react";
 import {
-  AppButton,
-  AppPageLayout,
-  AppCard,
-  AppCardHeader,
-  AppCardTitle,
-  AppCardDescription,
-  AppCardBody,
-  AppSection,
-  AppAlert,
+  PlatformButton,
+  PlatformPageLayout,
+  PlatformCard,
+  PlatformCardHeader,
+  PlatformCardTitle,
+  PlatformCardDescription,
+  PlatformCardBody,
+  PlatformSection,
+  PlatformAlert,
 } from "@/components/platform-ui";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -65,19 +65,19 @@ export default function HelpSettingsPage() {
   };
 
   return (
-    <AppPageLayout
+    <PlatformPageLayout
       title="Settings"
       backLink={{ to: "/help", label: "Overview" }}
     >
 
       {/* Public Help Center */}
-      <AppSection spacing="md">
-        <AppCard>
-          <AppCardHeader>
-            <AppCardTitle>Public Help Center</AppCardTitle>
-            <AppCardDescription>Control public access and features</AppCardDescription>
-          </AppCardHeader>
-          <AppCardBody>
+      <PlatformSection spacing="md">
+        <PlatformCard>
+          <PlatformCardHeader>
+            <PlatformCardTitle>Public Help Center</PlatformCardTitle>
+            <PlatformCardDescription>Control public access and features</PlatformCardDescription>
+          </PlatformCardHeader>
+          <PlatformCardBody>
             <SettingToggle
               id="public-help"
               label="Enable public Help Center"
@@ -111,18 +111,18 @@ export default function HelpSettingsPage() {
                 <ExternalLink className="h-3 w-3" strokeWidth={1.5} />
               </a>
             </div>
-          </AppCardBody>
-        </AppCard>
-      </AppSection>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformSection>
 
       {/* Analytics */}
-      <AppSection spacing="md">
-        <AppCard>
-          <AppCardHeader>
-            <AppCardTitle>Analytics</AppCardTitle>
-            <AppCardDescription>Data collection preferences</AppCardDescription>
-          </AppCardHeader>
-          <AppCardBody>
+      <PlatformSection spacing="md">
+        <PlatformCard>
+          <PlatformCardHeader>
+            <PlatformCardTitle>Analytics</PlatformCardTitle>
+            <PlatformCardDescription>Data collection preferences</PlatformCardDescription>
+          </PlatformCardHeader>
+          <PlatformCardBody>
             <SettingToggle
               id="track-views"
               label="Track article views"
@@ -139,23 +139,23 @@ export default function HelpSettingsPage() {
             />
             
             <div className="mt-4">
-              <AppAlert
+              <PlatformAlert
                 variant="info"
                 message="Analytics data helps improve Help content by showing popular topics and search gaps."
               />
             </div>
-          </AppCardBody>
-        </AppCard>
-      </AppSection>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformSection>
 
       {/* Permissions */}
-      <AppSection spacing="md">
-        <AppCard>
-          <AppCardHeader>
-            <AppCardTitle>Permissions</AppCardTitle>
-            <AppCardDescription>Access control for Help Workstation</AppCardDescription>
-          </AppCardHeader>
-          <AppCardBody>
+      <PlatformSection spacing="md">
+        <PlatformCard>
+          <PlatformCardHeader>
+            <PlatformCardTitle>Permissions</PlatformCardTitle>
+            <PlatformCardDescription>Access control for Help Workstation</PlatformCardDescription>
+          </PlatformCardHeader>
+          <PlatformCardBody>
             <p className="text-[12px] text-muted-foreground">
               Help Workstation access is managed via platform capabilities. Users with the{" "}
               <code className="px-1.5 py-0.5 bg-muted border border-border rounded text-[11px] font-mono">
@@ -165,21 +165,21 @@ export default function HelpSettingsPage() {
             </p>
             
             <div className="mt-4">
-              <AppAlert
+              <PlatformAlert
                 variant="info"
                 message="Contact a Platform Administrator to grant or revoke Help access for users."
               />
             </div>
-          </AppCardBody>
-        </AppCard>
-      </AppSection>
+          </PlatformCardBody>
+        </PlatformCard>
+      </PlatformSection>
 
       {/* Save Button */}
       <div className="flex justify-end pt-4">
-        <AppButton intent="primary" size="sm" onClick={handleSave} disabled={saving}>
+        <PlatformButton intent="primary" size="sm" onClick={handleSave} disabled={saving}>
           {saving ? "Saving..." : saved ? "Saved" : "Save Settings"}
-        </AppButton>
+        </PlatformButton>
       </div>
-    </AppPageLayout>
+    </PlatformPageLayout>
   );
 }
