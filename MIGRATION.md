@@ -10,6 +10,12 @@
 
 **Legend:** `[H]` = you (human), `[CC]` = Claude Code does it, you review diffs.
 
+**Naming (locked)**
+- Product name: **Watershed Portal** (replaces "Tribes Portal").
+- Target repo: **`Watershed-Music-Group/watershedportal`** (private) — org already exists.
+- Rename rule (Phase 6): `Tribes Portal` → `Watershed Portal`, and the bare word `Tribes` →
+  `Watershed`, everywhere except git history, the Supabase project id, and DB table/column names.
+
 ---
 
 ## Reconciled against repo audit — 2026-06-07
@@ -44,8 +50,8 @@ corrects it to match the actual repository. Key deltas applied:
 | # | Step | Notes |
 |---|------|-------|
 | 0.1 | Register Watershed domain + email domain | Pick final domains before DNS work in Phase 7. |
-| 0.2 | Create GitHub org + empty `watershed` repo (private) | Keep `tribesportal` intact until cutover. |
-| 0.3 | Create accounts: Vercel, Resend, Inngest, Sentry | Use the Watershed GitHub org for SSO where possible. |
+| 0.2 | Create empty **`watershedportal`** repo (private) in the existing **`Watershed-Music-Group`** org (no README/license, for a clean first push) | Keep `tribesportal` intact until cutover. |
+| 0.3 | Create accounts: Vercel, Resend, Inngest, Sentry | Use the `Watershed-Music-Group` GitHub org for SSO where possible. |
 | 0.4 | Confirm Supabase project ownership/billing stays on `rsdjfnsbimcdrxlhognv` | A new Supabase org re-scopes this to a full schema/data/RLS/storage migration — avoid unless required. |
 
 **Verify:** All accounts exist; you can log into each dashboard.
@@ -58,7 +64,7 @@ corrects it to match the actual repository. Key deltas applied:
 |---|------|-------|
 | 1.1 | Install Node.js LTS, VS Code, pnpm, git (Windows: WSL2) | `[H]` |
 | 1.2 | Install Claude Code VS Code extension; sign in (browser OAuth) | `[H]` |
-| 1.3 | Clone `tribesportal` locally; clone new empty `watershed` | `[H]` |
+| 1.3 | Clone `tribesportal` locally; clone the new empty `Watershed-Music-Group/watershedportal` | `[H]` |
 | 1.4 | Connect Supabase MCP to Claude Code (live schema introspection) | `[H]` |
 | 1.5 | Repo audit on `tribesportal` | `[CC]` — **DONE 2026-06-07** (this document is the reconciled output) |
 
@@ -143,13 +149,17 @@ Current backend = **11 Deno edge functions** (portable as-is): `accept-invite`, 
 
 | # | Step |
 |---|------|
-| 6.1 | Global string/asset rename: product name, copy, package names, email domain (`@tribesassets.com`), logos (`src/components/brand/TribesLogo.tsx`), favicons, GA id. |
+| 6.1 | Global string/asset rename per the locked rule: `Tribes Portal` → `Watershed Portal`, bare `Tribes` → `Watershed`. Hit-points: `index.html` `<title>` + GA id + favicons; `src/components/brand/TribesLogo.tsx` (component name + asset); email domain `@tribesassets.com` → new domain + the templates in `send-support-email` / `support-form` / `support-webhook`; copy in `src/constants/`; `package.json` name; `CLAUDE.md`; `README.md`. |
 | 6.2 | Update institutional tone/branding across UI + email templates. |
-| 6.3 | New `CLAUDE.md` for the Watershed repo (carry forward design-system law, schema canon, RLS helpers; fix the stale 8-vs-11 functions + Algolia-index notes). |
+| 6.3 | New `CLAUDE.md` for the `watershedportal` repo (carry forward design-system law, schema canon, RLS helpers; fix the stale 8-vs-11 functions + Algolia-index notes). |
 
 > Do the rename **after** the port so you're not chasing strings across two stacks.
 
-**Verify:** Grep for `Tribes` / `tribesassets.com` / `lovable` returns zero results outside intentional history.
+**Do NOT rename:** the Supabase project id `rsdjfnsbimcdrxlhognv` (opaque), git history, or DB
+table/column names (schema is untouched infra — note the `tribes.*` Tailwind color-token names are
+cosmetic and *may* be renamed, but the DB `tribes`-prefixed objects must not).
+
+**Verify:** `grep -ri "tribes" --exclude-dir=.git` returns zero results outside intentional history / the Supabase id / DB object names. Same for `tribesassets.com` and `lovable`.
 
 ---
 
@@ -157,7 +167,7 @@ Current backend = **11 Deno edge functions** (portable as-is): `accept-invite`, 
 
 | # | Step | Owner |
 |---|------|-------|
-| 7.1 | Connect `watershed` repo to Vercel; confirm per-PR preview deploys | `[H]` |
+| 7.1 | Connect `Watershed-Music-Group/watershedportal` to Vercel; confirm per-PR preview deploys | `[H]` |
 | 7.2 | Set all env vars in Vercel (prod + preview scopes): Supabase, Algolia, Resend, Inngest, Sentry, Anthropic | `[H]` |
 | 7.3 | GitHub Actions CI: **lint + typecheck gates now** (no test suite exists yet); add test gate once tests are written | `[CC]` build, `[H]` enable |
 | 7.4 | Resend domain verification — SPF/DKIM/DMARC records | `[H]` |
