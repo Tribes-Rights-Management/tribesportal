@@ -13,6 +13,8 @@
 **Naming (locked)**
 - Product name: **Watershed Portal** (replaces "Tribes Portal").
 - Target repo: **`Watershed-Music-Group/watershedportal`** (private) — org already exists.
+- Domains: marketing **`watershedmusicrights.com`**, app **`app.watershedmusicrights.com`**, email
+  **`@watershedmusicrights.com`** (replaces `tribesrightsmanagement.com` / `app.tribesrightsmanagement.com` / `@tribesassets.com`).
 - Rename rule (Phase 6): `Tribes Portal` → `Watershed Portal`, and the bare word `Tribes` →
   `Watershed`, everywhere except git history, the Supabase project id, and DB table/column names.
 
@@ -49,7 +51,7 @@ corrects it to match the actual repository. Key deltas applied:
 
 | # | Step | Notes |
 |---|------|-------|
-| 0.1 | Register Watershed domain + email domain | Pick final domains before DNS work in Phase 7. |
+| 0.1 | Register **`watershedmusicrights.com`** (app on `app.watershedmusicrights.com`, email `@watershedmusicrights.com`) | Domain is locked; DNS work happens in Phase 7. |
 | 0.2 | Create empty **`watershedportal`** repo (private) in the existing **`Watershed-Music-Group`** org (no README/license, for a clean first push) | Keep `tribesportal` intact until cutover. |
 | 0.3 | Create accounts: Vercel, Resend, Inngest, Sentry | Use the `Watershed-Music-Group` GitHub org for SSO where possible. |
 | 0.4 | Confirm Supabase project ownership/billing stays on `rsdjfnsbimcdrxlhognv` | A new Supabase org re-scopes this to a full schema/data/RLS/storage migration — avoid unless required. |
@@ -149,7 +151,7 @@ Current backend = **11 Deno edge functions** (portable as-is): `accept-invite`, 
 
 | # | Step |
 |---|------|
-| 6.1 | Global string/asset rename per the locked rule: `Tribes Portal` → `Watershed Portal`, bare `Tribes` → `Watershed`. Hit-points: `index.html` `<title>` + GA id + favicons; `src/components/brand/TribesLogo.tsx` (component name + asset); email domain `@tribesassets.com` → new domain + the templates in `send-support-email` / `support-form` / `support-webhook`; copy in `src/constants/`; `package.json` name; `CLAUDE.md`; `README.md`. |
+| 6.1 | Global string/asset rename per the locked rule: `Tribes Portal` → `Watershed Portal`, bare `Tribes` → `Watershed`. Hit-points: `index.html` `<title>` + GA id + favicons; `src/components/brand/TribesLogo.tsx` (component name + asset); email domain `@tribesassets.com` → `@watershedmusicrights.com` + the templates in `send-support-email` / `support-form` / `support-webhook`; copy in `src/constants/`; `package.json` name; `CLAUDE.md`; `README.md`. |
 | 6.2 | Update institutional tone/branding across UI + email templates. |
 | 6.3 | New `CLAUDE.md` for the `watershedportal` repo (carry forward design-system law, schema canon, RLS helpers; fix the stale 8-vs-11 functions + Algolia-index notes). |
 
@@ -170,8 +172,8 @@ cosmetic and *may* be renamed, but the DB `tribes`-prefixed objects must not).
 | 7.1 | Connect `Watershed-Music-Group/watershedportal` to Vercel; confirm per-PR preview deploys | `[H]` |
 | 7.2 | Set all env vars in Vercel (prod + preview scopes): Supabase, Algolia, Resend, Inngest, Sentry, Anthropic | `[H]` |
 | 7.3 | GitHub Actions CI: **lint + typecheck gates now** (no test suite exists yet); add test gate once tests are written | `[CC]` build, `[H]` enable |
-| 7.4 | Resend domain verification — SPF/DKIM/DMARC records | `[H]` |
-| 7.5 | DNS cutover to production | `[H]` |
+| 7.4 | Resend domain verification for `watershedmusicrights.com` — SPF/DKIM/DMARC records | `[H]` |
+| 7.5 | DNS cutover: point `watershedmusicrights.com` + `app.watershedmusicrights.com` to production | `[H]` |
 
 **Verify:** Production loads on the Watershed domain; email deliverability passes; PR previews work.
 
