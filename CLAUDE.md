@@ -4,6 +4,10 @@
 > Read this FIRST before making any changes to this codebase.
 > Last updated: 2026-03-11
 
+> **Migrating to Next.js/Vercel?** See [`MIGRATION.md`](./MIGRATION.md) — the repo-specific
+> Watershed execution plan (reconciled against a full audit on 2026-06-07). Read it before any
+> migration-related work.
+
 ---
 
 ## What Is This Project?
