@@ -12,7 +12,7 @@
 
 **Naming (locked)**
 - Product name: **Watershed Portal** (replaces "Tribes Portal").
-- Target repo: **`Watershed-Music-Group/watershedportal`** (private) — org already exists.
+- Target repo: **`Carpenter-Create/watershedportal`** (private) — org already exists.
 - Domains: marketing **`watershedmusicrights.com`**, app **`app.watershedmusicrights.com`**, email
   **`@watershedmusicrights.com`** (replaces `tribesrightsmanagement.com` / `app.tribesrightsmanagement.com` / `@tribesassets.com`).
 - Rename rule (Phase 6): `Tribes Portal` → `Watershed Portal`, and the bare word `Tribes` →
@@ -52,8 +52,8 @@ corrects it to match the actual repository. Key deltas applied:
 | # | Step | Notes |
 |---|------|-------|
 | 0.1 | Register **`watershedmusicrights.com`** (app on `app.watershedmusicrights.com`, email `@watershedmusicrights.com`) | Domain is locked; DNS work happens in Phase 7. |
-| 0.2 | Create empty **`watershedportal`** repo (private) in the existing **`Watershed-Music-Group`** org (no README/license, for a clean first push) | Keep `tribesportal` intact until cutover. |
-| 0.3 | Create accounts: Vercel, Resend, Inngest, Sentry | Use the `Watershed-Music-Group` GitHub org for SSO where possible. |
+| 0.2 | Create empty **`watershedportal`** repo (private) in the existing **`Carpenter-Create`** org (no README/license, for a clean first push) | Keep `tribesportal` intact until cutover. |
+| 0.3 | Create accounts: Vercel, Resend, Inngest, Sentry | Use the `Carpenter-Create` GitHub org for SSO where possible. |
 | 0.4 | Confirm Supabase project ownership/billing stays on `rsdjfnsbimcdrxlhognv` | A new Supabase org re-scopes this to a full schema/data/RLS/storage migration — avoid unless required. |
 
 **Verify:** All accounts exist; you can log into each dashboard.
@@ -66,7 +66,7 @@ corrects it to match the actual repository. Key deltas applied:
 |---|------|-------|
 | 1.1 | Install Node.js LTS, VS Code, pnpm, git (Windows: WSL2) | `[H]` |
 | 1.2 | Install Claude Code VS Code extension; sign in (browser OAuth) | `[H]` |
-| 1.3 | Clone `tribesportal` locally; clone the new empty `Watershed-Music-Group/watershedportal` | `[H]` |
+| 1.3 | Clone `tribesportal` locally; clone the new empty `Carpenter-Create/watershedportal` | `[H]` |
 | 1.4 | Connect Supabase MCP to Claude Code (live schema introspection) | `[H]` |
 | 1.5 | Repo audit on `tribesportal` | `[CC]` — **DONE 2026-06-07** (this document is the reconciled output) |
 
@@ -169,7 +169,7 @@ cosmetic and *may* be renamed, but the DB `tribes`-prefixed objects must not).
 
 | # | Step | Owner |
 |---|------|-------|
-| 7.1 | Connect `Watershed-Music-Group/watershedportal` to Vercel; confirm per-PR preview deploys | `[H]` |
+| 7.1 | Connect `Carpenter-Create/watershedportal` to Vercel; confirm per-PR preview deploys | `[H]` |
 | 7.2 | Set all env vars in Vercel (prod + preview scopes): Supabase, Algolia, Resend, Inngest, Sentry, Anthropic | `[H]` |
 | 7.3 | GitHub Actions CI: **lint + typecheck gates now** (no test suite exists yet); add test gate once tests are written | `[CC]` build, `[H]` enable |
 | 7.4 | Resend domain verification for `watershedmusicrights.com` — SPF/DKIM/DMARC records | `[H]` |
