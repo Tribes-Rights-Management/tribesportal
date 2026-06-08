@@ -179,6 +179,26 @@ cosmetic and *may* be renamed, but the DB `tribes`-prefixed objects must not).
 
 ---
 
+## Cutover sequencing (Phase 7 → 8 bridge)
+
+**Golden rule: disconnect the old only after the new is proven. Never leave a window where neither works.** This is a parallel run, not a swap.
+
+1. **Build (Phases 2–6):** touch nothing Tribes. The old app stays live on Lovable, on the Tribes
+   URLs, with `@tribesassets.com` email, the entire time.
+2. **Cutover (Phase 7) — additive only:** stand up Watershed on Vercel at
+   `app.watershedmusicrights.com` (new GoDaddy DNS records for the *new* domain only; do **not**
+   touch Tribes DNS). Verify Resend on `watershedmusicrights.com`. Both stacks now run in parallel —
+   that overlap is the rollback net (zero downtime).
+3. **Soak (~1–2 weeks):** run both live; move users/comms to the new domain; watch Sentry.
+4. **Decommission (Phase 8), only after the soak — in this order:**
+   - **Lovable** → disconnect (8.1); it only deploys the old app, so keep it as fallback until confident.
+   - **Tribes web URLs** → repoint `app.tribesrightsmanagement.com` to a **301 → `app.watershedmusicrights.com`** for bookmarks, then let the domain lapse later. Don't hard-kill.
+   - **`@tribesassets.com` email + Mailgun** → retire **last**. Keep it *receiving/forwarding* through the soak because `support-webhook` handles inbound support mail; revoke Mailgun (8.3) only once inbound is confirmed flowing to the new domain.
+
+> Email cutover lags web cutover: web can flip fast (DNS + redirect); email should overlap longest because of inbound support mail.
+
+---
+
 ## Phase 8 — Decommission `[H]`
 
 | # | Step |
