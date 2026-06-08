@@ -184,8 +184,9 @@ cosmetic and *may* be renamed, but the DB `tribes`-prefixed objects must not).
 | # | Step |
 |---|------|
 | 8.1 | Disconnect Lovable from the old repo; remove `lovable-tagger` (`package.json`) + `componentTagger` (`vite.config.ts`). |
-| 8.2 | Archive `tribesportal` once Watershed is stable in prod. |
+| 8.2 | Once Watershed has soaked stably in prod (≈1–2 weeks after cutover): **transfer `tribesportal` from `Tribes-Rights-Management` to `Carpenter-Create`** (GitHub → repo Settings → Transfer ownership), then **archive** it there (Settings → Archive). Keeps a read-only rollback under your main org. |
 | 8.3 | Revoke unused Mailgun + `LOVABLE_API_KEY` + old API keys. |
+| 8.4 | Confirm `Tribes-Rights-Management` holds no other repos/Actions/SSO you still need (`gh repo list Tribes-Rights-Management`), then **delete the `Tribes-Rights-Management` org**. Irreversible and removes every repo in it — only after 8.2 moves `tribesportal` out. (Backend is unaffected: Supabase/Algolia/domain don't live in GitHub.) |
 
 ---
 
