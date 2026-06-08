@@ -7,6 +7,10 @@
 > **Migrating to Next.js/Vercel?** See [`MIGRATION.md`](./MIGRATION.md) — the repo-specific
 > Watershed execution plan (reconciled against a full audit on 2026-06-07). Read it before any
 > migration-related work.
+>
+> **File storage:** client uploads (audio/video/PDF) go to **AWS S3 Glacier Instant Retrieval**
+> (metadata in Supabase, presigned URLs server-side) — not Supabase Storage. See ADR-001 in
+> [`MIGRATION.md`](./MIGRATION.md). Decided design; post-migration build item.
 
 ---
 

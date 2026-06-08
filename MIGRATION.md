@@ -226,3 +226,37 @@ cosmetic and *may* be renamed, but the DB `tribes`-prefixed objects must not).
 - **ElevenLabs voice** — feature integration once core is stable.
 - **Expo / React Native app** — add `apps/native` via Solito + NativeWind, reusing `packages/ui` + `packages/lib`.
 - **Schema reconciliation** — deliberate post-MVP cleanup (legacy `profiles`, `articles`/`categories`, dual export systems; see `docs/SCHEMA_CANON.md`).
+- **Client file storage on S3 Glacier Instant Retrieval** — decided design, post-migration build item. See **ADR-001** below.
+
+---
+
+## Architecture Decisions
+
+### ADR-001 — Client file storage: AWS S3 Glacier Instant Retrieval
+
+**Status:** Decided · **post-migration build item** (NOT part of the core Next.js cutover; the
+cutover keeps current file handling as-is until this is built).
+
+**Decision:** Client file uploads (audio, video, PDF) are stored in an **AWS S3 Glacier Instant
+Retrieval** bucket — **not** Supabase Storage, and **not** Glacier Deep Archive.
+
+**Rationale:** Files are rarely accessed but must be retrievable instantly. Glacier Instant
+Retrieval gives archival pricing (~$0.004/GB-month) with millisecond access.
+
+**Architecture:**
+- **File bytes** → S3 Glacier Instant Retrieval bucket.
+- **Metadata/index** → Supabase Postgres (filename, type, size, owner, S3 object key, timestamps),
+  protected by RLS. This table is the **source of truth** the app queries — never a live listing of
+  the bucket.
+- **Upload/download** → presigned S3 URLs generated **server-side** (Next.js route handler or
+  Inngest). **Never expose AWS keys to the browser.**
+
+**Caveats to design around:**
+- **Retrieval fee** ~$0.03/GB + higher per-request costs on each access.
+- **90-day minimum storage duration** — files deleted before 90 days still bill the full 90.
+- **Egress** ~$0.09/GB on download — route heavy/repeat downloads through **CloudFront**.
+- **Single region**; set a bucket **lifecycle policy** + **CORS** config for browser uploads.
+
+> Supersedes the current Supabase Storage `client-documents` bucket for client uploads. Note this
+> when the storage layer is built; the existing `help-articles` bucket (help-content images) is out
+> of scope for this decision and stays on Supabase Storage.
