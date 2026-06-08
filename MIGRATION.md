@@ -250,6 +250,12 @@ Retrieval gives archival pricing (~$0.004/GB-month) with millisecond access.
   the bucket.
 - **Upload/download** → presigned S3 URLs generated **server-side** (Next.js route handler or
   Inngest). **Never expose AWS keys to the browser.**
+- **Client-facing delivery** → downloads are served from the branded subdomain
+  **`assets.watershedmusicrights.com`** via **CloudFront + Origin Access Control (OAC)**, using
+  **CloudFront signed URLs**. The S3 bucket stays **private** (Block Public Access on); clients never
+  see the raw bucket/S3 hostname. Uploads use presigned PUT (direct-to-S3 is fine — momentary, not a
+  shared link). Rationale: trust + brand come from HTTPS on *our* domain, not from exposing AWS;
+  `assets.` reinforces the institutional asset-management positioning.
 
 **Caveats to design around:**
 - **Retrieval fee** ~$0.03/GB + higher per-request costs on each access.
@@ -260,3 +266,37 @@ Retrieval gives archival pricing (~$0.004/GB-month) with millisecond access.
 > Supersedes the current Supabase Storage `client-documents` bucket for client uploads. Note this
 > when the storage layer is built; the existing `help-articles` bucket (help-content images) is out
 > of scope for this decision and stays on Supabase Storage.
+
+**AWS account topology (established 2026-06-07):** AWS Organization with **E8 Holdings LLC**
+(`405912452061`) as the clean management/payer account; **Royalogic** and **Watershed** as isolated
+member accounts. Watershed's client files live in the **Watershed account `318940351764`**, fully
+walled off from Royalogic. (Cleanup pending: Royalogic's `royalogic-storage-mirror-*` S3 buckets
+still sit in the management account and should move to a dedicated Royalogic member account.)
+
+**Provisioned 2026-06-07 (Watershed account `318940351764`, region `us-west-2`):**
+- **S3 bucket `watershed-client-files`** — Block Public Access ON; default encryption SSE-S3
+  (AES256) + bucket key; CORS allows `https://app.watershedmusicrights.com` + `http://localhost:3000`
+  (PUT/GET/HEAD); lifecycle aborts incomplete multipart uploads after 7 days. Objects are written
+  with **storage class `GLACIER_IR` at upload time** (no transition lag/cost).
+- **IAM** — least-privilege customer-managed policy `watershed-app-s3` (PutObject/GetObject/
+  DeleteObject on the bucket objects + ListBucket) attached to IAM user `watershed-app-s3`.
+  **No access keys yet** — generate them at build time (secret never goes through chat).
+- **Temporary** admin user `watershed-cli` was used to provision; **delete it** once `watershed-app-s3`
+  keys exist and CloudFront is set up (use switch-role/SSO for future admin).
+
+**Env vars (post-migration, server-side only — add to `.env`/Vercel when the storage layer is built):**
+```
+AWS_REGION=us-west-2
+S3_BUCKET=watershed-client-files
+AWS_ACCESS_KEY_ID=        # watershed-app-s3 user, generated at build time
+AWS_SECRET_ACCESS_KEY=
+# CloudFront (downloads via assets.watershedmusicrights.com):
+CLOUDFRONT_DISTRIBUTION_DOMAIN=
+CLOUDFRONT_KEY_PAIR_ID=   # for signed URLs
+CLOUDFRONT_PRIVATE_KEY=
+```
+
+**Remaining build steps (post-migration):** create the **CloudFront distribution** with OAC over the
+private bucket; point **`assets.watershedmusicrights.com`** DNS (GoDaddy) at it with an ACM cert;
+generate the `watershed-app-s3` access keys; wire presigned uploads + CloudFront signed-URL downloads;
+then delete `watershed-cli`.
